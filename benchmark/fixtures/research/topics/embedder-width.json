@@ -1,0 +1,119 @@
+{
+  "id": "embedder-width",
+  "title": "Hash embedding width on a saturated corpus",
+  "datasetPath": "datasets/corpus.json",
+  "hiddenPath": "hidden/embedder-width.json",
+  "contract": {
+    "id": "embedder-width-contract",
+    "projectId": "embedder-width-project",
+    "hypothesisSpace": [
+      "embedder-width/256 improves recall-at-5 over embedder-width/64 on this fixture."
+    ],
+    "successRule": {
+      "metric": "recall-at-5",
+      "baseline": "baseline",
+      "condition": "candidate",
+      "minImprovement": 0,
+      "confidenceLevel": 0.95
+    },
+    "failureRule": "stop-on-invalid",
+    "metrics": [
+      {
+        "id": "recall-at-5",
+        "unit": "fraction",
+        "direction": "maximize"
+      }
+    ],
+    "datasets": [
+      {
+        "id": "fixture-corpus-v1",
+        "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+      }
+    ],
+    "splits": {
+      "train": [],
+      "test": [
+        "query-1",
+        "query-2",
+        "query-3",
+        "query-4",
+        "query-5",
+        "query-6",
+        "query-7",
+        "query-8"
+      ]
+    },
+    "requiredBaselines": [
+      {
+        "condition": "baseline",
+        "programId": "embedder-width/64",
+        "source": "benchmark/lib/research-programs.ts",
+        "licence": {
+          "spdx": "MIT",
+          "provenance": "tangle-authored-synthetic",
+          "source": "LICENSE.md"
+        }
+      }
+    ],
+    "replicatePolicy": {
+      "seeds": [
+        1
+      ],
+      "minimum": 1,
+      "resamples": 2000,
+      "bootstrapSeed": 17753
+    },
+    "attemptCap": 1,
+    "pivotCap": 1,
+    "reviewCap": 1,
+    "selectionRule": {
+      "kind": "all",
+      "n": 1,
+      "metric": "recall-at-5"
+    },
+    "stopConditions": [
+      "invalid evidence",
+      "registered budget reached",
+      "no positive paired interval",
+      "saturated metric"
+    ],
+    "contractHash": "253963516c88db74c8859ab8f2317fd7accd34ee5227f8809a4512bd8752635a"
+  },
+  "plan": {
+    "id": "embedder-width-plan",
+    "projectId": "embedder-width-project",
+    "contractHash": "253963516c88db74c8859ab8f2317fd7accd34ee5227f8809a4512bd8752635a",
+    "hypothesisHash": "5cf76309eee83a4bbec7d6a1a5f10a31e17ef6fde3d9e673a016da713e3e8bc5",
+    "conditions": [
+      {
+        "id": "baseline",
+        "programId": "embedder-width/64",
+        "datasetId": "fixture-corpus-v1",
+        "params": {
+          "limit": 5
+        }
+      },
+      {
+        "id": "candidate",
+        "programId": "embedder-width/256",
+        "datasetId": "fixture-corpus-v1",
+        "params": {
+          "limit": 5
+        }
+      }
+    ],
+    "inputPaths": [
+      "datasets/corpus.json"
+    ],
+    "evaluator": {
+      "id": "fixture-evaluator",
+      "version": "1"
+    },
+    "planHash": "613573ebcd9b5615d32a7f4a3a857b40b0356b44bc574f52035e82402b42a87d"
+  },
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  }
+}

@@ -6,6 +6,7 @@ import { createOutcomeStore } from '@tangleai/store';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { estimateTokens } from '@tangleai/core/tokens';
+import { kMeans } from '@tangleai/core/clustering';
 import { createMemoryUnit, createMemoryUnitStore } from '@tangleai/memory';
 import { createOfflineEmbedder } from '@tangleai/pipeline';
 import { extractHtml } from '@tangleai/documents';
@@ -33,6 +34,9 @@ for (const pkg of artifacts.packages) {
   }
 }
 assert.equal(estimateTokens('12345678'), 2);
+assert.deepEqual(kMeans([[0], [10]], 2, { random: () => 0 }).centroids, [[0], [10]]);
+assert.deepEqual(kMeans([[0], [0], [10]], 2, { random: () => 0, initialization: 'random' }).assignments, [1, 1, 0]);
+assert.deepEqual(kMeans([[0], [0], [10]], 2, { random: () => 0, initialization: 'random', maxIterations: 0 }).centroids, [[0], [0]]);
 const migration = JSON.parse(await readFile(new URL('./migration.json', import.meta.url), 'utf8'));
 for (const owner of ['models', 'context', 'agents']) {
   const expected = migration.rootSymbols.filter(symbol => symbol.destination.entry.startsWith(`@tangleai/${owner}/`)).map(symbol => symbol.name).sort();

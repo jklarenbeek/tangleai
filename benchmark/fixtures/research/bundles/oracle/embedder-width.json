@@ -1,0 +1,1006 @@
+{
+  "topicId": "embedder-width",
+  "contract": {
+    "id": "embedder-width-contract",
+    "projectId": "embedder-width-project",
+    "hypothesisSpace": [
+      "embedder-width/256 improves recall-at-5 over embedder-width/64 on this fixture."
+    ],
+    "successRule": {
+      "metric": "recall-at-5",
+      "baseline": "baseline",
+      "condition": "candidate",
+      "minImprovement": 0,
+      "confidenceLevel": 0.95
+    },
+    "failureRule": "stop-on-invalid",
+    "metrics": [
+      {
+        "id": "recall-at-5",
+        "unit": "fraction",
+        "direction": "maximize"
+      }
+    ],
+    "datasets": [
+      {
+        "id": "fixture-corpus-v1",
+        "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+      }
+    ],
+    "splits": {
+      "train": [],
+      "test": [
+        "query-1",
+        "query-2",
+        "query-3",
+        "query-4",
+        "query-5",
+        "query-6",
+        "query-7",
+        "query-8"
+      ]
+    },
+    "requiredBaselines": [
+      {
+        "condition": "baseline",
+        "programId": "embedder-width/64",
+        "source": "benchmark/lib/research-programs.ts",
+        "licence": {
+          "spdx": "MIT",
+          "provenance": "tangle-authored-synthetic",
+          "source": "LICENSE.md"
+        }
+      }
+    ],
+    "replicatePolicy": {
+      "seeds": [
+        1
+      ],
+      "minimum": 1,
+      "resamples": 2000,
+      "bootstrapSeed": 17753
+    },
+    "attemptCap": 1,
+    "pivotCap": 1,
+    "reviewCap": 1,
+    "selectionRule": {
+      "kind": "all",
+      "n": 1,
+      "metric": "recall-at-5"
+    },
+    "stopConditions": [
+      "invalid evidence",
+      "registered budget reached",
+      "no positive paired interval",
+      "saturated metric"
+    ],
+    "contractHash": "253963516c88db74c8859ab8f2317fd7accd34ee5227f8809a4512bd8752635a"
+  },
+  "plan": {
+    "id": "embedder-width-plan",
+    "projectId": "embedder-width-project",
+    "contractHash": "253963516c88db74c8859ab8f2317fd7accd34ee5227f8809a4512bd8752635a",
+    "hypothesisHash": "5cf76309eee83a4bbec7d6a1a5f10a31e17ef6fde3d9e673a016da713e3e8bc5",
+    "conditions": [
+      {
+        "id": "baseline",
+        "programId": "embedder-width/64",
+        "datasetId": "fixture-corpus-v1",
+        "params": {
+          "limit": 5
+        }
+      },
+      {
+        "id": "candidate",
+        "programId": "embedder-width/256",
+        "datasetId": "fixture-corpus-v1",
+        "params": {
+          "limit": 5
+        }
+      }
+    ],
+    "inputPaths": [
+      "datasets/corpus.json"
+    ],
+    "evaluator": {
+      "id": "fixture-evaluator",
+      "version": "1"
+    },
+    "planHash": "613573ebcd9b5615d32a7f4a3a857b40b0356b44bc574f52035e82402b42a87d"
+  },
+  "runs": [
+    {
+      "id": "embedder-width-baseline-seed-1",
+      "projectId": "embedder-width-project",
+      "condition": "baseline",
+      "programId": "embedder-width/64",
+      "seed": 1,
+      "status": "ok",
+      "inputHash": "3b58c34c64acb5499dd5ff1de4127adcb56ccafe100bf7033988b59347edfef6",
+      "executionManifestHash": "3c4bfeaab522b6102d60914f70dd70efdae081724706d9dd1355e9a57b646502",
+      "rawArtifactHash": "432910892ccde876602d86e4db2db7305c9f6210edeb6b860e8bd59ab25ab476",
+      "output": {
+        "kind": "rankings",
+        "methodIdentity": "hash-trigram-64",
+        "rankings": [
+          {
+            "queryId": "query-1",
+            "hits": [
+              {
+                "id": "doc-1",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.3123110098322495
+              },
+              {
+                "id": "doc-9",
+                "score": 0.3123110098322495
+              },
+              {
+                "id": "doc-10",
+                "score": 0.3123110098322495
+              },
+              {
+                "id": "doc-11",
+                "score": 0.3123110098322495
+              }
+            ]
+          },
+          {
+            "queryId": "query-2",
+            "hits": [
+              {
+                "id": "doc-2",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.5598098772715818
+              },
+              {
+                "id": "doc-9",
+                "score": 0.5598098772715818
+              },
+              {
+                "id": "doc-10",
+                "score": 0.5598098772715818
+              },
+              {
+                "id": "doc-11",
+                "score": 0.5598098772715818
+              }
+            ]
+          },
+          {
+            "queryId": "query-3",
+            "hits": [
+              {
+                "id": "doc-3",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.41249149014728603
+              },
+              {
+                "id": "doc-9",
+                "score": 0.41249149014728603
+              },
+              {
+                "id": "doc-10",
+                "score": 0.41249149014728603
+              },
+              {
+                "id": "doc-11",
+                "score": 0.41249149014728603
+              }
+            ]
+          },
+          {
+            "queryId": "query-4",
+            "hits": [
+              {
+                "id": "doc-4",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.5303461998467226
+              },
+              {
+                "id": "doc-9",
+                "score": 0.5303461998467226
+              },
+              {
+                "id": "doc-10",
+                "score": 0.5303461998467226
+              },
+              {
+                "id": "doc-11",
+                "score": 0.5303461998467226
+              }
+            ]
+          },
+          {
+            "queryId": "query-5",
+            "hits": [
+              {
+                "id": "doc-5",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.47141884293058506
+              },
+              {
+                "id": "doc-9",
+                "score": 0.47141884293058506
+              },
+              {
+                "id": "doc-10",
+                "score": 0.47141884293058506
+              },
+              {
+                "id": "doc-11",
+                "score": 0.47141884293058506
+              }
+            ]
+          },
+          {
+            "queryId": "query-6",
+            "hits": [
+              {
+                "id": "doc-6",
+                "score": 0.9999999999999999
+              },
+              {
+                "id": "doc-8",
+                "score": 0.4906682862673347
+              },
+              {
+                "id": "doc-9",
+                "score": 0.4906682862673347
+              },
+              {
+                "id": "doc-10",
+                "score": 0.4906682862673347
+              },
+              {
+                "id": "doc-11",
+                "score": 0.4906682862673347
+              }
+            ]
+          },
+          {
+            "queryId": "query-7",
+            "hits": [
+              {
+                "id": "doc-7",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.4714188449970043
+              },
+              {
+                "id": "doc-9",
+                "score": 0.4714188449970043
+              },
+              {
+                "id": "doc-10",
+                "score": 0.4714188449970043
+              },
+              {
+                "id": "doc-11",
+                "score": 0.4714188449970043
+              }
+            ]
+          },
+          {
+            "queryId": "query-8",
+            "hits": [
+              {
+                "id": "doc-1",
+                "score": 0.9285714285714287
+              },
+              {
+                "id": "doc-8",
+                "score": 0.3123110098322495
+              },
+              {
+                "id": "doc-9",
+                "score": 0.3123110098322495
+              },
+              {
+                "id": "doc-10",
+                "score": 0.3123110098322495
+              },
+              {
+                "id": "doc-11",
+                "score": 0.3123110098322495
+              }
+            ]
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": "start",
+          "detail": "embedder-width/64"
+        },
+        {
+          "event": "output",
+          "detail": "432910892ccde876602d86e4db2db7305c9f6210edeb6b860e8bd59ab25ab476"
+        }
+      ],
+      "spend": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "physical": 0
+      },
+      "error": null
+    },
+    {
+      "id": "embedder-width-candidate-seed-1",
+      "projectId": "embedder-width-project",
+      "condition": "candidate",
+      "programId": "embedder-width/256",
+      "seed": 1,
+      "status": "ok",
+      "inputHash": "3b58c34c64acb5499dd5ff1de4127adcb56ccafe100bf7033988b59347edfef6",
+      "executionManifestHash": "45356192ddbcc6c7768fed16a05dce016881add33c068fea8378cbfa076d20e1",
+      "rawArtifactHash": "cc4f7c06897a9f18df8b83dc23c44e1a02c9b42cde4d3ca01629df6c56499668",
+      "output": {
+        "kind": "rankings",
+        "methodIdentity": "hash-trigram-256",
+        "rankings": [
+          {
+            "queryId": "query-1",
+            "hits": [
+              {
+                "id": "doc-1",
+                "score": 0.9999999999999999
+              },
+              {
+                "id": "doc-8",
+                "score": 0.3509312032989389
+              },
+              {
+                "id": "doc-9",
+                "score": 0.3509312032989389
+              },
+              {
+                "id": "doc-10",
+                "score": 0.3509312032989389
+              },
+              {
+                "id": "doc-11",
+                "score": 0.3509312032989389
+              }
+            ]
+          },
+          {
+            "queryId": "query-2",
+            "hits": [
+              {
+                "id": "doc-2",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.3371637941811408
+              },
+              {
+                "id": "doc-9",
+                "score": 0.3371637941811408
+              },
+              {
+                "id": "doc-10",
+                "score": 0.3371637941811408
+              },
+              {
+                "id": "doc-11",
+                "score": 0.3371637941811408
+              }
+            ]
+          },
+          {
+            "queryId": "query-3",
+            "hits": [
+              {
+                "id": "doc-3",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.244357125087967
+              },
+              {
+                "id": "doc-9",
+                "score": 0.244357125087967
+              },
+              {
+                "id": "doc-10",
+                "score": 0.244357125087967
+              },
+              {
+                "id": "doc-11",
+                "score": 0.244357125087967
+              }
+            ]
+          },
+          {
+            "queryId": "query-4",
+            "hits": [
+              {
+                "id": "doc-4",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.2622385065853317
+              },
+              {
+                "id": "doc-9",
+                "score": 0.2622385065853317
+              },
+              {
+                "id": "doc-10",
+                "score": 0.2622385065853317
+              },
+              {
+                "id": "doc-11",
+                "score": 0.2622385065853317
+              }
+            ]
+          },
+          {
+            "queryId": "query-5",
+            "hits": [
+              {
+                "id": "doc-5",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.3665356876319505
+              },
+              {
+                "id": "doc-9",
+                "score": 0.3665356876319505
+              },
+              {
+                "id": "doc-10",
+                "score": 0.3665356876319505
+              },
+              {
+                "id": "doc-11",
+                "score": 0.3665356876319505
+              }
+            ]
+          },
+          {
+            "queryId": "query-6",
+            "hits": [
+              {
+                "id": "doc-6",
+                "score": 0.9999999999999999
+              },
+              {
+                "id": "doc-8",
+                "score": 0.3119388473768346
+              },
+              {
+                "id": "doc-9",
+                "score": 0.3119388473768346
+              },
+              {
+                "id": "doc-10",
+                "score": 0.3119388473768346
+              },
+              {
+                "id": "doc-11",
+                "score": 0.3119388473768346
+              }
+            ]
+          },
+          {
+            "queryId": "query-7",
+            "hits": [
+              {
+                "id": "doc-7",
+                "score": 1
+              },
+              {
+                "id": "doc-8",
+                "score": 0.3258095001172893
+              },
+              {
+                "id": "doc-9",
+                "score": 0.3258095001172893
+              },
+              {
+                "id": "doc-10",
+                "score": 0.3258095001172893
+              },
+              {
+                "id": "doc-11",
+                "score": 0.3258095001172893
+              }
+            ]
+          },
+          {
+            "queryId": "query-8",
+            "hits": [
+              {
+                "id": "doc-1",
+                "score": 0.9166666666666665
+              },
+              {
+                "id": "doc-8",
+                "score": 0.3119388473768346
+              },
+              {
+                "id": "doc-9",
+                "score": 0.3119388473768346
+              },
+              {
+                "id": "doc-10",
+                "score": 0.3119388473768346
+              },
+              {
+                "id": "doc-11",
+                "score": 0.3119388473768346
+              }
+            ]
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": "start",
+          "detail": "embedder-width/256"
+        },
+        {
+          "event": "output",
+          "detail": "cc4f7c06897a9f18df8b83dc23c44e1a02c9b42cde4d3ca01629df6c56499668"
+        }
+      ],
+      "spend": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "physical": 0
+      },
+      "error": null
+    }
+  ],
+  "observations": [
+    {
+      "id": "metric-4972333ca59d923d5d098e5110f79bdfd1ffac31a63e6dba23e22ff5fddf4792",
+      "projectId": "embedder-width-project",
+      "experimentRunId": "embedder-width-baseline-seed-1",
+      "evaluatorId": "fixture-evaluator",
+      "evaluatorVersion": "1",
+      "runArtifactHash": "432910892ccde876602d86e4db2db7305c9f6210edeb6b860e8bd59ab25ab476",
+      "condition": "baseline",
+      "metric": "recall-at-5",
+      "value": 1,
+      "unit": "fraction",
+      "seed": 1,
+      "registrySignature": "4972333ca59d923d5d098e5110f79bdfd1ffac31a63e6dba23e22ff5fddf4792"
+    },
+    {
+      "id": "metric-0ed50c4e8b0e53f296ffa066b6c4bd458c81afcdd6cca17a0129ff2f6536f627",
+      "projectId": "embedder-width-project",
+      "experimentRunId": "embedder-width-candidate-seed-1",
+      "evaluatorId": "fixture-evaluator",
+      "evaluatorVersion": "1",
+      "runArtifactHash": "cc4f7c06897a9f18df8b83dc23c44e1a02c9b42cde4d3ca01629df6c56499668",
+      "condition": "candidate",
+      "metric": "recall-at-5",
+      "value": 1,
+      "unit": "fraction",
+      "seed": 1,
+      "registrySignature": "0ed50c4e8b0e53f296ffa066b6c4bd458c81afcdd6cca17a0129ff2f6536f627"
+    }
+  ],
+  "decision": {
+    "id": "embedder-width-decision",
+    "projectId": "embedder-width-project",
+    "contractHash": "253963516c88db74c8859ab8f2317fd7accd34ee5227f8809a4512bd8752635a",
+    "kind": "Stop",
+    "reason": "SATURATED",
+    "observationIds": [
+      "metric-4972333ca59d923d5d098e5110f79bdfd1ffac31a63e6dba23e22ff5fddf4792",
+      "metric-0ed50c4e8b0e53f296ffa066b6c4bd458c81afcdd6cca17a0129ff2f6536f627"
+    ],
+    "exploratory": false
+  },
+  "literature": [
+    "embedder-width-paper-1",
+    "embedder-width-paper-2",
+    "embedder-width-paper-3",
+    "embedder-width-paper-4",
+    "embedder-width-paper-5",
+    "embedder-width-paper-6"
+  ],
+  "evidence": [
+    {
+      "id": "embedder-width-literature-evidence",
+      "literatureId": "embedder-width-paper-1",
+      "artifactId": "art-3b1ab468457fe9d56b0a758bda4d64d1591f631a1c4dfff9dedc827224891079",
+      "excerpt": "The synthetic embedder-width protocol compares the same feature inputs under two declared methods.",
+      "contentHash": "3b1ab468457fe9d56b0a758bda4d64d1591f631a1c4dfff9dedc827224891079",
+      "versionId": "687de0ffca164fc79b661c49b3c8ef9800d43db553c957b97a2debb00b27d399",
+      "locator": {
+        "headingPath": [
+          "Evidence"
+        ],
+        "elementOrder": 1
+      },
+      "fields": [
+        "literature"
+      ],
+      "extractionPromptRevision": "c23b304a19d5a1a189da0bbbf856558839ff333acddb412c66a4a201befb0d58"
+    },
+    {
+      "id": "embedder-width-limitation-evidence",
+      "literatureId": "embedder-width-paper-2",
+      "artifactId": "art-404dbe8ccc23d472974cc7aeb4f56e6b44315b0ca12223b01d4d33017b2ba268",
+      "excerpt": "These synthetic results do not establish a general method advantage.",
+      "contentHash": "404dbe8ccc23d472974cc7aeb4f56e6b44315b0ca12223b01d4d33017b2ba268",
+      "versionId": "21013c0e094cfec2053ddae09c256c367f0bc484fc54047132ee40ed83282989",
+      "locator": {
+        "headingPath": [
+          "Evidence"
+        ],
+        "elementOrder": 1
+      },
+      "fields": [
+        "interpretation"
+      ],
+      "extractionPromptRevision": "c23b304a19d5a1a189da0bbbf856558839ff333acddb412c66a4a201befb0d58"
+    }
+  ],
+  "claims": [
+    {
+      "id": "embedder-width-literature",
+      "section": "methods",
+      "kind": "literature",
+      "text": "The synthetic embedder-width protocol compares the same feature inputs under two declared methods.",
+      "literatureIds": [
+        "embedder-width-paper-1"
+      ],
+      "evidenceIds": [
+        "embedder-width-literature-evidence"
+      ],
+      "observationIds": [],
+      "strength": "descriptive",
+      "metricBinding": null
+    },
+    {
+      "id": "embedder-width-limitation",
+      "section": "conclusion",
+      "kind": "interpretation",
+      "text": "These synthetic results do not establish a general method advantage.",
+      "literatureIds": [
+        "embedder-width-paper-2"
+      ],
+      "evidenceIds": [
+        "embedder-width-limitation-evidence"
+      ],
+      "observationIds": [],
+      "strength": "descriptive",
+      "metricBinding": null
+    },
+    {
+      "id": "embedder-width-baseline-metric",
+      "section": "results",
+      "kind": "metric",
+      "text": "baseline has mean recall-at-5 1 fraction across all registered seeds.",
+      "literatureIds": [],
+      "evidenceIds": [
+        "metric-4972333ca59d923d5d098e5110f79bdfd1ffac31a63e6dba23e22ff5fddf4792-evidence"
+      ],
+      "observationIds": [
+        "metric-4972333ca59d923d5d098e5110f79bdfd1ffac31a63e6dba23e22ff5fddf4792"
+      ],
+      "strength": "descriptive",
+      "metricBinding": {
+        "condition": "baseline",
+        "metric": "recall-at-5",
+        "unit": "fraction",
+        "seeds": [
+          1
+        ],
+        "aggregate": "mean",
+        "value": 1
+      }
+    },
+    {
+      "id": "embedder-width-candidate-metric",
+      "section": "results",
+      "kind": "metric",
+      "text": "candidate has mean recall-at-5 1 fraction across all registered seeds.",
+      "literatureIds": [],
+      "evidenceIds": [
+        "metric-0ed50c4e8b0e53f296ffa066b6c4bd458c81afcdd6cca17a0129ff2f6536f627-evidence"
+      ],
+      "observationIds": [
+        "metric-0ed50c4e8b0e53f296ffa066b6c4bd458c81afcdd6cca17a0129ff2f6536f627"
+      ],
+      "strength": "descriptive",
+      "metricBinding": {
+        "condition": "candidate",
+        "metric": "recall-at-5",
+        "unit": "fraction",
+        "seeds": [
+          1
+        ],
+        "aggregate": "mean",
+        "value": 1
+      }
+    }
+  ],
+  "claimLedger": {
+    "version": 1,
+    "artifacts": [
+      {
+        "id": "art-3b1ab468457fe9d56b0a758bda4d64d1591f631a1c4dfff9dedc827224891079",
+        "kind": "document",
+        "digest": "3b1ab468457fe9d56b0a758bda4d64d1591f631a1c4dfff9dedc827224891079"
+      },
+      {
+        "id": "art-404dbe8ccc23d472974cc7aeb4f56e6b44315b0ca12223b01d4d33017b2ba268",
+        "kind": "document",
+        "digest": "404dbe8ccc23d472974cc7aeb4f56e6b44315b0ca12223b01d4d33017b2ba268"
+      },
+      {
+        "id": "art-432910892ccde876602d86e4db2db7305c9f6210edeb6b860e8bd59ab25ab476",
+        "kind": "experiment-output",
+        "digest": "432910892ccde876602d86e4db2db7305c9f6210edeb6b860e8bd59ab25ab476"
+      },
+      {
+        "id": "art-cc4f7c06897a9f18df8b83dc23c44e1a02c9b42cde4d3ca01629df6c56499668",
+        "kind": "experiment-output",
+        "digest": "cc4f7c06897a9f18df8b83dc23c44e1a02c9b42cde4d3ca01629df6c56499668"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "embedder-width-literature-evidence",
+        "artifact": "art-3b1ab468457fe9d56b0a758bda4d64d1591f631a1c4dfff9dedc827224891079",
+        "selector": "/Evidence/1",
+        "quote": "The synthetic embedder-width protocol compares the same feature inputs under two declared methods."
+      },
+      {
+        "id": "embedder-width-limitation-evidence",
+        "artifact": "art-404dbe8ccc23d472974cc7aeb4f56e6b44315b0ca12223b01d4d33017b2ba268",
+        "selector": "/Evidence/1",
+        "quote": "These synthetic results do not establish a general method advantage."
+      },
+      {
+        "id": "metric-4972333ca59d923d5d098e5110f79bdfd1ffac31a63e6dba23e22ff5fddf4792-evidence",
+        "artifact": "art-432910892ccde876602d86e4db2db7305c9f6210edeb6b860e8bd59ab25ab476",
+        "selector": "/",
+        "quote": "{\"kind\":\"rankings\",\"methodIdentity\":\"hash-trigram-64\",\"rankings\":[{\"hits\":[{\"id\":\"doc-1\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.3123110098322495},{\"id\":\"doc-9\",\"score\":0.3123110098322495},{\"id\":\"doc-10\",\"score\":0.3123110098322495},{\"id\":\"doc-11\",\"score\":0.3123110098322495}],\"queryId\":\"query-1\"},{\"hits\":[{\"id\":\"doc-2\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.5598098772715818},{\"id\":\"doc-9\",\"score\":0.5598098772715818},{\"id\":\"doc-10\",\"score\":0.5598098772715818},{\"id\":\"doc-11\",\"score\":0.5598098772715818}],\"queryId\":\"query-2\"},{\"hits\":[{\"id\":\"doc-3\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.41249149014728603},{\"id\":\"doc-9\",\"score\":0.41249149014728603},{\"id\":\"doc-10\",\"score\":0.41249149014728603},{\"id\":\"doc-11\",\"score\":0.41249149014728603}],\"queryId\":\"query-3\"},{\"hits\":[{\"id\":\"doc-4\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.5303461998467226},{\"id\":\"doc-9\",\"score\":0.5303461998467226},{\"id\":\"doc-10\",\"score\":0.5303461998467226},{\"id\":\"doc-11\",\"score\":0.5303461998467226}],\"queryId\":\"query-4\"},{\"hits\":[{\"id\":\"doc-5\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.47141884293058506},{\"id\":\"doc-9\",\"score\":0.47141884293058506},{\"id\":\"doc-10\",\"score\":0.47141884293058506},{\"id\":\"doc-11\",\"score\":0.47141884293058506}],\"queryId\":\"query-5\"},{\"hits\":[{\"id\":\"doc-6\",\"score\":0.9999999999999999},{\"id\":\"doc-8\",\"score\":0.4906682862673347},{\"id\":\"doc-9\",\"score\":0.4906682862673347},{\"id\":\"doc-10\",\"score\":0.4906682862673347},{\"id\":\"doc-11\",\"score\":0.4906682862673347}],\"queryId\":\"query-6\"},{\"hits\":[{\"id\":\"doc-7\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.4714188449970043},{\"id\":\"doc-9\",\"score\":0.4714188449970043},{\"id\":\"doc-10\",\"score\":0.4714188449970043},{\"id\":\"doc-11\",\"score\":0.4714188449970043}],\"queryId\":\"query-7\"},{\"hits\":[{\"id\":\"doc-1\",\"score\":0.9285714285714287},{\"id\":\"doc-8\",\"score\":0.3123110098322495},{\"id\":\"doc-9\",\"score\":0.3123110098322495},{\"id\":\"doc-10\",\"score\":0.3123110098322495},{\"id\":\"doc-11\",\"score\":0.3123110098322495}],\"queryId\":\"query-8\"}]}"
+      },
+      {
+        "id": "metric-0ed50c4e8b0e53f296ffa066b6c4bd458c81afcdd6cca17a0129ff2f6536f627-evidence",
+        "artifact": "art-cc4f7c06897a9f18df8b83dc23c44e1a02c9b42cde4d3ca01629df6c56499668",
+        "selector": "/",
+        "quote": "{\"kind\":\"rankings\",\"methodIdentity\":\"hash-trigram-256\",\"rankings\":[{\"hits\":[{\"id\":\"doc-1\",\"score\":0.9999999999999999},{\"id\":\"doc-8\",\"score\":0.3509312032989389},{\"id\":\"doc-9\",\"score\":0.3509312032989389},{\"id\":\"doc-10\",\"score\":0.3509312032989389},{\"id\":\"doc-11\",\"score\":0.3509312032989389}],\"queryId\":\"query-1\"},{\"hits\":[{\"id\":\"doc-2\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.3371637941811408},{\"id\":\"doc-9\",\"score\":0.3371637941811408},{\"id\":\"doc-10\",\"score\":0.3371637941811408},{\"id\":\"doc-11\",\"score\":0.3371637941811408}],\"queryId\":\"query-2\"},{\"hits\":[{\"id\":\"doc-3\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.244357125087967},{\"id\":\"doc-9\",\"score\":0.244357125087967},{\"id\":\"doc-10\",\"score\":0.244357125087967},{\"id\":\"doc-11\",\"score\":0.244357125087967}],\"queryId\":\"query-3\"},{\"hits\":[{\"id\":\"doc-4\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.2622385065853317},{\"id\":\"doc-9\",\"score\":0.2622385065853317},{\"id\":\"doc-10\",\"score\":0.2622385065853317},{\"id\":\"doc-11\",\"score\":0.2622385065853317}],\"queryId\":\"query-4\"},{\"hits\":[{\"id\":\"doc-5\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.3665356876319505},{\"id\":\"doc-9\",\"score\":0.3665356876319505},{\"id\":\"doc-10\",\"score\":0.3665356876319505},{\"id\":\"doc-11\",\"score\":0.3665356876319505}],\"queryId\":\"query-5\"},{\"hits\":[{\"id\":\"doc-6\",\"score\":0.9999999999999999},{\"id\":\"doc-8\",\"score\":0.3119388473768346},{\"id\":\"doc-9\",\"score\":0.3119388473768346},{\"id\":\"doc-10\",\"score\":0.3119388473768346},{\"id\":\"doc-11\",\"score\":0.3119388473768346}],\"queryId\":\"query-6\"},{\"hits\":[{\"id\":\"doc-7\",\"score\":1},{\"id\":\"doc-8\",\"score\":0.3258095001172893},{\"id\":\"doc-9\",\"score\":0.3258095001172893},{\"id\":\"doc-10\",\"score\":0.3258095001172893},{\"id\":\"doc-11\",\"score\":0.3258095001172893}],\"queryId\":\"query-7\"},{\"hits\":[{\"id\":\"doc-1\",\"score\":0.9166666666666665},{\"id\":\"doc-8\",\"score\":0.3119388473768346},{\"id\":\"doc-9\",\"score\":0.3119388473768346},{\"id\":\"doc-10\",\"score\":0.3119388473768346},{\"id\":\"doc-11\",\"score\":0.3119388473768346}],\"queryId\":\"query-8\"}]}"
+      }
+    ],
+    "claims": [
+      {
+        "id": "embedder-width-literature",
+        "text": "The synthetic embedder-width protocol compares the same feature inputs under two declared methods.",
+        "critical": true,
+        "status": "supported",
+        "evidence": [
+          "embedder-width-literature-evidence"
+        ]
+      },
+      {
+        "id": "embedder-width-limitation",
+        "text": "These synthetic results do not establish a general method advantage.",
+        "critical": true,
+        "status": "supported",
+        "evidence": [
+          "embedder-width-limitation-evidence"
+        ]
+      },
+      {
+        "id": "embedder-width-baseline-metric",
+        "text": "baseline has mean recall-at-5 1 fraction across all registered seeds.",
+        "critical": true,
+        "status": "supported",
+        "evidence": [
+          "metric-4972333ca59d923d5d098e5110f79bdfd1ffac31a63e6dba23e22ff5fddf4792-evidence"
+        ]
+      },
+      {
+        "id": "embedder-width-candidate-metric",
+        "text": "candidate has mean recall-at-5 1 fraction across all registered seeds.",
+        "critical": true,
+        "status": "supported",
+        "evidence": [
+          "metric-0ed50c4e8b0e53f296ffa066b6c4bd458c81afcdd6cca17a0129ff2f6536f627-evidence"
+        ]
+      }
+    ],
+    "visibleEvidence": [
+      "embedder-width-literature-evidence",
+      "embedder-width-limitation-evidence",
+      "metric-4972333ca59d923d5d098e5110f79bdfd1ffac31a63e6dba23e22ff5fddf4792-evidence",
+      "metric-0ed50c4e8b0e53f296ffa066b6c4bd458c81afcdd6cca17a0129ff2f6536f627-evidence"
+    ]
+  },
+  "manifest": {
+    "projectId": "embedder-width-project",
+    "contractHash": "253963516c88db74c8859ab8f2317fd7accd34ee5227f8809a4512bd8752635a",
+    "planHash": "613573ebcd9b5615d32a7f4a3a857b40b0356b44bc574f52035e82402b42a87d",
+    "promptRevision": "c23b304a19d5a1a189da0bbbf856558839ff333acddb412c66a4a201befb0d58",
+    "reviewedEvidenceHash": "7017e5294ccdc1a8223934fe5ae9f52ad6eeaa5e0d38c8125978b21959b140ec",
+    "runIdentityId": null,
+    "environment": {
+      "executor": "fixture-pure-functions",
+      "version": "1",
+      "programSourceHash": "19a040b103675daeba5a4dd30f2e02fa0c94f4ab200b4eea14d4ff3ade665412"
+    },
+    "inputs": [
+      {
+        "path": "datasets/corpus.json",
+        "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+      }
+    ],
+    "runIds": [
+      "embedder-width-baseline-seed-1",
+      "embedder-width-candidate-seed-1"
+    ],
+    "observationIds": [
+      "metric-4972333ca59d923d5d098e5110f79bdfd1ffac31a63e6dba23e22ff5fddf4792",
+      "metric-0ed50c4e8b0e53f296ffa066b6c4bd458c81afcdd6cca17a0129ff2f6536f627"
+    ],
+    "selectionRule": {
+      "kind": "all",
+      "n": 1,
+      "metric": "recall-at-5"
+    },
+    "baselineSources": [
+      "benchmark/lib/research-programs.ts"
+    ],
+    "metricOrigin": {
+      "evaluatorId": "fixture-evaluator",
+      "evaluatorVersion": "1"
+    },
+    "searchedLiterature": [
+      "kmeans-seeding-paper-1",
+      "kmeans-seeding-paper-2",
+      "kmeans-seeding-paper-3",
+      "kmeans-seeding-paper-4",
+      "kmeans-seeding-paper-5",
+      "kmeans-seeding-paper-6",
+      "kmeans-seeding-paper-7",
+      "kmeans-seeding-paper-8",
+      "lexical-ranking-paper-1",
+      "lexical-ranking-paper-2",
+      "lexical-ranking-paper-3",
+      "lexical-ranking-paper-4",
+      "lexical-ranking-paper-5",
+      "lexical-ranking-paper-6",
+      "lexical-ranking-paper-7",
+      "lexical-ranking-paper-8",
+      "embedder-width-paper-1",
+      "embedder-width-paper-2",
+      "embedder-width-paper-3",
+      "embedder-width-paper-4",
+      "embedder-width-paper-5",
+      "embedder-width-paper-6",
+      "embedder-width-paper-7",
+      "embedder-width-paper-8"
+    ],
+    "frozenBeforeResults": true,
+    "manifestHash": "373781dab75229a891f51c67d5e5329e7d8d968cc4b51737c2c096866f92f438"
+  },
+  "interventions": [
+    {
+      "id": "embedder-width-literature-approval",
+      "gate": "literature",
+      "actor": "scripted",
+      "action": "approve",
+      "reviewedManifestHash": "373781dab75229a891f51c67d5e5329e7d8d968cc4b51737c2c096866f92f438",
+      "approvedManifestHash": "373781dab75229a891f51c67d5e5329e7d8d968cc4b51737c2c096866f92f438",
+      "substantive": false
+    },
+    {
+      "id": "embedder-width-design-approval",
+      "gate": "design",
+      "actor": "scripted",
+      "action": "approve",
+      "reviewedManifestHash": "373781dab75229a891f51c67d5e5329e7d8d968cc4b51737c2c096866f92f438",
+      "approvedManifestHash": "373781dab75229a891f51c67d5e5329e7d8d968cc4b51737c2c096866f92f438",
+      "substantive": false
+    },
+    {
+      "id": "embedder-width-quality-approval",
+      "gate": "quality",
+      "actor": "scripted",
+      "action": "approve",
+      "reviewedManifestHash": "373781dab75229a891f51c67d5e5329e7d8d968cc4b51737c2c096866f92f438",
+      "approvedManifestHash": "373781dab75229a891f51c67d5e5329e7d8d968cc4b51737c2c096866f92f438",
+      "substantive": false
+    }
+  ],
+  "amendments": [],
+  "disclosure": [
+    {
+      "item": "human-review",
+      "satisfied": true,
+      "evidence": [
+        "/interventions"
+      ]
+    },
+    {
+      "item": "runnable-implementation",
+      "satisfied": true,
+      "evidence": [
+        "/manifest/environment"
+      ]
+    },
+    {
+      "item": "reconstructible-execution",
+      "satisfied": true,
+      "evidence": [
+        "/runs",
+        "/manifest/inputs",
+        "/manifest/promptRevision"
+      ]
+    },
+    {
+      "item": "novelty-audit",
+      "satisfied": true,
+      "evidence": [
+        "/literature",
+        "/evidence"
+      ]
+    },
+    {
+      "item": "attempt-selection-registration",
+      "satisfied": true,
+      "evidence": [
+        "/contract/selectionRule",
+        "/runs"
+      ]
+    },
+    {
+      "item": "baseline-audit",
+      "satisfied": true,
+      "evidence": [
+        "/contract/requiredBaselines",
+        "/manifest/baselineSources"
+      ]
+    },
+    {
+      "item": "independent-verification",
+      "satisfied": true,
+      "evidence": [
+        "/observations",
+        "/manifest/metricOrigin"
+      ]
+    },
+    {
+      "item": "frozen-hypotheses",
+      "satisfied": true,
+      "evidence": [
+        "/contract/contractHash",
+        "/plan/planHash"
+      ]
+    }
+  ]
+}

@@ -4,7 +4,7 @@
     "entry": "benchmark/mas-conformance.ts"
   },
   "source": {
-    "head": "c90f810d316c71b96401ed54d185b7c5d37d26d2",
+    "head": "82ff89dde495a23091cffc1e8151fd61b329f1f8",
     "clean": false,
     "files": [
       {
@@ -93,7 +93,7 @@
       },
       {
         "path": "benchmark/lib/mas-conformance.ts",
-        "sha256": "3cb90313457d34c21ab16bc242a381369669344de5f015342073bea113dbf76b"
+        "sha256": "e5d27e9de7dfeacf60edbf3ed2ea74ef4b1e40f35c3802493a88ce304731fdaf"
       },
       {
         "path": "benchmark/lib/mas-conformance.types.ts",
@@ -106,6 +106,10 @@
       {
         "path": "benchmark/lib/source-manifest.ts",
         "sha256": "1ef15c822791160d23f1b97e80f4dc7d91558b65575aedd8c96e45aaac118367"
+      },
+      {
+        "path": "benchmark/lib/suite-packages.ts",
+        "sha256": "5b8bcce02612456311b9d457478779f81f776edbe92eba278f499dd3b442e6c6"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -128,7 +132,7 @@
         "sha256": "3b05fd2e51a975a9b4bc25ab13813f6e887bf1fcbc1b48c37f6529b4c235f409"
       }
     ],
-    "sha256": "12b09fd301f957a717af8464a2751e1b582b20cdb40a3f05fd5f4931cd9c5934"
+    "sha256": "6b609d296301a8a47057ec10089f247f20382eaea8db392e59f173a4b01d078c"
   },
   "suite": {
     "packages": [
@@ -1275,7 +1279,7 @@
     "state": "not-run",
     "reason": "no authorized live plan"
   },
-  "reportId": "dc9551a613405b50467ffc535c308d95f6f29c6bead460da78c6e716393e19c1",
+  "reportId": "70c969f53910c8beba36e038a3389d08b8e0fc52ce9c7c342f7058c4bc4d9ce7",
   "decision": {
     "outcome": "runtime-conformant",
     "failedClauses": [],

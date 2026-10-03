@@ -711,7 +711,7 @@
       },
       {
         "path": "benchmark/lib/mas-conformance.ts",
-        "sha256": "3cb90313457d34c21ab16bc242a381369669344de5f015342073bea113dbf76b"
+        "sha256": "e5d27e9de7dfeacf60edbf3ed2ea74ef4b1e40f35c3802493a88ce304731fdaf"
       },
       {
         "path": "benchmark/lib/mas-conformance.types.ts",
@@ -922,6 +922,42 @@
         "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
       },
       {
+        "path": "benchmark/lib/research-evaluator.ts",
+        "sha256": "d83f01e80bc6cab800bfd6e5b8edb7e81dbcbda7edaa72f3f48e87c58061e5e5"
+      },
+      {
+        "path": "benchmark/lib/research-fixture.ts",
+        "sha256": "736f4e564da0d6ca9fae921b3b2713e57343badafb1c5a86d9db81ec24da9725"
+      },
+      {
+        "path": "benchmark/lib/research-oracle.ts",
+        "sha256": "1521483bea1d608f92ff69b78645225d1f4742f0fd590198b58e4d6c73dd6ffd"
+      },
+      {
+        "path": "benchmark/lib/research-programs.ts",
+        "sha256": "19a040b103675daeba5a4dd30f2e02fa0c94f4ab200b4eea14d4ff3ade665412"
+      },
+      {
+        "path": "benchmark/lib/research-runner.ts",
+        "sha256": "b32a1008d8065f28dfb8eb01e29f7ceef3866d2e6663282b23634c9d51e2633f"
+      },
+      {
+        "path": "benchmark/lib/research-schema.ts",
+        "sha256": "8f84aa39e60a064a697263c38e213ee462c81048e862bc4e9f10ca77198b72ec"
+      },
+      {
+        "path": "benchmark/lib/research-validation.ts",
+        "sha256": "968cb956c6ec3f3641a0cf1b3ed4508d06be222c596404703eb4f4a0ead8df13"
+      },
+      {
+        "path": "benchmark/lib/research.ts",
+        "sha256": "7c0a143ef35e3376788197da7339ba22a1ce7ef9c28ee2494ac78f9ca8f0b312"
+      },
+      {
+        "path": "benchmark/lib/research.types.ts",
+        "sha256": "ddbca12df5e12f7c73ab36904c40661de2d80e6119f014560e01bc8865bab346"
+      },
+      {
         "path": "benchmark/lib/retention.ts",
         "sha256": "4968b177ae551bcc53e45587d8873aa0532d32f6cf877461491030e79a702015"
       },
@@ -936,6 +972,10 @@
       {
         "path": "benchmark/lib/stats.ts",
         "sha256": "36bda7652aba14360e699adb9ef45cba11cfbeb062ee653a444dfa06390d0dee"
+      },
+      {
+        "path": "benchmark/lib/suite-packages.ts",
+        "sha256": "5b8bcce02612456311b9d457478779f81f776edbe92eba278f499dd3b442e6c6"
       },
       {
         "path": "benchmark/lib/table.ts",
@@ -1151,7 +1191,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "a7d45da5bd7a739fe700970878aa80fe642372322b73dbfd152fce6605ef74ce"
+        "sha256": "41cdac0ab356bc4cff05677e0b611e1eab1a9ff48cf97d4277d360bd4515f4fe"
       },
       {
         "path": "packages/agents/package.json",
@@ -1307,7 +1347,7 @@
       },
       {
         "path": "packages/core/src/clustering.ts",
-        "sha256": "81ee576b02a2092790ba447b454bcfbd2c3985308ac581580d5564eac689534e"
+        "sha256": "187735729918d97b7c95f666a6a6cbbe1bd34fb93d016aa9df8300d8d516aea5"
       },
       {
         "path": "packages/core/src/errors.ts",
@@ -3410,7 +3450,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "9bcc84332ae80cbabc6218b4d42d57af8c0036512b0431255f24e5b44ed7e141"
+    "sha256": "a02e68b411e31aa76042d7c2a19fb613975f8bf10e044f3aad5cf5b571683c15"
   },
   "fixtureSource": {
     "files": [
@@ -68600,7 +68640,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "9bcc84332ae80cbabc6218b4d42d57af8c0036512b0431255f24e5b44ed7e141",
+      "sourceSha256": "a02e68b411e31aa76042d7c2a19fb613975f8bf10e044f3aad5cf5b571683c15",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68684,7 +68724,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "a854578e76a5abf21ca14fbb0c23853fe0d54106c13b468e216a9bb2d576457d"
+      "planId": "23cc8d864aee9a4d9feee4744c07afd783adae3779f174651bff2cd31c7be6f2"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -68931,5 +68971,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "7b1ed73ec62634d25269ab52923d3def7597c8c5bdae20efc1aa259a5f5115ef"
+  "reportId": "d34b3ad91adcc800839fbe7e6e2ba881bc1c0c481e619518773fd5a6d4239f75"
 }

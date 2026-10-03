@@ -1,0 +1,31 @@
+/** Emit record assets and resolve their owners only for native declaration generation. */
+import { readFile, writeFile } from 'node:fs/promises';
+import { emitTypeScript } from '@jarenjs/emit';
+import { runIdentitySchema } from '@tangleai/config';
+import { RESEARCH_RECORD_SCHEMA, RESEARCH_REPORT_SCHEMA, RESEARCH_RECORD_ID } from '../benchmark/lib/research-schema.ts';
+
+const args = process.argv.slice(2);
+if (args.length > 1 || args.some(arg => arg !== '--check')) throw new Error('Usage: research-schema.ts [--check]');
+const reportPath = 'benchmark/schemas/research.schema.json';
+const recordPath = 'benchmark/schemas/research-records.schema.json';
+const config = JSON.parse(JSON.stringify(runIdentitySchema)
+  .replaceAll('"#runIdentity"', '"#/$defs/ConfigRunIdentity"')
+  .replaceAll('"#/$defs/', '"#/$defs/Config_'));
+// The root anchor names the root schema, not a definition.
+const { $defs: configDefs, $id: _id, $anchor: _anchor, ...configRoot } = config;
+const emission = JSON.parse(JSON.stringify(RESEARCH_REPORT_SCHEMA)
+  .replaceAll('"' + RESEARCH_RECORD_ID + '#/$defs/', '"#/$defs/')
+  .replaceAll('"https://tangleai.dev/schemas/run-identity#/$defs/', '"#/$defs/Config_'));
+emission.$defs = { ...RESEARCH_RECORD_SCHEMA.$defs, ...emission.$defs,
+  ...Object.fromEntries(Object.entries(configDefs).map(([key, value]) => ['Config_' + key, value])),
+  Config_ConfigRunIdentity: configRoot };
+const outputs = new Map([
+  [recordPath, JSON.stringify(RESEARCH_RECORD_SCHEMA, null, 2) + '\n'],
+  [reportPath, JSON.stringify(RESEARCH_REPORT_SCHEMA, null, 2) + '\n'],
+  ['benchmark/lib/research.types.ts', emitTypeScript(emission, { name: 'ResearchReport', source: reportPath }).trimEnd() + '\n'],
+]);
+for (const [path, bytes] of outputs) {
+  if (args.includes('--check')) {
+    if (await readFile(path, 'utf8') !== bytes) throw new Error('Research schema drift: ' + path);
+  } else await writeFile(path, bytes);
+}

@@ -182,6 +182,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       cpSync(resolve(root, 'test/release/fixtures/trace2skill-types.ts'), resolve(directory, 'trace2skill-types.ts'));
       imports.push("import './trace2skill-types.js';");
       imports.push(`import { estimateTokens } from '@tangleai/core';\nconst count: number = estimateTokens('typed consumer');\n// @ts-expect-error public declarations must reject a numeric token input\nestimateTokens(42);\nvoid count;`);
+      imports.push(`import { kMeans } from '@tangleai/core/clustering';\nconst clusters = kMeans([[0], [10]], 2, { initialization: 'random', random: () => 0 });\nkMeans([[0], [10]], 2, { initialization: 'kmeans++' });\n// @ts-expect-error initializers are a closed public union\nkMeans([[0], [10]], 2, { initialization: 'invented' });\nconst assignments: number[] = clusters.assignments;\nvoid assignments;`);
       if (migration) {
         const qualified = new Set(artifacts.packages.map(pkg => pkg.name));
         for (const declaration of migration.declarations) for (const symbol of declaration.symbols) {

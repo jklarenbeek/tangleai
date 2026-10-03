@@ -1,0 +1,1006 @@
+{
+  "topicId": "lexical-ranking",
+  "contract": {
+    "id": "lexical-ranking-contract",
+    "projectId": "lexical-ranking-project",
+    "hypothesisSpace": [
+      "lexical-ranking/bm25plus improves recall-at-5 over lexical-ranking/tf on this fixture."
+    ],
+    "successRule": {
+      "metric": "recall-at-5",
+      "baseline": "baseline",
+      "condition": "candidate",
+      "minImprovement": 0,
+      "confidenceLevel": 0.95
+    },
+    "failureRule": "stop-on-invalid",
+    "metrics": [
+      {
+        "id": "recall-at-5",
+        "unit": "fraction",
+        "direction": "maximize"
+      }
+    ],
+    "datasets": [
+      {
+        "id": "fixture-corpus-v1",
+        "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+      }
+    ],
+    "splits": {
+      "train": [],
+      "test": [
+        "query-1",
+        "query-2",
+        "query-3",
+        "query-4",
+        "query-5",
+        "query-6",
+        "query-7",
+        "query-8"
+      ]
+    },
+    "requiredBaselines": [
+      {
+        "condition": "baseline",
+        "programId": "lexical-ranking/tf",
+        "source": "benchmark/lib/research-programs.ts",
+        "licence": {
+          "spdx": "MIT",
+          "provenance": "tangle-authored-synthetic",
+          "source": "LICENSE.md"
+        }
+      }
+    ],
+    "replicatePolicy": {
+      "seeds": [
+        1
+      ],
+      "minimum": 1,
+      "resamples": 2000,
+      "bootstrapSeed": 17753
+    },
+    "attemptCap": 1,
+    "pivotCap": 1,
+    "reviewCap": 1,
+    "selectionRule": {
+      "kind": "all",
+      "n": 1,
+      "metric": "recall-at-5"
+    },
+    "stopConditions": [
+      "invalid evidence",
+      "registered budget reached",
+      "no positive paired interval",
+      "saturated metric"
+    ],
+    "contractHash": "2d15fd919868fadaa36f9b4d430e762cdce1dc62fbd73000d6d2a895c0211ab2"
+  },
+  "plan": {
+    "id": "lexical-ranking-plan",
+    "projectId": "lexical-ranking-project",
+    "contractHash": "2d15fd919868fadaa36f9b4d430e762cdce1dc62fbd73000d6d2a895c0211ab2",
+    "hypothesisHash": "4dc817383d46542546c4208ad8670bd1eed32ded1792d677519929cb18b0b0aa",
+    "conditions": [
+      {
+        "id": "baseline",
+        "programId": "lexical-ranking/tf",
+        "datasetId": "fixture-corpus-v1",
+        "params": {
+          "limit": 5
+        }
+      },
+      {
+        "id": "candidate",
+        "programId": "lexical-ranking/bm25plus",
+        "datasetId": "fixture-corpus-v1",
+        "params": {
+          "limit": 5
+        }
+      }
+    ],
+    "inputPaths": [
+      "datasets/corpus.json"
+    ],
+    "evaluator": {
+      "id": "fixture-evaluator",
+      "version": "1"
+    },
+    "planHash": "2c774a350bff82b84a316c691d342059a8950e28380c7c9ea773ae28cd61c3e9"
+  },
+  "runs": [
+    {
+      "id": "lexical-ranking-baseline-seed-1",
+      "projectId": "lexical-ranking-project",
+      "condition": "baseline",
+      "programId": "lexical-ranking/tf",
+      "seed": 1,
+      "status": "ok",
+      "inputHash": "3b58c34c64acb5499dd5ff1de4127adcb56ccafe100bf7033988b59347edfef6",
+      "executionManifestHash": "aeb63169321b17ca0724b6f99a6c638381e0c89cdb842a0e4d7aecca38cfa43b",
+      "rawArtifactHash": "0af0ccc8c20f8e9e715b1781d3c7347ff3b0e1b92a72d6c84694905f88d7b211",
+      "output": {
+        "kind": "rankings",
+        "methodIdentity": "plain-term-frequency/1;ascii-spaces;source-order-ties",
+        "rankings": [
+          {
+            "queryId": "query-1",
+            "hits": [
+              {
+                "id": "doc-8",
+                "score": 10
+              },
+              {
+                "id": "doc-9",
+                "score": 10
+              },
+              {
+                "id": "doc-10",
+                "score": 10
+              },
+              {
+                "id": "doc-11",
+                "score": 10
+              },
+              {
+                "id": "doc-12",
+                "score": 10
+              }
+            ]
+          },
+          {
+            "queryId": "query-2",
+            "hits": [
+              {
+                "id": "doc-8",
+                "score": 10
+              },
+              {
+                "id": "doc-9",
+                "score": 10
+              },
+              {
+                "id": "doc-10",
+                "score": 10
+              },
+              {
+                "id": "doc-11",
+                "score": 10
+              },
+              {
+                "id": "doc-12",
+                "score": 10
+              }
+            ]
+          },
+          {
+            "queryId": "query-3",
+            "hits": [
+              {
+                "id": "doc-8",
+                "score": 10
+              },
+              {
+                "id": "doc-9",
+                "score": 10
+              },
+              {
+                "id": "doc-10",
+                "score": 10
+              },
+              {
+                "id": "doc-11",
+                "score": 10
+              },
+              {
+                "id": "doc-12",
+                "score": 10
+              }
+            ]
+          },
+          {
+            "queryId": "query-4",
+            "hits": [
+              {
+                "id": "doc-8",
+                "score": 10
+              },
+              {
+                "id": "doc-9",
+                "score": 10
+              },
+              {
+                "id": "doc-10",
+                "score": 10
+              },
+              {
+                "id": "doc-11",
+                "score": 10
+              },
+              {
+                "id": "doc-12",
+                "score": 10
+              }
+            ]
+          },
+          {
+            "queryId": "query-5",
+            "hits": [
+              {
+                "id": "doc-8",
+                "score": 10
+              },
+              {
+                "id": "doc-9",
+                "score": 10
+              },
+              {
+                "id": "doc-10",
+                "score": 10
+              },
+              {
+                "id": "doc-11",
+                "score": 10
+              },
+              {
+                "id": "doc-12",
+                "score": 10
+              }
+            ]
+          },
+          {
+            "queryId": "query-6",
+            "hits": [
+              {
+                "id": "doc-8",
+                "score": 10
+              },
+              {
+                "id": "doc-9",
+                "score": 10
+              },
+              {
+                "id": "doc-10",
+                "score": 10
+              },
+              {
+                "id": "doc-11",
+                "score": 10
+              },
+              {
+                "id": "doc-12",
+                "score": 10
+              }
+            ]
+          },
+          {
+            "queryId": "query-7",
+            "hits": [
+              {
+                "id": "doc-8",
+                "score": 10
+              },
+              {
+                "id": "doc-9",
+                "score": 10
+              },
+              {
+                "id": "doc-10",
+                "score": 10
+              },
+              {
+                "id": "doc-11",
+                "score": 10
+              },
+              {
+                "id": "doc-12",
+                "score": 10
+              }
+            ]
+          },
+          {
+            "queryId": "query-8",
+            "hits": [
+              {
+                "id": "doc-8",
+                "score": 10
+              },
+              {
+                "id": "doc-9",
+                "score": 10
+              },
+              {
+                "id": "doc-10",
+                "score": 10
+              },
+              {
+                "id": "doc-11",
+                "score": 10
+              },
+              {
+                "id": "doc-12",
+                "score": 10
+              }
+            ]
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": "start",
+          "detail": "lexical-ranking/tf"
+        },
+        {
+          "event": "output",
+          "detail": "0af0ccc8c20f8e9e715b1781d3c7347ff3b0e1b92a72d6c84694905f88d7b211"
+        }
+      ],
+      "spend": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "physical": 0
+      },
+      "error": null
+    },
+    {
+      "id": "lexical-ranking-candidate-seed-1",
+      "projectId": "lexical-ranking-project",
+      "condition": "candidate",
+      "programId": "lexical-ranking/bm25plus",
+      "seed": 1,
+      "status": "ok",
+      "inputHash": "3b58c34c64acb5499dd5ff1de4127adcb56ccafe100bf7033988b59347edfef6",
+      "executionManifestHash": "7ad017aa3531f6f4148209efe5099d5e4c89e46f1f8c2f582bda420fe269084e",
+      "rawArtifactHash": "22b9448b70f68dffece751ed2f6ba5a3b4ab6fa4d888a63edf43b190c58278c4",
+      "output": {
+        "kind": "rankings",
+        "methodIdentity": "{\"version\":1,\"fields\":[\"text\"],\"profile\":\"lexical-key/1\",\"prefix\":false,\"fuzzy\":0,\"combineWith\":\"OR\",\"boost\":{},\"normalization\":\"tangle-nfkc-words/1\",\"limits\":{\"maxDocuments\":12,\"maxSourceBytes\":67108864,\"maxIndexBytes\":268435456,\"maxTemporaryBytes\":536870912,\"maxTokens\":4000000,\"maxPostings\":4000000,\"maxVocabulary\":300000,\"maxFieldBytes\":65536,\"maxTokenLength\":128,\"maxQueryBytes\":4096,\"maxExpansions\":16384,\"maxCandidates\":12,\"maxResults\":5,\"maxWork\":100000000,\"maxBatchWork\":100000}}",
+        "rankings": [
+          {
+            "queryId": "query-1",
+            "hits": [
+              {
+                "id": "doc-1",
+                "score": 9.938199820343172
+              },
+              {
+                "id": "doc-8",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-9",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-10",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-11",
+                "score": 3.277763786037707
+              }
+            ]
+          },
+          {
+            "queryId": "query-2",
+            "hits": [
+              {
+                "id": "doc-2",
+                "score": 9.938199820343172
+              },
+              {
+                "id": "doc-8",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-9",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-10",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-11",
+                "score": 3.277763786037707
+              }
+            ]
+          },
+          {
+            "queryId": "query-3",
+            "hits": [
+              {
+                "id": "doc-3",
+                "score": 9.938199820343172
+              },
+              {
+                "id": "doc-8",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-9",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-10",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-11",
+                "score": 3.277763786037707
+              }
+            ]
+          },
+          {
+            "queryId": "query-4",
+            "hits": [
+              {
+                "id": "doc-4",
+                "score": 9.938199820343172
+              },
+              {
+                "id": "doc-8",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-9",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-10",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-11",
+                "score": 3.277763786037707
+              }
+            ]
+          },
+          {
+            "queryId": "query-5",
+            "hits": [
+              {
+                "id": "doc-5",
+                "score": 9.938199820343172
+              },
+              {
+                "id": "doc-8",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-9",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-10",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-11",
+                "score": 3.277763786037707
+              }
+            ]
+          },
+          {
+            "queryId": "query-6",
+            "hits": [
+              {
+                "id": "doc-6",
+                "score": 9.938199820343172
+              },
+              {
+                "id": "doc-8",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-9",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-10",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-11",
+                "score": 3.277763786037707
+              }
+            ]
+          },
+          {
+            "queryId": "query-7",
+            "hits": [
+              {
+                "id": "doc-7",
+                "score": 9.938199820343172
+              },
+              {
+                "id": "doc-8",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-9",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-10",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-11",
+                "score": 3.277763786037707
+              }
+            ]
+          },
+          {
+            "queryId": "query-8",
+            "hits": [
+              {
+                "id": "doc-1",
+                "score": 9.938199820343172
+              },
+              {
+                "id": "doc-8",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-9",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-10",
+                "score": 3.277763786037707
+              },
+              {
+                "id": "doc-11",
+                "score": 3.277763786037707
+              }
+            ]
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": "start",
+          "detail": "lexical-ranking/bm25plus"
+        },
+        {
+          "event": "output",
+          "detail": "22b9448b70f68dffece751ed2f6ba5a3b4ab6fa4d888a63edf43b190c58278c4"
+        }
+      ],
+      "spend": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "physical": 0
+      },
+      "error": null
+    }
+  ],
+  "observations": [
+    {
+      "id": "metric-9bfb6e16e18cf2ebf5815a01804a417706419c29cadf5585c446b226a0ec9a72",
+      "projectId": "lexical-ranking-project",
+      "experimentRunId": "lexical-ranking-baseline-seed-1",
+      "evaluatorId": "fixture-evaluator",
+      "evaluatorVersion": "1",
+      "runArtifactHash": "0af0ccc8c20f8e9e715b1781d3c7347ff3b0e1b92a72d6c84694905f88d7b211",
+      "condition": "baseline",
+      "metric": "recall-at-5",
+      "value": 0,
+      "unit": "fraction",
+      "seed": 1,
+      "registrySignature": "9bfb6e16e18cf2ebf5815a01804a417706419c29cadf5585c446b226a0ec9a72"
+    },
+    {
+      "id": "metric-f644577f123752b910906c3b19c010ca326656517e85959b24ceda9d9caf4d89",
+      "projectId": "lexical-ranking-project",
+      "experimentRunId": "lexical-ranking-candidate-seed-1",
+      "evaluatorId": "fixture-evaluator",
+      "evaluatorVersion": "1",
+      "runArtifactHash": "22b9448b70f68dffece751ed2f6ba5a3b4ab6fa4d888a63edf43b190c58278c4",
+      "condition": "candidate",
+      "metric": "recall-at-5",
+      "value": 1,
+      "unit": "fraction",
+      "seed": 1,
+      "registrySignature": "f644577f123752b910906c3b19c010ca326656517e85959b24ceda9d9caf4d89"
+    }
+  ],
+  "decision": {
+    "id": "lexical-ranking-decision",
+    "projectId": "lexical-ranking-project",
+    "contractHash": "2d15fd919868fadaa36f9b4d430e762cdce1dc62fbd73000d6d2a895c0211ab2",
+    "kind": "Proceed",
+    "reason": "improvement",
+    "observationIds": [
+      "metric-9bfb6e16e18cf2ebf5815a01804a417706419c29cadf5585c446b226a0ec9a72",
+      "metric-f644577f123752b910906c3b19c010ca326656517e85959b24ceda9d9caf4d89"
+    ],
+    "exploratory": false
+  },
+  "literature": [
+    "lexical-ranking-paper-1",
+    "lexical-ranking-paper-2",
+    "lexical-ranking-paper-3",
+    "lexical-ranking-paper-4",
+    "lexical-ranking-paper-5",
+    "lexical-ranking-paper-6"
+  ],
+  "evidence": [
+    {
+      "id": "lexical-ranking-literature-evidence",
+      "literatureId": "lexical-ranking-paper-1",
+      "artifactId": "art-b8afeecda63372699e376399ea48ebadf7f507b9da069e6e8fac19eee028a77a",
+      "excerpt": "The synthetic lexical-ranking protocol compares the same feature inputs under two declared methods.",
+      "contentHash": "b8afeecda63372699e376399ea48ebadf7f507b9da069e6e8fac19eee028a77a",
+      "versionId": "562eacca289cfc2b889f984af6a6688c23fdd8dcd89bfc6ba761b21240a6ef9a",
+      "locator": {
+        "headingPath": [
+          "Evidence"
+        ],
+        "elementOrder": 1
+      },
+      "fields": [
+        "literature"
+      ],
+      "extractionPromptRevision": "c23b304a19d5a1a189da0bbbf856558839ff333acddb412c66a4a201befb0d58"
+    },
+    {
+      "id": "lexical-ranking-limitation-evidence",
+      "literatureId": "lexical-ranking-paper-2",
+      "artifactId": "art-0a663b263d24b3f21f4a44b3c5edbd9c554f8ee1e523c195f2e4e94390596df6",
+      "excerpt": "These synthetic results do not establish a general method advantage.",
+      "contentHash": "0a663b263d24b3f21f4a44b3c5edbd9c554f8ee1e523c195f2e4e94390596df6",
+      "versionId": "253fe9ae0a01960e13bad20e8d76f219cff58dc0ed99034526fea94d3dfdb7a5",
+      "locator": {
+        "headingPath": [
+          "Evidence"
+        ],
+        "elementOrder": 1
+      },
+      "fields": [
+        "interpretation"
+      ],
+      "extractionPromptRevision": "c23b304a19d5a1a189da0bbbf856558839ff333acddb412c66a4a201befb0d58"
+    }
+  ],
+  "claims": [
+    {
+      "id": "lexical-ranking-literature",
+      "section": "methods",
+      "kind": "literature",
+      "text": "The synthetic lexical-ranking protocol compares the same feature inputs under two declared methods.",
+      "literatureIds": [
+        "lexical-ranking-paper-1"
+      ],
+      "evidenceIds": [
+        "lexical-ranking-literature-evidence"
+      ],
+      "observationIds": [],
+      "strength": "descriptive",
+      "metricBinding": null
+    },
+    {
+      "id": "lexical-ranking-limitation",
+      "section": "conclusion",
+      "kind": "interpretation",
+      "text": "These synthetic results do not establish a general method advantage.",
+      "literatureIds": [
+        "lexical-ranking-paper-2"
+      ],
+      "evidenceIds": [
+        "lexical-ranking-limitation-evidence"
+      ],
+      "observationIds": [],
+      "strength": "descriptive",
+      "metricBinding": null
+    },
+    {
+      "id": "lexical-ranking-baseline-metric",
+      "section": "results",
+      "kind": "metric",
+      "text": "baseline has mean recall-at-5 0 fraction across all registered seeds.",
+      "literatureIds": [],
+      "evidenceIds": [
+        "metric-9bfb6e16e18cf2ebf5815a01804a417706419c29cadf5585c446b226a0ec9a72-evidence"
+      ],
+      "observationIds": [
+        "metric-9bfb6e16e18cf2ebf5815a01804a417706419c29cadf5585c446b226a0ec9a72"
+      ],
+      "strength": "descriptive",
+      "metricBinding": {
+        "condition": "baseline",
+        "metric": "recall-at-5",
+        "unit": "fraction",
+        "seeds": [
+          1
+        ],
+        "aggregate": "mean",
+        "value": 0
+      }
+    },
+    {
+      "id": "lexical-ranking-candidate-metric",
+      "section": "results",
+      "kind": "metric",
+      "text": "candidate has mean recall-at-5 1 fraction across all registered seeds.",
+      "literatureIds": [],
+      "evidenceIds": [
+        "metric-f644577f123752b910906c3b19c010ca326656517e85959b24ceda9d9caf4d89-evidence"
+      ],
+      "observationIds": [
+        "metric-f644577f123752b910906c3b19c010ca326656517e85959b24ceda9d9caf4d89"
+      ],
+      "strength": "descriptive",
+      "metricBinding": {
+        "condition": "candidate",
+        "metric": "recall-at-5",
+        "unit": "fraction",
+        "seeds": [
+          1
+        ],
+        "aggregate": "mean",
+        "value": 1
+      }
+    }
+  ],
+  "claimLedger": {
+    "version": 1,
+    "artifacts": [
+      {
+        "id": "art-b8afeecda63372699e376399ea48ebadf7f507b9da069e6e8fac19eee028a77a",
+        "kind": "document",
+        "digest": "b8afeecda63372699e376399ea48ebadf7f507b9da069e6e8fac19eee028a77a"
+      },
+      {
+        "id": "art-0a663b263d24b3f21f4a44b3c5edbd9c554f8ee1e523c195f2e4e94390596df6",
+        "kind": "document",
+        "digest": "0a663b263d24b3f21f4a44b3c5edbd9c554f8ee1e523c195f2e4e94390596df6"
+      },
+      {
+        "id": "art-0af0ccc8c20f8e9e715b1781d3c7347ff3b0e1b92a72d6c84694905f88d7b211",
+        "kind": "experiment-output",
+        "digest": "0af0ccc8c20f8e9e715b1781d3c7347ff3b0e1b92a72d6c84694905f88d7b211"
+      },
+      {
+        "id": "art-22b9448b70f68dffece751ed2f6ba5a3b4ab6fa4d888a63edf43b190c58278c4",
+        "kind": "experiment-output",
+        "digest": "22b9448b70f68dffece751ed2f6ba5a3b4ab6fa4d888a63edf43b190c58278c4"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "lexical-ranking-literature-evidence",
+        "artifact": "art-b8afeecda63372699e376399ea48ebadf7f507b9da069e6e8fac19eee028a77a",
+        "selector": "/Evidence/1",
+        "quote": "The synthetic lexical-ranking protocol compares the same feature inputs under two declared methods."
+      },
+      {
+        "id": "lexical-ranking-limitation-evidence",
+        "artifact": "art-0a663b263d24b3f21f4a44b3c5edbd9c554f8ee1e523c195f2e4e94390596df6",
+        "selector": "/Evidence/1",
+        "quote": "These synthetic results do not establish a general method advantage."
+      },
+      {
+        "id": "metric-9bfb6e16e18cf2ebf5815a01804a417706419c29cadf5585c446b226a0ec9a72-evidence",
+        "artifact": "art-0af0ccc8c20f8e9e715b1781d3c7347ff3b0e1b92a72d6c84694905f88d7b211",
+        "selector": "/",
+        "quote": "{\"kind\":\"rankings\",\"methodIdentity\":\"plain-term-frequency/1;ascii-spaces;source-order-ties\",\"rankings\":[{\"hits\":[{\"id\":\"doc-8\",\"score\":10},{\"id\":\"doc-9\",\"score\":10},{\"id\":\"doc-10\",\"score\":10},{\"id\":\"doc-11\",\"score\":10},{\"id\":\"doc-12\",\"score\":10}],\"queryId\":\"query-1\"},{\"hits\":[{\"id\":\"doc-8\",\"score\":10},{\"id\":\"doc-9\",\"score\":10},{\"id\":\"doc-10\",\"score\":10},{\"id\":\"doc-11\",\"score\":10},{\"id\":\"doc-12\",\"score\":10}],\"queryId\":\"query-2\"},{\"hits\":[{\"id\":\"doc-8\",\"score\":10},{\"id\":\"doc-9\",\"score\":10},{\"id\":\"doc-10\",\"score\":10},{\"id\":\"doc-11\",\"score\":10},{\"id\":\"doc-12\",\"score\":10}],\"queryId\":\"query-3\"},{\"hits\":[{\"id\":\"doc-8\",\"score\":10},{\"id\":\"doc-9\",\"score\":10},{\"id\":\"doc-10\",\"score\":10},{\"id\":\"doc-11\",\"score\":10},{\"id\":\"doc-12\",\"score\":10}],\"queryId\":\"query-4\"},{\"hits\":[{\"id\":\"doc-8\",\"score\":10},{\"id\":\"doc-9\",\"score\":10},{\"id\":\"doc-10\",\"score\":10},{\"id\":\"doc-11\",\"score\":10},{\"id\":\"doc-12\",\"score\":10}],\"queryId\":\"query-5\"},{\"hits\":[{\"id\":\"doc-8\",\"score\":10},{\"id\":\"doc-9\",\"score\":10},{\"id\":\"doc-10\",\"score\":10},{\"id\":\"doc-11\",\"score\":10},{\"id\":\"doc-12\",\"score\":10}],\"queryId\":\"query-6\"},{\"hits\":[{\"id\":\"doc-8\",\"score\":10},{\"id\":\"doc-9\",\"score\":10},{\"id\":\"doc-10\",\"score\":10},{\"id\":\"doc-11\",\"score\":10},{\"id\":\"doc-12\",\"score\":10}],\"queryId\":\"query-7\"},{\"hits\":[{\"id\":\"doc-8\",\"score\":10},{\"id\":\"doc-9\",\"score\":10},{\"id\":\"doc-10\",\"score\":10},{\"id\":\"doc-11\",\"score\":10},{\"id\":\"doc-12\",\"score\":10}],\"queryId\":\"query-8\"}]}"
+      },
+      {
+        "id": "metric-f644577f123752b910906c3b19c010ca326656517e85959b24ceda9d9caf4d89-evidence",
+        "artifact": "art-22b9448b70f68dffece751ed2f6ba5a3b4ab6fa4d888a63edf43b190c58278c4",
+        "selector": "/",
+        "quote": "{\"kind\":\"rankings\",\"methodIdentity\":\"{\\\"version\\\":1,\\\"fields\\\":[\\\"text\\\"],\\\"profile\\\":\\\"lexical-key/1\\\",\\\"prefix\\\":false,\\\"fuzzy\\\":0,\\\"combineWith\\\":\\\"OR\\\",\\\"boost\\\":{},\\\"normalization\\\":\\\"tangle-nfkc-words/1\\\",\\\"limits\\\":{\\\"maxDocuments\\\":12,\\\"maxSourceBytes\\\":67108864,\\\"maxIndexBytes\\\":268435456,\\\"maxTemporaryBytes\\\":536870912,\\\"maxTokens\\\":4000000,\\\"maxPostings\\\":4000000,\\\"maxVocabulary\\\":300000,\\\"maxFieldBytes\\\":65536,\\\"maxTokenLength\\\":128,\\\"maxQueryBytes\\\":4096,\\\"maxExpansions\\\":16384,\\\"maxCandidates\\\":12,\\\"maxResults\\\":5,\\\"maxWork\\\":100000000,\\\"maxBatchWork\\\":100000}}\",\"rankings\":[{\"hits\":[{\"id\":\"doc-1\",\"score\":9.938199820343172},{\"id\":\"doc-8\",\"score\":3.277763786037707},{\"id\":\"doc-9\",\"score\":3.277763786037707},{\"id\":\"doc-10\",\"score\":3.277763786037707},{\"id\":\"doc-11\",\"score\":3.277763786037707}],\"queryId\":\"query-1\"},{\"hits\":[{\"id\":\"doc-2\",\"score\":9.938199820343172},{\"id\":\"doc-8\",\"score\":3.277763786037707},{\"id\":\"doc-9\",\"score\":3.277763786037707},{\"id\":\"doc-10\",\"score\":3.277763786037707},{\"id\":\"doc-11\",\"score\":3.277763786037707}],\"queryId\":\"query-2\"},{\"hits\":[{\"id\":\"doc-3\",\"score\":9.938199820343172},{\"id\":\"doc-8\",\"score\":3.277763786037707},{\"id\":\"doc-9\",\"score\":3.277763786037707},{\"id\":\"doc-10\",\"score\":3.277763786037707},{\"id\":\"doc-11\",\"score\":3.277763786037707}],\"queryId\":\"query-3\"},{\"hits\":[{\"id\":\"doc-4\",\"score\":9.938199820343172},{\"id\":\"doc-8\",\"score\":3.277763786037707},{\"id\":\"doc-9\",\"score\":3.277763786037707},{\"id\":\"doc-10\",\"score\":3.277763786037707},{\"id\":\"doc-11\",\"score\":3.277763786037707}],\"queryId\":\"query-4\"},{\"hits\":[{\"id\":\"doc-5\",\"score\":9.938199820343172},{\"id\":\"doc-8\",\"score\":3.277763786037707},{\"id\":\"doc-9\",\"score\":3.277763786037707},{\"id\":\"doc-10\",\"score\":3.277763786037707},{\"id\":\"doc-11\",\"score\":3.277763786037707}],\"queryId\":\"query-5\"},{\"hits\":[{\"id\":\"doc-6\",\"score\":9.938199820343172},{\"id\":\"doc-8\",\"score\":3.277763786037707},{\"id\":\"doc-9\",\"score\":3.277763786037707},{\"id\":\"doc-10\",\"score\":3.277763786037707},{\"id\":\"doc-11\",\"score\":3.277763786037707}],\"queryId\":\"query-6\"},{\"hits\":[{\"id\":\"doc-7\",\"score\":9.938199820343172},{\"id\":\"doc-8\",\"score\":3.277763786037707},{\"id\":\"doc-9\",\"score\":3.277763786037707},{\"id\":\"doc-10\",\"score\":3.277763786037707},{\"id\":\"doc-11\",\"score\":3.277763786037707}],\"queryId\":\"query-7\"},{\"hits\":[{\"id\":\"doc-1\",\"score\":9.938199820343172},{\"id\":\"doc-8\",\"score\":3.277763786037707},{\"id\":\"doc-9\",\"score\":3.277763786037707},{\"id\":\"doc-10\",\"score\":3.277763786037707},{\"id\":\"doc-11\",\"score\":3.277763786037707}],\"queryId\":\"query-8\"}]}"
+      }
+    ],
+    "claims": [
+      {
+        "id": "lexical-ranking-literature",
+        "text": "The synthetic lexical-ranking protocol compares the same feature inputs under two declared methods.",
+        "critical": true,
+        "status": "supported",
+        "evidence": [
+          "lexical-ranking-literature-evidence"
+        ]
+      },
+      {
+        "id": "lexical-ranking-limitation",
+        "text": "These synthetic results do not establish a general method advantage.",
+        "critical": true,
+        "status": "supported",
+        "evidence": [
+          "lexical-ranking-limitation-evidence"
+        ]
+      },
+      {
+        "id": "lexical-ranking-baseline-metric",
+        "text": "baseline has mean recall-at-5 0 fraction across all registered seeds.",
+        "critical": true,
+        "status": "supported",
+        "evidence": [
+          "metric-9bfb6e16e18cf2ebf5815a01804a417706419c29cadf5585c446b226a0ec9a72-evidence"
+        ]
+      },
+      {
+        "id": "lexical-ranking-candidate-metric",
+        "text": "candidate has mean recall-at-5 1 fraction across all registered seeds.",
+        "critical": true,
+        "status": "supported",
+        "evidence": [
+          "metric-f644577f123752b910906c3b19c010ca326656517e85959b24ceda9d9caf4d89-evidence"
+        ]
+      }
+    ],
+    "visibleEvidence": [
+      "lexical-ranking-literature-evidence",
+      "lexical-ranking-limitation-evidence",
+      "metric-9bfb6e16e18cf2ebf5815a01804a417706419c29cadf5585c446b226a0ec9a72-evidence",
+      "metric-f644577f123752b910906c3b19c010ca326656517e85959b24ceda9d9caf4d89-evidence"
+    ]
+  },
+  "manifest": {
+    "projectId": "lexical-ranking-project",
+    "contractHash": "2d15fd919868fadaa36f9b4d430e762cdce1dc62fbd73000d6d2a895c0211ab2",
+    "planHash": "2c774a350bff82b84a316c691d342059a8950e28380c7c9ea773ae28cd61c3e9",
+    "promptRevision": "c23b304a19d5a1a189da0bbbf856558839ff333acddb412c66a4a201befb0d58",
+    "reviewedEvidenceHash": "fd8cb1c28a6e128ad1d7cc9751ae859fc7f26db7ff79bf531b40fff358b90612",
+    "runIdentityId": null,
+    "environment": {
+      "executor": "fixture-pure-functions",
+      "version": "1",
+      "programSourceHash": "19a040b103675daeba5a4dd30f2e02fa0c94f4ab200b4eea14d4ff3ade665412"
+    },
+    "inputs": [
+      {
+        "path": "datasets/corpus.json",
+        "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+      }
+    ],
+    "runIds": [
+      "lexical-ranking-baseline-seed-1",
+      "lexical-ranking-candidate-seed-1"
+    ],
+    "observationIds": [
+      "metric-9bfb6e16e18cf2ebf5815a01804a417706419c29cadf5585c446b226a0ec9a72",
+      "metric-f644577f123752b910906c3b19c010ca326656517e85959b24ceda9d9caf4d89"
+    ],
+    "selectionRule": {
+      "kind": "all",
+      "n": 1,
+      "metric": "recall-at-5"
+    },
+    "baselineSources": [
+      "benchmark/lib/research-programs.ts"
+    ],
+    "metricOrigin": {
+      "evaluatorId": "fixture-evaluator",
+      "evaluatorVersion": "1"
+    },
+    "searchedLiterature": [
+      "kmeans-seeding-paper-1",
+      "kmeans-seeding-paper-2",
+      "kmeans-seeding-paper-3",
+      "kmeans-seeding-paper-4",
+      "kmeans-seeding-paper-5",
+      "kmeans-seeding-paper-6",
+      "kmeans-seeding-paper-7",
+      "kmeans-seeding-paper-8",
+      "lexical-ranking-paper-1",
+      "lexical-ranking-paper-2",
+      "lexical-ranking-paper-3",
+      "lexical-ranking-paper-4",
+      "lexical-ranking-paper-5",
+      "lexical-ranking-paper-6",
+      "lexical-ranking-paper-7",
+      "lexical-ranking-paper-8",
+      "embedder-width-paper-1",
+      "embedder-width-paper-2",
+      "embedder-width-paper-3",
+      "embedder-width-paper-4",
+      "embedder-width-paper-5",
+      "embedder-width-paper-6",
+      "embedder-width-paper-7",
+      "embedder-width-paper-8"
+    ],
+    "frozenBeforeResults": true,
+    "manifestHash": "d158c0c9c93104191792ec7809a3c6095662c20af04e6f5b82d5cae8d4fec1bc"
+  },
+  "interventions": [
+    {
+      "id": "lexical-ranking-literature-approval",
+      "gate": "literature",
+      "actor": "scripted",
+      "action": "approve",
+      "reviewedManifestHash": "d158c0c9c93104191792ec7809a3c6095662c20af04e6f5b82d5cae8d4fec1bc",
+      "approvedManifestHash": "d158c0c9c93104191792ec7809a3c6095662c20af04e6f5b82d5cae8d4fec1bc",
+      "substantive": false
+    },
+    {
+      "id": "lexical-ranking-design-approval",
+      "gate": "design",
+      "actor": "scripted",
+      "action": "approve",
+      "reviewedManifestHash": "d158c0c9c93104191792ec7809a3c6095662c20af04e6f5b82d5cae8d4fec1bc",
+      "approvedManifestHash": "d158c0c9c93104191792ec7809a3c6095662c20af04e6f5b82d5cae8d4fec1bc",
+      "substantive": false
+    },
+    {
+      "id": "lexical-ranking-quality-approval",
+      "gate": "quality",
+      "actor": "scripted",
+      "action": "approve",
+      "reviewedManifestHash": "d158c0c9c93104191792ec7809a3c6095662c20af04e6f5b82d5cae8d4fec1bc",
+      "approvedManifestHash": "d158c0c9c93104191792ec7809a3c6095662c20af04e6f5b82d5cae8d4fec1bc",
+      "substantive": false
+    }
+  ],
+  "amendments": [],
+  "disclosure": [
+    {
+      "item": "human-review",
+      "satisfied": true,
+      "evidence": [
+        "/interventions"
+      ]
+    },
+    {
+      "item": "runnable-implementation",
+      "satisfied": true,
+      "evidence": [
+        "/manifest/environment"
+      ]
+    },
+    {
+      "item": "reconstructible-execution",
+      "satisfied": true,
+      "evidence": [
+        "/runs",
+        "/manifest/inputs",
+        "/manifest/promptRevision"
+      ]
+    },
+    {
+      "item": "novelty-audit",
+      "satisfied": true,
+      "evidence": [
+        "/literature",
+        "/evidence"
+      ]
+    },
+    {
+      "item": "attempt-selection-registration",
+      "satisfied": true,
+      "evidence": [
+        "/contract/selectionRule",
+        "/runs"
+      ]
+    },
+    {
+      "item": "baseline-audit",
+      "satisfied": true,
+      "evidence": [
+        "/contract/requiredBaselines",
+        "/manifest/baselineSources"
+      ]
+    },
+    {
+      "item": "independent-verification",
+      "satisfied": true,
+      "evidence": [
+        "/observations",
+        "/manifest/metricOrigin"
+      ]
+    },
+    {
+      "item": "frozen-hypotheses",
+      "satisfied": true,
+      "evidence": [
+        "/contract/contractHash",
+        "/plan/planHash"
+      ]
+    }
+  ]
+}

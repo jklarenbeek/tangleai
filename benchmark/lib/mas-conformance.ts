@@ -20,7 +20,7 @@
  * byte-identical JSON, Markdown and query output.
  */
 
-import { readdir, readFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { canonicalSha256 } from '@jarenjs/json/canonical';
@@ -66,6 +66,7 @@ import type {
 } from './mas-conformance.types.ts';
 
 import { sourceManifest } from './source-manifest.ts';
+import { installedSuitePackages } from './suite-packages.ts';
 
 export const MANIFEST_PATH = 'benchmark/fixtures/mas/manifest.json';
 export const REPORT_PATH = 'benchmark/results/mas-conformance.json';
@@ -103,6 +104,7 @@ export const SOURCE_MANIFEST: readonly string[] = [
   'benchmark/lib/mas-conformance.types.ts',
   'benchmark/lib/mas-runner.ts',
   'benchmark/lib/source-manifest.ts',
+  'benchmark/lib/suite-packages.ts',
   'benchmark/lib/validate.ts',
   'benchmark/mas-conformance.ts',
   'benchmark/schemas/mas-conformance.schema.json',
@@ -117,19 +119,7 @@ export async function conformanceSource(root = process.cwd()): Promise<MasConfor
 
 /** Installed foundation and executed mechanism identities, name-sorted. */
 export async function suitePackages(root = process.cwd()): Promise<MasConformance['suite']> {
-  const dir = join(root, 'node_modules', '@jarenjs');
-  const names = (await readdir(dir)).filter((name) => !name.startsWith('.')).sort();
-  const packages: Array<{ name: string, version: string }> = [];
-  for (const name of names) {
-    const manifest = JSON.parse(await readFile(join(dir, name, 'package.json'), 'utf8')) as { version: string };
-    packages.push({ name: `@jarenjs/${name}`, version: manifest.version });
-  }
-  for (const name of ['models', 'context', 'agents']) {
-    const manifest = JSON.parse(await readFile(join(root, 'node_modules', '@tangleai', name, 'package.json'), 'utf8')) as { version: string };
-    packages.push({ name: `@tangleai/${name}`, version: manifest.version });
-  }
-  packages.sort((a, b) => a.name.localeCompare(b.name));
-  return { packages };
+  return installedSuitePackages(root, ['models', 'context', 'agents']);
 }
 
 // ---------------------------------------------------------------------------

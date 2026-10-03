@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "c90f810d316c71b96401ed54d185b7c5d37d26d2",
+    "head": "82ff89dde495a23091cffc1e8151fd61b329f1f8",
     "clean": false,
     "files": [
       {
@@ -111,7 +111,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "a7d45da5bd7a739fe700970878aa80fe642372322b73dbfd152fce6605ef74ce"
+        "sha256": "41cdac0ab356bc4cff05677e0b611e1eab1a9ff48cf97d4277d360bd4515f4fe"
       },
       {
         "path": "packages/agents/package.json",
@@ -267,7 +267,7 @@
       },
       {
         "path": "packages/core/src/clustering.ts",
-        "sha256": "81ee576b02a2092790ba447b454bcfbd2c3985308ac581580d5564eac689534e"
+        "sha256": "187735729918d97b7c95f666a6a6cbbe1bd34fb93d016aa9df8300d8d516aea5"
       },
       {
         "path": "packages/core/src/errors.ts",
@@ -2374,7 +2374,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "04cadc06c79dde4be7bd5b3ea797c9aca6facd3338ba90a2ec0585dd28cc2dba"
+    "sha256": "9ebaab06be5a9955d1036895a93b58c06e28e606cc2f79b51593609adbe2d1fd"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85560,5 +85560,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "cf18b865ea5519b642625c6e26d5e4904e807d144c484a2dc2a89b44ca5d3cc7"
+  "reportId": "76201c206a3e62ec8e64e86a27b765552b0463342986da21706d90b539873788"
 }

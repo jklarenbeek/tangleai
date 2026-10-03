@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "c90f810d316c71b96401ed54d185b7c5d37d26d2",
+    "head": "82ff89dde495a23091cffc1e8151fd61b329f1f8",
     "clean": false,
     "files": [
       {
@@ -459,7 +459,7 @@
       },
       {
         "path": "benchmark/lib/mas-conformance.ts",
-        "sha256": "3cb90313457d34c21ab16bc242a381369669344de5f015342073bea113dbf76b"
+        "sha256": "e5d27e9de7dfeacf60edbf3ed2ea74ef4b1e40f35c3802493a88ce304731fdaf"
       },
       {
         "path": "benchmark/lib/mas-conformance.types.ts",
@@ -670,6 +670,42 @@
         "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
       },
       {
+        "path": "benchmark/lib/research-evaluator.ts",
+        "sha256": "d83f01e80bc6cab800bfd6e5b8edb7e81dbcbda7edaa72f3f48e87c58061e5e5"
+      },
+      {
+        "path": "benchmark/lib/research-fixture.ts",
+        "sha256": "736f4e564da0d6ca9fae921b3b2713e57343badafb1c5a86d9db81ec24da9725"
+      },
+      {
+        "path": "benchmark/lib/research-oracle.ts",
+        "sha256": "1521483bea1d608f92ff69b78645225d1f4742f0fd590198b58e4d6c73dd6ffd"
+      },
+      {
+        "path": "benchmark/lib/research-programs.ts",
+        "sha256": "19a040b103675daeba5a4dd30f2e02fa0c94f4ab200b4eea14d4ff3ade665412"
+      },
+      {
+        "path": "benchmark/lib/research-runner.ts",
+        "sha256": "b32a1008d8065f28dfb8eb01e29f7ceef3866d2e6663282b23634c9d51e2633f"
+      },
+      {
+        "path": "benchmark/lib/research-schema.ts",
+        "sha256": "8f84aa39e60a064a697263c38e213ee462c81048e862bc4e9f10ca77198b72ec"
+      },
+      {
+        "path": "benchmark/lib/research-validation.ts",
+        "sha256": "968cb956c6ec3f3641a0cf1b3ed4508d06be222c596404703eb4f4a0ead8df13"
+      },
+      {
+        "path": "benchmark/lib/research.ts",
+        "sha256": "7c0a143ef35e3376788197da7339ba22a1ce7ef9c28ee2494ac78f9ca8f0b312"
+      },
+      {
+        "path": "benchmark/lib/research.types.ts",
+        "sha256": "ddbca12df5e12f7c73ab36904c40661de2d80e6119f014560e01bc8865bab346"
+      },
+      {
         "path": "benchmark/lib/retention.ts",
         "sha256": "4968b177ae551bcc53e45587d8873aa0532d32f6cf877461491030e79a702015"
       },
@@ -684,6 +720,10 @@
       {
         "path": "benchmark/lib/stats.ts",
         "sha256": "36bda7652aba14360e699adb9ef45cba11cfbeb062ee653a444dfa06390d0dee"
+      },
+      {
+        "path": "benchmark/lib/suite-packages.ts",
+        "sha256": "5b8bcce02612456311b9d457478779f81f776edbe92eba278f499dd3b442e6c6"
       },
       {
         "path": "benchmark/lib/table.ts",
@@ -899,7 +939,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "a7d45da5bd7a739fe700970878aa80fe642372322b73dbfd152fce6605ef74ce"
+        "sha256": "41cdac0ab356bc4cff05677e0b611e1eab1a9ff48cf97d4277d360bd4515f4fe"
       },
       {
         "path": "packages/agents/package.json",
@@ -1594,7 +1634,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "3de2fb1840d14a63771f8a608f9dc767e0889c3afb9f9bb6bc7f975ba646f1b7"
+    "sha256": "9b9e04a3611a278553b3036d91090b51899b495f8406a79931a25f2992c5af7b"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45059,5 +45099,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "c88d762c520b862edf64ece2e7a1d6a1594672657034eca51ff1d8eee4698548"
+  "reportId": "c755842f74960627e31d0f0f577ce74b394a3e2d0c1afeef2273bc2054c65c38"
 }

@@ -1,0 +1,119 @@
+{
+  "id": "lexical-ranking",
+  "title": "Plain term frequency and native BM25+ ranking",
+  "datasetPath": "datasets/corpus.json",
+  "hiddenPath": "hidden/lexical-ranking.json",
+  "contract": {
+    "id": "lexical-ranking-contract",
+    "projectId": "lexical-ranking-project",
+    "hypothesisSpace": [
+      "lexical-ranking/bm25plus improves recall-at-5 over lexical-ranking/tf on this fixture."
+    ],
+    "successRule": {
+      "metric": "recall-at-5",
+      "baseline": "baseline",
+      "condition": "candidate",
+      "minImprovement": 0,
+      "confidenceLevel": 0.95
+    },
+    "failureRule": "stop-on-invalid",
+    "metrics": [
+      {
+        "id": "recall-at-5",
+        "unit": "fraction",
+        "direction": "maximize"
+      }
+    ],
+    "datasets": [
+      {
+        "id": "fixture-corpus-v1",
+        "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+      }
+    ],
+    "splits": {
+      "train": [],
+      "test": [
+        "query-1",
+        "query-2",
+        "query-3",
+        "query-4",
+        "query-5",
+        "query-6",
+        "query-7",
+        "query-8"
+      ]
+    },
+    "requiredBaselines": [
+      {
+        "condition": "baseline",
+        "programId": "lexical-ranking/tf",
+        "source": "benchmark/lib/research-programs.ts",
+        "licence": {
+          "spdx": "MIT",
+          "provenance": "tangle-authored-synthetic",
+          "source": "LICENSE.md"
+        }
+      }
+    ],
+    "replicatePolicy": {
+      "seeds": [
+        1
+      ],
+      "minimum": 1,
+      "resamples": 2000,
+      "bootstrapSeed": 17753
+    },
+    "attemptCap": 1,
+    "pivotCap": 1,
+    "reviewCap": 1,
+    "selectionRule": {
+      "kind": "all",
+      "n": 1,
+      "metric": "recall-at-5"
+    },
+    "stopConditions": [
+      "invalid evidence",
+      "registered budget reached",
+      "no positive paired interval",
+      "saturated metric"
+    ],
+    "contractHash": "2d15fd919868fadaa36f9b4d430e762cdce1dc62fbd73000d6d2a895c0211ab2"
+  },
+  "plan": {
+    "id": "lexical-ranking-plan",
+    "projectId": "lexical-ranking-project",
+    "contractHash": "2d15fd919868fadaa36f9b4d430e762cdce1dc62fbd73000d6d2a895c0211ab2",
+    "hypothesisHash": "4dc817383d46542546c4208ad8670bd1eed32ded1792d677519929cb18b0b0aa",
+    "conditions": [
+      {
+        "id": "baseline",
+        "programId": "lexical-ranking/tf",
+        "datasetId": "fixture-corpus-v1",
+        "params": {
+          "limit": 5
+        }
+      },
+      {
+        "id": "candidate",
+        "programId": "lexical-ranking/bm25plus",
+        "datasetId": "fixture-corpus-v1",
+        "params": {
+          "limit": 5
+        }
+      }
+    ],
+    "inputPaths": [
+      "datasets/corpus.json"
+    ],
+    "evaluator": {
+      "id": "fixture-evaluator",
+      "version": "1"
+    },
+    "planHash": "2c774a350bff82b84a316c691d342059a8950e28380c7c9ea773ae28cd61c3e9"
+  },
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  }
+}

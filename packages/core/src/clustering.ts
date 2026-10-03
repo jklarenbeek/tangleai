@@ -1,11 +1,10 @@
 /**
- * Zero-dependency centroid k-means with k-means++ seeding. Ported from
- * memflow `src/utils/clustering.ts` with one deliberate change: the
- * random source is INJECTED. memflow called `Math.random()` inline,
- * which made every clustering run unreproducible — a test could assert
- * "it converged" but never "it converged to this". Pass a seeded
- * generator and the whole run is a pure function of its inputs.
+ * Centroid k-means with selectable seeding and an injected random source.
+ * Both initializers share the same bounded Lloyd iteration. A seeded
+ * generator makes each result reproducible without modifying the inputs.
  */
+
+import { drawDistinct } from '@jarenjs/core/random';
 
 /**
  * Squared Euclidean distance, private to this module. `@jarenjs/core/vector`
@@ -38,11 +37,17 @@ export interface KMeansResult {
 export interface KMeansOptions {
   maxIterations?: number;
   random?: () => number;
+  /** Uniform distinct input indices or distance-weighted k-means++ (default). */
+  initialization?: 'random' | 'kmeans++';
 }
 
 export function kMeans(vectors: number[][], k: number, options: KMeansOptions = {}): KMeansResult {
   const maxIterations = options.maxIterations ?? 100;
   const random = options.random ?? Math.random;
+  const initialization = options.initialization ?? 'kmeans++';
+  if (initialization !== 'random' && initialization !== 'kmeans++') {
+    throw new TypeError('Unknown k-means initialization');
+  }
 
   if (vectors.length === 0 || k <= 0) {
     return { centroids: [], assignments: [], iterations: 0 };
@@ -52,7 +57,9 @@ export function kMeans(vectors: number[][], k: number, options: KMeansOptions = 
   const dim = vectors[0].length;
   const effectiveK = Math.min(k, n);
 
-  const centroids = initCentroids(vectors, effectiveK, random);
+  const centroids = initialization === 'random'
+    ? drawDistinct(random, n, effectiveK).map(index => [...vectors[index]])
+    : initCentroids(vectors, effectiveK, random);
   const assignments: number[] = new Array(n).fill(0);
 
   let converged = false;
@@ -60,7 +67,8 @@ export function kMeans(vectors: number[][], k: number, options: KMeansOptions = 
 
   while (!converged && iter < maxIterations) {
     iter++;
-    converged = true;
+    // Initial zero assignments are placeholders, not a previous Lloyd pass.
+    converged = iter > 1;
 
     for (let i = 0; i < n; i++) {
       let minDist = Infinity;
@@ -123,7 +131,7 @@ function initCentroids(vectors: number[][], k: number, random: () => number): nu
     let threshold = random() * totalDist;
     for (let i = 0; i < n; i++) {
       threshold -= distances[i];
-      if (threshold <= 0) {
+      if (threshold < 0) {
         centroids.push([...vectors[i]]);
         break;
       }

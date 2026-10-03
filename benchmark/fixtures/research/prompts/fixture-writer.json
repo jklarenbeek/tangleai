@@ -1,0 +1,8 @@
+{
+  "id": "fixture-writer-v1",
+  "instructions": [
+    "Report every registered condition and seed with its evaluator observation and raw output.",
+    "Make no causal or general method claim. Stop unless the frozen paired interval clears the threshold.",
+    "The no-model floor emits only metric statements. Scripted oracle approval is not human review."
+  ]
+}

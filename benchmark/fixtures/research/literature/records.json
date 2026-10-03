@@ -1,0 +1,890 @@
+[
+  {
+    "id": "kmeans-seeding-paper-1",
+    "canonicalIds": {
+      "doi": "10.5555/kmeans-seeding-paper-1",
+      "arxiv": "0000.00001"
+    },
+    "title": "Synthetic kmeans-seeding protocol note 1",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/kmeans-seeding-paper-1.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "kmeans-seeding-paper-2",
+    "canonicalIds": {
+      "doi": "10.5555/kmeans-seeding-paper-2",
+      "arxiv": "0000.00002"
+    },
+    "title": "Synthetic kmeans-seeding protocol note 2",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/kmeans-seeding-paper-2.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "kmeans-seeding-paper-3",
+    "canonicalIds": {
+      "doi": "10.5555/kmeans-seeding-paper-3",
+      "arxiv": "0000.00003"
+    },
+    "title": "Synthetic kmeans-seeding protocol note 3",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/kmeans-seeding-paper-3.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "kmeans-seeding-paper-4",
+    "canonicalIds": {
+      "doi": "10.5555/kmeans-seeding-paper-4",
+      "arxiv": "0000.00004"
+    },
+    "title": "Synthetic kmeans-seeding protocol note 4",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/kmeans-seeding-paper-4.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "kmeans-seeding-paper-5",
+    "canonicalIds": {
+      "doi": "10.5555/kmeans-seeding-paper-5",
+      "arxiv": "0000.00005"
+    },
+    "title": "Synthetic kmeans-seeding protocol note 5",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/kmeans-seeding-paper-5.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "kmeans-seeding-paper-6",
+    "canonicalIds": {
+      "doi": "10.5555/kmeans-seeding-paper-6",
+      "arxiv": "0000.00006"
+    },
+    "title": "Synthetic kmeans-seeding protocol note 6",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/kmeans-seeding-paper-6.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "kmeans-seeding-paper-7",
+    "canonicalIds": {
+      "doi": "10.5555/kmeans-seeding-paper-7",
+      "arxiv": "0000.00007"
+    },
+    "title": "Synthetic kmeans-seeding protocol note 7",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/kmeans-seeding-paper-7.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "kmeans-seeding-paper-8",
+    "canonicalIds": {
+      "doi": "10.5555/kmeans-seeding-paper-8",
+      "arxiv": "0000.00008"
+    },
+    "title": "Synthetic kmeans-seeding protocol note 8",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/kmeans-seeding-paper-8.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "lexical-ranking-paper-1",
+    "canonicalIds": {
+      "doi": "10.5555/lexical-ranking-paper-1",
+      "arxiv": "0000.00009"
+    },
+    "title": "Synthetic lexical-ranking protocol note 1",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/lexical-ranking-paper-1.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "lexical-ranking-paper-2",
+    "canonicalIds": {
+      "doi": "10.5555/lexical-ranking-paper-2",
+      "arxiv": "0000.00010"
+    },
+    "title": "Synthetic lexical-ranking protocol note 2",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/lexical-ranking-paper-2.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "lexical-ranking-paper-3",
+    "canonicalIds": {
+      "doi": "10.5555/lexical-ranking-paper-3",
+      "arxiv": "0000.00011"
+    },
+    "title": "Synthetic lexical-ranking protocol note 3",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/lexical-ranking-paper-3.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "lexical-ranking-paper-4",
+    "canonicalIds": {
+      "doi": "10.5555/lexical-ranking-paper-4",
+      "arxiv": "0000.00012"
+    },
+    "title": "Synthetic lexical-ranking protocol note 4",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/lexical-ranking-paper-4.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "lexical-ranking-paper-5",
+    "canonicalIds": {
+      "doi": "10.5555/lexical-ranking-paper-5",
+      "arxiv": "0000.00013"
+    },
+    "title": "Synthetic lexical-ranking protocol note 5",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/lexical-ranking-paper-5.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "lexical-ranking-paper-6",
+    "canonicalIds": {
+      "doi": "10.5555/lexical-ranking-paper-6",
+      "arxiv": "0000.00014"
+    },
+    "title": "Synthetic lexical-ranking protocol note 6",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/lexical-ranking-paper-6.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "lexical-ranking-paper-7",
+    "canonicalIds": {
+      "doi": "10.5555/lexical-ranking-paper-7",
+      "arxiv": "0000.00015"
+    },
+    "title": "Synthetic lexical-ranking protocol note 7",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/lexical-ranking-paper-7.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "lexical-ranking-paper-8",
+    "canonicalIds": {
+      "doi": "10.5555/lexical-ranking-paper-8",
+      "arxiv": "0000.00016"
+    },
+    "title": "Synthetic lexical-ranking protocol note 8",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/lexical-ranking-paper-8.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "embedder-width-paper-1",
+    "canonicalIds": {
+      "doi": "10.5555/embedder-width-paper-1",
+      "arxiv": "0000.00017"
+    },
+    "title": "Synthetic embedder-width protocol note 1",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/embedder-width-paper-1.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "embedder-width-paper-2",
+    "canonicalIds": {
+      "doi": "10.5555/embedder-width-paper-2",
+      "arxiv": "0000.00018"
+    },
+    "title": "Synthetic embedder-width protocol note 2",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/embedder-width-paper-2.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "embedder-width-paper-3",
+    "canonicalIds": {
+      "doi": "10.5555/embedder-width-paper-3",
+      "arxiv": "0000.00019"
+    },
+    "title": "Synthetic embedder-width protocol note 3",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/embedder-width-paper-3.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "embedder-width-paper-4",
+    "canonicalIds": {
+      "doi": "10.5555/embedder-width-paper-4",
+      "arxiv": "0000.00020"
+    },
+    "title": "Synthetic embedder-width protocol note 4",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/embedder-width-paper-4.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "embedder-width-paper-5",
+    "canonicalIds": {
+      "doi": "10.5555/embedder-width-paper-5",
+      "arxiv": "0000.00021"
+    },
+    "title": "Synthetic embedder-width protocol note 5",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/embedder-width-paper-5.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "embedder-width-paper-6",
+    "canonicalIds": {
+      "doi": "10.5555/embedder-width-paper-6",
+      "arxiv": "0000.00022"
+    },
+    "title": "Synthetic embedder-width protocol note 6",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/embedder-width-paper-6.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "embedder-width-paper-7",
+    "canonicalIds": {
+      "doi": "10.5555/embedder-width-paper-7",
+      "arxiv": "0000.00023"
+    },
+    "title": "Synthetic embedder-width protocol note 7",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/embedder-width-paper-7.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  },
+  {
+    "id": "embedder-width-paper-8",
+    "canonicalIds": {
+      "doi": "10.5555/embedder-width-paper-8",
+      "arxiv": "0000.00024"
+    },
+    "title": "Synthetic embedder-width protocol note 8",
+    "authors": [
+      "Tangle Fixture Authors"
+    ],
+    "date": "2026-01-01",
+    "rawHashes": [
+      {
+        "source": "openalex",
+        "sha256": "92d241a2b294b27e61a02ba40ddfbd6b0ea91338ffdf3d5df802dfcfd11b4019"
+      },
+      {
+        "source": "crossref",
+        "sha256": "8a97500c8f75db624e5b3167b8e7420c5a1b50f92aa7b08cc43ef435ff3e41ca"
+      },
+      {
+        "source": "semanticscholar",
+        "sha256": "dc74c5bfff643f3271e7c0ac76ff106cde6b67f95f547c758d992eb42b5d9889"
+      },
+      {
+        "source": "arxiv",
+        "sha256": "a2238822229b25dcbba33bc68eb5e67cd3c5aca127b6731ea104facdd03869ee"
+      }
+    ],
+    "resolution": "resolved",
+    "sourcePath": "sources/embedder-width-paper-8.md",
+    "licence": {
+      "spdx": "MIT",
+      "provenance": "tangle-authored-synthetic",
+      "source": "LICENSE.md"
+    }
+  }
+]

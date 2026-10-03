@@ -1,0 +1,41 @@
+[
+  {
+    "topicId": "kmeans-seeding",
+    "relevantLiterature": [
+      "kmeans-seeding-paper-1",
+      "kmeans-seeding-paper-2",
+      "kmeans-seeding-paper-3",
+      "kmeans-seeding-paper-4",
+      "kmeans-seeding-paper-5",
+      "kmeans-seeding-paper-6",
+      "kmeans-seeding-paper-9",
+      "kmeans-seeding-paper-10"
+    ]
+  },
+  {
+    "topicId": "lexical-ranking",
+    "relevantLiterature": [
+      "lexical-ranking-paper-1",
+      "lexical-ranking-paper-2",
+      "lexical-ranking-paper-3",
+      "lexical-ranking-paper-4",
+      "lexical-ranking-paper-5",
+      "lexical-ranking-paper-6",
+      "lexical-ranking-paper-9",
+      "lexical-ranking-paper-10"
+    ]
+  },
+  {
+    "topicId": "embedder-width",
+    "relevantLiterature": [
+      "embedder-width-paper-1",
+      "embedder-width-paper-2",
+      "embedder-width-paper-3",
+      "embedder-width-paper-4",
+      "embedder-width-paper-5",
+      "embedder-width-paper-6",
+      "embedder-width-paper-9",
+      "embedder-width-paper-10"
+    ]
+  }
+]

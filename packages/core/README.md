@@ -6,6 +6,13 @@ Install with `npm install @tangleai/core`. The npm distribution provides ESM Jav
 
 See the [Tangle documentation](https://github.com/jklarenbeek/tangleai#readme) for architecture, examples, and runtime requirements. All public Tangle packages use one coordinated version.
 
+`@tangleai/core/clustering` exports `kMeans(vectors, k, options)`. Its default
+initializer is `kmeans++`; `initialization: 'random'` samples distinct input
+indices uniformly, including separate indices with equal coordinates. Both
+initializers use the same Lloyd iteration, leave inputs unchanged and accept an
+injected `random` function returning values in `[0, 1)`. `maxIterations` defaults
+to 100. Use a seeded generator for repeatable results.
+
 `@tangleai/core/schemas/temporal` exports closed temporal JSON contracts,
 generated TypeScript types, `temporalSchema` and cached Jaren shape validation
 through `validateTemporalShape`. The matching schema asset is exported as

@@ -1,0 +1,88 @@
+{
+  "id": "fixture-corpus-v1",
+  "kind": "corpus",
+  "documents": [
+    {
+      "id": "doc-1",
+      "text": "planet orbit"
+    },
+    {
+      "id": "doc-2",
+      "text": "forest canopy"
+    },
+    {
+      "id": "doc-3",
+      "text": "ocean coral"
+    },
+    {
+      "id": "doc-4",
+      "text": "desert dune"
+    },
+    {
+      "id": "doc-5",
+      "text": "glacier ice"
+    },
+    {
+      "id": "doc-6",
+      "text": "volcano lava"
+    },
+    {
+      "id": "doc-7",
+      "text": "river delta"
+    },
+    {
+      "id": "doc-8",
+      "text": "planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river"
+    },
+    {
+      "id": "doc-9",
+      "text": "planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river"
+    },
+    {
+      "id": "doc-10",
+      "text": "planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river"
+    },
+    {
+      "id": "doc-11",
+      "text": "planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river"
+    },
+    {
+      "id": "doc-12",
+      "text": "planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river planet forest ocean desert glacier volcano river"
+    }
+  ],
+  "queries": [
+    {
+      "id": "query-1",
+      "text": "planet orbit"
+    },
+    {
+      "id": "query-2",
+      "text": "forest canopy"
+    },
+    {
+      "id": "query-3",
+      "text": "ocean coral"
+    },
+    {
+      "id": "query-4",
+      "text": "desert dune"
+    },
+    {
+      "id": "query-5",
+      "text": "glacier ice"
+    },
+    {
+      "id": "query-6",
+      "text": "volcano lava"
+    },
+    {
+      "id": "query-7",
+      "text": "river delta"
+    },
+    {
+      "id": "query-8",
+      "text": "orbit planet"
+    }
+  ]
+}

@@ -50,4 +50,27 @@ describe('kMeans', () => {
     const { centroids } = kMeans(vectors, 2, { random: seededRandom() });
     assert.equal(centroids.length, 2);
   });
+
+  it('a zero random draw never selects a zero-weight centroid', () => {
+    const result = kMeans([[0], [10]], 2, { random: () => 0 });
+    assert.deepEqual(result.centroids, [[0], [10]]);
+    assert.deepEqual(result.assignments, [0, 1]);
+  });
+
+  it('uniform initialization samples distinct indices, including equal points', () => {
+    const vectors = [[0], [0], [10], [20]];
+    const before = structuredClone(vectors);
+    const uniform = kMeans(vectors, 3, { initialization: 'random', random: () => 0, maxIterations: 0 });
+    assert.deepEqual(uniform.centroids, [[0], [0], [10]]);
+    assert.deepEqual(vectors, before);
+    assert.notEqual(uniform.centroids[0], vectors[0]);
+    assert.deepEqual(kMeans(vectors, 3, { random: () => 0, maxIterations: 0 }).centroids, [[0], [10], [20]]);
+  });
+
+  it('reassigns after a first pass in which every point chose the first centroid', () => {
+    const result = kMeans([[0], [0], [10]], 2, { initialization: 'random', random: () => 0 });
+    assert.deepEqual(result.centroids, [[10], [0]]);
+    assert.deepEqual(result.assignments, [1, 1, 0]);
+    assert.ok(result.iterations > 1);
+  });
 });

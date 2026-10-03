@@ -1,0 +1,7 @@
+# Synthetic protocol note 15
+
+Tangle-authored MIT fixture; this is not a real publication.
+
+## Evidence
+
+This note concerns a different synthetic problem and is irrelevant to the registered topic.

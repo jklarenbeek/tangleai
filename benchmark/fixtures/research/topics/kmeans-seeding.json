@@ -1,0 +1,237 @@
+{
+  "id": "kmeans-seeding",
+  "title": "Uniform random and k-means++ initialization",
+  "datasetPath": "datasets/blobs.json",
+  "hiddenPath": "hidden/kmeans-seeding.json",
+  "contract": {
+    "id": "kmeans-seeding-contract",
+    "projectId": "kmeans-seeding-project",
+    "hypothesisSpace": [
+      "kmeans-seeding/plusplus improves inertia over kmeans-seeding/random on this fixture."
+    ],
+    "successRule": {
+      "metric": "inertia",
+      "baseline": "baseline",
+      "condition": "candidate",
+      "minImprovement": 0,
+      "confidenceLevel": 0.95
+    },
+    "failureRule": "stop-on-invalid",
+    "metrics": [
+      {
+        "id": "inertia",
+        "unit": "squared-distance",
+        "direction": "minimize"
+      }
+    ],
+    "datasets": [
+      {
+        "id": "fixture-blobs-v1",
+        "sha256": "5d12d9d468f797c69cf2db5879ae3d0d0ea8935dee7eee9617d09b156c502af7"
+      }
+    ],
+    "splits": {
+      "train": [],
+      "test": [
+        "point-0-0",
+        "point-0-1",
+        "point-0-2",
+        "point-0-3",
+        "point-0-4",
+        "point-0-5",
+        "point-0-6",
+        "point-0-7",
+        "point-0-8",
+        "point-0-9",
+        "point-0-10",
+        "point-0-11",
+        "point-0-12",
+        "point-0-13",
+        "point-0-14",
+        "point-0-15",
+        "point-0-16",
+        "point-0-17",
+        "point-0-18",
+        "point-0-19",
+        "point-0-20",
+        "point-0-21",
+        "point-0-22",
+        "point-0-23",
+        "point-0-24",
+        "point-0-25",
+        "point-0-26",
+        "point-0-27",
+        "point-0-28",
+        "point-0-29",
+        "point-0-30",
+        "point-0-31",
+        "point-0-32",
+        "point-0-33",
+        "point-0-34",
+        "point-0-35",
+        "point-0-36",
+        "point-0-37",
+        "point-0-38",
+        "point-0-39",
+        "point-1-0",
+        "point-1-1",
+        "point-1-2",
+        "point-1-3",
+        "point-1-4",
+        "point-1-5",
+        "point-1-6",
+        "point-1-7",
+        "point-1-8",
+        "point-1-9",
+        "point-1-10",
+        "point-1-11",
+        "point-1-12",
+        "point-1-13",
+        "point-1-14",
+        "point-1-15",
+        "point-1-16",
+        "point-1-17",
+        "point-1-18",
+        "point-1-19",
+        "point-1-20",
+        "point-1-21",
+        "point-1-22",
+        "point-1-23",
+        "point-1-24",
+        "point-1-25",
+        "point-1-26",
+        "point-1-27",
+        "point-1-28",
+        "point-1-29",
+        "point-1-30",
+        "point-1-31",
+        "point-1-32",
+        "point-1-33",
+        "point-1-34",
+        "point-1-35",
+        "point-1-36",
+        "point-1-37",
+        "point-1-38",
+        "point-1-39",
+        "point-2-0",
+        "point-2-1",
+        "point-2-2",
+        "point-2-3",
+        "point-2-4",
+        "point-2-5",
+        "point-2-6",
+        "point-2-7",
+        "point-2-8",
+        "point-2-9",
+        "point-2-10",
+        "point-2-11",
+        "point-2-12",
+        "point-2-13",
+        "point-2-14",
+        "point-2-15",
+        "point-2-16",
+        "point-2-17",
+        "point-2-18",
+        "point-2-19",
+        "point-2-20",
+        "point-2-21",
+        "point-2-22",
+        "point-2-23",
+        "point-2-24",
+        "point-2-25",
+        "point-2-26",
+        "point-2-27",
+        "point-2-28",
+        "point-2-29",
+        "point-2-30",
+        "point-2-31",
+        "point-2-32",
+        "point-2-33",
+        "point-2-34",
+        "point-2-35",
+        "point-2-36",
+        "point-2-37",
+        "point-2-38",
+        "point-2-39"
+      ]
+    },
+    "requiredBaselines": [
+      {
+        "condition": "baseline",
+        "programId": "kmeans-seeding/random",
+        "source": "benchmark/lib/research-programs.ts",
+        "licence": {
+          "spdx": "MIT",
+          "provenance": "tangle-authored-synthetic",
+          "source": "LICENSE.md"
+        }
+      }
+    ],
+    "replicatePolicy": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "minimum": 5,
+      "resamples": 2000,
+      "bootstrapSeed": 17753
+    },
+    "attemptCap": 1,
+    "pivotCap": 1,
+    "reviewCap": 1,
+    "selectionRule": {
+      "kind": "all",
+      "n": 5,
+      "metric": "inertia"
+    },
+    "stopConditions": [
+      "invalid evidence",
+      "registered budget reached",
+      "no positive paired interval",
+      "saturated metric"
+    ],
+    "contractHash": "9e540ac737c545a2ef9e57bd6079002f826c7ef1b09d29767b593ba89cc76167"
+  },
+  "plan": {
+    "id": "kmeans-seeding-plan",
+    "projectId": "kmeans-seeding-project",
+    "contractHash": "9e540ac737c545a2ef9e57bd6079002f826c7ef1b09d29767b593ba89cc76167",
+    "hypothesisHash": "f6a07418a4d33512c6a9af7e229ed18d249440a9967026007c015bca3f13af6b",
+    "conditions": [
+      {
+        "id": "baseline",
+        "programId": "kmeans-seeding/random",
+        "datasetId": "fixture-blobs-v1",
+        "params": {
+          "k": 3,
+          "maxIterations": 100
+        }
+      },
+      {
+        "id": "candidate",
+        "programId": "kmeans-seeding/plusplus",
+        "datasetId": "fixture-blobs-v1",
+        "params": {
+          "k": 3,
+          "maxIterations": 100
+        }
+      }
+    ],
+    "inputPaths": [
+      "datasets/blobs.json"
+    ],
+    "evaluator": {
+      "id": "fixture-evaluator",
+      "version": "1"
+    },
+    "planHash": "4751834b400e9438c332ad6bb3ef098a3e1e1a3cac56ba54078801f8872a2626"
+  },
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  }
+}

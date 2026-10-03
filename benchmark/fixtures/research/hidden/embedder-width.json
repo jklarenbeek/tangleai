@@ -1,0 +1,99 @@
+{
+  "topicId": "embedder-width",
+  "relevantLiterature": [
+    "embedder-width-paper-1",
+    "embedder-width-paper-2",
+    "embedder-width-paper-3",
+    "embedder-width-paper-4",
+    "embedder-width-paper-5",
+    "embedder-width-paper-6",
+    "embedder-width-paper-9",
+    "embedder-width-paper-10"
+  ],
+  "requiredClaims": [
+    {
+      "id": "embedder-width-literature",
+      "kind": "literature",
+      "text": "The synthetic embedder-width protocol compares the same feature inputs under two declared methods.",
+      "literatureId": "embedder-width-paper-1",
+      "observationCondition": null,
+      "strength": "descriptive"
+    },
+    {
+      "id": "embedder-width-limitation",
+      "kind": "interpretation",
+      "text": "These synthetic results do not establish a general method advantage.",
+      "literatureId": "embedder-width-paper-2",
+      "observationCondition": null,
+      "strength": "descriptive"
+    },
+    {
+      "id": "embedder-width-baseline-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "baseline",
+      "strength": "descriptive"
+    },
+    {
+      "id": "embedder-width-candidate-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "candidate",
+      "strength": "descriptive"
+    }
+  ],
+  "queryGold": [
+    {
+      "queryId": "query-1",
+      "relevantIds": [
+        "doc-1"
+      ]
+    },
+    {
+      "queryId": "query-2",
+      "relevantIds": [
+        "doc-2"
+      ]
+    },
+    {
+      "queryId": "query-3",
+      "relevantIds": [
+        "doc-3"
+      ]
+    },
+    {
+      "queryId": "query-4",
+      "relevantIds": [
+        "doc-4"
+      ]
+    },
+    {
+      "queryId": "query-5",
+      "relevantIds": [
+        "doc-5"
+      ]
+    },
+    {
+      "queryId": "query-6",
+      "relevantIds": [
+        "doc-6"
+      ]
+    },
+    {
+      "queryId": "query-7",
+      "relevantIds": [
+        "doc-7"
+      ]
+    },
+    {
+      "queryId": "query-8",
+      "relevantIds": [
+        "doc-1"
+      ]
+    }
+  ],
+  "metricTolerance": 1e-12,
+  "registeredTruth": "SATURATED"
+}

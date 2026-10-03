@@ -1,0 +1,1648 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/research-records",
+  "$ref": "#/$defs/ResearchBundle",
+  "$defs": {
+    "Sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ResearchId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "ResearchIssue": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^TRSH10(0[1-9]|10)$"
+        },
+        "path": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cause": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "path": {
+              "type": "string"
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "code",
+            "path",
+            "detail"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "code",
+        "path",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchLicence": {
+      "type": "object",
+      "properties": {
+        "spdx": {
+          "const": "MIT"
+        },
+        "provenance": {
+          "const": "tangle-authored-synthetic"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "spdx",
+        "provenance",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchCost": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physical": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "tokens",
+        "ms",
+        "physical"
+      ],
+      "additionalProperties": false
+    },
+    "ReplicatePolicy": {
+      "type": "object",
+      "properties": {
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "minimum": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "resamples": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "bootstrapSeed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "seeds",
+        "minimum",
+        "resamples",
+        "bootstrapSeed"
+      ],
+      "additionalProperties": false
+    },
+    "SelectionRule": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "all",
+            "best-of-n"
+          ]
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "metric": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "n",
+        "metric"
+      ],
+      "additionalProperties": false
+    },
+    "MetricDefinition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "enum": [
+            "minimize",
+            "maximize"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "unit",
+        "direction"
+      ],
+      "additionalProperties": false
+    },
+    "SuccessRule": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "string",
+          "minLength": 1
+        },
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseline": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minImprovement": {
+          "type": "number",
+          "minimum": 0
+        },
+        "confidenceLevel": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        }
+      },
+      "required": [
+        "metric",
+        "condition",
+        "baseline",
+        "minImprovement",
+        "confidenceLevel"
+      ],
+      "additionalProperties": false
+    },
+    "BaselineProvenance": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "programId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "licence": {
+          "$ref": "#/$defs/ResearchLicence"
+        }
+      },
+      "required": [
+        "condition",
+        "programId",
+        "source",
+        "licence"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchContract": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "hypothesisSpace": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "successRule": {
+          "$ref": "#/$defs/SuccessRule"
+        },
+        "failureRule": {
+          "const": "stop-on-invalid"
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MetricDefinition"
+          },
+          "minItems": 1
+        },
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "id",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "splits": {
+          "type": "object",
+          "properties": {
+            "train": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "test": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "train",
+            "test"
+          ],
+          "additionalProperties": false
+        },
+        "requiredBaselines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BaselineProvenance"
+          },
+          "minItems": 1
+        },
+        "replicatePolicy": {
+          "$ref": "#/$defs/ReplicatePolicy"
+        },
+        "attemptCap": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pivotCap": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reviewCap": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "selectionRule": {
+          "$ref": "#/$defs/SelectionRule"
+        },
+        "stopConditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "contractHash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "hypothesisSpace",
+        "successRule",
+        "failureRule",
+        "metrics",
+        "datasets",
+        "splits",
+        "requiredBaselines",
+        "replicatePolicy",
+        "attemptCap",
+        "pivotCap",
+        "reviewCap",
+        "selectionRule",
+        "stopConditions",
+        "contractHash"
+      ],
+      "additionalProperties": false
+    },
+    "ProgramParams": {
+      "type": "object",
+      "properties": {
+        "k": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "dims": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxIterations": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "ExperimentCondition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "programId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "datasetId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "params": {
+          "$ref": "#/$defs/ProgramParams"
+        }
+      },
+      "required": [
+        "id",
+        "programId",
+        "datasetId",
+        "params"
+      ],
+      "additionalProperties": false
+    },
+    "ExperimentPlan": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "contractHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "hypothesisHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperimentCondition"
+          },
+          "minItems": 2
+        },
+        "inputPaths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "evaluator": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "version"
+          ],
+          "additionalProperties": false
+        },
+        "planHash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "contractHash",
+        "hypothesisHash",
+        "conditions",
+        "inputPaths",
+        "evaluator",
+        "planHash"
+      ],
+      "additionalProperties": false
+    },
+    "RawClusterOutput": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "clusters"
+        },
+        "centroids": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 1
+          },
+          "minItems": 1
+        },
+        "assignments": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1
+        },
+        "iterations": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "centroids",
+        "assignments",
+        "iterations"
+      ],
+      "additionalProperties": false
+    },
+    "RawRankingOutput": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "rankings"
+        },
+        "methodIdentity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rankings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "queryId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hits": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "score": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "score"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "queryId",
+              "hits"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "kind",
+        "methodIdentity",
+        "rankings"
+      ],
+      "additionalProperties": false
+    },
+    "RawFileOutput": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "files"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "content": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "kind",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchRawOutput": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RawClusterOutput"
+        },
+        {
+          "$ref": "#/$defs/RawRankingOutput"
+        },
+        {
+          "$ref": "#/$defs/RawFileOutput"
+        }
+      ]
+    },
+    "ExperimentRun": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "programId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "failed"
+          ]
+        },
+        "inputHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "executionManifestHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "rawArtifactHash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "output": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchRawOutput"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event": {
+                "enum": [
+                  "start",
+                  "output",
+                  "failure"
+                ]
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event",
+              "detail"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "spend": {
+          "$ref": "#/$defs/ResearchCost"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchIssue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "condition",
+        "programId",
+        "seed",
+        "status",
+        "inputHash",
+        "executionManifestHash",
+        "rawArtifactHash",
+        "output",
+        "trace",
+        "spend",
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    "MetricObservation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "experimentRunId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "evaluatorId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evaluatorVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runArtifactHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "metric": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "registrySignature": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "experimentRunId",
+        "evaluatorId",
+        "evaluatorVersion",
+        "runArtifactHash",
+        "condition",
+        "metric",
+        "value",
+        "unit",
+        "seed",
+        "registrySignature"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchDecision": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "contractHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "kind": {
+          "enum": [
+            "Proceed",
+            "Refine",
+            "Pivot",
+            "Stop"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observationIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "exploratory": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "contractHash",
+        "kind",
+        "reason",
+        "observationIds",
+        "exploratory"
+      ],
+      "additionalProperties": false
+    },
+    "LiteratureRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "canonicalIds": {
+          "type": "object",
+          "properties": {
+            "doi": {
+              "type": "string",
+              "minLength": 1
+            },
+            "arxiv": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "date": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rawHashes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "enum": [
+                  "openalex",
+                  "crossref",
+                  "semanticscholar",
+                  "arxiv"
+                ]
+              },
+              "sha256": {
+                "$ref": "#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "source",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "resolution": {
+          "enum": [
+            "resolved",
+            "unresolved"
+          ]
+        },
+        "sourcePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "licence": {
+          "$ref": "#/$defs/ResearchLicence"
+        }
+      },
+      "required": [
+        "id",
+        "canonicalIds",
+        "title",
+        "authors",
+        "date",
+        "rawHashes",
+        "resolution",
+        "sourcePath",
+        "licence"
+      ],
+      "additionalProperties": false
+    },
+    "EvidenceCard": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "literatureId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "artifactId": {
+          "type": "string",
+          "pattern": "^art-[0-9a-f]{64}$"
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "locator": {
+          "type": "object",
+          "properties": {
+            "page": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "headingPath": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "elementOrder": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "headingPath",
+            "elementOrder"
+          ],
+          "additionalProperties": false
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "extractionPromptRevision": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "literatureId",
+        "artifactId",
+        "excerpt",
+        "contentHash",
+        "versionId",
+        "locator",
+        "fields",
+        "extractionPromptRevision"
+      ],
+      "additionalProperties": false
+    },
+    "MetricBinding": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "metric": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "aggregate": {
+          "enum": [
+            "individual",
+            "mean"
+          ]
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "condition",
+        "metric",
+        "unit",
+        "seeds",
+        "aggregate",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchClaim": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "section": {
+          "enum": [
+            "abstract",
+            "methods",
+            "experiments",
+            "results",
+            "conclusion",
+            "discussion"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "literature",
+            "metric",
+            "interpretation"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "literatureIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "observationIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "strength": {
+          "enum": [
+            "descriptive",
+            "causal"
+          ]
+        },
+        "metricBinding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MetricBinding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "section",
+        "kind",
+        "text",
+        "literatureIds",
+        "evidenceIds",
+        "observationIds",
+        "strength",
+        "metricBinding"
+      ],
+      "additionalProperties": false
+    },
+    "Intervention": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "gate": {
+          "enum": [
+            "literature",
+            "design",
+            "quality"
+          ]
+        },
+        "actor": {
+          "enum": [
+            "human",
+            "timeout",
+            "scripted"
+          ]
+        },
+        "action": {
+          "enum": [
+            "approve",
+            "reject",
+            "edit",
+            "guidance",
+            "stop"
+          ]
+        },
+        "reviewedManifestHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "approvedManifestHash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "substantive": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "gate",
+        "actor",
+        "action",
+        "reviewedManifestHash",
+        "approvedManifestHash",
+        "substantive"
+      ],
+      "additionalProperties": false
+    },
+    "Amendment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "before": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "after": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "marksExploratory": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "before",
+        "after",
+        "reason",
+        "marksExploratory"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchManifest": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "contractHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "planHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "promptRevision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "reviewedEvidenceHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "runIdentityId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "environment": {
+          "type": "object",
+          "properties": {
+            "executor": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "programSourceHash": {
+              "$ref": "#/$defs/Sha256"
+            }
+          },
+          "required": [
+            "executor",
+            "version",
+            "programSourceHash"
+          ],
+          "additionalProperties": false
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "runIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "observationIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "selectionRule": {
+          "$ref": "#/$defs/SelectionRule"
+        },
+        "baselineSources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "metricOrigin": {
+          "type": "object",
+          "properties": {
+            "evaluatorId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "evaluatorVersion": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "evaluatorId",
+            "evaluatorVersion"
+          ],
+          "additionalProperties": false
+        },
+        "searchedLiterature": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "frozenBeforeResults": {
+          "type": "boolean"
+        },
+        "manifestHash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "projectId",
+        "contractHash",
+        "planHash",
+        "promptRevision",
+        "reviewedEvidenceHash",
+        "runIdentityId",
+        "environment",
+        "inputs",
+        "runIds",
+        "observationIds",
+        "selectionRule",
+        "baselineSources",
+        "metricOrigin",
+        "searchedLiterature",
+        "frozenBeforeResults",
+        "manifestHash"
+      ],
+      "additionalProperties": false
+    },
+    "DisclosureItem": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "enum": [
+            "human-review",
+            "runnable-implementation",
+            "reconstructible-execution",
+            "novelty-audit",
+            "attempt-selection-registration",
+            "baseline-audit",
+            "independent-verification",
+            "frozen-hypotheses"
+          ]
+        },
+        "satisfied": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "item",
+        "satisfied",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "DisclosureChecklist": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DisclosureItem"
+      },
+      "minItems": 8,
+      "maxItems": 8
+    },
+    "ResearchBundle": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "contract": {
+          "$ref": "#/$defs/ResearchContract"
+        },
+        "plan": {
+          "$ref": "#/$defs/ExperimentPlan"
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperimentRun"
+          },
+          "minItems": 1
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MetricObservation"
+          }
+        },
+        "decision": {
+          "$ref": "#/$defs/ResearchDecision"
+        },
+        "literature": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceCard"
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchClaim"
+          }
+        },
+        "claimLedger": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "const": 1
+            },
+            "artifacts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "kind": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "metadata": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "id",
+                  "kind"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "artifact": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "selector": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "id",
+                  "artifact"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "critical": {
+                    "type": "boolean"
+                  },
+                  "status": {
+                    "enum": [
+                      "supported",
+                      "unresolved"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "uniqueItems": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "text",
+                  "critical",
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "visibleEvidence": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "version",
+            "artifacts",
+            "evidence",
+            "claims",
+            "visibleEvidence"
+          ],
+          "additionalProperties": false
+        },
+        "manifest": {
+          "$ref": "#/$defs/ResearchManifest"
+        },
+        "interventions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Intervention"
+          }
+        },
+        "amendments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Amendment"
+          }
+        },
+        "disclosure": {
+          "$ref": "#/$defs/DisclosureChecklist"
+        }
+      },
+      "required": [
+        "topicId",
+        "contract",
+        "plan",
+        "runs",
+        "observations",
+        "decision",
+        "literature",
+        "evidence",
+        "claims",
+        "claimLedger",
+        "manifest",
+        "interventions",
+        "amendments",
+        "disclosure"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

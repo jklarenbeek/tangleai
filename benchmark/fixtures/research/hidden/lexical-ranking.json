@@ -1,0 +1,99 @@
+{
+  "topicId": "lexical-ranking",
+  "relevantLiterature": [
+    "lexical-ranking-paper-1",
+    "lexical-ranking-paper-2",
+    "lexical-ranking-paper-3",
+    "lexical-ranking-paper-4",
+    "lexical-ranking-paper-5",
+    "lexical-ranking-paper-6",
+    "lexical-ranking-paper-9",
+    "lexical-ranking-paper-10"
+  ],
+  "requiredClaims": [
+    {
+      "id": "lexical-ranking-literature",
+      "kind": "literature",
+      "text": "The synthetic lexical-ranking protocol compares the same feature inputs under two declared methods.",
+      "literatureId": "lexical-ranking-paper-1",
+      "observationCondition": null,
+      "strength": "descriptive"
+    },
+    {
+      "id": "lexical-ranking-limitation",
+      "kind": "interpretation",
+      "text": "These synthetic results do not establish a general method advantage.",
+      "literatureId": "lexical-ranking-paper-2",
+      "observationCondition": null,
+      "strength": "descriptive"
+    },
+    {
+      "id": "lexical-ranking-baseline-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "baseline",
+      "strength": "descriptive"
+    },
+    {
+      "id": "lexical-ranking-candidate-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "candidate",
+      "strength": "descriptive"
+    }
+  ],
+  "queryGold": [
+    {
+      "queryId": "query-1",
+      "relevantIds": [
+        "doc-1"
+      ]
+    },
+    {
+      "queryId": "query-2",
+      "relevantIds": [
+        "doc-2"
+      ]
+    },
+    {
+      "queryId": "query-3",
+      "relevantIds": [
+        "doc-3"
+      ]
+    },
+    {
+      "queryId": "query-4",
+      "relevantIds": [
+        "doc-4"
+      ]
+    },
+    {
+      "queryId": "query-5",
+      "relevantIds": [
+        "doc-5"
+      ]
+    },
+    {
+      "queryId": "query-6",
+      "relevantIds": [
+        "doc-6"
+      ]
+    },
+    {
+      "queryId": "query-7",
+      "relevantIds": [
+        "doc-7"
+      ]
+    },
+    {
+      "queryId": "query-8",
+      "relevantIds": [
+        "doc-1"
+      ]
+    }
+  ],
+  "metricTolerance": 1e-12,
+  "registeredTruth": "improvement"
+}
