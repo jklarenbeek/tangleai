@@ -1,5 +1,5 @@
 /** Meaning first, then temporal eligibility. No model call or implicit ordinary-path mutation. */
-import { cosineSimilarity } from '@jarenjs/core/vector';
+import { temporalSourcePool } from './source-pool.ts';
 import { checkTemporal, sameTemporalValue, refuse, success, type TemporalQuery, type TemporalRecall, type TemporalClaim, type TemporalResult, type Coverage, type Refusal } from './contracts.ts';
 import { temporalInstant, temporalStamp, claimOverlaps, claimContains } from './time.ts';
 import { selectTemporalAt } from './selection.ts';
@@ -55,12 +55,9 @@ export async function recallTemporal(store: TemporalStore, input: TemporalQuery)
   const relevant = claims.filter(c => (query.subject === null || c.series.subject === query.subject) && (query.series === null || c.series.key === query.series) &&
     (operation.kind !== 'elapsed' || sameTemporalValue(c.series, operation.fromSeries) || sameTemporalValue(c.series, operation.toSeries)));
   const sourceIds = new Set(relevant.flatMap(c => c.citations.map(s => s.sourceId)));
-  const vectors = new Map(projection.embeddings.map(e => [e.sourceId, e.vector]));
-  coverage.comparable = sources.filter(s => vectors.has(s.id)).length;
-  const ranked = sources.filter(s => vectors.has(s.id)).map(source => ({ source, score: cosineSimilarity(vectors.get(source.id)!, query.embedding) }))
-    .filter(row => row.score >= query.minScore).sort((a, b) => b.score - a.score || a.source.id.localeCompare(b.source.id));
-  const pool = ranked.slice(0, query.candidatePool), poolIds = new Set(pool.map(r => r.source.id));
-  coverage.semanticCandidates = pool.length; coverage.poolTruncated = ranked.length > pool.length;
+  const { vectors, comparable, pool, poolIds, poolTruncated } = temporalSourcePool(sources, projection, query);
+  coverage.comparable = comparable;
+  coverage.semanticCandidates = pool.length; coverage.poolTruncated = poolTruncated;
   const missingVectors = [...sourceIds].some(id => !vectors.has(id));
   const candidates = relevant.filter(c => c.citations.every(s => poolIds.has(s.sourceId)));
   if (operation.kind !== 'elapsed' && query.subject === null && new Set(candidates.map(c => c.series.subject)).size > 1) return fail(refuse('ambiguous-series', 'semantic candidates contain multiple subjects; supply a qualified subject'));

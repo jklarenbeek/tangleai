@@ -4,3 +4,8 @@ export * from './gazetteer.ts';
 export * from './match.ts';
 export * from './claims.ts';
 export * from './gates.ts';
+export { positionSeries, type PositionSeries, type PositionRow, type PositionSeriesOptions } from './series.ts';
+export * from './join.ts';
+export * from './nearby.ts';
+export * from './retrieval.ts';
+export * from './answer.ts';

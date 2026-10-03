@@ -1,4 +1,4 @@
-# Sourced place contracts and assertions
+# Sourced place memory
 
 `@tangleai/memory/place` supplies an opt-in, deterministic place vocabulary.
 Every operation returns `{ status: 'success', value }` or a closed
@@ -86,7 +86,60 @@ call no model and start no network, file or database work on import.
 | TPLC1010 | Persistence failure |
 | TPLC1011 | Exhausted budget |
 
-The vocabulary includes query/answer and coverage contracts for consumers.
-Contract validation alone does not execute a retrieval operation or establish
-that its evidence is complete. The sourced annotation instrument is documented
-in the repository's [place benchmark](https://github.com/jklarenbeek/tangleai/blob/main/docs/PLACE_BENCHMARK.md).
+`positionSeries(temporalStore, { scope, versionId, subject, gazetteer,
+pageLimit?, maxPages? })` reads the complete qualified location membership.
+Defaults are 256 rows per page and 128 pages. Every row and numeric mirror must
+match the captured validated projection; a short, repeated, altered or foreign
+page cannot prove completeness. The table retains unknown and conflicting
+assertions and counts them as unplaceable. Known starts produce numeric
+`{ at, value: tableIndex }` samples; unknown starts receive no invented instant.
+These native samples differ from the serialized `PositionSample` contract.
+
+`locationAtInstant(series, epoch)` uses Jaren's backward `asOfJoin`. Equal
+instants select the last row in deterministic physical membership-id order.
+Only the matched claim is tested by `claimContains`: an ended state or old
+point refuses `TPLC1008`, and an unknown end refuses `TPLC1009` with
+`unknown-validity`. There is no fallback to an older position. A later exact
+point can answer after an earlier unknown-ended state. An unknown-time row
+cannot be ordered and makes exact location refuse. `locationAtEvent` also
+requires an accepted, exact point event for the same subject and scope.
+`movementDistance` requires both event operands and rounds native
+`geoDistance` to integer metres. These are distances between sourced point
+proxies, not traveled route lengths or ellipsoidal distances.
+
+`nearbyEntries(gazetteer, entry, { radiusMetres, precision, entriesInCells? })`
+returns sorted neighbouring ids, excluding the centre, plus `probedCells`,
+`candidates` and `narrowed`. Native circle bounds must fit a contiguous nine-cell
+footprint; wrapped or polar footprints and larger radii conservatively refuse
+`TPLC1011`. The optional cell reader must return the complete candidates for the
+same immutable gazetteer. The SQLite adapter's stored cells use precision six
+and validate the whole gazetteer before their cell query; this is not bounded
+read I/O. Other precisions can use the in-memory view without that callback.
+
+`recallPlace({ temporal, gazetteer, entriesInCells? }, query)` requires scope,
+subject, knowledge and embedder identity, embedding, candidatePool, k, minScore
+and expectedHead (an exact head or null). Operations are `location-at` (`at`),
+`location-at-event` (`eventClaimId`), `movement` (`fromClaimId`, `toClaimId`) and
+`nearby` (`entryId`, `radiusMetres`, `precision`). The knowledge view must match
+an independently prepared projection. Ranking shares the temporal lane's cosine
+and source-id tie order. Every event and position citation must fit the declared
+semantic pool and final k; position paging never widens either budget.
+
+A successful recall contains `head`, `answer`, selected `claims` and `sources`,
+`coverage` and `refusals`. Coverage records occurrences, comparable sources,
+semantic candidates, positions, unplaceable rows, pool truncation and
+completeness; refusals retain that coverage. `answerPlace` adds deterministic
+`text`. `renderPlaceAnswer(answer, gazetteer)` returns a result containing names
+as the gazetteer spells them, integer metres and deduplicated source spans.
+The explicit gazetteer supplies names because the closed answer stores ids.
+Nearby geometry answers have no persona claims or invented citations; their
+entries retain source metadata in the gazetteer. `recallPlaceWithFallback`
+returns ordinary embedding ranking separately while keeping the original
+place refusal.
+
+Run the [three-entry public example](https://github.com/jklarenbeek/tangleai/blob/main/examples/place.ts)
+with `npm run place:smoke`. Its companion gazetteer copies the cited Wikidata
+CC0 coordinates unchanged; its persona assertions are synthetic host reporting
+events. The [place benchmark](https://github.com/jklarenbeek/tangleai/blob/main/docs/PLACE_BENCHMARK.md)
+measures the separately licensed annotation fixture. Neither changes ordinary
+LoCoMo scores or default pipeline routing.

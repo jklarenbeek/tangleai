@@ -712,6 +712,32 @@ export type MeasurementDetailAnyOf1 = string;
  */
 export type MeasurementProjectionIdAnyOf1 = string;
 
+export interface RuntimeCoverage {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  occurrences: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  comparable: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  semanticCandidates: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  positions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  unplaceable: number;
+  poolTruncated: boolean;
+  complete: boolean;
+}
+
+
 export interface Measurement {
   row: RowName;
   backend: Backend;
@@ -726,6 +752,7 @@ export interface Measurement {
   passed: boolean | null;
   detail: MeasurementDetailAnyOf1 | null;
   projectionId: MeasurementProjectionIdAnyOf1 | null;
+  runtimeCoverage: RuntimeCoverage | null;
 }
 
 

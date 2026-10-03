@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "22872322080dd7955acc9afbd39244f224307a80",
-      "sha256": "9f6751ad7e6fb2e363593b0baadba04d5cda29f77124eadce42a1253c6ba9472",
+      "head": "364b3369e9ac5f25ef6d98d6d282efc9fdb22836",
+      "sha256": "9fcc7297f07fbb8bdd0961c8d71ec80ffcf851bd1a43db799cb5691ad8e61c39",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -530,7 +530,7 @@
         },
         {
           "path": "benchmark/lib/place-conformance.ts",
-          "sha256": "d8e220c5e3510f5a5e6005b7ccdf24ed206f009d0aa25c2c1727edcaa99a5999"
+          "sha256": "87a3748bda0c1a8ec7647d8841cec7afbfc12bf17c4049e3f2d0e0fdad426e5b"
         },
         {
           "path": "benchmark/lib/place-fixture.ts",
@@ -546,11 +546,15 @@
         },
         {
           "path": "benchmark/lib/place-render.ts",
-          "sha256": "c78043a8a3087dd032e4427ff22357e18d27679b8862cb32f675a8ac7825d0ec"
+          "sha256": "f91777f612465f02f2b5c269dc43ce67930c5f7a66e4040ca0c14943977ac41c"
         },
         {
           "path": "benchmark/lib/place-report.types.ts",
-          "sha256": "37a89cd26011251a69998a093524f4f1bfdbb48fa6406d2cf3af7f691a87fb0f"
+          "sha256": "d1b4c7d28d689d631cab0fd8a2287edd22282ebbd24cb5130a22a9b8f0ee3a89"
+        },
+        {
+          "path": "benchmark/lib/place-runtime.ts",
+          "sha256": "142abeb7207a489ebf815a2c013a2958832df3dd3a8cad0866e435eca3fe428d"
         },
         {
           "path": "benchmark/lib/place-validation.ts",
@@ -886,7 +890,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "0ded8d682a2eb2cf89eca1825ecba90765d92fbbe41215748b9f39bfce80456d"
+          "sha256": "7fbbf741a1d0b171a2fef6e9aaa46f483ee0812b7fd5e76cc3d14ffc15d8d002"
         },
         {
           "path": "packages/agents/package.json",
@@ -1817,7 +1821,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "4ff1cd3369a1f7d4c7ec649b73187a77d266518e08520d8433eff723b0210cc1",
+    "planId": "2727f702d34cbd8218f51b2d62f4efab71f70772153230e0b8b1b659712bd104",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

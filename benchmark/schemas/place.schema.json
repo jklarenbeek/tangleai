@@ -1308,6 +1308,16 @@
               "type": "null"
             }
           ]
+        },
+        "runtimeCoverage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/runtimeCoverage"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1320,7 +1330,8 @@
         "status",
         "passed",
         "detail",
-        "projectionId"
+        "projectionId",
+        "runtimeCoverage"
       ],
       "additionalProperties": false
     },
@@ -1804,6 +1815,52 @@
           }
         ]
       }
+    },
+    "runtimeCoverage": {
+      "type": "object",
+      "properties": {
+        "occurrences": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "comparable": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "semanticCandidates": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "positions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unplaceable": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "poolTruncated": {
+          "type": "boolean"
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "occurrences",
+        "comparable",
+        "semanticCandidates",
+        "positions",
+        "unplaceable",
+        "poolTruncated",
+        "complete"
+      ],
+      "additionalProperties": false
     }
   }
 }

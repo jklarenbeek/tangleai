@@ -62,7 +62,7 @@ The lane remains opt-in/off: strict fixtures and full LongMemEval source
 qualification pass, while live QA improvement and deployment cost remain
 unmeasured. Ordinary recall and the selected policy above remain the default.
 
-## Sourced places
+## Place memory
 
 `@tangleai/memory/place` validates sourced point gazetteers, matches exact aliases
 with cited original spans and explicit ambiguity, creates temporal location
@@ -70,6 +70,15 @@ claims, and applies spatial authoring gates with host-supplied intent. It uses
 Jaren's geometry and geohash kernels and the temporal lane's identity and time
 rules. See the [place API guide](docs/PLACE.md) for qualification callbacks,
 uncertain time bounds, refusal values and the separate SQLite adapter.
+
+`recallPlace` and `answerPlace` compose source ranking with complete scoped
+position reads, native backward joins and geodesic distance. Event and position
+citations must fit the declared candidate pool and final k; unknown validity,
+unmatched positions and incomplete radius coverage remain visible refusals.
+`nearbyEntries` probes nine native cells and refines by metres, excluding the
+centre entry. The [keyless public example](https://github.com/jklarenbeek/tangleai/blob/main/examples/place.ts)
+demonstrates two personas, cited location and movement answers, actual SQLite
+reopen and zero-write replay. Default pipeline routing remains off.
 
 ## Outcome confidence
 

@@ -10,15 +10,18 @@ import { placeOracle, placeGateFixtures } from './place-oracle.ts';
 import { preparePlaceBaselines, meaningOnly, meaningTime, type PlaceBaselineContext } from './place-baselines.ts';
 import { validatePlaceShape } from './place-validation.ts';
 import type { Report, Source, Outcome, Measurement, Counts, Summary } from './place-report.types.ts';
+import type { PlaceCoverage } from '@tangleai/memory/place';
 
 export interface PlaceContext { loaded: LoadedPlaceFixture; source: Source; locomo: Report['locomo']; }
-export type PlaceAdapter = (question: PlaceInput) => Promise<Outcome | { unavailable: string }>;
+export interface PlaceRuntimeMeasurement { outcome: Outcome; coverage: PlaceCoverage; }
+export type PlaceAdapter = (question: PlaceInput) => Promise<Outcome | PlaceRuntimeMeasurement | { unavailable: string }>;
 export type PlaceAdapters = Partial<Record<string, PlaceAdapter>>;
 export async function placeContext(loaded?: LoadedPlaceFixture, root = process.cwd()): Promise<PlaceContext> {
   return { loaded: loaded ?? await loadPlaceFixture({ root }), source: await sourceManifest(root,
     ['package.json', 'package-lock.json', 'benchmark/place.ts', 'benchmark/schemas/place.schema.json',
       'benchmark/lib/place-validation.ts', 'benchmark/lib/place-fixture.ts', 'benchmark/lib/place-oracle.ts', 'benchmark/lib/place-projection.ts',
       'benchmark/lib/place-baselines.ts', 'benchmark/lib/place-conformance.ts', 'benchmark/lib/place-report.types.ts', 'benchmark/lib/place-render.ts',
+      'benchmark/lib/place-runtime.ts', 'benchmark/scripts/place-backend.ts', 'scripts/runtime-fixture.ts',
       'benchmark/lib/locomo.ts', 'benchmark/lib/locomo-corpus.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts', 'benchmark/lib/report-envelope.ts',
       `${PLACE_FIXTURE_PATH}/manifest.json`, ...PLACE_MEMBERS.map(p => `${PLACE_FIXTURE_PATH}/${p}`)],
     ['packages/core', 'packages/memory', 'packages/models', 'packages/jaren', 'packages/store']),
@@ -67,7 +70,7 @@ export async function runPlaceConformance(context: PlaceContext, adapters: Place
     const rows: Measurement[] = [];
     for (const { row, backend } of fixture.manifest.registration.rows) for (const question of fixture.questions) {
       const { expected, ...input } = question;
-      const base = { row, backend, kind: question.kind, questionId: question.id, expected,
+      const base = { row, backend, kind: question.kind, questionId: question.id, expected, runtimeCoverage: null,
         projectionId: 'sampleId' in question ? baselines.projections.get(question.sampleId)?.bundle.projection.versionId ?? null : null };
       const adapter = adapters[`${row}/${backend}`] ?? (row === 'oracle' ? async (q: PlaceInput) => placeOracle(loaded, q) :
         row === 'seeded-random' ? async () => ({ entryId: fixture.entries[Math.floor(random() * fixture.entries.length)].id }) :
@@ -75,9 +78,13 @@ export async function runPlaceConformance(context: PlaceContext, adapters: Place
       if (!adapter) { rows.push({ ...base, status: 'implementation-missing', actual: null, passed: null, detail: 'place runtime adapter is not implemented' }); continue; }
       if (corpus.status === 'unavailable' && 'sampleId' in question) { rows.push({ ...base, status: 'unavailable', actual: null, passed: null, detail: corpus.detail }); continue; }
       try {
-        const actual = await adapter(structuredClone(input));
-        if ('unavailable' in actual) rows.push({ ...base, status: 'unavailable', actual: null, passed: null, detail: actual.unavailable });
-        else rows.push({ ...base, status: 'measured', actual, passed: scorePlace(expected, actual), detail: null });
+        const measured = await adapter(structuredClone(input));
+        if ('unavailable' in measured) rows.push({ ...base, status: 'unavailable', actual: null, passed: null, detail: measured.unavailable });
+        else {
+          const actual = 'outcome' in measured ? measured.outcome : measured;
+          rows.push({ ...base, runtimeCoverage: 'outcome' in measured ? measured.coverage : null,
+            status: 'measured', actual, passed: scorePlace(expected, actual), detail: null });
+        }
       } catch (cause) { rows.push({ ...base, status: 'failed', actual: null, passed: false, detail: cause instanceof Error ? cause.message : String(cause) }); }
     }
     if (requests) throw new Error(`place network guard observed ${requests} forbidden requests`);
@@ -108,6 +115,11 @@ export async function validatePlaceReport(value: unknown, loaded: LoadedPlaceFix
   for (const row of r.rows) {
     const question = f.questions.find(q => q.id === row.questionId);
     if (!question || question.kind !== row.kind || !equal(row.expected, question.expected)) return false;
+    const coverage = row.runtimeCoverage;
+    if (coverage !== null && (row.row !== 'meaning-time-place' || row.status !== 'measured' ||
+      coverage.comparable > coverage.occurrences || coverage.semanticCandidates > coverage.comparable ||
+      coverage.unplaceable > coverage.positions || coverage.complete && (coverage.poolTruncated || coverage.comparable !== coverage.occurrences))) return false;
+    if (row.row === 'meaning-time-place' && row.status === 'measured' && coverage === null) return false;
     if ('sampleId' in question && loaded.corpus.status === 'available') {
       if (row.projectionId === null || projections.has(question.sampleId) && projections.get(question.sampleId) !== row.projectionId) return false;
       projections.set(question.sampleId, row.projectionId);

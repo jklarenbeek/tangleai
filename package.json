@@ -179,7 +179,8 @@
     "trading:artifacts": "node scripts/trading-artifacts.ts",
     "benchmark:place": "node benchmark/place.ts",
     "emit:place-report": "jaren-emit --schema benchmark/schemas/place.schema.json --out benchmark/lib --bundle place-report.types.ts",
-    "emit:place": "node scripts/place-schema.ts"
+    "emit:place": "node scripts/place-schema.ts",
+    "place:smoke": "node examples/place.ts"
   },
   "devDependencies": {
     "@changesets/apply-release-plan": "8.1.0",

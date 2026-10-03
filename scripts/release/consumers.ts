@@ -196,7 +196,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       Object.assign(browser, { window: browser, self: browser });
       vm.runInNewContext(readFileSync(resolve(directory, 'browser.js'), 'utf8'), browser, { timeout: 30_000 });
       const gmplBrowser = await browser.tangleConsumer.gmpl;
-      assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.place)), { entries: 71, grounded: 1, cells: 9, claim: true, refusal: 'TPLC1007', cause: 'AI0230' });
+      assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.place)), { entries: 71, grounded: 1, cells: 9, claim: true,
+        refusal: 'TPLC1007', cause: 'AI0230', movementMetres: 13393632, citedSources: 2, nearby: ['shibuya-q595153'] });
       assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.trading)), { writes: 9, replayWrites: 0, quantity: 10, refused: 1, missing: 1 });
       const groundingBrowser = await browser.tangleConsumer.grounding;
       const graphBrowser = await browser.tangleConsumer.lightrag;

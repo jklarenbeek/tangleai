@@ -779,7 +779,7 @@
       },
       {
         "path": "benchmark/lib/place-conformance.ts",
-        "sha256": "d8e220c5e3510f5a5e6005b7ccdf24ed206f009d0aa25c2c1727edcaa99a5999"
+        "sha256": "87a3748bda0c1a8ec7647d8841cec7afbfc12bf17c4049e3f2d0e0fdad426e5b"
       },
       {
         "path": "benchmark/lib/place-fixture.ts",
@@ -795,11 +795,15 @@
       },
       {
         "path": "benchmark/lib/place-render.ts",
-        "sha256": "c78043a8a3087dd032e4427ff22357e18d27679b8862cb32f675a8ac7825d0ec"
+        "sha256": "f91777f612465f02f2b5c269dc43ce67930c5f7a66e4040ca0c14943977ac41c"
       },
       {
         "path": "benchmark/lib/place-report.types.ts",
-        "sha256": "37a89cd26011251a69998a093524f4f1bfdbb48fa6406d2cf3af7f691a87fb0f"
+        "sha256": "d1b4c7d28d689d631cab0fd8a2287edd22282ebbd24cb5130a22a9b8f0ee3a89"
+      },
+      {
+        "path": "benchmark/lib/place-runtime.ts",
+        "sha256": "142abeb7207a489ebf815a2c013a2958832df3dd3a8cad0866e435eca3fe428d"
       },
       {
         "path": "benchmark/lib/place-validation.ts",
@@ -1135,7 +1139,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "0ded8d682a2eb2cf89eca1825ecba90765d92fbbe41215748b9f39bfce80456d"
+        "sha256": "7fbbf741a1d0b171a2fef6e9aaa46f483ee0812b7fd5e76cc3d14ffc15d8d002"
       },
       {
         "path": "packages/agents/package.json",
@@ -2598,6 +2602,10 @@
         "sha256": "9f5d9fddd297b84d9e5fd1fc0c683f23f5af08cd4b897b04949ed41aa9b4fcf1"
       },
       {
+        "path": "packages/memory/src/place/answer.ts",
+        "sha256": "30ca667575aee0049a8ab6a45955cb0ff6e04fbd986a79b958628cd9223d29df"
+      },
+      {
         "path": "packages/memory/src/place/claims.ts",
         "sha256": "4ab4dd8f0189b0a751328b3598c249437b6d27f0244a6aa9963187103d6501cb"
       },
@@ -2619,11 +2627,27 @@
       },
       {
         "path": "packages/memory/src/place/index.ts",
-        "sha256": "e3f2d3b655285c6db4f28dc654bcb9be8c996e16ec5c454e1d5d6418ee1dd7ea"
+        "sha256": "63731ef68744c517d023be5aa6c6f4a0c7ef641e3f0a1aeada741bde0ae701ab"
+      },
+      {
+        "path": "packages/memory/src/place/join.ts",
+        "sha256": "d873ef19268a13f2b9a8ef774214e7ceca9aead4a89b659ae397740b28495069"
       },
       {
         "path": "packages/memory/src/place/match.ts",
         "sha256": "1a9c12ab4df797d1e15cb91ea1fc3d4b495d0b54e222f47ca3c21d25a1e46847"
+      },
+      {
+        "path": "packages/memory/src/place/nearby.ts",
+        "sha256": "4f922908f048641adcc75420eb52c090354ab689b1b4edb024e819e6615bc105"
+      },
+      {
+        "path": "packages/memory/src/place/retrieval.ts",
+        "sha256": "29327951859163a2dbd788ea11332d5543c861faf7f8059cf3710a428467a9c7"
+      },
+      {
+        "path": "packages/memory/src/place/series.ts",
+        "sha256": "91043c3460f93e04d68cadf7fe67706000402970aca78d477ed1eb518b4ff185"
       },
       {
         "path": "packages/memory/src/policy.gen.ts",
@@ -2695,7 +2719,7 @@
       },
       {
         "path": "packages/memory/src/temporal/retrieval.ts",
-        "sha256": "4a9eb2a4f2aefb24527bb4686bda2e2d69f5e08fee731c0f8679a154c51d7670"
+        "sha256": "9d2b1a3331197177b24b8ed90ef3f81f95a850d528aeee937972a9608262761b"
       },
       {
         "path": "packages/memory/src/temporal/selection.ts",
@@ -2704,6 +2728,10 @@
       {
         "path": "packages/memory/src/temporal/session-index.ts",
         "sha256": "633b0256f181ba490af92e5a7906a965495621ca21c3129ea2400815db1b93a2"
+      },
+      {
+        "path": "packages/memory/src/temporal/source-pool.ts",
+        "sha256": "8dc8b1cdbdfc32d82983315ecd031ffe6895ed681cb09722576782f5a43df786"
       },
       {
         "path": "packages/memory/src/temporal/store.ts",
@@ -3366,7 +3394,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "2d5a06e87bd490c393fbe4d8ab4db56c86196384769e1d35309ba48e16f4027a"
+    "sha256": "79a7144d2db726fc1fda44bb5765fad6645d0085c416d15941a133cea123d740"
   },
   "fixtureSource": {
     "files": [
@@ -68556,7 +68584,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "2d5a06e87bd490c393fbe4d8ab4db56c86196384769e1d35309ba48e16f4027a",
+      "sourceSha256": "79a7144d2db726fc1fda44bb5765fad6645d0085c416d15941a133cea123d740",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68640,7 +68668,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "6bba422da50e922e2486838f6df152db7b43b8dae3292904d3d3815d9c84325b"
+      "planId": "1809557480ca9284507908afe2ab094891324859deb58828fcd84f960ea16554"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -68887,5 +68915,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "2db1fbca38c663a2c0c73814dcfeb6272ac94de4ff466db10d25d413555b96dd"
+  "reportId": "6788fe22e9c8f48037f4568382b19adf2028214a9392b8205e767717ca64a107"
 }

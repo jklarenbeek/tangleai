@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "22872322080dd7955acc9afbd39244f224307a80",
+    "head": "364b3369e9ac5f25ef6d98d6d282efc9fdb22836",
     "clean": false,
     "files": [
       {
@@ -111,7 +111,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "0ded8d682a2eb2cf89eca1825ecba90765d92fbbe41215748b9f39bfce80456d"
+        "sha256": "7fbbf741a1d0b171a2fef6e9aaa46f483ee0812b7fd5e76cc3d14ffc15d8d002"
       },
       {
         "path": "packages/agents/package.json",
@@ -1574,6 +1574,10 @@
         "sha256": "9f5d9fddd297b84d9e5fd1fc0c683f23f5af08cd4b897b04949ed41aa9b4fcf1"
       },
       {
+        "path": "packages/memory/src/place/answer.ts",
+        "sha256": "30ca667575aee0049a8ab6a45955cb0ff6e04fbd986a79b958628cd9223d29df"
+      },
+      {
         "path": "packages/memory/src/place/claims.ts",
         "sha256": "4ab4dd8f0189b0a751328b3598c249437b6d27f0244a6aa9963187103d6501cb"
       },
@@ -1595,11 +1599,27 @@
       },
       {
         "path": "packages/memory/src/place/index.ts",
-        "sha256": "e3f2d3b655285c6db4f28dc654bcb9be8c996e16ec5c454e1d5d6418ee1dd7ea"
+        "sha256": "63731ef68744c517d023be5aa6c6f4a0c7ef641e3f0a1aeada741bde0ae701ab"
+      },
+      {
+        "path": "packages/memory/src/place/join.ts",
+        "sha256": "d873ef19268a13f2b9a8ef774214e7ceca9aead4a89b659ae397740b28495069"
       },
       {
         "path": "packages/memory/src/place/match.ts",
         "sha256": "1a9c12ab4df797d1e15cb91ea1fc3d4b495d0b54e222f47ca3c21d25a1e46847"
+      },
+      {
+        "path": "packages/memory/src/place/nearby.ts",
+        "sha256": "4f922908f048641adcc75420eb52c090354ab689b1b4edb024e819e6615bc105"
+      },
+      {
+        "path": "packages/memory/src/place/retrieval.ts",
+        "sha256": "29327951859163a2dbd788ea11332d5543c861faf7f8059cf3710a428467a9c7"
+      },
+      {
+        "path": "packages/memory/src/place/series.ts",
+        "sha256": "91043c3460f93e04d68cadf7fe67706000402970aca78d477ed1eb518b4ff185"
       },
       {
         "path": "packages/memory/src/policy.gen.ts",
@@ -1671,7 +1691,7 @@
       },
       {
         "path": "packages/memory/src/temporal/retrieval.ts",
-        "sha256": "4a9eb2a4f2aefb24527bb4686bda2e2d69f5e08fee731c0f8679a154c51d7670"
+        "sha256": "9d2b1a3331197177b24b8ed90ef3f81f95a850d528aeee937972a9608262761b"
       },
       {
         "path": "packages/memory/src/temporal/selection.ts",
@@ -1680,6 +1700,10 @@
       {
         "path": "packages/memory/src/temporal/session-index.ts",
         "sha256": "633b0256f181ba490af92e5a7906a965495621ca21c3129ea2400815db1b93a2"
+      },
+      {
+        "path": "packages/memory/src/temporal/source-pool.ts",
+        "sha256": "8dc8b1cdbdfc32d82983315ecd031ffe6895ed681cb09722576782f5a43df786"
       },
       {
         "path": "packages/memory/src/temporal/store.ts",
@@ -2346,7 +2370,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "9d6e20ab8ba8df895cc62127a90a7d900c212282c8fca30dda0a545f64ad29b3"
+    "sha256": "bf5058c2d5ce3176e13acc5dbebeb88dc741d1e95e4fc1171363c42b0a8f5c39"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85532,5 +85556,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "a342a3c237aeb2598f75ef29ef11735f62112bba2b0148cf50589c251ca70982"
+  "reportId": "92fa88398612b5d846b61a672e2adee61f668df3a2859a5bf90e5e351b36bfd8"
 }

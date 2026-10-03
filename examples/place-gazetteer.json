@@ -1,0 +1,75 @@
+[
+  {
+    "id": "shibuya-q595153",
+    "names": [
+      "Shibuya"
+    ],
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        139.7039611111111,
+        35.65923333333333
+      ]
+    },
+    "sourceLatLon": {
+      "lat": 35.65923333333333,
+      "lon": 139.7039611111111
+    },
+    "source": {
+      "kind": "wikidata",
+      "id": "Q595153",
+      "url": "https://www.wikidata.org/wiki/Q595153",
+      "retrieved": "2026-10-02"
+    },
+    "confidence": "region"
+  },
+  {
+    "id": "shibuya-scramble-crossing-q21083961",
+    "names": [
+      "Shibuya",
+      "Shibuya Crossing"
+    ],
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        139.70054444444,
+        35.659502777778
+      ]
+    },
+    "sourceLatLon": {
+      "lat": 35.659502777778,
+      "lon": 139.70054444444
+    },
+    "source": {
+      "kind": "wikidata",
+      "id": "Q21083961",
+      "url": "https://www.wikidata.org/wiki/Q21083961",
+      "retrieved": "2026-10-02"
+    },
+    "confidence": "exact"
+  },
+  {
+    "id": "tokyo-q1490",
+    "names": [
+      "Tokyo"
+    ],
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        139.69166666666666,
+        35.68944444444445
+      ]
+    },
+    "sourceLatLon": {
+      "lat": 35.68944444444445,
+      "lon": 139.69166666666666
+    },
+    "source": {
+      "kind": "wikidata",
+      "id": "Q1490",
+      "url": "https://www.wikidata.org/wiki/Q1490",
+      "retrieved": "2026-10-02"
+    },
+    "confidence": "settlement"
+  }
+]

@@ -8,11 +8,13 @@ import { loadPlaceFixture } from '../../benchmark/lib/place-fixture.ts';
 import { placeGateFixtures } from '../../benchmark/lib/place-oracle.ts';
 import { runPlaceConformance, validatePlaceReport, renderPlaceReport, scorePlace, placeContext } from '../../benchmark/lib/place-conformance.ts';
 import { preparePlaceBaselines } from '../../benchmark/lib/place-baselines.ts';
+import { placeRuntimeAdapters } from '../../benchmark/lib/place-runtime.ts';
 
 const loaded = await loadPlaceFixture();
 const context = await placeContext(loaded);
 const prepared = await preparePlaceBaselines(loaded);
-const report = await runPlaceConformance(context, {}, prepared);
+const adapters = await placeRuntimeAdapters(loaded, prepared);
+const report = await runPlaceConformance(context, adapters, prepared);
 
 test('the independent oracle precedes scores, wrong controls fail and every spatial gate is exercised', () => {
   assert.ok(placeGateFixtures(loaded).every(g => g.passed));
@@ -21,7 +23,7 @@ test('the independent oracle precedes scores, wrong controls fail and every spat
   const oracle = report.rows.filter(r => r.row === 'oracle');
   if (loaded.corpus.status === 'available') assert.ok(oracle.every(r => r.passed === true));
   else assert.ok(oracle.some(r => r.status === 'unavailable'));
-  assert.ok(report.rows.filter(r => r.row === 'meaning-time-place').every(r => r.status === 'implementation-missing' && r.passed === null));
+  assert.ok(report.rows.filter(r => r.row === 'meaning-time-place').every(r => r.status === 'measured' || r.status === 'unavailable'));
 });
 
 test('place reports reconcile registered denominators and reject rehashed false successes', async () => {
@@ -35,6 +37,7 @@ test('place reports reconcile registered denominators and reject rehashed false 
     (r: typeof report) => { r.refusals.byCode.forged = 1; },
     (r: typeof report) => { r.rows[0].projectionId = '0'.repeat(64); },
     (r: typeof report) => { r.scale.targetP95Ms++; },
+    (r: typeof report) => { r.rows.find(row => row.runtimeCoverage !== null)!.runtimeCoverage!.unplaceable = Number.MAX_SAFE_INTEGER; },
   ]) {
     const copy = structuredClone(report); mutate(copy); const { sha256: _, ...body } = copy; copy.sha256 = await canonicalSha256(body);
     assert.equal(await validatePlaceReport(copy, loaded), false);
@@ -74,7 +77,7 @@ test('failed and unavailable adapters remain counted and network attempts cannot
 test('keyless place execution is byte-identical and never touches the network', async () => {
   let calls = 0; const before = globalThis.fetch;
   globalThis.fetch = async () => { calls++; throw new Error('network forbidden'); };
-  try { assert.deepEqual(await runPlaceConformance(context, {}, prepared), report); }
+  try { assert.deepEqual(await runPlaceConformance(context, adapters, prepared), report); }
   finally { globalThis.fetch = before; }
   assert.equal(calls, 0);
 });
@@ -84,7 +87,7 @@ test('place committed report and document reproduce from current measured owner 
   const committed = JSON.parse(await readFile('benchmark/results/place.json', 'utf8')) as typeof report;
   assert.equal(await validatePlaceReport(committed, loaded), true);
   assert.deepEqual(committed.source.files, context.source.files);
-  const reproduced = await runPlaceConformance({ ...context, source: committed.source }, {}, prepared);
+  const reproduced = await runPlaceConformance({ ...context, source: committed.source }, adapters, prepared);
   assert.equal(JSON.stringify(reproduced, null, 2) + '\n', await readFile('benchmark/results/place.json', 'utf8'));
   assert.equal(renderPlaceReport(reproduced), await readFile('docs/PLACE_BENCHMARK.md', 'utf8'));
 });
