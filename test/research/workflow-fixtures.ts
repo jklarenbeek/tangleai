@@ -17,26 +17,27 @@ export async function workflowFixture(decisions: ResearchExampleDecisions = [['P
 export type WorkflowFixture = Awaited<ReturnType<typeof workflowFixture>>;
 export async function workflowHarness(f: WorkflowFixture, options: {
   path?: string; probe?: (point: string) => void; decisions?: ResearchExampleDecisions;
-  tools?: (tools: ResearchTaskTools) => ResearchTaskTools; observer?: MasRuntimeObserver;
+  tools?: (tools: ResearchTaskTools, stores: { researchStore: ReturnType<typeof createResearchStore>; masStore: MasStore }) => ResearchTaskTools | Promise<ResearchTaskTools>; observer?: MasRuntimeObserver;
+  clientFor?: Parameters<typeof createResearchHostBindings>[0]['clientFor'];
 } = {}) {
   let jobClock = 1000000, executions = 0;
   const operations: ResearchStageOperation[] = [], now = () => '2026-01-01T00:00:00.000Z';
   const open = () => openTangleDb({ ...(options.path ? { path: options.path } : {}), jobs: { now: () => jobClock, random: () => 0.5 } });
   let db = await open();
-  const bind = () => {
+  const bind = async () => {
     const masStore = createMasStore(db, { now }), researchStore = createResearchStore(db, { now });
     let tools = researchExampleTools({ ...f, decisions: options.decisions ?? f.decisions, masStore,
       onExecute: op => { executions++; operations.push(op); }, onOperation: (step, op) => options.probe?.('research:' + op.path + ':' + step) });
-    tools = options.tools?.(tools) ?? tools;
+    tools = await options.tools?.(tools, { researchStore, masStore }) ?? tools;
     const handlers = createResearchTaskHandlers(researchStore, tools);
-    const bindings = createResearchHostBindings({ masStore, researchStore, taskHandlers: handlers, prepared: f.prepared, now, clock: () => 0,
+    const bindings = createResearchHostBindings({ masStore, researchStore, taskHandlers: handlers, prepared: f.prepared, now, clock: () => 0, ...(options.clientFor ? { clientFor: options.clientFor } : {}),
       observer: { ...options.observer, onNodeSettle: (path, status) => { options.observer?.onNodeSettle?.(path, status); options.probe?.('native:' + path + ':' + status); } } });
     const compiled = compileMasRuntime(f.prepared.validated, f.prepared.plan, f.prepared.snapshot, bindings);
     assert.ok(compiled.valid, JSON.stringify(compiled));
     return { masStore, researchStore, handlers, bindings, runtime: compiled.value,
       driver: createMasSegmentDriver(db, masStore, { owner: 'research-test', leaseMs: 1000 }) };
   };
-  let host = bind();
+  let host = await bind();
   const harness = {
     get db() { return db; }, get host() { return host; }, get executions() { return executions; }, operations,
     async start(limits = researchExampleLimits) {
@@ -47,9 +48,9 @@ export async function workflowHarness(f: WorkflowFixture, options: {
         profile: 'research-scripted', input: { frame: f.frame }, limits });
       assert.ok(created.ok, JSON.stringify(created)); await host.driver.enqueue(created.value);
     },
-    async segment() {
+    async segment(signal = new AbortController().signal) {
       await ensurePendingMasSegments(db, host.masStore);
-      const driven = await host.driver.drive(f.prepared.plan.executableRevision, host.runtime.executeSegment, new AbortController().signal);
+      const driven = await host.driver.drive(f.prepared.plan.executableRevision, host.runtime.executeSegment, signal);
       assert.ok(driven, 'Expected a native queued research segment');
       return (await host.masStore.readTrace(f.project.id))!;
     },
@@ -69,7 +70,7 @@ export async function workflowHarness(f: WorkflowFixture, options: {
     },
     async reopen() {
       assert.ok(options.path, 'Reopen requires an on-disk SQLite store');
-      await db.close(); jobClock += 60000; db = await open(); host = bind();
+      await db.close(); jobClock += 60000; db = await open(); host = await bind();
       await ensurePendingMasSegments(db, host.masStore);
     },
     async finish(responses: ResearchGateResponse['decision'][] = []) {

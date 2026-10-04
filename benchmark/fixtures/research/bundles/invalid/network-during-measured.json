@@ -1,0 +1,14 @@
+{
+  "id": "network-during-measured",
+  "expected": {
+    "code": "TRSH1010",
+    "path": "/network"
+  },
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/network/measured",
+      "value": "on"
+    }
+  ]
+}

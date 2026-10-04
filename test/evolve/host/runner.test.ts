@@ -41,6 +41,19 @@ function runnerFor(root: string, overrides: Partial<ProcessRunnerOptions> = {}) 
 }
 
 describe('the bounded process runner', () => {
+  it('preserves native bounded captures on timeout through a per-request settlement observer', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'tangle-settlement-'));
+    try {
+      const { runner } = runnerFor(dir, { limits: { legMs: 300, stdoutBytes: 64, stderrBytes: 64 } });
+      const observed: Array<Parameters<NonNullable<import('@tangleai/evolve/host').RunRequest['onSettlement']>>[0]> = [];
+      const result = await runner.run({ name: 'node', cwd: dir, args: ['-e', 'process.stdout.write("retained-prefix"); setInterval(() => {}, 1000)'],
+        onSettlement: value => { observed.push(value); assert.throws(() => { value.stdout = 'changed'; }, TypeError); } });
+      assert.equal(result.ok, false); if (!result.ok) assert.equal(result.issues[0].code, 'TEVO1005');
+      assert.equal(observed.length, 1); assert.equal(observed[0].reason, 'timeout');
+      assert.equal(observed[0].settlement, 'closed'); assert.equal(observed[0].stdout, 'retained-prefix');
+      assert.equal(runner.spawns, 1);
+    } finally { await rm(dir, { recursive: true, force: true }); }
+  });
   it('refuses what the allow-list does not name, before spawning', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'tangle-runner-'));
     try {

@@ -80,14 +80,14 @@ describe('research instrument', () => {
   });
   it('every registered mechanism has an explicit measurement scope and provider identity state', () => {
     assert.deepEqual(report.rows.map(row => row.id), RESEARCH_ROW_IDS);
-    for (const row of report.rows.filter(row => !['artifact-oracle', 'no-model-runner', 'fixed-single-agent', 'fixed-plus-debate'].includes(row.id))) {
+    for (const row of report.rows.filter(row => !['artifact-oracle', 'no-model-runner', 'fixed-single-agent', 'fixed-plus-debate', 'fixed-plus-branching'].includes(row.id))) {
       assert.equal(row.state, 'implementation-missing'); assert.equal(Object.hasOwn(row, 'claimSupport'), false);
       assert.ok('reason' in row && row.reason.length > 0);
     }
     assert.equal(report.identity.identities.length, 2);
     assert.equal(report.identity.rows.find(row => row.rowId === 'no-model-runner')?.identityStatus, 'run');
-    assert.ok(report.identity.rows.filter(row => ['fixed-single-agent', 'fixed-plus-debate'].includes(row.rowId)).every(row => row.identityStatus === 'run'));
-    assert.ok(report.identity.rows.filter(row => !['no-model-runner', 'fixed-single-agent', 'fixed-plus-debate'].includes(row.rowId)).every(row => row.identityStatus === 'not-run'));
+    assert.ok(report.identity.rows.filter(row => ['fixed-single-agent', 'fixed-plus-debate', 'fixed-plus-branching'].includes(row.rowId)).every(row => row.identityStatus === 'run'));
+    assert.ok(report.identity.rows.filter(row => !['no-model-runner', 'fixed-single-agent', 'fixed-plus-debate', 'fixed-plus-branching'].includes(row.rowId)).every(row => row.identityStatus === 'not-run'));
   });
   it('paired reasoning rows publish their equal conformance and unequal native cost without claiming experiment completion', () => {
     const rows = report.rows.filter(row => row.state === 'measured' && row.scope === 'pre-execution');
@@ -122,6 +122,45 @@ describe('research instrument', () => {
         assert.equal(prompt.gate.artifacts.some(a => raw.has(a.artifactId)), prompt.gate.kind === 'quality');
       }
       assert.equal(new Set(workflow.interactions.map(i => (i.prompt as { gate: { manifestHash: string } }).gate.manifestHash)).size, workflow.interactions.length);
+    }
+  });
+  it('matched execution retains three preregistered branches, every seed and the extra cost', () => {
+    const branch = report.rows.find(row => row.state === 'measured' && row.scope === 'execution');
+    assert.ok(branch && branch.state === 'measured' && branch.scope === 'execution');
+    const control = report.execution.control!;
+    assert.deepEqual(control.topics.map(row => row.runs.length), [10, 2, 2]);
+    assert.deepEqual(branch.topics.map(row => row.runs.length), [30, 2, 2]);
+    assert.equal(control.rerunRate.value, 1); assert.equal(branch.rerunRate.value, 1);
+    assert.equal(control.registryAccuracy.value, 1); assert.equal(branch.registryAccuracy.value, 1);
+    assert.deepEqual(control.cost, { calls: 18, tokens: 180, ms: 0, physical: 32 });
+    assert.deepEqual(branch.cost, { calls: 18, tokens: 180, ms: 0, physical: 52 });
+    assert.equal(control.rerunCost.physical, 14); assert.equal(branch.rerunCost.physical, 34);
+    for (const [index, topic] of branch.topics.entries()) {
+      assert.equal(topic.contract.contractHash, control.topics[index].contract.contractHash);
+      assert.equal(topic.plan.planHash, control.topics[index].plan.planHash);
+      assert.equal(topic.usage.physical, control.topics[index].usage.physical);
+      assert.equal(topic.nativeStatus, 'completed'); assert.equal(topic.state.status, 'STOPPED');
+      assert.equal(topic.runs.every(run => run.isolation?.verified === false), true);
+      assert.ok(topic.traceBytes <= report.registration.caps.traceBytes);
+      assert.equal(new Set(topic.branches.map(row => row.hypothesisHash)).size, 1);
+    }
+    assert.deepEqual(branch.topics[0].branches.map(row => row.attemptOrdinal), [1, 2, 3]);
+    assert.equal(context.loaded.topics[0].contract.attemptCap, 1, 'The original registration is immutable');
+    assert.equal(report.bundles.length, 26); assert.ok(report.bundles.every(row => row.refusedAsRegistered));
+  });
+  it('failure probes retain partial branches, failed runs, refused metrics and all incurred cost', () => {
+    const [thrown, cancelled] = report.execution.failureProbes.map(row => row.topic);
+    assert.equal(thrown.runs.length, 6); assert.equal(thrown.observations.length, 5); assert.equal(thrown.partialBranches, 1);
+    assert.equal(thrown.runs.find(row => row.status === 'failed')!.exitStatus, 1);
+    assert.equal(thrown.cost.physical, 12); assert.equal(thrown.rerunCost.physical, 5);
+    assert.equal(cancelled.runs.length, 3); assert.equal(cancelled.observations.length, 2); assert.equal(cancelled.partialBranches, 1);
+    assert.equal(cancelled.runs.filter(row => row.stopReason === 'cancelled').length, 1);
+    assert.equal(cancelled.cost.physical, 9); assert.equal(cancelled.rerunCost.physical, 2);
+    for (const row of [thrown, cancelled]) {
+      assert.equal(row.nativeStatus, 'failed'); assert.equal(row.state.status, 'STOPPED'); assert.equal(row.failures.program, 1);
+      assert.equal(row.expectedRuns, 10); assert.equal(row.cost.calls, 6); assert.equal(row.cost.tokens, 60);
+      const failed = new Set(row.runs.filter(run => run.status === 'failed').map(run => run.id));
+      assert.equal(row.observations.some(observation => failed.has(observation.experimentRunId)), false);
     }
   });
   it('selection retains not-run rows and cannot silently enable an unknown or duplicate id', async () => {

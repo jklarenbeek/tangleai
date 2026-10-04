@@ -756,6 +756,39 @@
               "type": "null"
             }
           ]
+        },
+        "exitStatus": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stdoutArtifactId": {
+          "type": "string",
+          "pattern": "^art-[0-9a-f]{64}$"
+        },
+        "stderrArtifactId": {
+          "type": "string",
+          "pattern": "^art-[0-9a-f]{64}$"
+        },
+        "outputInventory": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchOutputFile"
+          }
+        },
+        "resources": {
+          "$ref": "#/$defs/ResearchResourceUsage"
+        },
+        "stopReason": {
+          "$ref": "#/$defs/ResearchStopReason"
+        },
+        "isolation": {
+          "$ref": "#/$defs/ResearchExecutionIsolation"
         }
       },
       "required": [
@@ -2460,6 +2493,9 @@
         },
         "workspaceHash": {
           "$ref": "#/$defs/Sha256"
+        },
+        "outputDirectory": {
+          "const": "output"
         }
       },
       "required": [
@@ -2531,41 +2567,7 @@
           "$ref": "#/$defs/Sha256"
         },
         "resources": {
-          "type": "object",
-          "properties": {
-            "cpu": {
-              "type": "number",
-              "exclusiveMinimum": 0
-            },
-            "memoryBytes": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 9007199254740991
-            },
-            "pids": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 9007199254740991
-            },
-            "wallMs": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 9007199254740991
-            },
-            "outputBytes": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 9007199254740991
-            }
-          },
-          "required": [
-            "cpu",
-            "memoryBytes",
-            "pids",
-            "wallMs",
-            "outputBytes"
-          ],
-          "additionalProperties": false
+          "$ref": "#/$defs/ExecutionManifestResources"
         },
         "network": {
           "type": "object",
@@ -2606,6 +2608,27 @@
           "uniqueItems": true
         },
         "executionManifestHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "datasetId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "entrypoint": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "executorContractHash": {
           "$ref": "#/$defs/Sha256"
         }
       },
@@ -4252,6 +4275,419 @@
         "synthesis",
         "hypotheses",
         "constraints"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchStopReason": {
+      "enum": [
+        "completed",
+        "timeout",
+        "memory",
+        "pids",
+        "output-bytes",
+        "cancelled",
+        "isolation-refused"
+      ]
+    },
+    "ResearchOutputFile": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifactId": {
+          "type": "string",
+          "pattern": "^art-[0-9a-f]{64}$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "path",
+        "artifactId",
+        "sha256",
+        "bytes"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchResourceUsage": {
+      "type": "object",
+      "properties": {
+        "wallMs": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cpuMs": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "peakMemoryBytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "wallMs",
+        "cpuMs",
+        "peakMemoryBytes"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchExecutionIsolation": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "fixture",
+            "container"
+          ]
+        },
+        "imageDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "setupLogArtifactId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^art-[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "completeOutput": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "imageDigest",
+        "verified",
+        "setupLogArtifactId",
+        "completeOutput"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchCodeWrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "projectId",
+        "attemptId",
+        "path",
+        "artifactId",
+        "text",
+        "bytes",
+        "staticIssues"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "attemptId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "artifactId": {
+          "type": "string",
+          "pattern": "^art-[0-9a-f]{64}$"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        },
+        "staticIssues": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/ResearchIssue"
+          }
+        }
+      }
+    },
+    "ResearchExecutionWireArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "type": "string",
+          "pattern": "^art-[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "array",
+          "maxItems": 4194304,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          }
+        }
+      },
+      "required": [
+        "artifactId",
+        "bytes"
+      ]
+    },
+    "ResearchExecutionRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "manifest": {
+          "$ref": "#/$defs/ExecutionManifest"
+        },
+        "workspace": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "manifest": {
+              "$ref": "#/$defs/WorkspaceManifest"
+            },
+            "artifacts": {
+              "type": "array",
+              "maxItems": 130,
+              "items": {
+                "$ref": "#/$defs/ResearchExecutionWireArtifact"
+              }
+            }
+          },
+          "required": [
+            "manifest",
+            "artifacts"
+          ]
+        },
+        "contract": {
+          "$ref": "#/$defs/ResearchContract"
+        },
+        "plan": {
+          "$ref": "#/$defs/ExperimentPlan"
+        }
+      },
+      "required": [
+        "version",
+        "manifest",
+        "workspace",
+        "contract",
+        "plan"
+      ]
+    },
+    "ResearchExecutionResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "executionManifestHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "settlement": {
+          "enum": [
+            "not-started",
+            "settled",
+            "unresolved"
+          ]
+        },
+        "outcome": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "valid": {
+                  "const": true
+                },
+                "value": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "run": {
+                      "$ref": "#/$defs/ExperimentRun"
+                    },
+                    "artifacts": {
+                      "type": "array",
+                      "maxItems": 130,
+                      "items": {
+                        "$ref": "#/$defs/ResearchExecutionWireArtifact"
+                      }
+                    }
+                  },
+                  "required": [
+                    "run",
+                    "artifacts"
+                  ]
+                }
+              },
+              "required": [
+                "valid",
+                "value"
+              ]
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "valid": {
+                  "const": false
+                },
+                "issues": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 16,
+                  "items": {
+                    "$ref": "#/$defs/ResearchIssue"
+                  }
+                }
+              },
+              "required": [
+                "valid",
+                "issues"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "executionManifestHash",
+        "settlement",
+        "outcome"
+      ]
+    },
+    "ResearchExecutorCapability": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "kind": {
+          "enum": [
+            "fixture",
+            "container"
+          ]
+        },
+        "engine": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "imageDigests": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "available",
+        "kind",
+        "engine",
+        "version",
+        "imageDigests",
+        "reason"
+      ]
+    },
+    "ExecutionManifestResources": {
+      "type": "object",
+      "properties": {
+        "cpu": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "memoryBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "pids": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "wallMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "outputBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "cpu",
+        "memoryBytes",
+        "pids",
+        "wallMs",
+        "outputBytes"
       ],
       "additionalProperties": false
     }

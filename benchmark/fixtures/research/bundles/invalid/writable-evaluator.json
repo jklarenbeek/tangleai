@@ -1,0 +1,14 @@
+{
+  "id": "writable-evaluator",
+  "expected": {
+    "code": "TRSH1010",
+    "path": "/workspace/entries/1/mode"
+  },
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/workspace/manifest/entries/1/mode",
+      "value": "writable"
+    }
+  ]
+}

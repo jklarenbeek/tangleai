@@ -28,6 +28,7 @@ export interface ResearchRecordMap {
   ExperimentBranch: R.ExperimentBranch;
   WorkspaceManifest: R.WorkspaceManifest;
   ExecutionManifest: R.ExecutionManifest;
+  ResearchCodeWrite: R.ResearchCodeWrite;
   ExperimentRun: R.ExperimentRun;
   MetricObservation: R.MetricObservation;
   ResearchDecision: R.ResearchDecision;
@@ -46,7 +47,7 @@ const kinds: Record<ResearchRecordKind, true> = {
   ResearchArtifact: true, ArtifactAdmission: true, LiteratureRecord: true, ScreeningDecision: true,
   QueryPlan: true, InclusionCriteria: true, DiscoveryCandidate: true, DiscoveryReceipt: true, SourceAcquisition: true,
   EvidenceCard: true, Synthesis: true, ResearchHypothesis: true, HypothesisSet: true, NoveltyReport: true, ExperimentPlan: true, ExperimentBranch: true,
-  WorkspaceManifest: true, ExecutionManifest: true, ExperimentRun: true, MetricObservation: true,
+  WorkspaceManifest: true, ExecutionManifest: true, ResearchCodeWrite: true, ExperimentRun: true, MetricObservation: true,
   ResearchDecision: true, ResearchClaim: true, Review: true, Intervention: true, ResearchLesson: true,
   ResearchManifest: true, DisclosureChecklist: true,
 };

@@ -1,19 +1,29 @@
 /** Measured scripted model paths stop at their actual preregistration gate. */
 import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
 import { resolveProfile, type ProfileRegistry, type HostManifest } from '@tangleai/config';
-import { compileMasRuntime, type MasHostBindings } from '@tangleai/mas';
+import { compileMasRuntime, type MasHostBindings, type MasStore } from '@tangleai/mas';
 import { openTangleDb, createMasStore, createResearchStore, createMasSegmentDriver, ensurePendingMasSegments } from '@tangleai/store';
 import { createResearchBinding, researchArtifacts, researchReasoningRevisionOf, createDiscoveryStageTools, createResearchReasoningTools,
   prepareResearchWorkflow, initialResearchFrame, planProjectCreate, researchValue, createResearchTaskHandlers, createResearchHostBindings,
-  createReplayTransport, createResearchDesign, validateResearchShape, type ResearchReasoningPolicy, type ResearchProject,
+  createReplayTransport, createResearchDesign, validateResearchShape, researchExecutionRevisionOf, type ResearchReasoningPolicy, type ResearchProject,
   type ResearchWorkflowFrame, type EvidenceCard, type Synthesis, type ResearchHypothesis, type ResearchContract,
-  type ExperimentPlan, type HypothesisSet, type NoveltyReport } from '@tangleai/research';
-import { researchExampleTools } from '../../examples/research.ts';
+  type ExperimentPlan, type HypothesisSet, type NoveltyReport, type ResearchExecutionPolicy, type ResearchTaskTools, type ResearchStore } from '@tangleai/research';
+import { researchExampleTools, type ResearchExampleDecisions } from '../../examples/research.ts';
 import { createResearchDiscoveryFixture, researchDiscoveryConfiguration } from './research-discovery.ts';
 import { requireResearchShape } from './research-validation.ts';
 import { researchScore } from './research-oracle.ts';
 import type { LoadedResearchFixture } from './research-fixture.ts';
-import type { ResearchReasoningScript, ResearchReasoningTopic, ResearchModelUsage, ResearchFixtureTopic } from './research.types.ts';
+import type { ResearchReasoningScript, ResearchReasoningTopic, ResearchModelUsage, ResearchFixtureTopic, ResearchExecutionTopic } from './research.types.ts';
+
+export interface ResearchReasoningExecution {
+  policy: ResearchExecutionPolicy;
+  script: ResearchReasoningScript;
+  decisions: ResearchExampleDecisions;
+  revision: string;
+  signal?: AbortSignal;
+  tools(base: ResearchTaskTools, store: ResearchStore): Promise<ResearchTaskTools>;
+  collect(store: ResearchStore, masStore: MasStore, reasoning: ResearchReasoningTopic): Promise<ResearchExecutionTopic>;
+}
 
 async function identityFor(caps: LoadedResearchFixture['manifest']['caps']) {
   const registry: ProfileRegistry = { version: 1, credentialSlots: [], candidates: [
@@ -28,8 +38,8 @@ async function identityFor(caps: LoadedResearchFixture['manifest']['caps']) {
   const resolved = await resolveProfile({ registry, host, request: { kind: 'profile', profile: 'scripted-v1', overrides: null } });
   if (!resolved.ok) throw Error(JSON.stringify(resolved.issues)); return resolved.identity;
 }
-export async function runResearchReasoningFixture(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic, mode: ResearchReasoningPolicy['mode']) {
-  const script = requireResearchShape<ResearchReasoningScript>('ResearchReasoningScript', JSON.parse(new TextDecoder().decode(loaded.files.get('scripts/' + topic.id + '.json')!)));
+export async function runResearchReasoningFixture(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic, mode: ResearchReasoningPolicy['mode'], execution?: ResearchReasoningExecution) {
+  const script = requireResearchShape<ResearchReasoningScript>('ResearchReasoningScript', execution?.script ?? JSON.parse(new TextDecoder().decode(loaded.files.get('scripts/' + topic.id + '.json')!)));
   if (script.topicId !== topic.id) throw Error('Research reasoning script belongs to another topic.');
   const caps = loaded.manifest.caps, limits = { ...caps, toolRounds: 4, fanOut: 8, iterations: 8 }, identity = await identityFor(caps);
   const policy: ResearchReasoningPolicy = { mode, maxCards: 8, novelty: { criteriaId: 'identifier-overlap', concurrency: 1, maxRequests: 8, maxBytes: 1048576,
@@ -37,8 +47,10 @@ export async function runResearchReasoningFixture(loaded: LoadedResearchFixture,
   const discoveryConfiguration = await researchDiscoveryConfiguration(topic), binding = await createResearchBinding(topic.contract, {
     identity, promptRevision: researchArtifacts.revision, evaluator: topic.plan.evaluator,
     reservation: { calls: 32, tokens: 32768, ms: 30000, physical: 32 }, toolVersions: [
-      { name: 'scholarly-discovery', version: discoveryConfiguration.revision }, { name: 'research-reasoning', version: await researchReasoningRevisionOf(policy) }] });
-  const prepared = await prepareResearchWorkflow(topic.contract, { binding, profile: 'scripted-v1', limits, reasoning: policy });
+      { name: 'scholarly-discovery', version: discoveryConfiguration.revision }, { name: 'research-reasoning', version: await researchReasoningRevisionOf(policy) },
+      ...(execution ? [{ name: 'research-execution-fixture', version: execution.revision },
+        { name: 'research-execution', version: await researchExecutionRevisionOf(execution.policy) }] : [])] });
+  const prepared = await prepareResearchWorkflow(topic.contract, { binding, profile: 'scripted-v1', limits, reasoning: policy, ...(execution ? { execution: execution.policy } : {}) });
   const project: ResearchProject = { id: topic.contract.projectId, topic: topic.title, question: topic.title, domainProfile: 'computational', owner: 'scripted-fixture',
     mode: 'gate-only', safetyClass: 'computational', status: 'CREATED', budget: { calls: caps.calls, tokens: caps.tokens, ms: caps.ms, physical: caps.calls }, createdAt: '2026-01-01T00:00:00.000Z' };
   const frame = await initialResearchFrame(project, topic.plan, binding), now = () => '2026-01-01T00:00:00.000Z';
@@ -51,8 +63,11 @@ export async function runResearchReasoningFixture(loaded: LoadedResearchFixture,
       if (!snapshot?.records.some(row => row.kind === 'QueryPlan' && row.id === discoveryConfiguration.plan.id)) throw Error('Discovery ran before plan admission.');
     });
     const novelty = await createReplayTransport(script.noveltyTranscripts, { scope: 'research-reasoning-novelty' });
-    let tools = await createDiscoveryStageTools(researchExampleTools({ binding, contract: topic.contract, plan: topic.plan, masStore }), discovery.options);
-    tools = await createResearchReasoningTools(tools, { project, policy, provider: { ...discovery.options.provider, transport: async (request, context) => {
+    let base = researchExampleTools({ binding, contract: topic.contract, plan: topic.plan, masStore, ...(execution ? { decisions: execution.decisions } : {}) });
+    if (execution) base = await execution.tools(base, researchStore);
+    let tools = await createDiscoveryStageTools(base, discovery.options);
+    tools = await createResearchReasoningTools(tools, { project, policy,
+      ...(execution ? { generatedStages: ['execute', 'analyze', 'decide'] as const } : {}), provider: { ...discovery.options.provider, transport: async (request, context) => {
       const snapshot = researchValue(await researchStore.snapshot(project.id));
       if (!snapshot?.records.some(row => row.kind === 'QueryPlan' && row.value.queries.some(query => query.text === new URL(request.url).searchParams.get('query'))))
         throw Error('Novelty ran before its hypothesis query plan was admitted.');
@@ -151,6 +166,14 @@ export async function runResearchReasoningFixture(loaded: LoadedResearchFixture,
       refusalConformance: score(probes.map(row => row.matched)), cost, usage,
       interventions: { total: 1, approvals: 1, substantive: 0 }, failures: { program: 0, verification: probes.filter(row => !row.matched).length,
         leakage: requests.reduce((sum, row) => sum + row.hiddenPaths, 0), confound: 0, budget: 0, provider: 0, unsupported: 0 } });
-    return { measurement, identity };
+    if (!execution) return { measurement, identity, execution: undefined };
+    const designGate = trace.interactions.find(row => row.status === 'waiting')!, review = (designGate.prompt as ResearchWorkflowFrame).gate!;
+    const approved = await masStore.respondInteraction(designGate.id, { decision: 'approve', approvedManifestHash: review.manifestHash, note: '', actor: 'scripted' },
+      designGate.revision, topic.id + '-design-approval');
+    if (!approved.ok) throw Error(JSON.stringify(approved));
+    await ensurePendingMasSegments(db, masStore);
+    if (!await driver.drive(prepared.plan.executableRevision, compiled.value.executeSegment, execution.signal ?? new AbortController().signal))
+      throw Error('Execution continuation was not queued.');
+    return { measurement, identity, execution: await execution.collect(researchStore, masStore, measurement) };
   } finally { await discovery?.close(); await db.close(); }
 }

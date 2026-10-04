@@ -74,3 +74,24 @@ void [reasoningTools, researchArtifacts];
 // @ts-expect-error A model cannot choose an arbitrary reasoning topology.
 const unknownReasoning: ResearchReasoningPolicy = { ...reasoningPolicy, mode: 'unregistered' };
 void unknownReasoning;
+import { createResearchWorkspace, buildExecutionManifest, createFixtureExecutor, createEvaluationRegistry, createRemoteResearchExecutor,
+  createResearchExecutionTools, researchExecutionRevisionOf, validateResearchExecutionResult, type ResearchExecutor, type ResearchExecutionPolicy,
+  type ResearchWorkspace, type ExecutionManifest, type ResearchExecutionResult } from '@tangleai/research';
+declare const executionPolicy: ResearchExecutionPolicy, workspace: ResearchWorkspace, executionManifest: ExecutionManifest, executionResult: ResearchExecutionResult;
+const executor: ResearchExecutor = createFixtureExecutor({ fixture: async () => ({ kind: 'clusters', assignments: [0], centroids: [[0, 0]], iterations: 0 }) }, { now: () => 0 });
+await researchExecutionRevisionOf(executionPolicy);
+await createResearchWorkspace({ projectId: project.id, datasetIds: [], splitIds: [], files: [] });
+await buildExecutionManifest({ contract, plan, workspace, branchId: 'branch', condition: 'candidate', seed: 1,
+  imageDigest: executionPolicy.imageDigest, dependencyLockHash: executionPolicy.dependencyLockHash, resources: executionPolicy.resources });
+const executionContext = { contract, plan, signal: new AbortController().signal };
+await executor.run(executionManifest, workspace, executionContext);
+await validateResearchExecutionResult(executionResult, executionManifest, workspace, executionContext);
+const evaluator = { id: 'evaluator', version: '1', evaluate: async () => ({ valid: true as const, value: [{ metric: 'm', value: 1, unit: 'items' }] }) };
+const registry = createEvaluationRegistry([evaluator]);
+await registry.evaluate({ ...executionContext, manifest: executionManifest, workspace, result: executionResult, hiddenLabels: {} });
+await createResearchExecutionTools(taskTools, { researchStore: sqlite, policy: executionPolicy, executor, evaluators: [evaluator], hiddenLabels: {}, evaluatorBytes: new Uint8Array() });
+await prepareResearchWorkflow(contract, { binding, profile: 'scripted', limits, execution: executionPolicy });
+void createRemoteResearchExecutor;
+// @ts-expect-error Measured execution cannot enable the network.
+const unsafeExecution: ExecutionManifest = { ...executionManifest, network: { setup: 'off', measured: 'on' } };
+void unsafeExecution;

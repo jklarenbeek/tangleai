@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "dc083d799f268cab77c26268cd253ce21c9075ae",
+    "head": "802642f008e9a2e80f860e7e4d13f0a4899fbc97",
     "clean": false,
     "files": [
       {
@@ -679,7 +679,15 @@
       },
       {
         "path": "benchmark/lib/research-evaluator.ts",
-        "sha256": "d83f01e80bc6cab800bfd6e5b8edb7e81dbcbda7edaa72f3f48e87c58061e5e5"
+        "sha256": "b4e0837093b68cacd5f7cf0dbd3792fde6060f5afac8643a61c510ce46584642"
+      },
+      {
+        "path": "benchmark/lib/research-execution-fixture.ts",
+        "sha256": "e739025081039a40f3c87f0b602459d0cc37e1803336a194726da787654692cb"
+      },
+      {
+        "path": "benchmark/lib/research-execution.ts",
+        "sha256": "75a7b68d19da7506a09d7b44b8da12944104529954b443e0a9951467a2ede640"
       },
       {
         "path": "benchmark/lib/research-fixture.ts",
@@ -703,7 +711,7 @@
       },
       {
         "path": "benchmark/lib/research-reasoning.ts",
-        "sha256": "41ba95360ef0a2005ad4572f34f02ef1516cd7ba24c6c112f15571a751440929"
+        "sha256": "da99396964caf71faf72233a25e77ed3388b78a4739c33fd7ae45be3cfc48e95"
       },
       {
         "path": "benchmark/lib/research-runner.ts",
@@ -711,7 +719,7 @@
       },
       {
         "path": "benchmark/lib/research-schema.ts",
-        "sha256": "e4665886fa26fb4042a14c3db22af942953bf1c3e2e41d14470eb3eb74eba460"
+        "sha256": "95b37a8e0f7427192fd00b288c14eb69b1e7a22929a416c0e1c9942897228b42"
       },
       {
         "path": "benchmark/lib/research-validation.ts",
@@ -723,11 +731,11 @@
       },
       {
         "path": "benchmark/lib/research.ts",
-        "sha256": "1c55c07534830ef89b2a9cdb3da91580539174ead2ae759df02cd380a28478d6"
+        "sha256": "4684e0edb1fe14bb0a6c995489c7bb7f35d4d04acbf9b290d74bfc6b585aa377"
       },
       {
         "path": "benchmark/lib/research.types.ts",
-        "sha256": "3df5b0f1c8f5b556068da0ded6e8c0561f046012351789a8f0366592275f640b"
+        "sha256": "cf0bf8dc07639f0e428e57ea3c3b11016c6ad3b2e810fe76f8766fc76e8a9bc5"
       },
       {
         "path": "benchmark/lib/retention.ts",
@@ -959,11 +967,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "00a5d755be04483d159e187c268ca06d60558aacfaa9e68d41e13381423ea28d"
+        "sha256": "8c4ad68c7230b2039763ffeff0d5c26cced2cd6aedc69f000fc3d8b68cf67d25"
       },
       {
         "path": "package.json",
-        "sha256": "a4fd0365e0d6c334c2a6556bbcb9520a965a8cacbe7a26f661e481ec40f5cf4c"
+        "sha256": "aefe5950786e8a6a2dfe5ae4d7e0512c1b529bbb236e49b3e32be27e673c994e"
       },
       {
         "path": "packages/agents/package.json",
@@ -1666,7 +1674,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "bd0549781f37592e51b5c4cd5c056dbd9eca5e614bb722c60d630f3083bd9646"
+    "sha256": "a92bf4c1e4622b63eb85ce086f24ff08875782c848e9109ffcc6824e07c92a22"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45131,5 +45139,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "9cbeedc257149b88b2e703faf78e47da1f8fb0e2c7c8bc7f353330b576555510"
+  "reportId": "8ce96138560c30482857c7e57b08b54fe3d98cee2c04c65202efaa2204225ff1"
 }

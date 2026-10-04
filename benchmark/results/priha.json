@@ -931,7 +931,15 @@
       },
       {
         "path": "benchmark/lib/research-evaluator.ts",
-        "sha256": "d83f01e80bc6cab800bfd6e5b8edb7e81dbcbda7edaa72f3f48e87c58061e5e5"
+        "sha256": "b4e0837093b68cacd5f7cf0dbd3792fde6060f5afac8643a61c510ce46584642"
+      },
+      {
+        "path": "benchmark/lib/research-execution-fixture.ts",
+        "sha256": "e739025081039a40f3c87f0b602459d0cc37e1803336a194726da787654692cb"
+      },
+      {
+        "path": "benchmark/lib/research-execution.ts",
+        "sha256": "75a7b68d19da7506a09d7b44b8da12944104529954b443e0a9951467a2ede640"
       },
       {
         "path": "benchmark/lib/research-fixture.ts",
@@ -955,7 +963,7 @@
       },
       {
         "path": "benchmark/lib/research-reasoning.ts",
-        "sha256": "41ba95360ef0a2005ad4572f34f02ef1516cd7ba24c6c112f15571a751440929"
+        "sha256": "da99396964caf71faf72233a25e77ed3388b78a4739c33fd7ae45be3cfc48e95"
       },
       {
         "path": "benchmark/lib/research-runner.ts",
@@ -963,7 +971,7 @@
       },
       {
         "path": "benchmark/lib/research-schema.ts",
-        "sha256": "e4665886fa26fb4042a14c3db22af942953bf1c3e2e41d14470eb3eb74eba460"
+        "sha256": "95b37a8e0f7427192fd00b288c14eb69b1e7a22929a416c0e1c9942897228b42"
       },
       {
         "path": "benchmark/lib/research-validation.ts",
@@ -975,11 +983,11 @@
       },
       {
         "path": "benchmark/lib/research.ts",
-        "sha256": "1c55c07534830ef89b2a9cdb3da91580539174ead2ae759df02cd380a28478d6"
+        "sha256": "4684e0edb1fe14bb0a6c995489c7bb7f35d4d04acbf9b290d74bfc6b585aa377"
       },
       {
         "path": "benchmark/lib/research.types.ts",
-        "sha256": "3df5b0f1c8f5b556068da0ded6e8c0561f046012351789a8f0366592275f640b"
+        "sha256": "cf0bf8dc07639f0e428e57ea3c3b11016c6ad3b2e810fe76f8766fc76e8a9bc5"
       },
       {
         "path": "benchmark/lib/retention.ts",
@@ -1211,11 +1219,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "00a5d755be04483d159e187c268ca06d60558aacfaa9e68d41e13381423ea28d"
+        "sha256": "8c4ad68c7230b2039763ffeff0d5c26cced2cd6aedc69f000fc3d8b68cf67d25"
       },
       {
         "path": "package.json",
-        "sha256": "a4fd0365e0d6c334c2a6556bbcb9520a965a8cacbe7a26f661e481ec40f5cf4c"
+        "sha256": "aefe5950786e8a6a2dfe5ae4d7e0512c1b529bbb236e49b3e32be27e673c994e"
       },
       {
         "path": "packages/agents/package.json",
@@ -1579,7 +1587,7 @@
       },
       {
         "path": "packages/evolve/src/host/runner.ts",
-        "sha256": "62def228ffc173be752a37c488d091ee302fc9636b29b66656e7dfeae0dee899"
+        "sha256": "051ec67bf223192931fc45ef51345244a39d68ee3a9e28cbd79287014dd45835"
       },
       {
         "path": "packages/evolve/src/host/settle.ts",
@@ -3043,11 +3051,11 @@
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "f1b27f8ac8b53066a1501cd9db43e44a9a8d19a0b849a40d553a08640ebddc7e"
+        "sha256": "cfa96fcf48e13924ab4852c22ba97b0f3cbcf4e36e725631166abb1a883dae3e"
       },
       {
         "path": "packages/research/schemas/research.schema.json",
-        "sha256": "1ef8373a81284d1969718c7c0107949db5dd6162373e47f025ef669526ff2be7"
+        "sha256": "1ab77921daaf92dd06fca92498d5b3b892e440abb93740cf86aa7a571b4f8519"
       },
       {
         "path": "packages/research/src/adapters/arxiv.ts",
@@ -3091,7 +3099,7 @@
       },
       {
         "path": "packages/research/src/contracts.gen.ts",
-        "sha256": "7cc9cd70e93c811a3a0a232e9b74d8be80d12f701acb8bdbd58537005eb442b6"
+        "sha256": "9e5541d780184f8dd042977e60dfc0c0903f1eb965a23ea1ee9f9c42442b8795"
       },
       {
         "path": "packages/research/src/domain.ts",
@@ -3102,16 +3110,52 @@
         "sha256": "ce988e24b2f99a7bee7b7dd2b418fd7ccf5260cad4f104b029463ef82878d486"
       },
       {
+        "path": "packages/research/src/execution-contract.ts",
+        "sha256": "e81054cb2ecc0511b65e33228805fa2bf416768c126b8729502ac8ca39ba5f3a"
+      },
+      {
+        "path": "packages/research/src/execution-workflow.ts",
+        "sha256": "a7cd6f90be58be0daef673e33fa4717356bc79826d47253d3cacf84cf9afcd6a"
+      },
+      {
+        "path": "packages/research/src/execution/executor.ts",
+        "sha256": "85acee0a12d923f2a052ffe57adf555a1a28e7a2e0fc725715ec6e393bfdda0d"
+      },
+      {
+        "path": "packages/research/src/execution/fixture-executor.ts",
+        "sha256": "5772fd5e759cbaa1d2fe202ed7a124915bcc0bc6b12b039bf9a934047fed2ec6"
+      },
+      {
+        "path": "packages/research/src/execution/manifest.ts",
+        "sha256": "c15d23e1352390b79dbb2b0caae06f7b0f875b612be31eab1fa03a3969cc5282"
+      },
+      {
+        "path": "packages/research/src/execution/registry.ts",
+        "sha256": "70b6aebb51a85dd8bd20bc607dcda3a0d7057b9cf15923c54e440492809b99b3"
+      },
+      {
+        "path": "packages/research/src/execution/remote-executor.ts",
+        "sha256": "1b59863bac45c1d28bb3c6f377c8885414c1a90d1d99b2025934a7411b8b4da9"
+      },
+      {
+        "path": "packages/research/src/execution/wire.ts",
+        "sha256": "a2ed20977f7160edcdcd5dce8a241feed425f640af9fde9ca65196ce85a9184e"
+      },
+      {
+        "path": "packages/research/src/frames.ts",
+        "sha256": "f9f1259ed03caed77424f1f91744bb8e8676393e632fe517ff73fb6d91165970"
+      },
+      {
         "path": "packages/research/src/gates.ts",
         "sha256": "2dbe4855c62c1baeb2f113e966cefeeab6d96584a2beb3d734385dee1490f8db"
       },
       {
         "path": "packages/research/src/handlers.ts",
-        "sha256": "238b1ed607a8ab40f8b996ab021a942fac7bdaa2ad0643e5d7892545607983c3"
+        "sha256": "322b2bea94f172886063e6d35bf461388acd5559feda96f095e02563f2e4d036"
       },
       {
         "path": "packages/research/src/host.ts",
-        "sha256": "d255a3e606aaac6f89dc3af81c634c188c05929cebfe630bf3c65ea2ff1286ca"
+        "sha256": "40ae77f460cb58f72ffe280198878a880f566c989eaca8e2cce5323e4acafedb"
       },
       {
         "path": "packages/research/src/identity.ts",
@@ -3119,7 +3163,7 @@
       },
       {
         "path": "packages/research/src/index.ts",
-        "sha256": "55aab676805f091aedb44766f5884b1153274be60d72386e1f5a109a39c272cf"
+        "sha256": "70a3a329e50a9a17fcd8f103ea1bea05908b8789bda5d640866c0aa05c3cae2a"
       },
       {
         "path": "packages/research/src/manifest.ts",
@@ -3131,7 +3175,7 @@
       },
       {
         "path": "packages/research/src/reasoning-contract.ts",
-        "sha256": "8bfe1613e690279d85142c7a3aa567cf61f9c97a47c66178b9e19b2b35b17a0d"
+        "sha256": "7d7c500fcacef406e265d1e340506ae75b4007b684a317b891d9df0542ac67b3"
       },
       {
         "path": "packages/research/src/reasoning-records.ts",
@@ -3147,7 +3191,7 @@
       },
       {
         "path": "packages/research/src/records.ts",
-        "sha256": "46688f2a3a87c33ea00b48ef855ca20fb14c00e7b350bddf395e335a63ed4048"
+        "sha256": "86e9bc21df77024faa1ca97471f9e4f144ae67a3ef981e3b70852f852121f6e5"
       },
       {
         "path": "packages/research/src/schema.ts",
@@ -3156,6 +3200,10 @@
       {
         "path": "packages/research/src/stages/acquire.ts",
         "sha256": "48204b0cbafe8d67d1698d93c05a2f0d882b7c5a3a7c75cac427518a098ce274"
+      },
+      {
+        "path": "packages/research/src/stages/author.ts",
+        "sha256": "ecbaa03b8e722a06a68edb06197ee86211f92825edc18a4fe16270a8c0fd2a74"
       },
       {
         "path": "packages/research/src/stages/cards.ts",
@@ -3168,6 +3216,10 @@
       {
         "path": "packages/research/src/stages/discovery.ts",
         "sha256": "f9c7b08f50bbb084361fa50880227091e6cbcbcf2e788612a3fd3a90cc7db173"
+      },
+      {
+        "path": "packages/research/src/stages/execute.ts",
+        "sha256": "cce3c4fc29da82c5fc0cbdc484a8a9f14c89c64102ef1857bb91e7c49218a1e0"
       },
       {
         "path": "packages/research/src/stages/hypothesis.ts",
@@ -3187,7 +3239,7 @@
       },
       {
         "path": "packages/research/src/store-policy.ts",
-        "sha256": "64b2334a784dbcafeee10124712dcb68f96a1d8b8890caaf9ddb8e40bb27c5a9"
+        "sha256": "34ff3a8008b4659590e9889619d751e3d13c6d064a5897eb6134806458c52f3b"
       },
       {
         "path": "packages/research/src/store.ts",
@@ -3195,7 +3247,7 @@
       },
       {
         "path": "packages/research/src/tools.ts",
-        "sha256": "ccf28d934428c3656eaa8fb4968e371058b4457513f01e09a375b2400b318d1c"
+        "sha256": "121c66d9d6e8e7c2d29427aec80d402eb98d1556c88e769dfd2d2f96b9aca96b"
       },
       {
         "path": "packages/research/src/transitions.ts",
@@ -3207,7 +3259,7 @@
       },
       {
         "path": "packages/research/src/workflow.ts",
-        "sha256": "6f90a6df50c90fcf022c4d8c8d84da0f0a0a8a2ae032f1bf663c504bef6a08ca"
+        "sha256": "186520347dfbe5bab0a13b09e8f1487e9aabee83e7d96283a0cb5efc7ddfb76d"
       },
       {
         "path": "packages/search/package.json",
@@ -3658,7 +3710,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "475a3e71cf0e28ee7e691bfc573cbfdcb8797ca1f8a9344882edb4fd603e2a33"
+    "sha256": "93ae9c7f0d30dbd83b90f47c2eda78a28b093440f534def96c9eb8f9537c83da"
   },
   "fixtureSource": {
     "files": [
@@ -68848,7 +68900,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "475a3e71cf0e28ee7e691bfc573cbfdcb8797ca1f8a9344882edb4fd603e2a33",
+      "sourceSha256": "93ae9c7f0d30dbd83b90f47c2eda78a28b093440f534def96c9eb8f9537c83da",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68932,7 +68984,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "80f6cff843746739ee017207c9d67ce527fdfcc8f2dca886a0da62fba03fca07"
+      "planId": "227ab91f104bce563845d884c3bfd7b9fdfd71d6376a7689f2034d57cf45a676"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69179,5 +69231,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "d7625a282903e4101b105ccd01743cb8d448c51f106df7213cb8bbd1056f50fc"
+  "reportId": "53cea87302b8b994218a1781236c7ccee4c81644e637e559d8bec37fa3ef3ca9"
 }

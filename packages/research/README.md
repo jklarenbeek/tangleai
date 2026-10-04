@@ -233,3 +233,60 @@ coverage, canonical-identifier overlaps and the model's advisory rating.
 `gating` is always false. Overlap is an identity observation, not a semantic
 novelty judgment. The benchmark's model rows measure only through design review;
 their scripted accounting is not live research quality or experiment completion.
+
+`createResearchWorkspace` snapshots bounded byte views and builds one immutable
+path inventory. Inputs, code and the evaluator are read-only; only `output/` is
+writable. Paths cannot escape, collide or name hidden labels or secrets.
+`buildExecutionManifest` binds those bytes to the frozen contract, plan,
+condition, seed, parameters, evaluator, image digest, dependency identity and
+finite resource limits. Hash mismatches refuse before any executor call.
+
+Pin `researchExecutionRevisionOf(policy)` as the `research-execution` tool
+version, pass that same policy as `execution` to `prepareResearchWorkflow`,
+and wrap stage tools with `createResearchExecutionTools`. Supply the store,
+executor, independent evaluators, hidden labels and immutable evaluator bytes.
+Dataset artifacts must already belong to the committed input manifest. Native
+bounded seed/condition loops checkpoint each experiment before the branch's
+atomic commit. A failed or cancelled branch retains completed observations,
+the failed run, output artifacts and incurred spend. Resume consumes existing
+native receipts instead of repeating completed seeds. Execution workflows carry
+compact frame references between tasks; the package expands only their exact
+committed checkpoint bytes before checking input scope.
+
+`ResearchExecutor` exposes Evolve's frozen executor manifest plus typed research
+receipts. `createFixtureExecutor(programs, { now })` invokes only explicitly
+registered trusted pure functions with feature bytes, seed, parameters and a
+signal. It refuses authored code. Its resource checks describe trusted fixture
+conformance and do not provide operating-system isolation. Receipts explicitly
+set `isolation.verified` to false. `createRemoteResearchExecutor` uses injected
+fetch, clock and sleep to make a bounded native single-send request to the
+optional [private runner](../../apps/research-runner/README.md). The package
+does not import or start that host. Missing engine capability is a counted value;
+lost post-dispatch responses remain unresolved and never automatically retry.
+
+Every receipt retains bounded stdout/stderr, output-file hashes, exact manifest
+identity, exit status, stop reason and available resource measurements.
+`researchExecutionResult` builds the receipt; `validateResearchExecutionResult`
+independently rebuilds it from the retained bytes. Canonical raw output belongs
+at `output/raw.json`; invalid output still belongs in a failed execution's file
+inventory. Measured wall time is retained precisely, while charged milliseconds
+round up to the integral spend contract. Unmeasured CPU/RSS values remain null.
+
+`createEvaluationRegistry` is the metric admission owner. An injected evaluator
+receives raw outputs and hidden labels outside the experiment. Its id/version
+must match the manifest, and every finite metric and unit must match the frozen
+contract. Program-supplied metrics are refused. `registerObservations` recomputes
+both provenance signatures and actual values; a valid digest alone cannot admit
+a fabricated number. Repeated branches have distinct observation ids while
+retaining the specified eight-field provenance signature.
+
+An `authored` execution policy declares at most eight immutable `.mjs` slots and
+a total of 64 KiB. One native author agent uses the same MAS run and shared budget
+through `read-plan`, `read-workspace` and `write-code`. Slots are single-assignment;
+byte limits include UTF-8 encoding, and conflicting retries cannot accumulate
+new code artifacts. The model cannot read the evaluator or hidden labels. Static
+source checks are reported defense in depth. Only the injected container executor
+runs authored candidates; a host can route registered baseline program ids to
+its trusted fixture executor. When reasoning is enabled, explicitly bind each
+implemented downstream stage through `generatedStages`; absent analysis, decision
+or writing capabilities continue to fail closed.

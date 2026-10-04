@@ -1,0 +1,69 @@
+{
+  "id": "research-execution-v1",
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  },
+  "imageDigest": "sha256:6f3cfe746e42da0ed4bac885d40dc61ee4edf81329d9b05c77f08da9fb45d973",
+  "dependencyLockHash": "3aaf78c79c7c6d72b4261b2d8d0c775a2d62cdda8cb71a06afdc069069839db7",
+  "resources": {
+    "cpu": 1,
+    "memoryBytes": 67108864,
+    "pids": 16,
+    "wallMs": 1000,
+    "outputBytes": 65536
+  },
+  "topics": [
+    {
+      "topicId": "kmeans-seeding",
+      "attemptCap": 3,
+      "control": [
+        "Stop"
+      ],
+      "branching": [
+        "Refine",
+        "Refine",
+        "Stop"
+      ],
+      "designResources": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 10000,
+        "physical": 10
+      }
+    },
+    {
+      "topicId": "lexical-ranking",
+      "attemptCap": 1,
+      "control": [
+        "Stop"
+      ],
+      "branching": [
+        "Stop"
+      ],
+      "designResources": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 10000,
+        "physical": 2
+      }
+    },
+    {
+      "topicId": "embedder-width",
+      "attemptCap": 1,
+      "control": [
+        "Stop"
+      ],
+      "branching": [
+        "Stop"
+      ],
+      "designResources": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 10000,
+        "physical": 2
+      }
+    }
+  ]
+}

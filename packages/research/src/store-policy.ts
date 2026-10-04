@@ -80,6 +80,14 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
     const hashKey = hashes[write.kind];
     if (hashKey) {
       const body = { ...value } as Record<string, unknown>, digest = body[hashKey]; delete body[hashKey];
+      // Complete execution records use a digest-derived address. Historical
+      // records keep their original logical-id hash convention.
+      const prefix = write.kind === 'WorkspaceManifest' && 'outputDirectory' in value ? 'workspace-'
+        : write.kind === 'ExecutionManifest' && 'executorContractHash' in value ? 'execution-' : null;
+      if (prefix) {
+        if (body.id !== prefix + digest) refuse('TRSH1002', '/record/id', 'Execution record address does not bind its content digest.');
+        delete body.id;
+      }
       if (digest !== await researchRevisionOf(body)) refuse('TRSH1002', '/record/' + hashKey, 'Record content hash does not recompute.');
     }
     return { kind: write.kind, value, id, projectId } as ResearchRecordEntry;

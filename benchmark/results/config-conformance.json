@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "dc083d799f268cab77c26268cd253ce21c9075ae",
+    "head": "802642f008e9a2e80f860e7e4d13f0a4899fbc97",
     "clean": false,
     "files": [
       {
@@ -120,7 +120,7 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "a0890eff4acfe844cab176b7361bcc24bf26f22644f303a60603f1f978135741"
+    "sha256": "60845e073c9d9e6420d34a526cf01188591c3819b0a51f9b2219fbe805e6dbe8"
   },
   "suite": {
     "packages": [
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "168fbc5ab141bdfec9c39967ce89f5fca895d89930d0ddef7207ada6800b58eb"
+  "reportId": "5de171a01d0b08d457e5c47dcc9994140edae04c51b9027d41fea1221e198bfa"
 }

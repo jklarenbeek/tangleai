@@ -74,6 +74,8 @@ export interface RunRequest {
   args: string[];
   cwd: string;
   signal?: AbortSignal;
+  /** Per-request native settlement evidence, including bounded captures on refusal. */
+  onSettlement?: (outcome: Awaited<ReturnType<ReturnType<typeof createProcessExecutor>['run']>>) => void;
 }
 
 export interface ProcessRunner {
@@ -144,6 +146,7 @@ export function createProcessRunner(options: ProcessRunnerOptions): ProcessRunne
     get spawns() { return spawns; },
 
     async run(request: RunRequest): Promise<EvolveOutcome<RunResult>> {
+      const onSettlement = request.onSettlement;
       const allowed = Object.hasOwn(allow, request.name) ? allow[request.name] : undefined;
       if (allowed === undefined) {
         return refuseOne<RunResult>('TEVO1006', '/name', 'No allowed command is named ' + request.name + '.');
@@ -163,6 +166,7 @@ export function createProcessRunner(options: ProcessRunnerOptions): ProcessRunne
       // The executor resolves both sides through realpath, so a symlink
       // cannot point a legal-looking path at a directory outside the root.
       const result = await executor.run({ name: request.name, args: request.args, cwd: request.cwd, env: env.set, signal: request.signal });
+      onSettlement?.(Object.freeze({ ...result, truncated: Object.freeze({ ...result.truncated }) }));
 
       switch (result.refused) {
         case undefined: break;

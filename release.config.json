@@ -36,6 +36,7 @@
     "apps/desktop",
     "apps/pages",
     "apps/scraper",
+    "apps/research-runner",
     "benchmark"
   ]
 }

@@ -1,0 +1,14 @@
+{
+  "id": "resource-cap",
+  "expected": {
+    "code": "TRSH1010",
+    "path": "/resources/memoryBytes"
+  },
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/resources/memoryBytes",
+      "value": 2147483649
+    }
+  ]
+}

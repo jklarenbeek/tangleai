@@ -10,6 +10,7 @@ import { runResearchFixture } from '../lib/research-runner.ts';
 import { createResearchLifecycleFixture } from '../lib/research-lifecycle-fixture.ts';
 import { researchDiscoveryTranscripts } from '../lib/research-discovery-fixture.ts';
 import { researchReasoningScripts } from '../lib/research-reasoning-fixture.ts';
+import { researchExecutionRegistration, RESEARCH_EXECUTION_REFUSALS } from '../lib/research-execution-fixture.ts';
 import { verifyResearchBundle } from '../lib/research-oracle.ts';
 import { requireResearchShape } from '../lib/research-validation.ts';
 import type { ResearchDataset, ResearchFixtureTopic, ResearchFixtureManifest, ResearchHiddenLabels,
@@ -136,6 +137,8 @@ const manifest: ResearchFixtureManifest = { id: 'research-computational-v1', ver
   literature: { records: 'literature/records.json', gold: 'literature/gold.json' },
   programs: RESEARCH_PROGRAM_IDS.map(id => ({ id, source, sha256: sourceHash, licence })), datasets: [...datasets.keys()],
   bundles: [], oracles: topics.map(topic => ({ topicId: topic.id, path: 'bundles/oracle/' + topic.id + '.json' })),
+  execution: { registration: 'execution/registration.json', refusals: RESEARCH_EXECUTION_REFUSALS.map(row => ({ id: row.id,
+    path: 'bundles/invalid/' + row.id + '.json', expected: row.expected })) },
   caps: { calls: 128, tokens: 131072, ms: 120000, concurrency: 4, contextChars: 65536, traceBytes: 1048576 },
   replicatePolicy, licence, members: [], revision: '0'.repeat(64) };
 const lifecycle = requireResearchShape<LoadedResearchFixture['lifecycle']>('ResearchLifecycleFixture', await createResearchLifecycleFixture());
@@ -186,6 +189,8 @@ for (const [id, code, path, mutate] of invalid) {
     throw new Error('Wrong refusal for ' + id + ': ' + JSON.stringify(verification));
 }
 for (const [path, script] of await researchReasoningScripts(loaded)) put(path, script);
+put(manifest.execution.registration, await researchExecutionRegistration(loaded));
+for (const fixture of RESEARCH_EXECUTION_REFUSALS) put('bundles/invalid/' + fixture.id + '.json', fixture);
 manifest.members = [...files].sort(([a], [b]) => a.localeCompare(b)).map(([path, content]) => ({ path, sha256: researchBytesSha256(content), licence }));
 const { revision: _revision, ...registration } = manifest;
 manifest.revision = await canonicalSha256(registration);

@@ -2,6 +2,8 @@
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { dotProduct } from '@jarenjs/core/vector';
 import { mean, pairedBootstrap } from '@jarenjs/core/stats';
+import { researchObservationSignature } from '@tangleai/research';
+export { researchObservationSignature } from '@tangleai/research';
 import { researchShape } from './research-validation.ts';
 import { researchProgramInput } from './research-programs.ts';
 import type { ResearchDataset, ResearchHiddenLabels, ResearchFixtureTopic, ExperimentRun,
@@ -11,11 +13,6 @@ export const RESEARCH_EVALUATOR = { id: 'fixture-evaluator', version: '1' } as c
 export async function researchExecutionHash(topic: ResearchFixtureTopic, condition: string, seed: number, inputHash: string): Promise<string> {
   return canonicalSha256({ contractHash: topic.contract.contractHash, planHash: topic.plan.planHash,
     condition, seed, inputHash, evaluator: topic.plan.evaluator });
-}
-export async function researchObservationSignature(value: Pick<MetricObservation,
-  'evaluatorId' | 'evaluatorVersion' | 'runArtifactHash' | 'condition' | 'metric' | 'value' | 'unit' | 'seed'>): Promise<string> {
-  const { evaluatorId, evaluatorVersion, runArtifactHash, condition, metric, value: observed, unit, seed } = value;
-  return canonicalSha256({ evaluatorId, evaluatorVersion, runArtifactHash, condition, metric, value: observed, unit, seed });
 }
 export async function evaluateResearchRun(topic: ResearchFixtureTopic, dataset: ResearchDataset, hidden: ResearchHiddenLabels,
   run: ExperimentRun): Promise<{ valid: true; observation: MetricObservation } | { valid: false; issues: ResearchIssue[] }> {
@@ -33,6 +30,23 @@ export async function evaluateResearchRun(topic: ResearchFixtureTopic, dataset: 
   if (run.executionManifestHash !== await researchExecutionHash(topic, condition.id, run.seed, run.inputHash))
     return refuse('TRSH1002', '/executionManifestHash', 'Execution identity does not bind the frozen contract and plan.');
   if (run.rawArtifactHash !== await canonicalSha256(run.output)) return refuse('TRSH1002', '/rawArtifactHash', 'Raw output digest differs.');
+  const measured = researchMetricValues(topic, dataset, hidden, run);
+  if (!measured.valid) return measured;
+  const { metric, value, unit } = measured.values[0];
+  const signed = { evaluatorId: RESEARCH_EVALUATOR.id, evaluatorVersion: RESEARCH_EVALUATOR.version,
+    runArtifactHash: run.rawArtifactHash!, condition: run.condition, metric, value, unit, seed: run.seed };
+  const registrySignature = await researchObservationSignature(signed);
+  return { valid: true, observation: { id: 'metric-' + registrySignature, projectId: run.projectId,
+    experimentRunId: run.id, ...signed, registrySignature } };
+}
+/** The same independent arithmetic serves legacy receipts and the full manifest registry. */
+export function researchMetricValues(topic: Pick<ResearchFixtureTopic, 'id' | 'contract' | 'plan'>,
+  dataset: ResearchDataset, hidden: ResearchHiddenLabels, run: Pick<ExperimentRun, 'condition' | 'output'>):
+  { valid: true; values: Array<{ metric: string; value: number; unit: string }> } | { valid: false; issues: ResearchIssue[] } {
+  const refuse = (code: string, path: string, detail: string) => ({ valid: false as const, issues: [{ code, path, detail }] });
+  const condition = topic.plan.conditions.find(row => row.id === run.condition);
+  if (!condition || hidden.topicId !== topic.id) return refuse('TRSH1003', '/condition', 'Evaluator inputs do not belong to this topic and condition.');
+  if (!run.output) return refuse('TRSH1008', '/output', 'Experiment has no raw output.');
   const metric = topic.contract.metrics.find(metric => metric.id === topic.contract.successRule.metric);
   if (!metric) return refuse('TRSH1003', '/metric', 'Unregistered primary metric.');
   let value: number;
@@ -59,11 +73,7 @@ export async function evaluateResearchRun(topic: ResearchFixtureTopic, dataset: 
     }
     value = mean(recalls)!;
   } else return refuse('TRSH1005', '/output/kind', 'Raw output kind differs from the registered dataset.');
-  const signed = { evaluatorId: RESEARCH_EVALUATOR.id, evaluatorVersion: RESEARCH_EVALUATOR.version,
-    runArtifactHash: run.rawArtifactHash!, condition: run.condition, metric: metric.id, value, unit: metric.unit, seed: run.seed };
-  const registrySignature = await researchObservationSignature(signed);
-  return { valid: true, observation: { id: 'metric-' + registrySignature, projectId: run.projectId,
-    experimentRunId: run.id, ...signed, registrySignature } };
+  return { valid: true, values: [{ metric: metric.id, value, unit: metric.unit }] };
 }
 export function researchComparison(topic: Pick<ResearchFixtureTopic, 'contract'>, observations: readonly MetricObservation[]) {
   const rule = topic.contract.successRule, metric = topic.contract.metrics.find(metric => metric.id === rule.metric)!;

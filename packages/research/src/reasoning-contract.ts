@@ -17,7 +17,7 @@ export interface ResearchReasoningPolicy {
   novelty: ResearchNoveltyPolicy;
 }
 export interface ResearchPreparation {
-  stage: ResearchModelStage;
+  stage: ResearchModelStage | 'execute';
   scope: string;
   commitPath: string;
   manifestHash: string;
@@ -55,6 +55,7 @@ export interface ResearchHandlerAdmission {
   reconcileFailure?(runId: string, failure: MasRun['failure']): Promise<void>;
   toolBindings?: import('@tangleai/mas').MasHostBindings['toolBindings'];
   reasoning?: ResearchReasoningPolicy;
+  execution?: import('./execution-contract.ts').ResearchExecutionPolicy;
 }
 export async function researchPreparationFor(store: Pick<MasStore, 'readTrace'>, invocation: { runId: string; path: string }): Promise<ResearchPreparation> {
   const trace = await store.readTrace(invocation.runId);

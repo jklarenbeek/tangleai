@@ -7,13 +7,16 @@ import { loadResearchFixture, RESEARCH_FIXTURE_PATH, MANIFEST_PATH, type LoadedR
 import { researchCeilings, researchScore, verifyResearchBundle } from './research-oracle.ts';
 import { runNativeResearchFixture } from './research-workflow.ts';
 import { runResearchReasoningFixture } from './research-reasoning.ts';
+import { runResearchExecutionFixture, aggregateResearchExecution } from './research-execution.ts';
+import { probeResearchExecutionRefusal } from './research-execution-fixture.ts';
+import { requireResearchShape } from './research-validation.ts';
 import { researchComparison, researchMechanicalDecision } from './research-evaluator.ts';
 import { RESEARCH_ROW_IDS, RESEARCH_DIMENSIONS, RESEARCH_DISCLOSURES, RESEARCH_REASONING_DIMENSIONS } from './research-schema.ts';
 import { validateResearchReportShape } from './research-validation.ts';
 import { describeErrors } from './validate.ts';
 import { table as markdownTable } from './table.ts';
 import type { ResearchReport, ResearchBundle, ResearchFixtureTopic, ResearchTopicResult, ResearchMeasuredRow, ResearchScore,
-  ResearchReasoningRow, ResearchReasoningTopic, ResearchModelUsage } from './research.types.ts';
+  ResearchReasoningRow, ResearchReasoningTopic, ResearchModelUsage, ResearchExecutionTopic, ResearchExecutionRow, ResearchExecutionRefusalFixture } from './research.types.ts';
 
 export { MANIFEST_PATH };
 export const REPORT_PATH = 'benchmark/results/research.json';
@@ -27,6 +30,7 @@ export const SOURCE_MANIFEST = [
   'benchmark/lib/research-workflow.ts', 'benchmark/lib/research-lifecycle-fixture.ts', 'examples/research.ts',
   'benchmark/lib/research-discovery.ts', 'benchmark/lib/research-discovery-fixture.ts', 'benchmark/scripts/research-transcripts.ts',
   'benchmark/lib/research-reasoning.ts', 'benchmark/lib/research-reasoning-fixture.ts', 'scripts/research-artifacts.ts', 'scripts/research-sources.ts',
+  'benchmark/lib/research-execution.ts', 'benchmark/lib/research-execution-fixture.ts',
   'benchmark/lib/args.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts',
   'benchmark/lib/suite-packages.ts', 'benchmark/lib/report-envelope.ts', 'benchmark/lib/table.ts',
   'packages/research/schemas/research.schema.json', 'benchmark/schemas/research.schema.json',
@@ -41,8 +45,8 @@ export async function researchContext(root = process.cwd()): Promise<ResearchCon
   return { loaded, source: await sourceManifest(root, [...SOURCE_MANIFEST,
     ...loaded.manifest.members.map(member => RESEARCH_FIXTURE_PATH + '/' + member.path)],
   [RESEARCH_FIXTURE_PATH, 'packages/core', 'packages/models', 'packages/documents', 'packages/search', 'packages/context', 'packages/config',
-    'packages/jaren', 'packages/research', 'packages/gmpl', 'packages/mas', 'packages/store', 'packages/agents']),
-  suite: await installedSuitePackages(root, ['core', 'models', 'documents', 'search', 'context', 'config', 'research', 'gmpl', 'mas', 'store', 'agents']) };
+    'packages/jaren', 'packages/research', 'packages/gmpl', 'packages/mas', 'packages/store', 'packages/agents', 'packages/evolve']),
+  suite: await installedSuitePackages(root, ['core', 'models', 'documents', 'search', 'context', 'config', 'research', 'gmpl', 'mas', 'store', 'agents', 'evolve']) };
 }
 const same = (left: unknown, right: unknown): boolean => canonicalizeJson(left) === canonicalizeJson(right);
 const ratio = (values: readonly boolean[]): ResearchScore => researchScore(values.filter(Boolean).length, values.length);
@@ -129,6 +133,12 @@ function oracleAtCeilings(report: Pick<ResearchReport, 'rows' | 'ceilings'>): bo
 }
 function disclosures(rows: ResearchReport['rows']): ResearchReport['disclosure'] {
   return rows.map((row, rowIndex) => ({ rowId: row.id, items: RESEARCH_DISCLOSURES.map((item, index) => {
+    if (row.state === 'measured' && row.scope === 'execution') {
+      const pointer = item === 'runnable-implementation' ? '/plan/conditions' : item === 'reconstructible-execution' ? '/manifests'
+        : item === 'attempt-selection-registration' ? '/contract/selectionRule' : item === 'baseline-audit' ? '/contract/requiredBaselines'
+          : item === 'independent-verification' ? '/observations' : item === 'frozen-hypotheses' ? '/plan/hypothesisHash' : null;
+      return { item, satisfied: pointer !== null, evidence: pointer === null ? [] : row.topics.map((_topic, index) => '/rows/' + rowIndex + '/topics/' + index + pointer) };
+    }
     if (row.state === 'measured' && row.scope === 'pre-execution') {
       const pointer = item === 'novelty-audit' ? '/novelty' : item === 'attempt-selection-registration' ? '/contract/selectionRule'
         : item === 'baseline-audit' ? '/contract/requiredBaselines' : item === 'independent-verification' ? '/probes'
@@ -154,6 +164,10 @@ export const RESEARCH_LIMITATIONS = [
   'Completion in full-lifecycle rows records reaching the registered decision, not overall research quality. Reasoning rows stop at the real design gate and make no execution, result, writing or completion claim.',
   'The paired reasoning rows see the same eight of sixteen committed cards per topic, selected deterministically by first element per source. Seven compiled packs execute in debate; three execute in single-agent.',
   'Reasoning refusal counts are direct independent-verifier probes over four frozen bad proposals, with zero model calls. They measure validator sensitivity, not a model identifying or repairing a bad plan. Separate native integration tests exercise model-path refusals and repair accounting.',
+  'Execution comparisons use a separate preregistered control with three allowed clustering attempts. Both arms run the same single-agent model stages in one native workflow; only the branch arm follows Refine twice. Those choices are scripted controls, not a learned or statistically justified selector.',
+  'Execution retains all attempts and every seed, including unchanged repetitions. It claims neither additional independent evidence from repeats nor a scientific advantage from branching. The original one-attempt topic registrations and pre-execution model rows are preserved.',
+  'Fixture execution maps registered ids to trusted pure functions and reports isolation.verified=false. Its image identity identifies the fixture program manifest, not a locally installed container. Wall and CPU cost are unmeasured in deterministic rows; physical experiment dispatch and separate verification reruns are counted.',
+  'Program failure and cancellation probes include their own complete native model, experiment and verification costs. Container smoke timing and platform qualification are separate operational receipts and never enter the deterministic report.',
 ] as const;
 export async function buildReport(options: { context?: ResearchContext; rows?: readonly string[] } = {}): Promise<ResearchReport> {
   const context = options.context ?? await researchContext(), { loaded } = context;
@@ -167,11 +181,34 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
     bundles.push({ id: registered.id, expected: structuredClone(registered.expected), observed,
       refusedAsRegistered: !verified.valid && same(registered.expected, observed) });
   }
+  for (const registered of loaded.manifest.execution.refusals) {
+    const fixture = requireResearchShape<ResearchExecutionRefusalFixture>('ResearchExecutionRefusalFixture', JSON.parse(new TextDecoder().decode(loaded.files.get(registered.path)!)));
+    if (fixture.id !== registered.id || !same(fixture.expected, registered.expected)) throw Error('Execution refusal registration drift.');
+    bundles.push(await probeResearchExecutionRefusal(loaded, fixture));
+  }
   const rows: ResearchReport['rows'] = [];
   const discovery: ResearchReport['discovery'] = [];
+  const execution: ResearchReport['execution'] = { registrationHash: await canonicalSha256(JSON.parse(new TextDecoder().decode(loaded.files.get(loaded.manifest.execution.registration)!))),
+    control: null, failureProbes: [] };
   const identity = analyticEnvelope(RESEARCH_ROW_IDS), sourceRevision = await canonicalSha256(context.source.files);
   for (const id of RESEARCH_ROW_IDS) {
     if (!selected.includes(id)) { rows.push({ id, state: 'not-run', reason: 'Excluded by the explicit row selection.' }); continue; }
+    if (id === 'fixed-plus-branching') {
+      const control: ResearchExecutionTopic[] = [], branching: ResearchExecutionTopic[] = [];
+      for (const topic of loaded.topics) {
+        for (const mode of ['control', 'branching'] as const) {
+          const result = await runResearchExecutionFixture(loaded, topic, mode);
+          (mode === 'control' ? control : branching).push(result.execution!);
+          if (!identity.identities.some(row => row.identityId === result.identity.identityId)) identity.identities.push(result.identity);
+          identity.rows = identity.rows.map(row => row.rowId === id ? { rowId: id, identityStatus: 'run', identityId: result.identity.identityId } : row);
+        }
+      }
+      execution.control = aggregateResearchExecution('fixed-single-agent', control);
+      rows.push(aggregateResearchExecution(id, branching));
+      for (const probe of ['program-throw', 'cancelled'] as const) execution.failureProbes.push({ id: probe,
+        topic: (await runResearchExecutionFixture(loaded, loaded.topics[0], probe)).execution! });
+      continue;
+    }
     if (id === 'fixed-single-agent' || id === 'fixed-plus-debate') {
       const topics: ResearchReasoningTopic[] = [];
       for (const topic of loaded.topics) {
@@ -210,8 +247,8 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
   const payload: Omit<ResearchReport, 'reportId'> = { benchmark: 'research', schemaVersion: 1, source: context.source, suite: context.suite,
     registration: { id: loaded.manifest.id, revision: loaded.manifest.revision, topics: loaded.topics.map(topic => topic.id),
       caps: loaded.manifest.caps, replicatePolicy: loaded.manifest.replicatePolicy,
-      bundles: loaded.manifest.bundles.map(bundle => ({ id: bundle.id, expected: structuredClone(bundle.expected) })) },
-    identity, ceilings, rows, discovery, bundles, disclosure: disclosures(rows), gate,
+      bundles: [...loaded.manifest.bundles, ...loaded.manifest.execution.refusals].map(bundle => ({ id: bundle.id, expected: structuredClone(bundle.expected) })) },
+    identity, ceilings, rows, discovery, execution, bundles, disclosure: disclosures(rows), gate,
     decision: gate.registration && gate.oracle && gate.bundles ? 'conformant' : 'drift', limitations: [...RESEARCH_LIMITATIONS] };
   const report = { ...payload, reportId: await canonicalSha256(payload) };
   const validated = validateResearchReportShape(report);
@@ -234,6 +271,8 @@ const table = (head: string[], rows: Array<Array<string | number>>) => markdownT
 export function renderDocument(report: ResearchReport): string {
   const measured = report.rows.filter((row): row is ResearchMeasuredRow => row.state === 'measured' && row.scope === 'full-lifecycle');
   const reasoning = report.rows.filter((row): row is ResearchReasoningRow => row.state === 'measured' && row.scope === 'pre-execution');
+  const executions: ResearchExecutionRow[] = [...(report.execution.control ? [report.execution.control] : []),
+    ...report.rows.filter((row): row is ResearchExecutionRow => row.state === 'measured' && row.scope === 'execution')];
   const score = (value: ResearchScore) => value.passed + '/' + value.total + ' (' + value.value.toFixed(3) + ')';
   const comparisons = measured.flatMap(row => row.topics.map(topic => {
     const comparison = researchComparison(topic.bundle, topic.observations);
@@ -245,7 +284,7 @@ export function renderDocument(report: ResearchReport): string {
   return [
     '# Research benchmark', '', 'Generated by `npm run benchmark:research`. Report `' + report.reportId + '`.', '',
     'Registration `' + report.registration.id + '` / `' + report.registration.revision + '`. Source `' + report.source.sha256 + '`.', '',
-    'Three topics, eight registered rows and 21 adversarial bundles. Decision: **' + report.decision + '**. External provider requests: **0**.', '',
+    'Three topics, eight registered rows and ' + report.bundles.length + ' adversarial bundles. Decision: **' + report.decision + '**. External provider requests: **0**.', '',
     '## Analytic ceilings', '', 'Each topic has eight relevant sources; two are deliberately absent. Recovering all six available sources has recall 0.750, not 1.', '',
     table(['Topic', 'Literature recall', 'Precision', 'Citation identity', 'Registry accuracy'], report.ceilings.map(topic =>
       [topic.topicId, score(topic.literatureRecall), score(topic.literaturePrecision), score(topic.citationIdentity), score(topic.registryAccuracy)])), '',
@@ -263,7 +302,7 @@ export function renderDocument(report: ResearchReport): string {
     'CREATE commits the content-addressed query plan and criteria before the first request. Three JSON adapters use native provider descriptors; arXiv uses native attempts and one bounded Atom reader. SearxNG snippets remain candidates. Full source bodies and native document-version locators support the cards; chunk rows are not required. Receipts retain raw response hashes, native observations, normalized records, screening decisions and acquisition failures.', '',
     '## Registered rows', '', table(['Row', 'State', 'Claim support', 'Completion', 'Unsupported claims', 'Approvals'], report.rows.map(row =>
       row.state === 'measured' && row.scope === 'full-lifecycle' ? [row.id, row.state, score(row.claimSupport), score(row.completion), row.failures.unsupported, row.interventions.approvals]
-        : row.state === 'measured' ? [row.id, row.state + ': pre-execution', 'not measured', 'not executed', 'not measured', row.interventions.approvals]
+        : row.state === 'measured' ? [row.id, row.state + ': ' + row.scope, 'not measured', row.scope === 'execution' ? 'not evaluated' : 'not executed', 'not measured', row.interventions.approvals]
         : [row.id, row.state, '—', '—', '—', '—'])), '',
     ...measured.flatMap(row => ['### ' + row.id, '', table(['Dimension', ...row.topics.map(topic => topic.topicId), 'Pooled counts'],
       RESEARCH_DIMENSIONS.map(dimension => [dimension, ...row.topics.map(topic => score(topic[dimension])), score(row[dimension])])), '']),
@@ -282,6 +321,17 @@ export function renderDocument(report: ResearchReport): string {
       reasoning.flatMap(row => row.topics.map(topic => [row.id, topic.topicId, topic.novelty.coverage.complete + ' / ' + topic.novelty.coverage.attempted + ' / ' + topic.novelty.coverage.total,
         topic.novelty.overlapLiteratureIds.length, topic.novelty.advisory.rating, String(topic.novelty.gating), topic.noveltyReplay.requests + ' / ' + topic.noveltyReplay.networkCalls]))), '',
     'Novelty queries come from the hypotheses themselves. Their exact QueryPlan is stored before adapter dispatch. Coverage and identifier overlap are observations; the scripted model rating is advisory and never grants approval. Generated-plan execution requires a separately bound executor; approving the gate without one fails closed.', '',
+    '## Manifest-bound execution', '',
+    'The matched execution control starts a fresh single-agent workflow and continues through its design approval. The branch arm uses the same cards, scripted proposals, programs, parameters, seeds, resource caps and evaluator. Both preregister up to three clustering attempts before results; the control stops after one, while branching follows Refine twice then Stop. All other topics stop after one attempt. No seed, threshold or result selects those scripted choices.', '',
+    table(['Row', 'Topic', 'Attempts', 'Runs / planned', 'Rerun rate', 'Registry accuracy', 'Failed / partial', 'Model calls / tokens', 'Model + experiment physical', 'Verification physical'], executions.flatMap(row => row.topics.map(topic => [
+      row.id, topic.topicId, topic.branches.length, topic.runs.length + ' / ' + topic.expectedRuns, score(topic.rerunRate), score(topic.registryAccuracy),
+      topic.failures.program + ' / ' + topic.partialBranches, topic.cost.calls + ' / ' + topic.cost.tokens, topic.cost.physical, topic.rerunCost.physical]))), '',
+    'Reruns consume each complete frozen manifest and reproduce raw bytes and independently registered values. Repeating unchanged seeds adds cost, not independent evidence or a demonstrated improvement. Every branch, output inventory and failed run remains in the report. The original pre-execution comparison above retains its own scope and costs.', '',
+    table(['Failure probe', 'Retained runs / planned', 'Observations', 'Stop reasons', 'Failed / partial', 'Model calls / tokens', 'Total physical', 'Verification physical'], report.execution.failureProbes.map(({ id, topic }) => [
+      id, topic.runs.length + ' / ' + topic.expectedRuns, topic.observations.length, [...new Set(topic.runs.map(row => row.stopReason))].join(', '),
+      topic.failures.program + ' / ' + topic.partialBranches, topic.cost.calls + ' / ' + topic.cost.tokens, topic.cost.physical, topic.rerunCost.physical])), '',
+    table(['Isolation refusal', 'Expected', 'Observed', 'Count', 'Executor calls'], report.bundles.filter(row => ['escape-path', 'secret-read', 'network-during-measured', 'resource-cap', 'writable-evaluator'].includes(row.id))
+      .map(row => [row.id, row.expected.code, row.observed?.code ?? 'none', row.refusedAsRegistered ? 1 : 0, 0])), '',
     '## Durable lifecycle controls', '',
     'Scientific paths execute the registered programs at EXECUTE and independently evaluate their retained outputs at ANALYZE. Every StageAttempt retains its input manifest, content-addressed artifact admissions and native MAS path. Approvals bind the artifact set that existed at that gate; early approvals never claim to review future outputs.', '',
     table(['Topic', 'Science state', 'Science gates', 'Complete-path control', 'Control gates', 'Duplicate responses replayed'],

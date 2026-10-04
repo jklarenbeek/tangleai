@@ -1,6 +1,7 @@
 import { createMemoryResearchStore, planProjectCreate, planStateTransition, planStageCommit,
   inputManifestHashOf, stageAttemptIdOf, researchArtifactIdOf, validateResearchShape, createReplayTransport, discoverCrossref,
-  researchArtifacts, createResearchPatternHost, prepareResearchPattern } from '@tangleai/research';
+  researchArtifacts, createResearchPatternHost, prepareResearchPattern, researchRevisionOf, createResearchWorkspace,
+  buildExecutionManifest, createFixtureExecutor, createEvaluationRegistry, researchObservationSignature } from '@tangleai/research';
 import { GMPL_LIMITS } from '@tangleai/gmpl';
 import { createAttemptBudget, sleep } from '@jarenjs/core/retry';
 import schema from '@tangleai/research/schemas/research' with { type: 'json' };
@@ -55,4 +56,44 @@ export async function qualifyResearchDiscoveryBrowser() {
   if (result.outcome.state !== 'complete' || result.records.length !== 1) throw new Error('Installed discovery refused: ' + JSON.stringify(result.outcome));
   return { doi: result.records[0].canonicalIds.doi, rawHash: result.records[0].rawHashes[0].sha256 === (await researchArtifactIdOf(new TextEncoder().encode(body))).slice(4),
     ...replay.stats() };
+}
+export async function qualifyResearchExecutionBrowser() {
+  const bytes = new TextEncoder().encode('{"features":[1,2]}'), artifactId = await researchArtifactIdOf(bytes);
+  const contractBody = { id: 'packed-contract', projectId: 'packed-execution', hypothesisSpace: ['Retain every feature.'],
+    successRule: { metric: 'count', baseline: 'baseline', condition: 'candidate', minImprovement: 0, confidenceLevel: 0.95 },
+    failureRule: 'stop-on-invalid', metrics: [{ id: 'count', unit: 'items', direction: 'maximize' }],
+    datasets: [{ id: 'features', sha256: artifactId.slice(4) }], splits: { train: [], test: ['a', 'b'] },
+    requiredBaselines: [{ condition: 'baseline', programId: 'fixture', source: 'installed fixture',
+      licence: { spdx: 'MIT', provenance: 'tangle-authored-synthetic', source: 'installed fixture' } }],
+    replicatePolicy: { seeds: [1], minimum: 1, resamples: 10, bootstrapSeed: 1 }, attemptCap: 1, pivotCap: 1, reviewCap: 1,
+    selectionRule: { kind: 'all', n: 1, metric: 'count' }, stopConditions: ['invalid'] };
+  const contract = { ...contractBody, contractHash: await researchRevisionOf(contractBody) };
+  const planBody = { id: 'packed-plan', projectId: contract.projectId, contractHash: contract.contractHash,
+    hypothesisHash: await researchRevisionOf(contract.hypothesisSpace), inputPaths: ['features.json'], evaluator: { id: 'counter', version: '1' },
+    conditions: ['baseline', 'candidate'].map(id => ({ id, programId: 'fixture', datasetId: 'features', params: {} })) };
+  const plan = { ...planBody, planHash: await researchRevisionOf(planBody) };
+  const workspace = value(await createResearchWorkspace({ projectId: contract.projectId, datasetIds: ['features'], splitIds: ['a', 'b'], files: [
+    { path: 'features.json', bytes, mode: 'read-only', role: 'input' },
+    { path: 'evaluation/identity.json', bytes: new TextEncoder().encode('{"counter":1}'), mode: 'read-only', role: 'evaluator' }] }));
+  const input = { contract, plan, workspace, branchId: 'packed-branch', condition: 'candidate', seed: 1, imageDigest: 'sha256:' + 'd'.repeat(64),
+    dependencyLockHash: 'e'.repeat(64), resources: { cpu: 1, memoryBytes: 67108864, pids: 16, wallMs: 1000, outputBytes: 65536 } };
+  const manifest = value(await buildExecutionManifest(input));
+  const executor = createFixtureExecutor({ fixture: async request => {
+    if (JSON.parse(new TextDecoder().decode(request.bytes)).features.length !== 2) throw Error('Packed feature view differs');
+    return { kind: 'clusters', assignments: [0, 0], centroids: [[1.5, 0]], iterations: 1 };
+  } }, { now: () => 0 });
+  const context = { contract, plan, signal: new AbortController().signal }, result = value(await executor.run(manifest, workspace, context));
+  const registry = createEvaluationRegistry([{ id: 'counter', version: '1', evaluate: async request => {
+    if (request.hiddenLabels.expected !== 2 || request.rawOutput.kind !== 'clusters') throw Error('Packed evaluator scope differs');
+    return { valid: true, value: [{ metric: 'count', unit: 'items', value: request.rawOutput.assignments.length }] };
+  } }]);
+  const evidence = { ...context, manifest, workspace, result, hiddenLabels: { expected: 2 } };
+  const observations = value(await registry.evaluate(evidence));
+  const accepted = value(await registry.registerObservations(evidence, observations));
+  const forged = { ...observations[0], value: 999 }; forged.registrySignature = await researchObservationSignature(forged);
+  const refusal = await registry.registerObservations(evidence, [forged]);
+  const network = await buildExecutionManifest({ ...input, network: { setup: 'off', measured: 'on' } });
+  if (refusal.valid || network.valid) throw Error('Packed execution admitted a forgery or network escape');
+  return { status: result.run.status, value: accepted[0].value, signature: accepted[0].registrySignature === await researchObservationSignature(accepted[0]),
+    physical: result.run.spend.physical, isolated: result.run.isolation.verified, forged: refusal.issues[0].code, network: network.issues[0].code };
 }

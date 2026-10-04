@@ -522,6 +522,69 @@ export interface ExperimentRunTraceItem {
 }
 
 
+/**
+ * Schema constraints this type cannot express: type="integer"
+ */
+export type ExperimentRunExitStatusAnyOf1 = number;
+
+export interface ResearchOutputFile {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  artifactId: string;
+  sha256: Sha256;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  bytes: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type ResearchResourceUsageWallMsAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type ResearchResourceUsageCpuMsAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+ */
+export type ResearchResourceUsagePeakMemoryBytesAnyOf1 = number;
+
+export interface ResearchResourceUsage {
+  wallMs: ResearchResourceUsageWallMsAnyOf1 | null;
+  cpuMs: ResearchResourceUsageCpuMsAnyOf1 | null;
+  peakMemoryBytes: ResearchResourceUsagePeakMemoryBytesAnyOf1 | null;
+}
+
+
+export type ResearchStopReason = "completed" | "timeout" | "memory" | "pids" | "output-bytes" | "cancelled" | "isolation-refused";
+
+/**
+ * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+ */
+export type ResearchExecutionIsolationSetupLogArtifactIdAnyOf1 = string;
+
+export interface ResearchExecutionIsolation {
+  kind: "fixture" | "container";
+  /**
+   * Schema constraints this type cannot express: pattern="^sha256:[0-9a-f]{64}$"
+   */
+  imageDigest: string;
+  verified: boolean;
+  setupLogArtifactId: ResearchExecutionIsolationSetupLogArtifactIdAnyOf1 | null;
+  completeOutput: boolean;
+}
+
+
 export interface ExperimentRun {
   id: ResearchId;
   projectId: ResearchId;
@@ -548,6 +611,19 @@ export interface ExperimentRun {
   trace: Array<ExperimentRunTraceItem>;
   spend: ResearchCost;
   error: ResearchIssue | null;
+  exitStatus?: ExperimentRunExitStatusAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  stdoutArtifactId?: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  stderrArtifactId?: string;
+  outputInventory?: Array<ResearchOutputFile>;
+  resources?: ResearchResourceUsage;
+  stopReason?: ResearchStopReason;
+  isolation?: ResearchExecutionIsolation;
 }
 
 
@@ -1370,6 +1446,7 @@ export interface WorkspaceManifest {
    */
   splitIds: Array<ResearchId>;
   workspaceHash: Sha256;
+  outputDirectory?: "output";
 }
 
 
@@ -1407,6 +1484,11 @@ export interface ExecutionManifestResources {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ExecutionManifestEntrypointAnyOf1 = string;
+
 export interface ExecutionManifest {
   id: ResearchId;
   projectId: ResearchId;
@@ -1434,6 +1516,13 @@ export interface ExecutionManifest {
    */
   stopReasons: Array<"completed" | "timeout" | "memory" | "pids" | "output-bytes" | "cancelled" | "isolation-refused">;
   executionManifestHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition?: string;
+  datasetId?: ResearchId;
+  entrypoint?: ExecutionManifestEntrypointAnyOf1 | null;
+  executorContractHash?: Sha256;
 }
 
 
@@ -2123,6 +2212,112 @@ export interface ResearchReasoningContext {
    */
   hypotheses: Array<ResearchHypothesis>;
   constraints: ResearchReasoningConstraints;
+}
+
+
+export interface ResearchCodeWrite {
+  id: ResearchId;
+  projectId: ResearchId;
+  attemptId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  artifactId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=65536
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=65536
+   */
+  bytes: number;
+  /**
+   * Schema constraints this type cannot express: maxItems=4
+   */
+  staticIssues: Array<ResearchIssue>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0, maximum=255
+ */
+export type ResearchExecutionWireArtifactBytesItem = number;
+
+export interface ResearchExecutionWireArtifact {
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  artifactId: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=4194304
+   */
+  bytes: Array<ResearchExecutionWireArtifactBytesItem>;
+}
+
+
+export interface ResearchExecutionRequestWorkspace {
+  manifest: WorkspaceManifest;
+  /**
+   * Schema constraints this type cannot express: maxItems=130
+   */
+  artifacts: Array<ResearchExecutionWireArtifact>;
+}
+
+
+export interface ResearchExecutionRequest {
+  version: 1;
+  manifest: ExecutionManifest;
+  workspace: ResearchExecutionRequestWorkspace;
+  contract: ResearchContract;
+  plan: ExperimentPlan;
+}
+
+
+export interface ResearchExecutionResponseOutcomeOneOf1Value {
+  run: ExperimentRun;
+  /**
+   * Schema constraints this type cannot express: maxItems=130
+   */
+  artifacts: Array<ResearchExecutionWireArtifact>;
+}
+
+
+export interface ResearchExecutionResponseOutcomeOneOf2 {
+  valid: false;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=16
+   */
+  issues: Array<ResearchIssue>;
+}
+
+
+export interface ResearchExecutionResponse {
+  version: 1;
+  executionManifestHash: Sha256;
+  settlement: "not-started" | "settled" | "unresolved";
+  outcome: { valid: true; value: ResearchExecutionResponseOutcomeOneOf1Value; } | ResearchExecutionResponseOutcomeOneOf2;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^sha256:[0-9a-f]{64}$"
+ */
+export type ResearchExecutorCapabilityImageDigestsItem = string;
+
+export interface ResearchExecutorCapability {
+  available: boolean;
+  kind: "fixture" | "container";
+  engine: string | null;
+  version: string | null;
+  /**
+   * Schema constraints this type cannot express: maxItems=16, uniqueItems=true
+   */
+  imageDigests: Array<ResearchExecutorCapabilityImageDigestsItem>;
+  reason: string | null;
 }
 
 

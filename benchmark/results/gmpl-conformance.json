@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "dc083d799f268cab77c26268cd253ce21c9075ae",
+    "head": "802642f008e9a2e80f860e7e4d13f0a4899fbc97",
     "clean": false,
     "files": [
       {
@@ -203,11 +203,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "00a5d755be04483d159e187c268ca06d60558aacfaa9e68d41e13381423ea28d"
+        "sha256": "8c4ad68c7230b2039763ffeff0d5c26cced2cd6aedc69f000fc3d8b68cf67d25"
       },
       {
         "path": "package.json",
-        "sha256": "a4fd0365e0d6c334c2a6556bbcb9520a965a8cacbe7a26f661e481ec40f5cf4c"
+        "sha256": "aefe5950786e8a6a2dfe5ae4d7e0512c1b529bbb236e49b3e32be27e673c994e"
       },
       {
         "path": "packages/agents/package.json",
@@ -763,7 +763,7 @@
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "f1b27f8ac8b53066a1501cd9db43e44a9a8d19a0b849a40d553a08640ebddc7e"
+        "sha256": "cfa96fcf48e13924ab4852c22ba97b0f3cbcf4e36e725631166abb1a883dae3e"
       },
       {
         "path": "packages/search/package.json",
@@ -1003,7 +1003,7 @@
       },
       {
         "path": "release.config.json",
-        "sha256": "0bcc9d6da102bf25d5014cc2d15cc3cc21e6cb7398c82521325ec55d639a6c92"
+        "sha256": "687c496cce33489e1a62b76f014af774e5b01d99197022ef35d3c890ecffbdb2"
       },
       {
         "path": "scripts/gmpl-artifacts.ts",
@@ -1023,7 +1023,7 @@
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "535e07d94d0f10dd1e9348e2a9a938fef7dbbe7a7f5bef04cec5890219424077"
+        "sha256": "cace99eccedff5b2cb77dbf6aa6912f0a04cd2eebd4c8d2fc3ca68e46636262b"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -1115,7 +1115,7 @@
       },
       {
         "path": "test/release/fixtures/browser.mjs",
-        "sha256": "d75a2cf7e8e7af226508fdb0ff6ad8681f441efb12a0c1818f7c4608036a8d2f"
+        "sha256": "97b17275bf45edc9c8a21058d5a843b86157f6c4a439bcbd9cac50b9a68f9588"
       },
       {
         "path": "test/release/fixtures/gmpl-browser.mjs",
@@ -1130,7 +1130,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "aa4f84be30d1607ee9dd9d91553ea1fca22b868b04b3b7b35f59bfce886cd9c3"
+    "sha256": "b7ea812f4a91c0d909c8aeb780a3e96e3f21d5ba32322e7d317e836715858eb4"
   },
   "ablations": [
     {
@@ -76684,5 +76684,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "99fcd0dc00fca5e6397cf8903b4c0e2e15d4c9be0510629614c8bdc5a8b5f681"
+  "reportId": "707f3be6ba735e39a90d9813ebb2568e90e2d1a19b75b588a0c1c4f4e541bec0"
 }

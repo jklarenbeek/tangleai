@@ -19,6 +19,8 @@ export function createResearchHostBindings(options: {
     researchFail('TRSH1007', '/taskHandlers', 'Research handlers must match the compiled store and content binding.');
   if (!equalsJson(admitted.reasoning ?? null, prepared.model?.policy ?? null))
     researchFail('TRSH1007', '/reasoning', 'Prepared model topology and admitted stage owners must use the same policy.');
+  if (!equalsJson(admitted.execution ?? null, prepared.executionGraph?.policy ?? null))
+    researchFail('TRSH1007', '/execution', 'Prepared execution topology and admitted handlers must use the same policy.');
   const checkRun = (run: MasRun) => {
     if (run.workflowVersionId !== prepared.workflow.versionId || run.registryRevision !== prepared.snapshot.revision
       || run.executableRevision !== prepared.plan.executableRevision || run.configRegistryRevision !== prepared.catalog.revision)
@@ -58,6 +60,6 @@ export function createResearchHostBindings(options: {
     },
   };
   return { store, taskHandlers: { ...prepared.model?.taskHandlers, ...taskHandlers }, toolBindings: admitted.toolBindings ?? {}, contextProviders: {}, now: options.now, clock: options.clock,
-    ...(prepared.model ? { messageAdapters: prepared.model.adapters } : {}), ...(options.clientFor ? { clientFor: options.clientFor } : {}),
+    ...(prepared.model || prepared.executionGraph ? { messageAdapters: new Map([...prepared.model?.adapters ?? [], ...prepared.executionGraph?.adapters ?? []]) } : {}), ...(options.clientFor ? { clientFor: options.clientFor } : {}),
     ...(options.deadlineFor ? { deadlineFor: options.deadlineFor } : {}), ...(options.observer ? { observer: options.observer } : {}) };
 }

@@ -9,6 +9,8 @@ import { immutableResearchJson, researchRevisionOf } from './identity.ts';
 import { researchValue, researchMasValue, researchFail, type ResearchWorkflowBinding } from './workflow-contract.ts';
 import type { ResearchReasoningPolicy } from './reasoning-contract.ts';
 import { createResearchReasoningWorkflow, type PreparedResearchReasoning } from './reasoning-workflow.ts';
+import type { ResearchExecutionPolicy } from './execution-contract.ts';
+import { createResearchExecutionWorkflow, type PreparedResearchExecution } from './execution-workflow.ts';
 type QueryDocument = LoopNode['termination'];
 
 export const RESEARCH_STAGES = ['create', 'discovery', 'literature', 'synthesis', 'hypothesis', 'design', 'design-approval',
@@ -21,12 +23,15 @@ const envelope = object({ frame: RESEARCH_FRAME_SCHEMA });
 const status = (value: string): QueryDocument => ({ $eq: ['$.frame.status', value] });
 const decision = (value: string): QueryDocument => ({ $eq: ['$.frame.decision', value] });
 const either = (...values: string[]): QueryDocument => ({ $or: values.map(status) });
-interface TopologyOptions { profile: string; binding: ResearchWorkflowBinding; limits: WorkflowLimits; reasoning?: ResearchReasoningPolicy }
-interface ResearchRegistry extends TopologyOptions { contract: ResearchContract; snapshot: MasRegistrySnapshot; model?: PreparedResearchReasoning }
+interface TopologyOptions { profile: string; binding: ResearchWorkflowBinding; limits: WorkflowLimits; reasoning?: ResearchReasoningPolicy; execution?: ResearchExecutionPolicy }
+interface ResearchRegistry extends TopologyOptions { contract: ResearchContract; snapshot: MasRegistrySnapshot; model?: PreparedResearchReasoning; executionGraph?: PreparedResearchExecution }
 
 function graph(options: TopologyOptions) {
   const nodes: Invocation[] = [], messages: MessageEdge[] = [];
   const task = (id: string, stage: ResearchStageName | 'relay' | 'refuse' = id as ResearchStageName, response = false) => {
+    if (options.execution && stage === 'execute') {
+      nodes.push(graphInvocation({ id, subgraph: 'research-execution', input: { frame: RESEARCH_FRAME_SCHEMA }, output: { frame: RESEARCH_FRAME_SCHEMA } })); return;
+    }
     if (options.reasoning && ['synthesis', 'hypothesis', 'design'].includes(stage)) {
       nodes.push(graphInvocation({ id, subgraph: 'research-model-' + stage, input: { frame: RESEARCH_FRAME_SCHEMA }, output: { frame: RESEARCH_FRAME_SCHEMA } })); return;
     }
@@ -142,15 +147,19 @@ export async function createResearchRegistry(contract: ResearchContract, input: 
     researchFail('TRSH1006', '/limits/iterations', 'Native iteration limit must admit the declared research caps.');
   const children = await childWorkflows(c, options);
   const model = options.reasoning ? await createResearchReasoningWorkflow(options.reasoning, options.profile, options.limits) : undefined;
+  const executionGraph = options.execution ? await createResearchExecutionWorkflow(options.execution, options.profile, options.limits) : undefined;
+  if (executionGraph && (!options.binding.toolVersions.some(row => row.name === 'research-execution' && row.version === executionGraph.revision)
+    || options.limits.iterations < Math.max(executionGraph.policy.maxSeeds, executionGraph.policy.maxConditions)))
+    researchFail('TRSH1002', '/execution', 'Native execution requires its pinned policy and bounded loop allowance.');
   if (model && !options.binding.toolVersions.some(row => row.name === 'research-reasoning' && row.version === model.revision))
     researchFail('TRSH1002', '/reasoning', 'The model topology must match the pinned research reasoning policy.');
   const snapshot = researchMasValue(await createMasRegistrySnapshot({ $masRegistry: '0.1', registryId: 'research-lifecycle', roles: [],
-    ...(model ? { roles: model.roles } : {}),
+    ...(model || executionGraph ? { roles: [...(model?.roles ?? []), ...(executionGraph?.roles ?? [])] } : {}),
     handlers: [...[...RESEARCH_STAGES, 'relay', 'refuse'].map(stage => ({ id: 'research-' + stage, title: 'Research ' + stage,
-      effect: stage === 'relay' || stage === 'refuse' ? 'pure' : 'effectful', idempotency: stage === 'relay' || stage === 'refuse' ? 'not-required' : 'honored' })), ...(model?.handlers ?? [])],
-    tools: model?.tools ?? [], contextAdapters: [], messageAdapters: [...new Map([{ id: 'json-schema', version: '0.1' }, ...(model?.messageAdapters ?? [])].map(row => [row.id, row])).values()], templates: [],
-    subgraphs: [...children, ...(model?.subgraphs ?? [])].map(workflow => ({ id: workflow.workflowId, versionId: workflow.versionId, workflow })) }));
-  return Object.freeze({ ...options, contract: c, snapshot, ...(model ? { model } : {}) });
+      effect: stage === 'relay' || stage === 'refuse' ? 'pure' : 'effectful', idempotency: stage === 'relay' || stage === 'refuse' ? 'not-required' : 'honored' })), ...(model?.handlers ?? []), ...(executionGraph?.handlers ?? [])],
+    tools: [...(model?.tools ?? []), ...(executionGraph?.tools ?? [])], contextAdapters: [], messageAdapters: [...new Map([{ id: 'json-schema', version: '0.1' }, ...(model?.messageAdapters ?? []), ...(executionGraph?.messageAdapters ?? [])].map(row => [row.id, row])).values()], templates: [],
+    subgraphs: [...children, ...(model?.subgraphs ?? []), ...(executionGraph?.subgraphs ?? [])].map(workflow => ({ id: workflow.workflowId, versionId: workflow.versionId, workflow })) }));
+  return Object.freeze({ ...options, contract: c, snapshot, ...(model ? { model } : {}), ...(executionGraph ? { executionGraph } : {}) });
 }
 
 /** Returns the native version; its exact children live in the supplied pinned registry. */
@@ -170,11 +179,11 @@ export async function defineResearchWorkflow(contract: ResearchContract, options
 }
 export async function prepareResearchWorkflow(contract: ResearchContract, options: TopologyOptions) {
   const registry = await createResearchRegistry(contract, options);
-  const catalog = researchMasValue(await createMasConfigCatalog({ profiles: [options.profile], tools: registry.model?.tools.map(row => row.id) ?? [], contexts: [], limits: options.limits }));
+  const catalog = researchMasValue(await createMasConfigCatalog({ profiles: [options.profile], tools: registry.snapshot.document.tools.map(row => row.id), contexts: [], limits: options.limits }));
   const workflow = await defineResearchWorkflow(contract, { registry, catalog });
   const validated = researchMasValue(await validateMasWorkflow(workflow, registry.snapshot, catalog));
   const plan = researchMasValue(await planMasWorkflow(validated));
   return Object.freeze({ workflow, snapshot: registry.snapshot, catalog, validated, plan, binding: registry.binding, contract: registry.contract,
-    ...(registry.model ? { model: registry.model } : {}), mermaid: projectMasPlan(plan) });
+    ...(registry.model ? { model: registry.model } : {}), ...(registry.executionGraph ? { executionGraph: registry.executionGraph } : {}), mermaid: projectMasPlan(plan) });
 }
 export type PreparedResearchWorkflow = Awaited<ReturnType<typeof prepareResearchWorkflow>>;

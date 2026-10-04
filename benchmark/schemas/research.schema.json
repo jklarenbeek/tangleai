@@ -153,8 +153,8 @@
             ],
             "additionalProperties": false
           },
-          "minItems": 21,
-          "maxItems": 21
+          "minItems": 26,
+          "maxItems": 26
         }
       },
       "required": [
@@ -214,12 +214,62 @@
             "$ref": "#/$defs/ResearchReasoningRow"
           },
           {
+            "$ref": "#/$defs/ResearchExecutionRow"
+          },
+          {
             "$ref": "#/$defs/ResearchMissingRow"
           }
         ]
       },
       "minItems": 8,
       "maxItems": 8
+    },
+    "execution": {
+      "type": "object",
+      "properties": {
+        "registrationHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "control": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchExecutionRow"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "failureProbes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "program-throw",
+                  "cancelled"
+                ]
+              },
+              "topic": {
+                "$ref": "#/$defs/ResearchExecutionTopic"
+              }
+            },
+            "required": [
+              "id",
+              "topic"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "registrationHash",
+        "control",
+        "failureProbes"
+      ],
+      "additionalProperties": false
     },
     "discovery": {
       "type": "array",
@@ -261,8 +311,8 @@
         ],
         "additionalProperties": false
       },
-      "minItems": 21,
-      "maxItems": 21
+      "minItems": 26,
+      "maxItems": 26
     },
     "disclosure": {
       "type": "array",
@@ -345,6 +395,7 @@
     "identity",
     "ceilings",
     "rows",
+    "execution",
     "discovery",
     "bundles",
     "disclosure",
@@ -355,6 +406,459 @@
   ],
   "additionalProperties": false,
   "$defs": {
+    "ResearchExecutionRegistration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "research-execution-v1"
+        },
+        "licence": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLicence"
+        },
+        "imageDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "dependencyLockHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "resources": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExecutionManifestResources"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "topicId": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+              },
+              "attemptCap": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "control": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "Stop"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 1
+              },
+              "branching": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "Refine",
+                    "Stop"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 3
+              },
+              "designResources": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+              }
+            },
+            "required": [
+              "topicId",
+              "attemptCap",
+              "control",
+              "branching",
+              "designResources"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "id",
+        "licence",
+        "imageDigest",
+        "dependencyLockHash",
+        "resources",
+        "topics"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchExecutionRefusalFixture": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "$ref": "#/$defs/ResearchRefusal"
+        },
+        "patch": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "replace"
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {}
+            },
+            "required": [
+              "op",
+              "path",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "expected",
+        "patch"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchExecutionTopic": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "nativeStatus": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        },
+        "state": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchState"
+        },
+        "runIdentityId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "workflowVersionId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "executableRevision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "contract": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchContract"
+        },
+        "plan": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentPlan"
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/StageAttempt"
+          },
+          "minItems": 1
+        },
+        "branches": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentBranch"
+          },
+          "minItems": 1
+        },
+        "workspaces": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/WorkspaceManifest"
+          },
+          "minItems": 1
+        },
+        "manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExecutionManifest"
+          },
+          "minItems": 1
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentRun"
+          },
+          "minItems": 1
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/MetricObservation"
+          }
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchExecutionWireArtifact"
+          },
+          "minItems": 1
+        },
+        "usage": {
+          "$ref": "#/$defs/ResearchModelUsage"
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "rerunCost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "failures": {
+          "type": "object",
+          "properties": {
+            "program": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "verification": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "leakage": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "confound": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "budget": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "provider": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unsupported": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "program",
+            "verification",
+            "leakage",
+            "confound",
+            "budget",
+            "provider",
+            "unsupported"
+          ],
+          "additionalProperties": false
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/mas-runtime#/$defs/masInteraction"
+          }
+        },
+        "interventions": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "substantive": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "approvals": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "total",
+            "substantive",
+            "approvals"
+          ],
+          "additionalProperties": false
+        },
+        "rerunRate": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "registryAccuracy": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "tracesCompleteness": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "expectedRuns": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "partialBranches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traceBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "topicId",
+        "nativeStatus",
+        "state",
+        "runIdentityId",
+        "workflowVersionId",
+        "executableRevision",
+        "contract",
+        "plan",
+        "attempts",
+        "branches",
+        "workspaces",
+        "manifests",
+        "runs",
+        "observations",
+        "artifacts",
+        "usage",
+        "cost",
+        "rerunCost",
+        "failures",
+        "interactions",
+        "interventions",
+        "rerunRate",
+        "registryAccuracy",
+        "tracesCompleteness",
+        "expectedRuns",
+        "partialBranches",
+        "traceBytes"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchExecutionRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "fixed-single-agent",
+            "fixed-plus-branching"
+          ]
+        },
+        "state": {
+          "const": "measured"
+        },
+        "scope": {
+          "const": "execution"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchExecutionTopic"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "rerunCost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "failures": {
+          "type": "object",
+          "properties": {
+            "program": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "verification": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "leakage": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "confound": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "budget": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "provider": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unsupported": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "program",
+            "verification",
+            "leakage",
+            "confound",
+            "budget",
+            "provider",
+            "unsupported"
+          ],
+          "additionalProperties": false
+        },
+        "interventions": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "substantive": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "approvals": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "total",
+            "substantive",
+            "approvals"
+          ],
+          "additionalProperties": false
+        },
+        "rerunRate": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "registryAccuracy": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "tracesCompleteness": {
+          "$ref": "#/$defs/ResearchScore"
+        }
+      },
+      "required": [
+        "id",
+        "state",
+        "scope",
+        "topics",
+        "cost",
+        "rerunCost",
+        "failures",
+        "interventions",
+        "rerunRate",
+        "registryAccuracy",
+        "tracesCompleteness"
+      ],
+      "additionalProperties": false
+    },
     "ResearchReasoningScript": {
       "type": "object",
       "properties": {
@@ -1850,6 +2354,47 @@
           "minItems": 21,
           "maxItems": 21
         },
+        "execution": {
+          "type": "object",
+          "properties": {
+            "registration": {
+              "type": "string",
+              "minLength": 1
+            },
+            "refusals": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "expected": {
+                    "$ref": "#/$defs/ResearchRefusal"
+                  }
+                },
+                "required": [
+                  "id",
+                  "path",
+                  "expected"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 5,
+              "maxItems": 5
+            }
+          },
+          "required": [
+            "registration",
+            "refusals"
+          ],
+          "additionalProperties": false
+        },
         "oracles": {
           "type": "array",
           "items": {
@@ -1947,6 +2492,7 @@
         "programs",
         "datasets",
         "bundles",
+        "execution",
         "oracles",
         "caps",
         "replicatePolicy",

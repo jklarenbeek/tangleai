@@ -45,3 +45,20 @@ export { createResearchReasoningTools } from './reasoning.ts';
 export { researchReasoningRevisionOf } from './reasoning-contract.ts';
 export type { ResearchReasoningPolicy } from './reasoning-contract.ts';
 export { createResearchReadTools, RESEARCH_READ_TOOLS } from './tools.ts';
+export { RESEARCH_EXECUTION_LIMITS, RESEARCH_STOP_REASONS, isResearchWorkspacePath, createResearchWorkspace,
+  validateResearchWorkspace, buildExecutionManifest, validateExecutionManifest } from './execution/manifest.ts';
+export type { ResearchExecutionLimits, ResearchExecutionArtifact, ResearchWorkspace, ResearchWorkspaceFile,
+  ResearchExecutionManifestInput } from './execution/manifest.ts';
+export { RESEARCH_EXECUTOR_CONTRACT, RESEARCH_RAW_OUTPUT_PATH, researchExecutionResult, validateResearchExecutionResult,
+  researchRawOutputBytes } from './execution/executor.ts';
+export type { ResearchExecutor, ResearchExecutionContext, ResearchExecutionResult,
+  ResearchExecutionSettlement } from './execution/executor.ts';
+export { createFixtureExecutor } from './execution/fixture-executor.ts';
+export type { ResearchFixtureProgram } from './execution/fixture-executor.ts';
+export { createEvaluationRegistry, researchObservationSignature } from './execution/registry.ts';
+export type { ResearchEvaluator, ResearchMetricValue, ResearchEvaluationInput } from './execution/registry.ts';
+export { createResearchExecutionTools } from './stages/execute.ts';
+export { researchExecutionRevisionOf } from './execution-contract.ts';
+export type { ResearchExecutionPolicy } from './execution-contract.ts';
+export { createRemoteResearchExecutor } from './execution/remote-executor.ts';
+export { RESEARCH_RUNNER_WIRE_LIMITS, researchExecutionRequest, decodeResearchExecutionRequest, researchExecutionResponse } from './execution/wire.ts';

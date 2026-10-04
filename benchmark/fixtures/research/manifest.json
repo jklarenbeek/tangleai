@@ -299,6 +299,51 @@
       "path": "bundles/oracle/embedder-width.json"
     }
   ],
+  "execution": {
+    "registration": "execution/registration.json",
+    "refusals": [
+      {
+        "id": "escape-path",
+        "path": "bundles/invalid/escape-path.json",
+        "expected": {
+          "code": "TRSH1010",
+          "path": "/workspace/entries/0/path"
+        }
+      },
+      {
+        "id": "secret-read",
+        "path": "bundles/invalid/secret-read.json",
+        "expected": {
+          "code": "TRSH1010",
+          "path": "/workspace/entries/0/path"
+        }
+      },
+      {
+        "id": "network-during-measured",
+        "path": "bundles/invalid/network-during-measured.json",
+        "expected": {
+          "code": "TRSH1010",
+          "path": "/network"
+        }
+      },
+      {
+        "id": "resource-cap",
+        "path": "bundles/invalid/resource-cap.json",
+        "expected": {
+          "code": "TRSH1010",
+          "path": "/resources/memoryBytes"
+        }
+      },
+      {
+        "id": "writable-evaluator",
+        "path": "bundles/invalid/writable-evaluator.json",
+        "expected": {
+          "code": "TRSH1010",
+          "path": "/workspace/entries/1/mode"
+        }
+      }
+    ]
+  },
   "caps": {
     "calls": 128,
     "tokens": 131072,
@@ -355,6 +400,15 @@
     {
       "path": "bundles/invalid/confound.json",
       "sha256": "dd18876a032bf0fdc89a2d67413b9006abc38feedbdca1cff7dc59e243185716",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "bundles/invalid/escape-path.json",
+      "sha256": "21b9319b1e31551283cdf655ca3c8604146bf39d03e04b8b6b3135034fa76f95",
       "licence": {
         "spdx": "MIT",
         "provenance": "tangle-authored-synthetic",
@@ -470,6 +524,33 @@
       }
     },
     {
+      "path": "bundles/invalid/network-during-measured.json",
+      "sha256": "402bac36a0da3d8ee9648018636f2c045bc7f575a49586c70361586a8f1c0847",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "bundles/invalid/resource-cap.json",
+      "sha256": "f132ea99ca4528f4ef17c5815bad72967b1c4d91fcf457506f738abdf9d73e42",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "bundles/invalid/secret-read.json",
+      "sha256": "8449def8d41a03e576c760c78b3f40b31579dd5333b2461ca820bb271d64340f",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
       "path": "bundles/invalid/stale-approval.json",
       "sha256": "19eee81aec84dc509fb6f0d8f10d32cd602a804d3b15e037b73a6284ebaa3606",
       "licence": {
@@ -490,6 +571,15 @@
     {
       "path": "bundles/invalid/underpowered.json",
       "sha256": "ab2bf6b7efb8a125165a42064808ad4ac8cc46529ea3944a48029a95edcd9e59",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "bundles/invalid/writable-evaluator.json",
+      "sha256": "41ea2fa2ddcf086f0a017af7006abf8d92f7c1e69f18b39d7d228162a8780596",
       "licence": {
         "spdx": "MIT",
         "provenance": "tangle-authored-synthetic",
@@ -553,6 +643,15 @@
     {
       "path": "datasets/corpus.json",
       "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "execution/registration.json",
+      "sha256": "c00a4cb44a83cab6d25019524ba838b5167b0eb6391ea8bf0de493bd034bf743",
       "licence": {
         "spdx": "MIT",
         "provenance": "tangle-authored-synthetic",
@@ -1280,5 +1379,5 @@
       }
     }
   ],
-  "revision": "0dcc3ef21c648b837abf5652cdb061294f237cf463c6b842e522a8228cf436d8"
+  "revision": "290955a1481efc7a1157f52c0c904fe4a94e4f21e97ee00dac5a903156b34574"
 }

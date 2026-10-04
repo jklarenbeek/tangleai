@@ -9,6 +9,7 @@ import { researchFail, researchValue } from './workflow-contract.ts';
 import { researchPreparationFor } from './reasoning-contract.ts';
 import { readResearchReasoningInputs } from './reasoning-records.ts';
 import { createResearchHypotheses } from './stages/hypothesis.ts';
+import { resolveResearchFrame } from './frames.ts';
 
 export const RESEARCH_READ_TOOLS = ['read_cards', 'read_synthesis', 'propose_hypotheses'] as const;
 export async function researchToolDeclarations(): Promise<MasRegistry['tools']> {
@@ -22,7 +23,7 @@ export function createResearchReadTools(options: { researchStore: ResearchStore;
   maxCards: number; contract: ResearchContract; mode: 'single-agent' | 'debate' }): MasHostBindings['toolBindings'] {
   return Object.fromEntries(RESEARCH_READ_TOOLS.map(name => [name, { handler: async (input, context) => {
     if (!context.invocation) researchFail('TRSH1005', '/invocation', 'Research tools require a native invocation scope.');
-    const preparation = await researchPreparationFor(options.masStore, context.invocation), frame = preparation.frame;
+    const preparation = await researchPreparationFor(options.masStore, context.invocation), frame = await resolveResearchFrame(options.researchStore, preparation.frame);
     const snapshot = researchValue(await options.researchStore.snapshot(frame.projectId));
     if (!snapshot || snapshot.state.revision !== preparation.stateRevision || snapshot.state.status !== frame.status)
       researchFail('TRSH1004', '/invocation', 'The prepared research stage is no longer current.');
