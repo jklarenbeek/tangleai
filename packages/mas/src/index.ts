@@ -116,7 +116,7 @@ export { runAgentNode } from './agent-executor.ts';
 export type { AgentRunResult, AgentRunOutcome } from './agent-executor.ts';
 export type { MasAgentComponent, MasAgentComponentInput } from './agent-component.ts';
 
-export { createNodeLifecycle, MasNodeFailure } from './node-lifecycle.ts';
+export { createNodeLifecycle, MasNodeFailure, MasTaskRefusal } from './node-lifecycle.ts';
 export type { MasTaskHandlerBinding, MasTaskInput, MasRuntimeObserver } from './node-lifecycle.ts';
 
 export { executeDagRegion } from './dag-runtime.ts';

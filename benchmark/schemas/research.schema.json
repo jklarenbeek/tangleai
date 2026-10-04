@@ -344,6 +344,293 @@
   ],
   "additionalProperties": false,
   "$defs": {
+    "ResearchWorkflowMeasurement": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "scientific",
+            "complete-path-control"
+          ]
+        },
+        "runId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "bindingId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "runIdentityId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "workflowVersionId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "registryRevision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "executableRevision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "nativeStatus": {
+          "const": "completed"
+        },
+        "state": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchState"
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/StageAttempt"
+          },
+          "minItems": 1
+        },
+        "manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/InputManifest"
+          },
+          "minItems": 1
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ArtifactAdmission"
+          },
+          "minItems": 1
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/mas-runtime#/$defs/masInteraction"
+          }
+        },
+        "spend": {
+          "type": "object",
+          "properties": {
+            "turns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "turns",
+            "tokens",
+            "ms"
+          ],
+          "additionalProperties": false
+        },
+        "providerCalls": {
+          "const": 0
+        },
+        "taskExecutions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "duplicateResponses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gateBehaviour": {
+          "$ref": "#/$defs/ResearchScore"
+        }
+      },
+      "required": [
+        "kind",
+        "runId",
+        "bindingId",
+        "runIdentityId",
+        "workflowVersionId",
+        "registryRevision",
+        "executableRevision",
+        "nativeStatus",
+        "state",
+        "attempts",
+        "manifests",
+        "artifacts",
+        "interactions",
+        "spend",
+        "providerCalls",
+        "taskExecutions",
+        "duplicateResponses",
+        "gateBehaviour"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchLifecycleFixture": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "research-lifecycle-v1"
+        },
+        "project": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchProject"
+        },
+        "contract": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchContract"
+        },
+        "plan": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentPlan"
+        },
+        "workflow": {
+          "$ref": "https://tangleai.dev/schemas/mas-workflow"
+        },
+        "registry": {
+          "$ref": "https://tangleai.dev/schemas/mas-registry"
+        },
+        "catalog": {
+          "type": "object",
+          "properties": {
+            "revision": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            },
+            "profiles": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "tools": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "contexts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "limits": {
+              "$ref": "https://tangleai.dev/schemas/mas-workflow#/$defs/workflowLimits"
+            }
+          },
+          "required": [
+            "revision",
+            "profiles",
+            "tools",
+            "contexts",
+            "limits"
+          ],
+          "additionalProperties": false
+        },
+        "executableRevision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "projectionJson": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+              },
+              "action": {
+                "enum": [
+                  "run",
+                  "stale-approval",
+                  "overdue-pause",
+                  "overdue-stop"
+                ]
+              },
+              "decisions": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "Proceed",
+                      "Refine",
+                      "Pivot",
+                      "Stop"
+                    ]
+                  }
+                }
+              },
+              "responses": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "approve",
+                    "reject",
+                    "stop"
+                  ]
+                }
+              },
+              "expected": {
+                "type": "object",
+                "properties": {
+                  "nativeStatus": {
+                    "enum": [
+                      "completed",
+                      "waiting_for_input",
+                      "failed"
+                    ]
+                  },
+                  "lifecycleStatus": {
+                    "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLifecycle"
+                  },
+                  "executions": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "approvals": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "nativeStatus",
+                  "lifecycleStatus",
+                  "executions",
+                  "approvals"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "action",
+              "decisions",
+              "responses",
+              "expected"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "project",
+        "contract",
+        "plan",
+        "workflow",
+        "registry",
+        "catalog",
+        "executableRevision",
+        "projectionJson",
+        "cases"
+      ],
+      "additionalProperties": false
+    },
     "ResearchBlobs": {
       "type": "object",
       "properties": {
@@ -1064,6 +1351,26 @@
           "items": {
             "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchIssue"
           }
+        },
+        "workflow": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchWorkflowMeasurement"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "completePathControl": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchWorkflowMeasurement"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1090,7 +1397,9 @@
         "observations",
         "claimsExpected",
         "claimsSupported",
-        "verificationIssues"
+        "verificationIssues",
+        "workflow",
+        "completePathControl"
       ],
       "additionalProperties": false
     },

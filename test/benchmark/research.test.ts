@@ -11,6 +11,7 @@ import { validateResearchReportShape } from '../../benchmark/lib/research-valida
 import { RESEARCH_DIMENSIONS, RESEARCH_ROW_IDS, RESEARCH_DISCLOSURES } from '../../benchmark/lib/research-schema.ts';
 import { runResearchCli, requireResearchGate } from '../../benchmark/research.ts';
 import { RESEARCH_FIXTURE_PATH } from '../../benchmark/lib/research-fixture.ts';
+import { runResearchFixture } from '../../benchmark/lib/research-runner.ts';
 import type { ResearchReport, ResearchMeasuredRow } from '../../benchmark/lib/research.types.ts';
 
 const context = await researchContext();
@@ -51,7 +52,16 @@ describe('research instrument', () => {
       assert.equal(topic[dimension].value, dimension === 'literatureRecall' ? 0.75 : 1, topic.topicId + '/' + dimension);
     assert.equal(floor.claimSupport.value, 0.5); assert.equal(floor.claimSupport.total, 12);
     assert.equal(floor.failures.unsupported, 6); assert.equal(floor.literaturePrecision.value, 0.75);
-    assert.equal(floor.citationIdentity.value, 0); assert.equal(floor.gateBehaviour.value, 0);
+    assert.equal(floor.citationIdentity.value, 0); assert.deepEqual(floor.gateBehaviour, { passed: 7, total: 9, value: 7 / 9 });
+    assert.equal(floor.interventions.approvals, 7);
+    assert.deepEqual(floor.topics.map(t => t.workflow?.state.status), ['STOPPED', 'COMPLETE', 'STOPPED']);
+    for (const topic of floor.topics) {
+      assert.equal(topic.completePathControl?.state.status, 'COMPLETE');
+      assert.deepEqual(topic.completePathControl?.gateBehaviour, { passed: 3, total: 3, value: 1 });
+      assert.equal(topic.bundle.interventions.length, 0, 'Legacy pure-program evidence does not relabel early native approvals');
+      assert.equal(topic.workflow?.providerCalls, 0);
+      assert.equal(topic.workflow?.attempts.every(a => a.runIdentityId === report.identity.identities[0].identityId), true);
+    }
     assert.equal(floor.completion.value, 1); assert.equal(floor.topics[2].result, 'SATURATED');
     assert.deepEqual(floor.cost, { calls: 0, tokens: 0, ms: 0, physical: 0 });
   });
@@ -61,8 +71,23 @@ describe('research instrument', () => {
       assert.equal(row.state, 'implementation-missing'); assert.equal(Object.hasOwn(row, 'claimSupport'), false);
       assert.ok('reason' in row && row.reason.length > 0);
     }
-    assert.deepEqual(report.identity.identities, []);
-    assert.ok(report.identity.rows.every(row => row.identityStatus === 'not-run'));
+    assert.equal(report.identity.identities.length, 1);
+    assert.equal(report.identity.rows.find(row => row.rowId === 'no-model-runner')?.identityStatus, 'run');
+    assert.ok(report.identity.rows.filter(row => row.rowId !== 'no-model-runner').every(row => row.identityStatus === 'not-run'));
+  });
+  it('native stage execution preserves the exact scientific bundle and truthful early-gate artifact sets', async () => {
+    for (const [index, topic] of context.loaded.topics.entries()) {
+      const actual = measured(report, 1).topics[index], workflow = actual.workflow!;
+      assert.deepEqual(actual.bundle, await runResearchFixture(context.loaded, topic, 'no-model-runner'));
+      assert.deepEqual(workflow.taskExecutions, ['create', 'discovery', 'synthesis', 'hypothesis', 'design', 'execute', 'analyze', 'decide',
+        ...(actual.bundle.decision.kind === 'Proceed' ? ['write', 'verify'] : [])]);
+      const raw = new Set(actual.bundle.runs.map(run => 'art-' + run.rawArtifactHash));
+      for (const interaction of workflow.interactions) {
+        const prompt = interaction.prompt as { gate: { kind: string; artifacts: Array<{ artifactId: string }> } };
+        assert.equal(prompt.gate.artifacts.some(a => raw.has(a.artifactId)), prompt.gate.kind === 'quality');
+      }
+      assert.equal(new Set(workflow.interactions.map(i => (i.prompt as { gate: { manifestHash: string } }).gate.manifestHash)).size, workflow.interactions.length);
+    }
   });
   it('selection retains not-run rows and cannot silently enable an unknown or duplicate id', async () => {
     const selected = await buildReport({ context, rows: ['artifact-oracle'] });

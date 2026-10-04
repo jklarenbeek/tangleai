@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "e229e6339f693fa5df98c6e5f5809313970875fa",
+    "head": "32cba1de265f7e6d49e28dbdd63aac60a3364b01",
     "clean": false,
     "files": [
       {
@@ -1423,7 +1423,7 @@
       },
       {
         "path": "packages/mas/src/dag-runtime.ts",
-        "sha256": "ec7ce484493fd6d9807f82beb12c577a4ace8bf7471198f2056d846846a6f9eb"
+        "sha256": "66d6df7a5bb9d1c2e11b71ad16cf44cf8b78aaf635710460b4ba2f1bb8f88f04"
       },
       {
         "path": "packages/mas/src/errors.ts",
@@ -1435,7 +1435,7 @@
       },
       {
         "path": "packages/mas/src/index.ts",
-        "sha256": "ee9b3ab2c04c488378483448ba7f25fd5970ccc9c9664dacbee842908d0443c3"
+        "sha256": "1a21a8c4ca96a19b4c7d7919d481c379fb75e25dd59e07e50d9e1a9f44bbe053"
       },
       {
         "path": "packages/mas/src/jaren-flow.d.ts",
@@ -1455,7 +1455,7 @@
       },
       {
         "path": "packages/mas/src/node-lifecycle.ts",
-        "sha256": "98dd6e2208986aaa8223783db47a908b0cc84796144e0d4226c54b835f478787"
+        "sha256": "e86ffcc64b6cbae8446afdfcf1d94ac5c8dd60d465dae03f35d815df6a389027"
       },
       {
         "path": "packages/mas/src/partition.ts",
@@ -1467,7 +1467,7 @@
       },
       {
         "path": "packages/mas/src/runtime-state.ts",
-        "sha256": "9b58127283df56cb1ac2fb565e4197335d8b22cd59a94d316c36f2d94e9a9d11"
+        "sha256": "5d7a13190c0203f1da95638c53358cef6911803b4a06c0c92c7f27cc4289f8bc"
       },
       {
         "path": "packages/mas/src/runtime.ts",
@@ -1479,7 +1479,7 @@
       },
       {
         "path": "packages/mas/src/store.ts",
-        "sha256": "7771e3a4a4a00dff9666e940ec4f83c488d57da12426591344e70f4cb1f5ab20"
+        "sha256": "f6e82cbb543a2abf436aa4018eb4e0577089fdb54e97f39d558b5e24fb3e4319"
       },
       {
         "path": "packages/mas/src/template-bindings.ts",
@@ -1935,15 +1935,27 @@
       },
       {
         "path": "packages/research/schemas/research.schema.json",
-        "sha256": "b2f640b50584cde6c3d26dfca6499439bf4256fbbd2fc1a61d513981930d6dc3"
+        "sha256": "c90f56dec02ac9cbce288160cb09ee7080322dd2897613aa14dac27244300915"
       },
       {
         "path": "packages/research/src/contracts.gen.ts",
-        "sha256": "cb2d750c830d72e6d507b7a184db3539acd3164e752525d8840ac72f06f62e08"
+        "sha256": "6d61933e5aa0add8f36a209718f0beb9bc41f1be5b53a4a150d7f9083937b1d7"
       },
       {
         "path": "packages/research/src/errors.ts",
         "sha256": "ce988e24b2f99a7bee7b7dd2b418fd7ccf5260cad4f104b029463ef82878d486"
+      },
+      {
+        "path": "packages/research/src/gates.ts",
+        "sha256": "2dbe4855c62c1baeb2f113e966cefeeab6d96584a2beb3d734385dee1490f8db"
+      },
+      {
+        "path": "packages/research/src/handlers.ts",
+        "sha256": "e52bc6ccc5629d109e602dfb20c5cd65bc9ff71735a75dd89ac57dbb09841b0b"
+      },
+      {
+        "path": "packages/research/src/host.ts",
+        "sha256": "048a1e01b552fbf4379e0b7a9e0b262f55d4e555a047e4ab4960c6728a269999"
       },
       {
         "path": "packages/research/src/identity.ts",
@@ -1951,7 +1963,11 @@
       },
       {
         "path": "packages/research/src/index.ts",
-        "sha256": "3feda0804d5d5fb1473e4b1eab7027de3a45bcf70e8eb731b5e49594271a26ad"
+        "sha256": "4a8f3e7e23a36be43a944ad75bbe9f8c9a92d32952520a8892be0f367feba69f"
+      },
+      {
+        "path": "packages/research/src/manifest.ts",
+        "sha256": "219f259465ae37e8570aaacb17f862d110bfbaa42308390222cf1f727edca053"
       },
       {
         "path": "packages/research/src/records.ts",
@@ -1972,6 +1988,14 @@
       {
         "path": "packages/research/src/transitions.ts",
         "sha256": "524e3f9f939b06c1fc74d11bb17fadbe36019e7115c47e10731be81768d46467"
+      },
+      {
+        "path": "packages/research/src/workflow-contract.ts",
+        "sha256": "eb278b31c05e73e46514b434ef81063ea38245ab1b509467d8348fca9281318e"
+      },
+      {
+        "path": "packages/research/src/workflow.ts",
+        "sha256": "820a5c79c53f8bceda1098fb38fa2a68a7f08729ad65e71e14049f613f47b0d3"
       },
       {
         "path": "packages/search/package.json",
@@ -2083,7 +2107,7 @@
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
-        "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+        "sha256": "63f72606024de256c7bf042d0e3410a2bbbdeceafa3f198d7122dec05d02232f"
       },
       {
         "path": "packages/store/src/mas-segment-driver.ts",
@@ -2091,7 +2115,7 @@
       },
       {
         "path": "packages/store/src/mas-store.ts",
-        "sha256": "ee88242e82b22d003956a76cb65b529b9490757148e7bc6ca0d12611411721c7"
+        "sha256": "0b49811531691f1daecf9c8654a4bb89366600e8caca7734adeea3111f3a51d0"
       },
       {
         "path": "packages/store/src/memory-store.ts",
@@ -2426,7 +2450,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "69ea8f8fd8cecf40c16530d33892384ed84c06677bf883be9b6fb0640c144a93"
+    "sha256": "db114be5369848851a754729a493f897c2e849bcf37c9d1344003e23a8514f0f"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85612,5 +85636,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "056fa858e189173ad7387f76eb540904c08fe37b59388cca553f074505a6da49"
+  "reportId": "d3fc8c21db146b893922d577870e7802f350233ad5cb7eed97d894f2a48fb1e4"
 }

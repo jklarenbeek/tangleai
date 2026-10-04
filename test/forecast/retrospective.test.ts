@@ -47,7 +47,7 @@ it('a retrospective client is never constructed without its active MAS attempt',
     await q.masStore.putWorkflowVersion(p.workflow);await q.masStore.putRegistrySnapshot(p.snapshot.document as unknown as Record<string,unknown>,p.snapshot.revision);
     const created=await q.masStore.createRun({runId,workflowId:p.workflow.workflowId,workflowVersionId:p.workflow.versionId,registryRevision:p.snapshot.revision,executableRevision:p.plan.executableRevision,configRegistryRevision:p.catalog.revision,profile:'forecast-scripted',input:{request},limits:{...p.workflow.limits}});assert.ok(created.ok);
     const handlers=createForecastLifecycleHandlers({outcomeHost:q.outcome,masStore:q.masStore,segments:manualForecastSegments(f.db,q.masStore),profile:'forecast-scripted',now:f.now,clock:()=>0,executableRevision:p.plan.executableRevision,retrospectiveEditor:()=>{constructed++;throw Error('not active');}});
-    await assert.rejects(async()=>handlers['retrospective-run']({value:{request,resolution:r.id},state:{},node:'retrospective-run',path:'retrospective-run',idempotencyKey:runId+'/root//0/retrospective-run',signal:new AbortController().signal}),e=>(e as any).code==='TFCT1004');assert.equal(constructed,0);
+    await assert.rejects(async()=>handlers['retrospective-run']({runId,value:{request,resolution:r.id},state:{},node:'retrospective-run',path:'retrospective-run',idempotencyKey:runId+'/root//0/retrospective-run',signal:new AbortController().signal}),e=>(e as any).code==='TFCT1004');assert.equal(constructed,0);
   }finally{await f.db.close();}
 });
 it('a refine verdict that reproduces the captured parent retains it without staging an outcome version',async()=>{

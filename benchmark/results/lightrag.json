@@ -10802,7 +10802,7 @@
           },
           {
             "path": "packages/store/src/mas-jobs.ts",
-            "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+            "sha256": "63f72606024de256c7bf042d0e3410a2bbbdeceafa3f198d7122dec05d02232f"
           },
           {
             "path": "packages/store/src/mas-segment-driver.ts",
@@ -10810,7 +10810,7 @@
           },
           {
             "path": "packages/store/src/mas-store.ts",
-            "sha256": "ee88242e82b22d003956a76cb65b529b9490757148e7bc6ca0d12611411721c7"
+            "sha256": "0b49811531691f1daecf9c8654a4bb89366600e8caca7734adeea3111f3a51d0"
           },
           {
             "path": "packages/store/src/memory-store.ts",
@@ -10877,7 +10877,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "56b4ff0ebda7d790f18f273dd56dc2d33a7fd4be8a9ce5de6a9ded2ee425f30d"
+        "sha256": "ac8857515f4ee276f6e1f35ac099f0052c98aa15e9d0c557759266b72af4ed5d"
       },
       "questionIds": [
         "q-relay-port",
@@ -10988,7 +10988,7 @@
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)",
         "The conservative 56953-request bound exceeds TANGLE_AI_MAX_CALLS=200; model-dependent profiling and review allowances cannot be silently discarded."
       ],
-      "planId": "e76baef3e4ac1c2bbe0969e5ffe1cb18ef7caae5d9eb495dea28f924b09a7099"
+      "planId": "110e9f6e457292259806e67be6bbe08009cbb25010b23748ac4db720c46313b9"
     },
     "rows": [],
     "indexing": {
@@ -11020,7 +11020,7 @@
       "defaultChanged": false,
       "clauses": []
     },
-    "reportId": "82109f5b8d9d12c72b69b20625903aef9a46e59a534577fb5a15ea5185739070"
+    "reportId": "7dfb1421cbfbff48462911a9427197f9f669b16ced0ab8caab635ceadef27c1d"
   },
   "judge": {
     "document": "lightrag-judge",
@@ -11458,7 +11458,7 @@
           },
           {
             "path": "packages/store/src/mas-jobs.ts",
-            "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+            "sha256": "63f72606024de256c7bf042d0e3410a2bbbdeceafa3f198d7122dec05d02232f"
           },
           {
             "path": "packages/store/src/mas-segment-driver.ts",
@@ -11466,7 +11466,7 @@
           },
           {
             "path": "packages/store/src/mas-store.ts",
-            "sha256": "ee88242e82b22d003956a76cb65b529b9490757148e7bc6ca0d12611411721c7"
+            "sha256": "0b49811531691f1daecf9c8654a4bb89366600e8caca7734adeea3111f3a51d0"
           },
           {
             "path": "packages/store/src/memory-store.ts",
@@ -11533,7 +11533,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "56b4ff0ebda7d790f18f273dd56dc2d33a7fd4be8a9ce5de6a9ded2ee425f30d"
+        "sha256": "ac8857515f4ee276f6e1f35ac099f0052c98aa15e9d0c557759266b72af4ed5d"
       },
       "reportId": null,
       "promptRevision": "1d390f8d00465dc21cc63a21d762343b5d869519b1030daa53a0461bb5c9ae82",
@@ -11584,7 +11584,7 @@
         "A completed graph live report with retained per-question attempts is required.",
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)"
       ],
-      "planId": "d06888ed8e08aba61ed527d5cbfe9dfd41bc9a1a3113890ec23a95389e440a57"
+      "planId": "3d50656c431999599a2e3ad7382f1bf65e0cd47231f7e551a9ba86db3527f838"
     },
     "status": "not-run",
     "tier": "not-run",
@@ -11599,7 +11599,7 @@
     },
     "physicalRequests": 0,
     "defaultInput": false,
-    "reportId": "f02c91623a7e672f1251c51966f742297938f7762271bdff1ad88010244cc33e"
+    "reportId": "f5c9b971a409734ccba7f29be6a31a13933ffc6dccad8ca9afe37750877a8f5a"
   },
   "parity": {
     "document": "lightrag-parity",
@@ -12833,5 +12833,5 @@
     "defaultChanged": false,
     "clauses": []
   },
-  "reportId": "9109dc72c1d594eb90ad056a646dc51d9a23c022aa1a1cf6ffc72cf85aa075cc"
+  "reportId": "0efb6e33f353fff470a995fe208d639de3406f03cafd4fd1f966f499edf3f6e7"
 }

@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "e229e6339f693fa5df98c6e5f5809313970875fa",
-      "sha256": "179ea0d4f31e957943c47988e2940e6d4977d7fe3c62d23a3206b7b87e341d90",
+      "head": "32cba1de265f7e6d49e28dbdd63aac60a3364b01",
+      "sha256": "7545cf17d5b9db0bd334ad3b8e9e3a105c753ca16f2f9038646d91538653113c",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -678,7 +678,11 @@
         },
         {
           "path": "benchmark/lib/research-fixture.ts",
-          "sha256": "736f4e564da0d6ca9fae921b3b2713e57343badafb1c5a86d9db81ec24da9725"
+          "sha256": "0b7a29765883b1e12fa2c222112d8ec2591637a32590abe516cf4a0104e61b6f"
+        },
+        {
+          "path": "benchmark/lib/research-lifecycle-fixture.ts",
+          "sha256": "59552eba3455f6d401eb4440ed6f3c61f820c355199b2c92a234abf140a16f48"
         },
         {
           "path": "benchmark/lib/research-oracle.ts",
@@ -690,23 +694,27 @@
         },
         {
           "path": "benchmark/lib/research-runner.ts",
-          "sha256": "b32a1008d8065f28dfb8eb01e29f7ceef3866d2e6663282b23634c9d51e2633f"
+          "sha256": "b65631d9d44ff6a656f92222dda2fd95d70a441f19d6b0d7e03a3183dcd17d40"
         },
         {
           "path": "benchmark/lib/research-schema.ts",
-          "sha256": "a5745c51bea3a5712482f96382da2b9d7040f41dcfebf7b900ddd1e543ddfafa"
+          "sha256": "651cf4c0fea8dcd9d33589163cc390e9a945daf5b73363b0a86b212497135e73"
         },
         {
           "path": "benchmark/lib/research-validation.ts",
-          "sha256": "f4a732c8faff6ae7a55a5ce0c8374279cd3feee5b24f1f2dcc8b27e31c936132"
+          "sha256": "71dd29963064d7e4ecb21847c4c428027277db7e17d144017fc7f225fde40278"
+        },
+        {
+          "path": "benchmark/lib/research-workflow.ts",
+          "sha256": "c4513d048ace8a80714caca790794a7c3111e8654449392c577ee68f0bd40af8"
         },
         {
           "path": "benchmark/lib/research.ts",
-          "sha256": "9f5cf8d180e5ca724a83c417f3ce2c1f91277232c1528ce758d99f7a68ce704f"
+          "sha256": "ad82864b3fd4da58e7caff155da882efc768891bf75bd58544e52d9c5166cbce"
         },
         {
           "path": "benchmark/lib/research.types.ts",
-          "sha256": "f063f5e2dffad1b34fb85efc92ba35787fb4e3057bcdee565f1b7032f0f84ced"
+          "sha256": "a7906c7297f96811fe0940978caf0df66ec744cd696313eca15fdf68641c3618"
         },
         {
           "path": "benchmark/lib/retention.ts",
@@ -1326,7 +1334,7 @@
         },
         {
           "path": "packages/mas/src/dag-runtime.ts",
-          "sha256": "ec7ce484493fd6d9807f82beb12c577a4ace8bf7471198f2056d846846a6f9eb"
+          "sha256": "66d6df7a5bb9d1c2e11b71ad16cf44cf8b78aaf635710460b4ba2f1bb8f88f04"
         },
         {
           "path": "packages/mas/src/errors.ts",
@@ -1338,7 +1346,7 @@
         },
         {
           "path": "packages/mas/src/index.ts",
-          "sha256": "ee9b3ab2c04c488378483448ba7f25fd5970ccc9c9664dacbee842908d0443c3"
+          "sha256": "1a21a8c4ca96a19b4c7d7919d481c379fb75e25dd59e07e50d9e1a9f44bbe053"
         },
         {
           "path": "packages/mas/src/jaren-flow.d.ts",
@@ -1358,7 +1366,7 @@
         },
         {
           "path": "packages/mas/src/node-lifecycle.ts",
-          "sha256": "98dd6e2208986aaa8223783db47a908b0cc84796144e0d4226c54b835f478787"
+          "sha256": "e86ffcc64b6cbae8446afdfcf1d94ac5c8dd60d465dae03f35d815df6a389027"
         },
         {
           "path": "packages/mas/src/partition.ts",
@@ -1370,7 +1378,7 @@
         },
         {
           "path": "packages/mas/src/runtime-state.ts",
-          "sha256": "9b58127283df56cb1ac2fb565e4197335d8b22cd59a94d316c36f2d94e9a9d11"
+          "sha256": "5d7a13190c0203f1da95638c53358cef6911803b4a06c0c92c7f27cc4289f8bc"
         },
         {
           "path": "packages/mas/src/runtime.ts",
@@ -1382,7 +1390,7 @@
         },
         {
           "path": "packages/mas/src/store.ts",
-          "sha256": "7771e3a4a4a00dff9666e940ec4f83c488d57da12426591344e70f4cb1f5ab20"
+          "sha256": "f6e82cbb543a2abf436aa4018eb4e0577089fdb54e97f39d558b5e24fb3e4319"
         },
         {
           "path": "packages/mas/src/template-bindings.ts",
@@ -1566,7 +1574,7 @@
         },
         {
           "path": "packages/store/src/mas-jobs.ts",
-          "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+          "sha256": "63f72606024de256c7bf042d0e3410a2bbbdeceafa3f198d7122dec05d02232f"
         },
         {
           "path": "packages/store/src/mas-segment-driver.ts",
@@ -1574,7 +1582,7 @@
         },
         {
           "path": "packages/store/src/mas-store.ts",
-          "sha256": "ee88242e82b22d003956a76cb65b529b9490757148e7bc6ca0d12611411721c7"
+          "sha256": "0b49811531691f1daecf9c8654a4bb89366600e8caca7734adeea3111f3a51d0"
         },
         {
           "path": "packages/store/src/memory-store.ts",
@@ -1881,7 +1889,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "89692fdcaa8615714046d0447a1e17f74c7101d0abcbc5f5f4b893cb2006a002",
+    "planId": "a602dae85005eb79650d4d442c27bd2a685be849ee17894a41730dcadd6adb1d",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

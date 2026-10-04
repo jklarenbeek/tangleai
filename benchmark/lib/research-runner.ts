@@ -5,13 +5,18 @@ import { executeResearchProgram, researchProgramInput } from './research-program
 import { evaluateResearchRun, researchExecutionHash, researchMechanicalDecision } from './research-evaluator.ts';
 import { researchBytesSha256, type LoadedResearchFixture } from './research-fixture.ts';
 import { metricClaimText, researchDisclosures, researchReviewedEvidenceHash } from './research-oracle.ts';
-import type { ResearchBundle, ResearchFixtureTopic, ExperimentRun, MetricObservation, ResearchClaim, EvidenceCard } from './research.types.ts';
+import type { ResearchBundle, ResearchFixtureTopic, ResearchDataset, ExperimentRun, MetricObservation, ResearchClaim, EvidenceCard } from './research.types.ts';
 
 export async function runResearchFixture(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic,
   mode: 'artifact-oracle' | 'no-model-runner'): Promise<ResearchBundle> {
-  const dataset = loaded.datasets.get(topic.datasetPath)!, hidden = loaded.hidden.get(topic.id)!;
+  const runs = await executeResearchFixturePrograms(topic, loaded.datasets.get(topic.datasetPath)!);
+  const observations = await evaluateResearchFixturePrograms(loaded, topic, runs);
+  return assembleResearchFixtureBundle(loaded, topic, mode, runs, observations);
+}
+/** Feature-only execution, called by the native EXECUTE stage and the structural oracle. */
+export async function executeResearchFixturePrograms(topic: ResearchFixtureTopic, dataset: ResearchDataset): Promise<ExperimentRun[]> {
   const inputHash = await canonicalSha256(researchProgramInput(dataset));
-  const runs: ExperimentRun[] = [], observations: MetricObservation[] = [];
+  const runs: ExperimentRun[] = [];
   for (const condition of topic.plan.conditions) for (const seed of topic.contract.replicatePolicy.seeds) {
     const executed = await executeResearchProgram(condition.programId, dataset, seed, condition.params);
     const output = executed.ok ? executed.output : null;
@@ -24,10 +29,24 @@ export async function runResearchFixture(loaded: LoadedResearchFixture, topic: R
         ? { event: 'output', detail: rawArtifactHash! } : { event: 'failure', detail: executed.issue.code }],
       spend: { calls: 0, tokens: 0, ms: 0, physical: 0 }, error: executed.ok ? null : executed.issue };
     runs.push(run);
-    const evaluated = await evaluateResearchRun(topic, dataset, hidden, run);
+  }
+  return runs;
+}
+/** Hidden scoring labels remain inside the independent evaluator, after execution. */
+export async function evaluateResearchFixturePrograms(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic, runs: ExperimentRun[],
+  dataset: ResearchDataset = loaded.datasets.get(topic.datasetPath)!): Promise<MetricObservation[]> {
+  const observations: MetricObservation[] = [];
+  for (const run of runs) {
+    const evaluated = await evaluateResearchRun(topic, dataset, loaded.hidden.get(topic.id)!, run);
     if (!evaluated.valid) throw new Error('Fixture execution refused: ' + JSON.stringify(evaluated.issues));
     observations.push(evaluated.observation);
   }
+  return observations;
+}
+/** Project the retained program evidence without running a program or changing its decision. */
+export async function assembleResearchFixtureBundle(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic,
+  mode: 'artifact-oracle' | 'no-model-runner', runs: ExperimentRun[], observations: MetricObservation[]): Promise<ResearchBundle> {
+  const hidden = loaded.hidden.get(topic.id)!;
   const evidence: EvidenceCard[] = [], claims: ResearchClaim[] = [];
   const promptRevision = researchBytesSha256(loaded.files.get('prompts/fixture-writer.json')!);
   if (mode === 'artifact-oracle') for (const expected of hidden.requiredClaims.filter(claim => claim.kind !== 'metric')) {

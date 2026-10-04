@@ -71,7 +71,7 @@ it('requires a running MAS attempt before constructing a purchasing client',asyn
     const now = () => '2025-01-10T00:00:00.000Z', f = await fixtureForecastHost({ db,instant: now });
     const delivered = await f.host.deliver(f.question.id,1), run = await f.masStore.getRun(delivered.runId!); let constructions = 0;
     const handlers = createForecastHandlers({ forecastStore: f.store,masStore: f.masStore,executableRevision: f.host.plan.executableRevision,now,clock: () => 0,executor: () => { constructions++; throw Error('No active attempt.'); },noteBuilder: () => { constructions++; throw Error('No active attempt.'); } });
-    await assert.rejects(async () => handlers['checkpoint-run']({ value: run!.input as Record<string,unknown>,state: {},node: 'checkpoint-run',path: 'checkpoint-run',idempotencyKey: delivered.runId + '/root//0/checkpoint-run',signal: new AbortController().signal }),e => (e as { code: string }).code === 'TFCT1004');
+    await assert.rejects(async () => handlers['checkpoint-run']({ runId: delivered.runId!, value: run!.input as Record<string,unknown>,state: {},node: 'checkpoint-run',path: 'checkpoint-run',idempotencyKey: delivered.runId + '/root//0/checkpoint-run',signal: new AbortController().signal }),e => (e as { code: string }).code === 'TFCT1004');
     assert.equal(constructions,0);
   } finally { await db.close(); }
 });

@@ -181,6 +181,9 @@ export function planNodeCompletion(
     stateParent: string | null,
   },
 ): { ok: true, value: PlannedCompletion } | { ok: false, issue: MasIssue } {
+  if (current.runId !== plan.runId || current.id !== plan.attemptId) {
+    return { ok: false, issue: masIssue('TMAS2002', '/attemptId', 'the completion must name its own run and attempt') };
+  }
   if (current.status !== 'running') {
     return { ok: false, issue: masIssue('TMAS2003', '/status', `only a running attempt completes; '${current.id}' is '${current.status}'`) };
   }

@@ -132,7 +132,7 @@ export async function executeDagRegion(run: DagRegionRun): Promise<DagRegionOutc
         ok: false,
         failure: {
           node: nodeFailure.node,
-          error: { code: nodeFailure.issue.code, detail: nodeFailure.issue.detail, cause: null },
+          error: { code: nodeFailure.issue.code, detail: nodeFailure.issue.detail, cause: nodeFailure.issue.cause ?? null },
         },
       };
     }

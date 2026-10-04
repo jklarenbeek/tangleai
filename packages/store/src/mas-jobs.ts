@@ -235,7 +235,7 @@ export function createMasSegmentHandlers(masStore: MasStore, options: Pick<MasWo
       // A committed terminal outcome whose job completion was lost: close
       // the segment without executing a region.
       if (run.segment === payload.segment
-        && (run.status === 'completed' || run.status === 'failed' || run.status === 'waiting_for_input' || run.status === 'resume_pending')) {
+        && (run.status === 'completed' || run.status === 'failed' || run.status === 'cancelled' || run.status === 'waiting_for_input' || run.status === 'resume_pending')) {
         await Promise.resolve(suite.complete(segmentJobId, { status: run.status }));
         return { status: run.status, reclaimed: true };
       }

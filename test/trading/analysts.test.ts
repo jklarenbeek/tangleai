@@ -118,7 +118,7 @@ describe('immutable analyst lanes', () => {
       provenance: () => ({ valid: true, value: { model: { ...scriptedModel, profile: 'foreign-profile' }, spend: scriptedSpend() } }) });
     snapshot.observations.length = 0; manifest.assets.length = 0;
     const host = await pending; assert.ok(host.valid, JSON.stringify(host));
-    const args = { state: {}, node: 'prepare-analyst-news', path: 'prepare-analyst-news', idempotencyKey: 'test', signal: new AbortController().signal };
+    const args = { runId: 'test', state: {}, node: 'prepare-analyst-news', path: 'prepare-analyst-news', idempotencyKey: 'test', signal: new AbortController().signal };
     const prepared = await host.value.taskHandlers['prepare-analyst-news']({ ...args, value: { snapshot: f.snapshot.snapshot } }) as { variables: unknown };
     await assert.rejects(async () => host.value.taskHandlers['check-analyst-news']({ ...args, node: 'check-analyst-news', value: { ...prepared, out: f.report('news') } }), /TTRD1002/);
   });

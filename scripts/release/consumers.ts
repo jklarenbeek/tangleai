@@ -70,6 +70,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     for (const file of ['trading-consumer.mjs', 'trading-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'trading-consumer.mjs']);
     await sqliteFixture('bun', ['trading-consumer.mjs']);
+    writeFileSync(resolve(directory, 'research-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/research.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     for (const file of ['research-consumer.mjs', 'research-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'research-consumer.mjs']);
     await sqliteFixture('bun', ['research-consumer.mjs']);

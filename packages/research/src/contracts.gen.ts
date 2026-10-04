@@ -998,6 +998,10 @@ export interface InputManifest {
   toolVersions: ResearchToolVersions;
   evaluator: ResearchEvaluatorIdentity;
   reservation: ResearchCost;
+  /**
+   * Canonical stage control input, including root values, counters and the exact gate response; absent on pre-workflow manifests.
+   */
+  controlHash?: Sha256;
 }
 
 
@@ -1373,6 +1377,110 @@ export interface StageCommitReceipt {
   recordIds: Array<ResearchId>;
   nextState: ResearchState;
   operationHash: Sha256;
+}
+
+
+export type ResearchGateKind = "literature" | "design" | "quality";
+
+export interface ResearchInputArtifact {
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  artifactId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^admission-[0-9a-f]{64}$"
+   */
+  admissionId: string;
+}
+
+
+export interface ResearchGateReview {
+  projectId: ResearchId;
+  kind: ResearchGateKind;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  stateRevision: number;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  artifacts: Array<ResearchInputArtifact>;
+  manifestHash: Sha256;
+}
+
+
+export interface ResearchGateResponsePatchItemOneOf1 {
+  op: "add" | "replace" | "test";
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  path: string;
+  value: unknown;
+}
+
+
+export interface ResearchGateResponsePatchItemOneOf2 {
+  op: "remove";
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  path: string;
+}
+
+
+export interface ResearchGateResponsePatchItemOneOf3 {
+  op: "copy" | "move";
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  from: string;
+}
+
+
+export interface ResearchGateResponse {
+  decision: "approve" | "reject" | "edit" | "guide" | "stop";
+  approvedManifestHash: Sha256;
+  note: string;
+  actor: "human" | "scripted";
+  target?: "write" | "analyze" | "design";
+  /**
+   * Reserved bounded RFC6902 request; execution requires the separately bound guarded editor.
+   * Schema constraints this type cannot express: maxItems=64
+   */
+  patch?: Array<ResearchGateResponsePatchItemOneOf1 | ResearchGateResponsePatchItemOneOf2 | ResearchGateResponsePatchItemOneOf3>;
+}
+
+
+export interface ResearchWorkflowFrame {
+  projectId: ResearchId;
+  bindingId: Sha256;
+  status: ResearchLifecycle;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  artifacts: Array<ResearchInputArtifact>;
+  checkpoint: ResearchInputArtifact | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  pivot: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  attempt: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  review: number;
+  decision: null | "Proceed" | "Refine" | "Pivot" | "Stop";
+  gate: ResearchGateReview | null;
+  response: ResearchGateResponse | null;
+  projectHash: Sha256;
+  planHash: Sha256;
 }
 
 

@@ -541,6 +541,10 @@ export interface ResearchToolVersionsItem {
 export type ResearchToolVersions = Array<ResearchToolVersionsItem>;
 
 export interface InputManifest {
+  /**
+   * Canonical stage control input, including root values, counters and the exact gate response; absent on pre-workflow manifests.
+   */
+  controlHash?: Sha256;
   evaluator: ResearchEvaluatorIdentity;
   /**
    * Schema constraints this type cannot express: uniqueItems=true
@@ -1093,6 +1097,81 @@ export interface ResearchBundle {
 }
 
 
+export type ResearchGateKind = "literature" | "design" | "quality";
+
+export interface ResearchGateResponsePatchItemOneOf1 {
+  op: "add" | "replace" | "test";
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  path: string;
+  value: unknown;
+}
+
+
+export interface ResearchGateResponsePatchItemOneOf2 {
+  op: "remove";
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  path: string;
+}
+
+
+export interface ResearchGateResponsePatchItemOneOf3 {
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  from: string;
+  op: "copy" | "move";
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  path: string;
+}
+
+
+export interface ResearchGateResponse {
+  actor: "human" | "scripted";
+  approvedManifestHash: Sha256;
+  decision: "approve" | "reject" | "edit" | "guide" | "stop";
+  note: string;
+  /**
+   * Reserved bounded RFC6902 request; execution requires the separately bound guarded editor.
+   * Schema constraints this type cannot express: maxItems=64
+   */
+  patch?: Array<ResearchGateResponsePatchItemOneOf1 | ResearchGateResponsePatchItemOneOf2 | ResearchGateResponsePatchItemOneOf3>;
+  target?: "write" | "analyze" | "design";
+}
+
+
+export interface ResearchInputArtifact {
+  /**
+   * Schema constraints this type cannot express: pattern="^admission-[0-9a-f]{64}$"
+   */
+  admissionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  artifactId: string;
+}
+
+
+export interface ResearchGateReview {
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  artifacts: Array<ResearchInputArtifact>;
+  kind: ResearchGateKind;
+  manifestHash: Sha256;
+  projectId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  stateRevision: number;
+}
+
+
 /**
  * Schema constraints this type cannot express: minLength=1
  */
@@ -1198,6 +1277,35 @@ export interface ResearchState {
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
    */
   revision: number;
+  status: ResearchLifecycle;
+}
+
+
+export interface ResearchWorkflowFrame {
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  artifacts: Array<ResearchInputArtifact>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  attempt: number;
+  bindingId: Sha256;
+  checkpoint: ResearchInputArtifact | null;
+  decision: null | "Proceed" | "Refine" | "Pivot" | "Stop";
+  gate: ResearchGateReview | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  pivot: number;
+  planHash: Sha256;
+  projectHash: Sha256;
+  projectId: ResearchId;
+  response: ResearchGateResponse | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  review: number;
   status: ResearchLifecycle;
 }
 
@@ -1373,6 +1481,653 @@ export interface WorkspaceManifest {
    */
   splitIds: Array<ResearchId>;
   workspaceHash: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_recordId = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+ */
+export type MasRuntime_runtimeName = string;
+
+/**
+ * The hierarchical invocation address `<region>/<branch>/<iteration>/<node>` segments joined by `/`; iterations are 1-based decimals.
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_invocationPath = string;
+
+/**
+ * An injected-clock reading, ISO-8601 shaped. Deterministic ticks under conformance; never part of a canonical identity.
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_tick = string;
+
+export interface MasRuntime_masInteractionExpiryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  afterMs: number;
+  deadline: MasRuntime_tick;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_masInteractionResponseKeyOneOf2 = string;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type MasRuntime_masInteractionResumeSegmentOneOf2 = number;
+
+export interface MasRuntime_masInteraction {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  node: MasRuntime_runtimeName;
+  path: MasRuntime_invocationPath;
+  status: "waiting" | "responded" | "cancelled" | "expired";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  revision: number;
+  prompt: unknown;
+  responseSchema: { [key: string]: unknown; } | boolean;
+  expiry: null | MasRuntime_masInteractionExpiryOneOf2;
+  response: unknown;
+  responseKey: null | MasRuntime_masInteractionResponseKeyOneOf2;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  segment: number;
+  resumeSegment: null | MasRuntime_masInteractionResumeSegmentOneOf2;
+  requestedAt: MasRuntime_tick;
+  resolvedAt: null | MasRuntime_tick;
+}
+
+
+export interface ResearchWorkflowMeasurementSpend {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  ms: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchWorkflowMeasurementTaskExecutionsItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.passed","$.total"]},{"$eq":["$.value",{"$div":["$.passed","$.total"]}]}]}
+ */
+export interface ResearchScore {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  passed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  value: number;
+}
+
+
+export interface ResearchWorkflowMeasurement {
+  kind: "scientific" | "complete-path-control";
+  runId: ResearchId;
+  bindingId: Sha256;
+  runIdentityId: Sha256;
+  workflowVersionId: Sha256;
+  registryRevision: Sha256;
+  executableRevision: Sha256;
+  nativeStatus: "completed";
+  state: ResearchState;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  attempts: Array<StageAttempt>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  manifests: Array<InputManifest>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  artifacts: Array<ArtifactAdmission>;
+  interactions: Array<MasRuntime_masInteraction>;
+  spend: ResearchWorkflowMeasurementSpend;
+  providerCalls: 0;
+  taskExecutions: Array<ResearchWorkflowMeasurementTaskExecutionsItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateResponses: number;
+  gateBehaviour: ResearchScore;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+ */
+export type MasWorkflow_name = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type MasWorkflow_sha256 = string;
+
+export interface MasWorkflowProvenance {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  author: string;
+}
+
+
+/**
+ * An embedded JSON Schema document. The semantic validator compiles it; a schema that does not compile refuses.
+ */
+export type MasWorkflow_jsonSchema = { [key: string]: unknown; } | boolean;
+
+export interface MasWorkflow_schemaCarrier {
+  schema: MasWorkflow_jsonSchema;
+}
+
+
+export interface MasWorkflow_portRef {
+  node: MasWorkflow_name;
+  port: MasWorkflow_name;
+}
+
+
+export interface MasWorkflow_ports {
+  /**
+   * Schema constraints this type cannot express: minProperties=1, propertyNames={"pattern":"^[a-z][a-z0-9-]*$"}
+   */
+  ports: { [key: string]: { schema: MasWorkflow_jsonSchema; }; };
+}
+
+
+export interface MasWorkflow_statePullItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  member: string;
+  as: MasWorkflow_name;
+}
+
+
+export type MasWorkflow_statePull = Array<MasWorkflow_statePullItem>;
+
+export interface MasWorkflow_statePushItem {
+  from: MasWorkflow_name;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  member: string;
+}
+
+
+export type MasWorkflow_statePush = Array<MasWorkflow_statePushItem>;
+
+/**
+ * Schema constraints this type cannot express: minProperties=1
+ */
+export interface MasWorkflow_nodeLimitsOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolRounds?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextChars?: number;
+}
+
+
+export type MasWorkflow_nodeLimits = null | MasWorkflow_nodeLimitsOneOf2;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9_-]*$"
+ */
+export type MasWorkflow_agentNodeToolsItem = string;
+
+export interface MasWorkflow_agentNode {
+  id: MasWorkflow_name;
+  kind: "agent";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  role: MasWorkflow_name;
+  profile: MasWorkflow_name;
+  instructionsRevision: MasWorkflow_sha256;
+  tools: Array<MasWorkflow_agentNodeToolsItem>;
+  context: Array<MasWorkflow_name>;
+  messageAdapter: MasWorkflow_name;
+  executor?: MasWorkflow_name;
+}
+
+
+export interface MasWorkflow_taskNode {
+  id: MasWorkflow_name;
+  kind: "task";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  handler: MasWorkflow_name;
+  effect: "pure" | "read" | "effectful";
+}
+
+
+export interface MasWorkflow_graphNodePullItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  parent: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  child: string;
+}
+
+
+export interface MasWorkflow_graphNodePushItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  child: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  parent: string;
+}
+
+
+export interface MasWorkflow_graphNode {
+  id: MasWorkflow_name;
+  kind: "graph";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  subgraph: MasWorkflow_name;
+  pull: Array<MasWorkflow_graphNodePullItem>;
+  push: Array<MasWorkflow_graphNodePushItem>;
+}
+
+
+/**
+ * A Jaren JSON Query document — an operator object, a `$`-rooted path string, or a literal; never null, so a nullable member's oneOf stays decidable. Compilability is a semantic gate.
+ * Schema constraints this type cannot express: not={"type":"null"}
+ */
+export type MasWorkflow_queryDocument = unknown;
+
+export interface MasWorkflow_loopNode {
+  id: MasWorkflow_name;
+  kind: "loop";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  body: MasWorkflow_name;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  init: Array<{ port: MasWorkflow_name; to: string; }>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  feedback: Array<{ from: string; to: string; }>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  result: Array<{ port: MasWorkflow_name; from: string; }>;
+  /**
+   * The host-owned iteration cap. Positivity is the semantic gate, so an unbounded declaration refuses at its own pointer rather than as a shape error.
+   * Schema constraints this type cannot express: type="integer"
+   */
+  maxIterations: number;
+  termination: MasWorkflow_queryDocument;
+}
+
+
+export interface MasWorkflow_switchNodeBranchesItem {
+  id: MasWorkflow_name;
+  when: MasWorkflow_queryDocument;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  nodes: Array<MasWorkflow_name>;
+  result: MasWorkflow_portRef;
+}
+
+
+export interface MasWorkflow_switchNode {
+  id: MasWorkflow_name;
+  kind: "switch";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  mode: "one-of" | "multi-select";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  branches: Array<MasWorkflow_switchNodeBranchesItem>;
+  default: null | MasWorkflow_name;
+}
+
+
+export interface MasWorkflow_interactionNodeExpiryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  afterMs: number;
+}
+
+
+export interface MasWorkflow_interactionNode {
+  id: MasWorkflow_name;
+  kind: "interaction";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  prompt: MasWorkflow_schemaCarrier;
+  response: MasWorkflow_schemaCarrier;
+  expiry: null | MasWorkflow_interactionNodeExpiryOneOf2;
+}
+
+
+export type MasWorkflow_invocation = MasWorkflow_agentNode | MasWorkflow_taskNode | MasWorkflow_graphNode | MasWorkflow_loopNode | MasWorkflow_switchNode | MasWorkflow_interactionNode;
+
+export interface MasWorkflow_messageEdge {
+  id: MasWorkflow_name;
+  from: MasWorkflow_portRef;
+  to: MasWorkflow_portRef;
+  adapter: MasWorkflow_name;
+  select: null | MasWorkflow_queryDocument;
+  aggregation: "one" | "ordered-list" | "named-object";
+}
+
+
+export interface MasWorkflow_workflowLimits {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  toolRounds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  fanOut: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  concurrency: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  iterations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  contextChars: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  traceBytes: number;
+}
+
+
+/**
+ * The immutable, content-addressed intermediate representation every authoring path emits and the only shape the runtime executes. A version carries its stable workflow id, its canonical `versionId` (the SHA-256 of the document with `versionId`, `provenance` and `compile` excluded, so authorship and source provenance can never move a version), closed input/output/state schemas, named entry/exit ports, the closed six-kind invocation union, control dependencies, ordered typed message edges, workflow/node caps, pinned registry and CONFIG references and compile metadata. Secrets, clocks and observed results have no representable member. Unknown members refuse at every object.
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.nodes[*].id"},{"$count":{"$distinct":"$.nodes[*].id"}}]},{"$eq":[{"$count":"$.messages[*].id"},{"$count":{"$distinct":"$.messages[*].id"}}]},{"$every":{"n":"$.nodes[?(@.kind=='switch')]"},"$satisfies":{"$eq":[{"$count":"$n.branches[*].id"},{"$count":{"$distinct":"$n.branches[*].id"}}]}}]}
+ */
+export interface MasWorkflow {
+  $mas: "0.1";
+  workflowId: MasWorkflow_name;
+  versionId: MasWorkflow_sha256;
+  parentVersionId: null | MasWorkflow_sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  description: string;
+  provenance: MasWorkflowProvenance;
+  input: MasWorkflow_schemaCarrier;
+  output: MasWorkflow_schemaCarrier;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  entry: Array<{ port: MasWorkflow_name; to: MasWorkflow_portRef; }>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  exit: Array<{ port: MasWorkflow_name; from: MasWorkflow_portRef; }>;
+  state: { schema: MasWorkflow_jsonSchema; init: unknown; };
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  nodes: Array<MasWorkflow_invocation>;
+  control: Array<{ from: MasWorkflow_name; to: MasWorkflow_name; }>;
+  messages: Array<MasWorkflow_messageEdge>;
+  limits: MasWorkflow_workflowLimits;
+  /**
+   * The pinned MAS registry snapshot revision. `null` is legal only for a subgraph-embedded child, which inherits the enclosing pin.
+   */
+  registry: { revision: null | MasWorkflow_sha256; };
+  config: { registryRevision: null | MasWorkflow_sha256; profile: MasWorkflow_name; };
+  compile: { schemaVersion: "0.1"; sourceMode: "declarative" | "imperative"; sourceDesignRevision: null | MasWorkflow_sha256; executableRevision: null | MasWorkflow_sha256; };
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+ */
+export type MasRegistry_registryName = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type MasRegistry_registrySha256 = string;
+
+export interface MasRegistryRolesItem {
+  id: MasRegistry_registryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  instructions: string;
+  instructionsRevision: MasRegistry_registrySha256;
+  capabilities: Array<MasRegistry_registryName>;
+}
+
+
+export interface MasRegistryHandlersItem {
+  id: MasRegistry_registryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  effect: "pure" | "read" | "effectful";
+  /**
+   * `honored` — the bound host handler accepts and honors an out-of-band idempotency key; required before an effectful handler may bind.
+   */
+  idempotency: "not-required" | "honored";
+}
+
+
+export interface MasRegistryToolsItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9_-]*$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  effect: "pure" | "read" | "effectful";
+  input: { [key: string]: unknown; } | boolean;
+  inputRevision: MasRegistry_registrySha256;
+}
+
+
+export interface MasRegistryMessageAdaptersItem {
+  id: MasRegistry_registryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+}
+
+
+export interface MasRegistryContextAdaptersItem {
+  id: MasRegistry_registryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  capabilities: Array<MasRegistry_registryName>;
+}
+
+
+export interface MasRegistryTemplatesItem {
+  id: MasRegistry_registryName;
+  versionId: MasRegistry_registrySha256;
+  /**
+   * The embedded MasTemplateVersion document, validated against its own schema by the snapshot constructor.
+   */
+  template: { [key: string]: unknown; };
+}
+
+
+export interface MasRegistrySubgraphsItem {
+  id: MasRegistry_registryName;
+  versionId: MasRegistry_registrySha256;
+  /**
+   * The embedded MasWorkflowVersion document, validated against the workflow schema by the snapshot constructor; its versionId must recompute.
+   */
+  workflow: { [key: string]: unknown; };
+}
+
+
+/**
+ * The validated capability snapshot a workflow pins by revision: role identities with content-addressed instructions, named task handler contracts, schema-checked tool declarations, message and context adapter identities, immutable template versions and embedded subgraph workflow versions. Entries are data descriptions only — a function, credential, URL or mutable reference has no representable member; host registries bind functions to these ids only after the snapshot validates. The snapshot revision is the canonical SHA-256 of this whole document.
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.roles[*].id"},{"$count":{"$distinct":"$.roles[*].id"}}]},{"$eq":[{"$count":"$.handlers[*].id"},{"$count":{"$distinct":"$.handlers[*].id"}}]},{"$eq":[{"$count":"$.tools[*].id"},{"$count":{"$distinct":"$.tools[*].id"}}]},{"$eq":[{"$count":"$.messageAdapters[*].id"},{"$count":{"$distinct":"$.messageAdapters[*].id"}}]},{"$eq":[{"$count":"$.contextAdapters[*].id"},{"$count":{"$distinct":"$.contextAdapters[*].id"}}]},{"$eq":[{"$count":"$.templates[*].id"},{"$count":{"$distinct":"$.templates[*].id"}}]},{"$eq":[{"$count":"$.subgraphs[*].id"},{"$count":{"$distinct":"$.subgraphs[*].id"}}]}]}
+ */
+export interface MasRegistry {
+  $masRegistry: "0.1";
+  registryId: MasRegistry_registryName;
+  agentExecutors?: Array<{ id: MasRegistry_registryName; version: MasRegistry_registrySha256; }>;
+  roles: Array<MasRegistryRolesItem>;
+  handlers: Array<MasRegistryHandlersItem>;
+  tools: Array<MasRegistryToolsItem>;
+  messageAdapters: Array<MasRegistryMessageAdaptersItem>;
+  contextAdapters: Array<MasRegistryContextAdaptersItem>;
+  templates: Array<MasRegistryTemplatesItem>;
+  subgraphs: Array<MasRegistrySubgraphsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchLifecycleFixtureCatalogProfilesItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchLifecycleFixtureCatalogToolsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchLifecycleFixtureCatalogContextsItem = string;
+
+export interface ResearchLifecycleFixtureCasesItemExpected {
+  nativeStatus: "completed" | "waiting_for_input" | "failed";
+  lifecycleStatus: ResearchLifecycle;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  executions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  approvals: number;
+}
+
+
+export interface ResearchLifecycleFixture {
+  id: "research-lifecycle-v1";
+  project: ResearchProject;
+  contract: ResearchContract;
+  plan: ExperimentPlan;
+  workflow: MasWorkflow;
+  registry: MasRegistry;
+  catalog: { revision: Sha256; profiles: Array<ResearchLifecycleFixtureCatalogProfilesItem>; tools: Array<ResearchLifecycleFixtureCatalogToolsItem>; contexts: Array<ResearchLifecycleFixtureCatalogContextsItem>; limits: MasWorkflow_workflowLimits; };
+  executableRevision: Sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  projectionJson: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  cases: Array<{ id: ResearchId; action: "run" | "stale-approval" | "overdue-pause" | "overdue-stop"; decisions: Array<Array<"Proceed" | "Refine" | "Pivot" | "Stop">>; responses: Array<"approve" | "reject" | "stop">; expected: ResearchLifecycleFixtureCasesItemExpected; }>;
 }
 
 
@@ -1644,25 +2399,6 @@ export interface ResearchFixtureManifest {
 }
 
 
-/**
- * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.passed","$.total"]},{"$eq":["$.value",{"$div":["$.passed","$.total"]}]}]}
- */
-export interface ResearchScore {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  passed: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  total: number;
-  /**
-   * Schema constraints this type cannot express: minimum=0, maximum=1
-   */
-  value: number;
-}
-
-
 export interface ResearchTopicResultInterventions {
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
@@ -1752,6 +2488,8 @@ export interface ResearchTopicResult {
    */
   claimsSupported: Array<ResearchTopicResultClaimsSupportedItem>;
   verificationIssues: Array<ResearchIssue>;
+  workflow: ResearchWorkflowMeasurement | null;
+  completePathControl: ResearchWorkflowMeasurement | null;
 }
 
 
@@ -2246,6 +2984,304 @@ export interface Config_resolutionOneOf2 {
  * The pure resolver's only two outcomes. Refusal is a value: sorted stable issues with document paths, no secret in any detail.
  */
 export type Config_resolution = { ok: true; identity: Config_ConfigRunIdentity; } | Config_resolutionOneOf2;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type MasRuntime_runtimeSha256 = string;
+
+export type MasRuntime_runStatus = "queued" | "running" | "waiting_for_input" | "resume_pending" | "completed" | "failed" | "cancelled";
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_masRunClaimOwnerOneOf2 = string;
+
+/**
+ * The worker claim epoch: bumped on every segment claim/reclaim, never by ordinary record writes. A semantic commit carrying a stale claim seq refuses TMAS2005 — a zombie worker whose lease expired cannot write a completion.
+ */
+export interface MasRuntime_masRunClaim {
+  owner: null | MasRuntime_masRunClaimOwnerOneOf2;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  seq: number;
+}
+
+
+export interface MasRuntime_runtimeErrorCauseOneOf2 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  docPath: string;
+  message: string;
+}
+
+
+export interface MasRuntime_runtimeError {
+  /**
+   * Schema constraints this type cannot express: pattern="^(TMAS[12][0-9]{3}|JF[0-9]{4}|JQ[0-9]{4}|JD[0-9]{4})$"
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  detail: string;
+  cause: null | MasRuntime_runtimeErrorCauseOneOf2;
+}
+
+
+export interface MasRuntime_runFailure {
+  node: null | MasRuntime_invocationPath;
+  error: MasRuntime_runtimeError;
+}
+
+
+export interface MasRuntime_budgetSpend {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
+export interface MasRuntime_masRun {
+  id: MasRuntime_recordId;
+  workflowId: MasRuntime_runtimeName;
+  workflowVersionId: MasRuntime_runtimeSha256;
+  registryRevision: MasRuntime_runtimeSha256;
+  executableRevision: MasRuntime_runtimeSha256;
+  configRegistryRevision: null | MasRuntime_runtimeSha256;
+  profile: MasRuntime_runtimeName;
+  status: MasRuntime_runStatus;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  revision: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  segment: number;
+  /**
+   * The worker claim epoch: bumped on every segment claim/reclaim, never by ordinary record writes. A semantic commit carrying a stale claim seq refuses TMAS2005 — a zombie worker whose lease expired cannot write a completion.
+   */
+  claim: MasRuntime_masRunClaim;
+  /**
+   * The per-run trace sequence authority: record ids derive from it transactionally, so the trace order is committed state, never a process-local counter.
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceSeq: number;
+  jobId: null | MasRuntime_recordId;
+  input: unknown;
+  output: unknown;
+  failure: null | MasRuntime_runFailure;
+  /**
+   * Persisted suite FSM snapshots and host context per control descriptor id — the whole durable control state of the run.
+   */
+  fsm: { [key: string]: unknown; };
+  budget: { limits: { [key: string]: unknown; }; spent: MasRuntime_budgetSpend; };
+  createdAt: MasRuntime_tick;
+  updatedAt: MasRuntime_tick;
+}
+
+
+export type MasRuntime_attemptStatus = "running" | "completed" | "failed" | "aborted" | "uncertain";
+
+export interface MasRuntime_usageCounts {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextReads: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  promptTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completionTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unknownTokenRequests?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  estimatedTokens?: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_masNodeAttemptStopReasonOneOf2 = string;
+
+/**
+ * A bounded, redaction-safe view of a larger value. `state` says exactly why bytes may be absent; `text` is the retained bounded rendering.
+ */
+export interface MasRuntime_boundedView {
+  state: "retained" | "redacted" | "truncated" | "expired" | "not-configured" | "not-run";
+  text: null | string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  size: number;
+  artifact: null | MasRuntime_recordId;
+}
+
+
+export interface MasRuntime_toolStep {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  name: string;
+  arguments: MasRuntime_boundedView;
+  result: MasRuntime_boundedView;
+  state: "ok" | "invalid-input" | "handler-error" | "aborted" | "uncertain";
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_contextReadAddressesItem = string;
+
+export interface MasRuntime_contextRead {
+  adapter: MasRuntime_runtimeName;
+  outcome: "ok" | "unavailable" | "failed";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  units: number;
+  addresses: Array<MasRuntime_contextReadAddressesItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chars: number;
+}
+
+
+export interface MasRuntime_masNodeAttempt {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  seq: number;
+  path: MasRuntime_invocationPath;
+  invocationId: MasRuntime_runtimeName;
+  kind: "agent" | "task" | "graph" | "loop" | "switch" | "interaction";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attempt: number;
+  status: MasRuntime_attemptStatus;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  idempotencyKey: string;
+  output: unknown;
+  error: null | MasRuntime_runtimeError;
+  usage: MasRuntime_usageCounts;
+  spend: MasRuntime_budgetSpend;
+  stopReason: null | MasRuntime_masNodeAttemptStopReasonOneOf2;
+  transcript: MasRuntime_boundedView;
+  toolSteps: Array<MasRuntime_toolStep>;
+  contextReads: Array<MasRuntime_contextRead>;
+  restored: boolean;
+  startedAt: MasRuntime_tick;
+  finishedAt: null | MasRuntime_tick;
+}
+
+
+export interface MasRuntime_messageEnd {
+  path: MasRuntime_invocationPath;
+  port: MasRuntime_runtimeName;
+}
+
+
+export interface MasRuntime_masMessage {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  seq: number;
+  edgeId: MasRuntime_runtimeName;
+  from: MasRuntime_messageEnd;
+  to: MasRuntime_messageEnd;
+  adapter: MasRuntime_runtimeName;
+  aggregation: "one" | "ordered-list" | "named-object";
+  /**
+   * The edge-document-order position among the target port's inbound edges — the aggregation order, independent of completion timing.
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  index: number;
+  payload: unknown;
+  payloadState: "retained" | "redacted" | "truncated" | "expired";
+  artifact: null | MasRuntime_recordId;
+  at: MasRuntime_tick;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^/"
+ */
+export type MasRuntime_masStateRevisionProvenanceMembersItem = string;
+
+export interface MasRuntime_masStateRevision {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  seq: number;
+  /**
+   * The state owner: '' for the workflow root, or the graph invocation path for an isolated child namespace.
+   */
+  namespace: string;
+  parent: null | MasRuntime_recordId;
+  value: unknown;
+  provenance: { path: MasRuntime_invocationPath; members: Array<MasRuntime_masStateRevisionProvenanceMembersItem>; };
+  at: MasRuntime_tick;
+}
+
+
+export interface MasRuntime_masTraceArtifact {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  kind: "transcript" | "tool-arguments" | "tool-result" | "message-payload" | "context-unit" | "normalization";
+  state: "retained" | "redacted" | "truncated" | "expired";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  size: number;
+  bytes: null | string;
+  at: MasRuntime_tick;
+}
+
+
+/**
+ * Store-neutral runtime records: the run, the node attempt, the message, the state revision, the interaction and the bounded trace artifact. Persistence implements collections over exactly these shapes; the runtime constructs them; the conformance instrument reads them. Timestamps come from the injected host clock (deterministic ticks under conformance) and never enter a canonical identity. Credential values have no representable member, and every omitted payload is an explicit state — `retained`, `redacted`, `truncated`, `expired`, `not-configured` or `not-run` — never a silent absence.
+ */
+export type MasRuntime = MasRuntime_masRun | MasRuntime_masNodeAttempt | MasRuntime_masMessage | MasRuntime_masStateRevision | MasRuntime_masInteraction | MasRuntime_masTraceArtifact;
 
 export interface ResearchReportSourceFilesItem {
   /**

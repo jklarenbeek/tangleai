@@ -900,7 +900,16 @@
         "provenance": "tangle-authored-synthetic",
         "source": "LICENSE.md"
       }
+    },
+    {
+      "path": "workflows/lifecycle.json",
+      "sha256": "d4cbb0791cc8aa61aa43a2413ecf99e4c6b963f9f2fd9f1e3caa8b02db48ede7",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
     }
   ],
-  "revision": "163312c5811c9a19f661699b6df18c7286efe3b25178c340eb3dc973d6ef4214"
+  "revision": "21ac1400e7c3c144bf0e5a56fd4b61da5843e8cbfed4cc8e9729c8da9ba7c503"
 }

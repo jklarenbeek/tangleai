@@ -5,7 +5,7 @@ import { installedSuitePackages } from './suite-packages.ts';
 import { analyticEnvelope } from './report-envelope.ts';
 import { loadResearchFixture, RESEARCH_FIXTURE_PATH, MANIFEST_PATH, type LoadedResearchFixture } from './research-fixture.ts';
 import { researchCeilings, researchScore, verifyResearchBundle } from './research-oracle.ts';
-import { runResearchFixture } from './research-runner.ts';
+import { runNativeResearchFixture } from './research-workflow.ts';
 import { researchComparison, researchMechanicalDecision } from './research-evaluator.ts';
 import { RESEARCH_ROW_IDS, RESEARCH_DIMENSIONS, RESEARCH_DISCLOSURES } from './research-schema.ts';
 import { validateResearchReportShape } from './research-validation.ts';
@@ -22,6 +22,7 @@ export const SOURCE_MANIFEST = [
   'benchmark/lib/research.ts', 'benchmark/lib/research-schema.ts', 'benchmark/lib/research.types.ts',
   'benchmark/lib/research-fixture.ts', 'benchmark/lib/research-programs.ts', 'benchmark/lib/research-evaluator.ts',
   'benchmark/lib/research-oracle.ts', 'benchmark/lib/research-runner.ts', 'benchmark/lib/research-validation.ts',
+  'benchmark/lib/research-workflow.ts', 'benchmark/lib/research-lifecycle-fixture.ts', 'examples/research.ts',
   'benchmark/lib/args.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts',
   'benchmark/lib/suite-packages.ts', 'benchmark/lib/report-envelope.ts', 'benchmark/lib/table.ts',
   'packages/research/schemas/research.schema.json', 'benchmark/schemas/research.schema.json',
@@ -36,8 +37,8 @@ export async function researchContext(root = process.cwd()): Promise<ResearchCon
   return { loaded, source: await sourceManifest(root, [...SOURCE_MANIFEST,
     ...loaded.manifest.members.map(member => RESEARCH_FIXTURE_PATH + '/' + member.path)],
   [RESEARCH_FIXTURE_PATH, 'packages/core', 'packages/models', 'packages/documents', 'packages/context', 'packages/config',
-    'packages/jaren', 'packages/research', 'packages/gmpl']),
-  suite: await installedSuitePackages(root, ['core', 'models', 'documents', 'context', 'config', 'research', 'gmpl']) };
+    'packages/jaren', 'packages/research', 'packages/gmpl', 'packages/mas', 'packages/store', 'packages/agents']),
+  suite: await installedSuitePackages(root, ['core', 'models', 'documents', 'context', 'config', 'research', 'gmpl', 'mas', 'store', 'agents']) };
 }
 const same = (left: unknown, right: unknown): boolean => canonicalizeJson(left) === canonicalizeJson(right);
 const ratio = (values: readonly boolean[]): ResearchScore => researchScore(values.filter(Boolean).length, values.length);
@@ -86,7 +87,7 @@ export async function scoreResearchBundle(loaded: LoadedResearchFixture, topic: 
       provider: bundle.runs.filter(run => run.spend.physical > 0 && run.status === 'failed').length,
       unsupported: hidden.requiredClaims.filter(claim => !supported.has(claim.id)).length },
     completion: ratio([bundle.runs.length === expectedRuns && bundle.observations.length === expectedRuns && correctDecision]),
-    result: verification.valid ? comparison.result : 'failed',
+    result: verification.valid ? comparison.result : 'failed', workflow: null, completePathControl: null,
   };
 }
 function aggregate(id: typeof RESEARCH_ROW_IDS[number], topics: ResearchTopicResult[]): ResearchMeasuredRow {
@@ -121,7 +122,9 @@ function disclosures(rows: ResearchReport['rows']): ResearchReport['disclosure']
 export const RESEARCH_LIMITATIONS = [
   'All data, literature and provider transcripts are authored synthetic MIT fixtures. Identifiers do not describe real publications.',
   'Scripted conformance is not live research quality. The oracle can read hidden labels; the no-model program inputs contain features and queries only.',
-  'Human-review disclosures on the artifact oracle are scripted structural gate probes, not actual human participation. The no-model floor has no approvals.',
+  'Oracle review disclosures are scripted whole-bundle structural probes. Native lifecycle approvals are scripted interactions over the artifact set available at each gate; none establishes actual human participation.',
+  'The scientific no-model paths retain both Stop decisions, hence seven of nine possible approvals. Separate complete-path controls reach all three gates for each topic and make no scientific decision claim.',
+  'The pure-program bundle retains its original null provider identity and no approvals. The enclosing native workflow binds a recomputable synthetic CONFIG identity; no provider endpoint is called.',
   'Claim support uses fixed authored propositions and numeric bindings, not a general entailment or novelty detector. Omitted required claims remain in the denominator.',
   'Confound detection and branch compliance measure the shared verifier against registered corrupted bundles, not an autonomous scientific judgement.',
   'Provider calls, tokens, physical requests and provider time are zero. Local CPU latency and monetary cost are unmeasured.',
@@ -142,6 +145,7 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
       refusedAsRegistered: !verified.valid && same(registered.expected, observed) });
   }
   const rows: ResearchReport['rows'] = [];
+  const identity = analyticEnvelope(RESEARCH_ROW_IDS), sourceRevision = await canonicalSha256(context.source.files);
   for (const id of RESEARCH_ROW_IDS) {
     if (!selected.includes(id)) { rows.push({ id, state: 'not-run', reason: 'Excluded by the explicit row selection.' }); continue; }
     if (id !== 'artifact-oracle' && id !== 'no-model-runner') {
@@ -149,8 +153,18 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
     }
     const topics: ResearchTopicResult[] = [];
     for (const topic of loaded.topics) {
-      const bundle = id === 'artifact-oracle' ? loaded.oracles.get(topic.id)! : await runResearchFixture(loaded, topic, id);
-      topics.push(await scoreResearchBundle(loaded, topic, bundle, bundles));
+      if (id === 'artifact-oracle') topics.push(await scoreResearchBundle(loaded, topic, loaded.oracles.get(topic.id)!, bundles));
+      else {
+        const science = await runNativeResearchFixture(loaded, topic, sourceRevision);
+        const control = await runNativeResearchFixture(loaded, topic, sourceRevision, 'complete-path-control');
+        const scored = await scoreResearchBundle(loaded, topic, science.bundle!, bundles);
+        const actions = science.measurement.interactions.map(i => i.response as { decision: string; note: string });
+        topics.push({ ...scored, workflow: science.measurement, completePathControl: control.measurement,
+          gateBehaviour: science.measurement.gateBehaviour, interventions: { total: actions.length,
+            substantive: actions.filter(a => a.note.trim().length > 0).length, approvals: actions.filter(a => a.decision === 'approve').length } });
+        if (!identity.identities.some(row => row.identityId === science.identity.identityId)) identity.identities.push(science.identity);
+        identity.rows = identity.rows.map(row => row.rowId === id ? { rowId: id, identityStatus: 'run', identityId: science.identity.identityId } : row);
+      }
     }
     rows.push(aggregate(id, topics));
   }
@@ -161,7 +175,7 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
     registration: { id: loaded.manifest.id, revision: loaded.manifest.revision, topics: loaded.topics.map(topic => topic.id),
       caps: loaded.manifest.caps, replicatePolicy: loaded.manifest.replicatePolicy,
       bundles: loaded.manifest.bundles.map(bundle => ({ id: bundle.id, expected: structuredClone(bundle.expected) })) },
-    identity: analyticEnvelope(RESEARCH_ROW_IDS), ceilings, rows, bundles, disclosure: disclosures(rows), gate,
+    identity, ceilings, rows, bundles, disclosure: disclosures(rows), gate,
     decision: gate.registration && gate.oracle && gate.bundles ? 'conformant' : 'drift', limitations: [...RESEARCH_LIMITATIONS] };
   const report = { ...payload, reportId: await canonicalSha256(payload) };
   const validated = validateResearchReportShape(report);
@@ -203,6 +217,13 @@ export function renderDocument(report: ResearchReport): string {
         : [row.id, row.state, '—', '—', '—', '—'])), '',
     ...measured.flatMap(row => ['### ' + row.id, '', table(['Dimension', ...row.topics.map(topic => topic.topicId), 'Pooled counts'],
       RESEARCH_DIMENSIONS.map(dimension => [dimension, ...row.topics.map(topic => score(topic[dimension])), score(row[dimension])])), '']),
+    '## Durable lifecycle controls', '',
+    'Scientific paths execute the registered programs at EXECUTE and independently evaluate their retained outputs at ANALYZE. Every StageAttempt retains its input manifest, content-addressed artifact admissions and native MAS path. Approvals bind the artifact set that existed at that gate; early approvals never claim to review future outputs.', '',
+    table(['Topic', 'Science state', 'Science gates', 'Complete-path control', 'Control gates', 'Duplicate responses replayed'],
+      measured.flatMap(row => row.topics.filter(t => t.workflow && t.completePathControl).map(t => [t.topicId, t.workflow!.state.status,
+        score(t.workflow!.gateBehaviour), t.completePathControl!.state.status, score(t.completePathControl!.gateBehaviour),
+        t.workflow!.duplicateResponses + t.completePathControl!.duplicateResponses]))), '',
+    'The complete-path controls are separately labelled scripted topology checks. They neither replace a scientific Stop with Proceed nor count a quality approval on a stopped science run. The three controls reach 9/9 gates; the scientific runs retain 7/9. All responses are scripted, all provider spend is zero, and the six other mechanisms remain implementation-missing.', '',
     '## Retained comparisons', '', 'Favorable differences use baseline minus candidate for inertia and candidate minus baseline for recall. Paired bootstrap: 2,000 resamples, seed 17753, 95%, nearest-rank. No seed or threshold was selected after execution.', '',
     table(['Row', 'Topic', 'Seeds', 'Baseline', 'Candidate', 'Favorable difference', 'Interval', 'Win/loss/tie', 'Result', 'Decision'], comparisons), '',
     'K-means++ is seed-deterministic. Its lower mean does not clear the positive-interval rule: two seeds win and three tie, so the result is inconclusive and stops. BM25+ wins this synthetic lexical comparison. Hash widths 64 and 256 both reach recall@5 of 1: SATURATED, with no improvement claimed.', '',

@@ -19,10 +19,10 @@
  */
 
 import { compileJsonQuery } from '@jarenjs/json/query';
-import { cloneJson } from '@jarenjs/core/object';
+import { cloneJson, deepFreeze } from '@jarenjs/core/object';
 
 import { masIssue, type MasIssue } from './errors.ts';
-import { compileEmbeddedSchema } from './schema.ts';
+import { compileEmbeddedSchema, validateRuntimeRecord } from './schema.ts';
 import { semanticKeyOf, invocationPathOf } from './runtime-state.ts';
 import { nodeFeeds, selectMasFeed, type Feed } from './lower.ts';
 import { runAgentNode } from './agent-executor.ts';
@@ -48,10 +48,23 @@ export class MasNodeFailure extends Error {
 /** A process-level crash seam: rides the queue retry path, never the semantic trace. */
 export class MasInfrastructureCrash extends Error {}
 
+/** A typed task refusal that the native lifecycle persists before failing its region. */
+export class MasTaskRefusal extends Error {
+  readonly failure: RuntimeError;
+  constructor(failure: RuntimeError) {
+    super(failure.detail);
+    const checked = validateRuntimeRecord('runtimeError', failure);
+    if (!checked.valid) throw new TypeError('A task refusal must be a closed native runtime error.');
+    this.failure = deepFreeze(checked.value) as unknown as RuntimeError;
+  }
+}
+
 /** Internal suspension: a committed human wait leaves composition attempts open. */
 export class MasInteractionWait extends Error {}
 
 export interface MasTaskInput {
+  /** The native run identity, separate from CONFIG identities and invocation paths. */
+  runId: string;
   value: Record<string, unknown>;
   state: Record<string, unknown>;
   node: string;
@@ -269,7 +282,8 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
       });
       enter();
       deps.observer?.onNodeSettle?.(path, status);
-      throw new MasNodeFailure(invocation.id, masIssue(error.code as MasIssue['code'], `/${invocation.id}`, error.detail));
+      throw new MasNodeFailure(invocation.id, { ...masIssue(error.code as MasIssue['code'], `/${invocation.id}`, error.detail),
+        ...(error.cause === null ? {} : { cause: error.cause }) });
     };
 
     try {
@@ -344,7 +358,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
         if (handler === undefined) {
           return await fail('failed', { code: 'TMAS2004', detail: `no host binding for handler '${node.handler}'`, cause: null });
         }
-        const produced = await handler({ value, state: pulledState, node: invocation.id, path, idempotencyKey: key, signal });
+        const produced = await handler({ runId: deps.runId, value, state: pulledState, node: invocation.id, path, idempotencyKey: key, signal });
         output = produced as Record<string, unknown>;
       } else if (invocation.kind === 'agent') {
         const node = invocation as AgentNode;
@@ -525,6 +539,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
         deps.observer?.onNodeCrash?.(path);
         throw error;
       }
+      if (error instanceof MasTaskRefusal) return await fail('failed', error.failure);
       if (error instanceof MasUncertainEffect) {
         return await fail('uncertain', {
           code: 'TMAS2006',

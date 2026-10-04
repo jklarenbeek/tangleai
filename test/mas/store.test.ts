@@ -61,7 +61,7 @@ describe('the run lifecycle is exhaustive', () => {
   const legal = new Set([
     'queued:start', 'queued:fail', 'queued:cancel',
     'running:complete', 'running:fail', 'running:wait', 'running:cancel',
-    'waiting_for_input:resume-pending', 'waiting_for_input:cancel',
+    'waiting_for_input:resume-pending', 'waiting_for_input:cancel', 'waiting_for_input:fail',
     'resume_pending:queue-segment', 'resume_pending:fail', 'resume_pending:cancel',
   ]);
 

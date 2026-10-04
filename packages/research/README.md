@@ -68,6 +68,57 @@ RunLog ids are separate. The adapter accepts an injected `now` and does not clos
 the caller's database. `createMemoryResearchPersistence` exposes snapshots and a
 close method for hosts that need explicit ownership of the in-memory adapter.
 
-Failures are values: pure operations return `{ valid: false, issues }`, store
+Failures are values: pure plans return `{ valid: false, issues }`, store
 operations return `{ ok: false, issue }`. `RESEARCH_ERRORS` defines `TRSH1001`–
 `TRSH1010`; adapter failures retain the underlying code, path and detail.
+
+`createResearchBinding(contract, options)` validates and recomputes a complete
+CONFIG identity and pins prompt, tools, evaluator and stage reservation.
+`prepareResearchWorkflow` returns the native workflow, immutable registry,
+catalog, validated plan and Mermaid projection. `defineResearchWorkflow` is the
+root authoring function; `createResearchRegistry` supplies its exact child
+versions. Composition failures throw `ResearchFailure` with a typed `issue`.
+Native subgraphs host three bounded loops: refinement uses `attemptCap`, pivot
+uses `pivotCap`, and quality review uses `reviewCap`. A requested repetition at
+its cap takes the registered Stop edge; native `TMAS2009` remains a failure.
+
+Create the project before starting its MAS run, use the same project id as the
+native run id, and construct the root input with `initialResearchFrame`.
+`createResearchTaskHandlers(store, tools)` binds scripted stage bodies. The body
+receives an immutable operation, stable idempotency key, signal and a reader
+restricted to admitted input artifacts. The separately injected verifier checks
+its result before any artifact becomes committed evidence. New work requires
+its running MAS attempt. Handler replay checks the existing path's manifest
+before executing and reconstructs the exact output frame from its receipt.
+The native completion and research transaction are separate checkpoints; a
+crash between them reuses research output without another execution or RunLog
+frame. Precommit effects must honor the supplied idempotency key.
+
+`inputManifestOf` is the sole workflow manifest builder. Its optional
+`controlHash` binds root content, counters and the exact gate response alongside
+artifact hashes; earlier manifests without this field retain their identities.
+The recovery frame's content artifact has no self-reference. The returned frame
+names that committed admission, which becomes an input to the next stage.
+
+`createResearchHostBindings` assembles injected capabilities with no host I/O.
+It checks the handler binding and native run identities even when MAS can replay
+completed nodes without entering a handler. Each indefinite interaction stores
+`gateResponseSchema(kind, reviewedManifestHash)` with the reviewed artifact hash
+as a response const. The handler accepts only the actual durable response.
+Scripted approvals identify themselves as scripted; a digest does not establish
+who reviewed the artifacts. The initial scripted host supports approve, Stop
+and bounded quality rejection to write. Edit, guide and targeted rejection
+requests refuse until their guarded capabilities are bound.
+
+`overdueGates(trace, now, policy)` returns counted waiting gates using an explicit
+RFC3339 instant. Pause preserves the wait. Stop resolves the native interaction
+as expired and fails MAS with `TMAS2007`, without approval or a resume job.
+`applyOverduePolicy` also reconciles the research STOPPED projection after an
+interruption between the two stores' updates. That composition is retryable,
+and does not claim a transaction spanning both adapters.
+
+[`examples/research.ts`](../../examples/research.ts) runs the real MAS worker,
+reopens SQLite after each approval and verifies zero provider spend. Queue,
+worker, clock and database lifetimes belong to the executable host. Scripted
+complete-path controls qualify durability; they do not establish scientific
+quality or replace a retained scientific Stop decision.

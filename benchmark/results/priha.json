@@ -927,7 +927,11 @@
       },
       {
         "path": "benchmark/lib/research-fixture.ts",
-        "sha256": "736f4e564da0d6ca9fae921b3b2713e57343badafb1c5a86d9db81ec24da9725"
+        "sha256": "0b7a29765883b1e12fa2c222112d8ec2591637a32590abe516cf4a0104e61b6f"
+      },
+      {
+        "path": "benchmark/lib/research-lifecycle-fixture.ts",
+        "sha256": "59552eba3455f6d401eb4440ed6f3c61f820c355199b2c92a234abf140a16f48"
       },
       {
         "path": "benchmark/lib/research-oracle.ts",
@@ -939,23 +943,27 @@
       },
       {
         "path": "benchmark/lib/research-runner.ts",
-        "sha256": "b32a1008d8065f28dfb8eb01e29f7ceef3866d2e6663282b23634c9d51e2633f"
+        "sha256": "b65631d9d44ff6a656f92222dda2fd95d70a441f19d6b0d7e03a3183dcd17d40"
       },
       {
         "path": "benchmark/lib/research-schema.ts",
-        "sha256": "a5745c51bea3a5712482f96382da2b9d7040f41dcfebf7b900ddd1e543ddfafa"
+        "sha256": "651cf4c0fea8dcd9d33589163cc390e9a945daf5b73363b0a86b212497135e73"
       },
       {
         "path": "benchmark/lib/research-validation.ts",
-        "sha256": "f4a732c8faff6ae7a55a5ce0c8374279cd3feee5b24f1f2dcc8b27e31c936132"
+        "sha256": "71dd29963064d7e4ecb21847c4c428027277db7e17d144017fc7f225fde40278"
+      },
+      {
+        "path": "benchmark/lib/research-workflow.ts",
+        "sha256": "c4513d048ace8a80714caca790794a7c3111e8654449392c577ee68f0bd40af8"
       },
       {
         "path": "benchmark/lib/research.ts",
-        "sha256": "9f5cf8d180e5ca724a83c417f3ce2c1f91277232c1528ce758d99f7a68ce704f"
+        "sha256": "ad82864b3fd4da58e7caff155da882efc768891bf75bd58544e52d9c5166cbce"
       },
       {
         "path": "benchmark/lib/research.types.ts",
-        "sha256": "f063f5e2dffad1b34fb85efc92ba35787fb4e3057bcdee565f1b7032f0f84ced"
+        "sha256": "a7906c7297f96811fe0940978caf0df66ec744cd696313eca15fdf68641c3618"
       },
       {
         "path": "benchmark/lib/retention.ts",
@@ -2503,7 +2511,7 @@
       },
       {
         "path": "packages/mas/src/dag-runtime.ts",
-        "sha256": "ec7ce484493fd6d9807f82beb12c577a4ace8bf7471198f2056d846846a6f9eb"
+        "sha256": "66d6df7a5bb9d1c2e11b71ad16cf44cf8b78aaf635710460b4ba2f1bb8f88f04"
       },
       {
         "path": "packages/mas/src/errors.ts",
@@ -2515,7 +2523,7 @@
       },
       {
         "path": "packages/mas/src/index.ts",
-        "sha256": "ee9b3ab2c04c488378483448ba7f25fd5970ccc9c9664dacbee842908d0443c3"
+        "sha256": "1a21a8c4ca96a19b4c7d7919d481c379fb75e25dd59e07e50d9e1a9f44bbe053"
       },
       {
         "path": "packages/mas/src/jaren-flow.d.ts",
@@ -2535,7 +2543,7 @@
       },
       {
         "path": "packages/mas/src/node-lifecycle.ts",
-        "sha256": "98dd6e2208986aaa8223783db47a908b0cc84796144e0d4226c54b835f478787"
+        "sha256": "e86ffcc64b6cbae8446afdfcf1d94ac5c8dd60d465dae03f35d815df6a389027"
       },
       {
         "path": "packages/mas/src/partition.ts",
@@ -2547,7 +2555,7 @@
       },
       {
         "path": "packages/mas/src/runtime-state.ts",
-        "sha256": "9b58127283df56cb1ac2fb565e4197335d8b22cd59a94d316c36f2d94e9a9d11"
+        "sha256": "5d7a13190c0203f1da95638c53358cef6911803b4a06c0c92c7f27cc4289f8bc"
       },
       {
         "path": "packages/mas/src/runtime.ts",
@@ -2559,7 +2567,7 @@
       },
       {
         "path": "packages/mas/src/store.ts",
-        "sha256": "7771e3a4a4a00dff9666e940ec4f83c488d57da12426591344e70f4cb1f5ab20"
+        "sha256": "f6e82cbb543a2abf436aa4018eb4e0577089fdb54e97f39d558b5e24fb3e4319"
       },
       {
         "path": "packages/mas/src/template-bindings.ts",
@@ -3015,15 +3023,27 @@
       },
       {
         "path": "packages/research/schemas/research.schema.json",
-        "sha256": "b2f640b50584cde6c3d26dfca6499439bf4256fbbd2fc1a61d513981930d6dc3"
+        "sha256": "c90f56dec02ac9cbce288160cb09ee7080322dd2897613aa14dac27244300915"
       },
       {
         "path": "packages/research/src/contracts.gen.ts",
-        "sha256": "cb2d750c830d72e6d507b7a184db3539acd3164e752525d8840ac72f06f62e08"
+        "sha256": "6d61933e5aa0add8f36a209718f0beb9bc41f1be5b53a4a150d7f9083937b1d7"
       },
       {
         "path": "packages/research/src/errors.ts",
         "sha256": "ce988e24b2f99a7bee7b7dd2b418fd7ccf5260cad4f104b029463ef82878d486"
+      },
+      {
+        "path": "packages/research/src/gates.ts",
+        "sha256": "2dbe4855c62c1baeb2f113e966cefeeab6d96584a2beb3d734385dee1490f8db"
+      },
+      {
+        "path": "packages/research/src/handlers.ts",
+        "sha256": "e52bc6ccc5629d109e602dfb20c5cd65bc9ff71735a75dd89ac57dbb09841b0b"
+      },
+      {
+        "path": "packages/research/src/host.ts",
+        "sha256": "048a1e01b552fbf4379e0b7a9e0b262f55d4e555a047e4ab4960c6728a269999"
       },
       {
         "path": "packages/research/src/identity.ts",
@@ -3031,7 +3051,11 @@
       },
       {
         "path": "packages/research/src/index.ts",
-        "sha256": "3feda0804d5d5fb1473e4b1eab7027de3a45bcf70e8eb731b5e49594271a26ad"
+        "sha256": "4a8f3e7e23a36be43a944ad75bbe9f8c9a92d32952520a8892be0f367feba69f"
+      },
+      {
+        "path": "packages/research/src/manifest.ts",
+        "sha256": "219f259465ae37e8570aaacb17f862d110bfbaa42308390222cf1f727edca053"
       },
       {
         "path": "packages/research/src/records.ts",
@@ -3052,6 +3076,14 @@
       {
         "path": "packages/research/src/transitions.ts",
         "sha256": "524e3f9f939b06c1fc74d11bb17fadbe36019e7115c47e10731be81768d46467"
+      },
+      {
+        "path": "packages/research/src/workflow-contract.ts",
+        "sha256": "eb278b31c05e73e46514b434ef81063ea38245ab1b509467d8348fca9281318e"
+      },
+      {
+        "path": "packages/research/src/workflow.ts",
+        "sha256": "820a5c79c53f8bceda1098fb38fa2a68a7f08729ad65e71e14049f613f47b0d3"
       },
       {
         "path": "packages/search/package.json",
@@ -3163,7 +3195,7 @@
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
-        "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+        "sha256": "63f72606024de256c7bf042d0e3410a2bbbdeceafa3f198d7122dec05d02232f"
       },
       {
         "path": "packages/store/src/mas-segment-driver.ts",
@@ -3171,7 +3203,7 @@
       },
       {
         "path": "packages/store/src/mas-store.ts",
-        "sha256": "ee88242e82b22d003956a76cb65b529b9490757148e7bc6ca0d12611411721c7"
+        "sha256": "0b49811531691f1daecf9c8654a4bb89366600e8caca7734adeea3111f3a51d0"
       },
       {
         "path": "packages/store/src/memory-store.ts",
@@ -3502,7 +3534,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "be7c527aa4adc7bffbe075dc5601feffc60c5dc119031c24faec8e5eab4e918c"
+    "sha256": "d54aa6133eab56ce1248d7a0296989484872ddb17d15fed120d820535a8089b4"
   },
   "fixtureSource": {
     "files": [
@@ -68692,7 +68724,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "be7c527aa4adc7bffbe075dc5601feffc60c5dc119031c24faec8e5eab4e918c",
+      "sourceSha256": "d54aa6133eab56ce1248d7a0296989484872ddb17d15fed120d820535a8089b4",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68776,7 +68808,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "3be4ebf07cd0730ff86e3aeb08768013c0e059537ecddf7c9d16da7ee12a1a5c"
+      "planId": "7a7e7346474d6f26ec79553779722ac77f35b7b8ba327d57c8f616a066f4bcda"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69023,5 +69055,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "0184e16c21e4d8b61d47e06662bf7c7ae03369c941f637de44182d57b79b47aa"
+  "reportId": "c569cca611633b1d706a79d031a13ee658ee815029e426aee6e54021d5379f1f"
 }

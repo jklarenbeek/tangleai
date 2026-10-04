@@ -253,6 +253,31 @@ omissions; they do not change the production topology guards. The paper profile
 retains an unavailable state with no corpus or invented runtime manifest.
 No licensed historical quality, live brokerage or operational parity is claimed.
 
+## Durable research lifecycle
+
+`@tangleai/research` defines one MAS workflow per project. Native graphs host
+bounded refine, pivot and review loops; three indefinite interactions bind their
+response schemas to immutable review manifests. The registry, CONFIG catalog,
+prompt, tools and evaluator are pinned before execution. Hosts own the queue,
+worker, stores and clocks. Research adds no scheduler or execution state machine.
+
+Scripted task bodies follow plan, execute, independent verification and atomic
+research commit. The input manifest binds exact admitted artifacts and control
+input; reads outside that manifest refuse. Immutable recovery frames bridge the
+research commit and native MAS completion: restart reuses committed work, while a
+changed manifest on the same path refuses before execution. SQLite research
+transactions include the attempt, artifact provenance, lifecycle projection and
+native RunLog append. Their revision checks and native MAS task admission fence
+new work; exact committed replay remains a read.
+
+Overdue pause leaves a gate waiting. Overdue stop expires the native interaction
+and fails its run with `TMAS2007` atomically, then reconciles the separate research
+STOPPED projection. Terminal runs reject new semantic writes. A clock never
+creates an approval. The [research instrument](RESEARCH_BENCHMARK.md) retains
+stage-specific scripted approvals, honest scientific Stop decisions, and separate
+complete-path controls. These are keyless durability and fixture measurements;
+the later model, scholarly-adapter and learning mechanisms remain explicit gaps.
+
 ## Evaluated orchestration learning
 
 `@tangleai/hera` composes eight GMPL role artifacts and five control artifacts

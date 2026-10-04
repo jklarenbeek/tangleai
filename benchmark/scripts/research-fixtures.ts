@@ -7,6 +7,7 @@ import { researchBytesSha256, RESEARCH_FIXTURE_PATH, type LoadedResearchFixture 
 import { RESEARCH_PROGRAM_IDS } from '../lib/research-programs.ts';
 import { RESEARCH_EVALUATOR, researchComparison } from '../lib/research-evaluator.ts';
 import { runResearchFixture } from '../lib/research-runner.ts';
+import { createResearchLifecycleFixture } from '../lib/research-lifecycle-fixture.ts';
 import { verifyResearchBundle } from '../lib/research-oracle.ts';
 import { requireResearchShape } from '../lib/research-validation.ts';
 import type { ResearchDataset, ResearchFixtureTopic, ResearchFixtureManifest, ResearchHiddenLabels,
@@ -134,7 +135,9 @@ const manifest: ResearchFixtureManifest = { id: 'research-computational-v1', ver
   bundles: [], oracles: topics.map(topic => ({ topicId: topic.id, path: 'bundles/oracle/' + topic.id + '.json' })),
   caps: { calls: 128, tokens: 131072, ms: 120000, concurrency: 4, contextChars: 65536, traceBytes: 1048576 },
   replicatePolicy, licence, members: [], revision: '0'.repeat(64) };
-const loaded: LoadedResearchFixture = { manifest, topics, datasets, hidden, literature, files, oracles: new Map(), invalid: [] };
+const lifecycle = requireResearchShape<LoadedResearchFixture['lifecycle']>('ResearchLifecycleFixture', await createResearchLifecycleFixture());
+put('workflows/lifecycle.json', lifecycle);
+const loaded: LoadedResearchFixture = { manifest, topics, datasets, hidden, literature, files, oracles: new Map(), invalid: [], lifecycle };
 for (const topic of topics) {
   const bundle = await runResearchFixture(loaded, topic, 'artifact-oracle');
   requireResearchShape('ResearchBundle', bundle);

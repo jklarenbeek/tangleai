@@ -13,3 +13,14 @@ export type { ProjectCreatePlan, StateTransitionPlan, ContractFreezePlan, Amendm
 export { createMemoryResearchStore, createMemoryResearchPersistence, createResearchStoreAdapter } from './store.ts';
 export type { ResearchStore, ResearchStoreOutcome, ResearchSnapshot, ResearchTables, ResearchTable,
   ResearchTransaction, ResearchPersistence, ResearchPhysicalRow, ResearchMemoryState, ResearchMemoryOptions } from './store.ts';
+export { ResearchFailure, researchValue, createResearchBinding, initialResearchFrame, researchProjectHash } from './workflow-contract.ts';
+export type { ResearchWorkflowBinding, ResearchBindingOptions } from './workflow-contract.ts';
+export { inputManifestOf, researchFrameInputs } from './manifest.ts';
+export { RESEARCH_STAGES, RESEARCH_FRAME_SCHEMA, RESEARCH_RESPONSE_SCHEMA, createResearchRegistry,
+  defineResearchWorkflow, prepareResearchWorkflow } from './workflow.ts';
+export type { ResearchStageName, PreparedResearchWorkflow } from './workflow.ts';
+export { gateReviewOf, checkResearchGate, gateResponseSchema, overdueGates, applyOverduePolicy } from './gates.ts';
+export type { ResearchOverduePolicy, ResearchOverdueGate } from './gates.ts';
+export { createResearchTaskHandlers, RESEARCH_FRAME_MEDIA_TYPE } from './handlers.ts';
+export type { ResearchTaskTools, ResearchTaskHandlers, ResearchStageOperation, ResearchStageResult, ResearchStageAccess } from './handlers.ts';
+export { createResearchHostBindings } from './host.ts';

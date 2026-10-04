@@ -88,7 +88,7 @@ export type RunCommand = (
 const RUN_TRANSITIONS: Record<RunCommand['kind'], { from: RunStatus[], to: RunStatus }> = {
   start: { from: ['queued'], to: 'running' },
   complete: { from: ['running'], to: 'completed' },
-  fail: { from: ['running', 'queued', 'resume_pending'], to: 'failed' },
+  fail: { from: ['running', 'queued', 'waiting_for_input', 'resume_pending'], to: 'failed' },
   wait: { from: ['running'], to: 'waiting_for_input' },
   'resume-pending': { from: ['waiting_for_input'], to: 'resume_pending' },
   'queue-segment': { from: ['resume_pending'], to: 'queued' },

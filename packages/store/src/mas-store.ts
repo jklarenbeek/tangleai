@@ -53,7 +53,7 @@ export interface MasStoreOptions {
   /** Injected clock; deterministic ticks under conformance. */
   now?: () => string;
   /**
-   * Test-only probe invoked between the writes of one completion
+   * Test-only probe invoked between the writes of one semantic
    * transaction; a throwing probe proves rollback leaves nothing.
    */
   applyProbe?: (step: string) => void;
@@ -176,6 +176,27 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
     }
     await txn.collection<MasRun>('mas_runs').put(next);
     return { ok: true, value: next };
+  }
+
+  /** Resolution and run failure share one transaction; no resume job is reserved. */
+  async function terminateInteraction(txn: TransactionStore, current: MasInteraction,
+    status: 'cancelled' | 'expired'): Promise<StoreOutcome<MasInteraction>> {
+    const run = await readRun(txn, current.runId);
+    if (run === undefined) return refuse('TMAS2002', '/runId', `run '${current.runId}' does not exist`);
+    const failure: NonNullable<MasRun['failure']> = { node: current.node,
+      error: { code: 'TMAS2007', detail: `interaction '${current.node}' is ${status}; the run cannot resume`, cause: null } };
+    const transition = planRunTransition(run.status, { kind: 'fail', failure });
+    if (!transition.ok) return { ok: false, issue: transition.issue };
+    const next: MasInteraction = { ...current, status, revision: current.revision + 1, resolvedAt: now() };
+    const checked = validateRuntimeRecord('masInteraction', next);
+    if (!checked.valid) return refuse('TMAS2004', '/interaction', checked.issues[0]?.detail ?? 'the terminal interaction does not validate');
+    probe('interaction');
+    await txn.collection<MasInteraction>('mas_interactions').put(next);
+    probe('interaction-run');
+    const written = await writeRun(txn, { ...run, status: transition.status, failure });
+    if (!written.ok) throw new MasRollback(written);
+    probe('interaction-commit');
+    return { ok: true, value: structuredClone(next) };
   }
 
   const responseValidators = new Map<string, (value: unknown) => { valid: boolean }>();
@@ -327,6 +348,8 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
       return atomically(async (txn) => {
         const run = await readRun(txn, runId);
         if (run === undefined) return refuse<MasRun>('TMAS2002', '/id', `run '${runId}' does not exist`);
+        if (equalsJson(run.fsm[controlId], snapshot)) return { ok: true as const, value: structuredClone(run) };
+        if (run.status !== 'running') return refuse<MasRun>('TMAS2003', '/status', 'only a running segment can change control state');
         const written = await writeRun(txn, { ...run, fsm: { ...run.fsm, [controlId]: snapshot } });
         if (written.ok) await enforceTraceLimit(txn, runId);
         return written;
@@ -345,9 +368,15 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
         const handle = txn.collection<MasNodeAttempt>('mas_node_attempts');
         const rows = asRows(await handle.execute<MasNodeAttempt>(matching({ runId: plan.runId, idempotencyKey: plan.idempotencyKey })));
         const latest = rows.at(-1);
+        if (latest !== undefined && (latest.path !== plan.path || latest.invocationId !== plan.invocationId || latest.kind !== plan.kind)) {
+          return { kind: 'refused' as const, issue: masIssue('TMAS2001', '/idempotencyKey', 'a semantic key cannot identify a different path, invocation or kind') };
+        }
         if (latest !== undefined && latest.status === 'completed') {
           const messages = asRows(await txn.collection<MasMessage>('mas_messages').execute<MasMessage>(matching({ runId: plan.runId, 'from.path': latest.path }, 'seq')));
           return { kind: 'completed' as const, attempt: structuredClone(latest), messages: structuredClone(messages) };
+        }
+        if (run.status !== 'running') {
+          return { kind: 'refused' as const, issue: masIssue('TMAS2003', '/status', 'only a running segment can begin a new attempt') };
         }
         if (latest !== undefined && latest.status === 'uncertain') {
           return {
@@ -405,6 +434,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
         const handle = txn.collection<MasNodeAttempt>('mas_node_attempts');
         const current = await handle.get(plan.attemptId);
         if (current === undefined) return refuse<never>('TMAS2003', '/attemptId', `attempt '${plan.attemptId}' does not exist`);
+        if (current.runId !== plan.runId) return refuse<never>('TMAS2002', '/attemptId', 'the completion must belong to the named run');
         if (current.status === 'completed') {
           if (equalsJson(current.output, plan.output)) {
             const messages = asRows(await txn.collection<MasMessage>('mas_messages').execute<MasMessage>(matching({ runId: plan.runId, 'from.path': current.path }, 'seq')));
@@ -412,6 +442,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
           }
           return refuse<never>('TMAS2001', '/output', 'a different payload cannot re-commit under an already committed idempotency key');
         }
+        if (run.status !== 'running') return refuse<never>('TMAS2003', '/status', 'only a running segment can commit a new completion');
         const stateRows = plan.state === null ? [] : asRows(await txn.collection<MasStateRevision>('mas_state_revisions').execute<MasStateRevision>(matching({ runId: plan.runId, namespace: plan.state.namespace }, 'seq')));
         const planned = planNodeCompletion(current, plan, {
           nextSeq: run.traceSeq + 1,
@@ -471,6 +502,8 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
         const handle = txn.collection<MasNodeAttempt>('mas_node_attempts');
         const current = await handle.get(plan.attemptId);
         if (current === undefined) return refuse<MasNodeAttempt>('TMAS2003', '/attemptId', `attempt '${plan.attemptId}' does not exist`);
+        if (current.runId !== plan.runId) return refuse<MasNodeAttempt>('TMAS2002', '/attemptId', 'the failure receipt must belong to the named run');
+        if (run.status !== 'running') return refuse<MasNodeAttempt>('TMAS2003', '/status', 'only a running segment can fail an attempt');
         if (current.status !== 'running') {
           return refuse<MasNodeAttempt>('TMAS2003', '/status', `only a running attempt can move to '${plan.status}'; '${plan.attemptId}' is '${current.status}'`);
         }
@@ -498,6 +531,8 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
         const handle = txn.collection<MasInteraction>('mas_interactions');
         const existing = await handle.get(id);
         if (existing !== undefined) return { ok: true as const, value: structuredClone(existing) };
+        if (run.status === 'completed' || run.status === 'failed' || run.status === 'cancelled')
+          return refuse<MasInteraction>('TMAS2003', '/status', 'a terminal run cannot request a new interaction');
         const interaction: MasInteraction = {
           id,
           runId: plan.runId,
@@ -545,8 +580,8 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
           return refuse<MasInteraction>('TMAS2007', '/revision', `the interaction moved (expected revision ${expectedRevision}, found ${current.revision}); a conflicting second response is refused`);
         }
         if (current.expiry !== null && now() > current.expiry.deadline) {
-          const expired: MasInteraction = { ...current, status: 'expired', revision: current.revision + 1, resolvedAt: now() };
-          await handle.put(expired);
+          const expired = await terminateInteraction(txn, current, 'expired');
+          if (!expired.ok) return expired;
           return refuse<MasInteraction>('TMAS2007', '/expiry', 'the interaction expired before the response arrived');
         }
         const validate = responseValidator(current.responseSchema, id);
@@ -587,9 +622,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
         if (current.revision !== expectedRevision) {
           return refuse<MasInteraction>('TMAS2007', '/revision', 'the interaction moved under this resolution');
         }
-        const next: MasInteraction = { ...current, status, revision: current.revision + 1, resolvedAt: now() };
-        await handle.put(next);
-        return { ok: true as const, value: structuredClone(next) };
+        return terminateInteraction(txn, current, status);
       });
     },
 

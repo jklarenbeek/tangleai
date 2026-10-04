@@ -3,10 +3,11 @@ import { readFile, readdir, lstat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join, posix } from 'node:path';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
+import { createMasRegistrySnapshot, createMasConfigCatalog, validateMasWorkflow, planMasWorkflow, projectMasPlan } from '@tangleai/mas';
 import { requireResearchShape, researchShape } from './research-validation.ts';
 import { RESEARCH_PROGRAM_IDS } from './research-programs.ts';
 import type { ResearchFixtureManifest, ResearchFixtureTopic, ResearchDataset, ResearchHiddenLabels,
-  ResearchBundle, LiteratureRecord, ResearchIssue, ResearchLicence } from './research.types.ts';
+  ResearchBundle, LiteratureRecord, ResearchIssue, ResearchLicence, ResearchLifecycleFixture } from './research.types.ts';
 
 export const RESEARCH_FIXTURE_PATH = 'benchmark/fixtures/research';
 export const MANIFEST_PATH = RESEARCH_FIXTURE_PATH + '/manifest.json';
@@ -22,6 +23,7 @@ export interface LoadedResearchFixture {
   files: Map<string, Uint8Array>;
   oracles: Map<string, ResearchBundle>;
   invalid: Array<{ id: string; expected: { code: string; path: string }; bundle: unknown }>;
+  lifecycle: ResearchLifecycleFixture;
 }
 const parse = (bytes: Uint8Array): unknown => JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
 function memberPath(path: string): void {
@@ -122,7 +124,17 @@ export async function loadResearchFixture(root = process.cwd()): Promise<LoadedR
     return { id: entry.id, expected: entry.expected, bundle: value.bundle };
   });
   if (new Set(invalid.map(bundle => bundle.id)).size !== invalid.length) throw new Error('Duplicate invalid-bundle identity.');
-  return { manifest, topics, datasets, hidden, literature, files, oracles, invalid };
+  const lifecycle = requireResearchShape<ResearchLifecycleFixture>('ResearchLifecycleFixture', json('workflows/lifecycle.json'));
+  const registry = await createMasRegistrySnapshot(lifecycle.registry), { revision: catalogRevision, ...catalogBody } = lifecycle.catalog;
+  const catalog = await createMasConfigCatalog(catalogBody);
+  if (!registry.valid || !catalog.valid || catalog.value.revision !== catalogRevision) throw Error('Research lifecycle registry/catalog drift.');
+  const validated = await validateMasWorkflow(lifecycle.workflow, registry.value, catalog.value);
+  if (!validated.valid) throw Error('Research lifecycle validation refused: ' + JSON.stringify(validated.issues));
+  const planned = await planMasWorkflow(validated.value);
+  if (!planned.valid || planned.value.executableRevision !== lifecycle.executableRevision
+    || await canonicalSha256(projectMasPlan(planned.value)) !== await canonicalSha256(JSON.parse(lifecycle.projectionJson)))
+    throw Error('Research lifecycle executable/projection drift.');
+  return { manifest, topics, datasets, hidden, literature, files, oracles, invalid, lifecycle };
 }
 export function researchDatasetIssues(value: unknown): ResearchIssue[] {
   const issues = researchShape('ResearchDataset', value);
