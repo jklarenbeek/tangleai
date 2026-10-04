@@ -31,3 +31,17 @@ export { createInclusionCriteria, screenLiterature } from './stages/screening.ts
 export { acquireResearchSources } from './stages/acquire.ts';
 export type { ResearchDocumentHost, ResearchAcquisitionLimits } from './stages/acquire.ts';
 export { extractEvidenceCards, toAdmittedArtifact, resolveEvidenceCard } from './stages/cards.ts';
+export { createResearchSynthesis } from './stages/synthesis.ts';
+export { createResearchHypotheses } from './stages/hypothesis.ts';
+export { createResearchDesign } from './stages/design.ts';
+export type { ResearchDesignBounds } from './stages/design.ts';
+export { researchArtifacts, createResearchDomainBinding, createResearchPatternHost, prepareResearchPattern } from './domain.ts';
+export type { PreparedResearchPattern } from './domain.ts';
+export { RESEARCH_PROMPT_NAMES, RESEARCH_PROMPT_VARIABLES, researchProposalSchema } from './prompt-contracts.ts';
+export type { ResearchPromptName, ResearchPatternPurpose } from './prompt-contracts.ts';
+export { createResearchNoveltyPlan, executeResearchNovelty } from './stages/novelty.ts';
+export type { ResearchNoveltyPolicy } from './stages/novelty.ts';
+export { createResearchReasoningTools } from './reasoning.ts';
+export { researchReasoningRevisionOf } from './reasoning-contract.ts';
+export type { ResearchReasoningPolicy } from './reasoning-contract.ts';
+export { createResearchReadTools, RESEARCH_READ_TOOLS } from './tools.ts';

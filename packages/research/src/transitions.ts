@@ -28,6 +28,8 @@ export interface StageCommitPlan extends StateTransitionPlan {
   artifactAdmissionIds: string[];
   records: ResearchRecordWrite[];
   projection: ResearchProjection;
+  /** Activated with the design receipt, never in a preceding transaction. */
+  preregistration?: { contract: ResearchContract; plan: ExperimentPlan };
 }
 
 export function planProjectCreate(input: unknown): ResearchOutcome<ProjectCreatePlan> {
@@ -107,6 +109,7 @@ export async function planAmendment(current: ResearchState, amendmentInput: Amen
 export async function planStageCommit(input: {
   state: ResearchState; attempt: StageAttempt; manifest: InputManifest; nextStatus: ResearchLifecycle;
   artifactAdmissionIds: readonly string[]; records?: readonly ResearchRecordWrite[];
+  preregistration?: { contract: ResearchContract; plan: ExperimentPlan };
 }): Promise<ResearchOutcome<StageCommitPlan>> {
   let snapshot: typeof input;
   try { snapshot = immutableResearchJson(input); }
@@ -115,7 +118,17 @@ export async function planStageCommit(input: {
   if (!attempt.valid) return attempt;
   const manifest = validateResearchShape<InputManifest>('InputManifest', snapshot.manifest);
   if (!manifest.valid) return manifest;
-  const transition = planStateTransition(snapshot.state, snapshot.nextStatus);
+  let activated = snapshot.state;
+  let preregistration: StageCommitPlan['preregistration'];
+  if (snapshot.preregistration) {
+    if (snapshot.state.status !== 'DESIGN' || snapshot.nextStatus !== 'DESIGN_GATE' || attempt.value.stopReason !== 'completed')
+      return researchRefuse('TRSH1009', '/preregistration', 'Only a successfully verified design can atomically activate preregistration.');
+    const frozen = await planContractFreeze(snapshot.state, snapshot.preregistration.contract, snapshot.preregistration.plan, []);
+    if (!frozen.valid) return frozen;
+    preregistration = { contract: frozen.value.contract, plan: frozen.value.plan };
+    activated = { ...frozen.value.nextState, revision: snapshot.state.revision };
+  }
+  const transition = planStateTransition(activated, snapshot.nextStatus);
   if (!transition.valid) return transition;
   const state = transition.value.expectedState, row = attempt.value;
   if (row.projectId !== state.projectId || manifest.value.projectId !== state.projectId || row.stage !== state.status || manifest.value.stage !== row.stage)
@@ -132,13 +145,14 @@ export async function planStageCommit(input: {
   if (row.stopReason === 'completed' ? row.error !== null : row.error === null || snapshot.nextStatus !== 'STOPPED')
     return researchRefuse('TRSH1004', '/attempt/stopReason', 'Failed stage attempts retain their cause and stop the projection.');
   for (const key of ['calls', 'tokens', 'ms', 'physical'] as const) {
-    if (row.spend[key] > manifest.value.reservation[key]) return researchRefuse('TRSH1006', '/attempt/spend/' + key, 'Stage spend exceeds its reservation.');
+    if (row.spend[key] > manifest.value.reservation[key] && !(row.stopReason === 'failed' && row.error?.code === 'TRSH1006'))
+      return researchRefuse('TRSH1006', '/attempt/spend/' + key, 'Stage spend exceeds its reservation.');
   }
   if (new Set(snapshot.artifactAdmissionIds).size !== snapshot.artifactAdmissionIds.length
     || snapshot.artifactAdmissionIds.some(id => !/^admission-[0-9a-f]{64}$/.test(id)))
     return researchRefuse('TRSH1001', '/artifactAdmissionIds', 'Expected unique immutable artifact admissions.');
   const status = row.stopReason === 'completed' ? 'ok' : row.stopReason === 'cancelled' ? 'cancelled' : 'error';
-  return { valid: true, value: immutableResearchJson({ ...transition.value, attempt: row, manifest: manifest.value,
+  return { valid: true, value: immutableResearchJson({ ...transition.value, expectedState: snapshot.state, attempt: row, manifest: manifest.value,
     artifactAdmissionIds: [...snapshot.artifactAdmissionIds], records: [...(snapshot.records ?? [])],
-    projection: { stage: row.stage, status, ms: row.spend.ms } }) };
+    projection: { stage: row.stage, status, ms: row.spend.ms }, ...(preregistration ? { preregistration } : {}) }) };
 }

@@ -7,8 +7,8 @@ export async function buildParallelAnalysis(participants:number,context:PatternB
   const mergedSchema=stageArtifact('analysis-merge',context).outputSchema;
   for(let i=1;i<=participants;i++){
     const id=`analyst-${i}`,prepare=`prepare-${id}`,check=`check-${id}`;
-    nodes.push(pureTask(prepare,'gmpl-analysis-prepare',{input:inputSchema},{variables:stageArtifact('analysis-analyst',context).variableSchema}),
-      await stageAgent(id,'analysis-analyst',context),pureTask(check,'gmpl-stage-check',{input:inputSchema,out:reportSchema},{out:reportSchema}));
+    nodes.push(pureTask(prepare,'gmpl-analysis-prepare',{input:inputSchema},{variables:stageArtifact('analysis-analyst',context,i).variableSchema}),
+      await stageAgent(id,'analysis-analyst',context,i),pureTask(check,'gmpl-stage-check',{input:inputSchema,out:reportSchema},{out:reportSchema}));
     entry.push({port:'input',to:{node:prepare,port:'input'}},{port:'input',to:{node:check,port:'input'}});
     messages.push(masMessage([prepare,'variables'],[id,'variables']),masMessage([id,'out'],[check,'out']),
       masMessage([check,'out'],['prepare-synthesis','reports'],{aggregation:'ordered-list'}),

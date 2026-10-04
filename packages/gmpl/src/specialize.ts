@@ -7,6 +7,7 @@ import {gmplRefuse,type GmplOutcome} from './errors.ts';
 import {gmplVersionOf,gmplRevisionOf,immutableJson} from './identity.ts';
 import {resolveGmplParameters,GMPL_LIMITS,type GmplCatalog} from './catalog.ts';
 import {validateGmplShape,gmplSchemaOf} from './schema.ts';
+import {gmplStagePrompts} from './stage-prompts.ts';
 import {buildDelphiRound} from './patterns/delphi-panel.ts';
 import {buildClarification} from './patterns/clarification.ts';
 import {buildBoundedPattern} from './patterns/controller.ts';
@@ -40,8 +41,8 @@ export async function materializeGmplTemplate(recipe:GmplPatternRecipe,domain:Gm
       const ceiling=config.value.limits?.[key];if(ceiling!==undefined)limits[key]=Math.min(limits[key],ceiling);
       const requested=parameters.value.caps?.[key];if(requested!==undefined){if(requested>limits[key])return gmplRefuse('TGMPL1007',`/parameters/caps/${key}`,'parameters cannot widen host caps');limits[key]=requested;}
     }
-    const prompts=recipe.stages.map(stage=>catalog.prompt(domain.rolePrompts[stage]??stage));
-    if(prompts.some(p=>!p))return gmplRefuse('TGMPL1003','/recipe/stages','unknown prompt stage');
+    const selected=gmplStagePrompts(recipe,domain,catalog);if(!selected.valid)return selected;
+    const prompts=selected.value;
     for(const required of domain.requiredCapabilities){
       const found=registry.value.document.messageAdapters.find(a=>a.id===required.id)||registry.value.document.contextAdapters.find(a=>a.id===required.id);
       if(!found||!('version' in found)||found.version!==required.version)return gmplRefuse('TGMPL1007','/domain/requiredCapabilities',`host capability ${required.id} is unavailable`);

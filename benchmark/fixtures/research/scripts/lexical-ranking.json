@@ -1,0 +1,825 @@
+{
+  "topicId": "lexical-ranking",
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  },
+  "model": "scripted-v1",
+  "synthesis": {
+    "summary": "Compare the declared methods on the same visible inputs and report every registered replicate.",
+    "evidenceIds": [
+      "card-bb274916ee7bba1900ac75fa444faa20af8ee146ed880649847ec581e9b31c26",
+      "card-7380cba0f99e79f675fd84cb9f96c291ad212750d01023be3c5b1b39039057df"
+    ],
+    "conflicts": [
+      "No experiment result is available; the method comparison remains unresolved."
+    ],
+    "gaps": [
+      "The fixture does not establish a general method advantage."
+    ]
+  },
+  "hypotheses": {
+    "hypotheses": [
+      {
+        "statement": "lexical-ranking/bm25plus improves recall-at-5 over lexical-ranking/tf on this fixture.",
+        "nullHypothesis": "The candidate has no favorable paired difference from the baseline.",
+        "predictedObservation": "A favorable paired difference on the declared metric.",
+        "disconfirmingObservation": "A nonpositive paired difference or an interval touching zero.",
+        "evidenceIds": [
+          "card-bb274916ee7bba1900ac75fa444faa20af8ee146ed880649847ec581e9b31c26"
+        ],
+        "baselineIds": [
+          "baseline"
+        ],
+        "confounds": [
+          "different input features"
+        ],
+        "queries": [
+          "lexical-ranking paired method comparison"
+        ]
+      },
+      {
+        "statement": "The registered candidate and baseline may be indistinguishable on this dataset.",
+        "nullHypothesis": "The two registered methods have a nonzero paired difference.",
+        "predictedObservation": "Equal retained outputs across the declared comparisons.",
+        "disconfirmingObservation": "At least one registered paired output differs.",
+        "evidenceIds": [
+          "card-7380cba0f99e79f675fd84cb9f96c291ad212750d01023be3c5b1b39039057df"
+        ],
+        "baselineIds": [
+          "baseline"
+        ],
+        "confounds": [
+          "different input features"
+        ],
+        "queries": [
+          "lexical-ranking controlled equivalence comparison"
+        ]
+      }
+    ],
+    "advisory": {
+      "rating": 0.4,
+      "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+    }
+  },
+  "design": {
+    "hypothesisId": "hypothesis-ec626c154aa8b5743219fa772b0383b776479276bfa380604c4110b826c4f705",
+    "contract": {
+      "hypothesisSpace": [
+        "lexical-ranking/bm25plus improves recall-at-5 over lexical-ranking/tf on this fixture."
+      ],
+      "successRule": {
+        "metric": "recall-at-5",
+        "baseline": "baseline",
+        "condition": "candidate",
+        "minImprovement": 0,
+        "confidenceLevel": 0.95
+      },
+      "failureRule": "stop-on-invalid",
+      "metrics": [
+        {
+          "id": "recall-at-5",
+          "unit": "fraction",
+          "direction": "maximize"
+        }
+      ],
+      "datasets": [
+        {
+          "id": "fixture-corpus-v1",
+          "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+        }
+      ],
+      "splits": {
+        "train": [],
+        "test": [
+          "query-1",
+          "query-2",
+          "query-3",
+          "query-4",
+          "query-5",
+          "query-6",
+          "query-7",
+          "query-8"
+        ]
+      },
+      "requiredBaselines": [
+        {
+          "condition": "baseline",
+          "programId": "lexical-ranking/tf",
+          "source": "benchmark/lib/research-programs.ts",
+          "licence": {
+            "spdx": "MIT",
+            "provenance": "tangle-authored-synthetic",
+            "source": "LICENSE.md"
+          }
+        }
+      ],
+      "replicatePolicy": {
+        "seeds": [
+          1
+        ],
+        "minimum": 1,
+        "resamples": 2000,
+        "bootstrapSeed": 17753
+      },
+      "attemptCap": 1,
+      "pivotCap": 1,
+      "reviewCap": 1,
+      "selectionRule": {
+        "kind": "all",
+        "n": 1,
+        "metric": "recall-at-5"
+      },
+      "stopConditions": [
+        "invalid evidence",
+        "registered budget reached",
+        "no positive paired interval",
+        "saturated metric"
+      ]
+    },
+    "plan": {
+      "conditions": [
+        {
+          "id": "baseline",
+          "programId": "lexical-ranking/tf",
+          "datasetId": "fixture-corpus-v1",
+          "params": {
+            "limit": 5
+          }
+        },
+        {
+          "id": "candidate",
+          "programId": "lexical-ranking/bm25plus",
+          "datasetId": "fixture-corpus-v1",
+          "params": {
+            "limit": 5
+          }
+        }
+      ],
+      "inputPaths": [
+        "datasets/corpus.json"
+      ],
+      "evaluator": {
+        "id": "fixture-evaluator",
+        "version": "1"
+      },
+      "design": {
+        "variables": {
+          "independent": [
+            "method"
+          ],
+          "dependent": [
+            "recall-at-5"
+          ],
+          "controlled": [
+            "input features",
+            "seed"
+          ]
+        },
+        "controls": [
+          {
+            "confound": "different input features",
+            "strategy": "Both conditions use the exact registered dataset bytes and split."
+          }
+        ],
+        "statisticalTest": {
+          "name": "paired bootstrap",
+          "rationale": "Preserve the preregistered seed pairing, resample count and confidence rule."
+        },
+        "replicateRationale": "Use every registered seed; deterministic one-pair cases establish fixture behavior only.",
+        "resources": {
+          "calls": 0,
+          "tokens": 0,
+          "ms": 10000,
+          "physical": 0
+        },
+        "hazards": [
+          {
+            "hazard": "untrusted candidate program",
+            "mitigation": "Refuse execution without the isolated experiment host."
+          }
+        ],
+        "expectedFailures": [
+          "Inconclusive or saturated metric; retain the negative result without changing the threshold."
+        ]
+      }
+    }
+  },
+  "participants": {
+    "innovator": {
+      "hypotheses": [
+        {
+          "statement": "lexical-ranking/bm25plus improves recall-at-5 over lexical-ranking/tf on this fixture.",
+          "nullHypothesis": "The candidate has no favorable paired difference from the baseline.",
+          "predictedObservation": "A favorable paired difference on the declared metric.",
+          "disconfirmingObservation": "A nonpositive paired difference or an interval touching zero.",
+          "evidenceIds": [
+            "card-bb274916ee7bba1900ac75fa444faa20af8ee146ed880649847ec581e9b31c26"
+          ],
+          "baselineIds": [
+            "baseline"
+          ],
+          "confounds": [
+            "different input features"
+          ],
+          "queries": [
+            "lexical-ranking paired method comparison"
+          ]
+        }
+      ],
+      "advisory": {
+        "rating": 0.4,
+        "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+      }
+    },
+    "pragmatist": {
+      "hypotheses": [
+        {
+          "statement": "The registered candidate and baseline may be indistinguishable on this dataset.",
+          "nullHypothesis": "The two registered methods have a nonzero paired difference.",
+          "predictedObservation": "Equal retained outputs across the declared comparisons.",
+          "disconfirmingObservation": "At least one registered paired output differs.",
+          "evidenceIds": [
+            "card-7380cba0f99e79f675fd84cb9f96c291ad212750d01023be3c5b1b39039057df"
+          ],
+          "baselineIds": [
+            "baseline"
+          ],
+          "confounds": [
+            "different input features"
+          ],
+          "queries": [
+            "lexical-ranking controlled equivalence comparison"
+          ]
+        }
+      ],
+      "advisory": {
+        "rating": 0.4,
+        "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+      }
+    },
+    "contrarian": {
+      "hypotheses": [
+        {
+          "statement": "lexical-ranking/bm25plus improves recall-at-5 over lexical-ranking/tf on this fixture.",
+          "nullHypothesis": "The candidate has no favorable paired difference from the baseline.",
+          "predictedObservation": "A favorable paired difference on the declared metric.",
+          "disconfirmingObservation": "A nonpositive paired difference or an interval touching zero.",
+          "evidenceIds": [
+            "card-bb274916ee7bba1900ac75fa444faa20af8ee146ed880649847ec581e9b31c26"
+          ],
+          "baselineIds": [
+            "baseline"
+          ],
+          "confounds": [
+            "different input features"
+          ],
+          "queries": [
+            "lexical-ranking paired method comparison"
+          ]
+        }
+      ],
+      "advisory": {
+        "rating": 0.4,
+        "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+      }
+    },
+    "screener": {
+      "hypotheses": [
+        {
+          "statement": "The registered candidate and baseline may be indistinguishable on this dataset.",
+          "nullHypothesis": "The two registered methods have a nonzero paired difference.",
+          "predictedObservation": "Equal retained outputs across the declared comparisons.",
+          "disconfirmingObservation": "At least one registered paired output differs.",
+          "evidenceIds": [
+            "card-7380cba0f99e79f675fd84cb9f96c291ad212750d01023be3c5b1b39039057df"
+          ],
+          "baselineIds": [
+            "baseline"
+          ],
+          "confounds": [
+            "different input features"
+          ],
+          "queries": [
+            "lexical-ranking controlled equivalence comparison"
+          ]
+        }
+      ],
+      "advisory": {
+        "rating": 0.4,
+        "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "infeasible-plan",
+      "proposal": {
+        "hypothesisId": "hypothesis-ec626c154aa8b5743219fa772b0383b776479276bfa380604c4110b826c4f705",
+        "contract": {
+          "hypothesisSpace": [
+            "lexical-ranking/bm25plus improves recall-at-5 over lexical-ranking/tf on this fixture."
+          ],
+          "successRule": {
+            "metric": "recall-at-5",
+            "baseline": "baseline",
+            "condition": "candidate",
+            "minImprovement": 0,
+            "confidenceLevel": 0.95
+          },
+          "failureRule": "stop-on-invalid",
+          "metrics": [
+            {
+              "id": "recall-at-5",
+              "unit": "fraction",
+              "direction": "maximize"
+            }
+          ],
+          "datasets": [
+            {
+              "id": "fixture-corpus-v1",
+              "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+            }
+          ],
+          "splits": {
+            "train": [],
+            "test": [
+              "query-1",
+              "query-2",
+              "query-3",
+              "query-4",
+              "query-5",
+              "query-6",
+              "query-7",
+              "query-8"
+            ]
+          },
+          "requiredBaselines": [
+            {
+              "condition": "baseline",
+              "programId": "lexical-ranking/tf",
+              "licence": {
+                "spdx": "MIT",
+                "provenance": "tangle-authored-synthetic",
+                "source": "LICENSE.md"
+              }
+            }
+          ],
+          "replicatePolicy": {
+            "seeds": [
+              1
+            ],
+            "minimum": 1,
+            "resamples": 2000,
+            "bootstrapSeed": 17753
+          },
+          "attemptCap": 1,
+          "pivotCap": 1,
+          "reviewCap": 1,
+          "selectionRule": {
+            "kind": "all",
+            "n": 1,
+            "metric": "recall-at-5"
+          },
+          "stopConditions": [
+            "invalid evidence",
+            "registered budget reached",
+            "no positive paired interval",
+            "saturated metric"
+          ]
+        },
+        "plan": {
+          "conditions": [
+            {
+              "id": "baseline",
+              "programId": "lexical-ranking/tf",
+              "datasetId": "fixture-corpus-v1",
+              "params": {
+                "limit": 5
+              }
+            },
+            {
+              "id": "candidate",
+              "programId": "lexical-ranking/bm25plus",
+              "datasetId": "fixture-corpus-v1",
+              "params": {
+                "limit": 5
+              }
+            }
+          ],
+          "inputPaths": [
+            "datasets/corpus.json"
+          ],
+          "evaluator": {
+            "id": "fixture-evaluator",
+            "version": "1"
+          },
+          "design": {
+            "variables": {
+              "independent": [
+                "method"
+              ],
+              "dependent": [
+                "recall-at-5"
+              ],
+              "controlled": [
+                "input features",
+                "seed"
+              ]
+            },
+            "controls": [
+              {
+                "confound": "different input features",
+                "strategy": "Both conditions use the exact registered dataset bytes and split."
+              }
+            ],
+            "statisticalTest": {
+              "name": "paired bootstrap",
+              "rationale": "Preserve the preregistered seed pairing, resample count and confidence rule."
+            },
+            "replicateRationale": "Use every registered seed; deterministic one-pair cases establish fixture behavior only.",
+            "resources": {
+              "calls": 0,
+              "tokens": 0,
+              "ms": 10000,
+              "physical": 0
+            },
+            "hazards": [
+              {
+                "hazard": "untrusted candidate program",
+                "mitigation": "Refuse execution without the isolated experiment host."
+              }
+            ],
+            "expectedFailures": [
+              "Inconclusive or saturated metric; retain the negative result without changing the threshold."
+            ]
+          }
+        }
+      },
+      "expected": {
+        "code": "TRSH1009",
+        "path": "/contract/requiredBaselines/0/source"
+      }
+    },
+    {
+      "id": "confounded-plan",
+      "proposal": {
+        "hypothesisId": "hypothesis-ec626c154aa8b5743219fa772b0383b776479276bfa380604c4110b826c4f705",
+        "contract": {
+          "hypothesisSpace": [
+            "lexical-ranking/bm25plus improves recall-at-5 over lexical-ranking/tf on this fixture."
+          ],
+          "successRule": {
+            "metric": "recall-at-5",
+            "baseline": "baseline",
+            "condition": "candidate",
+            "minImprovement": 0,
+            "confidenceLevel": 0.95
+          },
+          "failureRule": "stop-on-invalid",
+          "metrics": [
+            {
+              "id": "recall-at-5",
+              "unit": "fraction",
+              "direction": "maximize"
+            }
+          ],
+          "datasets": [
+            {
+              "id": "fixture-corpus-v1",
+              "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+            }
+          ],
+          "splits": {
+            "train": [],
+            "test": [
+              "query-1",
+              "query-2",
+              "query-3",
+              "query-4",
+              "query-5",
+              "query-6",
+              "query-7",
+              "query-8"
+            ]
+          },
+          "requiredBaselines": [
+            {
+              "condition": "baseline",
+              "programId": "lexical-ranking/tf",
+              "source": "benchmark/lib/research-programs.ts",
+              "licence": {
+                "spdx": "MIT",
+                "provenance": "tangle-authored-synthetic",
+                "source": "LICENSE.md"
+              }
+            }
+          ],
+          "replicatePolicy": {
+            "seeds": [
+              1
+            ],
+            "minimum": 1,
+            "resamples": 2000,
+            "bootstrapSeed": 17753
+          },
+          "attemptCap": 1,
+          "pivotCap": 1,
+          "reviewCap": 1,
+          "selectionRule": {
+            "kind": "all",
+            "n": 1,
+            "metric": "recall-at-5"
+          },
+          "stopConditions": [
+            "invalid evidence",
+            "registered budget reached",
+            "no positive paired interval",
+            "saturated metric"
+          ]
+        },
+        "plan": {
+          "conditions": [
+            {
+              "id": "baseline",
+              "programId": "lexical-ranking/tf",
+              "datasetId": "fixture-corpus-v1",
+              "params": {
+                "limit": 5
+              }
+            },
+            {
+              "id": "candidate",
+              "programId": "lexical-ranking/bm25plus",
+              "datasetId": "fixture-corpus-v1",
+              "params": {
+                "limit": 5
+              }
+            }
+          ],
+          "inputPaths": [
+            "datasets/corpus.json"
+          ],
+          "evaluator": {
+            "id": "fixture-evaluator",
+            "version": "1"
+          },
+          "design": {
+            "variables": {
+              "independent": [
+                "method"
+              ],
+              "dependent": [
+                "recall-at-5"
+              ],
+              "controlled": [
+                "input features",
+                "seed"
+              ]
+            },
+            "controls": [
+              {
+                "confound": "unrelated control",
+                "strategy": "Both conditions use the exact registered dataset bytes and split."
+              }
+            ],
+            "statisticalTest": {
+              "name": "paired bootstrap",
+              "rationale": "Preserve the preregistered seed pairing, resample count and confidence rule."
+            },
+            "replicateRationale": "Use every registered seed; deterministic one-pair cases establish fixture behavior only.",
+            "resources": {
+              "calls": 0,
+              "tokens": 0,
+              "ms": 10000,
+              "physical": 0
+            },
+            "hazards": [
+              {
+                "hazard": "untrusted candidate program",
+                "mitigation": "Refuse execution without the isolated experiment host."
+              }
+            ],
+            "expectedFailures": [
+              "Inconclusive or saturated metric; retain the negative result without changing the threshold."
+            ]
+          }
+        }
+      },
+      "expected": {
+        "code": "TRSH1009",
+        "path": "/plan/design/controls"
+      }
+    },
+    {
+      "id": "hidden-read",
+      "proposal": {
+        "hypothesisId": "hypothesis-ec626c154aa8b5743219fa772b0383b776479276bfa380604c4110b826c4f705",
+        "contract": {
+          "hypothesisSpace": [
+            "lexical-ranking/bm25plus improves recall-at-5 over lexical-ranking/tf on this fixture."
+          ],
+          "successRule": {
+            "metric": "recall-at-5",
+            "baseline": "baseline",
+            "condition": "candidate",
+            "minImprovement": 0,
+            "confidenceLevel": 0.95
+          },
+          "failureRule": "stop-on-invalid",
+          "metrics": [
+            {
+              "id": "recall-at-5",
+              "unit": "fraction",
+              "direction": "maximize"
+            }
+          ],
+          "datasets": [
+            {
+              "id": "fixture-corpus-v1",
+              "sha256": "70b321a44319c1c4a99950f1858132d6cbdde6128a90f7955a797c064c290df8"
+            }
+          ],
+          "splits": {
+            "train": [],
+            "test": [
+              "query-1",
+              "query-2",
+              "query-3",
+              "query-4",
+              "query-5",
+              "query-6",
+              "query-7",
+              "query-8"
+            ]
+          },
+          "requiredBaselines": [
+            {
+              "condition": "baseline",
+              "programId": "lexical-ranking/tf",
+              "source": "benchmark/lib/research-programs.ts",
+              "licence": {
+                "spdx": "MIT",
+                "provenance": "tangle-authored-synthetic",
+                "source": "LICENSE.md"
+              }
+            }
+          ],
+          "replicatePolicy": {
+            "seeds": [
+              1
+            ],
+            "minimum": 1,
+            "resamples": 2000,
+            "bootstrapSeed": 17753
+          },
+          "attemptCap": 1,
+          "pivotCap": 1,
+          "reviewCap": 1,
+          "selectionRule": {
+            "kind": "all",
+            "n": 1,
+            "metric": "recall-at-5"
+          },
+          "stopConditions": [
+            "invalid evidence",
+            "registered budget reached",
+            "no positive paired interval",
+            "saturated metric"
+          ]
+        },
+        "plan": {
+          "conditions": [
+            {
+              "id": "baseline",
+              "programId": "lexical-ranking/tf",
+              "datasetId": "fixture-corpus-v1",
+              "params": {
+                "limit": 5
+              }
+            },
+            {
+              "id": "candidate",
+              "programId": "lexical-ranking/bm25plus",
+              "datasetId": "fixture-corpus-v1",
+              "params": {
+                "limit": 5
+              }
+            }
+          ],
+          "inputPaths": [
+            "datasets/corpus.json",
+            "hidden/lexical-ranking.json"
+          ],
+          "evaluator": {
+            "id": "fixture-evaluator",
+            "version": "1"
+          },
+          "design": {
+            "variables": {
+              "independent": [
+                "method"
+              ],
+              "dependent": [
+                "recall-at-5"
+              ],
+              "controlled": [
+                "input features",
+                "seed"
+              ]
+            },
+            "controls": [
+              {
+                "confound": "different input features",
+                "strategy": "Both conditions use the exact registered dataset bytes and split."
+              }
+            ],
+            "statisticalTest": {
+              "name": "paired bootstrap",
+              "rationale": "Preserve the preregistered seed pairing, resample count and confidence rule."
+            },
+            "replicateRationale": "Use every registered seed; deterministic one-pair cases establish fixture behavior only.",
+            "resources": {
+              "calls": 0,
+              "tokens": 0,
+              "ms": 10000,
+              "physical": 0
+            },
+            "hazards": [
+              {
+                "hazard": "untrusted candidate program",
+                "mitigation": "Refuse execution without the isolated experiment host."
+              }
+            ],
+            "expectedFailures": [
+              "Inconclusive or saturated metric; retain the negative result without changing the threshold."
+            ]
+          }
+        }
+      },
+      "expected": {
+        "code": "TRSH1005",
+        "path": "/plan/inputPaths/1"
+      }
+    },
+    {
+      "id": "malformed",
+      "proposal": {},
+      "expected": {
+        "code": "TRSH1009",
+        "path": "/hypothesisId"
+      }
+    }
+  ],
+  "noveltyTranscripts": [
+    {
+      "method": "GET",
+      "url": "https://api.crossref.org/works?query=lexical-ranking+paired+method+comparison&rows=5&cursor=*",
+      "body": null,
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-5\",\"items\":[{\"DOI\":\"10.5555/lexical-ranking-paper-1\",\"title\":[\"Synthetic lexical-ranking protocol note 1\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-1.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-2\",\"title\":[\"Synthetic lexical-ranking protocol note 2\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-2.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-3\",\"title\":[\"Synthetic lexical-ranking protocol note 3\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-3.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-4\",\"title\":[\"Synthetic lexical-ranking protocol note 4\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-4.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-5\",\"title\":[\"Synthetic lexical-ranking protocol note 5\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-5.md\"}}}]}}"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.crossref.org/works?query=lexical-ranking+paired+method+comparison&rows=5&cursor=page-5",
+      "body": null,
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-10\",\"items\":[{\"DOI\":\"10.5555/lexical-ranking-paper-6\",\"title\":[\"Synthetic lexical-ranking protocol note 6\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-6.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-7\",\"title\":[\"Synthetic lexical-ranking protocol note 7\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-7.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-8\",\"title\":[\"Synthetic lexical-ranking protocol note 8\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-8.md\"}}}]}}"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.crossref.org/works?query=lexical-ranking+controlled+equivalence+comparison&rows=5&cursor=*",
+      "body": null,
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-5\",\"items\":[{\"DOI\":\"10.5555/lexical-ranking-paper-1\",\"title\":[\"Synthetic lexical-ranking protocol note 1\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-1.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-2\",\"title\":[\"Synthetic lexical-ranking protocol note 2\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-2.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-3\",\"title\":[\"Synthetic lexical-ranking protocol note 3\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-3.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-4\",\"title\":[\"Synthetic lexical-ranking protocol note 4\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-4.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-5\",\"title\":[\"Synthetic lexical-ranking protocol note 5\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-5.md\"}}}]}}"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.crossref.org/works?query=lexical-ranking+controlled+equivalence+comparison&rows=5&cursor=page-5",
+      "body": null,
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-10\",\"items\":[{\"DOI\":\"10.5555/lexical-ranking-paper-6\",\"title\":[\"Synthetic lexical-ranking protocol note 6\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-6.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-7\",\"title\":[\"Synthetic lexical-ranking protocol note 7\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-7.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-8\",\"title\":[\"Synthetic lexical-ranking protocol note 8\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-8.md\"}}}]}}"
+      }
+    }
+  ]
+}

@@ -381,11 +381,9 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 - [ ] **Verifiable autonomous research.** *Wanted:* a topic taken through
   literature discovery, hypothesis formation, executable experiments, analysis,
   review and a draft — with every important claim traceable to literature or
-  immutable experiment output: a typed, immutable research question and
-  preregistered success contract before any result exists; replayable literature
-  discovery with normalized source identity, screening records and evidence cards;
-  falsifiable, evidence-linked hypotheses with nulls, confounds and baselines;
-  generated code executing outside the desktop process under a pinned,
+  immutable experiment output. The remaining execution path must consume the
+  committed evidence, generated hypotheses and frozen design: generated code
+  executing outside the desktop process under a pinned,
   resource-bounded, secret-free policy that cannot modify the evaluation harness
   or the metric registry; Proceed / Refine / Pivot / Stop decisions schema-valid,
   budgeted and resumable; every manuscript number resolving to a registered

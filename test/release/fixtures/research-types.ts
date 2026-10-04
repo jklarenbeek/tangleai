@@ -9,6 +9,9 @@ import { discoverCrossref, createReplayTransport, createQueryPlan, createInclusi
   extractEvidenceCards, toAdmittedArtifact, type DiscoveryQuery, type ResearchProviderHost, type ResearchAdapterContext,
   type ResearchDiscoveryOptions, type EvidenceCard } from '@tangleai/research';
 import type { MasStore, WorkflowLimits } from '@tangleai/mas';
+import { createResearchReasoningTools, researchReasoningRevisionOf, createResearchSynthesis, createResearchHypotheses, createResearchDesign,
+  createResearchNoveltyPlan, executeResearchNovelty, researchArtifacts, type ResearchReasoningPolicy, type ResearchDesignProposal,
+  type HypothesisSetProposal, type SynthesisProposal, type Synthesis, type ResearchHypothesis, type HypothesisSet } from '@tangleai/research';
 import schema from '@tangleai/research/schemas/research' with { type: 'json' };
 import { createResearchStore, createResearchDbPersistence, researchRunLogId, type TangleDb } from '@tangleai/store';
 declare const project: ResearchProject, state: ResearchState, attempt: StageAttempt, manifest: InputManifest,
@@ -56,3 +59,18 @@ void [complete, rawHashes, replayTransport, admitted, extractEvidenceCards];
 // @ts-expect-error Unknown providers cannot enter a frozen query.
 const unregisteredQuery: DiscoveryQuery = { ...discoveryQuery, provider: 'unknown' };
 void unregisteredQuery;
+declare const reasoningPolicy: ResearchReasoningPolicy, synthesisProposal: SynthesisProposal, hypothesisProposal: HypothesisSetProposal,
+  designProposal: ResearchDesignProposal, synthesis: Synthesis, hypotheses: ResearchHypothesis[], hypothesisSet: HypothesisSet;
+const reasoningTools: ResearchTaskTools = await createResearchReasoningTools(taskTools, { project, policy: reasoningPolicy, provider: providerHost });
+await prepareResearchWorkflow(contract, { binding, profile: 'scripted', limits, reasoning: reasoningPolicy });
+await researchReasoningRevisionOf(reasoningPolicy);
+await createResearchSynthesis(project.id, project.question, synthesisProposal, [evidenceCard]);
+await createResearchHypotheses(synthesis, hypothesisProposal, [evidenceCard], ['control'], 'single-agent');
+await createResearchDesign(project.id, designProposal, hypotheses, { contract, plan, budget: project.budget });
+await createResearchNoveltyPlan(hypothesisSet, reasoningPolicy.novelty);
+await executeResearchNovelty(hypothesisSet, reasoningPolicy.novelty, [], { provider: providerHost,
+  admitPlan: async query => { await sqlite.putRecord(project.id, { kind: 'QueryPlan', value: query }); } }, new AbortController().signal);
+void [reasoningTools, researchArtifacts];
+// @ts-expect-error A model cannot choose an arbitrary reasoning topology.
+const unknownReasoning: ResearchReasoningPolicy = { ...reasoningPolicy, mode: 'unregistered' };
+void unknownReasoning;

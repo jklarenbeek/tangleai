@@ -9,6 +9,7 @@ import { openTangleDb, createResearchStore, researchRunLogId, createRunLog, RESE
 import { planProjectCreate, planStateTransition, type ResearchProjection, type ResearchStoreOutcome, type ResearchState } from '@tangleai/research';
 import { researchStoreSuite, faultProbe, lifecycle, memoryHarness, stored, start, staged, type ResearchHarness } from '../research/store-harness.ts';
 import { checked, project } from '../research/fixtures.ts';
+import { researchDesignStoreSuite } from '../research/design-store-suite.ts';
 
 function deferred<T>() {
   let resolve!: (value: T) => void, reject!: (cause: unknown) => void;
@@ -42,6 +43,7 @@ async function sqliteHarness(): Promise<ResearchHarness> {
     } };
 }
 researchStoreSuite('SQLite research transactions', sqliteHarness);
+researchDesignStoreSuite('atomic generated design in SQLite', sqliteHarness);
 it('one lifecycle fixture passes identically against memory and SQLite', async () => {
   const memory = await memoryHarness(), sqlite = await sqliteHarness();
   try {

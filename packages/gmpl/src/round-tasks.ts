@@ -5,11 +5,11 @@ import {validateGmplShape,compileGmplSchema} from './schema.ts';
 import {validateGmplEvidence,mergeGmplFindings} from './evidence.ts';
 import {gmplRevisionOf} from './identity.ts';
 import {gmplRefuse} from './errors.ts';
-import {taskValue} from './tasks.ts';
+import {taskValue,gmplInputContext} from './tasks.ts';
 interface Ports {state:GmplRoundState;input:GmplInput;out:{result:GmplPatternResult};reviews:PeerReviewReview[];attacks:RedTeamAttack[];defenses:RedTeamDefense[];}
 const attackStrategies=['adversarial-reframing','edge-case-injection','assumption-challenge'] as const;
 export function checkedRoundState(value:unknown):GmplRoundState{return taskValue(validateGmplShape<GmplRoundState>('gmplRoundState',value));}
-export function stageVariables(state:GmplRoundState,context:unknown){return {query:state.input.query,evidence:state.input.evidence,context};}
+export function stageVariables(state:GmplRoundState,context:Record<string,unknown>){return {query:state.input.query,evidence:state.input.evidence,context:gmplInputContext(state.input,context)};}
 export function roundMax(s:GmplRoundState){const p=s.policy.parameters;return 'maxRounds' in p?p.maxRounds??3:1;}
 function threshold(s:GmplRoundState){const p=s.policy.parameters;return 'threshold' in p?p.threshold??0.7:0.7;}
 export function participants(s:GmplRoundState){const p=s.policy.parameters;return 'participants' in p?p.participants??2:1;}
@@ -25,7 +25,7 @@ export function roundTaskHandlers():Record<string,MasTaskHandlerBinding>{
     'gmpl-round-empty':async({value,state})=>({state:await initializeGmplRound((value as unknown as Ports).input,state.policy as GmplPolicy,{answer:'',disposition:'no-consensus',claims:[],findings:[]})}),
     'gmpl-round-synthesis':({value})=>{const s=checkedRoundState((value as unknown as Ports).state);if(!s.done)taskValue(gmplRefuse('TGMPL1006','/done','synthesis requires terminal carry'));return {variables:stageVariables(s,{disposition:s.disposition,draft:s.draft,history:s.history,findings:s.findings})};},
     'gmpl-round-synthesis-finalize':({value})=>{const {state:s,out}=value as unknown as Ports;if(!s.done||!s.disposition)taskValue(gmplRefuse('TGMPL1006','/disposition','synthesis requires terminal carry'));return {result:taskValue(validateGmplEvidence({...out.result,disposition:s.disposition!},s.input.evidence,s.findings))};},
-    'gmpl-author-prepare':({value})=>{const {input}=value as unknown as Ports;return {variables:{query:input.query,evidence:input.evidence,context:{purpose:'initial-author'}}};},
+    'gmpl-author-prepare':({value})=>{const {input}=value as unknown as Ports;return {variables:{query:input.query,evidence:input.evidence,context:gmplInputContext(input,{purpose:'initial-author'})}};},
     'gmpl-round-initialize':async({value,state})=>{const v=value as unknown as Ports;return {state:await initializeGmplRound(v.input,state.policy as GmplPolicy,v.out.result)};},
     'gmpl-review-prepare':({value,node})=>{const s=checkedRoundState((value as unknown as Ports).state);return {variables:stageVariables(s,{round:s.round,draftRevision:s.draftRevision,draft:s.draft,participant:node.replace('prepare-','')})};},
     'gmpl-round-stage-check':({value})=>{const {state,out}=value as unknown as Ports;taskValue(validateGmplEvidence(out.result,state.input.evidence,state.findings));if('strategy' in out&&out.strategy!==attackStrategies[(state.round-1)%attackStrategies.length])taskValue(gmplRefuse('TGMPL1006','/strategy','attack changed the selected round strategy'));return {out};},

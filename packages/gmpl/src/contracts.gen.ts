@@ -93,6 +93,10 @@ export interface GmplInput {
    */
   query: string;
   evidence: Array<GmplEvidenceUnit>;
+  /**
+   * Optional domain data; validated by the bound payloadSchema and passed intact in role context.domain.
+   */
+  payload?: { [key: string]: unknown; };
 }
 
 

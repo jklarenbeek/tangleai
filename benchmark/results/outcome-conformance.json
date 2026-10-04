@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "e6a6f5cd0acfdba1ca7835d03dafa73feb107f3b",
+    "head": "dc083d799f268cab77c26268cd253ce21c9075ae",
     "clean": false,
     "files": [
       {
@@ -111,7 +111,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "1887b6bc8206d0e3a01bd41947b62aa60161c420eddea4e202b4417f89c099cd"
+        "sha256": "a4fd0365e0d6c334c2a6556bbcb9520a965a8cacbe7a26f661e481ec40f5cf4c"
       },
       {
         "path": "packages/agents/package.json",
@@ -747,7 +747,7 @@
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
-        "sha256": "45d35251829b16633dd964a7eda0ffa8dd8018cb7b99311a3e1ea85ed3f1df45"
+        "sha256": "b7f485dde0872f726e9a9efba19549b43e27499aac4aed4bc5c28f3c5d4af456"
       },
       {
         "path": "packages/gmpl/src/catalog.ts",
@@ -759,7 +759,7 @@
       },
       {
         "path": "packages/gmpl/src/contracts.gen.ts",
-        "sha256": "c12882e66d4ab5f55e56992a67ef9bd317594a9cbd79bdaf77870ca4ef1653cb"
+        "sha256": "46460a60441c13770f12d59bc3c7640ded21cfbf7432b04e9fdf8454ba2765d2"
       },
       {
         "path": "packages/gmpl/src/debate-tasks.ts",
@@ -783,7 +783,7 @@
       },
       {
         "path": "packages/gmpl/src/host-bindings.ts",
-        "sha256": "0f17cfb88ab0db0ac2f8c6bac20b29ed501acbe43c40620c393b4d4416f1efda"
+        "sha256": "769b028f3965c354bd612b26a2b8ba535ae9710dcdffb43b530a1c679f8ac5fb"
       },
       {
         "path": "packages/gmpl/src/identity.ts",
@@ -807,7 +807,7 @@
       },
       {
         "path": "packages/gmpl/src/patterns/parallel-analysis.ts",
-        "sha256": "03bbf2daefbcc562db2702e92220fbf65b08abfa0a7dd63146611497a7e2561f"
+        "sha256": "c9ef0e5bd68f263f7a07ceed258e20e62388e01808fc996413c5c23a10a33683"
       },
       {
         "path": "packages/gmpl/src/patterns/peer-review.ts",
@@ -823,11 +823,11 @@
       },
       {
         "path": "packages/gmpl/src/patterns/shared.ts",
-        "sha256": "b295cbbf853ae600148d9ddca5b0ca5f4fe8b18e0802609f234fbb6653d44771"
+        "sha256": "cb599bde5e6a4067c5c93f76a50af402a37e5f1384dd8cb25c5733adc5483fe9"
       },
       {
         "path": "packages/gmpl/src/patterns/structured-debate.ts",
-        "sha256": "3606fc971bd903ed510b45e85e793d5bb1436daea93e5c6679b942196e3e2b1b"
+        "sha256": "8ab58fe1eb8be6c684fd5765ff4ad83f445581981b7665e9d41fb6c92790fc55"
       },
       {
         "path": "packages/gmpl/src/projection.ts",
@@ -839,7 +839,7 @@
       },
       {
         "path": "packages/gmpl/src/round-tasks.ts",
-        "sha256": "bf7ba5d1c22d2327f1b71bb51b43fd446b25da6dec2343ef08c2a55f3282d69a"
+        "sha256": "84c7dedabee4f8c6fb2d88740a08a47d2065558ee55b4eb78a7914c5b50add41"
       },
       {
         "path": "packages/gmpl/src/schema.ts",
@@ -847,11 +847,15 @@
       },
       {
         "path": "packages/gmpl/src/specialize.ts",
-        "sha256": "4eaec241dd7aa6728e479437edb828230cc209ac8136619e377e49a9866f2ee7"
+        "sha256": "996d47caa6ec2fc2ac7f3bbe01d855373a9634ac633ebdaaac569f527aff6441"
+      },
+      {
+        "path": "packages/gmpl/src/stage-prompts.ts",
+        "sha256": "25334893a19fae93ff0bc3fa88975a6116afa3d7d68f60f825c7f1aab14b33f2"
       },
       {
         "path": "packages/gmpl/src/tasks.ts",
-        "sha256": "17d0457b6a04669dce2de693d568ad7ec14df0526dd6fc44cb0090295349661e"
+        "sha256": "178f15a8192cc5d56cb86e1b0aa7fedc787b5efa3e36e38d3115616ae5899a12"
       },
       {
         "path": "packages/grounding/artifacts/catalog.json",
@@ -1930,12 +1934,16 @@
         "sha256": "3399c8277d7d927de7df1dc1a0ad68ff77cb04a76e6d644bb4c2d13f1eb5c8b0"
       },
       {
+        "path": "packages/research/artifacts/catalog.json",
+        "sha256": "c54664ca58204ca9dd2e972e576105b8e4f0eadc4ae2a550f3a44268a31dfda9"
+      },
+      {
         "path": "packages/research/package.json",
-        "sha256": "3b4c94a93e66388ca997270ecb2baf0d10da4ebbe3258a2ae096c2cf2f4447a5"
+        "sha256": "f1b27f8ac8b53066a1501cd9db43e44a9a8d19a0b849a40d553a08640ebddc7e"
       },
       {
         "path": "packages/research/schemas/research.schema.json",
-        "sha256": "369b4e0c6e7f3caaedb38ed4667afba9abcf9d52232636f97323e52c34b7ab6d"
+        "sha256": "1ef8373a81284d1969718c7c0107949db5dd6162373e47f025ef669526ff2be7"
       },
       {
         "path": "packages/research/src/adapters/arxiv.ts",
@@ -1979,7 +1987,11 @@
       },
       {
         "path": "packages/research/src/contracts.gen.ts",
-        "sha256": "a3e2746ad120e22d54ee974aa7dcc55e9f9d07b23fc450099fb676aca19aa283"
+        "sha256": "7cc9cd70e93c811a3a0a232e9b74d8be80d12f701acb8bdbd58537005eb442b6"
+      },
+      {
+        "path": "packages/research/src/domain.ts",
+        "sha256": "aa0340ef1683a4c81cbc67c73de7c7e1fc855955ac32272e2adb4af22088beb2"
       },
       {
         "path": "packages/research/src/errors.ts",
@@ -1991,11 +2003,11 @@
       },
       {
         "path": "packages/research/src/handlers.ts",
-        "sha256": "9082a30b4dfbf0c262f53928b4a27484f832215d0b54736291d27134ff76eff8"
+        "sha256": "238b1ed607a8ab40f8b996ab021a942fac7bdaa2ad0643e5d7892545607983c3"
       },
       {
         "path": "packages/research/src/host.ts",
-        "sha256": "048a1e01b552fbf4379e0b7a9e0b262f55d4e555a047e4ab4960c6728a269999"
+        "sha256": "d255a3e606aaac6f89dc3af81c634c188c05929cebfe630bf3c65ea2ff1286ca"
       },
       {
         "path": "packages/research/src/identity.ts",
@@ -2003,15 +2015,35 @@
       },
       {
         "path": "packages/research/src/index.ts",
-        "sha256": "3c9ab627be52e70aad4846be72932f5c4464fd299c51c384982866e6ab7ce698"
+        "sha256": "55aab676805f091aedb44766f5884b1153274be60d72386e1f5a109a39c272cf"
       },
       {
         "path": "packages/research/src/manifest.ts",
         "sha256": "219f259465ae37e8570aaacb17f862d110bfbaa42308390222cf1f727edca053"
       },
       {
+        "path": "packages/research/src/prompt-contracts.ts",
+        "sha256": "be3803b6d6eab9f57f7bc942b30435b4a0d466fb9bde5015d7e8f62621038678"
+      },
+      {
+        "path": "packages/research/src/reasoning-contract.ts",
+        "sha256": "8bfe1613e690279d85142c7a3aa567cf61f9c97a47c66178b9e19b2b35b17a0d"
+      },
+      {
+        "path": "packages/research/src/reasoning-records.ts",
+        "sha256": "795728100ba41c979b2f49ee651999b66ee61715b7e7949a562f08816760304b"
+      },
+      {
+        "path": "packages/research/src/reasoning-workflow.ts",
+        "sha256": "98e5273638aa73f6b9781ef68720ebaa0f8525da52725c291bcc458b77a44f76"
+      },
+      {
+        "path": "packages/research/src/reasoning.ts",
+        "sha256": "14bc2156766ef7a358d5d969eecea2f6b25e7cb4cdc0514d96996ed79a5bbaad"
+      },
+      {
         "path": "packages/research/src/records.ts",
-        "sha256": "92bd57373490a67a1e993c86e8603305aa130d96b36313771cb0f9cbbc2c5e26"
+        "sha256": "46688f2a3a87c33ea00b48ef855ca20fb14c00e7b350bddf395e335a63ed4048"
       },
       {
         "path": "packages/research/src/schema.ts",
@@ -2026,24 +2058,44 @@
         "sha256": "a39eabecca335327fdf8867ea780a33bd28426d7a7e3f46b3cfc966374ae0b42"
       },
       {
+        "path": "packages/research/src/stages/design.ts",
+        "sha256": "09e8b76618f8b2b0c9dc01abc70410768b27ccd11bef29cfcc1029918bf3e56f"
+      },
+      {
         "path": "packages/research/src/stages/discovery.ts",
         "sha256": "f9c7b08f50bbb084361fa50880227091e6cbcbcf2e788612a3fd3a90cc7db173"
+      },
+      {
+        "path": "packages/research/src/stages/hypothesis.ts",
+        "sha256": "bf99e835db0f9ac7bb1a43876940308a0dda8fce4d2fafa647de555997ef547a"
+      },
+      {
+        "path": "packages/research/src/stages/novelty.ts",
+        "sha256": "dad76156e22ea8c997d0095740561d52c4d94913e44a0a6aa67d15b415e8d3f5"
       },
       {
         "path": "packages/research/src/stages/screening.ts",
         "sha256": "57b8e3c23bd75030332995ff35d26e56dfc847ad0d10ae69f16eb5488cf6e9fb"
       },
       {
+        "path": "packages/research/src/stages/synthesis.ts",
+        "sha256": "7820528773d66ea47cf4192a48f6e95fc1539ead661695f774c4ea34e89566dd"
+      },
+      {
         "path": "packages/research/src/store-policy.ts",
-        "sha256": "f0afb7f51caa8a1333a0f623c91b395241900edd959e6d4b676e9ca4cf18c952"
+        "sha256": "64b2334a784dbcafeee10124712dcb68f96a1d8b8890caaf9ddb8e40bb27c5a9"
       },
       {
         "path": "packages/research/src/store.ts",
         "sha256": "b4468a73fdceb3c9091c18d1fa08f96f7447f819e445c088f5602539dfc80e3d"
       },
       {
+        "path": "packages/research/src/tools.ts",
+        "sha256": "ccf28d934428c3656eaa8fb4968e371058b4457513f01e09a375b2400b318d1c"
+      },
+      {
         "path": "packages/research/src/transitions.ts",
-        "sha256": "524e3f9f939b06c1fc74d11bb17fadbe36019e7115c47e10731be81768d46467"
+        "sha256": "55199fc1e5efd6fdb36c76f8bdbe0a8913b1d0e71c8028e62fe57b4714b89f93"
       },
       {
         "path": "packages/research/src/workflow-contract.ts",
@@ -2051,7 +2103,7 @@
       },
       {
         "path": "packages/research/src/workflow.ts",
-        "sha256": "820a5c79c53f8bceda1098fb38fa2a68a7f08729ad65e71e14049f613f47b0d3"
+        "sha256": "6f90a6df50c90fcf022c4d8c8d84da0f0a0a8a2ae032f1bf663c504bef6a08ca"
       },
       {
         "path": "packages/search/package.json",
@@ -2506,7 +2558,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "c771189b84f12e771d63dabe0f195f4993d5b27453aefc62bc526df2e2e8c34d"
+    "sha256": "b2690109613777a8219e01e2077b4b65ed69ed1337030a9d1408a4b07f213477"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85692,5 +85744,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "48642e353a94643c096875c432f36f8eed9ac78aad4b3e1f3be368894f61bd90"
+  "reportId": "4685f60ea6f08700522a5c8d1cde58f37bff912361284c7a8da6538aca8cec51"
 }

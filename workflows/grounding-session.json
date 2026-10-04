@@ -1,7 +1,7 @@
 {
   "$mas": "0.1",
   "workflowId": "grounding-session",
-  "versionId": "0faaa239cafa1bf40546e994f22e51fbb89fb839dc5b835b2687b3d7154747df",
+  "versionId": "2d809072121fd0f9fc102935ffb58459800561c724aaf63ecaf267ad63c79824",
   "parentVersionId": null,
   "title": "Grounded session",
   "description": "Profile rules, durable clarification, dual retrieval, reconciliation and validated claim citations. Binding: grounding-template",
@@ -1023,6 +1023,10 @@
                   },
                   "type": "array"
                 },
+                "payload": {
+                  "description": "Optional domain data; validated by the bound payloadSchema and passed intact in role context.domain.",
+                  "type": "object"
+                },
                 "query": {
                   "minLength": 1,
                   "type": "string"
@@ -1087,6 +1091,10 @@
                     "$ref": "#/$defs/gmplEvidenceUnit"
                   },
                   "type": "array"
+                },
+                "payload": {
+                  "description": "Optional domain data; validated by the bound payloadSchema and passed intact in role context.domain.",
+                  "type": "object"
                 },
                 "query": {
                   "minLength": 1,
@@ -7641,7 +7649,7 @@
     "traceBytes": 768000
   },
   "registry": {
-    "revision": "4907d3f70166a241c76003ea2977662e9b24250175efd20fa217df5412b51f57"
+    "revision": "91af048e0c1747cc9d9cb6e4daa25140052871a67ef09c6575dcdaf4e2fa56cd"
   },
   "config": {
     "registryRevision": "3ed01d83a6b6c361679c91acf2889cc49f6fa47f382bedad03b52f38d4cd65ef",

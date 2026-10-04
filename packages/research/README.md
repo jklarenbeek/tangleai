@@ -46,8 +46,9 @@ the plan again and commits records, attempt, control state and RunLog projection
 in one transaction. Only verified output admissions with a complete committed
 ancestry can become reachable. A replay returns the recorded result and spend
 without another projection frame. Conflicting results refuse `TRSH1002`; changed
-state or a reused MAS path/ordinal refuses `TRSH1004`. Cumulative spend cannot
-exceed the project's budget. `collectUnreferenced(projectId, before)` reports
+state or a reused MAS path/ordinal refuses `TRSH1004`. Successful work cannot
+exceed the project's budget. A terminal failed `TRSH1006` receipt retains actual
+incurred overrun costs; it grants no further execution. `collectUnreferenced(projectId, before)` reports
 uncommitted admissions from older ordinals of the named stage and deletes nothing.
 
 `putRecord` stores immutable data by project, kind and id; identical puts replay
@@ -175,3 +176,60 @@ The benchmark runs committed synthetic transcripts only. The separate
 approval and writes a new private capture; it never edits the fixture or applies
 its licence to external content. Scholarly discovery does not qualify live API
 availability or scientific support.
+
+For model reasoning, pin `researchArtifacts.revision` as the prompt revision and
+`researchReasoningRevisionOf(policy)` as the `research-reasoning` tool version.
+Pass the same `ResearchReasoningPolicy` to `prepareResearchWorkflow` as `reasoning`
+and to `createResearchReasoningTools(base, { project, policy, provider })`.
+Supply `clientFor` to `createResearchHostBindings`. The installed catalog contains
+seven compiled packs; `npm run research:artifacts -- --check` verifies their build.
+Runtime imports never read prompt files from the filesystem.
+
+The policy selects `single-agent` or `debate`, bounds visible cards and declares
+the novelty query budget. Both modes execute in the existing MAS run. Native
+agent nodes own the agent loop, toolbox, normalization, bounded repair and shared
+budget. Debate embeds the ordinary parallel-analysis and structured-debate
+patterns with Innovator, Pragmatist, Contrarian and a separate synthesizer.
+Per-participant prompt overrides preserve equal variable and output contracts.
+
+Preparation persists the exact input manifest before model dispatch. Pure tools
+`read_cards`, `read_synthesis` and `propose_hypotheses` implement the readCards,
+readSynthesis and proposeHypotheses operations using native MAS tool identifiers.
+They require the current running invocation and its completed preparation; reads
+stay inside committed inputs, and proposal validation writes nothing. One card
+per source is selected by first element order, with source-id ordering and the
+declared maximum. After literature approval, later frames carry the record
+envelope and required source/dataset references. Original discovery artifacts,
+their provenance and the full reviewed gate remain immutable and accessible.
+
+Model proposals contain content, not authoritative ids or hashes.
+`createResearchSynthesis`, `createResearchHypotheses` and `createResearchDesign`
+independently check references and scientific registration constraints before
+assigning content addresses. Final hypotheses require at least two distinct
+alternatives with nulls, predictions, disconfirming observations, confounds and
+declared baselines. Unknown cards refuse `TRSH1003`. Missing or infeasible design
+metadata refuses `TRSH1009` at the offending pointer; unapproved input paths
+refuse `TRSH1005`.
+
+In model mode, the bootstrap contract bounds topology but does not become the
+scientific preregistration at CREATE. The verified DESIGN commit atomically
+activates the generated contract and plan, records artifacts and advances to
+DESIGN_GATE with one revision. It checks the actual persisted observation census.
+Later changes still require an amendment; an approval cannot rewrite frozen
+content. Downstream stages refuse `TRSH1007` unless the host explicitly binds them
+to generated-plan execution through `generatedStages`.
+
+Stage cost comes from retained native agent attempts, including normalization,
+repair and failed calls. Model replies and caller-supplied totals cannot supply
+that authority. A native failure reconciles its prepared research attempt before
+the native run transition. A failure between stages adds a terminal control
+receipt against the last committed frame, preserving earlier model charges.
+Reopening after either commit does not repeat model calls or charge them twice.
+Trajectory artifacts retain the native agent records.
+
+`executeResearchNovelty` derives queries from the hypothesis set and awaits the
+host's `admitPlan` before any request. Reports retain attempted/completed query
+coverage, canonical-identifier overlaps and the model's advisory rating.
+`gating` is always false. Overlap is an identity observation, not a semantic
+novelty judgment. The benchmark's model rows measure only through design review;
+their scripted accounting is not live research quality or experiment completion.

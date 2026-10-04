@@ -8,7 +8,8 @@ export async function buildDebateRound(participants:number,context:PatternBuildC
     const a=stageArtifact(`debate-${kind}`,context),collection=kind==='position'?'positions':'rebuttals';
     for(let i=1;i<=participants;i++){
       const id=`${kind}-${i}`,prepare=`prepare-${id}`,check=`check-${id}`;
-      nodes.push(pureTask(prepare,`gmpl-debate-${kind}-prepare`,{state},{variables:a.variableSchema}),await stageAgent(id,`debate-${kind}`,context),pureTask(check,'gmpl-round-stage-check',{state,out:a.outputSchema},{out:a.outputSchema}));
+      const participant=stageArtifact(`debate-${kind}`,context,i);
+      nodes.push(pureTask(prepare,`gmpl-debate-${kind}-prepare`,{state},{variables:participant.variableSchema}),await stageAgent(id,`debate-${kind}`,context,i),pureTask(check,'gmpl-round-stage-check',{state,out:a.outputSchema},{out:a.outputSchema}));
       if(kind==='position')entry.push({port:'state',to:{node:prepare,port:'state'}},{port:'state',to:{node:check,port:'state'}});
       else messages.push(masMessage(['positions','state'],[prepare,'state']),masMessage(['positions','state'],[check,'state']));
       messages.push(masMessage([prepare,'variables'],[id,'variables']),masMessage([id,'out'],[check,'out']),masMessage([check,'out'],[collection,collection],{aggregation:'ordered-list'}));

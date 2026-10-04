@@ -12,10 +12,13 @@ import type { PreparedResearchWorkflow } from './workflow.ts';
 export function createResearchHostBindings(options: {
   masStore: MasStore; researchStore: ResearchStore; taskHandlers: ResearchTaskHandlers; prepared: PreparedResearchWorkflow;
   now: () => string; clock: () => number; deadlineFor?: (afterMs: number) => string; observer?: MasHostBindings['observer'];
+  clientFor?: MasHostBindings['clientFor'];
 }): MasHostBindings {
   const { masStore, researchStore, taskHandlers, prepared } = options, admitted = researchHandlerAdmission(taskHandlers);
   if (!admitted || admitted.store !== researchStore || !equalsJson(admitted.binding, prepared.binding))
     researchFail('TRSH1007', '/taskHandlers', 'Research handlers must match the compiled store and content binding.');
+  if (!equalsJson(admitted.reasoning ?? null, prepared.model?.policy ?? null))
+    researchFail('TRSH1007', '/reasoning', 'Prepared model topology and admitted stage owners must use the same policy.');
   const checkRun = (run: MasRun) => {
     if (run.workflowVersionId !== prepared.workflow.versionId || run.registryRevision !== prepared.snapshot.revision
       || run.executableRevision !== prepared.plan.executableRevision || run.configRegistryRevision !== prepared.catalog.revision)
@@ -27,6 +30,10 @@ export function createResearchHostBindings(options: {
   const store: MasStore = { ...masStore,
     async getRun(id) { const run = await masStore.getRun(id); if (run) checkRun(run); return run; },
     async readTrace(id) { const trace = await masStore.readTrace(id); if (trace) checkRun(trace.run); return trace; },
+    async transitionRun(id, command) {
+      if (command.kind === 'fail') await admitted.reconcileFailure?.(id, command.failure);
+      return masStore.transitionRun(id, command);
+    },
     async createInteraction(plan) {
       try {
         const frame = researchValue(validateResearchShape<ResearchWorkflowFrame>('ResearchWorkflowFrame', plan.prompt));
@@ -50,6 +57,7 @@ export function createResearchHostBindings(options: {
       }
     },
   };
-  return { store, taskHandlers, toolBindings: {}, contextProviders: {}, now: options.now, clock: options.clock,
+  return { store, taskHandlers: { ...prepared.model?.taskHandlers, ...taskHandlers }, toolBindings: admitted.toolBindings ?? {}, contextProviders: {}, now: options.now, clock: options.clock,
+    ...(prepared.model ? { messageAdapters: prepared.model.adapters } : {}), ...(options.clientFor ? { clientFor: options.clientFor } : {}),
     ...(options.deadlineFor ? { deadlineFor: options.deadlineFor } : {}), ...(options.observer ? { observer: options.observer } : {}) };
 }

@@ -9,13 +9,13 @@ import {clarificationTaskHandlers} from './clarification-tasks.ts';
 import {debateTaskHandlers} from './debate-tasks.ts';
 import {roundTaskHandlers} from './round-tasks.ts';
 import {analysisTaskHandlers,taskValue} from './tasks.ts';
+import {gmplStagePrompts} from './stage-prompts.ts';
 /** Pure content bindings only. The caller supplies MAS clients, context and store. */
 export function createGmplHostBindings(materialized:GmplMaterializedTemplate,catalog:GmplCatalog,options:{answerProjector?:GmplAnswerProjector}={}){
   if(catalog.document.revision!==materialized.catalogRevision)return gmplRefuse('TGMPL1002','/revision','catalog changed after materialization');
   const adapters=new Map<string,MasMessageAdapter>();
-  for(const stage of materialized.recipe.stages){
-    const artifact=catalog.prompt(materialized.domain.rolePrompts[stage]??stage);
-    if(!artifact)return gmplRefuse('TGMPL1003','/recipe/stages','stage artifact unavailable');
+  const selected=gmplStagePrompts(materialized.recipe,materialized.domain,catalog);if(!selected.valid)return selected;
+  for(const artifact of selected.value){
     const id=`gmpl-${artifact.id}`;
     adapters.set(id,Object.freeze({id,version:artifact.revision,render:(input:Parameters<MasMessageAdapter['render']>[0])=>taskValue(renderGmplPrompt(artifact,input.value.variables)).user}));
   }

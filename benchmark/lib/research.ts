@@ -6,12 +6,14 @@ import { analyticEnvelope } from './report-envelope.ts';
 import { loadResearchFixture, RESEARCH_FIXTURE_PATH, MANIFEST_PATH, type LoadedResearchFixture } from './research-fixture.ts';
 import { researchCeilings, researchScore, verifyResearchBundle } from './research-oracle.ts';
 import { runNativeResearchFixture } from './research-workflow.ts';
+import { runResearchReasoningFixture } from './research-reasoning.ts';
 import { researchComparison, researchMechanicalDecision } from './research-evaluator.ts';
-import { RESEARCH_ROW_IDS, RESEARCH_DIMENSIONS, RESEARCH_DISCLOSURES } from './research-schema.ts';
+import { RESEARCH_ROW_IDS, RESEARCH_DIMENSIONS, RESEARCH_DISCLOSURES, RESEARCH_REASONING_DIMENSIONS } from './research-schema.ts';
 import { validateResearchReportShape } from './research-validation.ts';
 import { describeErrors } from './validate.ts';
 import { table as markdownTable } from './table.ts';
-import type { ResearchReport, ResearchBundle, ResearchFixtureTopic, ResearchTopicResult, ResearchMeasuredRow, ResearchScore } from './research.types.ts';
+import type { ResearchReport, ResearchBundle, ResearchFixtureTopic, ResearchTopicResult, ResearchMeasuredRow, ResearchScore,
+  ResearchReasoningRow, ResearchReasoningTopic, ResearchModelUsage } from './research.types.ts';
 
 export { MANIFEST_PATH };
 export const REPORT_PATH = 'benchmark/results/research.json';
@@ -24,6 +26,7 @@ export const SOURCE_MANIFEST = [
   'benchmark/lib/research-oracle.ts', 'benchmark/lib/research-runner.ts', 'benchmark/lib/research-validation.ts',
   'benchmark/lib/research-workflow.ts', 'benchmark/lib/research-lifecycle-fixture.ts', 'examples/research.ts',
   'benchmark/lib/research-discovery.ts', 'benchmark/lib/research-discovery-fixture.ts', 'benchmark/scripts/research-transcripts.ts',
+  'benchmark/lib/research-reasoning.ts', 'benchmark/lib/research-reasoning-fixture.ts', 'scripts/research-artifacts.ts', 'scripts/research-sources.ts',
   'benchmark/lib/args.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts',
   'benchmark/lib/suite-packages.ts', 'benchmark/lib/report-envelope.ts', 'benchmark/lib/table.ts',
   'packages/research/schemas/research.schema.json', 'benchmark/schemas/research.schema.json',
@@ -96,7 +99,7 @@ function aggregate(id: typeof RESEARCH_ROW_IDS[number], topics: ResearchTopicRes
     researchScore(topics.reduce((sum, topic) => sum + topic[name].passed, 0), topics.reduce((sum, topic) => sum + topic[name].total, 0))])) as
     Pick<ResearchMeasuredRow, typeof RESEARCH_DIMENSIONS[number] | 'completion'>;
   const sum = (pick: (topic: ResearchTopicResult) => number) => topics.reduce((sum, topic) => sum + pick(topic), 0);
-  return { id, state: 'measured', topics, ...scores,
+  return { id, state: 'measured', scope: 'full-lifecycle', topics, ...scores,
     cost: { calls: sum(topic => topic.cost.calls), tokens: sum(topic => topic.cost.tokens),
       ms: sum(topic => topic.cost.ms), physical: sum(topic => topic.cost.physical) },
     failures: { program: sum(topic => topic.failures.program), verification: sum(topic => topic.failures.verification),
@@ -105,9 +108,20 @@ function aggregate(id: typeof RESEARCH_ROW_IDS[number], topics: ResearchTopicRes
     interventions: { total: sum(topic => topic.interventions.total), substantive: sum(topic => topic.interventions.substantive),
       approvals: sum(topic => topic.interventions.approvals) } };
 }
+function aggregateReasoning(id: ResearchReasoningRow['id'], topics: ResearchReasoningTopic[]): ResearchReasoningRow {
+  const sum = (pick: (topic: ResearchReasoningTopic) => number) => topics.reduce((total, topic) => total + pick(topic), 0);
+  const scores = Object.fromEntries(RESEARCH_REASONING_DIMENSIONS.map(name => [name,
+    researchScore(sum(topic => topic[name].passed), sum(topic => topic[name].total))])) as Pick<ResearchReasoningRow, typeof RESEARCH_REASONING_DIMENSIONS[number]>;
+  const usage = Object.fromEntries(Object.keys(topics[0].usage).map(key => [key, sum(topic => topic.usage[key as keyof ResearchModelUsage])])) as unknown as ResearchModelUsage;
+  return { id, state: 'measured', scope: 'pre-execution', topics, ...scores, usage,
+    cost: { calls: sum(t => t.cost.calls), tokens: sum(t => t.cost.tokens), ms: sum(t => t.cost.ms), physical: sum(t => t.cost.physical) },
+    failures: { program: sum(t => t.failures.program), verification: sum(t => t.failures.verification), leakage: sum(t => t.failures.leakage),
+      confound: sum(t => t.failures.confound), budget: sum(t => t.failures.budget), provider: sum(t => t.failures.provider), unsupported: sum(t => t.failures.unsupported) },
+    interventions: { total: sum(t => t.interventions.total), substantive: sum(t => t.interventions.substantive), approvals: sum(t => t.interventions.approvals) } };
+}
 function oracleAtCeilings(report: Pick<ResearchReport, 'rows' | 'ceilings'>): boolean {
   const oracle = report.rows.find(row => row.id === 'artifact-oracle');
-  return oracle?.state === 'measured' && oracle.topics.every(topic => {
+  return oracle?.state === 'measured' && oracle.scope === 'full-lifecycle' && oracle.topics.every(topic => {
     const ceiling = report.ceilings.find(ceiling => ceiling.topicId === topic.topicId)!;
     return RESEARCH_DIMENSIONS.every(dimension => topic[dimension].value === (dimension === 'literatureRecall' ? ceiling.literatureRecall.value : 1))
       && topic.completion.value === 1 && Object.values(topic.failures).every(count => count === 0);
@@ -115,6 +129,12 @@ function oracleAtCeilings(report: Pick<ResearchReport, 'rows' | 'ceilings'>): bo
 }
 function disclosures(rows: ResearchReport['rows']): ResearchReport['disclosure'] {
   return rows.map((row, rowIndex) => ({ rowId: row.id, items: RESEARCH_DISCLOSURES.map((item, index) => {
+    if (row.state === 'measured' && row.scope === 'pre-execution') {
+      const pointer = item === 'novelty-audit' ? '/novelty' : item === 'attempt-selection-registration' ? '/contract/selectionRule'
+        : item === 'baseline-audit' ? '/contract/requiredBaselines' : item === 'independent-verification' ? '/probes'
+          : item === 'frozen-hypotheses' ? '/hypotheses' : null;
+      return { item, satisfied: pointer !== null, evidence: pointer === null ? [] : row.topics.map((_topic, index) => '/rows/' + rowIndex + '/topics/' + index + pointer) };
+    }
     const satisfied = row.state === 'measured' && row.topics.every(topic => topic.bundle.disclosure[index].satisfied);
     return { item, satisfied, evidence: !satisfied || row.state !== 'measured' ? [] : row.topics.flatMap((topic, topicIndex) =>
       topic.bundle.disclosure[index].evidence.map(pointer => '/rows/' + rowIndex + '/topics/' + topicIndex + '/bundle' + pointer)) };
@@ -128,10 +148,12 @@ export const RESEARCH_LIMITATIONS = [
   'The pure-program bundle retains its original null provider identity and no approvals. The enclosing native workflow binds a recomputable synthetic CONFIG identity; no provider endpoint is called.',
   'Claim support uses fixed authored propositions and numeric bindings, not a general entailment or novelty detector. Omitted required claims remain in the denominator.',
   'Confound detection and branch compliance measure the shared verifier against registered corrupted bundles, not an autonomous scientific judgement.',
-  'Provider calls, tokens, physical requests and provider time are zero. Local CPU latency and monetary cost are unmeasured.',
+  'Model requests use the in-process scripted-v1 client. Its authored 7 prompt / 3 completion token receipts test accounting, not tokenizer efficiency. External provider requests remain zero; local CPU latency and monetary cost are unmeasured.',
   'Clustering uses five fixed seed pairs. Retrieval has one deterministic pair on eight queries; its degenerate interval is not population-level statistical evidence.',
   'Every comparison retains ties and losses. A confidence interval touching zero does not establish improvement; saturated results stop without threshold changes.',
-  'Completion records reaching the registered decision and is not the primary quality score. Six mechanism rows have no implementation yet.',
+  'Completion in full-lifecycle rows records reaching the registered decision, not overall research quality. Reasoning rows stop at the real design gate and make no execution, result, writing or completion claim.',
+  'The paired reasoning rows see the same eight of sixteen committed cards per topic, selected deterministically by first element per source. Seven compiled packs execute in debate; three execute in single-agent.',
+  'Reasoning refusal counts are direct independent-verifier probes over four frozen bad proposals, with zero model calls. They measure validator sensitivity, not a model identifying or repairing a bad plan. Separate native integration tests exercise model-path refusals and repair accounting.',
 ] as const;
 export async function buildReport(options: { context?: ResearchContext; rows?: readonly string[] } = {}): Promise<ResearchReport> {
   const context = options.context ?? await researchContext(), { loaded } = context;
@@ -150,6 +172,16 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
   const identity = analyticEnvelope(RESEARCH_ROW_IDS), sourceRevision = await canonicalSha256(context.source.files);
   for (const id of RESEARCH_ROW_IDS) {
     if (!selected.includes(id)) { rows.push({ id, state: 'not-run', reason: 'Excluded by the explicit row selection.' }); continue; }
+    if (id === 'fixed-single-agent' || id === 'fixed-plus-debate') {
+      const topics: ResearchReasoningTopic[] = [];
+      for (const topic of loaded.topics) {
+        const result = await runResearchReasoningFixture(loaded, topic, id === 'fixed-single-agent' ? 'single-agent' : 'debate');
+        topics.push(result.measurement);
+        if (!identity.identities.some(row => row.identityId === result.identity.identityId)) identity.identities.push(result.identity);
+        identity.rows = identity.rows.map(row => row.rowId === id ? { rowId: id, identityStatus: 'run', identityId: result.identity.identityId } : row);
+      }
+      rows.push(aggregateReasoning(id, topics)); continue;
+    }
     if (id !== 'artifact-oracle' && id !== 'no-model-runner') {
       rows.push({ id, state: 'implementation-missing', reason: 'Registered research mechanism has not been implemented or measured.' }); continue;
     }
@@ -200,7 +232,8 @@ export async function validateResearchReport(value: unknown, context?: ResearchC
 export function renderReport(report: ResearchReport): string { return JSON.stringify(report, null, 2) + '\n'; }
 const table = (head: string[], rows: Array<Array<string | number>>) => markdownTable({ head, rows });
 export function renderDocument(report: ResearchReport): string {
-  const measured = report.rows.filter((row): row is ResearchMeasuredRow => row.state === 'measured');
+  const measured = report.rows.filter((row): row is ResearchMeasuredRow => row.state === 'measured' && row.scope === 'full-lifecycle');
+  const reasoning = report.rows.filter((row): row is ResearchReasoningRow => row.state === 'measured' && row.scope === 'pre-execution');
   const score = (value: ResearchScore) => value.passed + '/' + value.total + ' (' + value.value.toFixed(3) + ')';
   const comparisons = measured.flatMap(row => row.topics.map(topic => {
     const comparison = researchComparison(topic.bundle, topic.observations);
@@ -229,17 +262,33 @@ export function renderDocument(report: ResearchReport): string {
       row.providerOutcomes.counts.unresolved, row.providerOutcomes.counts.cancelled, row.providerOutcomes.counts.rateLimited])), '',
     'CREATE commits the content-addressed query plan and criteria before the first request. Three JSON adapters use native provider descriptors; arXiv uses native attempts and one bounded Atom reader. SearxNG snippets remain candidates. Full source bodies and native document-version locators support the cards; chunk rows are not required. Receipts retain raw response hashes, native observations, normalized records, screening decisions and acquisition failures.', '',
     '## Registered rows', '', table(['Row', 'State', 'Claim support', 'Completion', 'Unsupported claims', 'Approvals'], report.rows.map(row =>
-      row.state === 'measured' ? [row.id, row.state, score(row.claimSupport), score(row.completion), row.failures.unsupported, row.interventions.approvals]
+      row.state === 'measured' && row.scope === 'full-lifecycle' ? [row.id, row.state, score(row.claimSupport), score(row.completion), row.failures.unsupported, row.interventions.approvals]
+        : row.state === 'measured' ? [row.id, row.state + ': pre-execution', 'not measured', 'not executed', 'not measured', row.interventions.approvals]
         : [row.id, row.state, '—', '—', '—', '—'])), '',
     ...measured.flatMap(row => ['### ' + row.id, '', table(['Dimension', ...row.topics.map(topic => topic.topicId), 'Pooled counts'],
       RESEARCH_DIMENSIONS.map(dimension => [dimension, ...row.topics.map(topic => score(topic[dimension])), score(row[dimension])])), '']),
+    '## Synthesis, hypotheses and preregistration', '',
+    'Both model rows execute inside one durable research MAS run per topic and wait at the actual design gate. They share visible cards, constraints, provider replay, scripted model identity and registered caps. Every generated hypothesis has a null, disconfirming observation, confound and baseline. The contract and plan activate in the same atomic stage commit before any experiment or observation exists.', '',
+    table(['Row', 'Topic', 'Hypotheses valid', 'Evidence linked', 'Design checks', 'Hidden isolation', 'Refusals matched', 'Visible / available cards'],
+      reasoning.flatMap(row => row.topics.map(topic => [row.id, topic.topicId, score(topic.hypothesisValidity), score(topic.evidenceLinkage),
+        score(topic.designIntegrity), score(topic.hiddenIsolation), score(topic.refusalConformance), topic.visibleCardIds.length + ' / ' + topic.availableCards]))), '',
+    table(['Row', 'Topic', 'Roles', 'Completion', 'Normalization', 'Repair', 'Physical calls', 'Tokens', 'Serialized trace bytes'],
+      reasoning.flatMap(row => row.topics.map(topic => [row.id, topic.topicId, topic.usage.roles, topic.usage.completion, topic.usage.normalization,
+        topic.usage.repair, topic.cost.physical, topic.cost.tokens, topic.usage.traceBytes]))), '',
+    'The fixed scripted proposals tie on these validity and refusal dimensions; debate costs more model calls and tokens. This establishes fixture conformance, not a quality advantage for either architecture. Refusal counts below come from the independent verifier after the valid native run; no extra model requests are attributed to those probes.', '',
+    table(['Row', 'Topic', 'Probe', 'Kind', 'Observed code', 'Pointer', 'Model calls'], reasoning.flatMap(row => row.topics.flatMap(topic => topic.probes.map(probe =>
+      [row.id, topic.topicId, probe.id, probe.kind, probe.observed?.code ?? 'none', '`' + (probe.observed?.path ?? '') + '`', probe.calls])))), '',
+    table(['Row', 'Topic', 'Novelty queries complete / attempted / total', 'Identifier overlaps', 'Advisory', 'Gating', 'Replay requests / network'],
+      reasoning.flatMap(row => row.topics.map(topic => [row.id, topic.topicId, topic.novelty.coverage.complete + ' / ' + topic.novelty.coverage.attempted + ' / ' + topic.novelty.coverage.total,
+        topic.novelty.overlapLiteratureIds.length, topic.novelty.advisory.rating, String(topic.novelty.gating), topic.noveltyReplay.requests + ' / ' + topic.noveltyReplay.networkCalls]))), '',
+    'Novelty queries come from the hypotheses themselves. Their exact QueryPlan is stored before adapter dispatch. Coverage and identifier overlap are observations; the scripted model rating is advisory and never grants approval. Generated-plan execution requires a separately bound executor; approving the gate without one fails closed.', '',
     '## Durable lifecycle controls', '',
     'Scientific paths execute the registered programs at EXECUTE and independently evaluate their retained outputs at ANALYZE. Every StageAttempt retains its input manifest, content-addressed artifact admissions and native MAS path. Approvals bind the artifact set that existed at that gate; early approvals never claim to review future outputs.', '',
     table(['Topic', 'Science state', 'Science gates', 'Complete-path control', 'Control gates', 'Duplicate responses replayed'],
       measured.flatMap(row => row.topics.filter(t => t.workflow && t.completePathControl).map(t => [t.topicId, t.workflow!.state.status,
         score(t.workflow!.gateBehaviour), t.completePathControl!.state.status, score(t.completePathControl!.gateBehaviour),
         t.workflow!.duplicateResponses + t.completePathControl!.duplicateResponses]))), '',
-    'The complete-path controls are separately labelled scripted topology checks. They neither replace a scientific Stop with Proceed nor count a quality approval on a stopped science run. The three controls reach 9/9 gates; the scientific runs retain 7/9. All responses are scripted, all provider spend is zero, and the six other mechanisms remain implementation-missing.', '',
+    'The complete-path controls are separately labelled scripted topology checks. They neither replace a scientific Stop with Proceed nor count a quality approval on a stopped science run. The three controls reach 9/9 gates; the scientific runs retain 7/9. All responses are scripted. ' + report.rows.filter(row => row.state === 'implementation-missing').length + ' registered mechanisms remain implementation-missing.', '',
     '## Retained comparisons', '', 'Favorable differences use baseline minus candidate for inertia and candidate minus baseline for recall. Paired bootstrap: 2,000 resamples, seed 17753, 95%, nearest-rank. No seed or threshold was selected after execution.', '',
     table(['Row', 'Topic', 'Seeds', 'Baseline', 'Candidate', 'Favorable difference', 'Interval', 'Win/loss/tie', 'Result', 'Decision'], comparisons), '',
     'K-means++ is seed-deterministic. Its lower mean does not clear the positive-interval rule: two seeds win and three tie, so the result is inconclusive and stops. BM25+ wins this synthetic lexical comparison. Hash widths 64 and 256 both reach recall@5 of 1: SATURATED, with no improvement claimed.', '',

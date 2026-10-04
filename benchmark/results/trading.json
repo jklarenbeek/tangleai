@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "e6a6f5cd0acfdba1ca7835d03dafa73feb107f3b",
+    "head": "dc083d799f268cab77c26268cd253ce21c9075ae",
     "clean": false,
     "files": [
       {
@@ -215,7 +215,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "1887b6bc8206d0e3a01bd41947b62aa60161c420eddea4e202b4417f89c099cd"
+        "sha256": "a4fd0365e0d6c334c2a6556bbcb9520a965a8cacbe7a26f661e481ec40f5cf4c"
       },
       {
         "path": "packages/agents/package.json",
@@ -439,7 +439,7 @@
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
-        "sha256": "45d35251829b16633dd964a7eda0ffa8dd8018cb7b99311a3e1ea85ed3f1df45"
+        "sha256": "b7f485dde0872f726e9a9efba19549b43e27499aac4aed4bc5c28f3c5d4af456"
       },
       {
         "path": "packages/gmpl/src/catalog.ts",
@@ -451,7 +451,7 @@
       },
       {
         "path": "packages/gmpl/src/contracts.gen.ts",
-        "sha256": "c12882e66d4ab5f55e56992a67ef9bd317594a9cbd79bdaf77870ca4ef1653cb"
+        "sha256": "46460a60441c13770f12d59bc3c7640ded21cfbf7432b04e9fdf8454ba2765d2"
       },
       {
         "path": "packages/gmpl/src/debate-tasks.ts",
@@ -475,7 +475,7 @@
       },
       {
         "path": "packages/gmpl/src/host-bindings.ts",
-        "sha256": "0f17cfb88ab0db0ac2f8c6bac20b29ed501acbe43c40620c393b4d4416f1efda"
+        "sha256": "769b028f3965c354bd612b26a2b8ba535ae9710dcdffb43b530a1c679f8ac5fb"
       },
       {
         "path": "packages/gmpl/src/identity.ts",
@@ -499,7 +499,7 @@
       },
       {
         "path": "packages/gmpl/src/patterns/parallel-analysis.ts",
-        "sha256": "03bbf2daefbcc562db2702e92220fbf65b08abfa0a7dd63146611497a7e2561f"
+        "sha256": "c9ef0e5bd68f263f7a07ceed258e20e62388e01808fc996413c5c23a10a33683"
       },
       {
         "path": "packages/gmpl/src/patterns/peer-review.ts",
@@ -515,11 +515,11 @@
       },
       {
         "path": "packages/gmpl/src/patterns/shared.ts",
-        "sha256": "b295cbbf853ae600148d9ddca5b0ca5f4fe8b18e0802609f234fbb6653d44771"
+        "sha256": "cb599bde5e6a4067c5c93f76a50af402a37e5f1384dd8cb25c5733adc5483fe9"
       },
       {
         "path": "packages/gmpl/src/patterns/structured-debate.ts",
-        "sha256": "3606fc971bd903ed510b45e85e793d5bb1436daea93e5c6679b942196e3e2b1b"
+        "sha256": "8ab58fe1eb8be6c684fd5765ff4ad83f445581981b7665e9d41fb6c92790fc55"
       },
       {
         "path": "packages/gmpl/src/projection.ts",
@@ -531,7 +531,7 @@
       },
       {
         "path": "packages/gmpl/src/round-tasks.ts",
-        "sha256": "bf7ba5d1c22d2327f1b71bb51b43fd446b25da6dec2343ef08c2a55f3282d69a"
+        "sha256": "84c7dedabee4f8c6fb2d88740a08a47d2065558ee55b4eb78a7914c5b50add41"
       },
       {
         "path": "packages/gmpl/src/schema.ts",
@@ -539,11 +539,15 @@
       },
       {
         "path": "packages/gmpl/src/specialize.ts",
-        "sha256": "4eaec241dd7aa6728e479437edb828230cc209ac8136619e377e49a9866f2ee7"
+        "sha256": "996d47caa6ec2fc2ac7f3bbe01d855373a9634ac633ebdaaac569f527aff6441"
+      },
+      {
+        "path": "packages/gmpl/src/stage-prompts.ts",
+        "sha256": "25334893a19fae93ff0bc3fa88975a6116afa3d7d68f60f825c7f1aab14b33f2"
       },
       {
         "path": "packages/gmpl/src/tasks.ts",
-        "sha256": "17d0457b6a04669dce2de693d568ad7ec14df0526dd6fc44cb0090295349661e"
+        "sha256": "178f15a8192cc5d56cb86e1b0aa7fedc787b5efa3e36e38d3115616ae5899a12"
       },
       {
         "path": "packages/mas/package.json",
@@ -1238,7 +1242,7 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "3c09d3f316d01e327fbd755aa5b2f88dc089cec810a4d6bc8d669dbe823fccf3"
+    "sha256": "3198d50944708f96e84b8c3fb37ebb177690a18a5abc385cb38997ac506258ae"
   },
   "suite": {
     "tangle": "0.37.0",
@@ -1800,9 +1804,9 @@
       "controlSha256": null,
       "execution": {
         "manifestId": "manifest-2ed3ef0405b3009538e04225cbadad37971410197977c188714958276e77be30",
-        "resultId": "backtest-result-12acd539342c7f18679e7a3e3bcba032ec916d42833b68a1a41019141621a2f9",
+        "resultId": "backtest-result-13b370fba9a8eaed2a3cb3e57782c24d9d1ff4444b5e8ce6549f6385eff613a8",
         "equitySha256": "01091a709b3f781b372b684be8e2cfd86253c1ac906584cf50ccce68e9c14b66",
-        "ledgerSha256": "2da3360d36e256555bab52c7b480a80c7692758d08691b1463525402b934ca21",
+        "ledgerSha256": "5f1c76b78ceff6082e18cac6a8dfb4de132164053c61a885c9865ed613d1f28e",
         "replayWrites": 0,
         "staleMarks": 0,
         "decisionCount": 374
@@ -1834,8 +1838,8 @@
             "count": 2
           }
         ],
-        "receiptsSha256": "09877f1ae44d6ae335a159295b9d3140ada04120c68d57dc3c4aad35da879780",
-        "resultSha256": "6a4694db388432457b9c02dcfe52651631003814000b988178c2120cb59609d0"
+        "receiptsSha256": "63c5d800f02f3082a95ab6c21d9a2d2656d3e66b75bdcb81fcb50015f21b6e05",
+        "resultSha256": "d63df29da7c9419260736d20aebc37e9923bfe911b4c2f10798a7aa83b97a307"
       }
     },
     {
@@ -25619,7 +25623,7 @@
       {
         "id": "full",
         "manifestId": "manifest-068ecfb50ad12f60fd3365a3a7e3e28ed0586c06119110ac9c4f74d8593e6835",
-        "workflowVersionId": "60647bbb8dc46a3482b789f878eea46f42dc263c4d801e1c7b7f44792c0fa7d4",
+        "workflowVersionId": "b6b4d35b58d3f90d6760e9c50cc090e9cb850b23d0fb90f2f274715d768798a4",
         "comparisonId": "a669900c50e09374a2247f21ecd390eda618e73a18166aac9b8de6e494b89df7",
         "resourcesSha256": "c114926e53852df23cc39415da5ac068609c6f9deab911ae7f9153e64092395a",
         "status": "completed",
@@ -25676,13 +25680,13 @@
             "count": 2
           }
         ],
-        "resultSha256": "0841a3a5a8fca4920e3e155f1da5d9e97c47fa7f8b73c44cee4d0fc1fa530ece",
-        "receiptsSha256": "b3dedd7a0cb8d954807316105d34531ee3906342064c57e01be6cae54b38e373"
+        "resultSha256": "5c5182812487938ef6eb3b926d82b2693a09c19c4d97615678bc68aab5070a57",
+        "receiptsSha256": "cd6e7808a7fc5fc9ccb7e3903f06513b6cc260d59e3e80fd3a225581935d51ab"
       },
       {
         "id": "single-agent",
         "manifestId": "manifest-068ecfb50ad12f60fd3365a3a7e3e28ed0586c06119110ac9c4f74d8593e6835",
-        "workflowVersionId": "5389ee6eb11276c5e1351c8912eaf80d59394f850de738f0b09abef4d27d4d9f",
+        "workflowVersionId": "699322727e8e015ee9aa36edc8822d51166163b99e8c8e9caeaa47a558aae79c",
         "comparisonId": "a669900c50e09374a2247f21ecd390eda618e73a18166aac9b8de6e494b89df7",
         "resourcesSha256": "c114926e53852df23cc39415da5ac068609c6f9deab911ae7f9153e64092395a",
         "status": "completed",
@@ -25739,13 +25743,13 @@
             "count": 2
           }
         ],
-        "resultSha256": "f5c54a8a2bd75b54f98a0bea8995a0de71f05c160bbc1bb2ac1e7922518d6638",
-        "receiptsSha256": "7ea7ae5787b429c34016c2c0080595330c25ca161a1b0b4b0762117301c87485"
+        "resultSha256": "681d72f5b5ef5357d6a02ce30beb67e9f6d6e6d7f4e2b2cdc090daeed01a395e",
+        "receiptsSha256": "b1d3be1fba16fd0b206c26e1ec6decaaed23f3579e117ad607a1f102f6247af5"
       },
       {
         "id": "no-research-debate",
         "manifestId": "manifest-068ecfb50ad12f60fd3365a3a7e3e28ed0586c06119110ac9c4f74d8593e6835",
-        "workflowVersionId": "a1f88e64ba3b8eabbbe164bd34120d086b3da08d61479612627783df7c4cadac",
+        "workflowVersionId": "1ab0d2748c08eeced48240e2423d4993a19064f790df0b3deaade151e8f09d67",
         "comparisonId": "a669900c50e09374a2247f21ecd390eda618e73a18166aac9b8de6e494b89df7",
         "resourcesSha256": "c114926e53852df23cc39415da5ac068609c6f9deab911ae7f9153e64092395a",
         "status": "completed",
@@ -25802,13 +25806,13 @@
             "count": 2
           }
         ],
-        "resultSha256": "39969b95454989da0abd3961ea9214e197d4c2d9f85238ee23057750fa1de058",
-        "receiptsSha256": "58198e5f54894e038cd9d2a71d1f1109596abf7476c904c2dca65a66ff48d6f0"
+        "resultSha256": "12557adfab9b037dc0b2e3e3a48382708a8b9d58d76096c5d33caa0fac7733c8",
+        "receiptsSha256": "beeaf8d63022b4384aa5076d6d6d31ad8f260518cdde8e16afee2aad3078c6b6"
       },
       {
         "id": "no-risk-team",
         "manifestId": "manifest-068ecfb50ad12f60fd3365a3a7e3e28ed0586c06119110ac9c4f74d8593e6835",
-        "workflowVersionId": "a87f427b887c9b84bda1bcf9b36942aef69bc5644f9d7b68c57800cde5c875ff",
+        "workflowVersionId": "a8ae26d5de231cdf190b029dab5916b004ba97e95d0c6b2d3ee6123ae31d2b41",
         "comparisonId": "a669900c50e09374a2247f21ecd390eda618e73a18166aac9b8de6e494b89df7",
         "resourcesSha256": "c114926e53852df23cc39415da5ac068609c6f9deab911ae7f9153e64092395a",
         "status": "completed",
@@ -25865,8 +25869,8 @@
             "count": 2
           }
         ],
-        "resultSha256": "95021aa1bbe13afae53edda0c52d49167305ae45546621b627cad5e8c8491aad",
-        "receiptsSha256": "1b9cdd803144a03a1d85f88a4c9835de551198224df5e6626a1b3fea76ab3e4b"
+        "resultSha256": "34dee6264861d48d5c84c2ce61a4d68f0066e2159154d976e20e9709190dcd77",
+        "receiptsSha256": "2203657083b9c1caf9106ffc5aff65598b4ef8beb6e6a317e820d49d3d932beb"
       }
     ],
     "comparisons": [
@@ -26039,5 +26043,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "40b81d74a38fe7fa5d2a64e889c06a1fb3b33e029dada394f977ed0eac56a768"
+  "reportId": "d93e5a700f66f17c58e95fb98e863543011dd800d567d45d5368d4a807c413d9"
 }

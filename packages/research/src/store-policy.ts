@@ -159,6 +159,17 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
       await reference('Synthesis', row.value.synthesisId);
       for (const id of row.value.evidenceIds) await reference('EvidenceCard', id);
     }
+    if (row.kind === 'HypothesisSet') {
+      await reference('Synthesis', row.value.synthesisId);
+      for (const id of row.value.hypothesisIds) await reference('ResearchHypothesis', id);
+      for (const query of row.value.queries) if (!row.value.hypothesisIds.includes(query.hypothesisId))
+        refuse('TRSH1003', '/record/queries', 'Novelty queries must belong to this hypothesis set.');
+    }
+    if (row.kind === 'NoveltyReport') {
+      await reference('HypothesisSet', row.value.hypothesisSetId);
+      await reference('QueryPlan', row.value.queryPlanId);
+      for (const id of row.value.overlapLiteratureIds) await reference('LiteratureRecord', id);
+    }
     if (row.kind === 'MetricObservation') await reference('ExperimentRun', row.value.experimentRunId);
     if (row.kind === 'ResearchClaim') {
       for (const id of row.value.literatureIds) await reference('LiteratureRecord', id);
@@ -244,12 +255,14 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
     },
     commitStage: input => apply(input, async (tx, plan) => {
       const valid = checked(await planStageCommit({ state: plan.expectedState, attempt: plan.attempt, manifest: plan.manifest,
-        nextStatus: plan.nextState.status, artifactAdmissionIds: plan.artifactAdmissionIds, records: plan.records }));
+        nextStatus: plan.nextState.status, artifactAdmissionIds: plan.artifactAdmissionIds, records: plan.records,
+        ...(plan.preregistration ? { preregistration: plan.preregistration } : {}) }));
       samePlan(plan, valid);
       const projectId = valid.attempt.projectId, owner = (await project(tx, projectId))!;
       const rows = await receipts(tx, projectId);
       const operationHash = await researchRevisionOf({ attempt: valid.attempt, manifest: valid.manifest, artifactAdmissionIds: valid.artifactAdmissionIds,
-        records: valid.records, projection: valid.projection, nextStatus: valid.nextState.status });
+        records: valid.records, projection: valid.projection, nextStatus: valid.nextState.status,
+        ...(valid.preregistration ? { preregistration: valid.preregistration } : {}) });
       const prior = rows.find(row => row.attempt.id === valid.attempt.id);
       if (prior) {
         if (prior.operationHash !== operationHash) refuse('TRSH1002', '/attempt/id', 'Committed attempt already names another result.');
@@ -261,7 +274,8 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
           refuse('TRSH1004', '/attempt', 'MAS path or stage ordinal has already been committed.');
       }
       for (const key of ['calls', 'tokens', 'ms', 'physical'] as const) {
-        if (rows.reduce((sum, row) => sum + row.attempt.spend[key], valid.attempt.spend[key]) > owner.budget[key])
+        if (rows.reduce((sum, row) => sum + row.attempt.spend[key], valid.attempt.spend[key]) > owner.budget[key]
+          && !(valid.attempt.stopReason === 'failed' && valid.attempt.error?.code === 'TRSH1006'))
           refuse('TRSH1006', '/attempt/spend/' + key, 'Committed spend would exceed the project budget.');
       }
       const previousIds = committed(rows), available = new Set([...previousIds, ...valid.artifactAdmissionIds]);
@@ -286,11 +300,26 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
       for (const item of valid.manifest.inputs) if (!previousArtifacts.has(item.artifactId))
         refuse('TRSH1003', '/manifest/inputs', 'Input artifact has no committed admission in this project.');
       const records: ResearchRecordEntry[] = [];
-      for (const write of valid.records) {
+      const writes: ResearchRecordWrite[] = [...valid.records, ...(valid.preregistration ? [
+        { kind: 'ResearchContract' as const, value: valid.preregistration.contract },
+        { kind: 'ExperimentPlan' as const, value: valid.preregistration.plan },
+      ] : [])];
+      for (const write of writes) {
         const row = await entry(projectId, write);
         if (managed.has(row.kind)) refuse('TRSH1004', '/records/kind', 'Stage writes cannot replace lifecycle-managed records.');
         if (records.some(other => other.kind === row.kind && other.id === row.id)) refuse('TRSH1002', '/records', 'Stage record addresses must be unique.');
         records.push(row);
+      }
+      if (valid.preregistration) {
+        const known = await entries(tx, projectId);
+        checked(await planContractFreeze(valid.expectedState, valid.preregistration.contract, valid.preregistration.plan,
+          known.filter(row => row.kind === 'MetricObservation').map(row => row.id)));
+        const hypothesis = [...known, ...records].find(row => row.kind === 'ResearchHypothesis'
+          && row.value.hypothesisHash === valid.preregistration!.plan.hypothesisHash);
+        if (!hypothesis || hypothesis.kind !== 'ResearchHypothesis')
+          refuse('TRSH1003', '/preregistration/plan/hypothesisHash', 'Generated preregistration must name an admitted hypothesis.');
+        if (!valid.preregistration.contract.hypothesisSpace.includes(hypothesis.value.statement))
+          refuse('TRSH1009', '/preregistration/contract/hypothesisSpace', 'The selected hypothesis must remain in its frozen contract.');
       }
       for (const row of records) await references(tx, row, records, outputs);
       for (const id of valid.attempt.interventions) if (!records.some(row => row.kind === 'Intervention' && row.id === id)

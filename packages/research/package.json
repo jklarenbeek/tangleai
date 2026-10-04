@@ -35,6 +35,7 @@
     "src/**/*.js",
     "src/**/*.d.ts",
     "schemas/**/*.json",
+    "artifacts/**/*.json",
     "README.md",
     "LICENSE",
     "CHANGELOG.md",

@@ -318,6 +318,101 @@ export interface ExperimentPlanEvaluator {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+ */
+export type ResearchDesignMetadataVariablesIndependentItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+ */
+export type ResearchDesignMetadataVariablesDependentItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+ */
+export type ResearchDesignMetadataVariablesControlledItem = string;
+
+export interface ResearchDesignMetadataVariables {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=16, uniqueItems=true
+   */
+  independent: Array<ResearchDesignMetadataVariablesIndependentItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=16, uniqueItems=true
+   */
+  dependent: Array<ResearchDesignMetadataVariablesDependentItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=16, uniqueItems=true
+   */
+  controlled: Array<ResearchDesignMetadataVariablesControlledItem>;
+}
+
+
+export interface ResearchDesignMetadataControlsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  confound: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  strategy: string;
+}
+
+
+export interface ResearchDesignMetadataStatisticalTest {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  name: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  rationale: string;
+}
+
+
+export interface ResearchDesignMetadataHazardsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  hazard: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  mitigation: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+ */
+export type ResearchDesignMetadataExpectedFailuresItem = string;
+
+export interface ResearchDesignMetadata {
+  variables: ResearchDesignMetadataVariables;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=16
+   */
+  controls: Array<ResearchDesignMetadataControlsItem>;
+  statisticalTest: ResearchDesignMetadataStatisticalTest;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  replicateRationale: string;
+  resources: ResearchCost;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=16
+   */
+  hazards: Array<ResearchDesignMetadataHazardsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=16, uniqueItems=true
+   */
+  expectedFailures: Array<ResearchDesignMetadataExpectedFailuresItem>;
+}
+
+
 export interface ExperimentPlan {
   id: ResearchId;
   projectId: ResearchId;
@@ -333,6 +428,7 @@ export interface ExperimentPlan {
   inputPaths: Array<ExperimentPlanInputPathsItem>;
   evaluator: ExperimentPlanEvaluator;
   planHash: Sha256;
+  design?: ResearchDesignMetadata;
 }
 
 
@@ -1727,6 +1823,306 @@ export interface SourceAcquisition {
   contentHash: Sha256 | null;
   artifactId: string | null;
   issues: Array<ResearchIssue>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type SynthesisProposalConflictsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type SynthesisProposalGapsItem = string;
+
+export interface SynthesisProposal {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  summary: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  evidenceIds: Array<ResearchId>;
+  conflicts: Array<SynthesisProposalConflictsItem>;
+  gaps: Array<SynthesisProposalGapsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchHypothesisProposalConfoundsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+ */
+export type ResearchHypothesisProposalQueriesItem = string;
+
+export interface ResearchHypothesisProposal {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  statement: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  nullHypothesis: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  predictedObservation: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  disconfirmingObservation: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  evidenceIds: Array<ResearchId>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  baselineIds: Array<ResearchId>;
+  confounds: Array<ResearchHypothesisProposalConfoundsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=3, uniqueItems=true
+   */
+  queries: Array<ResearchHypothesisProposalQueriesItem>;
+}
+
+
+export interface NoveltyAdvisory {
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  rating: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  reason: string;
+}
+
+
+export interface HypothesisSetProposal {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=8
+   */
+  hypotheses: Array<ResearchHypothesisProposal>;
+  advisory: NoveltyAdvisory;
+}
+
+
+export interface HypothesisSetQueriesItem {
+  hypothesisId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  query: string;
+}
+
+
+export interface HypothesisSet {
+  id: ResearchId;
+  projectId: ResearchId;
+  synthesisId: ResearchId;
+  mode: "single-agent" | "debate";
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=8, uniqueItems=true
+   */
+  hypothesisIds: Array<ResearchId>;
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=24
+   */
+  queries: Array<HypothesisSetQueriesItem>;
+  advisory: NoveltyAdvisory;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchContractProposalHypothesisSpaceItem = string;
+
+export interface ResearchContractProposalDatasetsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  sha256: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchContractProposalSplitsTrainItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchContractProposalSplitsTestItem = string;
+
+export interface ResearchContractProposalSplits {
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  train: Array<ResearchContractProposalSplitsTrainItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  test: Array<ResearchContractProposalSplitsTestItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchContractProposalStopConditionsItem = string;
+
+export interface ResearchContractProposal {
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  hypothesisSpace: Array<ResearchContractProposalHypothesisSpaceItem>;
+  successRule: SuccessRule;
+  failureRule: "stop-on-invalid";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  metrics: Array<MetricDefinition>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  datasets: Array<ResearchContractProposalDatasetsItem>;
+  splits: ResearchContractProposalSplits;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  requiredBaselines: Array<BaselineProvenance>;
+  replicatePolicy: ReplicatePolicy;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attemptCap: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  pivotCap: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  reviewCap: number;
+  selectionRule: SelectionRule;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  stopConditions: Array<ResearchContractProposalStopConditionsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ExperimentPlanProposalInputPathsItem = string;
+
+export interface ExperimentPlanProposalEvaluator {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+}
+
+
+export interface ExperimentPlanProposal {
+  /**
+   * Schema constraints this type cannot express: minItems=2
+   */
+  conditions: Array<ExperimentCondition>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  inputPaths: Array<ExperimentPlanProposalInputPathsItem>;
+  evaluator: ExperimentPlanProposalEvaluator;
+  design: ResearchDesignMetadata;
+}
+
+
+export interface ResearchDesignProposal {
+  hypothesisId: ResearchId;
+  contract: ResearchContractProposal;
+  plan: ExperimentPlanProposal;
+}
+
+
+export interface NoveltyReportCoverage {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  attempted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  complete: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  total: number;
+}
+
+
+export interface NoveltyReport {
+  id: ResearchId;
+  projectId: ResearchId;
+  hypothesisSetId: ResearchId;
+  queryPlanId: ResearchId;
+  receipt: DiscoveryReceipt;
+  coverage: NoveltyReportCoverage;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  overlapLiteratureIds: Array<ResearchId>;
+  advisory: NoveltyAdvisory;
+  gating: false;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+ */
+export type ResearchReasoningConstraintsInputPathsItem = string;
+
+export interface ResearchReasoningConstraints {
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  baselineIds: Array<ResearchId>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  metrics: Array<MetricDefinition>;
+  budget: ResearchCost;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  inputPaths: Array<ResearchReasoningConstraintsInputPathsItem>;
+  design?: { contract: ResearchContract; plan: ExperimentPlan; };
+}
+
+
+export interface ResearchReasoningContext {
+  stage: "synthesis" | "hypothesis" | "design";
+  synthesis: Synthesis | null;
+  /**
+   * Schema constraints this type cannot express: maxItems=8
+   */
+  hypotheses: Array<ResearchHypothesis>;
+  constraints: ResearchReasoningConstraints;
 }
 
 

@@ -40,8 +40,11 @@ const topicProperties = { topicId: external('ResearchId'), ...measurement,
   observations: array(external('MetricObservation')), claimsExpected: array(text, { minItems: 1, uniqueItems: true }),
   claimsSupported: array(text, { uniqueItems: true }), verificationIssues: array(external('ResearchIssue')),
   workflow: nullable(ref('ResearchWorkflowMeasurement')), completePathControl: nullable(ref('ResearchWorkflowMeasurement')) };
-const rowProperties = { id: names(RESEARCH_ROW_IDS), state: { const: 'measured' }, ...measurement,
+const rowProperties = { id: names(RESEARCH_ROW_IDS), state: { const: 'measured' }, scope: { const: 'full-lifecycle' }, ...measurement,
   topics: array(ref('ResearchTopicResult'), { minItems: 3, maxItems: 3 }) };
+export const RESEARCH_REASONING_DIMENSIONS = ['hypothesisValidity', 'evidenceLinkage', 'designIntegrity', 'hiddenIsolation', 'refusalConformance'] as const;
+const reasoningMeasurements = { ...Object.fromEntries(RESEARCH_REASONING_DIMENSIONS.map(name => [name, ref('ResearchScore')])),
+  interventions: measurement.interventions, cost: external('ResearchCost'), failures, usage: ref('ResearchModelUsage') };
 const queries: unknown[] = [
   { $eq: [['$.rows[*].id'], [...RESEARCH_ROW_IDS]] },
   { $eq: [['$.identity.rows[*].rowId'], ['$.rows[*].id']] },
@@ -59,11 +62,34 @@ const queries: unknown[] = [
   { $eq: [['$.disclosure[*].rowId'], ['$.rows[*].id']] },
 ];
 for (const dimension of [...RESEARCH_DIMENSIONS, 'completion']) {
-  queries.push({ $every: { row: '$.rows[?(@.state=="measured")]' }, $satisfies: { $and: [
+  queries.push({ $every: { row: '$.rows[?(@.scope=="full-lifecycle")]' }, $satisfies: { $and: [
     { $eq: ['$row.' + dimension + '.passed', { $sum: '$row.topics[*].' + dimension + '.passed' }] },
     { $eq: ['$row.' + dimension + '.total', { $sum: '$row.topics[*].' + dimension + '.total' }] },
   ] } });
 }
+for (const dimension of RESEARCH_REASONING_DIMENSIONS) queries.push({ $every: { row: '$.rows[?(@.scope=="pre-execution")]' }, $satisfies: { $and: [
+  { $eq: ['$row.' + dimension + '.passed', { $sum: '$row.topics[*].' + dimension + '.passed' }] },
+  { $eq: ['$row.' + dimension + '.total', { $sum: '$row.topics[*].' + dimension + '.total' }] },
+] } });
+for (const member of ['roles', 'completion', 'normalization', 'repair', 'physical', 'promptTokens', 'completionTokens', 'unknownTokenRequests', 'traceBytes'])
+  queries.push({ $every: { row: '$.rows[?(@.scope=="pre-execution")]' }, $satisfies:
+    { $eq: ['$row.usage.' + member, { $sum: '$row.topics[*].usage.' + member }] } });
+queries.push({ $every: { row: '$.rows[?(@.scope=="pre-execution")]' }, $satisfies: {
+  $every: { topic: '$row.topics[*]' }, $satisfies: { $and: [
+    { $eq: ['$topic.state.status', 'DESIGN_GATE'] },
+    { $eq: ['$topic.state.contractHash', '$topic.contract.contractHash'] },
+    { $eq: ['$topic.state.planHash', '$topic.plan.planHash'] },
+    { $eq: ['$topic.plan.contractHash', '$topic.contract.contractHash'] },
+    { $eq: ['$topic.usage.physical', { $add: [{ $add: ['$topic.usage.completion', '$topic.usage.normalization'] }, '$topic.usage.repair'] }] },
+    { $eq: ['$topic.usage.physical', { $count: '$topic.requests[*]' }] },
+    { $eq: ['$topic.cost.physical', '$topic.usage.physical'] },
+    { $eq: ['$topic.cost.calls', '$topic.usage.physical'] },
+    { $eq: ['$topic.cost.tokens', { $add: ['$topic.usage.promptTokens', '$topic.usage.completionTokens'] }] },
+    { $le: ['$topic.usage.traceBytes', '$.registration.caps.traceBytes'] },
+    { $le: [{ $count: '$topic.visibleCardIds[*]' }, '$topic.availableCards'] },
+    ...['calls', 'tokens', 'ms', 'physical'].map(dimension => ({ $eq: ['$topic.cost.' + dimension, { $sum: '$topic.attempts[*].spend.' + dimension }] })),
+  ] },
+} });
 for (const [group, members] of Object.entries({ cost: ['calls', 'tokens', 'ms', 'physical'],
   interventions: ['total', 'substantive', 'approvals'], failures: ['program', 'verification', 'leakage', 'confound', 'budget', 'provider', 'unsupported'] })) {
   for (const member of members) queries.push({ $every: { row: '$.rows[?(@.state=="measured")]' }, $satisfies:
@@ -88,7 +114,7 @@ export const RESEARCH_REPORT_SCHEMA = {
     ceilings: array(record({ topicId: external('ResearchId'), literatureRecall: ref('ResearchScore'),
       literaturePrecision: ref('ResearchScore'), citationIdentity: ref('ResearchScore'), registryAccuracy: ref('ResearchScore') }),
     { minItems: 3, maxItems: 3 }),
-    rows: array({ oneOf: [ref('ResearchMeasuredRow'), ref('ResearchMissingRow')] }, { minItems: 8, maxItems: 8 }),
+    rows: array({ oneOf: [ref('ResearchMeasuredRow'), ref('ResearchReasoningRow'), ref('ResearchMissingRow')] }, { minItems: 8, maxItems: 8 }),
     discovery: array(ref('ResearchDiscoveryMeasurement'), { maxItems: 3 }),
     bundles: array(record({ id: external('ResearchId'), expected: ref('ResearchRefusal'),
       observed: nullable(ref('ResearchRefusal')), refusedAsRegistered: { type: 'boolean' } }), { minItems: 21, maxItems: 21 }),
@@ -97,6 +123,32 @@ export const RESEARCH_REPORT_SCHEMA = {
     decision: names(['conformant', 'drift']), limitations: array(text, { minItems: 1 }), reportId: external('Sha256'),
   }),
   $defs: {
+    ResearchReasoningScript: record({ topicId: external('ResearchId'), licence: external('ResearchLicence'), model: { const: 'scripted-v1' },
+      synthesis: external('SynthesisProposal'), hypotheses: external('HypothesisSetProposal'), design: external('ResearchDesignProposal'),
+      participants: record(Object.fromEntries(['innovator', 'pragmatist', 'contrarian', 'screener'].map(name => [name, external('HypothesisSetProposal')]))),
+      cases: array(record({ id: names(['infeasible-plan', 'confounded-plan', 'hidden-read', 'malformed']), proposal: { type: 'object' },
+        expected: ref('ResearchRefusal') }), { minItems: 4, maxItems: 4 }),
+      noveltyTranscripts: array(record({ method: { const: 'GET' }, url: text, body: { type: 'null' }, headers: { type: 'object', additionalProperties: { type: 'string' } },
+        response: record({ status: { const: 200 }, headers: { type: 'object', additionalProperties: { type: 'string' } }, body: text }) },
+      ['method', 'url', 'body', 'response']), { minItems: 4, maxItems: 4 }) }),
+    ResearchModelUsage: record(Object.fromEntries(['roles', 'completion', 'normalization', 'repair', 'physical', 'promptTokens', 'completionTokens', 'unknownTokenRequests', 'traceBytes'].map(name => [name, count]))),
+    ResearchReasoningTopic: record({ topicId: external('ResearchId'), ...reasoningMeasurements,
+      nativeStatus: { const: 'waiting_for_input' }, state: external('ResearchState'), bindingId: external('Sha256'), runIdentityId: external('Sha256'),
+      workflowVersionId: external('Sha256'), registryRevision: external('Sha256'), executableRevision: external('Sha256'),
+      attempts: array(external('StageAttempt'), { minItems: 6, maxItems: 6 }), manifests: array(external('InputManifest'), { minItems: 6, maxItems: 6 }),
+      artifacts: array(external('ArtifactAdmission'), { minItems: 1 }), interactions: array({ $ref: 'https://tangleai.dev/schemas/mas-runtime#/$defs/masInteraction' }),
+      synthesis: external('Synthesis'), hypotheses: array(external('ResearchHypothesis'), { minItems: 2 }), hypothesisSet: external('HypothesisSet'),
+      contract: external('ResearchContract'), plan: external('ExperimentPlan'), novelty: external('NoveltyReport'),
+      visibleCardIds: array(external('ResearchId'), { minItems: 1, uniqueItems: true }), availableCards: positive,
+      requests: array(record({ role: text, phase: names(['completion', 'normalization', 'repair']), sha256: external('Sha256'), hiddenPaths: count }), { minItems: 1 }),
+      executedPacks: array(text, { minItems: 1, uniqueItems: true }),
+      probes: array(record({ id: text, kind: { const: 'independent-verifier' }, calls: { const: 0 }, expected: ref('ResearchRefusal'),
+        observed: nullable(ref('ResearchRefusal')), matched: { type: 'boolean' } }), { minItems: 4, maxItems: 4 }),
+      discoveryReplay: record({ requests: count, misses: count, networkCalls: { const: 0 } }),
+      noveltyReplay: record({ requests: count, misses: count, networkCalls: { const: 0 } }),
+    }),
+    ResearchReasoningRow: record({ id: names(['fixed-single-agent', 'fixed-plus-debate']), state: { const: 'measured' }, scope: { const: 'pre-execution' },
+      ...reasoningMeasurements, topics: array(ref('ResearchReasoningTopic'), { minItems: 3, maxItems: 3 }) }),
     ResearchDiscoveryMeasurement: record({ topicId: external('ResearchId'), receipt: external('DiscoveryReceipt'),
       literature: array(external('LiteratureRecord')), screening: array(external('ScreeningDecision')),
       acquisitions: array(external('SourceAcquisition')), evidence: array(external('EvidenceCard')),

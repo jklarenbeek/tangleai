@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "e6a6f5cd0acfdba1ca7835d03dafa73feb107f3b",
+    "head": "dc083d799f268cab77c26268cd253ce21c9075ae",
     "clean": false,
     "files": [
       {
@@ -207,7 +207,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "1887b6bc8206d0e3a01bd41947b62aa60161c420eddea4e202b4417f89c099cd"
+        "sha256": "a4fd0365e0d6c334c2a6556bbcb9520a965a8cacbe7a26f661e481ec40f5cf4c"
       },
       {
         "path": "packages/agents/package.json",
@@ -431,7 +431,7 @@
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
-        "sha256": "45d35251829b16633dd964a7eda0ffa8dd8018cb7b99311a3e1ea85ed3f1df45"
+        "sha256": "b7f485dde0872f726e9a9efba19549b43e27499aac4aed4bc5c28f3c5d4af456"
       },
       {
         "path": "packages/gmpl/src/catalog.ts",
@@ -443,7 +443,7 @@
       },
       {
         "path": "packages/gmpl/src/contracts.gen.ts",
-        "sha256": "c12882e66d4ab5f55e56992a67ef9bd317594a9cbd79bdaf77870ca4ef1653cb"
+        "sha256": "46460a60441c13770f12d59bc3c7640ded21cfbf7432b04e9fdf8454ba2765d2"
       },
       {
         "path": "packages/gmpl/src/debate-tasks.ts",
@@ -467,7 +467,7 @@
       },
       {
         "path": "packages/gmpl/src/host-bindings.ts",
-        "sha256": "0f17cfb88ab0db0ac2f8c6bac20b29ed501acbe43c40620c393b4d4416f1efda"
+        "sha256": "769b028f3965c354bd612b26a2b8ba535ae9710dcdffb43b530a1c679f8ac5fb"
       },
       {
         "path": "packages/gmpl/src/identity.ts",
@@ -491,7 +491,7 @@
       },
       {
         "path": "packages/gmpl/src/patterns/parallel-analysis.ts",
-        "sha256": "03bbf2daefbcc562db2702e92220fbf65b08abfa0a7dd63146611497a7e2561f"
+        "sha256": "c9ef0e5bd68f263f7a07ceed258e20e62388e01808fc996413c5c23a10a33683"
       },
       {
         "path": "packages/gmpl/src/patterns/peer-review.ts",
@@ -507,11 +507,11 @@
       },
       {
         "path": "packages/gmpl/src/patterns/shared.ts",
-        "sha256": "b295cbbf853ae600148d9ddca5b0ca5f4fe8b18e0802609f234fbb6653d44771"
+        "sha256": "cb599bde5e6a4067c5c93f76a50af402a37e5f1384dd8cb25c5733adc5483fe9"
       },
       {
         "path": "packages/gmpl/src/patterns/structured-debate.ts",
-        "sha256": "3606fc971bd903ed510b45e85e793d5bb1436daea93e5c6679b942196e3e2b1b"
+        "sha256": "8ab58fe1eb8be6c684fd5765ff4ad83f445581981b7665e9d41fb6c92790fc55"
       },
       {
         "path": "packages/gmpl/src/projection.ts",
@@ -523,7 +523,7 @@
       },
       {
         "path": "packages/gmpl/src/round-tasks.ts",
-        "sha256": "bf7ba5d1c22d2327f1b71bb51b43fd446b25da6dec2343ef08c2a55f3282d69a"
+        "sha256": "84c7dedabee4f8c6fb2d88740a08a47d2065558ee55b4eb78a7914c5b50add41"
       },
       {
         "path": "packages/gmpl/src/schema.ts",
@@ -531,11 +531,15 @@
       },
       {
         "path": "packages/gmpl/src/specialize.ts",
-        "sha256": "4eaec241dd7aa6728e479437edb828230cc209ac8136619e377e49a9866f2ee7"
+        "sha256": "996d47caa6ec2fc2ac7f3bbe01d855373a9634ac633ebdaaac569f527aff6441"
+      },
+      {
+        "path": "packages/gmpl/src/stage-prompts.ts",
+        "sha256": "25334893a19fae93ff0bc3fa88975a6116afa3d7d68f60f825c7f1aab14b33f2"
       },
       {
         "path": "packages/gmpl/src/tasks.ts",
-        "sha256": "17d0457b6a04669dce2de693d568ad7ec14df0526dd6fc44cb0090295349661e"
+        "sha256": "178f15a8192cc5d56cb86e1b0aa7fedc787b5efa3e36e38d3115616ae5899a12"
       },
       {
         "path": "packages/grounding/package.json",
@@ -759,7 +763,7 @@
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "3b4c94a93e66388ca997270ecb2baf0d10da4ebbe3258a2ae096c2cf2f4447a5"
+        "sha256": "f1b27f8ac8b53066a1501cd9db43e44a9a8d19a0b849a40d553a08640ebddc7e"
       },
       {
         "path": "packages/search/package.json",
@@ -1019,7 +1023,7 @@
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "35ece3cf1f297ae4752926d4226072f75c7e91b6f931f42c8fcd125ec822aa55"
+        "sha256": "535e07d94d0f10dd1e9348e2a9a938fef7dbbe7a7f5bef04cec5890219424077"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -1055,7 +1059,7 @@
       },
       {
         "path": "test/gmpl/domain-binding.test.ts",
-        "sha256": "e8ef27c333cbcab38654c41fa571a30590cb4ab20159cdb992597c7794586637"
+        "sha256": "8b1d2760244c41b8586b9c3c3e11e811a628e2110acc119e80fdabedb309ecfe"
       },
       {
         "path": "test/gmpl/evidence.test.ts",
@@ -1111,7 +1115,7 @@
       },
       {
         "path": "test/release/fixtures/browser.mjs",
-        "sha256": "66bc773d6bc1a752e771f0984b2ac230f9d1b3368bd3706716faaff16035a4df"
+        "sha256": "d75a2cf7e8e7af226508fdb0ff6ad8681f441efb12a0c1818f7c4608036a8d2f"
       },
       {
         "path": "test/release/fixtures/gmpl-browser.mjs",
@@ -1126,7 +1130,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "f2026ba49ae4b988e18f695e4228afce41e3dd558731a79b30eb48f706818f2d"
+    "sha256": "aa4f84be30d1607ee9dd9d91553ea1fca22b868b04b3b7b35f59bfce886cd9c3"
   },
   "ablations": [
     {
@@ -1407,7 +1411,7 @@
           "completionTokens": 18,
           "unknownTokenRequests": 0,
           "activeMs": 0,
-          "traceBytes": 59938,
+          "traceBytes": 61678,
           "replays": 0,
           "restores": 0,
           "money": null,
@@ -1595,7 +1599,7 @@
           },
           "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
         },
-        "receiptId": "9f4d9e29860c011b9e3b5dd7bd762661fb8c9335dea783da18273229aa3dae4f"
+        "receiptId": "c5842c5ebfa47ffa95c5a9ddf2e83f7dcbf9a830301481ea52ba63ed01d6a816"
       }
     },
     {
@@ -1628,7 +1632,7 @@
           "completionTokens": 24,
           "unknownTokenRequests": 0,
           "activeMs": 0,
-          "traceBytes": 67903,
+          "traceBytes": 69933,
           "replays": 0,
           "restores": 0,
           "money": null,
@@ -1862,7 +1866,7 @@
           },
           "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
         },
-        "receiptId": "d8ffc86128f0ad8197907a4742cc54a9f17f5a2f1932b5d569babdca22c5d67f"
+        "receiptId": "d2a58fe4b0b40a3a831372f8156b7497e23eb93f32eb02d748e96f7bec68c167"
       }
     },
     {
@@ -1895,7 +1899,7 @@
           "completionTokens": 36,
           "unknownTokenRequests": 0,
           "activeMs": 0,
-          "traceBytes": 115866,
+          "traceBytes": 118331,
           "replays": 0,
           "restores": 0,
           "money": null,
@@ -2225,7 +2229,7 @@
           },
           "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
         },
-        "receiptId": "1f1cfb9b178f19777ba6868099f747f33030b7156ef4dda220d75fe4edd6d4af"
+        "receiptId": "ec9e6b31fe7716d0129c3395b01503457f5898d57f1385d522e19f15555d65f3"
       }
     },
     {
@@ -2253,7 +2257,7 @@
           "completionTokens": 12,
           "unknownTokenRequests": 0,
           "activeMs": 0,
-          "traceBytes": 40602,
+          "traceBytes": 41907,
           "replays": 0,
           "restores": 0,
           "money": null,
@@ -2391,7 +2395,7 @@
           },
           "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
         },
-        "receiptId": "5dc63be20448376f006b28cd3e3ae3141b172fc2ed76359e2d77f221f53d44ec"
+        "receiptId": "a9875e5b9cdc28b8fde4faf1d20f402d0833c933df0502bc794031cef88c8e59"
       }
     },
     {
@@ -2424,7 +2428,7 @@
           "completionTokens": 36,
           "unknownTokenRequests": 0,
           "activeMs": 0,
-          "traceBytes": 83589,
+          "traceBytes": 84749,
           "replays": 0,
           "restores": 0,
           "money": null,
@@ -2752,7 +2756,7 @@
           },
           "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
         },
-        "receiptId": "0a99a670cdb5654d8d37ffb6beaad9f51ea6a1da08994fea4b8eabe24539c36c"
+        "receiptId": "80c8cb21e12c645850806314b3a9d9899e0f1e36e0716522384f20e091dafdde"
       }
     },
     {
@@ -2785,7 +2789,7 @@
           "completionTokens": 96,
           "unknownTokenRequests": 0,
           "activeMs": 0,
-          "traceBytes": 199607,
+          "traceBytes": 201057,
           "replays": 0,
           "restores": 0,
           "money": null,
@@ -3597,7 +3601,7 @@
           },
           "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
         },
-        "receiptId": "e981aa6cec6232c297825088df95af0c01e97b6a3033aeb3e06cb1dd5d99530f"
+        "receiptId": "31f37ed4ba882dff6eccbbf770ff9a120c8aa51297fd5988e8ce358bed93508f"
       }
     }
   ],
@@ -12013,7 +12017,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 84762,
+            "traceBytes": 86502,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -12207,7 +12211,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "a649fb839cc4852a112bc2f791b854a0ffe74808f48f1910030cb0ab8e6d9bca"
+          "receiptId": "78e73c3f2a3c718f064dd9a41714fc6b581894d593e3b751ec78d98e04400431"
         },
         {
           "caseId": "direct-fact-insufficient",
@@ -12234,7 +12238,7 @@
             "completionTokens": 54,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 159932,
+            "traceBytes": 163412,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -12718,7 +12722,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "bd33a441db2c40e8df2d0f75462b102fb9fb94e098025622c5c63e6a24769e24"
+          "receiptId": "3209f699b59cb7d330d9fe0d239b84b470c6fc40fe56d4cd458c73637d89e68b"
         },
         {
           "caseId": "direct-fact-conflict",
@@ -12776,7 +12780,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 125282,
+            "traceBytes": 127022,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -12970,7 +12974,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "75ed7f95b0a5930a7ce7c100697b8fbd5ad25035b0da240235eb1273d6b618e3"
+          "receiptId": "007f292037403d78850fd6cb5cbd38caab223c426d5eaa739e2a3f7ec47b9026"
         },
         {
           "caseId": "direct-fact-misleading",
@@ -13011,7 +13015,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 91564,
+            "traceBytes": 93304,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -13211,7 +13215,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "e3ee11859f6cdfdce87e5bc8508dfccee34dfef488d33a203e6310df326649e6"
+          "receiptId": "baf2f9b169a3676212807b3a52892d63ad0508df9ce0c4233e04645a517c3d63"
         },
         {
           "caseId": "multi-source-success",
@@ -13252,7 +13256,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 82370,
+            "traceBytes": 84110,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -13446,7 +13450,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c73ce77a26fa3156dc4fe0756ebf870befc5a2be04fc0f5e251955baeb66936b"
+          "receiptId": "7d4af6ef9b43fc9b6c06994a92281471d3c92746483de220734a1a25b26cf03a"
         },
         {
           "caseId": "multi-source-insufficient",
@@ -13473,7 +13477,7 @@
             "completionTokens": 54,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 160088,
+            "traceBytes": 163568,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -13957,7 +13961,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c273f7d28330ef116f677199fbff079cdda7f710cb1faf24380ca6808edd21b5"
+          "receiptId": "348dc5810c8e3b819da2903e80c5c3eaeed0c62fb1c661ecd848fbbc484f9001"
         },
         {
           "caseId": "multi-source-conflict",
@@ -14015,7 +14019,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 122820,
+            "traceBytes": 124560,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -14209,7 +14213,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "4cbb279c4919d5de6fb8b03217c31ac7d4845b1325c85d0152bc04bf5fffc3c2"
+          "receiptId": "0bcd7f3c161181189cb610071468d423e4f0fd1608fad4f67bc085f9c07ea77d"
         },
         {
           "caseId": "multi-source-misleading",
@@ -14250,7 +14254,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 89032,
+            "traceBytes": 90772,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -14450,7 +14454,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "8cafd2412654b48263a0c578dbabb5cfaa8436035849fb0f4ec4c7a9b548d827"
+          "receiptId": "667706c520a0136ceb65d3e2a0f70f8bf3152ea696d8ce068eddc6f9d06354a7"
         },
         {
           "caseId": "minority-conflict-success",
@@ -14508,7 +14512,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 128330,
+            "traceBytes": 130070,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -14702,7 +14706,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "4527c10730cc1d8f7b1b6b41c6b8f20c9baeedcd1b039dd32787104e43a9a87b"
+          "receiptId": "24b3c1078a5bd0c564f325e3821bbd0ee3794a34d687b24aa4c4e1fdf28aa991"
         },
         {
           "caseId": "minority-conflict-insufficient",
@@ -14729,7 +14733,7 @@
             "completionTokens": 54,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 160868,
+            "traceBytes": 164348,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -15213,7 +15217,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "713ad915e9d27807fc0dce6058f9a486b538d7d2983b192c02faf6ec3d796675"
+          "receiptId": "5ce3ea7564b222e6d53d1b1dbeb9957b6d5b1a7cb96fa2ed3a25fef8323b53d1"
         },
         {
           "caseId": "minority-conflict-conflict",
@@ -15271,7 +15275,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 128906,
+            "traceBytes": 130646,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -15465,7 +15469,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "5d3a16b498bed3930efae4f15ce0fe4f64b58ddf5bf87b6d26add9fde31401ec"
+          "receiptId": "f3f2f012cd6c4770e565813912fa60fbffaba09cfcd4a3e461c871132f32d2c6"
         },
         {
           "caseId": "minority-conflict-misleading",
@@ -15523,7 +15527,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 136182,
+            "traceBytes": 137922,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -15723,7 +15727,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "8014f78bdcd98a09ac83fa313f47a476c87f516e767ce29e5d67fd12da78d61f"
+          "receiptId": "abf413a600eb01d7d5abb825a5e7667f97ab425825086543374a65cb9a251f2a"
         },
         {
           "caseId": "ambiguous-intent-success",
@@ -15750,7 +15754,7 @@
             "completionTokens": 54,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 173468,
+            "traceBytes": 176948,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -16252,7 +16256,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "6b3da0effdb6b224918f3c03496a2f1b5ac1be95a6ba3683788fb834f9bb189e"
+          "receiptId": "96dd95103e52dac540c5089349f3be3acf36c5d0c20e6280a4135f25eadacdaa"
         },
         {
           "caseId": "ambiguous-intent-insufficient",
@@ -16279,7 +16283,7 @@
             "completionTokens": 54,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 160712,
+            "traceBytes": 164192,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -16763,7 +16767,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "461c62ca8474b45473c3a0cb2c020627687269386f4f15eddf55ae53141a6da1"
+          "receiptId": "214611a714b3c4d1a27bf59bc77db3325ac40d91a570408ae9d4398fc6fa45bd"
         },
         {
           "caseId": "ambiguous-intent-conflict",
@@ -16790,7 +16794,7 @@
             "completionTokens": 54,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 173624,
+            "traceBytes": 177104,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -17292,7 +17296,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "9b11aaa61ff5ddc9d7eff6e25edfb2ba29774307bd31ff200f4b86506fcd8a4d"
+          "receiptId": "2890ed047746f2782231db6967d08352bc709aeb3ca6ac5ff1270705470498e3"
         },
         {
           "caseId": "ambiguous-intent-misleading",
@@ -17319,7 +17323,7 @@
             "completionTokens": 54,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 188024,
+            "traceBytes": 191504,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -17839,7 +17843,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "46747868616e4f0418bce25763ce23246d3541aa6e84eb85ede5e5cb3e5c1f39"
+          "receiptId": "11f5b1659d906268d9b94329ab9ba17b1ce7a5e18b20ad99f88cc43ea596a114"
         },
         {
           "caseId": "adversarial-proposal-success",
@@ -17897,7 +17901,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 130226,
+            "traceBytes": 131966,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -18091,7 +18095,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "02b4486c34d92c354604514555b9bfbcc56c504eff5571681ff91d6bb53cb717"
+          "receiptId": "0833df197fdeb06ac743c8b5c5549a7c8cb048470b35592f298ac40aba85f81a"
         },
         {
           "caseId": "adversarial-proposal-insufficient",
@@ -18118,7 +18122,7 @@
             "completionTokens": 54,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 161336,
+            "traceBytes": 164816,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -18602,7 +18606,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "91f9b4f3b4fc98f327e7af0dd8a9910c4a2a41069a5f4cacfea5fb972ee7afdf"
+          "receiptId": "b1273578352233185dd1762cef49e4fe1bb9325c3073fd31573166cbee6ec54d"
         },
         {
           "caseId": "adversarial-proposal-conflict",
@@ -18660,7 +18664,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 130746,
+            "traceBytes": 132486,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -18854,7 +18858,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "06fd1f921365584ea991b52310f091fdb5062cdf0d1f2798843280f3648203ff"
+          "receiptId": "53f94a21b2ac76e8510a9150ba97165255d6c3ba1f3dd0621f649a68b15e8bc8"
         },
         {
           "caseId": "adversarial-proposal-misleading",
@@ -18912,7 +18916,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 137994,
+            "traceBytes": 139734,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -19112,7 +19116,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "0e9654cfd142f39ac47e2caf613b537135dad2fc01bc95f1328e5bf298a82219"
+          "receiptId": "c49314913631ac93bb103fb812cc60e962f464827fc2d38fb7dc8ff568fe19bd"
         },
         {
           "caseId": "panel-success",
@@ -19153,7 +19157,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 80256,
+            "traceBytes": 81996,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -19347,7 +19351,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "1f68cf2b6e15e6b95364cb2d689083abd7c725d2c77a127e4940ffb840ea7e77"
+          "receiptId": "7201d110ca492206ec11452e8bd88a998f7410a734cf00086709adc2e0cb403a"
         },
         {
           "caseId": "panel-insufficient",
@@ -19374,7 +19378,7 @@
             "completionTokens": 54,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 158996,
+            "traceBytes": 162476,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -19858,7 +19862,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "7821be13e2b2ab09e89715a3c0cd55f2040e72f194f9ed986abfc45c7dd48ce6"
+          "receiptId": "db7a7aef75b06edd9f75050cd0381f20751f30c08c937d82996c06cbd3107af8"
         },
         {
           "caseId": "panel-conflict",
@@ -19916,7 +19920,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 118648,
+            "traceBytes": 120388,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -20110,7 +20114,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "be642b3a9ad97eed8f96f2f63088bd9d396e4e1b18431a0070ba66ace5d3a4e3"
+          "receiptId": "700234e8fafc25c5521194a517c8dd21b4de85681fbedaab820d3233725442c9"
         },
         {
           "caseId": "panel-misleading",
@@ -20151,7 +20155,7 @@
             "completionTokens": 18,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 86722,
+            "traceBytes": 88462,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -20351,7 +20355,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "71663281fc71d2217df87003f63538f7b66d465dbbaad532caeaee124a3e1acb"
+          "receiptId": "4642025d5ba49aba37381931079514bcad12d779b1c73542c2ee6c64620c0af5"
         }
       ]
     },
@@ -23309,7 +23313,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 98303,
+            "traceBytes": 100333,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -23551,7 +23555,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "52b8439ff6157856e51529c4161f487bbc2b258b78c71b4071a714ed7b67afc7"
+          "receiptId": "b0288d69d35e6fb86acda19bd9cf5db5d14b9dc8318ad5fe3f5096e5d22571f5"
         },
         {
           "caseId": "direct-fact-insufficient",
@@ -23578,7 +23582,7 @@
             "completionTokens": 60,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 172278,
+            "traceBytes": 176628,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -24108,7 +24112,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "fd3ad027e4abf6d74ce0220a93f893546ee58cf6127da5f78798f44ac9556d71"
+          "receiptId": "bb4b60282a56f585465506d77fe16407afe846a4c926c28eb35ae922553cc2f7"
         },
         {
           "caseId": "direct-fact-conflict",
@@ -24166,7 +24170,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 144667,
+            "traceBytes": 146697,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -24408,7 +24412,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "fbb24e5eb7ded3aa17a677a8c91efa27899298515cd1de6c78ba5e68a7e2b417"
+          "receiptId": "16ec7dc34abdde2b379e85879452eb236668c12c5fae6ae5576f96e33cfd755c"
         },
         {
           "caseId": "direct-fact-misleading",
@@ -24449,7 +24453,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 106563,
+            "traceBytes": 108593,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -24699,7 +24703,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c944c3652e135b709064a2f3dd1040dbc6be13ee08bbcda62fa7941c9266fed6"
+          "receiptId": "78d46e83cb126985fffff493a6ff09f6375a39675e4343f6a263d08d3952ea6d"
         },
         {
           "caseId": "multi-source-success",
@@ -24740,7 +24744,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 95383,
+            "traceBytes": 97413,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -24982,7 +24986,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "1cbe0d00ac410525fbdbdf88665ffe2bc165cf26783550bc19f1597cf664fbed"
+          "receiptId": "5f2bce250f3e296870f70dd6515d3d108a8e9402562e239a9131c3bf5cb20753"
         },
         {
           "caseId": "multi-source-insufficient",
@@ -25009,7 +25013,7 @@
             "completionTokens": 60,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 172460,
+            "traceBytes": 176810,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -25539,7 +25543,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "ae159311fbe78598a1be62ba64d23caecc8c71c06909e5783ca7678175b7fe83"
+          "receiptId": "2521fb6f7ef96404838c4a613e23141a9dc43bcee3aeaf87595dca4b50dee7ae"
         },
         {
           "caseId": "multi-source-conflict",
@@ -25597,7 +25601,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 142073,
+            "traceBytes": 144103,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -25839,7 +25843,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "734dd5afd783e03c60cf6c89ee56140a06850705104121426eaeaba078793ae2"
+          "receiptId": "292771ca4c3fa35bb623c6981260f952c78d88835805b7ff9f456be300f43b0c"
         },
         {
           "caseId": "multi-source-misleading",
@@ -25880,7 +25884,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 103473,
+            "traceBytes": 105503,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -26130,7 +26134,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "06377bcecc61d14146474446d1478c31ad3a70d19423537626c52156cb98b073"
+          "receiptId": "82a210a40e8607ed870e6146ea7b97747343952c564970f49a41f8a9b285e51f"
         },
         {
           "caseId": "minority-conflict-success",
@@ -26188,7 +26192,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 147681,
+            "traceBytes": 149711,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -26430,7 +26434,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "2373e837191726832d1c3d27e92f9ad1321f0aa1c347e01f501f03b67b696106"
+          "receiptId": "890df2e889795993750ceae290b98672905b648c065566f28d6ac6bafbad048b"
         },
         {
           "caseId": "minority-conflict-insufficient",
@@ -26457,7 +26461,7 @@
             "completionTokens": 60,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 173370,
+            "traceBytes": 177720,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -26987,7 +26991,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "0ee117209fd36c7e60962f25581a5669312e3acbbeb6dd35e880982efbedf84e"
+          "receiptId": "16eec4a35bd32f3785c152e256d8063b5f7ee4ee8a377dd4f670e110e3260d0f"
         },
         {
           "caseId": "minority-conflict-conflict",
@@ -27045,7 +27049,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 148263,
+            "traceBytes": 150293,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -27287,7 +27291,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "1155079d26203fcf9c018ee61a1ccfab4c044a44fb065f7a0ee9a1f0d12e77e0"
+          "receiptId": "ccff0c9cf89648fcc4e398a5419697ed42efd763d528575eab53868ebf424503"
         },
         {
           "caseId": "minority-conflict-misleading",
@@ -27345,7 +27349,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 155823,
+            "traceBytes": 157853,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -27595,7 +27599,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "9b4b42d69382227c4e89d36caef32f1e70017bd91def8ccdacfce9ab5a8658e5"
+          "receiptId": "20888826eafdbd81a37e951bc24f2e8331de89186a62a74282aef504a269190b"
         },
         {
           "caseId": "ambiguous-intent-success",
@@ -27622,7 +27626,7 @@
             "completionTokens": 60,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 187890,
+            "traceBytes": 192240,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -28172,7 +28176,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "42578d814b29edf0a8880d210240a089792f707ab95135110b97a3a0246f0858"
+          "receiptId": "a1a584302510e23387a186a18676bf662b054a68995fc2abd5c57d1b367b6148"
         },
         {
           "caseId": "ambiguous-intent-insufficient",
@@ -28199,7 +28203,7 @@
             "completionTokens": 60,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 173188,
+            "traceBytes": 177538,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -28729,7 +28733,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "400fdd20858ee53c045e4cd286b480c397c050d018cf41bd63f964cdea605244"
+          "receiptId": "e9dab36ce99f3e3d464011450a95e9ef845e52e4461cdd0f824b33dab9791906"
         },
         {
           "caseId": "ambiguous-intent-conflict",
@@ -28756,7 +28760,7 @@
             "completionTokens": 60,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 188072,
+            "traceBytes": 192422,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -29306,7 +29310,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "7874030686db89a8cbf087253517a76ea5ac7a7cfcdcddb144c69e38535255a6"
+          "receiptId": "64ad538f57927f21e0066d1c3cfc680342d91514b015e9088dde9fdaec9dea25"
         },
         {
           "caseId": "ambiguous-intent-misleading",
@@ -29333,7 +29337,7 @@
             "completionTokens": 60,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 204696,
+            "traceBytes": 209046,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -29903,7 +29907,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "20c1dc5b7d163e84542c709edddec80746c42e1e55f296c59b5d957e49aad8e5"
+          "receiptId": "c4ffce2c0f1b933b15116d49565c16778d8953fb326fb9f7105f21d3cf24ddd3"
         },
         {
           "caseId": "adversarial-proposal-success",
@@ -29961,7 +29965,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 149483,
+            "traceBytes": 151513,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -30203,7 +30207,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "7bf150d513742ef043a6b0fad1dce62638eef27ccf2fb07aec7de0499a65387d"
+          "receiptId": "8b643d7f64ac796d4c7da7132cf2e0f5f56fffb0061d16aa9be31461e520ecca"
         },
         {
           "caseId": "adversarial-proposal-insufficient",
@@ -30230,7 +30234,7 @@
             "completionTokens": 60,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 173916,
+            "traceBytes": 178266,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -30760,7 +30764,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "f3ffb1131d433e6b94a177414d073f23d05d338222c769a6bf93205baf909871"
+          "receiptId": "5c7288eb29cfc8633df5d826304e6019fa54b5a57ed86fa37f7a403df8c8a0c3"
         },
         {
           "caseId": "adversarial-proposal-conflict",
@@ -30818,7 +30822,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 149999,
+            "traceBytes": 152029,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -31060,7 +31064,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "59c2dcd51127f677b3b3592f1f73ee4341671aee4a5bb9aba98c868a46426e14"
+          "receiptId": "57707b398130b924585c5985ef4a9f61d52a87939cb85e280e76ede31ccebc28"
         },
         {
           "caseId": "adversarial-proposal-misleading",
@@ -31118,7 +31122,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 157523,
+            "traceBytes": 159553,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -31368,7 +31372,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "a4aac6b7d18d117ad02007956cb14c10112db00a166365074bbbaf121751663e"
+          "receiptId": "deb928c8c7fcf74369c0a0baf52f8218d02afedec5b100c968f7d53bdaecda3e"
         },
         {
           "caseId": "panel-success",
@@ -31409,7 +31413,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 92875,
+            "traceBytes": 94905,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -31651,7 +31655,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "d3ee3722bfd9453a793b9ed6a7b712a91daa1f76693c32489ec9cab3d04f915b"
+          "receiptId": "523b7c546ebd508683235546fcf35dd6068e90241701ebbff7b13e96beb154d9"
         },
         {
           "caseId": "panel-insufficient",
@@ -31678,7 +31682,7 @@
             "completionTokens": 60,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 171186,
+            "traceBytes": 175536,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -32208,7 +32212,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c950da92ee1c9c184cf5ff74cc38305bc791ae835fa9f98f72677c44e1023614"
+          "receiptId": "7449edd7d6b24c583434aef411888988a49e5f29be9713c70ed54869ed3b195f"
         },
         {
           "caseId": "panel-conflict",
@@ -32266,7 +32270,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 137763,
+            "traceBytes": 139793,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -32508,7 +32512,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "2f9e960a7371b86218fbcedba96ce4a4bb8867cebb36605ea9b777114ab5d3eb"
+          "receiptId": "192191400cb9a3f9679e64387b65661fa45de75df093d9445256149f9de09297"
         },
         {
           "caseId": "panel-misleading",
@@ -32549,7 +32553,7 @@
             "completionTokens": 24,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 100727,
+            "traceBytes": 102757,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -32799,7 +32803,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "a139f3fef39d06a1a3ae4b9b40da5b27b1a17f264ee2ca516bf8b2e6c6e676cb"
+          "receiptId": "5fe84a18c835b8163457759a10ac2eaeafec57db0b295403fe0d7699e9e26827"
         }
       ]
     },
@@ -35757,7 +35761,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 153745,
+            "traceBytes": 156210,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -36099,7 +36103,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "ed43028396a235361ed24afeb849aba9b6a260f49a4833bc00d2e900cc90eabf"
+          "receiptId": "c9f1c718df66e99c1cbdc126fe545afb380c9f70f2e386eda2ccd4f95daf538b"
         },
         {
           "caseId": "direct-fact-insufficient",
@@ -36126,7 +36130,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 382048,
+            "traceBytes": 387413,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -36944,7 +36948,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "2a712cbd0cad3323c9bce04c5f9a05ef6d7a50a4bcec5e090ff14a4cc083b460"
+          "receiptId": "eba847178e840447e1ec9d731c80f0a84b791411c47065dbf2d12725d5dd5e27"
         },
         {
           "caseId": "direct-fact-conflict",
@@ -37002,7 +37006,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 227861,
+            "traceBytes": 230326,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -37344,7 +37348,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "f688eca854f4ed830c98d50333a271f4c4db531a749916683dfaac0a4d692fa6"
+          "receiptId": "0b9ee4672f60ce49a7210e6aed6f4d835be0c50084685ff569dcffc877899f4d"
         },
         {
           "caseId": "direct-fact-misleading",
@@ -37385,7 +37389,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 164127,
+            "traceBytes": 166592,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -37739,7 +37743,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "9509f91a8a15291a0a6d448be1fe9eb9d135d26d688e469f98e5614661937afa"
+          "receiptId": "1f9237a75874030997e08699e0227c8a89ee1a51018f7fc1c74c4c43d39becd7"
         },
         {
           "caseId": "multi-source-success",
@@ -37780,7 +37784,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 150331,
+            "traceBytes": 152796,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -38122,7 +38126,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c97662b844eb9f45069fa4307e8fc36266b0a19e7903a50e399f49621fbbea68"
+          "receiptId": "f1369d8a5cca184c4cacae2ae4264804601627c5b3eb5d2039ce8d77d634fc17"
         },
         {
           "caseId": "multi-source-insufficient",
@@ -38149,7 +38153,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 382632,
+            "traceBytes": 387997,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -38967,7 +38971,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "8357acc012bc933af72f648aeb60fa9083cbeb6020ebee0698161f598ccbdfe1"
+          "receiptId": "a7b2a9dedbb5fa478405318405837d90ef9200a045c405a4b7fb1662929d4d63"
         },
         {
           "caseId": "multi-source-conflict",
@@ -39025,7 +39029,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 224962,
+            "traceBytes": 227427,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -39367,7 +39371,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "9be25b9540d7d5251b8260d23509b4474b7754c9555a774c63fdbf0dfb442ab6"
+          "receiptId": "ee8c30fa71e3243736b14b17dec2df6cf9ee76e1d46fdeac5f1c8e1b88e5aa96"
         },
         {
           "caseId": "multi-source-misleading",
@@ -39408,7 +39412,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 160527,
+            "traceBytes": 162992,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -39762,7 +39766,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "3e03bbd85a60fec6cd3af654f445ecd5e0fb8ad67758aad3b025463cf9772a4d"
+          "receiptId": "51646a6b3c47f0813e81c736a0f2731f00a30d8f78cee6030e41ff368d67a3ff"
         },
         {
           "caseId": "minority-conflict-success",
@@ -39820,7 +39824,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 232734,
+            "traceBytes": 235199,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -40162,7 +40166,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "420c7a20c125acb3b8e99a405196b8b1ebbc6e9d12ec0362456b70193622020e"
+          "receiptId": "7b40b377aebd064a24d2d507d4a4132dd23b205445e5e7e3a4eccfb9303cfb9a"
         },
         {
           "caseId": "minority-conflict-insufficient",
@@ -40189,7 +40193,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 385474,
+            "traceBytes": 390839,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -41007,7 +41011,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "ea8986ed927eca8e0742813a470da59a66bd0855136a6cd3584bef85d5c57366"
+          "receiptId": "fbb18718c15ac1de1022f319ae46239ac69f5c3d5b8e91a7cae856c919622986"
         },
         {
           "caseId": "minority-conflict-conflict",
@@ -41065,7 +41069,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 233671,
+            "traceBytes": 236136,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -41407,7 +41411,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "fd4f60cc7125e1480e16be0ddf0b392eb7bf4d4ad550445fb6e98c2f6bbb4c71"
+          "receiptId": "c051abf42ed58594de0fc2a5d5fa1c98cc564908362166bcdc556bc42dd96e17"
         },
         {
           "caseId": "minority-conflict-misleading",
@@ -41465,7 +41469,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 243233,
+            "traceBytes": 245698,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -41819,7 +41823,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "fbc73108a23d737cd493abb15239d06c3bc05ec466070c580d33a1c5d7fbc0ae"
+          "receiptId": "bcf6e19f5b0aca896939be0eb4684e3eb30fdbbdb8b8d2a357f83a68450f0703"
         },
         {
           "caseId": "ambiguous-intent-success",
@@ -41846,7 +41850,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 402234,
+            "traceBytes": 407599,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -42696,7 +42700,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "e0301db05853c035a33c4130f1e9807ab7340515c47aec17869822aca16c6e3a"
+          "receiptId": "0baaa782cf6e1bc54e4244e149de574eb810b6056fca4eaca3922b29a885fc4c"
         },
         {
           "caseId": "ambiguous-intent-insufficient",
@@ -42723,7 +42727,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 384916,
+            "traceBytes": 390281,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -43541,7 +43545,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "984554ec56afdaa4a3a1b375729fc8a92b0ab42461e0849076e1cec09b599d3d"
+          "receiptId": "67af5a5bd90ea196d374a6ac5d19f04f6599899bc9bfd2f9b1e1e4d8fdef9c03"
         },
         {
           "caseId": "ambiguous-intent-conflict",
@@ -43568,7 +43572,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 402796,
+            "traceBytes": 408161,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -44418,7 +44422,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "f98a6c15ed0f316075a0604b6aaf8e9248526e2d6ddd3e6d813edc47cd6cb761"
+          "receiptId": "6e7db86337c1ad08eee92a5401a8e167ed3ed413e572bb153dcfe2f444223f79"
         },
         {
           "caseId": "ambiguous-intent-misleading",
@@ -44445,7 +44449,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 424554,
+            "traceBytes": 429919,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -45327,7 +45331,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "d56938c730f80d1628fad60043efd6392fc50f90f3cc8e8a091ae2b5e81ad9c5"
+          "receiptId": "60d02ad9258358e67116fa57b3764899a07e5c70453c15067d6a7ad6917ed1bc"
         },
         {
           "caseId": "adversarial-proposal-success",
@@ -45385,7 +45389,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 236301,
+            "traceBytes": 238766,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -45727,7 +45731,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "7071c274fdfc6518a9ca9526de54aba3da7fe358a93517d90a3e22d63a058ce2"
+          "receiptId": "ab3072ab8abe20e98ee7b972e857c132f90fdefe9d813052fba6cd7358bb1232"
         },
         {
           "caseId": "adversarial-proposal-insufficient",
@@ -45754,7 +45758,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 387112,
+            "traceBytes": 392477,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -46572,7 +46576,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c3ba584370e4101d7411691968b15f480f10482cb8df892e2423eeecc90bb8fb"
+          "receiptId": "e8331d8672a070c9f544464e601db89d2db5fda89588cfb89cf5e41ad3939269"
         },
         {
           "caseId": "adversarial-proposal-conflict",
@@ -46630,7 +46634,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 237194,
+            "traceBytes": 239659,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -46972,7 +46976,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "d68aa421af24be8b79d03726a3b6a89ae620a9c737e0d9878656f6c49bc9cfa5"
+          "receiptId": "d96108f15851c2abc7241200e8ee1aacd546df549ea4aa239f2ba577c2ba9e61"
         },
         {
           "caseId": "adversarial-proposal-misleading",
@@ -47030,7 +47034,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 246700,
+            "traceBytes": 249165,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -47384,7 +47388,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "ae7ea71d69eabdee005dedcc7dcd0badeedfc8a0aee4ffaed2fe04e5cfe45afc"
+          "receiptId": "44e53dbb19525c30484cef5559eace233698fe4698b56e603639aeef68eac8de"
         },
         {
           "caseId": "panel-success",
@@ -47425,7 +47429,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 146601,
+            "traceBytes": 149066,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -47767,7 +47771,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "3310ee835768d8a441228f8e770493dd96021b0f00085cb958b2cbfee8fcfe0c"
+          "receiptId": "96ba328b2220c58238c6cb5e66f1744c0e57eaa7951a02de4824f1c7416e16fc"
         },
         {
           "caseId": "panel-insufficient",
@@ -47794,7 +47798,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 378548,
+            "traceBytes": 383913,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -48612,7 +48616,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "476c9f782f907e8716423ba0e070887a6c354a3bddc0449c48c0283accba3870"
+          "receiptId": "25ca4ee7fddfeebb1a182541ea45c62e3f8b2d596bfbff0715122fa273e92b2c"
         },
         {
           "caseId": "panel-conflict",
@@ -48670,7 +48674,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 218251,
+            "traceBytes": 220716,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -49012,7 +49016,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "5ed4299d91b9cb5a8c9d359563ca4da3203f6ce6f176a0f7c31a1fe39da1f598"
+          "receiptId": "dbbed75e9ce18e0081ef8d4c90845a3184bd3225c5f86ae270164bb1802039f4"
         },
         {
           "caseId": "panel-misleading",
@@ -49053,7 +49057,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 156603,
+            "traceBytes": 159068,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -49407,7 +49411,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c3b0ce8e296999e388141bbb8de819976857cd04a1b94dfa5d056a64212c1e16"
+          "receiptId": "c576a28dc489742765b3e828822309dc1ffe68b74e117041ef5e49d67e17c214"
         }
       ]
     },
@@ -52365,7 +52369,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 57819,
+            "traceBytes": 59849,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -52509,7 +52513,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c6cb957b491cbae6952e19757e04bdd981779112699341394e13c00a4ab81b82"
+          "receiptId": "6d3b1d8ff0bae8b89abf4b506aa71cfbab94d3a0e28b749b38b5aded313bc70c"
         },
         {
           "caseId": "direct-fact-insufficient",
@@ -52531,7 +52535,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 40217,
+            "traceBytes": 41522,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -52669,7 +52673,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "e869e737e89e8c4212fd1907b0b4e16fe6aa7e8b8c853997ff68af481463fc8d"
+          "receiptId": "bb74cfeb53471a5aa2c59a951707c07410ede282a1fe2fb4028fb0f67fed5986"
         },
         {
           "caseId": "direct-fact-conflict",
@@ -52727,7 +52731,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 74606,
+            "traceBytes": 76636,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -52871,7 +52875,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "aa19bae0875ac4507286e6cbd24560cba14b64afbc4c3f0861cde959affc8891"
+          "receiptId": "2465af2e038f4107945a9099b9962476e2b42970c7cafd1981899da5103815f3"
         },
         {
           "caseId": "direct-fact-misleading",
@@ -52912,7 +52916,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 63589,
+            "traceBytes": 65619,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -53060,7 +53064,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c9655b4ae16381b273873d6ba34c78bfacb11843ac88b841cb2f351a1d56d1f0"
+          "receiptId": "30cbdca7dbd2f747f896955d5409c1631d30ee253f49140cc0b82af0e21d96de"
         },
         {
           "caseId": "multi-source-success",
@@ -53101,7 +53105,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 55538,
+            "traceBytes": 57568,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -53245,7 +53249,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "88c58bad2789d2c5c9a426af1ac102d630598886f130289923f11d882e5559a5"
+          "receiptId": "3d67fda446a48b044c6142118bbe04b9878a0d07c96ef6867feaa0995d2ecd08"
         },
         {
           "caseId": "multi-source-insufficient",
@@ -53267,7 +53271,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 40294,
+            "traceBytes": 41599,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -53405,7 +53409,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "07384849eceebe58d6adc3e7bc093a0e9dbba86a02bff1e256461db127a34024"
+          "receiptId": "47b9e947604ea2c8345cf8bc7506f3e8308a623fa430e48c25839444f33f642f"
         },
         {
           "caseId": "multi-source-conflict",
@@ -53463,7 +53467,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 72295,
+            "traceBytes": 74325,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -53607,7 +53611,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "1277c0e9507ac4454649f130e48804c97cdd61a4181ece1452c6f3093aca2c9c"
+          "receiptId": "aa45dc2f58ed3a20cd11f8a71ec88b6f9d61fb04a57555e29149746a6594a10f"
         },
         {
           "caseId": "multi-source-misleading",
@@ -53648,7 +53652,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 61183,
+            "traceBytes": 63213,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -53796,7 +53800,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "555ae94c388d0852a77bec5d14d9548daad766d282bf152852a749388f9c232a"
+          "receiptId": "5ef1af4ad1fa4d784c55177b80d7295f2c06c98e8eeb4b76dfb4d9f74b721e11"
         },
         {
           "caseId": "minority-conflict-success",
@@ -53854,7 +53858,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 76353,
+            "traceBytes": 78383,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -53998,7 +54002,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "71dc0d874ceac1f4fb0a7a8729e7aecc3137ad1ab5663bf900c1c05e1f605ec4"
+          "receiptId": "8e092f4f537af301cfa0e94f97440a9a0642029992c24b40353937c1117f468b"
         },
         {
           "caseId": "minority-conflict-insufficient",
@@ -54020,7 +54024,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 40679,
+            "traceBytes": 41984,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -54158,7 +54162,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "f7aea8214b46153ecb73576df6fcf9f2b848a56ce6bad302e7526c639a371cfc"
+          "receiptId": "8be1faaf89f3e3d5782d93384ac20ea362036b6bd2c824f7d8ca0ba185b6eeac"
         },
         {
           "caseId": "minority-conflict-conflict",
@@ -54216,7 +54220,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 76640,
+            "traceBytes": 78670,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -54360,7 +54364,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "258ea18870f5af153abefef9d2ea3c39b79402ea7016ab0ec855e03fb2f340ea"
+          "receiptId": "1772854e08e040a6e09d30720ad4d57fcc5c4956184e89524b111540301b39ef"
         },
         {
           "caseId": "minority-conflict-misleading",
@@ -54418,7 +54422,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 82633,
+            "traceBytes": 84663,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -54566,7 +54570,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "f32908dee659d0f39882085e65420e48dca7a325914305751a308d84a69e4f65"
+          "receiptId": "f00bf97164c81b720f5679d6840d97d30c9b0d9ed1411f5ffbd09a6ec36fb44f"
         },
         {
           "caseId": "ambiguous-intent-success",
@@ -54588,7 +54592,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 44494,
+            "traceBytes": 45799,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -54730,7 +54734,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "9ab3d453dd2f931780ca54ee3ce07cc265277649063fda0a899235db1e17ae5a"
+          "receiptId": "fa456b49030ae3829df9901dbb1a7c2dec8fa9e194289bc14c2a2e6d73159028"
         },
         {
           "caseId": "ambiguous-intent-insufficient",
@@ -54752,7 +54756,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 40602,
+            "traceBytes": 41907,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -54890,7 +54894,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "5dc63be20448376f006b28cd3e3ae3141b172fc2ed76359e2d77f221f53d44ec"
+          "receiptId": "a9875e5b9cdc28b8fde4faf1d20f402d0833c933df0502bc794031cef88c8e59"
         },
         {
           "caseId": "ambiguous-intent-conflict",
@@ -54912,7 +54916,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 44546,
+            "traceBytes": 45851,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -55054,7 +55058,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "c45ef28a9e02ad3bd822c81115c2c2bcd7884801e38e0196e1e9a428755f7fb6"
+          "receiptId": "d3cd3a184da614152cbd12043270837416f3453aa077fb8937f0ad782f7e70cd"
         },
         {
           "caseId": "ambiguous-intent-misleading",
@@ -55076,7 +55080,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 48994,
+            "traceBytes": 50299,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -55222,7 +55226,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "180127828518b8a8446e8877840b095f7a985874738fad91b50a91a3f7f0c767"
+          "receiptId": "ad3e2289a09ab7f197a14189bb92077fc39eb076a68d1af94354e30a0cb39cf4"
         },
         {
           "caseId": "adversarial-proposal-success",
@@ -55280,7 +55284,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 76745,
+            "traceBytes": 78775,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -55424,7 +55428,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "a84b746f3a9a2ce3e0a3999eba286fd6426464ba27742a721d5d2f1fb05e7818"
+          "receiptId": "682c1dc66cd8d7a235f5869b0cff2172d290fd7ed772a209991803f5ccfad9ea"
         },
         {
           "caseId": "adversarial-proposal-insufficient",
@@ -55446,7 +55450,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 40910,
+            "traceBytes": 42215,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -55584,7 +55588,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "0c2513dacc73109c7a577766eeb67171c4acf82b9f5563385f8adafd3ffac1b3"
+          "receiptId": "fd747b131226b1311c14213ffd0785c2e3a4d726a4d63a50b20af86d948ec775"
         },
         {
           "caseId": "adversarial-proposal-conflict",
@@ -55642,7 +55646,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 76982,
+            "traceBytes": 79012,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -55786,7 +55790,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "e2e3b644d3ebaeb5bb5434ba306d289e4491b97a5e58dc8224962c1dd4db2004"
+          "receiptId": "d6696f7295067b6b10f7905b7d65da2f89f5c3dfe71ef739fc08526675186046"
         },
         {
           "caseId": "adversarial-proposal-misleading",
@@ -55844,7 +55848,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 82950,
+            "traceBytes": 84980,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -55992,7 +55996,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "194ad9c5deb71a252362f326a45f19167390eae0a69e86e428019c7fe61987e2"
+          "receiptId": "89dbf18bfacb19d1f616b2ecc840cd7f6b574778bbfe07dccf192c115e9d7192"
         },
         {
           "caseId": "panel-success",
@@ -56033,7 +56037,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 54055,
+            "traceBytes": 56085,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -56177,7 +56181,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "578ae4bb75a928defbd16ba5120f37103f041ef08dd7b87380292098cc136b1c"
+          "receiptId": "3153181ce8e6c11f6f5007d514d48607c6f0eb32631ea411788d9e0ca74b7dd7"
         },
         {
           "caseId": "panel-insufficient",
@@ -56199,7 +56203,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 39755,
+            "traceBytes": 41060,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -56337,7 +56341,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "5cadd43e952d2ab0ffb4a4bff57646590e50b62bcd7f29cf9522456afa286932"
+          "receiptId": "19d0458d1cab08ab7366352dfd938cbce4d1cd6dac8ecbf4879642cc28922d67"
         },
         {
           "caseId": "panel-conflict",
@@ -56395,7 +56399,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 69972,
+            "traceBytes": 72002,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -56539,7 +56543,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "d4cfb37d95940c6998618220fc77888bea26d2c51b784b28738c8cd57086f6ba"
+          "receiptId": "302e6542b39a83466fc4ff36e776d12706d52dccaffbf01980220a5829ba0466"
         },
         {
           "caseId": "panel-misleading",
@@ -56580,7 +56584,7 @@
             "completionTokens": 12,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 59525,
+            "traceBytes": 61555,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -56728,7 +56732,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "74bf7ef52847f3b7d49f87e756cd6a2c9ea9c1e61328725a5bd46b7f4cf4b049"
+          "receiptId": "f72e036a06d19f76ac4a4ea24f1de22592542274c460394f5fb3ee79130d6722"
         }
       ]
     },
@@ -59686,7 +59690,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 118891,
+            "traceBytes": 120051,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -60026,7 +60030,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "4090f93a83b97b3f4046bd876de6afc76680cdbae0c3ffbd668193c4dac12c89"
+          "receiptId": "73d426a0716ad2a18f9b55636fb45c87ea6d5f9ae96f1b535531819265b9d4dd"
         },
         {
           "caseId": "direct-fact-insufficient",
@@ -60053,7 +60057,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 230731,
+            "traceBytes": 232181,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -60865,7 +60869,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "7e45076315dcc6309c7de7735df052ad3f9dc6170b01e81af980b2543b326617"
+          "receiptId": "cad8edee51d5e94f5df63fc312a5ea115ef84ab09f636257ce061a957286f2e7"
         },
         {
           "caseId": "direct-fact-conflict",
@@ -60923,7 +60927,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 168078,
+            "traceBytes": 169238,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -61263,7 +61267,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "70a03d473c02893e081a1007f99b4c0ec31746a4d62428b194a69b13d485730c"
+          "receiptId": "5d0ebebf151cf68de553395e414f9da865756b54fa162d05d844c7f31faa8156"
         },
         {
           "caseId": "direct-fact-misleading",
@@ -61304,7 +61308,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 126967,
+            "traceBytes": 128127,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -61656,7 +61660,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "6d6864440ec3257e22d4f3131c8e7155d49b5a9412de24cc3cb1930bd4b20b24"
+          "receiptId": "d03553d55e5c7ef4700017eccefa4af53ee432b041f3df007fa3010196c3a4f2"
         },
         {
           "caseId": "multi-source-success",
@@ -61697,7 +61701,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 116237,
+            "traceBytes": 117397,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -62037,7 +62041,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "565d48b7b7d5a5e364e25b22d53fca730fb4b590e33eac6f3ba1d12072d607c1"
+          "receiptId": "6d60bc74dcb2854f9ad852c22e33f50a43fba276a46bf0e76540a217802f0b8a"
         },
         {
           "caseId": "multi-source-insufficient",
@@ -62064,7 +62068,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 230890,
+            "traceBytes": 232340,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -62876,7 +62880,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "1fd5ccd01858779a4ceda997d82bf68aaf70a32135e58c8b1dfa72be90d3b3d7"
+          "receiptId": "493e9c0d467d0855c3dfe74747fab341efb8b801610b9629fbf7a462385151c7"
         },
         {
           "caseId": "multi-source-conflict",
@@ -62934,7 +62938,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 165086,
+            "traceBytes": 166246,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -63274,7 +63278,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "e4a4c4728d7f3f57cffd52030a3c11026cc211f769f42d1b13d13a796844ace8"
+          "receiptId": "1f3be0ef7c5ba642fb1e4db98a1eafbfb6a82b3ea97eb9fc62d4f2769e750866"
         },
         {
           "caseId": "multi-source-misleading",
@@ -63315,7 +63319,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 124166,
+            "traceBytes": 125326,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -63667,7 +63671,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "95042979959da3f7cb21f524f0aa8fe0d4e3b1f298fc219227b2f94f59183888"
+          "receiptId": "be9224021e47ee6653d5a7218744d2e2ffee6b990565cef71fab99003f4fadfa"
         },
         {
           "caseId": "minority-conflict-success",
@@ -63725,7 +63729,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 171719,
+            "traceBytes": 172879,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -64065,7 +64069,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "865e2007ae1ae6814b9c897105bc57af2d349035b58c53238a46f634eec025fd"
+          "receiptId": "43565f267d01f397763a16732ffdc548716e51c3c2e2511fb21a8e0778898679"
         },
         {
           "caseId": "minority-conflict-insufficient",
@@ -64092,7 +64096,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 231701,
+            "traceBytes": 233151,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -64904,7 +64908,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "eefcfed426082cd32bcff57cf06ffb3309c3d996028d0b46df1a3b3659cb47af"
+          "receiptId": "5bd778324aed70f5ea4d8022957a1ca3fda5c72f25ba70ff60ec51b332065801"
         },
         {
           "caseId": "minority-conflict-conflict",
@@ -64962,7 +64966,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 172398,
+            "traceBytes": 173558,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -65302,7 +65306,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "307a04c211aa72628594bbd35b888b77bea7c88845a061756e4021ebd550388f"
+          "receiptId": "51bafdb93887384026f2cf21dd3bf06bc6e19b079596baabcc93dcc23a13cd8d"
         },
         {
           "caseId": "minority-conflict-misleading",
@@ -65360,7 +65364,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 181093,
+            "traceBytes": 182253,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -65712,7 +65716,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "ea42e668e55cd0f943aed95ec07f58ffdffd73efdf4e10128afac0c181fb08af"
+          "receiptId": "1463c51a71937b967d1a6a3c2663e2cf492e331009e771da767e4a33949cafe6"
         },
         {
           "caseId": "ambiguous-intent-success",
@@ -65739,7 +65743,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 246985,
+            "traceBytes": 248435,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -66583,7 +66587,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "3106d786ce5cf47d36d82d7bfd96695a1ebe4fe45ac209319feaa4cde76ce061"
+          "receiptId": "4d237871b20c10b47c3658597d25b1b7386105ca0a8dcbe3b1c107fb4e73c41d"
         },
         {
           "caseId": "ambiguous-intent-insufficient",
@@ -66610,7 +66614,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 231542,
+            "traceBytes": 232992,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -67422,7 +67426,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "621e60880511a1f0a863e8bf4c5ec226a65f3b6c7849fa8aa391ccc37f81bbc5"
+          "receiptId": "7595da7170d1b8a6bfd8211e0386c0b55d017b05f6f1b7be1810028e1609d563"
         },
         {
           "caseId": "ambiguous-intent-conflict",
@@ -67449,7 +67453,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 247148,
+            "traceBytes": 248598,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -68293,7 +68297,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "5e5727a8dd70d0c3f54ba0e0bb11556a8aa908df57611be8770aa3eee0030ac9"
+          "receiptId": "ede0e7bcc26ed3520f14605c155da80eaba18aa936a830d0e8f95bf419674272"
         },
         {
           "caseId": "ambiguous-intent-misleading",
@@ -68320,7 +68324,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 264240,
+            "traceBytes": 265690,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -69196,7 +69200,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "5f594ef5b6b78b5963b17f7f8669bd649356ec4d48e4305aa10df940d69366a5"
+          "receiptId": "b4cd6146a76958d07abcab9614bbb1aae42e90889799169a8bd531402deebe09"
         },
         {
           "caseId": "adversarial-proposal-success",
@@ -69254,7 +69258,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 175078,
+            "traceBytes": 176238,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -69594,7 +69598,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "a82a6fdda40a1544661b677854f95816a86cbf686b4ce2d640c1b44f3b22f3a4"
+          "receiptId": "3325fa077bfac22fc58eb2e4caa85375a5078cc097468c5ff0535f72872504d2"
         },
         {
           "caseId": "adversarial-proposal-insufficient",
@@ -69621,7 +69625,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 232188,
+            "traceBytes": 233638,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -70433,7 +70437,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "f38b7d701c7463564249cfc367334d22626e4482d72af02e00cf0940173d3bf3"
+          "receiptId": "1fb3a6ee505fcd58d20e138a93ee3aac8167a80f04ab7c6abaf653901ebc8024"
         },
         {
           "caseId": "adversarial-proposal-conflict",
@@ -70491,7 +70495,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 175699,
+            "traceBytes": 176859,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -70831,7 +70835,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "8cf9a4ce636b9d4e222ba8efe3d75c9d3104c2f8cba8997c50a5e102361d9d18"
+          "receiptId": "ab72ad05cbcc209b8532cfc3f66d34f50945943ce944e016b10e24e1f9eacf3f"
         },
         {
           "caseId": "adversarial-proposal-misleading",
@@ -70889,7 +70893,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 184351,
+            "traceBytes": 185511,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -71241,7 +71245,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "a9fceb8e3c9d92415afe5e4a43285c841a5acdcc1f290dd8eac9535b388061b4"
+          "receiptId": "c3654906f93f02753e345c3c9037f61d989f46eb0c07daa5d8e61d7599e96aea"
         },
         {
           "caseId": "panel-success",
@@ -71282,7 +71286,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 113683,
+            "traceBytes": 114843,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -71622,7 +71626,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "951a883bb73e5c5052982600e07877020ff30ec1b2c5c355fafd28f14268444c"
+          "receiptId": "2ccbe4a81de731e8045bfc95a9698e55dc427ffc621189f7f4ec38b58e903378"
         },
         {
           "caseId": "panel-insufficient",
@@ -71649,7 +71653,7 @@
             "completionTokens": 96,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 229757,
+            "traceBytes": 231207,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -72461,7 +72465,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "571c79e7fb61e7763a4e77cabc0e24995c80c832fdd53cb929ffcf9617f579eb"
+          "receiptId": "d62cc0be94e8ed0f5f7112495bc77fe245d76fb6a9bddfc1e3cd603b00650cfd"
         },
         {
           "caseId": "panel-conflict",
@@ -72519,7 +72523,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 160112,
+            "traceBytes": 161272,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -72859,7 +72863,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "63c0720399c52ebe86b72da1a9ab21a36c9b0a4557974ff982200bcd402c5dea"
+          "receiptId": "b6fb77e9c8cb5ab44e47a2ed6eb6124f23ca1016e908a1800c8f6de7dfeb0e23"
         },
         {
           "caseId": "panel-misleading",
@@ -72900,7 +72904,7 @@
             "completionTokens": 36,
             "unknownTokenRequests": 0,
             "activeMs": 0,
-            "traceBytes": 121437,
+            "traceBytes": 122597,
             "replays": 0,
             "restores": 0,
             "money": null,
@@ -73252,7 +73256,7 @@
             },
             "humanId": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
           },
-          "receiptId": "b937745fd4b11b9c3c5202e63361d098b6b50e0b6be87b68b8951a039bc6a253"
+          "receiptId": "e3a8df4cf1cdc85a7a5a325e9b0a73920cf4f16ccf15ceeb9d60ca8f5f444ee3"
         }
       ]
     },
@@ -76680,5 +76684,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "68373e21ac156e4c7f7bdc8fe27e49b5572445ce66606c3d3095adf8e724a0c2"
+  "reportId": "99fcd0dc00fca5e6397cf8903b4c0e2e15d4c9be0510629614c8bdc5a8b5f681"
 }

@@ -215,6 +215,10 @@
           "items": {
             "$ref": "#/$defs/gmplEvidenceUnit"
           }
+        },
+        "payload": {
+          "type": "object",
+          "description": "Optional domain data; validated by the bound payloadSchema and passed intact in role context.domain."
         }
       },
       "required": [

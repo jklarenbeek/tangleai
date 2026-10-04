@@ -1,5 +1,7 @@
 import { createMemoryResearchStore, planProjectCreate, planStateTransition, planStageCommit,
-  inputManifestHashOf, stageAttemptIdOf, researchArtifactIdOf, validateResearchShape, createReplayTransport, discoverCrossref } from '@tangleai/research';
+  inputManifestHashOf, stageAttemptIdOf, researchArtifactIdOf, validateResearchShape, createReplayTransport, discoverCrossref,
+  researchArtifacts, createResearchPatternHost, prepareResearchPattern } from '@tangleai/research';
+import { GMPL_LIMITS } from '@tangleai/gmpl';
 import { createAttemptBudget, sleep } from '@jarenjs/core/retry';
 import schema from '@tangleai/research/schemas/research' with { type: 'json' };
 
@@ -32,6 +34,15 @@ export async function exerciseResearchConsumer(store) {
     replayed: replay.replayed === true, bytes: [...reread.bytes], artifactId: await researchArtifactIdOf(bytes), refusal: invalid.issues[0].code } };
 }
 export async function qualifyResearchBrowser() { return (await exerciseResearchConsumer(createMemoryResearchStore())).summary; }
+export async function qualifyResearchReasoningBrowser() {
+  const prepared = await prepareResearchPattern('hypothesis', await createResearchPatternHost('packed-reasoning', { ...GMPL_LIMITS }));
+  const nodes = [prepared.validated.workflow, ...prepared.snapshot.subgraphs.values()].flatMap(workflow => workflow.nodes);
+  const prompts = researchArtifacts.prompts.filter(pack => ['synthesis', 'innovator', 'pragmatist', 'contrarian', 'synthesizer', 'designer', 'screener']
+    .some(name => pack.id === 'research-' + name));
+  return { packs: prompts.length, participants: nodes.filter(node => /^position-\d+$/.test(node.id)).length,
+    separateSynthesizer: nodes.some(node => node.id === 'synthesis' && node.kind === 'agent'),
+    generatedPlanSchema: !!schema.$defs.ResearchDesignProposal };
+}
 export async function qualifyResearchDiscoveryBrowser() {
   const body = JSON.stringify({ message: { items: [{ DOI: '10.5555/packed', title: ['Packed scholarly fixture'],
     author: [{ name: 'Fixture Author' }], published: { 'date-parts': [[2026, 1, 1]] }, URL: 'https://fixture.invalid/packed' }] } });

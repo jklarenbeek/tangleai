@@ -9,6 +9,7 @@ import { RESEARCH_EVALUATOR, researchComparison } from '../lib/research-evaluato
 import { runResearchFixture } from '../lib/research-runner.ts';
 import { createResearchLifecycleFixture } from '../lib/research-lifecycle-fixture.ts';
 import { researchDiscoveryTranscripts } from '../lib/research-discovery-fixture.ts';
+import { researchReasoningScripts } from '../lib/research-reasoning-fixture.ts';
 import { verifyResearchBundle } from '../lib/research-oracle.ts';
 import { requireResearchShape } from '../lib/research-validation.ts';
 import type { ResearchDataset, ResearchFixtureTopic, ResearchFixtureManifest, ResearchHiddenLabels,
@@ -184,6 +185,7 @@ for (const [id, code, path, mutate] of invalid) {
   if (verification.valid || observed?.code !== code || observed.path !== path)
     throw new Error('Wrong refusal for ' + id + ': ' + JSON.stringify(verification));
 }
+for (const [path, script] of await researchReasoningScripts(loaded)) put(path, script);
 manifest.members = [...files].sort(([a], [b]) => a.localeCompare(b)).map(([path, content]) => ({ path, sha256: researchBytesSha256(content), licence }));
 const { revision: _revision, ...registration } = manifest;
 manifest.revision = await canonicalSha256(registration);

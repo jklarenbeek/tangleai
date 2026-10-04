@@ -211,6 +211,9 @@
             "$ref": "#/$defs/ResearchMeasuredRow"
           },
           {
+            "$ref": "#/$defs/ResearchReasoningRow"
+          },
+          {
             "$ref": "#/$defs/ResearchMissingRow"
           }
         ]
@@ -352,6 +355,681 @@
   ],
   "additionalProperties": false,
   "$defs": {
+    "ResearchReasoningScript": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "licence": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLicence"
+        },
+        "model": {
+          "const": "scripted-v1"
+        },
+        "synthesis": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/SynthesisProposal"
+        },
+        "hypotheses": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/HypothesisSetProposal"
+        },
+        "design": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchDesignProposal"
+        },
+        "participants": {
+          "type": "object",
+          "properties": {
+            "innovator": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/HypothesisSetProposal"
+            },
+            "pragmatist": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/HypothesisSetProposal"
+            },
+            "contrarian": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/HypothesisSetProposal"
+            },
+            "screener": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/HypothesisSetProposal"
+            }
+          },
+          "required": [
+            "innovator",
+            "pragmatist",
+            "contrarian",
+            "screener"
+          ],
+          "additionalProperties": false
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "infeasible-plan",
+                  "confounded-plan",
+                  "hidden-read",
+                  "malformed"
+                ]
+              },
+              "proposal": {
+                "type": "object"
+              },
+              "expected": {
+                "$ref": "#/$defs/ResearchRefusal"
+              }
+            },
+            "required": [
+              "id",
+              "proposal",
+              "expected"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "noveltyTranscripts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "url": {
+                "type": "string",
+                "minLength": 1
+              },
+              "body": {
+                "type": "null"
+              },
+              "headers": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "response": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "const": 200
+                  },
+                  "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "body": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "status",
+                  "headers",
+                  "body"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "method",
+              "url",
+              "body",
+              "response"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "topicId",
+        "licence",
+        "model",
+        "synthesis",
+        "hypotheses",
+        "design",
+        "participants",
+        "cases",
+        "noveltyTranscripts"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchModelUsage": {
+      "type": "object",
+      "properties": {
+        "roles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalization": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repair": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promptTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completionTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknownTokenRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traceBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "roles",
+        "completion",
+        "normalization",
+        "repair",
+        "physical",
+        "promptTokens",
+        "completionTokens",
+        "unknownTokenRequests",
+        "traceBytes"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchReasoningTopic": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "hypothesisValidity": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "evidenceLinkage": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "designIntegrity": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "hiddenIsolation": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "refusalConformance": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "interventions": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "substantive": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "approvals": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "total",
+            "substantive",
+            "approvals"
+          ],
+          "additionalProperties": false
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "failures": {
+          "type": "object",
+          "properties": {
+            "program": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "verification": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "leakage": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "confound": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "budget": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "provider": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unsupported": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "program",
+            "verification",
+            "leakage",
+            "confound",
+            "budget",
+            "provider",
+            "unsupported"
+          ],
+          "additionalProperties": false
+        },
+        "usage": {
+          "$ref": "#/$defs/ResearchModelUsage"
+        },
+        "nativeStatus": {
+          "const": "waiting_for_input"
+        },
+        "state": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchState"
+        },
+        "bindingId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "runIdentityId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "workflowVersionId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "registryRevision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "executableRevision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/StageAttempt"
+          },
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/InputManifest"
+          },
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ArtifactAdmission"
+          },
+          "minItems": 1
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/mas-runtime#/$defs/masInteraction"
+          }
+        },
+        "synthesis": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Synthesis"
+        },
+        "hypotheses": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchHypothesis"
+          },
+          "minItems": 2
+        },
+        "hypothesisSet": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/HypothesisSet"
+        },
+        "contract": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchContract"
+        },
+        "plan": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentPlan"
+        },
+        "novelty": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/NoveltyReport"
+        },
+        "visibleCardIds": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "availableCards": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string",
+                "minLength": 1
+              },
+              "phase": {
+                "enum": [
+                  "completion",
+                  "normalization",
+                  "repair"
+                ]
+              },
+              "sha256": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+              },
+              "hiddenPaths": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "role",
+              "phase",
+              "sha256",
+              "hiddenPaths"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "executedPacks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "const": "independent-verifier"
+              },
+              "calls": {
+                "const": 0
+              },
+              "expected": {
+                "$ref": "#/$defs/ResearchRefusal"
+              },
+              "observed": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResearchRefusal"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "matched": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "calls",
+              "expected",
+              "observed",
+              "matched"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "discoveryReplay": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "misses": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "networkCalls": {
+              "const": 0
+            }
+          },
+          "required": [
+            "requests",
+            "misses",
+            "networkCalls"
+          ],
+          "additionalProperties": false
+        },
+        "noveltyReplay": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "misses": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "networkCalls": {
+              "const": 0
+            }
+          },
+          "required": [
+            "requests",
+            "misses",
+            "networkCalls"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "topicId",
+        "hypothesisValidity",
+        "evidenceLinkage",
+        "designIntegrity",
+        "hiddenIsolation",
+        "refusalConformance",
+        "interventions",
+        "cost",
+        "failures",
+        "usage",
+        "nativeStatus",
+        "state",
+        "bindingId",
+        "runIdentityId",
+        "workflowVersionId",
+        "registryRevision",
+        "executableRevision",
+        "attempts",
+        "manifests",
+        "artifacts",
+        "interactions",
+        "synthesis",
+        "hypotheses",
+        "hypothesisSet",
+        "contract",
+        "plan",
+        "novelty",
+        "visibleCardIds",
+        "availableCards",
+        "requests",
+        "executedPacks",
+        "probes",
+        "discoveryReplay",
+        "noveltyReplay"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchReasoningRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "fixed-single-agent",
+            "fixed-plus-debate"
+          ]
+        },
+        "state": {
+          "const": "measured"
+        },
+        "scope": {
+          "const": "pre-execution"
+        },
+        "hypothesisValidity": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "evidenceLinkage": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "designIntegrity": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "hiddenIsolation": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "refusalConformance": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "interventions": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "substantive": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "approvals": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "total",
+            "substantive",
+            "approvals"
+          ],
+          "additionalProperties": false
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "failures": {
+          "type": "object",
+          "properties": {
+            "program": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "verification": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "leakage": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "confound": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "budget": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "provider": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unsupported": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "program",
+            "verification",
+            "leakage",
+            "confound",
+            "budget",
+            "provider",
+            "unsupported"
+          ],
+          "additionalProperties": false
+        },
+        "usage": {
+          "$ref": "#/$defs/ResearchModelUsage"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchReasoningTopic"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "id",
+        "state",
+        "scope",
+        "hypothesisValidity",
+        "evidenceLinkage",
+        "designIntegrity",
+        "hiddenIsolation",
+        "refusalConformance",
+        "interventions",
+        "cost",
+        "failures",
+        "usage",
+        "topics"
+      ],
+      "additionalProperties": false
+    },
     "ResearchDiscoveryMeasurement": {
       "type": "object",
       "properties": {
@@ -1567,6 +2245,9 @@
         "state": {
           "const": "measured"
         },
+        "scope": {
+          "const": "full-lifecycle"
+        },
         "preregistrationIntegrity": {
           "$ref": "#/$defs/ResearchScore"
         },
@@ -1687,6 +2368,7 @@
       "required": [
         "id",
         "state",
+        "scope",
         "preregistrationIntegrity",
         "literatureRecall",
         "literaturePrecision",
@@ -1904,7 +2586,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -1929,7 +2611,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -1954,7 +2636,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -1979,7 +2661,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2004,7 +2686,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2029,7 +2711,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2054,7 +2736,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2079,7 +2761,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2104,7 +2786,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2129,7 +2811,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2154,7 +2836,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2179,7 +2861,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2204,7 +2886,7 @@
       },
       {
         "$every": {
-          "row": "$.rows[?(@.state==\"measured\")]"
+          "row": "$.rows[?(@.scope==\"full-lifecycle\")]"
         },
         "$satisfies": {
           "$and": [
@@ -2225,6 +2907,379 @@
               ]
             }
           ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.hypothesisValidity.passed",
+                {
+                  "$sum": "$row.topics[*].hypothesisValidity.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.hypothesisValidity.total",
+                {
+                  "$sum": "$row.topics[*].hypothesisValidity.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.evidenceLinkage.passed",
+                {
+                  "$sum": "$row.topics[*].evidenceLinkage.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.evidenceLinkage.total",
+                {
+                  "$sum": "$row.topics[*].evidenceLinkage.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.designIntegrity.passed",
+                {
+                  "$sum": "$row.topics[*].designIntegrity.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.designIntegrity.total",
+                {
+                  "$sum": "$row.topics[*].designIntegrity.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.hiddenIsolation.passed",
+                {
+                  "$sum": "$row.topics[*].hiddenIsolation.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.hiddenIsolation.total",
+                {
+                  "$sum": "$row.topics[*].hiddenIsolation.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.refusalConformance.passed",
+                {
+                  "$sum": "$row.topics[*].refusalConformance.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.refusalConformance.total",
+                {
+                  "$sum": "$row.topics[*].refusalConformance.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$row.usage.roles",
+            {
+              "$sum": "$row.topics[*].usage.roles"
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$row.usage.completion",
+            {
+              "$sum": "$row.topics[*].usage.completion"
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$row.usage.normalization",
+            {
+              "$sum": "$row.topics[*].usage.normalization"
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$row.usage.repair",
+            {
+              "$sum": "$row.topics[*].usage.repair"
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$row.usage.physical",
+            {
+              "$sum": "$row.topics[*].usage.physical"
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$row.usage.promptTokens",
+            {
+              "$sum": "$row.topics[*].usage.promptTokens"
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$row.usage.completionTokens",
+            {
+              "$sum": "$row.topics[*].usage.completionTokens"
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$row.usage.unknownTokenRequests",
+            {
+              "$sum": "$row.topics[*].usage.unknownTokenRequests"
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$row.usage.traceBytes",
+            {
+              "$sum": "$row.topics[*].usage.traceBytes"
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"pre-execution\")]"
+        },
+        "$satisfies": {
+          "$every": {
+            "topic": "$row.topics[*]"
+          },
+          "$satisfies": {
+            "$and": [
+              {
+                "$eq": [
+                  "$topic.state.status",
+                  "DESIGN_GATE"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.state.contractHash",
+                  "$topic.contract.contractHash"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.state.planHash",
+                  "$topic.plan.planHash"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.plan.contractHash",
+                  "$topic.contract.contractHash"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.usage.physical",
+                  {
+                    "$add": [
+                      {
+                        "$add": [
+                          "$topic.usage.completion",
+                          "$topic.usage.normalization"
+                        ]
+                      },
+                      "$topic.usage.repair"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.usage.physical",
+                  {
+                    "$count": "$topic.requests[*]"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.physical",
+                  "$topic.usage.physical"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.calls",
+                  "$topic.usage.physical"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.tokens",
+                  {
+                    "$add": [
+                      "$topic.usage.promptTokens",
+                      "$topic.usage.completionTokens"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$le": [
+                  "$topic.usage.traceBytes",
+                  "$.registration.caps.traceBytes"
+                ]
+              },
+              {
+                "$le": [
+                  {
+                    "$count": "$topic.visibleCardIds[*]"
+                  },
+                  "$topic.availableCards"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.calls",
+                  {
+                    "$sum": "$topic.attempts[*].spend.calls"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.tokens",
+                  {
+                    "$sum": "$topic.attempts[*].spend.tokens"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.ms",
+                  {
+                    "$sum": "$topic.attempts[*].spend.ms"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.physical",
+                  {
+                    "$sum": "$topic.attempts[*].spend.physical"
+                  }
+                ]
+              }
+            ]
+          }
         }
       },
       {

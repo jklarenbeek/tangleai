@@ -10,6 +10,8 @@ for(const pattern of ['parallel-analysis','peer-review'] as const)it(`${pattern}
   const p=await prepareGmplPattern({pattern},'pattern',{domain});
   const d=await driveGmplWorkflow(p,{input:{input:fixture.input},bindings:p.bindings,response:()=>({result:fixture.script.result})});
   assert.equal(d.status,'failed');assert.equal(d.usage.physical,0);assert.match(d.trace.run.failure!.error.detail,/TGMPL1001/);
+  assert.equal(d.trace.run.failure!.error.cause?.code,'TGMPL1001');
+  assert.equal(d.trace.run.failure!.error.cause?.docPath,'/input');
 });
 it('peer review supports its declared one-reviewer lower bound',async()=>{
   const p=await prepareGmplPattern({pattern:'peer-review',participants:1}),result=fixture.script.result;

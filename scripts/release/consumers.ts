@@ -217,6 +217,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
         replayed: true, bytes: [97, 98, 99], artifactId: 'art-ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad', refusal: 'TRSH1001' });
       assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.researchDiscovery)),
         { doi: '10.5555/packed', rawHash: true, requests: 1, misses: 0, networkCalls: 0 });
+      assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.researchReasoning)),
+        { packs: 7, participants: 3, separateSynthesizer: true, generatedPlanSchema: true });
       const groundingBrowser = await browser.tangleConsumer.grounding;
       const graphBrowser = await browser.tangleConsumer.lightrag;
       const graphPreparation = await browser.tangleConsumer.lightragPreparation;

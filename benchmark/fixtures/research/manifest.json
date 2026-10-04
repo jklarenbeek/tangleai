@@ -1001,6 +1001,33 @@
       }
     },
     {
+      "path": "scripts/embedder-width.json",
+      "sha256": "bea68522dd796ce16add12ea9394deb8b427d7ff1f30605de3d4be3708864140",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "scripts/kmeans-seeding.json",
+      "sha256": "718aa1a2113bd763445676498f2aeb7b7e8042951ff151043c819683ae1f0fbc",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "scripts/lexical-ranking.json",
+      "sha256": "d4593d6bde6b7fb6330c25ea76b8a023406e3ba074ff4efe5096091a133950ff",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
       "path": "sources/embedder-width-paper-1.md",
       "sha256": "3b1ab468457fe9d56b0a758bda4d64d1591f631a1c4dfff9dedc827224891079",
       "licence": {
@@ -1253,5 +1280,5 @@
       }
     }
   ],
-  "revision": "fc9fadb43116bad3a4b4f02a5fdbe88d142cfbcbcab33953c12a445beb1f60b7"
+  "revision": "0dcc3ef21c648b837abf5652cdb061294f237cf463c6b842e522a8228cf436d8"
 }

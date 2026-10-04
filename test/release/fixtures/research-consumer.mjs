@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { openTangleDb, createResearchStore, researchRunLogId, createRunLog } from '@tangleai/store';
-import { exerciseResearchConsumer, qualifyResearchBrowser, qualifyResearchDiscoveryBrowser } from './research-browser.mjs';
+import { exerciseResearchConsumer, qualifyResearchBrowser, qualifyResearchDiscoveryBrowser, qualifyResearchReasoningBrowser } from './research-browser.mjs';
 import { runResearchExample } from './research-example.mjs';
 
 assert.match(import.meta.resolve('@tangleai/research'), /\.js$/);
@@ -13,6 +13,7 @@ try {
     artifactId: 'art-ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad', refusal: 'TRSH1001' };
   assert.deepEqual(await qualifyResearchBrowser(), expected);
   assert.deepEqual(await qualifyResearchDiscoveryBrowser(), { doi: '10.5555/packed', rawHash: true, requests: 1, misses: 0, networkCalls: 0 });
+  assert.deepEqual(await qualifyResearchReasoningBrowser(), { packs: 7, participants: 3, separateSynthesizer: true, generatedPlanSchema: true });
   const path = join(directory, 'research.db'); db = await openTangleDb({ path });
   const run = await exerciseResearchConsumer(createResearchStore(db)); assert.deepEqual(run.summary, expected);
   const runLogId = await researchRunLogId(db, 'packed-research'); assert.ok(runLogId);

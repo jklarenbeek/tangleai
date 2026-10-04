@@ -18,7 +18,7 @@ const context = await researchContext();
 const report = await buildReport({ context });
 function measured(value: ResearchReport, index: number): ResearchMeasuredRow {
   const row = value.rows[index]; assert.equal(row.state, 'measured');
-  if (row.state !== 'measured') throw new Error('expected measured row'); return row;
+  if (row.state !== 'measured' || row.scope !== 'full-lifecycle') throw new Error('expected a measured full-lifecycle row'); return row;
 }
 async function rehash(value: ResearchReport): Promise<void> {
   const { reportId: _id, ...body } = value; value.reportId = await canonicalSha256(body);
@@ -78,15 +78,37 @@ describe('research instrument', () => {
       assert.ok(row.acquisitions.every(a => a.status === 'resolved' && a.issues.length === 0));
     }
   });
-  it('every registered mechanism and its absent provider identity remain explicit', () => {
+  it('every registered mechanism has an explicit measurement scope and provider identity state', () => {
     assert.deepEqual(report.rows.map(row => row.id), RESEARCH_ROW_IDS);
-    for (const row of report.rows.slice(2)) {
+    for (const row of report.rows.filter(row => !['artifact-oracle', 'no-model-runner', 'fixed-single-agent', 'fixed-plus-debate'].includes(row.id))) {
       assert.equal(row.state, 'implementation-missing'); assert.equal(Object.hasOwn(row, 'claimSupport'), false);
       assert.ok('reason' in row && row.reason.length > 0);
     }
-    assert.equal(report.identity.identities.length, 1);
+    assert.equal(report.identity.identities.length, 2);
     assert.equal(report.identity.rows.find(row => row.rowId === 'no-model-runner')?.identityStatus, 'run');
-    assert.ok(report.identity.rows.filter(row => row.rowId !== 'no-model-runner').every(row => row.identityStatus === 'not-run'));
+    assert.ok(report.identity.rows.filter(row => ['fixed-single-agent', 'fixed-plus-debate'].includes(row.rowId)).every(row => row.identityStatus === 'run'));
+    assert.ok(report.identity.rows.filter(row => !['no-model-runner', 'fixed-single-agent', 'fixed-plus-debate'].includes(row.rowId)).every(row => row.identityStatus === 'not-run'));
+  });
+  it('paired reasoning rows publish their equal conformance and unequal native cost without claiming experiment completion', () => {
+    const rows = report.rows.filter(row => row.state === 'measured' && row.scope === 'pre-execution');
+    assert.equal(rows.length, 2);
+    for (const row of rows) {
+      assert.equal(Object.hasOwn(row, 'completion'), false); assert.equal(Object.hasOwn(row, 'claimSupport'), false);
+      assert.equal(row.hypothesisValidity.value, 1); assert.equal(row.evidenceLinkage.value, 1); assert.equal(row.refusalConformance.value, 1);
+      for (const topic of row.topics) {
+        assert.equal(topic.nativeStatus, 'waiting_for_input'); assert.equal(topic.state.status, 'DESIGN_GATE');
+        assert.equal(topic.cost.calls, topic.usage.completion + topic.usage.normalization + topic.usage.repair);
+        assert.equal(topic.cost.tokens, topic.usage.promptTokens + topic.usage.completionTokens);
+        assert.equal(topic.visibleCardIds.length, 8); assert.equal(topic.availableCards, 16);
+        assert.equal(topic.requests.every(request => request.hiddenPaths === 0), true); assert.ok(topic.usage.traceBytes < report.registration.caps.traceBytes);
+        assert.ok(topic.probes.every(probe => probe.kind === 'independent-verifier' && probe.calls === 0 && probe.matched));
+        assert.deepEqual(topic.novelty.coverage, { attempted: 2, complete: 2, total: 2 }); assert.equal(topic.novelty.gating, false);
+        assert.equal(topic.noveltyReplay.requests, 4); assert.equal(topic.noveltyReplay.networkCalls, 0);
+      }
+    }
+    assert.equal(rows[0].cost.calls, 18); assert.equal(rows[1].cost.calls, 78);
+    assert.equal(rows[0].cost.tokens, 180); assert.equal(rows[1].cost.tokens, 780);
+    assert.deepEqual(rows[0].topics.map(topic => topic.visibleCardIds), rows[1].topics.map(topic => topic.visibleCardIds));
   });
   it('native stage execution preserves the exact scientific bundle and truthful early-gate artifact sets', async () => {
     for (const [index, topic] of context.loaded.topics.entries()) {
@@ -139,6 +161,12 @@ describe('research instrument', () => {
       value => { measured(value, 0).claimSupport.total++; },
       value => { value.gate.bundles = false; },
       value => { value.decision = 'drift'; },
+      value => { const row = value.rows.find(row => row.state === 'measured' && row.scope === 'pre-execution')!;
+        if (row.state === 'measured' && row.scope === 'pre-execution') row.topics[0].state.planHash = '0'.repeat(64); },
+      value => { const row = value.rows.find(row => row.state === 'measured' && row.scope === 'pre-execution')!;
+        if (row.state === 'measured' && row.scope === 'pre-execution') {
+          row.topics[0].usage.completion++; row.usage.completion++;
+        } },
     ];
     assert.equal(validateResearchReportShape(report).valid, true);
     for (const [index, mutate] of mutations.entries()) {
