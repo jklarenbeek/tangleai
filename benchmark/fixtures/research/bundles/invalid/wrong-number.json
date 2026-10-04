@@ -1,0 +1,12 @@
+{
+  "id": "wrong-number",
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  },
+  "scope": "sentence-level",
+  "mutation": "Increase the first registered result value by one while retaining its observations and complete seed set.",
+  "expectedCode": "TRSH1002",
+  "expectedState": "unresolved"
+}

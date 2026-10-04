@@ -108,3 +108,19 @@ await selectBranch(candidates, contract); await planResearchDecision(analysis, c
 planResearchReplication(analysis, contract, plan, branches, 1); await researchAnalysisRevisionOf(analysisPolicy);
 await createResearchAnalysisTools(taskTools, { researchStore: sqlite, policy: analysisPolicy, statistic });
 await prepareResearchWorkflow(contract, { binding, profile: 'scripted', limits, execution: executionPolicy, analysis: analysisPolicy });
+
+import { buildClaimLedger, writeResearchDraft, verifyResearchDraft, renderMetricTable, renderMarkdownBundle, rerunBundle, renderLatexBundle,
+  researchDisclosure, researchWritingRevisionOf, createResearchWritingTools, type ResearchWritingInputs, type ResearchClaimLedger,
+  type ResearchRoleIdentity, type Draft, type ResearchExportSource, type ResearchManifest, type ResearchWritingPolicy } from '@tangleai/research';
+declare const writingInputs: ResearchWritingInputs, claimLedger: ResearchClaimLedger, writer: ResearchRoleIdentity, draft: Draft,
+  exportSource: ResearchExportSource, scientificManifest: ResearchManifest, writingPolicy: ResearchWritingPolicy;
+await buildClaimLedger(writingInputs); await writeResearchDraft(claimLedger, writer, { mode: 'template' });
+await verifyResearchDraft(writingInputs, claimLedger, draft); await renderMetricTable(writingInputs);
+const rendered = await renderMarkdownBundle(exportSource, scientificManifest);
+if (rendered.valid) { await rerunBundle(rendered.value.manifest); await renderLatexBundle(rendered.value.manifest); }
+researchDisclosure(exportSource, scientificManifest); await researchWritingRevisionOf(writingPolicy);
+await createResearchWritingTools(taskTools, { policy: writingPolicy });
+await prepareResearchWorkflow(contract, { binding, profile: 'scripted', limits, execution: executionPolicy, analysis: analysisPolicy, writing: writingPolicy });
+// @ts-expect-error Writing modes are closed and never grant an arbitrary toolbox.
+const unknownWriter: ResearchWritingPolicy = { ...writingPolicy, mode: 'unrestricted' };
+void unknownWriter;

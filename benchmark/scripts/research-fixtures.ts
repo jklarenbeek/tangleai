@@ -12,10 +12,11 @@ import { researchDiscoveryTranscripts } from '../lib/research-discovery-fixture.
 import { researchReasoningScripts } from '../lib/research-reasoning-fixture.ts';
 import { researchExecutionRegistration, RESEARCH_EXECUTION_REFUSALS } from '../lib/research-execution-fixture.ts';
 import { researchDecisionRegistration } from '../lib/research-decision-fixture.ts';
+import { researchWritingRegistration, researchWritingControlTopic } from '../lib/research-writing-fixture.ts';
 import { verifyResearchBundle } from '../lib/research-oracle.ts';
 import { requireResearchShape } from '../lib/research-validation.ts';
 import type { ResearchDataset, ResearchFixtureTopic, ResearchFixtureManifest, ResearchHiddenLabels,
-  LiteratureRecord, ResearchBundle, ResearchContract, ExperimentPlan } from '../lib/research.types.ts';
+  LiteratureRecord, ResearchBundle, ResearchContract, ExperimentPlan, ResearchReasoningScript } from '../lib/research.types.ts';
 
 const args = process.argv.slice(2);
 if (args.length > 1 || args.some(arg => arg !== '--check')) throw new Error('Usage: research-fixtures.ts [--check]');
@@ -135,6 +136,7 @@ put('literature/gold.json', topics.map(topic => ({ topicId: topic.id, relevantLi
 const source = 'benchmark/lib/research-programs.ts', sourceHash = researchBytesSha256(await readFile(join(root, source)));
 const manifest: ResearchFixtureManifest = { id: 'research-computational-v1', version: 1,
   analysis: { registration: 'analysis/registration.json' },
+  writing: { registration: 'writing/registration.json', claims: topics.map(topic => ({ topicId: topic.id, path: 'claims/' + topic.id + '.json' })) },
   topics: topics.map(topic => ({ id: topic.id, path: 'topics/' + topic.id + '.json' })),
   literature: { records: 'literature/records.json', gold: 'literature/gold.json' },
   programs: RESEARCH_PROGRAM_IDS.map(id => ({ id, source, sha256: sourceHash, licence })), datasets: [...datasets.keys()],
@@ -193,6 +195,18 @@ for (const [id, code, path, mutate] of invalid) {
 for (const [path, script] of await researchReasoningScripts(loaded)) put(path, script);
 put(manifest.execution.registration, await researchExecutionRegistration(loaded));
 put(manifest.analysis.registration, researchDecisionRegistration(licence));
+const writing = researchWritingRegistration(licence);
+put(manifest.writing.registration, writing);
+const writingTopic = await researchWritingControlTopic(topics.find(topic => topic.id === writing.control.topicId)!, writing);
+put(writing.control.topicPath, writingTopic);
+const writingScript = (await researchReasoningScripts({ ...loaded, topics: [writingTopic] })).get('scripts/' + writingTopic.id + '.json') as ResearchReasoningScript;
+writingScript.design.plan.design.resources.physical = writingTopic.plan.conditions.length * writingTopic.contract.replicatePolicy.seeds.length;
+put(writing.control.scriptPath, writingScript);
+for (const row of manifest.writing.claims) put(row.path, { topicId: row.topicId, licence,
+  required: hidden.get(row.topicId)!.requiredClaims.map(claim => ({ ...claim, expectedState: 'supported' })) });
+put('bundles/invalid/wrong-number.json', { id: 'wrong-number', licence, scope: 'sentence-level',
+  mutation: 'Increase the first registered result value by one while retaining its observations and complete seed set.',
+  expectedCode: 'TRSH1002', expectedState: 'unresolved' });
 for (const fixture of RESEARCH_EXECUTION_REFUSALS) put('bundles/invalid/' + fixture.id + '.json', fixture);
 manifest.members = [...files].sort(([a], [b]) => a.localeCompare(b)).map(([path, content]) => ({ path, sha256: researchBytesSha256(content), licence }));
 const { revision: _revision, ...registration } = manifest;

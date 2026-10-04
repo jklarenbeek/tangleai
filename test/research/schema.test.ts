@@ -44,13 +44,14 @@ it('the public schema owns every research record and closes object definitions',
     'MetricObservation', 'ResearchDecision', 'ResearchClaim', 'Review', 'Intervention', 'ResearchLesson',
     'ResearchManifest', 'DisclosureChecklist']) assert.equal(Object.hasOwn(researchSchema.$defs, name), true, name);
   assert.deepEqual(researchSchema.$defs.ResearchBundle.properties.claimLedger, CLAIM_EVIDENCE_SCHEMA);
+  assert.deepEqual(researchSchema.$defs.ResearchClaimEnvelope, CLAIM_EVIDENCE_SCHEMA);
   const visit = (value: unknown, path = ''): void => {
     // The native evidence envelope owns its intentionally open artifact metadata.
-    if (path === '/ResearchBundle/properties/claimLedger') return;
+    if (path === '/ResearchBundle/properties/claimLedger' || path === '/ResearchClaimEnvelope') return;
     if (Array.isArray(value)) { value.forEach((item, i) => visit(item, path + '/' + i)); return; }
     if (value === null || typeof value !== 'object') return;
     const schema = value as Record<string, unknown>;
-    if (schema.type === 'object') assert.equal(schema.additionalProperties, false);
+    if (schema.type === 'object') assert.equal(schema.additionalProperties, false, path);
     Object.entries(schema).forEach(([key, item]) => visit(item, path + '/' + key));
   };
   visit(researchSchema.$defs);

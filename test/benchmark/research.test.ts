@@ -47,7 +47,7 @@ describe('research instrument', () => {
     assert.equal(renderDocument(rebuilt), await readFile(DOCUMENT_PATH, 'utf8'));
   });
   it('the oracle reaches every dimension ceiling while the no-model floor omits half the claims', () => {
-    assert.equal(report.decision, 'conformant'); assert.deepEqual(report.gate, { registration: true, oracle: true, bundles: true, analysis: true, networkCalls: 0 });
+    assert.equal(report.decision, 'conformant'); assert.deepEqual(report.gate, { registration: true, oracle: true, bundles: true, analysis: true, writing: true, networkCalls: 0 });
     const oracle = measured(report, 0), floor = measured(report, 1);
     for (const topic of oracle.topics) for (const dimension of RESEARCH_DIMENSIONS)
       assert.equal(topic[dimension].value, dimension === 'literatureRecall' ? 0.75 : 1, topic.topicId + '/' + dimension);
@@ -81,14 +81,47 @@ describe('research instrument', () => {
   });
   it('every registered mechanism has an explicit measurement scope and provider identity state', () => {
     assert.deepEqual(report.rows.map(row => row.id), RESEARCH_ROW_IDS);
-    for (const row of report.rows.filter(row => !['artifact-oracle', 'no-model-runner', 'fixed-single-agent', 'fixed-plus-debate', 'fixed-plus-branching'].includes(row.id))) {
+    for (const row of report.rows.filter(row => row.id === 'full-auto-full')) {
       assert.equal(row.state, 'implementation-missing'); assert.equal(Object.hasOwn(row, 'claimSupport'), false);
       assert.ok('reason' in row && row.reason.length > 0);
     }
-    assert.equal(report.identity.identities.length, 2);
+    assert.equal(report.identity.identities.length, 3);
     assert.equal(report.identity.rows.find(row => row.rowId === 'no-model-runner')?.identityStatus, 'run');
-    assert.ok(report.identity.rows.filter(row => ['fixed-single-agent', 'fixed-plus-debate', 'fixed-plus-branching'].includes(row.rowId)).every(row => row.identityStatus === 'run'));
-    assert.ok(report.identity.rows.filter(row => !['no-model-runner', 'fixed-single-agent', 'fixed-plus-debate', 'fixed-plus-branching'].includes(row.rowId)).every(row => row.identityStatus === 'not-run'));
+    assert.ok(report.identity.rows.filter(row => !['artifact-oracle', 'full-auto-full'].includes(row.rowId)).every(row => row.identityStatus === 'run'));
+    assert.ok(report.identity.rows.filter(row => ['artifact-oracle', 'full-auto-full'].includes(row.rowId)).every(row => row.identityStatus === 'not-run'));
+  });
+  it('writing retains missing result claims, the stopped scientific outcomes and a separately registered complete native control', () => {
+    const rows = report.rows.filter(row => row.state === 'measured' && row.scope === 'writing');
+    assert.equal(rows.length, 2);
+    const [retrieval, full] = rows;
+    assert.deepEqual(retrieval.claimSupport, { passed: 6, total: 12, value: 0.5 });
+    assert.deepEqual(retrieval.numericMapping, { passed: 0, total: 6, value: 0 });
+    assert.deepEqual(full.claimSupport, { passed: 12, total: 12, value: 1 });
+    assert.deepEqual(full.numericMapping, { passed: 6, total: 6, value: 1 });
+    assert.equal(retrieval.cost.calls, 0); assert.equal(retrieval.interventions.total, 0);
+    assert.deepEqual(full.cost, report.analysis.rows[0].cost);
+    for (const row of rows) for (const topic of row.topics) {
+      assert.equal(topic.citationIdentity.value, 1); assert.equal(topic.claimValidity.value, 1); assert.equal(topic.bundleRerun.value, 1);
+      assert.equal(topic.refusalConformance.value, 1); assert.equal(topic.receipt.files.length, 7);
+      assert.equal(topic.receipt.latex.state, 'skipped'); assert.ok(topic.receipt.latex.reason);
+      assert.equal(topic.bundle.source.disclosure.length, 8);
+      assert.equal(topic.bundle.source.disclosure.find(item => item.item === 'human-review')!.satisfied, false);
+      if (row.id === 'single-pass-retrieve-draft') {
+        assert.equal(topic.terminal, 'LITERATURE_GATE'); assert.equal(topic.scope, 'retrieval-control'); assert.equal(topic.resultClaims, 0);
+        assert.equal(topic.probes.length, 3); assert.equal(topic.required.filter(claim => claim.actualState === 'missing').length, 2);
+      } else {
+        assert.equal(topic.terminal, 'STOPPED'); assert.equal(topic.scope, 'stopped-run-audit'); assert.equal(topic.resultClaims, 2);
+        assert.equal(topic.probes.length, 4); assert.equal(topic.bundle.source.inputs.decision?.kind, 'Stop');
+      }
+    }
+    const control = report.writing.control!;
+    assert.equal(control.state.status, 'COMPLETE'); assert.equal(control.writerCalls, 2); assert.equal(control.reviewCalls, 14);
+    assert.equal(control.bundle.source.inputs.analysis?.support, 'supported'); assert.equal(control.bundle.source.inputs.decision?.kind, 'Proceed');
+    assert.equal(control.bundle.source.reviews.length, 2); assert.equal(control.cost.calls, control.requests.length);
+    assert.equal(control.requests.every(row => row.hiddenPaths === 0), true);
+    assert.equal(control.bundle.source.reviews.every(row => row.independence?.roleId !== control.bundle.source.draft.writer.roleId), true);
+    assert.equal(report.identity.identities.some(row => row.identityId === control.runIdentityId), true);
+    assert.doesNotThrow(() => requireResearchGate(report, 'writing'));
   });
   it('paired reasoning rows publish their equal conformance and unequal native cost without claiming experiment completion', () => {
     const rows = report.rows.filter(row => row.state === 'measured' && row.scope === 'pre-execution');
@@ -189,7 +222,7 @@ describe('research instrument', () => {
     assert.equal(selected.rows.length, 8); assert.equal(selected.rows[0].state, 'measured');
     assert.ok(selected.rows.slice(1).every(row => row.state === 'not-run'));
     assert.equal(selected.gate.oracle, true);
-    assert.equal(selected.gate.analysis, false); assert.equal(selected.decision, 'drift');
+    assert.equal(selected.gate.analysis, false); assert.equal(selected.gate.writing, false); assert.equal(selected.decision, 'drift');
     assert.equal(validateResearchReportShape(selected).valid, true);
     await assert.rejects(buildReport({ context, rows: ['invented'] }), /subset/);
     await assert.rejects(buildReport({ context, rows: ['artifact-oracle', 'artifact-oracle'] }), /subset/);
@@ -223,6 +256,8 @@ describe('research instrument', () => {
       value => { measured(value, 0).claimSupport.total++; },
       value => { value.gate.bundles = false; },
       value => { value.gate.analysis = false; },
+      value => { value.gate.writing = false; },
+      value => { value.writing.control!.writerCalls = 0; },
       value => { value.analysis.probes[0].matched = false; },
       value => { value.analysis.rows[0].cost.physical++; },
       value => { value.analysis.repair[0].reviewCalls++; },

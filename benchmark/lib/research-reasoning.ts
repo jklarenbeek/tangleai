@@ -1,14 +1,15 @@
 /** Measured scripted model paths stop at their actual preregistration gate. */
 import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
 import { resolveProfile, type ProfileRegistry, type HostManifest } from '@tangleai/config';
-import { compileMasRuntime, type MasHostBindings, type MasStore } from '@tangleai/mas';
+import { compileMasRuntime, type MasHostBindings, type MasStore, type WorkflowLimits } from '@tangleai/mas';
 import { openTangleDb, createMasStore, createResearchStore, createMasSegmentDriver, ensurePendingMasSegments } from '@tangleai/store';
 import { createResearchBinding, researchArtifacts, researchReasoningRevisionOf, createDiscoveryStageTools, createResearchReasoningTools,
   prepareResearchWorkflow, initialResearchFrame, planProjectCreate, researchValue, createResearchTaskHandlers, createResearchHostBindings,
   createReplayTransport, createResearchDesign, validateResearchShape, researchExecutionRevisionOf, type ResearchReasoningPolicy, type ResearchProject,
   type ResearchWorkflowFrame, type EvidenceCard, type Synthesis, type ResearchHypothesis, type ResearchContract,
   type ExperimentPlan, type HypothesisSet, type NoveltyReport, type ResearchExecutionPolicy, type ResearchTaskTools, type ResearchStore,
-  researchAnalysisRevisionOf, type ResearchAnalysisRuntimePolicy } from '@tangleai/research';
+  researchAnalysisRevisionOf, type ResearchAnalysisRuntimePolicy, createResearchWritingTools, researchWritingRevisionOf,
+  type ResearchWritingPolicy, type ResearchCost } from '@tangleai/research';
 import { researchExampleTools, type ResearchExampleDecisions } from '../../examples/research.ts';
 import { createResearchDiscoveryFixture, researchDiscoveryConfiguration } from './research-discovery.ts';
 import { requireResearchShape } from './research-validation.ts';
@@ -24,11 +25,14 @@ export interface ResearchReasoningExecution<T = ResearchExecutionTopic> {
   signal?: AbortSignal;
   analysis?: ResearchAnalysisRuntimePolicy;
   reviewResponse?: (node: Parameters<NonNullable<MasHostBindings['clientFor']>>[0], request: unknown) => unknown;
+  writing?: { policy: Omit<ResearchWritingPolicy, 'modelIdentity'>; limits: WorkflowLimits; reservation: ResearchCost;
+    response: NonNullable<ResearchReasoningExecution['reviewResponse']> };
   tools(base: ResearchTaskTools, store: ResearchStore): Promise<ResearchTaskTools>;
-  collect(store: ResearchStore, masStore: MasStore, reasoning: ResearchReasoningTopic): Promise<T>;
+  collect(store: ResearchStore, masStore: MasStore, reasoning: ResearchReasoningTopic,
+    native: { runGraph: string; requests: ResearchReasoningTopic['requests'] }): Promise<T>;
 }
 
-async function identityFor(caps: LoadedResearchFixture['manifest']['caps']) {
+async function identityFor(caps: Pick<WorkflowLimits, 'calls' | 'tokens' | 'ms' | 'concurrency'>) {
   const registry: ProfileRegistry = { version: 1, credentialSlots: [], candidates: [
     { id: 'scripted-chat', kind: 'chat', provider: 'ollama', model: 'scripted-v1', baseUrl: null, credentialSlot: null, features: [], rateCard: null },
     { id: 'scripted-embedding', kind: 'embedding', provider: 'builtin', model: 'research-control', dims: 2, baseUrl: null, credentialSlot: null, features: [], rateCard: null }],
@@ -44,18 +48,20 @@ async function identityFor(caps: LoadedResearchFixture['manifest']['caps']) {
 export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic, mode: ResearchReasoningPolicy['mode'], execution?: ResearchReasoningExecution<T>) {
   const script = requireResearchShape<ResearchReasoningScript>('ResearchReasoningScript', execution?.script ?? JSON.parse(new TextDecoder().decode(loaded.files.get('scripts/' + topic.id + '.json')!)));
   if (script.topicId !== topic.id) throw Error('Research reasoning script belongs to another topic.');
-  const caps = loaded.manifest.caps, limits = { ...caps, toolRounds: 4, fanOut: 8, iterations: 8 }, identity = await identityFor(caps);
+  const caps = execution?.writing?.limits ?? loaded.manifest.caps, limits = execution?.writing?.limits ?? { ...caps, toolRounds: 4, fanOut: 8, iterations: 8 }, identity = await identityFor(caps);
+  const writingPolicy = execution?.writing ? { ...execution.writing.policy, modelIdentity: identity.identityId } : undefined;
   const policy: ResearchReasoningPolicy = { mode, maxCards: 8, novelty: { criteriaId: 'identifier-overlap', concurrency: 1, maxRequests: 8, maxBytes: 1048576,
     query: { provider: 'crossref', pages: 3, rows: 32, bytes: 262144, pageSize: 5 } } };
   const discoveryConfiguration = await researchDiscoveryConfiguration(topic), binding = await createResearchBinding(topic.contract, {
     identity, promptRevision: researchArtifacts.revision, evaluator: topic.plan.evaluator,
-    reservation: { calls: 32, tokens: 32768, ms: 30000, physical: 32 }, toolVersions: [
+    reservation: execution?.writing?.reservation ?? { calls: 32, tokens: 32768, ms: 30000, physical: 32 }, toolVersions: [
       { name: 'scholarly-discovery', version: discoveryConfiguration.revision }, { name: 'research-reasoning', version: await researchReasoningRevisionOf(policy) },
       ...(execution ? [{ name: 'research-execution-fixture', version: execution.revision },
         { name: 'research-execution', version: await researchExecutionRevisionOf(execution.policy) }] : []),
-      ...(execution?.analysis ? [{ name: 'research-analysis', version: await researchAnalysisRevisionOf(execution.analysis) }] : [])] });
+      ...(execution?.analysis ? [{ name: 'research-analysis', version: await researchAnalysisRevisionOf(execution.analysis) }] : []),
+      ...(writingPolicy ? [{ name: 'research-writing', version: await researchWritingRevisionOf(writingPolicy) }] : [])] });
   const prepared = await prepareResearchWorkflow(topic.contract, { binding, profile: 'scripted-v1', limits, reasoning: policy,
-    ...(execution ? { execution: execution.policy } : {}), ...(execution?.analysis ? { analysis: execution.analysis } : {}) });
+    ...(execution ? { execution: execution.policy } : {}), ...(execution?.analysis ? { analysis: execution.analysis } : {}), ...(writingPolicy ? { writing: writingPolicy } : {}) });
   const project: ResearchProject = { id: topic.contract.projectId, topic: topic.title, question: topic.title, domainProfile: 'computational', owner: 'scripted-fixture',
     mode: 'gate-only', safetyClass: 'computational', status: 'CREATED', budget: { calls: caps.calls, tokens: caps.tokens, ms: caps.ms, physical: caps.calls }, createdAt: '2026-01-01T00:00:00.000Z' };
   const frame = await initialResearchFrame(project, topic.plan, binding), now = () => '2026-01-01T00:00:00.000Z';
@@ -72,12 +78,13 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
     if (execution) base = await execution.tools(base, researchStore);
     let tools = await createDiscoveryStageTools(base, discovery.options);
     tools = await createResearchReasoningTools(tools, { project, policy,
-      ...(execution ? { generatedStages: ['execute', 'analyze', 'decide'] as const } : {}), provider: { ...discovery.options.provider, transport: async (request, context) => {
+      ...(execution ? { generatedStages: [...(['execute', 'analyze', 'decide'] as const), ...(writingPolicy ? ['write', 'verify'] as const : [])] } : {}), provider: { ...discovery.options.provider, transport: async (request, context) => {
       const snapshot = researchValue(await researchStore.snapshot(project.id));
       if (!snapshot?.records.some(row => row.kind === 'QueryPlan' && row.value.queries.some(query => query.text === new URL(request.url).searchParams.get('query'))))
         throw Error('Novelty ran before its hypothesis query plan was admitted.');
       return novelty.transport(request, context);
     } } });
+    if (writingPolicy) tools = await createResearchWritingTools(tools, { policy: writingPolicy });
     const usage: ResearchModelUsage = { roles: 0, completion: 0, normalization: 0, repair: 0, physical: 0, promptTokens: 0, completionTokens: 0, unknownTokenRequests: 0, traceBytes: 0 };
     const requests: ResearchReasoningTopic['requests'] = [], executedPacks = new Set<string>(), visibleIds = new Set<string>();
     const cursors = new Map<string, 'completion' | 'normalization' | 'repair'>();
@@ -107,6 +114,10 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
         if (!execution?.reviewResponse) throw Error('Result review requires a registered scripted response.');
         proposal = execution.reviewResponse(node, request);
       }
+      if (node.role === 'research-writer' || /^research-(critic|attacker|defender|judge)-/.test(node.role)) {
+        if (!execution?.writing) throw Error('Draft review requires its registered writing control.');
+        proposal = execution.writing.response(node, request);
+      }
       const base = researchArtifacts.prompts.find(pack => pack.role.id === node.role)!;
       executedPacks.add(base.id.replace(/-(analysis-analyst|analysis-merge|debate-position|debate-rebuttal|debate-judge)$/, ''));
       usage.physical++; usage[phase]++; if (fresh) usage.roles++; usage.promptTokens += 7; usage.completionTokens += 3;
@@ -120,7 +131,7 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
     researchValue(await researchStore.createProject(researchValue(planProjectCreate(project))));
     const created = await masStore.createRun({ runId: project.id, workflowId: prepared.workflow.workflowId, workflowVersionId: prepared.workflow.versionId,
       registryRevision: prepared.snapshot.revision, executableRevision: prepared.plan.executableRevision, configRegistryRevision: prepared.catalog.revision,
-      profile: 'scripted-v1', input: { frame }, limits });
+      profile: 'scripted-v1', input: { frame }, limits: { ...limits } });
     if (!created.ok) throw Error(JSON.stringify(created));
     const driver = createMasSegmentDriver(db, masStore, { owner: 'research-reasoning', leaseMs: 1000 }); await driver.enqueue(created.value);
     for (let segment = 0; segment < 2; segment++) {
@@ -183,6 +194,17 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
     await ensurePendingMasSegments(db, masStore);
     if (!await driver.drive(prepared.plan.executableRevision, compiled.value.executeSegment, execution.signal ?? new AbortController().signal))
       throw Error('Execution continuation was not queued.');
-    return { measurement, identity, execution: await execution.collect(researchStore, masStore, measurement) };
+    if (execution.writing) {
+      const reviewed = (await masStore.readTrace(project.id))!, gate = reviewed.interactions.find(row => row.status === 'waiting');
+      const prompt = gate?.prompt as ResearchWorkflowFrame | undefined;
+      if (reviewed.run.status !== 'waiting_for_input' || prompt?.gate?.kind !== 'quality')
+        throw Error('Positive writing control did not reach its native quality gate: ' + JSON.stringify(reviewed.run.failure));
+      const accepted = await masStore.respondInteraction(gate!.id, { decision: 'approve', approvedManifestHash: prompt.gate.manifestHash,
+        note: 'Scripted mechanism approval; no human quality claim.', actor: 'scripted' }, gate!.revision, topic.id + '-writing-approval');
+      if (!accepted.ok) throw Error(JSON.stringify(accepted));
+      await ensurePendingMasSegments(db, masStore);
+      if (!await driver.drive(prepared.plan.executableRevision, compiled.value.executeSegment, new AbortController().signal)) throw Error('Quality continuation was not queued.');
+    }
+    return { measurement, identity, execution: await execution.collect(researchStore, masStore, measurement, { runGraph: canonicalizeJson(prepared.mermaid), requests }) };
   } finally { await discovery?.close(); await db.close(); }
 }

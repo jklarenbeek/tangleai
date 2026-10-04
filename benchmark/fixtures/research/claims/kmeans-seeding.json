@@ -1,0 +1,46 @@
+{
+  "topicId": "kmeans-seeding",
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  },
+  "required": [
+    {
+      "id": "kmeans-seeding-literature",
+      "kind": "literature",
+      "text": "The synthetic kmeans-seeding protocol compares the same feature inputs under two declared methods.",
+      "literatureId": "kmeans-seeding-paper-1",
+      "observationCondition": null,
+      "strength": "descriptive",
+      "expectedState": "supported"
+    },
+    {
+      "id": "kmeans-seeding-limitation",
+      "kind": "interpretation",
+      "text": "These synthetic results do not establish a general method advantage.",
+      "literatureId": "kmeans-seeding-paper-2",
+      "observationCondition": null,
+      "strength": "descriptive",
+      "expectedState": "supported"
+    },
+    {
+      "id": "kmeans-seeding-baseline-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "baseline",
+      "strength": "descriptive",
+      "expectedState": "supported"
+    },
+    {
+      "id": "kmeans-seeding-candidate-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "candidate",
+      "strength": "descriptive",
+      "expectedState": "supported"
+    }
+  ]
+}

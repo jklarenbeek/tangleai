@@ -95,6 +95,13 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
       const prefix = write.kind === 'Analysis' ? 'analysis-' : write.kind === 'ResearchBranchSelection' ? 'selection-' : 'decision-';
       if (id !== prefix + await researchRevisionOf(body)) refuse('TRSH1002', '/record/id', 'Analysis or decision content address changed.');
     }
+    const writingPrefix: Partial<Record<ResearchRecordKind, string>> = { ResearchClaimLedger: 'ledger-', Draft: 'draft-',
+      ResearchDraftVerification: 'verification-', ResearchExportManifest: 'export-', ExportReceipt: 'export-receipt-' };
+    const prefix = writingPrefix[write.kind] ?? (write.kind === 'Review' && 'draftId' in value ? 'review-' : null);
+    if (prefix) {
+      const { id: _id, ...body } = value as { id: string };
+      if (id !== prefix + await researchRevisionOf(body)) refuse('TRSH1002', '/record/id', 'Writing record content address changed.');
+    }
     return { kind: write.kind, value, id, projectId } as ResearchRecordEntry;
   }
   async function readEntry(tx: ResearchTransaction, projectId: string, kind: ResearchRecordKind, id: string): Promise<ResearchRecordEntry | null> {
@@ -203,6 +210,22 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
       for (const id of row.value.evidenceIds) await reference('EvidenceCard', id);
       for (const id of row.value.observationIds) await reference('MetricObservation', id);
     }
+    if (row.kind === 'ResearchClaimLedger') {
+      if (row.value.analysisId) await reference('Analysis', row.value.analysisId);
+      if (row.value.decisionId) await reference('ResearchDecision', row.value.decisionId);
+      for (const artifact of row.value.envelope.artifacts)
+        await reference(artifact.kind === 'metric-observation' ? 'MetricObservation' : 'EvidenceCard', artifact.id);
+    }
+    if (row.kind === 'Draft') await reference('ResearchClaimLedger', row.value.ledgerId);
+    if (row.kind === 'ResearchDraftVerification') {
+      await reference('ResearchClaimLedger', row.value.ledgerId); await reference('Draft', row.value.draftId);
+    }
+    if (row.kind === 'Review' && row.value.draftId) await reference('Draft', row.value.draftId);
+    if (row.kind === 'ResearchExportManifest') {
+      await reference('Draft', row.value.source.draft.id); await reference('ResearchDraftVerification', row.value.source.verification.id);
+      for (const review of row.value.source.reviews) await reference('Review', review.id);
+    }
+    if (row.kind === 'ExportReceipt') await reference('ResearchExportManifest', row.value.manifestId);
     if (row.kind === 'ResearchManifest') {
       for (const id of row.value.runIds) await reference('ExperimentRun', id);
       for (const id of row.value.observationIds) await reference('MetricObservation', id);

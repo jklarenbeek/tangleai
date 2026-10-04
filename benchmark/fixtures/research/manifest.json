@@ -4,6 +4,23 @@
   "analysis": {
     "registration": "analysis/registration.json"
   },
+  "writing": {
+    "registration": "writing/registration.json",
+    "claims": [
+      {
+        "topicId": "kmeans-seeding",
+        "path": "claims/kmeans-seeding.json"
+      },
+      {
+        "topicId": "lexical-ranking",
+        "path": "claims/lexical-ranking.json"
+      },
+      {
+        "topicId": "embedder-width",
+        "path": "claims/embedder-width.json"
+      }
+    ]
+  },
   "topics": [
     {
       "id": "kmeans-seeding",
@@ -608,6 +625,15 @@
       }
     },
     {
+      "path": "bundles/invalid/wrong-number.json",
+      "sha256": "8dd2a582494dd482f8807d747b7ed8b4c5e70a21810533d1e8c74dd889e49868",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
       "path": "bundles/invalid/wrong-unit.json",
       "sha256": "a9c107aa6048fb316337e68b08ff0127fbd77e372b9e0db00b138f402758b15c",
       "licence": {
@@ -637,6 +663,33 @@
     {
       "path": "bundles/oracle/lexical-ranking.json",
       "sha256": "b967e9ffd2ee7e91decedba3f7c8bf69ad2b09f14b76b17737e9cdbc53d324d6",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "claims/embedder-width.json",
+      "sha256": "af017883c587efa95e45208c08ebd4b14bdc26433e2d337edad21b395031bd53",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "claims/kmeans-seeding.json",
+      "sha256": "0f95c80a56e3adb63652fa420d1437e2681c0ca7a6462d6df612183cd9be5606",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "claims/lexical-ranking.json",
+      "sha256": "26122089167842e29bd7e39835874af338154ffb797723547e85b4bccd2e3a09",
       "licence": {
         "spdx": "MIT",
         "provenance": "tangle-authored-synthetic",
@@ -1389,7 +1442,34 @@
         "provenance": "tangle-authored-synthetic",
         "source": "LICENSE.md"
       }
+    },
+    {
+      "path": "writing/control-script.json",
+      "sha256": "ca7d31e877c49ad6adf4d5d5d14f12d50e0825116b7a4994180ff74fcabbef65",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "writing/control-topic.json",
+      "sha256": "53ad4a1b4b072bd94ab995b1fa74c89aefebd74f0d90ead1eb7a4587eda9061f",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "writing/registration.json",
+      "sha256": "3a1f8f83447ffb3d6ea8dd1b82dd38b6f11ab96f79bbeb170226fb06113621e5",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
     }
   ],
-  "revision": "3c3ebc543537b92619117fb9df5b6cf45a5bd44401047471d064e50bac39e08a"
+  "revision": "54282f614d554a92c162c2cc57ca62680baaf206c2fb984482313fd1b348ae63"
 }

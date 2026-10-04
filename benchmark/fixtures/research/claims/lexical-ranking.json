@@ -1,0 +1,46 @@
+{
+  "topicId": "lexical-ranking",
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  },
+  "required": [
+    {
+      "id": "lexical-ranking-literature",
+      "kind": "literature",
+      "text": "The synthetic lexical-ranking protocol compares the same feature inputs under two declared methods.",
+      "literatureId": "lexical-ranking-paper-1",
+      "observationCondition": null,
+      "strength": "descriptive",
+      "expectedState": "supported"
+    },
+    {
+      "id": "lexical-ranking-limitation",
+      "kind": "interpretation",
+      "text": "These synthetic results do not establish a general method advantage.",
+      "literatureId": "lexical-ranking-paper-2",
+      "observationCondition": null,
+      "strength": "descriptive",
+      "expectedState": "supported"
+    },
+    {
+      "id": "lexical-ranking-baseline-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "baseline",
+      "strength": "descriptive",
+      "expectedState": "supported"
+    },
+    {
+      "id": "lexical-ranking-candidate-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "candidate",
+      "strength": "descriptive",
+      "expectedState": "supported"
+    }
+  ]
+}

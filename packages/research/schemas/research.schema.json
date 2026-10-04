@@ -201,6 +201,11 @@
             "minimize",
             "maximize"
           ]
+        },
+        "roundingDigits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
         }
       },
       "required": [
@@ -1222,6 +1227,9 @@
               "type": "null"
             }
           ]
+        },
+        "proof": {
+          "$ref": "#/$defs/ResearchClaimProof"
         }
       },
       "required": [
@@ -1508,6 +1516,10 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
         }
       },
       "required": [
@@ -2708,6 +2720,28 @@
           "items": {
             "type": "string",
             "minLength": 1
+          }
+        },
+        "independence": {
+          "$ref": "#/$defs/ResearchRoleIdentity"
+        },
+        "rubricVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pattern": {
+          "enum": [
+            "peer-review",
+            "red-team"
+          ]
+        },
+        "draftId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "retainedFindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchGmplFinding"
           }
         }
       },
@@ -5512,6 +5546,991 @@
         "reviewArtifactIds",
         "attemptOrdinal",
         "pivotOrdinal"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchClaimProof": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "literature",
+            "result",
+            "method",
+            "interpretation"
+          ]
+        },
+        "strength": {
+          "enum": [
+            "exact",
+            "supports",
+            "suggests"
+          ]
+        },
+        "cardId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "citation": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "recordId": {
+                  "$ref": "#/$defs/ResearchId"
+                },
+                "canonicalIds": {
+                  "type": "object",
+                  "properties": {
+                    "doi": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "arxiv": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "openalex": {
+                      "type": "string",
+                      "pattern": "^W[0-9]+$"
+                    },
+                    "s2": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "arxivVersion": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [],
+                  "additionalProperties": false
+                },
+                "rawHashes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "enum": [
+                          "openalex",
+                          "crossref",
+                          "semanticscholar",
+                          "arxiv"
+                        ]
+                      },
+                      "sha256": {
+                        "$ref": "#/$defs/Sha256"
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "sha256"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "recordId",
+                "canonicalIds",
+                "rawHashes"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "n": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "strength",
+        "cardId",
+        "quote",
+        "citation",
+        "n"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchClaimEnvelope": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "locator": {
+                "type": "string",
+                "minLength": 1
+              },
+              "digest": {
+                "type": "string",
+                "minLength": 1
+              },
+              "metadata": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "kind"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact": {
+                "type": "string",
+                "minLength": 1
+              },
+              "selector": {
+                "type": "string",
+                "minLength": 1
+              },
+              "quote": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "artifact"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "status": {
+                "enum": [
+                  "supported",
+                  "unresolved"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "id",
+              "text",
+              "critical",
+              "status",
+              "evidence"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "visibleEvidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "version",
+        "artifacts",
+        "evidence",
+        "claims",
+        "visibleEvidence"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchWritingScope": {
+      "enum": [
+        "research-draft",
+        "stopped-run-audit",
+        "retrieval-control"
+      ]
+    },
+    "ResearchWritingInputs": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ResearchWritingScope"
+        },
+        "contract": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchContract"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperimentPlan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchDecision"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "analysis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Analysis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceCard"
+          }
+        },
+        "literature": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LiteratureRecord"
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MetricObservation"
+          }
+        }
+      },
+      "required": [
+        "projectId",
+        "scope",
+        "contract",
+        "plan",
+        "decision",
+        "analysis",
+        "cards",
+        "literature",
+        "observations"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchClaimLedger": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ResearchWritingScope"
+        },
+        "decisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "analysisId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchClaim"
+          }
+        },
+        "envelope": {
+          "$ref": "#/$defs/ResearchClaimEnvelope"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "scope",
+        "decisionId",
+        "analysisId",
+        "claims",
+        "envelope"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchRoleIdentity": {
+      "type": "object",
+      "properties": {
+        "roleId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "promptRevision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "modelIdentity": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "roleId",
+        "promptRevision",
+        "modelIdentity"
+      ],
+      "additionalProperties": false
+    },
+    "Draft": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "ledgerId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "mode": {
+          "enum": [
+            "template",
+            "agent"
+          ]
+        },
+        "writer": {
+          "$ref": "#/$defs/ResearchRoleIdentity"
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "abstract",
+                  "methods",
+                  "experiments",
+                  "results",
+                  "conclusion",
+                  "discussion"
+                ]
+              },
+              "kind": {
+                "enum": [
+                  "strict",
+                  "open"
+                ]
+              },
+              "text": {
+                "type": "string"
+              },
+              "claimIds": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ResearchId"
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "text",
+              "claimIds"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "ledgerId",
+        "mode",
+        "writer",
+        "sections"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchDraftProposal": {
+      "type": "object",
+      "properties": {
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "abstract",
+                  "methods",
+                  "experiments",
+                  "results",
+                  "conclusion",
+                  "discussion"
+                ]
+              },
+              "kind": {
+                "enum": [
+                  "strict",
+                  "open"
+                ]
+              },
+              "text": {
+                "type": "string"
+              },
+              "claimIds": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ResearchId"
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "text",
+              "claimIds"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "sections"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchClaimCheck": {
+      "type": "object",
+      "properties": {
+        "claimId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "section": {
+          "enum": [
+            "abstract",
+            "methods",
+            "experiments",
+            "results",
+            "conclusion",
+            "discussion"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "supported",
+            "unresolved"
+          ]
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchIssue"
+          }
+        }
+      },
+      "required": [
+        "claimId",
+        "section",
+        "text",
+        "critical",
+        "status",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchDraftVerification": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "draftId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "ledgerId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "state": {
+          "enum": [
+            "verified",
+            "refused"
+          ]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchClaimCheck"
+          }
+        },
+        "envelope": {
+          "$ref": "#/$defs/ResearchClaimEnvelope"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchIssue"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "draftId",
+        "ledgerId",
+        "state",
+        "claims",
+        "envelope",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchExportManifest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ResearchWritingScope"
+        },
+        "research": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchManifest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "inputs": {
+              "$ref": "#/$defs/ResearchWritingInputs"
+            },
+            "ledger": {
+              "$ref": "#/$defs/ResearchClaimLedger"
+            },
+            "draft": {
+              "$ref": "#/$defs/Draft"
+            },
+            "verification": {
+              "$ref": "#/$defs/ResearchDraftVerification"
+            },
+            "reviews": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Review"
+              }
+            },
+            "disclosure": {
+              "$ref": "#/$defs/DisclosureChecklist"
+            },
+            "provenance": {
+              "type": "object",
+              "properties": {
+                "runGraph": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "attempts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/StageAttempt"
+                  }
+                },
+                "selection": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/ResearchBranchSelection"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "prompts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/ResearchRoleIdentity"
+                  }
+                },
+                "tools": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "version": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "version"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "code": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/ResearchId"
+                  },
+                  "uniqueItems": true
+                },
+                "seeds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "environments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "interventions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/Intervention"
+                  }
+                },
+                "cost": {
+                  "$ref": "#/$defs/ResearchCost"
+                }
+              },
+              "required": [
+                "runGraph",
+                "attempts",
+                "selection",
+                "prompts",
+                "tools",
+                "code",
+                "data",
+                "seeds",
+                "environments",
+                "interventions",
+                "cost"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "inputs",
+            "ledger",
+            "draft",
+            "verification",
+            "reviews",
+            "disclosure",
+            "provenance"
+          ],
+          "additionalProperties": false
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "enum": [
+                  "draft.md",
+                  "claims.json",
+                  "metrics.json",
+                  "literature.json",
+                  "audit.md",
+                  "disclosure.json"
+                ]
+              },
+              "sha256": {
+                "$ref": "#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "scope",
+        "research",
+        "source",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "ExportReceipt": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "manifestId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "manifestSha256": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "latex": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "enum": [
+                "unmeasured",
+                "compiled",
+                "skipped",
+                "refused"
+              ]
+            },
+            "reason": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "$ref": "#/$defs/Sha256"
+                  }
+                },
+                "required": [
+                  "path",
+                  "sha256"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "state",
+            "reason",
+            "files"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "manifestId",
+        "manifestSha256",
+        "files",
+        "latex"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchMetricTableCell": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "metric": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "aggregate": {
+          "enum": [
+            "individual",
+            "mean"
+          ]
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "condition",
+        "metric",
+        "unit",
+        "seeds",
+        "n",
+        "aggregate",
+        "value"
       ],
       "additionalProperties": false
     }

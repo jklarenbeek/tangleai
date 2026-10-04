@@ -927,7 +927,7 @@
       },
       {
         "path": "benchmark/lib/research-decisions.ts",
-        "sha256": "5ed1efe847bb6bcd4087c1f1c8350eb986f773638e98b7eb20d95763643d34fe"
+        "sha256": "b1bcbb61d89896296cb1a1e539678530356434f08d603c3dafb2f9bec2dd31c2"
       },
       {
         "path": "benchmark/lib/research-discovery-fixture.ts",
@@ -954,6 +954,10 @@
         "sha256": "a58a5c75906bbd9b25ead10f13ae07ff22a3d85bc146392c672f9fb65f54f924"
       },
       {
+        "path": "benchmark/lib/research-latex.ts",
+        "sha256": "04bbcb0f5608791055ba8d22ae563e5f72072e110cc5a401c9fa33bbee8b56dc"
+      },
+      {
         "path": "benchmark/lib/research-lifecycle-fixture.ts",
         "sha256": "59552eba3455f6d401eb4440ed6f3c61f820c355199b2c92a234abf140a16f48"
       },
@@ -971,7 +975,7 @@
       },
       {
         "path": "benchmark/lib/research-reasoning.ts",
-        "sha256": "de40805136dd38fb5c954007b7690418a5fe63ef2894260105c4c47824b05143"
+        "sha256": "5c3574f841cecca301e122e84071b3fd222b03cbf6b5b86ff5b95bf2235bcd64"
       },
       {
         "path": "benchmark/lib/research-runner.ts",
@@ -979,7 +983,7 @@
       },
       {
         "path": "benchmark/lib/research-schema.ts",
-        "sha256": "7de6318052d89a9e23b8879a5963f118cee2e3122faf7ae60c0861cb0bb72024"
+        "sha256": "6c6d767b6bfc3ed5868cdb0e54b1b2930702b1367907552b520c7fa39d50bb71"
       },
       {
         "path": "benchmark/lib/research-statistics.ts",
@@ -994,12 +998,20 @@
         "sha256": "0251b2d7d48b37336f4bfc1fb387b569e09ebef4be0bbf07604bee90edeaa292"
       },
       {
+        "path": "benchmark/lib/research-writing-fixture.ts",
+        "sha256": "60c555e6a8f0b460045018f6ef3fe28478481d0d3acafbde61cc02cfe6a07666"
+      },
+      {
+        "path": "benchmark/lib/research-writing.ts",
+        "sha256": "d6c53e77600ef2f71da7f3d91195b2267c17b2de4f2fc3ed6d2fce8b2264021f"
+      },
+      {
         "path": "benchmark/lib/research.ts",
-        "sha256": "f6949bc88998c73f3157b4019c726d8f101bf7cff37ff134d47bd6605739b6a8"
+        "sha256": "c27ea84134645dc3d096f46a7004a179d664c168a5cae07f03d6deb470667d9b"
       },
       {
         "path": "benchmark/lib/research.types.ts",
-        "sha256": "cdcf1d8acb38ec610e9a4b8bd89bc68452b36713112297601f4a01197709ce40"
+        "sha256": "db3a60efdcd1781146008f0f8dab5aef9b04bcde695d7a81d312879e5e3df581"
       },
       {
         "path": "benchmark/lib/retention.ts",
@@ -1231,7 +1243,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "8c4ad68c7230b2039763ffeff0d5c26cced2cd6aedc69f000fc3d8b68cf67d25"
+        "sha256": "721642ab25fdd188e0fc90427bcb6190de55393d74cb097452e7b0e82113116d"
       },
       {
         "path": "package.json",
@@ -3059,15 +3071,15 @@
       },
       {
         "path": "packages/research/artifacts/catalog.json",
-        "sha256": "8fc513c467313349c5a9bb2350a6297bfce2feb59a28dede980910d5510b520b"
+        "sha256": "8750c1bf3f0499b61875ea0ffa7ce600ef50a1c52ee454e3f33626f03b4073b4"
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "cfa96fcf48e13924ab4852c22ba97b0f3cbcf4e36e725631166abb1a883dae3e"
+        "sha256": "2adf667e8cc78c5c5f1311bf04696d99fcee96d3ce1ab1fcaa088c6595e25e79"
       },
       {
         "path": "packages/research/schemas/research.schema.json",
-        "sha256": "e2c7fe74a0f2eb090f04895bf7f8ebbceb7cdfb6e8f3260e044ab942d6dbd261"
+        "sha256": "8eadb19f9512fdae22cc097c18221db669202b34322483fc30d6a15c9f54759a"
       },
       {
         "path": "packages/research/src/adapters/arxiv.ts",
@@ -3127,11 +3139,11 @@
       },
       {
         "path": "packages/research/src/contracts.gen.ts",
-        "sha256": "64c59a3a9217ef1b2351b55c0e927a702d6ebd6aae423f85196b7a8aeed7eef9"
+        "sha256": "6e498a2434924ee3e618fc2d64ff858945b5f3dde47dfb0dc383dcc574b0d002"
       },
       {
         "path": "packages/research/src/domain.ts",
-        "sha256": "cea4b42e6c216062d6eebf2fe4250b0d1f3016f21c714d81d84fdde1c72ffc6e"
+        "sha256": "068b0912514ed2a527c6093b14ed1ac46e5cee59289fafc7c8a1ba09f5721dba"
       },
       {
         "path": "packages/research/src/errors.ts",
@@ -3170,6 +3182,18 @@
         "sha256": "a2ed20977f7160edcdcd5dce8a241feed425f640af9fde9ca65196ce85a9184e"
       },
       {
+        "path": "packages/research/src/export/latex.ts",
+        "sha256": "72c8c1f143a4c182de2300c5e71f4d4c626bb6287ad4f068a35ec24eb97e0e58"
+      },
+      {
+        "path": "packages/research/src/export/manifest.ts",
+        "sha256": "20473cbba3de13042883acaecadedaafb1c39380defa37455b2727e8f114039a"
+      },
+      {
+        "path": "packages/research/src/export/markdown.ts",
+        "sha256": "7b81d116e54b4f60e961a543a5c7fb4f89c6f0501c26ed81432d54deee2e0840"
+      },
+      {
         "path": "packages/research/src/frames.ts",
         "sha256": "f9f1259ed03caed77424f1f91744bb8e8676393e632fe517ff73fb6d91165970"
       },
@@ -3179,11 +3203,11 @@
       },
       {
         "path": "packages/research/src/handlers.ts",
-        "sha256": "e178fe866c1dfb1a226a5d954a13534d561adb77a195d1cbba4f6e34c59a24af"
+        "sha256": "0a0976fdaeb6d9129691bda79c80d39e3c8b9e1d4ce7ab94fb71b92bc6373353"
       },
       {
         "path": "packages/research/src/host.ts",
-        "sha256": "67f45ce955fc840b2b63555c30a9ad5eec45123e493b68b1fea44b4b0e9b9e47"
+        "sha256": "e62baa10037885fb96d4c18863c0d69fade47a836583aa7eb442bddf590a8272"
       },
       {
         "path": "packages/research/src/identity.ts",
@@ -3191,7 +3215,7 @@
       },
       {
         "path": "packages/research/src/index.ts",
-        "sha256": "4c2d67da3c812183ce019812779a001b065fbc50c636369be459e854bf987c98"
+        "sha256": "ecbf9464ffe8752cf322b85779b2b9f2ecf54a9834ca8dc4ec98e015fcf98182"
       },
       {
         "path": "packages/research/src/manifest.ts",
@@ -3199,11 +3223,11 @@
       },
       {
         "path": "packages/research/src/prompt-contracts.ts",
-        "sha256": "2cf965508b5ad91e38d7db67f3b87cb3af8db230ee2b18f9331c8c6ab189cebe"
+        "sha256": "6502f877bf39cf0e70c3b61a5a0ef47911c473d4c724082f8711bbe02428a288"
       },
       {
         "path": "packages/research/src/reasoning-contract.ts",
-        "sha256": "3f950ace5b54b8119d8aa7fa9cc2a2b43189d31f70632bdd4309a4e61125d350"
+        "sha256": "6e73c1470b3da18eaaf50d4c74c46664113a3019ecf5af91016984ee2ed00a65"
       },
       {
         "path": "packages/research/src/reasoning-records.ts",
@@ -3219,7 +3243,11 @@
       },
       {
         "path": "packages/research/src/records.ts",
-        "sha256": "cb26595eb56153e54a5c0c3e9bc6d7dce5f70ce7448135e956aaeeec8f339b16"
+        "sha256": "7bc9102eb3db20d9134e1a0367024944ec0b3d74e9d1b76b08a3066173824bea"
+      },
+      {
+        "path": "packages/research/src/render.ts",
+        "sha256": "3e6cf4615c5968e045d89b1091cb1884455d4030f1e05e3266fc794c4b95ccc9"
       },
       {
         "path": "packages/research/src/schema.ts",
@@ -3244,6 +3272,10 @@
       {
         "path": "packages/research/src/stages/cards.ts",
         "sha256": "a39eabecca335327fdf8867ea780a33bd28426d7a7e3f46b3cfc966374ae0b42"
+      },
+      {
+        "path": "packages/research/src/stages/claims.ts",
+        "sha256": "276e22029944a734f29f339d6cde088d8c4cf1ae2026fa8fc909319488601af6"
       },
       {
         "path": "packages/research/src/stages/decide.ts",
@@ -3274,6 +3306,10 @@
         "sha256": "86923442ef25a430a9a95b74e9c0a87c96ce4da6d1cbeedf9002389575372c6b"
       },
       {
+        "path": "packages/research/src/stages/review.ts",
+        "sha256": "072023249ea47dee61964161a92d990d9f3a86f4a308a4376709c891faffd1e7"
+      },
+      {
         "path": "packages/research/src/stages/screening.ts",
         "sha256": "57b8e3c23bd75030332995ff35d26e56dfc847ad0d10ae69f16eb5488cf6e9fb"
       },
@@ -3282,12 +3318,20 @@
         "sha256": "7820528773d66ea47cf4192a48f6e95fc1539ead661695f774c4ea34e89566dd"
       },
       {
+        "path": "packages/research/src/stages/verify.ts",
+        "sha256": "640a3235a4a3d60ae1a8449e5de6f8dd25b35e8a79d9059a4695da57bcef243f"
+      },
+      {
+        "path": "packages/research/src/stages/write.ts",
+        "sha256": "0204e20a8356ec7a7a6c0ad45825dc12aa1ff865b9336b538e3266206eaff02c"
+      },
+      {
         "path": "packages/research/src/statistics.ts",
         "sha256": "7bedfbac8be85731d11d95aaa91aade8e89db57303fc437a940e09f66358614c"
       },
       {
         "path": "packages/research/src/store-policy.ts",
-        "sha256": "6db598fb1b7fd90f142fd69298cf9b79c508a9924f6f42fc7e8b2a8301e75a37"
+        "sha256": "b5f947d969d5b2a458e6650baf6aa0bcc72ea5828083393bacfe7e1ce60e770b"
       },
       {
         "path": "packages/research/src/store.ts",
@@ -3307,7 +3351,27 @@
       },
       {
         "path": "packages/research/src/workflow.ts",
-        "sha256": "f523d835808bf1f214d3e26931fa5cfeff1fb2de9810b9e40ebbee477243c3c5"
+        "sha256": "c4db4306610718aedea3f298d874ccb111a461e21c18687737afe8d4ffeb4059"
+      },
+      {
+        "path": "packages/research/src/writing-contract.ts",
+        "sha256": "74018b67a7e62ce75ffe868e33264494c784d4d533f23d8e31eba2c238f4c637"
+      },
+      {
+        "path": "packages/research/src/writing-records.ts",
+        "sha256": "9910c313c2c250ad97acfa541eb0723ccd9f6d416f6a79eb6be37ef33b2d0ebf"
+      },
+      {
+        "path": "packages/research/src/writing-view.ts",
+        "sha256": "e53d310128e863e58e17dd008f1bfcdc73ba6456b8ee885de0bf3c0421b21d7f"
+      },
+      {
+        "path": "packages/research/src/writing-workflow.ts",
+        "sha256": "1c3b45abd1a1cad678eb5b646ccf52004a5ccb16d00d2e8d847956f9b1522428"
+      },
+      {
+        "path": "packages/research/src/writing.ts",
+        "sha256": "4551f96a9895fe0d30e6a46dd8e34bb81e4490b9a1b5dc13c89dd68ca952b586"
       },
       {
         "path": "packages/search/package.json",
@@ -3758,7 +3822,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "df0dd545479c8a148ef484004fbaa71e84c210585d623852bca34a6b8f3b8e56"
+    "sha256": "fa8486c7e3be52889f982171ca36cc726d6f85167096d57d6e2f6fe3e68cd58c"
   },
   "fixtureSource": {
     "files": [
@@ -68948,7 +69012,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "df0dd545479c8a148ef484004fbaa71e84c210585d623852bca34a6b8f3b8e56",
+      "sourceSha256": "fa8486c7e3be52889f982171ca36cc726d6f85167096d57d6e2f6fe3e68cd58c",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69032,7 +69096,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "ec1dd61bb8f243fe4faf9a0e6606800de7bff026260ff56b8d437d89da3aeb7f"
+      "planId": "6ec6f5e8109c7acbc16aa7e8c762d9cd14136877006dfd3fab5716584034aa0b"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69279,5 +69343,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "ab567996b5fc1850f884f7137522dd099e325c3a9b80d90d0f21281c36d0ec98"
+  "reportId": "3ab916beb1e04d53769a1fe42b35b98cd7bb412a122afdad85276a7011c3762d"
 }

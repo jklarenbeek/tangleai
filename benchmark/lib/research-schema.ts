@@ -43,6 +43,8 @@ const topicProperties = { topicId: external('ResearchId'), ...measurement,
 const rowProperties = { id: names(RESEARCH_ROW_IDS), state: { const: 'measured' }, scope: { const: 'full-lifecycle' }, ...measurement,
   topics: array(ref('ResearchTopicResult'), { minItems: 3, maxItems: 3 }) };
 export const RESEARCH_REASONING_DIMENSIONS = ['hypothesisValidity', 'evidenceLinkage', 'designIntegrity', 'hiddenIsolation', 'refusalConformance'] as const;
+export const RESEARCH_WRITING_DIMENSIONS = ['citationIdentity', 'claimSupport', 'numericMapping', 'claimValidity', 'bundleRerun', 'refusalConformance'] as const;
+const writingScores = Object.fromEntries(RESEARCH_WRITING_DIMENSIONS.map(name => [name, ref('ResearchScore')]));
 const reasoningMeasurements = { ...Object.fromEntries(RESEARCH_REASONING_DIMENSIONS.map(name => [name, ref('ResearchScore')])),
   interventions: measurement.interventions, cost: external('ResearchCost'), failures, usage: ref('ResearchModelUsage') };
 const queries: unknown[] = [
@@ -68,6 +70,10 @@ for (const dimension of [...RESEARCH_DIMENSIONS, 'completion']) {
   ] } });
 }
 for (const dimension of RESEARCH_REASONING_DIMENSIONS) queries.push({ $every: { row: '$.rows[?(@.scope=="pre-execution")]' }, $satisfies: { $and: [
+  { $eq: ['$row.' + dimension + '.passed', { $sum: '$row.topics[*].' + dimension + '.passed' }] },
+  { $eq: ['$row.' + dimension + '.total', { $sum: '$row.topics[*].' + dimension + '.total' }] },
+] } });
+for (const dimension of RESEARCH_WRITING_DIMENSIONS) queries.push({ $every: { row: '$.rows[?(@.scope=="writing")]' }, $satisfies: { $and: [
   { $eq: ['$row.' + dimension + '.passed', { $sum: '$row.topics[*].' + dimension + '.passed' }] },
   { $eq: ['$row.' + dimension + '.total', { $sum: '$row.topics[*].' + dimension + '.total' }] },
 ] } });
@@ -105,6 +111,32 @@ const analysisGate = { $and: [
     .map(name => ({ $eq: ['$row.' + name + '.value', 1] })) } },
 ] };
 queries.push({ $eq: ['$.gate.analysis', analysisGate] });
+const writingGate = { $and: [
+  { $eq: [{ $count: '$.rows[?(@.scope=="writing")]' }, 2] },
+  { $eq: ['$.writing.control.state.status', 'COMPLETE'] }, { $gt: ['$.writing.control.writerCalls', 0] }, { $gt: ['$.writing.control.reviewCalls', 0] },
+  { $every: { row: '$.rows[?(@.scope=="writing")]' }, $satisfies: { $and: [
+    ...['citationIdentity', 'claimValidity', 'bundleRerun', 'refusalConformance'].map(name => ({ $eq: ['$row.' + name + '.value', 1] })),
+    { $or: [
+      { $and: [{ $eq: ['$row.id', 'single-pass-retrieve-draft'] }, { $eq: ['$row.claimSupport.value', 0.5] }, { $eq: ['$row.numericMapping.value', 0] }] },
+      { $and: [{ $eq: ['$row.id', 'gate-only-full'] }, { $eq: ['$row.claimSupport.value', 1] }, { $eq: ['$row.numericMapping.value', 1] }] },
+    ] },
+  ] } },
+] };
+queries.push({ $eq: ['$.gate.writing', writingGate] });
+queries.push({ $every: { row: '$.rows[?(@.scope=="writing")]' }, $satisfies: {
+  $every: { topic: '$row.topics[*]' }, $satisfies: { $and: [
+    { $eq: ['$topic.scope', '$topic.bundle.scope'] },
+    { $eq: ['$topic.receipt.manifestId', '$topic.bundle.id'] },
+    { $eq: ['$topic.claimSupport.total', { $count: '$topic.required[*]' }] },
+    { $eq: ['$topic.claimSupport.passed', { $count: '$topic.required[?(@.actualState=="supported")]' }] },
+    { $eq: ['$topic.refusalConformance.total', { $count: '$topic.probes[*]' }] },
+    { $eq: ['$topic.refusalConformance.passed', { $count: '$topic.probes[?(@.matched==true)]' }] },
+    { $every: { probe: '$topic.probes[*]' }, $satisfies: { $eq: ['$probe.matched', { $and: [
+      { $eq: ['$probe.state', 'unresolved'] }, { $eq: ['$probe.expectedCode', '$probe.observedCode'] },
+    ] }] } },
+    ...['calls', 'tokens', 'ms', 'physical'].map(key => ({ $eq: ['$topic.cost.' + key, { $sum: '$topic.bundle.source.provenance.attempts[*].spend.' + key }] })),
+  ] },
+} });
 queries.push({ $every: { probe: '$.analysis.probes[*]' }, $satisfies: { $eq: ['$probe.matched', { $eq: ['$probe.expected', '$probe.decision.kind'] }] } });
 queries.push({ $every: { row: '$.analysis.rows[*]' }, $satisfies: { $and: [
   { $eq: [['$row.topics[*].topicId'], ['$.registration.topics[*]']] },
@@ -139,19 +171,45 @@ export const RESEARCH_REPORT_SCHEMA = {
     ceilings: array(record({ topicId: external('ResearchId'), literatureRecall: ref('ResearchScore'),
       literaturePrecision: ref('ResearchScore'), citationIdentity: ref('ResearchScore'), registryAccuracy: ref('ResearchScore') }),
     { minItems: 3, maxItems: 3 }),
-    rows: array({ oneOf: [ref('ResearchMeasuredRow'), ref('ResearchReasoningRow'), ref('ResearchExecutionRow'), ref('ResearchMissingRow')] }, { minItems: 8, maxItems: 8 }),
+    rows: array({ oneOf: [ref('ResearchMeasuredRow'), ref('ResearchReasoningRow'), ref('ResearchExecutionRow'), ref('ResearchWritingRow'), ref('ResearchMissingRow')] }, { minItems: 8, maxItems: 8 }),
     execution: record({ registrationHash: external('Sha256'), control: nullable(ref('ResearchExecutionRow')),
       failureProbes: array(record({ id: names(['program-throw', 'cancelled']), topic: ref('ResearchExecutionTopic') }), { maxItems: 2 }) }),
     analysis: record({ registrationHash: external('Sha256'), rows: array(ref('ResearchAnalysisRow'), { maxItems: 2 }),
       probes: array(ref('ResearchDecisionProbe'), { maxItems: 5 }), repair: array(ref('ResearchAnalysisTopic'), { maxItems: 2 }) }),
+    writing: record({ registrationHash: external('Sha256'), control: nullable(ref('ResearchWritingControl')) }),
     discovery: array(ref('ResearchDiscoveryMeasurement'), { maxItems: 3 }),
     bundles: array(record({ id: external('ResearchId'), expected: ref('ResearchRefusal'),
       observed: nullable(ref('ResearchRefusal')), refusedAsRegistered: { type: 'boolean' } }), { minItems: 26, maxItems: 26 }),
     disclosure: array(record({ rowId: names(RESEARCH_ROW_IDS), items: external('DisclosureChecklist') }), { minItems: 8, maxItems: 8 }),
-    gate: record({ registration: { type: 'boolean' }, oracle: { type: 'boolean' }, bundles: { type: 'boolean' }, analysis: { type: 'boolean' }, networkCalls: { const: 0 } }),
+    gate: record({ registration: { type: 'boolean' }, oracle: { type: 'boolean' }, bundles: { type: 'boolean' }, analysis: { type: 'boolean' }, writing: { type: 'boolean' }, networkCalls: { const: 0 } }),
     decision: names(['conformant', 'drift']), limitations: array(text, { minItems: 1 }), reportId: external('Sha256'),
   }),
   $defs: {
+    ResearchWritingRegistration: record({ id: { const: 'research-writing-v1' }, licence: external('ResearchLicence'),
+      control: record({ id: { const: 'positive-writing-control' }, topicId: { const: 'kmeans-seeding' },
+        baseline: array(number, { minItems: 5, maxItems: 5 }), candidate: array(number, { minItems: 5, maxItems: 5 }),
+        programIds: record({ baseline: text, candidate: text }), evaluator: external('ResearchEvaluatorIdentity'),
+        metric: external('MetricDefinition'), minImprovement: number, source: text, topicPath: text, scriptPath: text,
+        reservation: external('ResearchCost'), limits: { $ref: 'https://tangleai.dev/schemas/mas-workflow#/$defs/workflowLimits' },
+        policy: record({ mode: { const: 'agent' }, maxCards: positive, maxClaims: positive, maxViewChars: positive }) }),
+      refusals: array(record({ id: names(['hallucinated-citation', 'inflated-claim', 'wrong-number', 'missing-citation']), source: text,
+        expectedCode: names(['TRSH1002', 'TRSH1003', 'TRSH1005']), expectedState: { const: 'unresolved' } }), { minItems: 4, maxItems: 4 }) }),
+    ResearchSentenceRegistration: record({ topicId: external('ResearchId'), licence: external('ResearchLicence'),
+      required: array(record({ id: text, kind: names(['literature', 'metric', 'interpretation']), text, literatureId: nullable(text),
+        observationCondition: nullable(text), strength: names(['descriptive', 'causal']), expectedState: { const: 'supported' } }), { minItems: 4, maxItems: 4 }) }),
+    ResearchWritingProbe: record({ id: text, expectedCode: text, observedCode: nullable(text), state: names(['supported', 'unresolved']), matched: { type: 'boolean' } }),
+    ResearchWritingTopic: record({ topicId: external('ResearchId'), scope: external('ResearchWritingScope'), terminal: names(['LITERATURE_GATE', 'STOPPED', 'COMPLETE']),
+      bundle: external('ResearchExportManifest'), receipt: external('ExportReceipt'), ...writingScores,
+      required: array(record({ id: text, claimId: nullable(text), expectedState: { const: 'supported' }, actualState: names(['supported', 'unresolved', 'missing']) }), { minItems: 4, maxItems: 4 }),
+      probes: array(ref('ResearchWritingProbe')), cost: external('ResearchCost'), interventions: measurement.interventions, failures, resultClaims: count }),
+    ResearchWritingRow: record({ id: names(['single-pass-retrieve-draft', 'gate-only-full']), state: { const: 'measured' }, scope: { const: 'writing' },
+      topics: array(ref('ResearchWritingTopic'), { minItems: 3, maxItems: 3 }), ...writingScores, cost: external('ResearchCost'), interventions: measurement.interventions, failures }),
+    ResearchWritingControl: record({ id: { const: 'positive-writing-control' }, nativeStatus: { const: 'completed' }, state: external('ResearchState'),
+      runIdentityId: external('Sha256'), workflowVersionId: external('Sha256'), traceBytes: count,
+      bundle: external('ResearchExportManifest'), receipt: external('ExportReceipt'),
+      requests: array(record({ role: text, phase: names(['completion', 'normalization', 'repair']), sha256: external('Sha256'), hiddenPaths: count })),
+      interactions: array({ $ref: 'https://tangleai.dev/schemas/mas-runtime#/$defs/masInteraction' }),
+      writerCalls: count, reviewCalls: count, cost: external('ResearchCost') }),
     ResearchDecisionRegistration: record({ id: { const: 'research-decisions-v1' }, licence: external('ResearchLicence'),
       analystIdentityId: external('ResearchId'), reviewerIdentityId: external('ResearchId'), statisticId: text,
       repair: record({ topicId: { const: 'kmeans-seeding' }, programId: text, fault: text }),
@@ -262,6 +320,7 @@ export const RESEARCH_REPORT_SCHEMA = {
       contract: external('ResearchContract'), plan: external('ExperimentPlan'), licence: external('ResearchLicence') }),
     ResearchFixtureManifest: record({ id: { const: 'research-computational-v1' }, version: { const: 1 },
       analysis: record({ registration: text }),
+      writing: record({ registration: text, claims: array(record({ topicId: text, path: text }), { minItems: 3, maxItems: 3 }) }),
       topics: array(record({ id: external('ResearchId'), path: text }), { minItems: 3, maxItems: 3 }),
       literature: record({ records: text, gold: text }),
       programs: array(record({ id: text, source: text, sha256: external('Sha256'), licence: external('ResearchLicence') }), { minItems: 9, maxItems: 9 }),
@@ -281,5 +340,5 @@ export const RESEARCH_REPORT_SCHEMA = {
     ResearchMissingRow: record({ id: names(RESEARCH_ROW_IDS), state: names(['implementation-missing', 'not-run']), reason: text }),
   },
   $query: { $and: [...queries, { $eq: [{ $eq: ['$.decision', 'conformant'] },
-    { $and: ['$.gate.registration', '$.gate.oracle', '$.gate.bundles', '$.gate.analysis'] }] }] },
+    { $and: ['$.gate.registration', '$.gate.oracle', '$.gate.bundles', '$.gate.analysis', '$.gate.writing'] }] }] },
 };

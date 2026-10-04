@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "accf91e2490ab8a20acf078f51079243f4cca903",
+    "head": "de8a41292f1798e60b5f95cf132a90e90b8e0c42",
     "clean": false,
     "files": [
       {
@@ -203,7 +203,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "8c4ad68c7230b2039763ffeff0d5c26cced2cd6aedc69f000fc3d8b68cf67d25"
+        "sha256": "721642ab25fdd188e0fc90427bcb6190de55393d74cb097452e7b0e82113116d"
       },
       {
         "path": "package.json",
@@ -763,7 +763,7 @@
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "cfa96fcf48e13924ab4852c22ba97b0f3cbcf4e36e725631166abb1a883dae3e"
+        "sha256": "2adf667e8cc78c5c5f1311bf04696d99fcee96d3ce1ab1fcaa088c6595e25e79"
       },
       {
         "path": "packages/search/package.json",
@@ -1023,7 +1023,7 @@
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "e2266af03ff7f989582d44ae3d25db0fdc8e2ce9c23f21494991b7921a133c3b"
+        "sha256": "c7c1400e6f2d797a912b656a983bb04a2b848f1d1d631e15fab3fcd08b5cd033"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -1115,7 +1115,7 @@
       },
       {
         "path": "test/release/fixtures/browser.mjs",
-        "sha256": "eb363d6f324d88cb397de395e1143c4c90ab5455be5196cf12da076678bf7f6c"
+        "sha256": "214ebe214ed43b09b9b6f5e601b4e9c526f9c3fbfca2352542e16be9e54032e6"
       },
       {
         "path": "test/release/fixtures/gmpl-browser.mjs",
@@ -1130,7 +1130,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "2c4a7e92bbef199f2753b3eacd6b620a03c0806bafd8e6149d7d2889864540ee"
+    "sha256": "ec733231463f637f1b695d2edd4205dfea60ecd0ac306ae60fee7ef809e9332d"
   },
   "ablations": [
     {
@@ -76684,5 +76684,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "8de3e550b3932357070a5ce28c88f0daf34dac92f4d4dfcc0375f6ea2d8ba863"
+  "reportId": "84df6134744870544850d456e467b9636045440fda24b618eb675284784806ae"
 }

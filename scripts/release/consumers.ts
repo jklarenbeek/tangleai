@@ -223,6 +223,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
         { status: 'ok', value: 2, signature: true, physical: 1, isolated: false, forged: 'TRSH1006', network: 'TRSH1010' });
       assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.researchAnalysis)),
         { support: 'not-supported', underpowered: true, decision: 'Stop', candidates: 1, reviewers: 2 });
+      assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.researchWriting)),
+        { sections: 6, files: 7, rerun: true, disclosure: 8, tex: ['main.tex', 'references.bib'], refused: 'TRSH1002' });
       const groundingBrowser = await browser.tangleConsumer.grounding;
       const graphBrowser = await browser.tangleConsumer.lightrag;
       const graphPreparation = await browser.tangleConsumer.lightragPreparation;

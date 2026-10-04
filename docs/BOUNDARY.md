@@ -148,6 +148,15 @@ spends an afternoon looking:
   `createSearxngClient`; source acquisition reuses the document ingester. Exact
   replay retains failure bodies and headers that the native success-only cache
   does not store. No provider response type is a research record.
+- **Scientific claim verification and research exports.** `@tangleai/research`
+  binds literature identity, exact source quotations and registered numeric
+  observations to a draft. Its verifier applies the research contract's units,
+  conditions, seeds, aggregates, rounding and strict-section policy. The shared
+  `validateClaimEvidence` remains the envelope/reference validator, and native
+  GMPL owns independent review cycles. `@jarenjs/md` owns Markdown syntax;
+  research owns the finite bundle inventory, scientific provenance and disclosure
+  policy. The package emits TeX text only; bounded process execution belongs to
+  the benchmark host. Sentence-level gold and measurement stay in `benchmark/`.
 - **A filesystem watcher.** The suite ships none, and it must not: watching a
   folder is host policy — a debounce, an overflow ceiling, a restart scan and
   a bounded admission are decisions about one application's corpus, not a

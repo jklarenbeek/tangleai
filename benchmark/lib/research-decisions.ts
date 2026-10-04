@@ -1,7 +1,7 @@
 /** Matched native decision controls preserve negative results and expose every continuation cost. */
 import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
 import { createResearchExecutionTools, createResearchAnalysisTools, createFixtureExecutor, researchValue,
-  type ResearchAnalysisRuntimePolicy, type ResearchCost } from '@tangleai/research';
+  type ResearchAnalysisRuntimePolicy, type ResearchCost, type EvidenceCard, type LiteratureRecord, type Intervention } from '@tangleai/research';
 import { researchExecutionFixture } from './research-execution-fixture.ts';
 import { runResearchReasoningFixture } from './research-reasoning.ts';
 import { researchPairedStatistic } from './research-statistics.ts';
@@ -47,7 +47,8 @@ export async function runResearchDecisionFixture(loaded: LoadedResearchFixture, 
   const executor = repair ? createFixtureExecutor({ ...f.programs, [registration.repair.programId]: async () => {
     throw Error(registration.repair.fault);
   } }, { now: () => 0 }) : f.executor;
-  return runResearchReasoningFixture<ResearchAnalysisTopic>(loaded, topic, 'single-agent', { policy: f.policy, script, decisions: [['Stop']],
+  let writingEvidence: { cards: EvidenceCard[]; literature: LiteratureRecord[]; interventions: Intervention[]; runGraph: string; programSourceHash: string } | undefined;
+  const result = await runResearchReasoningFixture<ResearchAnalysisTopic>(loaded, topic, 'single-agent', { policy: f.policy, script, decisions: [['Stop']],
     revision: await canonicalSha256({ registration, mode, repair }), analysis: analysisPolicy, reviewResponse: researchDecisionResponse,
     async tools(base, store) {
       const execute = base.execute, verify = base.verify;
@@ -59,7 +60,7 @@ export async function runResearchDecisionFixture(loaded: LoadedResearchFixture, 
       { researchStore: store, policy: f.policy, executor, evaluators: [f.evaluator], hiddenLabels: f.hiddenLabels, evaluatorBytes: f.evaluatorBytes });
       return createResearchAnalysisTools(execution, { researchStore: store, policy: analysisPolicy, statistic: researchPairedStatistic });
     },
-    async collect(store, masStore, reasoning) {
+    async collect(store, masStore, reasoning, native) {
       const snapshot = researchValue(await store.snapshot(topic.contract.projectId))!, trace = (await masStore.readTrace(topic.contract.projectId))!;
       if (trace.run.status !== 'completed' || snapshot.state.status !== 'STOPPED')
         throw Error('Decision control did not terminate explicitly: ' + JSON.stringify(trace.run.failure));
@@ -78,6 +79,10 @@ export async function runResearchDecisionFixture(loaded: LoadedResearchFixture, 
         bytes: [...researchValue(await store.readArtifact(topic.contract.projectId, row.id)).bytes] })));
       const final = decisions.at(-1)!;
       if (!final?.details || final.kind !== 'Stop') throw Error('Decision control omitted its final bounded decision.');
+      writingEvidence = { cards: snapshot.records.filter(row => row.kind === 'EvidenceCard').map(row => row.value),
+        literature: snapshot.records.filter(row => row.kind === 'LiteratureRecord').map(row => row.value),
+        interventions: snapshot.records.filter(row => row.kind === 'Intervention').map(row => row.value), runGraph: native.runGraph,
+        programSourceHash: await canonicalSha256(loaded.manifest.programs) };
       return requireResearchShape<ResearchAnalysisTopic>('ResearchAnalysisTopic', { topicId: topic.id, nativeStatus: trace.run.status, state: snapshot.state,
         runIdentityId: reasoning.runIdentityId, workflowVersionId: reasoning.workflowVersionId, contract, plan, cost, branches, analyses, decisions, reviews,
         selections: snapshot.records.filter(row => row.kind === 'ResearchBranchSelection').map(row => row.value),
@@ -87,6 +92,8 @@ export async function runResearchDecisionFixture(loaded: LoadedResearchFixture, 
         reviewCalls: snapshot.attempts.filter(row => row.attempt.stage === 'DECIDE').reduce((n, row) => n + row.attempt.spend.calls, 0) });
     },
   });
+  if (!writingEvidence) throw Error('Decision control omitted its admitted writing evidence.');
+  return { ...result, writingEvidence };
 }
 export function aggregateResearchAnalysis(id: ResearchAnalysisRow['id'], topics: ResearchAnalysisTopic[], probes: ResearchDecisionProbe[]): ResearchAnalysisRow {
   const negative = topics.filter(row => row.topicId === 'embedder-width');

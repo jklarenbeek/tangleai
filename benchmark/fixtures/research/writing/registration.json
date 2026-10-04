@@ -1,0 +1,92 @@
+{
+  "id": "research-writing-v1",
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  },
+  "control": {
+    "id": "positive-writing-control",
+    "topicId": "kmeans-seeding",
+    "baseline": [
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "candidate": [
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "programIds": {
+      "baseline": "writing-coordinate-control",
+      "candidate": "writing-coordinate-candidate"
+    },
+    "evaluator": {
+      "id": "writing-coordinate",
+      "version": "1"
+    },
+    "metric": {
+      "id": "coordinate",
+      "unit": "raw-coordinate",
+      "direction": "maximize"
+    },
+    "minImprovement": 1,
+    "source": "benchmark/lib/research-writing.ts",
+    "topicPath": "writing/control-topic.json",
+    "scriptPath": "writing/control-script.json",
+    "reservation": {
+      "calls": 57,
+      "tokens": 32768,
+      "ms": 30000,
+      "physical": 57
+    },
+    "limits": {
+      "calls": 512,
+      "tokens": 524288,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 4,
+      "iterations": 8,
+      "contextChars": 200000,
+      "traceBytes": 8000000
+    },
+    "policy": {
+      "mode": "agent",
+      "maxCards": 64,
+      "maxClaims": 128,
+      "maxViewChars": 50000
+    }
+  },
+  "refusals": [
+    {
+      "id": "hallucinated-citation",
+      "source": "bundles/invalid/hallucinated-citation.json",
+      "expectedCode": "TRSH1003",
+      "expectedState": "unresolved"
+    },
+    {
+      "id": "inflated-claim",
+      "source": "bundles/invalid/inflated-claim.json",
+      "expectedCode": "TRSH1005",
+      "expectedState": "unresolved"
+    },
+    {
+      "id": "wrong-number",
+      "source": "bundles/invalid/wrong-number.json",
+      "expectedCode": "TRSH1002",
+      "expectedState": "unresolved"
+    },
+    {
+      "id": "missing-citation",
+      "source": "bundles/invalid/missing-citation.json",
+      "expectedCode": "TRSH1003",
+      "expectedState": "unresolved"
+    }
+  ]
+}

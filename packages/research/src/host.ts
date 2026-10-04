@@ -23,6 +23,8 @@ export function createResearchHostBindings(options: {
     researchFail('TRSH1007', '/execution', 'Prepared execution topology and admitted handlers must use the same policy.');
   if (!equalsJson(admitted.analysis ?? null, prepared.analysisGraph?.policy ?? null))
     researchFail('TRSH1007', '/analysis', 'Prepared result review and admitted analysis must use the same policy.');
+  if (!equalsJson(admitted.writing ?? null, prepared.writingGraph?.policy ?? null))
+    researchFail('TRSH1007', '/writing', 'Prepared writing and admitted writer/reviewer owners must use the same policy.');
   const checkRun = (run: MasRun) => {
     if (run.workflowVersionId !== prepared.workflow.versionId || run.registryRevision !== prepared.snapshot.revision
       || run.executableRevision !== prepared.plan.executableRevision || run.configRegistryRevision !== prepared.catalog.revision)
@@ -61,7 +63,7 @@ export function createResearchHostBindings(options: {
       }
     },
   };
-  return { store, taskHandlers: { ...prepared.model?.taskHandlers, ...prepared.analysisGraph?.taskHandlers, ...taskHandlers }, toolBindings: admitted.toolBindings ?? {}, contextProviders: {}, now: options.now, clock: options.clock,
-    ...(prepared.model || prepared.executionGraph || prepared.analysisGraph ? { messageAdapters: new Map([...prepared.model?.adapters ?? [], ...prepared.executionGraph?.adapters ?? [], ...prepared.analysisGraph?.adapters ?? []]) } : {}), ...(options.clientFor ? { clientFor: options.clientFor } : {}),
+  return { store, taskHandlers: { ...prepared.model?.taskHandlers, ...prepared.analysisGraph?.taskHandlers, ...prepared.writingGraph?.taskHandlers, ...taskHandlers }, toolBindings: admitted.toolBindings ?? {}, contextProviders: prepared.writingGraph?.contextProviders ?? {}, now: options.now, clock: options.clock,
+    ...(prepared.model || prepared.executionGraph || prepared.analysisGraph || prepared.writingGraph ? { messageAdapters: new Map([...prepared.model?.adapters ?? [], ...prepared.executionGraph?.adapters ?? [], ...prepared.analysisGraph?.adapters ?? [], ...prepared.writingGraph?.adapters ?? []]) } : {}), ...(options.clientFor ? { clientFor: options.clientFor } : {}),
     ...(options.deadlineFor ? { deadlineFor: options.deadlineFor } : {}), ...(options.observer ? { observer: options.observer } : {}) };
 }

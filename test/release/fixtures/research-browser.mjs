@@ -1,8 +1,10 @@
 import { createMemoryResearchStore, planProjectCreate, planStateTransition, planStageCommit,
   inputManifestHashOf, stageAttemptIdOf, researchArtifactIdOf, validateResearchShape, createReplayTransport, discoverCrossref,
   researchArtifacts, createResearchPatternHost, prepareResearchPattern, researchRevisionOf, createResearchWorkspace,
-  buildExecutionManifest, createFixtureExecutor, createEvaluationRegistry, researchObservationSignature, createResearchAnalysis, selectBranch, planResearchDecision } from '@tangleai/research';
+  buildExecutionManifest, createFixtureExecutor, createEvaluationRegistry, researchObservationSignature, createResearchAnalysis, selectBranch, planResearchDecision,
+  buildClaimLedger, writeResearchDraft, verifyResearchDraft, researchDisclosure, renderMarkdownBundle, rerunBundle, renderLatexBundle } from '@tangleai/research';
 import { pairedBootstrap } from '@jarenjs/core/stats';
+import { cloneJson } from '@jarenjs/core/object';
 import { GMPL_LIMITS } from '@tangleai/gmpl';
 import { createAttemptBudget, sleep } from '@jarenjs/core/retry';
 import schema from '@tangleai/research/schemas/research' with { type: 'json' };
@@ -123,3 +125,18 @@ export async function qualifyResearchExecutionBrowser(analyze = false) {
 }
 
 export function qualifyResearchAnalysisBrowser() { return qualifyResearchExecutionBrowser(true); }
+
+export async function qualifyResearchWritingBrowser() {
+  const inputs = { projectId: 'packed-writing', scope: 'retrieval-control', contract: null, plan: null, analysis: null, decision: null,
+    cards: [], literature: [], observations: [] };
+  const ledger = value(await buildClaimLedger(inputs)), writer = { roleId: 'packed-template', promptRevision: 'a'.repeat(64), modelIdentity: 'no-model' };
+  const draft = value(await writeResearchDraft(ledger, writer, { mode: 'template' })), verification = value(await verifyResearchDraft(inputs, ledger, draft));
+  const body = { inputs, ledger, draft, verification, reviews: [], provenance: { runGraph: 'Empty retrieval rendering fixture.', attempts: [],
+    selection: null, prompts: [writer], tools: [], code: [], data: [], seeds: [], environments: [], interventions: [], cost: { calls: 0, tokens: 0, ms: 0, physical: 0 } } };
+  const bundle = value(await renderMarkdownBundle({ ...body, disclosure: researchDisclosure(body, null) }, null));
+  const rerun = value(await rerunBundle(bundle.manifest)), tex = value(await renderLatexBundle(bundle.manifest));
+  const bad = cloneJson(draft); bad.sections[0].text = 'An unsupported 99% result.';
+  const refused = await verifyResearchDraft(inputs, ledger, bad);
+  return { sections: draft.sections.length, files: Object.keys(bundle.files).length, rerun: JSON.stringify(bundle.files) === JSON.stringify(rerun.files),
+    disclosure: bundle.manifest.source.disclosure.length, tex: Object.keys(tex.files).sort(), refused: refused.valid ? refused.value.state : refused.issues[0].code };
+}

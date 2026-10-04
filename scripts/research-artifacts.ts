@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { stringifyToml } from '@jarenjs/josl';
 import { compileGmplPromptPack, createGmplCatalog, createGmplRecipe, gmplArtifacts, gmplCatalogDocument,
   gmplSchemaOf, GMPL_STAGES, type GmplPromptArtifact, type GmplVariables } from '@tangleai/gmpl';
-import { RESEARCH_PROMPT_NAMES, RESEARCH_PROMPT_VARIABLES, RESEARCH_NATIVE_PROMPTS, researchProposalSchema,
+import { RESEARCH_PROMPT_NAMES, researchPromptVariables, RESEARCH_NATIVE_PROMPTS, researchProposalSchema,
   defineResearchDomainBinding, type ResearchPromptName } from '../packages/research/src/prompt-contracts.ts';
 import { researchPromptFiles } from './research-sources.ts';
 
@@ -18,7 +18,7 @@ if (JSON.stringify(files) !== JSON.stringify(RESEARCH_PROMPT_NAMES.map(name => `
 const base: GmplPromptArtifact[] = [];
 for (const file of files) {
   const name = file.split('/').at(-1)!.slice(0, -5) as ResearchPromptName;
-  base.push(value(await compileGmplPromptPack(await readFile(file, 'utf8'), { variables: RESEARCH_PROMPT_VARIABLES, outputSchema: researchProposalSchema(name) })));
+  base.push(value(await compileGmplPromptPack(await readFile(file, 'utf8'), { variables: researchPromptVariables(name), outputSchema: researchProposalSchema(name) })));
 }
 const variables: GmplVariables = { query: { schema: { type: 'string', minLength: 1 }, render: 'text' },
   evidence: { schema: { type: 'array', items: gmplSchemaOf('gmplEvidenceUnit') }, render: 'json' },
@@ -28,8 +28,10 @@ for (const [name, stage] of RESEARCH_NATIVE_PROMPTS) {
   const original = base.find(prompt => prompt.id === 'research-' + name)!;
   const pack = structuredClone(original.pack);
   pack.meta.id += '-' + stage; pack.meta.role = pack.meta.id;
-  pack.meta.pattern = stage.startsWith('debate-') ? 'structured-debate' : stage.startsWith('peer-review-') ? 'peer-review' : 'parallel-analysis';
-  pack.system.content += stage.startsWith('peer-review-') ? '\nReturn the declared native GMPL envelope. result.answer is advisory prose about the immutable analysis. Retain cited findings and their original identity, disposition, criticality and contradiction markers.'
+  pack.meta.pattern = stage.startsWith('debate-') ? 'structured-debate' : stage.startsWith('red-team-') ? 'red-team' : stage.startsWith('peer-review-') ? 'peer-review' : 'parallel-analysis';
+  pack.system.content += ['critic', 'attacker', 'defender', 'judge'].includes(name)
+    ? '\nReturn the declared native GMPL envelope. result.answer is an advisory assessment of the unchanged admitted draft and ledger. Preserve every finding, citation, criticality and contradiction marker. Revision revises the assessment only; it cannot alter the draft, evidence or deterministic verification.'
+    : stage.startsWith('peer-review-') ? '\nReturn the declared native GMPL envelope. result.answer is advisory prose about the immutable analysis. Retain cited findings and their original identity, disposition, criticality and contradiction markers.'
     : '\nNative protocol: return the declared GMPL envelope. result.answer is JSON matching the research proposal schema below. '
     + 'Every research evidence id must also occur in result.claims citations with its visible digest. Preserve supported findings and their provenance. '
     + 'Research data are in context.domain; the synthesis and constraint blocks render that complete context. '
@@ -42,11 +44,13 @@ for (const [name, stage] of RESEARCH_NATIVE_PROMPTS) {
   derived.push(value(await compileGmplPromptPack(stringifyToml(pack), { variables, outputSchema: gmplSchemaOf(stage) })));
 }
 const prompts = [...gmplArtifacts.prompts, ...base, ...derived];
-const domains = await Promise.all((['synthesis', 'hypothesis', 'result-review'] as const).map(async purpose => value(await defineResearchDomainBinding(purpose, prompts))));
+const domains = await Promise.all((['synthesis', 'hypothesis', 'result-review', 'draft-peer-review', 'draft-red-team'] as const).map(async purpose => value(await defineResearchDomainBinding(purpose, prompts))));
 const recipes = [
   value(await createGmplRecipe({ id: 'research-synthesis', parameters: { pattern: 'parallel-analysis', participants: 3 }, scope: 'pattern', stages: [...GMPL_STAGES['parallel-analysis']] })),
   value(await createGmplRecipe({ id: 'research-debate', parameters: { pattern: 'structured-debate', participants: 3, maxRounds: 3 }, scope: 'pattern', stages: [...GMPL_STAGES['structured-debate']] })),
   value(await createGmplRecipe({ id: 'research-result-review', parameters: { pattern: 'peer-review', participants: 2, maxRounds: 1 }, scope: 'pattern', stages: [...GMPL_STAGES['peer-review']] })),
+  value(await createGmplRecipe({ id: 'research-draft-peer-review', parameters: { pattern: 'peer-review', participants: 2, maxRounds: 3, threshold: 0.7 }, scope: 'pattern', stages: [...GMPL_STAGES['peer-review']] })),
+  value(await createGmplRecipe({ id: 'research-draft-red-team', parameters: { pattern: 'red-team', participants: 1, maxRounds: 3, threshold: 0.7 }, scope: 'pattern', stages: [...GMPL_STAGES['red-team']] })),
 ];
 const document = await gmplCatalogDocument({ id: 'research-prompts', prompts, domains, recipes });
 value(await createGmplCatalog(document));

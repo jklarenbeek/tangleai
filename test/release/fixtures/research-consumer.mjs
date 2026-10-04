@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { openTangleDb, createResearchStore, researchRunLogId, createRunLog } from '@tangleai/store';
-import { exerciseResearchConsumer, qualifyResearchBrowser, qualifyResearchDiscoveryBrowser, qualifyResearchReasoningBrowser, qualifyResearchExecutionBrowser, qualifyResearchAnalysisBrowser } from './research-browser.mjs';
+import { exerciseResearchConsumer, qualifyResearchBrowser, qualifyResearchDiscoveryBrowser, qualifyResearchReasoningBrowser, qualifyResearchExecutionBrowser, qualifyResearchAnalysisBrowser, qualifyResearchWritingBrowser } from './research-browser.mjs';
 import { runResearchExample } from './research-example.mjs';
 
 assert.match(import.meta.resolve('@tangleai/research'), /\.js$/);
@@ -16,6 +16,7 @@ try {
   assert.deepEqual(await qualifyResearchReasoningBrowser(), { packs: 7, participants: 3, separateSynthesizer: true, generatedPlanSchema: true });
   assert.deepEqual(await qualifyResearchExecutionBrowser(), { status: 'ok', value: 2, signature: true, physical: 1, isolated: false, forged: 'TRSH1006', network: 'TRSH1010' });
   assert.deepEqual(await qualifyResearchAnalysisBrowser(), { support: 'not-supported', underpowered: true, decision: 'Stop', candidates: 1, reviewers: 2 });
+  assert.deepEqual(await qualifyResearchWritingBrowser(), { sections: 6, files: 7, rerun: true, disclosure: 8, tex: ['main.tex', 'references.bib'], refused: 'TRSH1002' });
   const path = join(directory, 'research.db'); db = await openTangleDb({ path });
   const run = await exerciseResearchConsumer(createResearchStore(db)); assert.deepEqual(run.summary, expected);
   const runLogId = await researchRunLogId(db, 'packed-research'); assert.ok(runLogId);

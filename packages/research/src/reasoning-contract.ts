@@ -17,7 +17,7 @@ export interface ResearchReasoningPolicy {
   novelty: ResearchNoveltyPolicy;
 }
 export interface ResearchPreparation {
-  stage: ResearchModelStage | 'execute' | 'decide';
+  stage: ResearchModelStage | 'execute' | 'decide' | 'write' | 'verify';
   scope: string;
   commitPath: string;
   manifestHash: string;
@@ -57,6 +57,7 @@ export interface ResearchHandlerAdmission {
   reasoning?: ResearchReasoningPolicy;
   execution?: import('./execution-contract.ts').ResearchExecutionPolicy;
   analysis?: import('./analysis-contract.ts').ResearchAnalysisRuntimePolicy;
+  writing?: import('./writing-contract.ts').ResearchWritingPolicy;
 }
 export async function researchPreparationFor(store: Pick<MasStore, 'readTrace'>, invocation: { runId: string; path: string }): Promise<ResearchPreparation> {
   const trace = await store.readTrace(invocation.runId);

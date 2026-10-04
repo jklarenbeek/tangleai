@@ -20,6 +20,7 @@ import { createResearchReadTools } from './tools.ts';
 import { RESEARCH_FRAME_MEDIA_TYPE, restoredResearchFrame as restoredFrame, resolveResearchFrame, researchWireFrame } from './frames.ts';
 import type { ResearchExecutionRuntime } from './execution-contract.ts';
 import type { ResearchAnalysisRuntime } from './analysis-contract.ts';
+import type { ResearchWritingRuntime } from './writing-contract.ts';
 export { RESEARCH_FRAME_MEDIA_TYPE } from './frames.ts';
 const zero: ResearchCost = { calls: 0, tokens: 0, ms: 0, physical: 0 };
 const stages: Record<ResearchStageName, ResearchLifecycle> = { create: 'CREATED', discovery: 'DISCOVERY', literature: 'LITERATURE_GATE',
@@ -59,6 +60,7 @@ export interface ResearchTaskTools {
   reasoning?: ResearchReasoningRuntime;
   execution?: ResearchExecutionRuntime;
   analysis?: ResearchAnalysisRuntime;
+  writing?: ResearchWritingRuntime;
   execute(operation: ResearchStageOperation, access: ResearchStageAccess): Promise<ResearchStageResult>;
   /** Independent deterministic verification, outside the executing stage body. */
   verify(operation: ResearchStageOperation, result: ResearchStageResult, access: ResearchStageAccess): Promise<ResearchOutcome<null>>;
@@ -90,7 +92,9 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
   const reasoning = tools.reasoning ? { ...tools.reasoning, policy: immutableResearchJson(tools.reasoning.policy) } : undefined;
   const execution = tools.execution ? { ...tools.execution, policy: immutableResearchJson(tools.execution.policy), taskHandlers: { ...tools.execution.taskHandlers }, toolBindings: { ...tools.execution.toolBindings } } : undefined;
   const analysis = tools.analysis ? { ...tools.analysis, policy: immutableResearchJson(tools.analysis.policy) } : undefined;
-  const nativeMode = (stage: string) => stage === 'decide' ? 'debate' : stage === 'execute'
+  const writing = tools.writing ? { ...tools.writing, policy: immutableResearchJson(tools.writing.policy) } : undefined;
+  const nativeMode = (stage: string) => stage === 'write' ? writing!.policy.mode === 'agent' ? 'single-agent' : 'scripted'
+    : stage === 'decide' || stage === 'verify' ? 'debate' : stage === 'execute'
     ? execution!.policy.mode === 'authored' ? 'single-agent' : 'scripted' : reasoning!.policy.mode;
   const handlers: ResearchTaskHandlers = { ...execution?.taskHandlers };
   handlers['research-refuse'] = () => { throw new MasTaskRefusal({ code: 'TMAS2004', detail: 'Research control input has no registered lifecycle edge.',
@@ -110,15 +114,18 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
   }
   if (execution) { handlers['research-prepare-execute'] = bind('execute', 'prepare'); handlers['research-commit-execute'] = bind('execute', 'commit'); }
   if (analysis) { handlers['research-prepare-decide'] = bind('decide', 'prepare'); handlers['research-commit-decide'] = bind('decide', 'commit'); }
+  if (writing) for (const name of ['write', 'verify'] as const) {
+    handlers['research-prepare-' + name] = bind(name, 'prepare'); handlers['research-commit-' + name] = bind(name, 'commit');
+  }
   admissions.set(handlers, { binding, store, ...(reasoning ? { reasoning: reasoning.policy } : {}),
-    ...(execution ? { execution: execution.policy } : {}), ...(analysis ? { analysis: analysis.policy } : {}), ...(reasoning || execution || analysis ? { reconcileFailure, toolBindings: {
+    ...(execution ? { execution: execution.policy } : {}), ...(analysis ? { analysis: analysis.policy } : {}), ...(writing ? { writing: writing.policy } : {}), ...(reasoning || execution || analysis || writing ? { reconcileFailure, toolBindings: {
       ...(reasoning ? createResearchReadTools({ researchStore: store, masStore, maxCards: reasoning.policy.maxCards, contract, mode: reasoning.policy.mode }) : {}),
       ...execution?.toolBindings,
     } } : {}) });
   return Object.freeze(handlers);
 
   async function reconcileFailure(runId: string, failure: import('@tangleai/mas').MasRun['failure']) {
-    if ((!reasoning && !execution && !analysis) || !failure) return;
+    if ((!reasoning && !execution && !analysis && !writing) || !failure) return;
     const trace = await masStore.readTrace(runId), snapshot = researchValue(await store.snapshot(runId));
     if (!trace || !snapshot || snapshot.state.status === 'STOPPED' || snapshot.state.status === 'COMPLETE') return;
     const native = failure.error;
@@ -137,7 +144,11 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       let spend = researchNativeCost(trace.attempts, preparation.scope);
       const expanded = execution ? await resolveResearchFrame(store, preparation.frame) : preparation.frame;
       const retained = preparation.stage === 'execute' && execution ? await execution.complete({ stage: 'execute', path: preparation.commitPath,
-        idempotencyKey: '', frame: expanded, manifest, attemptId: preparation.attemptId, expectedState: snapshot.state }, spend, preparation.scope, true) : null;
+        idempotencyKey: '', frame: expanded, manifest, attemptId: preparation.attemptId, expectedState: snapshot.state }, spend, preparation.scope, true)
+        : writing && ['write', 'verify'].includes(preparation.stage) ? { spend, records: [], artifacts: [{
+          mediaType: 'application/vnd.tangleai.research-native-writing-failure+json', bytes: new TextEncoder().encode(canonicalizeJson({
+            kind: 'native-writing-failure', scope: preparation.scope, preparation, failure,
+            attempts: trace.attempts.filter(row => row.path.startsWith(preparation.scope + '/')) })) }] } : null;
       if (retained) spend = retained.spend;
       const key = { projectId: runId, stage: preparation.frame.status,
         attemptOrdinal: Math.max(0, ...snapshot.attempts.filter(row => row.attempt.stage === preparation.frame.status).map(row => row.attempt.attemptOrdinal)) + 1,
@@ -266,12 +277,16 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       if (name === 'decide' && analysis) {
         const prepared = await analysis.prepare(operation, access); onOperation?.('prepared', operation); return { preparation, ...prepared };
       }
+      if (writing && (name === 'write' || name === 'verify')) {
+        const prepared = await writing.prepare(operation, access); onOperation?.('prepared', operation); return { preparation, ...prepared };
+      }
       const prepared = await reasoning!.prepare(operation, access); onOperation?.('prepared', operation);
       return { preparation, ...(reasoning!.policy.mode === 'debate' && name !== 'design' ? { input: prepared.input } : { variables: prepared.variables }) };
     }
     let result: ResearchStageResult = { artifacts: [], records: [], spend: zero };
     let carriedInputs = frame.artifacts;
     let retainedFailure: ResearchIssue | undefined;
+    let verifiedWriting = false;
     let target: ResearchLifecycle, nextFrame: ResearchWorkflowFrame = { ...frame, checkpoint: null, response: null, gate: null };
     try {
       if (kind) {
@@ -307,6 +322,13 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
               researchFail('TRSH1005', '/proposal', 'Decision requires its exact completed native peer-review result.');
             result = resultSnapshot(await analysis.complete(operation, access, input.value.proposal, result.spend));
           }
+          else if (writing && (name === 'write' || name === 'verify')) {
+            const model = native.attempts.find(row => row.path === scope + '/model' && row.status === 'completed');
+            const port = name === 'write' ? 'out' : 'result';
+            if (!model || !equalsJson((model.output as Record<string, unknown>)[port], input.value.proposal))
+              researchFail('TRSH1005', '/proposal', 'Writing requires its exact completed native proposal or deterministic refusal.');
+            result = resultSnapshot(await writing.complete(operation, access, input.value.proposal, result.spend));
+          }
           else {
           const model = native.attempts.find(row => row.path === scope + '/model' && row.status === 'completed');
           const port = reasoning!.policy.mode === 'debate' && name !== 'design' ? 'result' : 'out';
@@ -319,8 +341,11 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
           }
         } else result = resultSnapshot(await execute(operation, access));
         onOperation?.('executed', operation);
+        if (writing && (name === 'write' || name === 'verify')) {
+          researchValue(await verify(operation, resultSnapshot(result), access)); verifiedWriting = true;
+        }
         if (result.error) throw new ResearchFailure(result.error);
-        if (!(name === 'execute' && execution && phase === 'commit')) researchValue(await verify(operation, resultSnapshot(result), access));
+        if (!verifiedWriting && !(name === 'execute' && execution && phase === 'commit')) researchValue(await verify(operation, resultSnapshot(result), access));
         onOperation?.('verified', operation);
         if (name === 'decide') {
           if (!result.decision || !['Proceed', 'Refine', 'Pivot', 'Stop'].includes(result.decision)) researchFail('TRSH1001', '/decision', 'Decision stage must produce a registered edge.');
@@ -342,11 +367,19 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
     } catch (cause) {
       if (cause instanceof MasInfrastructureCrash) throw cause;
       let issue = cause instanceof ResearchFailure ? cause.issue : researchIssue('TRSH1008', '', 'Stage execution or verification failed.', cause);
-      if (execution && name === 'execute' && phase === 'commit') {
+      const failedWriting = writing && (name === 'write' || name === 'verify') && phase === 'commit';
+      if (failedWriting && !verifiedWriting) {
+        // An invalid proposal is not admitted as a draft or review. The native
+        // attempt is still authoritative evidence of its output and cost.
+        result = { records: [], spend: researchNativeCost(native.attempts, scope), artifacts: [{
+          mediaType: 'application/vnd.tangleai.research-native-writing-failure+json', bytes: new TextEncoder().encode(canonicalizeJson({
+            kind: 'native-writing-failure', preparation, issue, attempts: native.attempts.filter(row => row.path.startsWith(scope + '/')) })) }] };
+      }
+      if (execution && name === 'execute' && phase === 'commit' || verifiedWriting || failedWriting) {
         for (const dimension of ['calls', 'tokens', 'ms', 'physical'] as const)
           if (result.spend[dimension] > manifest.reservation[dimension]
             || snapshot.attempts.reduce((total, row) => total + row.attempt.spend[dimension], result.spend[dimension]) > snapshot.project.budget[dimension])
-            issue = researchIssue('TRSH1006', '/spend/' + dimension, 'Execution exceeded its reservation; all incurred cost and receipts are retained.', issue);
+            issue = researchIssue('TRSH1006', '/spend/' + dimension, 'Native work exceeded its reservation; all incurred cost and receipts are retained.', issue);
         retainedFailure = issue; target = 'STOPPED'; nextFrame.decision = 'Stop';
       } else {
       const failed = { ...attempt, spend: result.spend, stopReason: 'failed' as const, error: issue, interventions: [] };

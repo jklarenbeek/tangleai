@@ -35,6 +35,11 @@ export interface ResearchRecordMap {
   ResearchBranchSelection: R.ResearchBranchSelection;
   ResearchDecision: R.ResearchDecision;
   ResearchClaim: R.ResearchClaim;
+  ResearchClaimLedger: R.ResearchClaimLedger;
+  Draft: R.Draft;
+  ResearchDraftVerification: R.ResearchDraftVerification;
+  ResearchExportManifest: R.ResearchExportManifest;
+  ExportReceipt: R.ExportReceipt;
   Review: R.Review;
   Intervention: R.Intervention;
   ResearchLesson: R.ResearchLesson;
@@ -53,6 +58,7 @@ const kinds: Record<ResearchRecordKind, true> = {
   Analysis: true, ResearchBranchSelection: true,
   ResearchDecision: true, ResearchClaim: true, Review: true, Intervention: true, ResearchLesson: true,
   ResearchManifest: true, DisclosureChecklist: true,
+  ResearchClaimLedger: true, Draft: true, ResearchDraftVerification: true, ResearchExportManifest: true, ExportReceipt: true,
 };
 
 export function validateResearchRecord<K extends ResearchRecordKind>(kind: K, input: unknown): ResearchOutcome<ResearchRecordMap[K]> {

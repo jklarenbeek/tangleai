@@ -1,0 +1,46 @@
+{
+  "topicId": "embedder-width",
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  },
+  "required": [
+    {
+      "id": "embedder-width-literature",
+      "kind": "literature",
+      "text": "The synthetic embedder-width protocol compares the same feature inputs under two declared methods.",
+      "literatureId": "embedder-width-paper-1",
+      "observationCondition": null,
+      "strength": "descriptive",
+      "expectedState": "supported"
+    },
+    {
+      "id": "embedder-width-limitation",
+      "kind": "interpretation",
+      "text": "These synthetic results do not establish a general method advantage.",
+      "literatureId": "embedder-width-paper-2",
+      "observationCondition": null,
+      "strength": "descriptive",
+      "expectedState": "supported"
+    },
+    {
+      "id": "embedder-width-baseline-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "baseline",
+      "strength": "descriptive",
+      "expectedState": "supported"
+    },
+    {
+      "id": "embedder-width-candidate-metric",
+      "kind": "metric",
+      "text": "Report the registered mean with all seeds and raw evidence.",
+      "literatureId": null,
+      "observationCondition": "candidate",
+      "strength": "descriptive",
+      "expectedState": "supported"
+    }
+  ]
+}

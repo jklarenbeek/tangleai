@@ -336,3 +336,36 @@ same transaction as the design receipt. All previous observations remain
 available and marked exploratory; failed transactions expose no partial lineage.
 The [research instrument](../../docs/RESEARCH_BENCHMARK.md) publishes matched
 replication costs, persistent-fault repair losses and honest negative decisions.
+
+`buildClaimLedger` binds exact admitted card quotations and registered means to
+the shared context claim envelope. Every result claim and every strict section
+is critical. `writeResearchDraft` arranges those sentences in six fixed sections;
+it cannot add facts, omit claims or mint evidence. Tables come directly from
+observation rows through `renderMetricTable`. An open unresolved claim keeps its
+visible marker. Strict unresolved claims refuse the draft.
+
+`verifyResearchDraft` checks canonical citation identity and raw hashes, exact
+card quotation and its field's permitted strength, then the full registered
+numeric mapping, unit, condition, seeds, aggregate and sample count. It delegates
+envelope references and critical-claim enforcement to `validateClaimEvidence`.
+These checks establish bounded support, not general semantic entailment.
+
+Pin `researchWritingRevisionOf(policy)` as `research-writing`, pass the same
+policy as `writing` to `prepareResearchWorkflow`, and wrap the analysis tools
+with `createResearchWritingTools`. Agent writing uses a read-only context and
+an empty toolbox inside the existing MAS run. Views reference repeated source
+records once and refuse overflow; they never silently truncate. Deterministic
+verification precedes the native GMPL peer-review and red-team controllers.
+Independent role and prompt identities accompany each review; critical findings,
+disagreements, refused outputs and every incurred model call remain retained.
+Incomplete or rejected review stops before the quality gate. Atomic recovery
+reuses the committed negative result without repeating model calls.
+
+`renderMarkdownBundle` produces seven files, including the immutable manifest
+and eight evidence-backed disclosures. `rerunBundle(manifest)` re-derives every
+file byte from embedded records; the outer receipt hashes `manifest.json` too.
+Exports distinguish supported research drafts, stopped-run audits and
+retrieval-only controls. A Stop is never relabelled as successful research.
+`renderLatexBundle` emits escaped TeX and BibTeX without host I/O. The benchmark's
+separate bounded compiler records compilation, missing-tool skips or refusals;
+compilation is not a research quality gate.

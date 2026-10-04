@@ -1,0 +1,1309 @@
+{
+  "topicId": "kmeans-seeding",
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  },
+  "model": "scripted-v1",
+  "synthesis": {
+    "summary": "Compare the declared methods on the same visible inputs and report every registered replicate.",
+    "evidenceIds": [
+      "card-e5ab826947852d6253f42e153c7183be069f4715840c633a840511a9614748c8",
+      "card-9644fe4c636b3228f5f5994dbe38e8ef83ad17f3df77d2c2b2dd236a3a5eb107"
+    ],
+    "conflicts": [
+      "No experiment result is available; the method comparison remains unresolved."
+    ],
+    "gaps": [
+      "The fixture does not establish a general method advantage."
+    ]
+  },
+  "hypotheses": {
+    "hypotheses": [
+      {
+        "statement": "The registered candidate coordinate exceeds the baseline in the scripted writing mechanism control.",
+        "nullHypothesis": "The candidate has no favorable paired difference from the baseline.",
+        "predictedObservation": "A favorable paired difference on the declared metric.",
+        "disconfirmingObservation": "A nonpositive paired difference or an interval touching zero.",
+        "evidenceIds": [
+          "card-e5ab826947852d6253f42e153c7183be069f4715840c633a840511a9614748c8"
+        ],
+        "baselineIds": [
+          "baseline"
+        ],
+        "confounds": [
+          "different input features"
+        ],
+        "queries": [
+          "kmeans-seeding paired method comparison"
+        ]
+      },
+      {
+        "statement": "The registered candidate and baseline may be indistinguishable on this dataset.",
+        "nullHypothesis": "The two registered methods have a nonzero paired difference.",
+        "predictedObservation": "Equal retained outputs across the declared comparisons.",
+        "disconfirmingObservation": "At least one registered paired output differs.",
+        "evidenceIds": [
+          "card-9644fe4c636b3228f5f5994dbe38e8ef83ad17f3df77d2c2b2dd236a3a5eb107"
+        ],
+        "baselineIds": [
+          "baseline"
+        ],
+        "confounds": [
+          "different input features"
+        ],
+        "queries": [
+          "kmeans-seeding controlled equivalence comparison"
+        ]
+      }
+    ],
+    "advisory": {
+      "rating": 0.4,
+      "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+    }
+  },
+  "design": {
+    "hypothesisId": "hypothesis-adc7b58f2b3f5e8bb9fc88039f9558a1120a93a86a8b777eff61ed3cf5be52e3",
+    "contract": {
+      "hypothesisSpace": [
+        "The registered candidate coordinate exceeds the baseline in the scripted writing mechanism control."
+      ],
+      "successRule": {
+        "metric": "coordinate",
+        "baseline": "baseline",
+        "condition": "candidate",
+        "minImprovement": 1,
+        "confidenceLevel": 0.95
+      },
+      "failureRule": "stop-on-invalid",
+      "metrics": [
+        {
+          "id": "coordinate",
+          "unit": "raw-coordinate",
+          "direction": "maximize"
+        }
+      ],
+      "datasets": [
+        {
+          "id": "fixture-blobs-v1",
+          "sha256": "5d12d9d468f797c69cf2db5879ae3d0d0ea8935dee7eee9617d09b156c502af7"
+        }
+      ],
+      "splits": {
+        "train": [],
+        "test": [
+          "point-0-0",
+          "point-0-1",
+          "point-0-2",
+          "point-0-3",
+          "point-0-4",
+          "point-0-5",
+          "point-0-6",
+          "point-0-7",
+          "point-0-8",
+          "point-0-9",
+          "point-0-10",
+          "point-0-11",
+          "point-0-12",
+          "point-0-13",
+          "point-0-14",
+          "point-0-15",
+          "point-0-16",
+          "point-0-17",
+          "point-0-18",
+          "point-0-19",
+          "point-0-20",
+          "point-0-21",
+          "point-0-22",
+          "point-0-23",
+          "point-0-24",
+          "point-0-25",
+          "point-0-26",
+          "point-0-27",
+          "point-0-28",
+          "point-0-29",
+          "point-0-30",
+          "point-0-31",
+          "point-0-32",
+          "point-0-33",
+          "point-0-34",
+          "point-0-35",
+          "point-0-36",
+          "point-0-37",
+          "point-0-38",
+          "point-0-39",
+          "point-1-0",
+          "point-1-1",
+          "point-1-2",
+          "point-1-3",
+          "point-1-4",
+          "point-1-5",
+          "point-1-6",
+          "point-1-7",
+          "point-1-8",
+          "point-1-9",
+          "point-1-10",
+          "point-1-11",
+          "point-1-12",
+          "point-1-13",
+          "point-1-14",
+          "point-1-15",
+          "point-1-16",
+          "point-1-17",
+          "point-1-18",
+          "point-1-19",
+          "point-1-20",
+          "point-1-21",
+          "point-1-22",
+          "point-1-23",
+          "point-1-24",
+          "point-1-25",
+          "point-1-26",
+          "point-1-27",
+          "point-1-28",
+          "point-1-29",
+          "point-1-30",
+          "point-1-31",
+          "point-1-32",
+          "point-1-33",
+          "point-1-34",
+          "point-1-35",
+          "point-1-36",
+          "point-1-37",
+          "point-1-38",
+          "point-1-39",
+          "point-2-0",
+          "point-2-1",
+          "point-2-2",
+          "point-2-3",
+          "point-2-4",
+          "point-2-5",
+          "point-2-6",
+          "point-2-7",
+          "point-2-8",
+          "point-2-9",
+          "point-2-10",
+          "point-2-11",
+          "point-2-12",
+          "point-2-13",
+          "point-2-14",
+          "point-2-15",
+          "point-2-16",
+          "point-2-17",
+          "point-2-18",
+          "point-2-19",
+          "point-2-20",
+          "point-2-21",
+          "point-2-22",
+          "point-2-23",
+          "point-2-24",
+          "point-2-25",
+          "point-2-26",
+          "point-2-27",
+          "point-2-28",
+          "point-2-29",
+          "point-2-30",
+          "point-2-31",
+          "point-2-32",
+          "point-2-33",
+          "point-2-34",
+          "point-2-35",
+          "point-2-36",
+          "point-2-37",
+          "point-2-38",
+          "point-2-39"
+        ]
+      },
+      "requiredBaselines": [
+        {
+          "condition": "baseline",
+          "programId": "writing-coordinate-control",
+          "source": "benchmark/lib/research-writing.ts",
+          "licence": {
+            "spdx": "MIT",
+            "provenance": "tangle-authored-synthetic",
+            "source": "LICENSE.md"
+          }
+        }
+      ],
+      "replicatePolicy": {
+        "seeds": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "minimum": 5,
+        "resamples": 2000,
+        "bootstrapSeed": 17753
+      },
+      "attemptCap": 1,
+      "pivotCap": 1,
+      "reviewCap": 1,
+      "selectionRule": {
+        "kind": "all",
+        "n": 5,
+        "metric": "coordinate"
+      },
+      "stopConditions": [
+        "invalid evidence",
+        "registered budget reached",
+        "no positive paired interval",
+        "saturated metric"
+      ],
+      "branchSelectionRule": {
+        "kind": "single"
+      },
+      "analysisPolicy": {
+        "seedBatchSize": 5,
+        "recoverProgramFailure": false,
+        "confoundAction": "Stop",
+        "seedVariationChecks": []
+      }
+    },
+    "plan": {
+      "conditions": [
+        {
+          "id": "baseline",
+          "programId": "writing-coordinate-control",
+          "datasetId": "fixture-blobs-v1",
+          "params": {}
+        },
+        {
+          "id": "candidate",
+          "programId": "writing-coordinate-candidate",
+          "datasetId": "fixture-blobs-v1",
+          "params": {}
+        }
+      ],
+      "inputPaths": [
+        "datasets/blobs.json"
+      ],
+      "evaluator": {
+        "id": "writing-coordinate",
+        "version": "1"
+      },
+      "design": {
+        "variables": {
+          "independent": [
+            "method"
+          ],
+          "dependent": [
+            "coordinate"
+          ],
+          "controlled": [
+            "input features",
+            "seed"
+          ]
+        },
+        "controls": [
+          {
+            "confound": "different input features",
+            "strategy": "Both conditions use the exact registered dataset bytes and split."
+          }
+        ],
+        "statisticalTest": {
+          "name": "paired bootstrap",
+          "rationale": "Preserve the preregistered seed pairing, resample count and confidence rule."
+        },
+        "replicateRationale": "Use every registered seed; deterministic one-pair cases establish fixture behavior only.",
+        "resources": {
+          "calls": 0,
+          "tokens": 0,
+          "ms": 10000,
+          "physical": 10
+        },
+        "hazards": [
+          {
+            "hazard": "untrusted candidate program",
+            "mitigation": "Refuse execution without the isolated experiment host."
+          }
+        ],
+        "expectedFailures": [
+          "Inconclusive or saturated metric; retain the negative result without changing the threshold."
+        ]
+      }
+    }
+  },
+  "participants": {
+    "innovator": {
+      "hypotheses": [
+        {
+          "statement": "The registered candidate coordinate exceeds the baseline in the scripted writing mechanism control.",
+          "nullHypothesis": "The candidate has no favorable paired difference from the baseline.",
+          "predictedObservation": "A favorable paired difference on the declared metric.",
+          "disconfirmingObservation": "A nonpositive paired difference or an interval touching zero.",
+          "evidenceIds": [
+            "card-e5ab826947852d6253f42e153c7183be069f4715840c633a840511a9614748c8"
+          ],
+          "baselineIds": [
+            "baseline"
+          ],
+          "confounds": [
+            "different input features"
+          ],
+          "queries": [
+            "kmeans-seeding paired method comparison"
+          ]
+        }
+      ],
+      "advisory": {
+        "rating": 0.4,
+        "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+      }
+    },
+    "pragmatist": {
+      "hypotheses": [
+        {
+          "statement": "The registered candidate and baseline may be indistinguishable on this dataset.",
+          "nullHypothesis": "The two registered methods have a nonzero paired difference.",
+          "predictedObservation": "Equal retained outputs across the declared comparisons.",
+          "disconfirmingObservation": "At least one registered paired output differs.",
+          "evidenceIds": [
+            "card-9644fe4c636b3228f5f5994dbe38e8ef83ad17f3df77d2c2b2dd236a3a5eb107"
+          ],
+          "baselineIds": [
+            "baseline"
+          ],
+          "confounds": [
+            "different input features"
+          ],
+          "queries": [
+            "kmeans-seeding controlled equivalence comparison"
+          ]
+        }
+      ],
+      "advisory": {
+        "rating": 0.4,
+        "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+      }
+    },
+    "contrarian": {
+      "hypotheses": [
+        {
+          "statement": "The registered candidate coordinate exceeds the baseline in the scripted writing mechanism control.",
+          "nullHypothesis": "The candidate has no favorable paired difference from the baseline.",
+          "predictedObservation": "A favorable paired difference on the declared metric.",
+          "disconfirmingObservation": "A nonpositive paired difference or an interval touching zero.",
+          "evidenceIds": [
+            "card-e5ab826947852d6253f42e153c7183be069f4715840c633a840511a9614748c8"
+          ],
+          "baselineIds": [
+            "baseline"
+          ],
+          "confounds": [
+            "different input features"
+          ],
+          "queries": [
+            "kmeans-seeding paired method comparison"
+          ]
+        }
+      ],
+      "advisory": {
+        "rating": 0.4,
+        "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+      }
+    },
+    "screener": {
+      "hypotheses": [
+        {
+          "statement": "The registered candidate and baseline may be indistinguishable on this dataset.",
+          "nullHypothesis": "The two registered methods have a nonzero paired difference.",
+          "predictedObservation": "Equal retained outputs across the declared comparisons.",
+          "disconfirmingObservation": "At least one registered paired output differs.",
+          "evidenceIds": [
+            "card-9644fe4c636b3228f5f5994dbe38e8ef83ad17f3df77d2c2b2dd236a3a5eb107"
+          ],
+          "baselineIds": [
+            "baseline"
+          ],
+          "confounds": [
+            "different input features"
+          ],
+          "queries": [
+            "kmeans-seeding controlled equivalence comparison"
+          ]
+        }
+      ],
+      "advisory": {
+        "rating": 0.4,
+        "reason": "Scripted model opinion; query coverage and identifier overlap are reported separately."
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "infeasible-plan",
+      "proposal": {
+        "hypothesisId": "hypothesis-adc7b58f2b3f5e8bb9fc88039f9558a1120a93a86a8b777eff61ed3cf5be52e3",
+        "contract": {
+          "hypothesisSpace": [
+            "The registered candidate coordinate exceeds the baseline in the scripted writing mechanism control."
+          ],
+          "successRule": {
+            "metric": "coordinate",
+            "baseline": "baseline",
+            "condition": "candidate",
+            "minImprovement": 1,
+            "confidenceLevel": 0.95
+          },
+          "failureRule": "stop-on-invalid",
+          "metrics": [
+            {
+              "id": "coordinate",
+              "unit": "raw-coordinate",
+              "direction": "maximize"
+            }
+          ],
+          "datasets": [
+            {
+              "id": "fixture-blobs-v1",
+              "sha256": "5d12d9d468f797c69cf2db5879ae3d0d0ea8935dee7eee9617d09b156c502af7"
+            }
+          ],
+          "splits": {
+            "train": [],
+            "test": [
+              "point-0-0",
+              "point-0-1",
+              "point-0-2",
+              "point-0-3",
+              "point-0-4",
+              "point-0-5",
+              "point-0-6",
+              "point-0-7",
+              "point-0-8",
+              "point-0-9",
+              "point-0-10",
+              "point-0-11",
+              "point-0-12",
+              "point-0-13",
+              "point-0-14",
+              "point-0-15",
+              "point-0-16",
+              "point-0-17",
+              "point-0-18",
+              "point-0-19",
+              "point-0-20",
+              "point-0-21",
+              "point-0-22",
+              "point-0-23",
+              "point-0-24",
+              "point-0-25",
+              "point-0-26",
+              "point-0-27",
+              "point-0-28",
+              "point-0-29",
+              "point-0-30",
+              "point-0-31",
+              "point-0-32",
+              "point-0-33",
+              "point-0-34",
+              "point-0-35",
+              "point-0-36",
+              "point-0-37",
+              "point-0-38",
+              "point-0-39",
+              "point-1-0",
+              "point-1-1",
+              "point-1-2",
+              "point-1-3",
+              "point-1-4",
+              "point-1-5",
+              "point-1-6",
+              "point-1-7",
+              "point-1-8",
+              "point-1-9",
+              "point-1-10",
+              "point-1-11",
+              "point-1-12",
+              "point-1-13",
+              "point-1-14",
+              "point-1-15",
+              "point-1-16",
+              "point-1-17",
+              "point-1-18",
+              "point-1-19",
+              "point-1-20",
+              "point-1-21",
+              "point-1-22",
+              "point-1-23",
+              "point-1-24",
+              "point-1-25",
+              "point-1-26",
+              "point-1-27",
+              "point-1-28",
+              "point-1-29",
+              "point-1-30",
+              "point-1-31",
+              "point-1-32",
+              "point-1-33",
+              "point-1-34",
+              "point-1-35",
+              "point-1-36",
+              "point-1-37",
+              "point-1-38",
+              "point-1-39",
+              "point-2-0",
+              "point-2-1",
+              "point-2-2",
+              "point-2-3",
+              "point-2-4",
+              "point-2-5",
+              "point-2-6",
+              "point-2-7",
+              "point-2-8",
+              "point-2-9",
+              "point-2-10",
+              "point-2-11",
+              "point-2-12",
+              "point-2-13",
+              "point-2-14",
+              "point-2-15",
+              "point-2-16",
+              "point-2-17",
+              "point-2-18",
+              "point-2-19",
+              "point-2-20",
+              "point-2-21",
+              "point-2-22",
+              "point-2-23",
+              "point-2-24",
+              "point-2-25",
+              "point-2-26",
+              "point-2-27",
+              "point-2-28",
+              "point-2-29",
+              "point-2-30",
+              "point-2-31",
+              "point-2-32",
+              "point-2-33",
+              "point-2-34",
+              "point-2-35",
+              "point-2-36",
+              "point-2-37",
+              "point-2-38",
+              "point-2-39"
+            ]
+          },
+          "requiredBaselines": [
+            {
+              "condition": "baseline",
+              "programId": "writing-coordinate-control",
+              "licence": {
+                "spdx": "MIT",
+                "provenance": "tangle-authored-synthetic",
+                "source": "LICENSE.md"
+              }
+            }
+          ],
+          "replicatePolicy": {
+            "seeds": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "minimum": 5,
+            "resamples": 2000,
+            "bootstrapSeed": 17753
+          },
+          "attemptCap": 1,
+          "pivotCap": 1,
+          "reviewCap": 1,
+          "selectionRule": {
+            "kind": "all",
+            "n": 5,
+            "metric": "coordinate"
+          },
+          "stopConditions": [
+            "invalid evidence",
+            "registered budget reached",
+            "no positive paired interval",
+            "saturated metric"
+          ],
+          "branchSelectionRule": {
+            "kind": "single"
+          },
+          "analysisPolicy": {
+            "seedBatchSize": 5,
+            "recoverProgramFailure": false,
+            "confoundAction": "Stop",
+            "seedVariationChecks": []
+          }
+        },
+        "plan": {
+          "conditions": [
+            {
+              "id": "baseline",
+              "programId": "writing-coordinate-control",
+              "datasetId": "fixture-blobs-v1",
+              "params": {}
+            },
+            {
+              "id": "candidate",
+              "programId": "writing-coordinate-candidate",
+              "datasetId": "fixture-blobs-v1",
+              "params": {}
+            }
+          ],
+          "inputPaths": [
+            "datasets/blobs.json"
+          ],
+          "evaluator": {
+            "id": "writing-coordinate",
+            "version": "1"
+          },
+          "design": {
+            "variables": {
+              "independent": [
+                "method"
+              ],
+              "dependent": [
+                "coordinate"
+              ],
+              "controlled": [
+                "input features",
+                "seed"
+              ]
+            },
+            "controls": [
+              {
+                "confound": "different input features",
+                "strategy": "Both conditions use the exact registered dataset bytes and split."
+              }
+            ],
+            "statisticalTest": {
+              "name": "paired bootstrap",
+              "rationale": "Preserve the preregistered seed pairing, resample count and confidence rule."
+            },
+            "replicateRationale": "Use every registered seed; deterministic one-pair cases establish fixture behavior only.",
+            "resources": {
+              "calls": 0,
+              "tokens": 0,
+              "ms": 10000,
+              "physical": 0
+            },
+            "hazards": [
+              {
+                "hazard": "untrusted candidate program",
+                "mitigation": "Refuse execution without the isolated experiment host."
+              }
+            ],
+            "expectedFailures": [
+              "Inconclusive or saturated metric; retain the negative result without changing the threshold."
+            ]
+          }
+        }
+      },
+      "expected": {
+        "code": "TRSH1009",
+        "path": "/contract/requiredBaselines/0/source"
+      }
+    },
+    {
+      "id": "confounded-plan",
+      "proposal": {
+        "hypothesisId": "hypothesis-adc7b58f2b3f5e8bb9fc88039f9558a1120a93a86a8b777eff61ed3cf5be52e3",
+        "contract": {
+          "hypothesisSpace": [
+            "The registered candidate coordinate exceeds the baseline in the scripted writing mechanism control."
+          ],
+          "successRule": {
+            "metric": "coordinate",
+            "baseline": "baseline",
+            "condition": "candidate",
+            "minImprovement": 1,
+            "confidenceLevel": 0.95
+          },
+          "failureRule": "stop-on-invalid",
+          "metrics": [
+            {
+              "id": "coordinate",
+              "unit": "raw-coordinate",
+              "direction": "maximize"
+            }
+          ],
+          "datasets": [
+            {
+              "id": "fixture-blobs-v1",
+              "sha256": "5d12d9d468f797c69cf2db5879ae3d0d0ea8935dee7eee9617d09b156c502af7"
+            }
+          ],
+          "splits": {
+            "train": [],
+            "test": [
+              "point-0-0",
+              "point-0-1",
+              "point-0-2",
+              "point-0-3",
+              "point-0-4",
+              "point-0-5",
+              "point-0-6",
+              "point-0-7",
+              "point-0-8",
+              "point-0-9",
+              "point-0-10",
+              "point-0-11",
+              "point-0-12",
+              "point-0-13",
+              "point-0-14",
+              "point-0-15",
+              "point-0-16",
+              "point-0-17",
+              "point-0-18",
+              "point-0-19",
+              "point-0-20",
+              "point-0-21",
+              "point-0-22",
+              "point-0-23",
+              "point-0-24",
+              "point-0-25",
+              "point-0-26",
+              "point-0-27",
+              "point-0-28",
+              "point-0-29",
+              "point-0-30",
+              "point-0-31",
+              "point-0-32",
+              "point-0-33",
+              "point-0-34",
+              "point-0-35",
+              "point-0-36",
+              "point-0-37",
+              "point-0-38",
+              "point-0-39",
+              "point-1-0",
+              "point-1-1",
+              "point-1-2",
+              "point-1-3",
+              "point-1-4",
+              "point-1-5",
+              "point-1-6",
+              "point-1-7",
+              "point-1-8",
+              "point-1-9",
+              "point-1-10",
+              "point-1-11",
+              "point-1-12",
+              "point-1-13",
+              "point-1-14",
+              "point-1-15",
+              "point-1-16",
+              "point-1-17",
+              "point-1-18",
+              "point-1-19",
+              "point-1-20",
+              "point-1-21",
+              "point-1-22",
+              "point-1-23",
+              "point-1-24",
+              "point-1-25",
+              "point-1-26",
+              "point-1-27",
+              "point-1-28",
+              "point-1-29",
+              "point-1-30",
+              "point-1-31",
+              "point-1-32",
+              "point-1-33",
+              "point-1-34",
+              "point-1-35",
+              "point-1-36",
+              "point-1-37",
+              "point-1-38",
+              "point-1-39",
+              "point-2-0",
+              "point-2-1",
+              "point-2-2",
+              "point-2-3",
+              "point-2-4",
+              "point-2-5",
+              "point-2-6",
+              "point-2-7",
+              "point-2-8",
+              "point-2-9",
+              "point-2-10",
+              "point-2-11",
+              "point-2-12",
+              "point-2-13",
+              "point-2-14",
+              "point-2-15",
+              "point-2-16",
+              "point-2-17",
+              "point-2-18",
+              "point-2-19",
+              "point-2-20",
+              "point-2-21",
+              "point-2-22",
+              "point-2-23",
+              "point-2-24",
+              "point-2-25",
+              "point-2-26",
+              "point-2-27",
+              "point-2-28",
+              "point-2-29",
+              "point-2-30",
+              "point-2-31",
+              "point-2-32",
+              "point-2-33",
+              "point-2-34",
+              "point-2-35",
+              "point-2-36",
+              "point-2-37",
+              "point-2-38",
+              "point-2-39"
+            ]
+          },
+          "requiredBaselines": [
+            {
+              "condition": "baseline",
+              "programId": "writing-coordinate-control",
+              "source": "benchmark/lib/research-writing.ts",
+              "licence": {
+                "spdx": "MIT",
+                "provenance": "tangle-authored-synthetic",
+                "source": "LICENSE.md"
+              }
+            }
+          ],
+          "replicatePolicy": {
+            "seeds": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "minimum": 5,
+            "resamples": 2000,
+            "bootstrapSeed": 17753
+          },
+          "attemptCap": 1,
+          "pivotCap": 1,
+          "reviewCap": 1,
+          "selectionRule": {
+            "kind": "all",
+            "n": 5,
+            "metric": "coordinate"
+          },
+          "stopConditions": [
+            "invalid evidence",
+            "registered budget reached",
+            "no positive paired interval",
+            "saturated metric"
+          ],
+          "branchSelectionRule": {
+            "kind": "single"
+          },
+          "analysisPolicy": {
+            "seedBatchSize": 5,
+            "recoverProgramFailure": false,
+            "confoundAction": "Stop",
+            "seedVariationChecks": []
+          }
+        },
+        "plan": {
+          "conditions": [
+            {
+              "id": "baseline",
+              "programId": "writing-coordinate-control",
+              "datasetId": "fixture-blobs-v1",
+              "params": {}
+            },
+            {
+              "id": "candidate",
+              "programId": "writing-coordinate-candidate",
+              "datasetId": "fixture-blobs-v1",
+              "params": {}
+            }
+          ],
+          "inputPaths": [
+            "datasets/blobs.json"
+          ],
+          "evaluator": {
+            "id": "writing-coordinate",
+            "version": "1"
+          },
+          "design": {
+            "variables": {
+              "independent": [
+                "method"
+              ],
+              "dependent": [
+                "coordinate"
+              ],
+              "controlled": [
+                "input features",
+                "seed"
+              ]
+            },
+            "controls": [
+              {
+                "confound": "unrelated control",
+                "strategy": "Both conditions use the exact registered dataset bytes and split."
+              }
+            ],
+            "statisticalTest": {
+              "name": "paired bootstrap",
+              "rationale": "Preserve the preregistered seed pairing, resample count and confidence rule."
+            },
+            "replicateRationale": "Use every registered seed; deterministic one-pair cases establish fixture behavior only.",
+            "resources": {
+              "calls": 0,
+              "tokens": 0,
+              "ms": 10000,
+              "physical": 0
+            },
+            "hazards": [
+              {
+                "hazard": "untrusted candidate program",
+                "mitigation": "Refuse execution without the isolated experiment host."
+              }
+            ],
+            "expectedFailures": [
+              "Inconclusive or saturated metric; retain the negative result without changing the threshold."
+            ]
+          }
+        }
+      },
+      "expected": {
+        "code": "TRSH1009",
+        "path": "/plan/design/controls"
+      }
+    },
+    {
+      "id": "hidden-read",
+      "proposal": {
+        "hypothesisId": "hypothesis-adc7b58f2b3f5e8bb9fc88039f9558a1120a93a86a8b777eff61ed3cf5be52e3",
+        "contract": {
+          "hypothesisSpace": [
+            "The registered candidate coordinate exceeds the baseline in the scripted writing mechanism control."
+          ],
+          "successRule": {
+            "metric": "coordinate",
+            "baseline": "baseline",
+            "condition": "candidate",
+            "minImprovement": 1,
+            "confidenceLevel": 0.95
+          },
+          "failureRule": "stop-on-invalid",
+          "metrics": [
+            {
+              "id": "coordinate",
+              "unit": "raw-coordinate",
+              "direction": "maximize"
+            }
+          ],
+          "datasets": [
+            {
+              "id": "fixture-blobs-v1",
+              "sha256": "5d12d9d468f797c69cf2db5879ae3d0d0ea8935dee7eee9617d09b156c502af7"
+            }
+          ],
+          "splits": {
+            "train": [],
+            "test": [
+              "point-0-0",
+              "point-0-1",
+              "point-0-2",
+              "point-0-3",
+              "point-0-4",
+              "point-0-5",
+              "point-0-6",
+              "point-0-7",
+              "point-0-8",
+              "point-0-9",
+              "point-0-10",
+              "point-0-11",
+              "point-0-12",
+              "point-0-13",
+              "point-0-14",
+              "point-0-15",
+              "point-0-16",
+              "point-0-17",
+              "point-0-18",
+              "point-0-19",
+              "point-0-20",
+              "point-0-21",
+              "point-0-22",
+              "point-0-23",
+              "point-0-24",
+              "point-0-25",
+              "point-0-26",
+              "point-0-27",
+              "point-0-28",
+              "point-0-29",
+              "point-0-30",
+              "point-0-31",
+              "point-0-32",
+              "point-0-33",
+              "point-0-34",
+              "point-0-35",
+              "point-0-36",
+              "point-0-37",
+              "point-0-38",
+              "point-0-39",
+              "point-1-0",
+              "point-1-1",
+              "point-1-2",
+              "point-1-3",
+              "point-1-4",
+              "point-1-5",
+              "point-1-6",
+              "point-1-7",
+              "point-1-8",
+              "point-1-9",
+              "point-1-10",
+              "point-1-11",
+              "point-1-12",
+              "point-1-13",
+              "point-1-14",
+              "point-1-15",
+              "point-1-16",
+              "point-1-17",
+              "point-1-18",
+              "point-1-19",
+              "point-1-20",
+              "point-1-21",
+              "point-1-22",
+              "point-1-23",
+              "point-1-24",
+              "point-1-25",
+              "point-1-26",
+              "point-1-27",
+              "point-1-28",
+              "point-1-29",
+              "point-1-30",
+              "point-1-31",
+              "point-1-32",
+              "point-1-33",
+              "point-1-34",
+              "point-1-35",
+              "point-1-36",
+              "point-1-37",
+              "point-1-38",
+              "point-1-39",
+              "point-2-0",
+              "point-2-1",
+              "point-2-2",
+              "point-2-3",
+              "point-2-4",
+              "point-2-5",
+              "point-2-6",
+              "point-2-7",
+              "point-2-8",
+              "point-2-9",
+              "point-2-10",
+              "point-2-11",
+              "point-2-12",
+              "point-2-13",
+              "point-2-14",
+              "point-2-15",
+              "point-2-16",
+              "point-2-17",
+              "point-2-18",
+              "point-2-19",
+              "point-2-20",
+              "point-2-21",
+              "point-2-22",
+              "point-2-23",
+              "point-2-24",
+              "point-2-25",
+              "point-2-26",
+              "point-2-27",
+              "point-2-28",
+              "point-2-29",
+              "point-2-30",
+              "point-2-31",
+              "point-2-32",
+              "point-2-33",
+              "point-2-34",
+              "point-2-35",
+              "point-2-36",
+              "point-2-37",
+              "point-2-38",
+              "point-2-39"
+            ]
+          },
+          "requiredBaselines": [
+            {
+              "condition": "baseline",
+              "programId": "writing-coordinate-control",
+              "source": "benchmark/lib/research-writing.ts",
+              "licence": {
+                "spdx": "MIT",
+                "provenance": "tangle-authored-synthetic",
+                "source": "LICENSE.md"
+              }
+            }
+          ],
+          "replicatePolicy": {
+            "seeds": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "minimum": 5,
+            "resamples": 2000,
+            "bootstrapSeed": 17753
+          },
+          "attemptCap": 1,
+          "pivotCap": 1,
+          "reviewCap": 1,
+          "selectionRule": {
+            "kind": "all",
+            "n": 5,
+            "metric": "coordinate"
+          },
+          "stopConditions": [
+            "invalid evidence",
+            "registered budget reached",
+            "no positive paired interval",
+            "saturated metric"
+          ],
+          "branchSelectionRule": {
+            "kind": "single"
+          },
+          "analysisPolicy": {
+            "seedBatchSize": 5,
+            "recoverProgramFailure": false,
+            "confoundAction": "Stop",
+            "seedVariationChecks": []
+          }
+        },
+        "plan": {
+          "conditions": [
+            {
+              "id": "baseline",
+              "programId": "writing-coordinate-control",
+              "datasetId": "fixture-blobs-v1",
+              "params": {}
+            },
+            {
+              "id": "candidate",
+              "programId": "writing-coordinate-candidate",
+              "datasetId": "fixture-blobs-v1",
+              "params": {}
+            }
+          ],
+          "inputPaths": [
+            "datasets/blobs.json",
+            "hidden/kmeans-seeding.json"
+          ],
+          "evaluator": {
+            "id": "writing-coordinate",
+            "version": "1"
+          },
+          "design": {
+            "variables": {
+              "independent": [
+                "method"
+              ],
+              "dependent": [
+                "coordinate"
+              ],
+              "controlled": [
+                "input features",
+                "seed"
+              ]
+            },
+            "controls": [
+              {
+                "confound": "different input features",
+                "strategy": "Both conditions use the exact registered dataset bytes and split."
+              }
+            ],
+            "statisticalTest": {
+              "name": "paired bootstrap",
+              "rationale": "Preserve the preregistered seed pairing, resample count and confidence rule."
+            },
+            "replicateRationale": "Use every registered seed; deterministic one-pair cases establish fixture behavior only.",
+            "resources": {
+              "calls": 0,
+              "tokens": 0,
+              "ms": 10000,
+              "physical": 0
+            },
+            "hazards": [
+              {
+                "hazard": "untrusted candidate program",
+                "mitigation": "Refuse execution without the isolated experiment host."
+              }
+            ],
+            "expectedFailures": [
+              "Inconclusive or saturated metric; retain the negative result without changing the threshold."
+            ]
+          }
+        }
+      },
+      "expected": {
+        "code": "TRSH1005",
+        "path": "/plan/inputPaths/1"
+      }
+    },
+    {
+      "id": "malformed",
+      "proposal": {},
+      "expected": {
+        "code": "TRSH1009",
+        "path": "/hypothesisId"
+      }
+    }
+  ],
+  "noveltyTranscripts": [
+    {
+      "method": "GET",
+      "url": "https://api.crossref.org/works?query=kmeans-seeding+paired+method+comparison&rows=5&cursor=*",
+      "body": null,
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-5\",\"items\":[{\"DOI\":\"10.5555/kmeans-seeding-paper-1\",\"title\":[\"Synthetic kmeans-seeding protocol note 1\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-1.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-2\",\"title\":[\"Synthetic kmeans-seeding protocol note 2\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-2.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-3\",\"title\":[\"Synthetic kmeans-seeding protocol note 3\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-3.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-4\",\"title\":[\"Synthetic kmeans-seeding protocol note 4\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-4.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-5\",\"title\":[\"Synthetic kmeans-seeding protocol note 5\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-5.md\"}}}]}}"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.crossref.org/works?query=kmeans-seeding+paired+method+comparison&rows=5&cursor=page-5",
+      "body": null,
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-10\",\"items\":[{\"DOI\":\"10.5555/kmeans-seeding-paper-6\",\"title\":[\"Synthetic kmeans-seeding protocol note 6\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-6.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-7\",\"title\":[\"Synthetic kmeans-seeding protocol note 7\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-7.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-8\",\"title\":[\"Synthetic kmeans-seeding protocol note 8\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-8.md\"}}}]}}"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.crossref.org/works?query=kmeans-seeding+controlled+equivalence+comparison&rows=5&cursor=*",
+      "body": null,
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-5\",\"items\":[{\"DOI\":\"10.5555/kmeans-seeding-paper-1\",\"title\":[\"Synthetic kmeans-seeding protocol note 1\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-1.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-2\",\"title\":[\"Synthetic kmeans-seeding protocol note 2\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-2.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-3\",\"title\":[\"Synthetic kmeans-seeding protocol note 3\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-3.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-4\",\"title\":[\"Synthetic kmeans-seeding protocol note 4\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-4.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-5\",\"title\":[\"Synthetic kmeans-seeding protocol note 5\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-5.md\"}}}]}}"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.crossref.org/works?query=kmeans-seeding+controlled+equivalence+comparison&rows=5&cursor=page-5",
+      "body": null,
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-10\",\"items\":[{\"DOI\":\"10.5555/kmeans-seeding-paper-6\",\"title\":[\"Synthetic kmeans-seeding protocol note 6\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-6.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-7\",\"title\":[\"Synthetic kmeans-seeding protocol note 7\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-7.md\"}}},{\"DOI\":\"10.5555/kmeans-seeding-paper-8\",\"title\":[\"Synthetic kmeans-seeding protocol note 8\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/kmeans-seeding-paper-8.md\"}}}]}}"
+      }
+    }
+  ]
+}

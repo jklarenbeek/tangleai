@@ -217,6 +217,9 @@
             "$ref": "#/$defs/ResearchExecutionRow"
           },
           {
+            "$ref": "#/$defs/ResearchWritingRow"
+          },
+          {
             "$ref": "#/$defs/ResearchMissingRow"
           }
         ]
@@ -304,6 +307,29 @@
         "rows",
         "probes",
         "repair"
+      ],
+      "additionalProperties": false
+    },
+    "writing": {
+      "type": "object",
+      "properties": {
+        "registrationHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "control": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchWritingControl"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "registrationHash",
+        "control"
       ],
       "additionalProperties": false
     },
@@ -395,6 +421,9 @@
         "analysis": {
           "type": "boolean"
         },
+        "writing": {
+          "type": "boolean"
+        },
         "networkCalls": {
           "const": 0
         }
@@ -404,6 +433,7 @@
         "oracle",
         "bundles",
         "analysis",
+        "writing",
         "networkCalls"
       ],
       "additionalProperties": false
@@ -437,6 +467,7 @@
     "rows",
     "execution",
     "analysis",
+    "writing",
     "discovery",
     "bundles",
     "disclosure",
@@ -447,6 +478,710 @@
   ],
   "additionalProperties": false,
   "$defs": {
+    "ResearchWritingRegistration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "research-writing-v1"
+        },
+        "licence": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLicence"
+        },
+        "control": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "positive-writing-control"
+            },
+            "topicId": {
+              "const": "kmeans-seeding"
+            },
+            "baseline": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 5,
+              "maxItems": 5
+            },
+            "candidate": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 5,
+              "maxItems": 5
+            },
+            "programIds": {
+              "type": "object",
+              "properties": {
+                "baseline": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "candidate": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "baseline",
+                "candidate"
+              ],
+              "additionalProperties": false
+            },
+            "evaluator": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchEvaluatorIdentity"
+            },
+            "metric": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/MetricDefinition"
+            },
+            "minImprovement": {
+              "type": "number"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "topicPath": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scriptPath": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reservation": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+            },
+            "limits": {
+              "$ref": "https://tangleai.dev/schemas/mas-workflow#/$defs/workflowLimits"
+            },
+            "policy": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "const": "agent"
+                },
+                "maxCards": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxClaims": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxViewChars": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "mode",
+                "maxCards",
+                "maxClaims",
+                "maxViewChars"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "topicId",
+            "baseline",
+            "candidate",
+            "programIds",
+            "evaluator",
+            "metric",
+            "minImprovement",
+            "source",
+            "topicPath",
+            "scriptPath",
+            "reservation",
+            "limits",
+            "policy"
+          ],
+          "additionalProperties": false
+        },
+        "refusals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "hallucinated-citation",
+                  "inflated-claim",
+                  "wrong-number",
+                  "missing-citation"
+                ]
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expectedCode": {
+                "enum": [
+                  "TRSH1002",
+                  "TRSH1003",
+                  "TRSH1005"
+                ]
+              },
+              "expectedState": {
+                "const": "unresolved"
+              }
+            },
+            "required": [
+              "id",
+              "source",
+              "expectedCode",
+              "expectedState"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "id",
+        "licence",
+        "control",
+        "refusals"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchSentenceRegistration": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "licence": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLicence"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "enum": [
+                  "literature",
+                  "metric",
+                  "interpretation"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "literatureId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "observationCondition": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "strength": {
+                "enum": [
+                  "descriptive",
+                  "causal"
+                ]
+              },
+              "expectedState": {
+                "const": "supported"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "text",
+              "literatureId",
+              "observationCondition",
+              "strength",
+              "expectedState"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "topicId",
+        "licence",
+        "required"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchWritingProbe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedCode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observedCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "supported",
+            "unresolved"
+          ]
+        },
+        "matched": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "expectedCode",
+        "observedCode",
+        "state",
+        "matched"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchWritingTopic": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "scope": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchWritingScope"
+        },
+        "terminal": {
+          "enum": [
+            "LITERATURE_GATE",
+            "STOPPED",
+            "COMPLETE"
+          ]
+        },
+        "bundle": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchExportManifest"
+        },
+        "receipt": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExportReceipt"
+        },
+        "citationIdentity": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "claimSupport": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "numericMapping": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "claimValidity": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "bundleRerun": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "refusalConformance": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "claimId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "expectedState": {
+                "const": "supported"
+              },
+              "actualState": {
+                "enum": [
+                  "supported",
+                  "unresolved",
+                  "missing"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "claimId",
+              "expectedState",
+              "actualState"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchWritingProbe"
+          }
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "interventions": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "substantive": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "approvals": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "total",
+            "substantive",
+            "approvals"
+          ],
+          "additionalProperties": false
+        },
+        "failures": {
+          "type": "object",
+          "properties": {
+            "program": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "verification": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "leakage": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "confound": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "budget": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "provider": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unsupported": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "program",
+            "verification",
+            "leakage",
+            "confound",
+            "budget",
+            "provider",
+            "unsupported"
+          ],
+          "additionalProperties": false
+        },
+        "resultClaims": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "topicId",
+        "scope",
+        "terminal",
+        "bundle",
+        "receipt",
+        "citationIdentity",
+        "claimSupport",
+        "numericMapping",
+        "claimValidity",
+        "bundleRerun",
+        "refusalConformance",
+        "required",
+        "probes",
+        "cost",
+        "interventions",
+        "failures",
+        "resultClaims"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchWritingRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "single-pass-retrieve-draft",
+            "gate-only-full"
+          ]
+        },
+        "state": {
+          "const": "measured"
+        },
+        "scope": {
+          "const": "writing"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchWritingTopic"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "citationIdentity": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "claimSupport": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "numericMapping": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "claimValidity": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "bundleRerun": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "refusalConformance": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "interventions": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "substantive": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "approvals": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "total",
+            "substantive",
+            "approvals"
+          ],
+          "additionalProperties": false
+        },
+        "failures": {
+          "type": "object",
+          "properties": {
+            "program": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "verification": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "leakage": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "confound": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "budget": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "provider": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unsupported": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "program",
+            "verification",
+            "leakage",
+            "confound",
+            "budget",
+            "provider",
+            "unsupported"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "state",
+        "scope",
+        "topics",
+        "citationIdentity",
+        "claimSupport",
+        "numericMapping",
+        "claimValidity",
+        "bundleRerun",
+        "refusalConformance",
+        "cost",
+        "interventions",
+        "failures"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchWritingControl": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "positive-writing-control"
+        },
+        "nativeStatus": {
+          "const": "completed"
+        },
+        "state": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchState"
+        },
+        "runIdentityId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "workflowVersionId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "traceBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bundle": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchExportManifest"
+        },
+        "receipt": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExportReceipt"
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string",
+                "minLength": 1
+              },
+              "phase": {
+                "enum": [
+                  "completion",
+                  "normalization",
+                  "repair"
+                ]
+              },
+              "sha256": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+              },
+              "hiddenPaths": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "role",
+              "phase",
+              "sha256",
+              "hiddenPaths"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/mas-runtime#/$defs/masInteraction"
+          }
+        },
+        "writerCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reviewCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        }
+      },
+      "required": [
+        "id",
+        "nativeStatus",
+        "state",
+        "runIdentityId",
+        "workflowVersionId",
+        "traceBytes",
+        "bundle",
+        "receipt",
+        "requests",
+        "interactions",
+        "writerCalls",
+        "reviewCalls",
+        "cost"
+      ],
+      "additionalProperties": false
+    },
     "ResearchDecisionRegistration": {
       "type": "object",
       "properties": {
@@ -2711,6 +3446,43 @@
           ],
           "additionalProperties": false
         },
+        "writing": {
+          "type": "object",
+          "properties": {
+            "registration": {
+              "type": "string",
+              "minLength": 1
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "topicId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "topicId",
+                  "path"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          },
+          "required": [
+            "registration",
+            "claims"
+          ],
+          "additionalProperties": false
+        },
         "topics": {
           "type": "array",
           "items": {
@@ -2952,6 +3724,7 @@
         "id",
         "version",
         "analysis",
+        "writing",
         "topics",
         "literature",
         "programs",
@@ -4047,6 +4820,156 @@
       },
       {
         "$every": {
+          "row": "$.rows[?(@.scope==\"writing\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.citationIdentity.passed",
+                {
+                  "$sum": "$row.topics[*].citationIdentity.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.citationIdentity.total",
+                {
+                  "$sum": "$row.topics[*].citationIdentity.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"writing\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.claimSupport.passed",
+                {
+                  "$sum": "$row.topics[*].claimSupport.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.claimSupport.total",
+                {
+                  "$sum": "$row.topics[*].claimSupport.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"writing\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.numericMapping.passed",
+                {
+                  "$sum": "$row.topics[*].numericMapping.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.numericMapping.total",
+                {
+                  "$sum": "$row.topics[*].numericMapping.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"writing\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.claimValidity.passed",
+                {
+                  "$sum": "$row.topics[*].claimValidity.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.claimValidity.total",
+                {
+                  "$sum": "$row.topics[*].claimValidity.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"writing\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.bundleRerun.passed",
+                {
+                  "$sum": "$row.topics[*].bundleRerun.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.bundleRerun.total",
+                {
+                  "$sum": "$row.topics[*].bundleRerun.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"writing\")]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.refusalConformance.passed",
+                {
+                  "$sum": "$row.topics[*].refusalConformance.passed"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.refusalConformance.total",
+                {
+                  "$sum": "$row.topics[*].refusalConformance.total"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
           "row": "$.rows[?(@.scope==\"pre-execution\")]"
         },
         "$satisfies": {
@@ -4574,6 +5497,238 @@
         ]
       },
       {
+        "$eq": [
+          "$.gate.writing",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  {
+                    "$count": "$.rows[?(@.scope==\"writing\")]"
+                  },
+                  2
+                ]
+              },
+              {
+                "$eq": [
+                  "$.writing.control.state.status",
+                  "COMPLETE"
+                ]
+              },
+              {
+                "$gt": [
+                  "$.writing.control.writerCalls",
+                  0
+                ]
+              },
+              {
+                "$gt": [
+                  "$.writing.control.reviewCalls",
+                  0
+                ]
+              },
+              {
+                "$every": {
+                  "row": "$.rows[?(@.scope==\"writing\")]"
+                },
+                "$satisfies": {
+                  "$and": [
+                    {
+                      "$eq": [
+                        "$row.citationIdentity.value",
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$row.claimValidity.value",
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$row.bundleRerun.value",
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$row.refusalConformance.value",
+                        1
+                      ]
+                    },
+                    {
+                      "$or": [
+                        {
+                          "$and": [
+                            {
+                              "$eq": [
+                                "$row.id",
+                                "single-pass-retrieve-draft"
+                              ]
+                            },
+                            {
+                              "$eq": [
+                                "$row.claimSupport.value",
+                                0.5
+                              ]
+                            },
+                            {
+                              "$eq": [
+                                "$row.numericMapping.value",
+                                0
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "$and": [
+                            {
+                              "$eq": [
+                                "$row.id",
+                                "gate-only-full"
+                              ]
+                            },
+                            {
+                              "$eq": [
+                                "$row.claimSupport.value",
+                                1
+                              ]
+                            },
+                            {
+                              "$eq": [
+                                "$row.numericMapping.value",
+                                1
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"writing\")]"
+        },
+        "$satisfies": {
+          "$every": {
+            "topic": "$row.topics[*]"
+          },
+          "$satisfies": {
+            "$and": [
+              {
+                "$eq": [
+                  "$topic.scope",
+                  "$topic.bundle.scope"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.receipt.manifestId",
+                  "$topic.bundle.id"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.claimSupport.total",
+                  {
+                    "$count": "$topic.required[*]"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.claimSupport.passed",
+                  {
+                    "$count": "$topic.required[?(@.actualState==\"supported\")]"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.refusalConformance.total",
+                  {
+                    "$count": "$topic.probes[*]"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.refusalConformance.passed",
+                  {
+                    "$count": "$topic.probes[?(@.matched==true)]"
+                  }
+                ]
+              },
+              {
+                "$every": {
+                  "probe": "$topic.probes[*]"
+                },
+                "$satisfies": {
+                  "$eq": [
+                    "$probe.matched",
+                    {
+                      "$and": [
+                        {
+                          "$eq": [
+                            "$probe.state",
+                            "unresolved"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$probe.expectedCode",
+                            "$probe.observedCode"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "$eq": [
+                  "$topic.cost.calls",
+                  {
+                    "$sum": "$topic.bundle.source.provenance.attempts[*].spend.calls"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.tokens",
+                  {
+                    "$sum": "$topic.bundle.source.provenance.attempts[*].spend.tokens"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.ms",
+                  {
+                    "$sum": "$topic.bundle.source.provenance.attempts[*].spend.ms"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.cost.physical",
+                  {
+                    "$sum": "$topic.bundle.source.provenance.attempts[*].spend.physical"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
         "$every": {
           "probe": "$.analysis.probes[*]"
         },
@@ -4891,7 +6046,8 @@
               "$.gate.registration",
               "$.gate.oracle",
               "$.gate.bundles",
-              "$.gate.analysis"
+              "$.gate.analysis",
+              "$.gate.writing"
             ]
           }
         ]
