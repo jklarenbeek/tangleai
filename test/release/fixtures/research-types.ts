@@ -95,3 +95,16 @@ void createRemoteResearchExecutor;
 // @ts-expect-error Measured execution cannot enable the network.
 const unsafeExecution: ExecutionManifest = { ...executionManifest, network: { setup: 'off', measured: 'on' } };
 void unsafeExecution;
+
+import { createResearchAnalysis, verifyResearchAnalysis, planResearchDecision, selectBranch, createResearchAnalysisTools,
+  researchAnalysisRevisionOf, planResearchReplication, type ResearchAnalysisInput, type ResearchPairedStatistic,
+  type ResearchAnalysisRuntimePolicy, type ResearchBranchCandidate, type ResearchDecisionLedger, type ResearchDecisionBudget,
+  type ResearchResultReview, type Analysis, type ExperimentBranch } from '@tangleai/research';
+declare const analysisInput: ResearchAnalysisInput, statistic: ResearchPairedStatistic, analysisPolicy: ResearchAnalysisRuntimePolicy,
+  analysis: Analysis, candidates: ResearchBranchCandidate[], ledger: ResearchDecisionLedger, budget: ResearchDecisionBudget,
+  resultReview: ResearchResultReview, branches: ExperimentBranch[];
+await createResearchAnalysis(analysisInput, statistic); await verifyResearchAnalysis(analysisInput, analysis, statistic);
+await selectBranch(candidates, contract); await planResearchDecision(analysis, contract, ledger, budget, resultReview);
+planResearchReplication(analysis, contract, plan, branches, 1); await researchAnalysisRevisionOf(analysisPolicy);
+await createResearchAnalysisTools(taskTools, { researchStore: sqlite, policy: analysisPolicy, statistic });
+await prepareResearchWorkflow(contract, { binding, profile: 'scripted', limits, execution: executionPolicy, analysis: analysisPolicy });

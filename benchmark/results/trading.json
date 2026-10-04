@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "802642f008e9a2e80f860e7e4d13f0a4899fbc97",
+    "head": "accf91e2490ab8a20acf078f51079243f4cca903",
     "clean": false,
     "files": [
       {
@@ -1242,7 +1242,7 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "fb02c15ace113a1a10d44e98a992b7419141199a0eb20f3ed5af6a538003b9fa"
+    "sha256": "6e59b174d20cf1e3cfc10171e337ef4468ff26225e994d46d438878f34c9a708"
   },
   "suite": {
     "tangle": "0.37.0",
@@ -26043,5 +26043,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "d97841f66f5a2dd760f77fce683ecd4794c8a071ca657769405ed23522345a4b"
+  "reportId": "21ec39f7648a3ca50ef7c16a9a474de23dc27a39516e3f40ccf930856861c23b"
 }

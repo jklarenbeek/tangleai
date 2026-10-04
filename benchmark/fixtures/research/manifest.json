@@ -1,6 +1,9 @@
 {
   "id": "research-computational-v1",
   "version": 1,
+  "analysis": {
+    "registration": "analysis/registration.json"
+  },
   "topics": [
     {
       "id": "kmeans-seeding",
@@ -370,6 +373,15 @@
     "source": "LICENSE.md"
   },
   "members": [
+    {
+      "path": "analysis/registration.json",
+      "sha256": "3f076d1142d8c3f4740f495debf2ac6df5aee1f69186b5888cfdfc1ff3faa89f",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
     {
       "path": "bundles/invalid/amendment-after-results.json",
       "sha256": "28750984be24b2cabb155ed050e1e56602003ef8f42eee49c4e58aa34512f5c0",
@@ -1379,5 +1391,5 @@
       }
     }
   ],
-  "revision": "290955a1481efc7a1157f52c0c904fe4a94e4f21e97ee00dac5a903156b34574"
+  "revision": "3c3ebc543537b92619117fb9df5b6cf45a5bd44401047471d064e50bac39e08a"
 }

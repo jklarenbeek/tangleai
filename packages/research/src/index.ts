@@ -9,7 +9,7 @@ export type { ResearchSchemaName } from './schema.ts';
 export type { ResearchRecordMap, ResearchRecordKind, ResearchRecordWrite, ResearchRecordEntry } from './records.ts';
 export { RESEARCH_EDGES, planProjectCreate, planStateTransition, planContractFreeze, planAmendment, planStageCommit } from './transitions.ts';
 export type { ProjectCreatePlan, StateTransitionPlan, ContractFreezePlan, AmendmentPlan,
-  StageCommitPlan, ResearchProjection } from './transitions.ts';
+  StageCommitPlan, ResearchProjection, ResearchPreregistration } from './transitions.ts';
 export { createMemoryResearchStore, createMemoryResearchPersistence, createResearchStoreAdapter } from './store.ts';
 export type { ResearchStore, ResearchStoreOutcome, ResearchSnapshot, ResearchTables, ResearchTable,
   ResearchTransaction, ResearchPersistence, ResearchPhysicalRow, ResearchMemoryState, ResearchMemoryOptions } from './store.ts';
@@ -62,3 +62,15 @@ export { researchExecutionRevisionOf } from './execution-contract.ts';
 export type { ResearchExecutionPolicy } from './execution-contract.ts';
 export { createRemoteResearchExecutor } from './execution/remote-executor.ts';
 export { RESEARCH_RUNNER_WIRE_LIMITS, researchExecutionRequest, decodeResearchExecutionRequest, researchExecutionResponse } from './execution/wire.ts';
+export { createResearchAnalysis, verifyResearchAnalysis } from './stages/analyze.ts';
+export type { ResearchAnalysisInput } from './stages/analyze.ts';
+export { researchAggregate } from './statistics.ts';
+export type { ResearchPairedStatistic } from './statistics.ts';
+export { selectBranch } from './selection.ts';
+export type { ResearchBranchCandidate } from './selection.ts';
+export { planResearchDecision, validateResearchDecision } from './stages/decide.ts';
+export type { ResearchDecisionLedger, ResearchDecisionBudget, ResearchResultReview } from './stages/decide.ts';
+export { planResearchReplication } from './stages/replicate.ts';
+export { researchAnalysisRevisionOf } from './analysis-contract.ts';
+export type { ResearchAnalysisRuntimePolicy } from './analysis-contract.ts';
+export { createResearchAnalysisTools } from './analysis.ts';

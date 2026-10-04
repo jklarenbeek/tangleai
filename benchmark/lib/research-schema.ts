@@ -97,6 +97,31 @@ for (const [group, members] of Object.entries({ cost: ['calls', 'tokens', 'ms', 
 }
 queries.push({ $eq: [['$.ceilings[*].topicId'], ['$.registration.topics[*]']] });
 queries.push({ $every: { row: '$.disclosure[*]' }, $satisfies: { $eq: [['$row.items[*].item'], [...RESEARCH_DISCLOSURES]] } });
+const analysisGate = { $and: [
+  { $eq: [{ $count: '$.analysis.rows[*]' }, 2] }, { $eq: [{ $count: '$.analysis.probes[*]' }, 5] },
+  { $eq: [{ $count: '$.analysis.repair[*]' }, 2] },
+  { $every: { probe: '$.analysis.probes[*]' }, $satisfies: '$probe.matched' },
+  { $every: { row: '$.analysis.rows[*]' }, $satisfies: { $and: ['confoundDetection', 'negativeResultHandling', 'branchSelectionCompliance']
+    .map(name => ({ $eq: ['$row.' + name + '.value', 1] })) } },
+] };
+queries.push({ $eq: ['$.gate.analysis', analysisGate] });
+queries.push({ $every: { probe: '$.analysis.probes[*]' }, $satisfies: { $eq: ['$probe.matched', { $eq: ['$probe.expected', '$probe.decision.kind'] }] } });
+queries.push({ $every: { row: '$.analysis.rows[*]' }, $satisfies: { $and: [
+  { $eq: [['$row.topics[*].topicId'], ['$.registration.topics[*]']] },
+  ...['calls', 'tokens', 'ms', 'physical'].map(key => ({ $eq: ['$row.cost.' + key, { $sum: '$row.topics[*].cost.' + key }] })),
+] } });
+for (const path of ['$.analysis.rows[*].topics[*]', '$.analysis.repair[*]']) queries.push({ $every: { topic: path }, $satisfies: { $and: [
+  { $eq: ['$topic.nativeStatus', 'completed'] }, { $eq: ['$topic.state.status', 'STOPPED'] },
+  { $eq: ['$topic.state.contractHash', '$topic.contract.contractHash'] }, { $eq: ['$topic.state.planHash', '$topic.plan.planHash'] },
+  { $le: ['$topic.traceBytes', '$.registration.caps.traceBytes'] },
+  { $eq: ['$topic.cost.physical', { $add: ['$topic.cost.calls', { $count: '$topic.runs[*]' }] }] },
+  { $eq: ['$topic.reviewCalls', { $sum: '$topic.attempts[?(@.stage=="DECIDE")].spend.calls' }] },
+  { $some: { decision: '$topic.decisions[*]' }, $satisfies: { $and: [
+    { $eq: ['$decision.id', '$topic.finalDecisionId'] }, { $eq: ['$decision.kind', 'Stop'] },
+    { $eq: ['$decision.details.analysisId', '$topic.finalAnalysisId'] },
+  ] } },
+  ...['calls', 'tokens', 'ms', 'physical'].map(key => ({ $eq: ['$topic.cost.' + key, { $sum: '$topic.attempts[*].spend.' + key }] })),
+] } });
 export const RESEARCH_REPORT_SCHEMA = {
   $schema: 'http://json-schema.org/draft-07/schema#', $id: RESEARCH_REPORT_ID,
   ...record({
@@ -117,14 +142,37 @@ export const RESEARCH_REPORT_SCHEMA = {
     rows: array({ oneOf: [ref('ResearchMeasuredRow'), ref('ResearchReasoningRow'), ref('ResearchExecutionRow'), ref('ResearchMissingRow')] }, { minItems: 8, maxItems: 8 }),
     execution: record({ registrationHash: external('Sha256'), control: nullable(ref('ResearchExecutionRow')),
       failureProbes: array(record({ id: names(['program-throw', 'cancelled']), topic: ref('ResearchExecutionTopic') }), { maxItems: 2 }) }),
+    analysis: record({ registrationHash: external('Sha256'), rows: array(ref('ResearchAnalysisRow'), { maxItems: 2 }),
+      probes: array(ref('ResearchDecisionProbe'), { maxItems: 5 }), repair: array(ref('ResearchAnalysisTopic'), { maxItems: 2 }) }),
     discovery: array(ref('ResearchDiscoveryMeasurement'), { maxItems: 3 }),
     bundles: array(record({ id: external('ResearchId'), expected: ref('ResearchRefusal'),
       observed: nullable(ref('ResearchRefusal')), refusedAsRegistered: { type: 'boolean' } }), { minItems: 26, maxItems: 26 }),
     disclosure: array(record({ rowId: names(RESEARCH_ROW_IDS), items: external('DisclosureChecklist') }), { minItems: 8, maxItems: 8 }),
-    gate: record({ registration: { type: 'boolean' }, oracle: { type: 'boolean' }, bundles: { type: 'boolean' }, networkCalls: { const: 0 } }),
+    gate: record({ registration: { type: 'boolean' }, oracle: { type: 'boolean' }, bundles: { type: 'boolean' }, analysis: { type: 'boolean' }, networkCalls: { const: 0 } }),
     decision: names(['conformant', 'drift']), limitations: array(text, { minItems: 1 }), reportId: external('Sha256'),
   }),
   $defs: {
+    ResearchDecisionRegistration: record({ id: { const: 'research-decisions-v1' }, licence: external('ResearchLicence'),
+      analystIdentityId: external('ResearchId'), reviewerIdentityId: external('ResearchId'), statisticId: text,
+      repair: record({ topicId: { const: 'kmeans-seeding' }, programId: text, fault: text }),
+      control: record({ attemptCap: positive, seedBatchSize: positive, rule: external('ResearchBranchSelectionRule') }),
+      branching: record({ attemptCap: positive, seedBatchSize: positive, rule: external('ResearchBranchSelectionRule') }),
+      cases: array(record({ id: names(['success', 'bug', 'degenerate', 'confound', 'negative']), baseline: array(number, { minItems: 5, maxItems: 5 }),
+        candidate: nullable(array(number, { minItems: 5, maxItems: 5 })), variationCheck: { type: 'boolean' }, confounded: { type: 'boolean' },
+        expected: names(['Proceed', 'Refine', 'Pivot', 'Stop']) }), { minItems: 5, maxItems: 5 }) }),
+    ResearchDecisionProbe: record({ id: text, expected: names(['Proceed', 'Refine', 'Pivot', 'Stop']), matched: { type: 'boolean' },
+      review: external('ResearchExecutionWireArtifact'), analysis: external('Analysis'), decision: external('ResearchDecision'), selection: external('ResearchBranchSelection'),
+      contract: external('ResearchContract'), plan: external('ExperimentPlan'), branches: array(external('ExperimentBranch')),
+      manifests: array(external('ExecutionManifest')), runs: array(external('ExperimentRun')), observations: array(external('MetricObservation')),
+      cost: external('ResearchCost') }),
+    ResearchAnalysisTopic: record({ topicId: external('ResearchId'), nativeStatus: names(['completed', 'failed']), state: external('ResearchState'),
+      runIdentityId: external('Sha256'), workflowVersionId: external('Sha256'), contract: external('ResearchContract'), plan: external('ExperimentPlan'),
+      attempts: array(external('StageAttempt')), branches: array(external('ExperimentBranch')), manifests: array(external('ExecutionManifest')),
+      runs: array(external('ExperimentRun')), observations: array(external('MetricObservation')), analyses: array(external('Analysis')),
+      reviews: array(external('ResearchExecutionWireArtifact')), decisions: array(external('ResearchDecision')), selections: array(external('ResearchBranchSelection')), cost: external('ResearchCost'),
+      finalAnalysisId: external('ResearchId'), finalDecisionId: external('ResearchId'), traceBytes: count, reviewCalls: count }),
+    ResearchAnalysisRow: record({ id: names(['fixed-single-agent', 'fixed-plus-branching']), topics: array(ref('ResearchAnalysisTopic'), { minItems: 3, maxItems: 3 }),
+      confoundDetection: ref('ResearchScore'), negativeResultHandling: ref('ResearchScore'), branchSelectionCompliance: ref('ResearchScore'), cost: external('ResearchCost') }),
     ResearchExecutionRegistration: record({ id: { const: 'research-execution-v1' }, licence: external('ResearchLicence'),
       imageDigest: { type: 'string', pattern: '^sha256:[0-9a-f]{64}$' }, dependencyLockHash: external('Sha256'),
       resources: external('ExecutionManifestResources'), topics: array(record({ topicId: external('ResearchId'), attemptCap: positive,
@@ -213,6 +261,7 @@ export const RESEARCH_REPORT_SCHEMA = {
     ResearchFixtureTopic: record({ id: external('ResearchId'), title: text, datasetPath: text, hiddenPath: text,
       contract: external('ResearchContract'), plan: external('ExperimentPlan'), licence: external('ResearchLicence') }),
     ResearchFixtureManifest: record({ id: { const: 'research-computational-v1' }, version: { const: 1 },
+      analysis: record({ registration: text }),
       topics: array(record({ id: external('ResearchId'), path: text }), { minItems: 3, maxItems: 3 }),
       literature: record({ records: text, gold: text }),
       programs: array(record({ id: text, source: text, sha256: external('Sha256'), licence: external('ResearchLicence') }), { minItems: 9, maxItems: 9 }),
@@ -232,5 +281,5 @@ export const RESEARCH_REPORT_SCHEMA = {
     ResearchMissingRow: record({ id: names(RESEARCH_ROW_IDS), state: names(['implementation-missing', 'not-run']), reason: text }),
   },
   $query: { $and: [...queries, { $eq: [{ $eq: ['$.decision', 'conformant'] },
-    { $and: ['$.gate.registration', '$.gate.oracle', '$.gate.bundles'] }] }] },
+    { $and: ['$.gate.registration', '$.gate.oracle', '$.gate.bundles', '$.gate.analysis'] }] }] },
 };

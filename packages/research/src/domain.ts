@@ -24,7 +24,7 @@ export async function createResearchPatternHost(profile: string, limits: Workflo
 export async function prepareResearchPattern(purpose: ResearchPatternPurpose, host: GmplHostSnapshot) {
   const catalog = value(await createGmplCatalog(researchArtifacts));
   const domain = value(await createResearchDomainBinding(purpose));
-  const recipe = catalog.recipe(purpose === 'synthesis' ? 'research-synthesis' : 'research-debate')!;
+  const recipe = catalog.recipe(purpose === 'synthesis' ? 'research-synthesis' : purpose === 'result-review' ? 'research-result-review' : 'research-debate')!;
   const materialized = value(await materializeGmplTemplate(recipe, domain, host, catalog));
   const prepared = value(await instantiateGmplPattern(materialized, {}, host, catalog));
   return { ...prepared, materialized, contentCatalog: catalog, bindings: value(createGmplHostBindings(materialized, catalog)) };

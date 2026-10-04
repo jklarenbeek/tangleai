@@ -182,7 +182,7 @@ For model reasoning, pin `researchArtifacts.revision` as the prompt revision and
 Pass the same `ResearchReasoningPolicy` to `prepareResearchWorkflow` as `reasoning`
 and to `createResearchReasoningTools(base, { project, policy, provider })`.
 Supply `clientFor` to `createResearchHostBindings`. The installed catalog contains
-seven compiled packs; `npm run research:artifacts -- --check` verifies their build.
+nine compiled packs; `npm run research:artifacts -- --check` verifies their build.
 Runtime imports never read prompt files from the filesystem.
 
 The policy selects `single-agent` or `debate`, bounds visible cards and declares
@@ -290,3 +290,49 @@ runs authored candidates; a host can route registered baseline program ids to
 its trusted fixture executor. When reasoning is enabled, explicitly bind each
 implemented downstream stage through `generatedStages`; absent analysis, decision
 or writing capabilities continue to fail closed.
+
+`createResearchAnalysis` admits only the exact frozen contract, plan, execution
+manifests, run receipts and independently registered observations of a branch.
+It separates execution success, metric movement, paired evidence, practical
+significance and hypothesis support. Aggregates use native sample statistics;
+the paired interval function is injected and its point estimate is checked
+independently. Missing statistics stay null. All declared seeds must complete,
+with at least two pairs and the declared minimum, before support is possible.
+Saturated results remain `not-supported`; a one-seed equality does not establish
+statistical equivalence. Amended observations remain visibly exploratory.
+
+Freeze `analysisPolicy` and `branchSelectionRule` in the research contract
+before execution. The former declares seed batches, settled program-failure
+recovery, confound handling and any named seed-variation checks. Zero variance
+alone is not a defect. The latter is `single` or `best-of-n`, with a candidate
+cap and `preregistered-metric` or `lowest-variance` selector. The existing
+`selectionRule` retains its original seed-opportunity meaning. Selection keeps
+all candidate lineages and their costs, including failed repairs.
+
+Pin `researchAnalysisRevisionOf(policy)` under `research-analysis`, pass the
+same policy as `analysis` to `prepareResearchWorkflow`, and wrap the execution
+tools with `createResearchAnalysisTools(base, { researchStore, policy, statistic })`.
+The policy names distinct analyst and reviewer identities and a pinned statistic.
+ANALYZE independently recomputes admitted records. DECIDE embeds the native GMPL
+peer-review pattern in the same MAS run. Reviewers see compact scientific
+projections bound to immutable record digests; complete provenance stays in the
+records. Their model calls, disagreements and incomplete reviews remain retained.
+An unresolved critical finding prevents Proceed.
+
+`planResearchDecision` produces the sole Proceed/Refine/Pivot/Stop decision.
+Continuation reservations cover the next execution, analysis and review path;
+remaining grants and attempt, candidate and pivot caps produce explicit Stop.
+Replication schedules only missing frozen seeds through the existing executor
+and checkpoints. It preserves the hypothesis, evaluator, dataset and exact
+authored code without calling the author again. Repairs retain a parent and
+expose their admitted diagnosis and previous code to a new bounded author.
+`read-previous-code` returns at most 2,048 characters per call from a named
+parent file, with an explicit continuation offset.
+Unsafe or unsettled executions remain terminal failures.
+
+A result-driven Pivot must choose a distinct admitted hypothesis. Its next
+verified design activates a new contract and plan with an Amendment in the
+same transaction as the design receipt. All previous observations remain
+available and marked exploratory; failed transactions expose no partial lineage.
+The [research instrument](../../docs/RESEARCH_BENCHMARK.md) publishes matched
+replication costs, persistent-fault repair losses and honest negative decisions.

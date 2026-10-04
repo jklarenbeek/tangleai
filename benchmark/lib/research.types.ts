@@ -31,6 +31,175 @@ export interface Amendment {
 }
 
 
+export interface ResearchAnalysisDiagnostic {
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  evidenceIds: Array<ResearchId>;
+  kind: "program-error" | "degenerate" | "confound" | "invalid-execution";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface ResearchPairedInterval {
+  estimate: number;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0, exclusiveMaximum=1
+   */
+  level: number;
+  lower: number;
+  method: "paired-bootstrap";
+  quantile: "nearest-rank" | "linear";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  resamples: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  seed: number;
+  upper: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+ */
+export type ResearchAnalysisEvidenceMissingSeedsItem = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+ */
+export type ResearchAnalysisEvidenceSeedsItem = number;
+
+export interface ResearchAnalysisEvidence {
+  interval: ResearchPairedInterval | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=2
+   */
+  minimum: number;
+  missingSeeds: Array<ResearchAnalysisEvidenceMissingSeedsItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  n: number;
+  outcome: "positive" | "negative" | "neutral" | "inconclusive" | "unmeasured";
+  seeds: Array<ResearchAnalysisEvidenceSeedsItem>;
+  underpowered: boolean;
+}
+
+
+export interface AnalysisExecution {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  completed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  failed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  partial: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  runs: number;
+  success: boolean;
+}
+
+
+export interface ResearchMetricAggregateValuesItem {
+  observationId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  seed: number;
+  value: number;
+}
+
+
+export interface ResearchMetricAggregate {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition: string;
+  mean: number | null;
+  median: number | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  n: number;
+  sampleStddev: number | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  unit: string;
+  values: Array<ResearchMetricAggregateValuesItem>;
+}
+
+
+export interface AnalysisMovement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  baseline: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition: string;
+  direction: "maximize" | "minimize";
+  estimate: number | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
+  outcome: "improved" | "unchanged" | "worsened" | "unmeasured";
+}
+
+
+export interface Analysis {
+  analystIdentityId: ResearchId;
+  branchId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  branchIds: Array<ResearchId>;
+  contractHash: Sha256;
+  diagnostics: Array<ResearchAnalysisDiagnostic>;
+  evidence: ResearchAnalysisEvidence;
+  execution: AnalysisExecution;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  exploratoryObservationIds: Array<ResearchId>;
+  hypothesisHash: Sha256;
+  id: ResearchId;
+  metrics: Array<ResearchMetricAggregate>;
+  movement: AnalysisMovement;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  observationIds: Array<ResearchId>;
+  planHash: Sha256;
+  practical: { met: boolean | null; minimumImprovement: number; };
+  projectId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  runIds: Array<ResearchId>;
+  support: "supported" | "not-supported" | "inconclusive" | "exploratory";
+}
+
+
 export type ResearchLifecycle = "CREATED" | "DISCOVERY" | "LITERATURE_GATE" | "SYNTHESIS" | "HYPOTHESIS_GATE" | "DESIGN" | "DESIGN_GATE" | "EXECUTE" | "ANALYZE" | "DECIDE" | "WRITE" | "VERIFY" | "QUALITY_GATE" | "COMPLETE" | "STOPPED";
 
 export interface ResearchArtifactStorage {
@@ -503,6 +672,7 @@ export interface ExperimentBranch {
   contractHash: Sha256;
   hypothesisHash: Sha256;
   id: ResearchId;
+  kind?: "initial" | "replicate" | "repair";
   parentId: ResearchId | null;
   planHash: Sha256;
   projectId: ResearchId;
@@ -1281,6 +1451,90 @@ export interface ReplicatePolicy {
 }
 
 
+export interface ResearchAnalysisPolicySeedVariationChecksItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface ResearchAnalysisPolicy {
+  confoundAction: "Stop" | "Pivot";
+  recoverProgramFailure: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
+   */
+  seedBatchSize: number;
+  seedVariationChecks: Array<ResearchAnalysisPolicySeedVariationChecksItem>;
+}
+
+
+export interface ResearchBranchSelectionCandidatesItem {
+  analysisId: ResearchId;
+  branchId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  branchIds: Array<ResearchId>;
+  cost: ResearchCost;
+  eligible: boolean;
+  estimate: number | null;
+  variance: number | null;
+}
+
+
+export interface ResearchBranchSelectionRuleOneOf2 {
+  kind: "best-of-n";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
+   */
+  n: number;
+  selector: "preregistered-metric" | "lowest-variance";
+}
+
+
+export type ResearchBranchSelectionRule = { kind: "single"; } | ResearchBranchSelectionRuleOneOf2;
+
+export interface ResearchBranchSelection {
+  candidates: Array<ResearchBranchSelectionCandidatesItem>;
+  contractHash: Sha256;
+  id: ResearchId;
+  projectId: ResearchId;
+  rule: ResearchBranchSelectionRule;
+  selectedBranchId: ResearchId;
+  totalCost: ResearchCost;
+}
+
+
+export interface ResearchBudgetEffect {
+  /**
+   * Schema constraints this type cannot express: maximum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: maximum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: maximum=0
+   */
+  physical: number;
+  /**
+   * Schema constraints this type cannot express: maximum=0
+   */
+  tokens: number;
+}
+
+
 export interface ResearchBundleClaimLedgerArtifactsItem {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -1481,10 +1735,12 @@ export interface SuccessRule {
 
 
 export interface ResearchContract {
+  analysisPolicy?: ResearchAnalysisPolicy;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   attemptCap: number;
+  branchSelectionRule?: ResearchBranchSelectionRule;
   contractHash: Sha256;
   /**
    * Schema constraints this type cannot express: minItems=1
@@ -1527,10 +1783,83 @@ export interface ResearchContract {
 /**
  * Schema constraints this type cannot express: minLength=1
  */
+export type ResearchDecisionDetailsReviewArtifactIdsItem = string;
+
+export interface ResearchGmplCitation {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  digest: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+}
+
+
+export interface ResearchGmplFinding {
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  citations: Array<ResearchGmplCitation>;
+  contradictory?: boolean;
+  critical?: boolean;
+  disposition: "supported" | "contested" | "rejected-with-reason" | "unresolved";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  origin: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface ResearchDecisionDetails {
+  action: "write" | "replicate" | "repair" | "pivot" | "none";
+  analysisId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  attemptOrdinal: number;
+  budgetEffect: ResearchBudgetEffect;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  opposing: Array<ResearchId>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  pivotOrdinal: number;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  reviewArtifactIds: Array<ResearchDecisionDetailsReviewArtifactIdsItem>;
+  reviewerFindings: Array<ResearchGmplFinding>;
+  reviewerIdentityId: ResearchId;
+  selectedBranchId: ResearchId;
+  selectionId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  supporting: Array<ResearchId>;
+  targetStage: "WRITE" | "EXECUTE" | "SYNTHESIS" | "STOPPED";
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
 export type ResearchDecisionObservationIdsItem = string;
 
 export interface ResearchDecision {
   contractHash: Sha256;
+  details?: ResearchDecisionDetails;
   exploratory: boolean;
   id: ResearchId;
   kind: "Proceed" | "Refine" | "Pivot" | "Stop";
@@ -1733,10 +2062,12 @@ export interface ResearchContractProposalSplits {
 export type ResearchContractProposalStopConditionsItem = string;
 
 export interface ResearchContractProposal {
+  analysisPolicy?: ResearchAnalysisPolicy;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   attemptCap: number;
+  branchSelectionRule?: ResearchBranchSelectionRule;
   /**
    * Schema constraints this type cannot express: minItems=1
    */
@@ -2321,6 +2652,166 @@ export interface SynthesisProposal {
 }
 
 
+export interface ResearchDecisionRegistrationRepair {
+  topicId: "kmeans-seeding";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  programId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  fault: string;
+}
+
+
+export interface ResearchDecisionRegistrationControl {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attemptCap: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  seedBatchSize: number;
+  rule: ResearchBranchSelectionRule;
+}
+
+
+export interface ResearchDecisionRegistrationBranching {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attemptCap: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  seedBatchSize: number;
+  rule: ResearchBranchSelectionRule;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minItems=5, maxItems=5
+ */
+export type ResearchDecisionRegistrationCasesItemCandidateAnyOf1 = Array<number>;
+
+export interface ResearchDecisionRegistrationCasesItem {
+  id: "success" | "bug" | "degenerate" | "confound" | "negative";
+  /**
+   * Schema constraints this type cannot express: minItems=5, maxItems=5
+   */
+  baseline: Array<number>;
+  candidate: ResearchDecisionRegistrationCasesItemCandidateAnyOf1 | null;
+  variationCheck: boolean;
+  confounded: boolean;
+  expected: "Proceed" | "Refine" | "Pivot" | "Stop";
+}
+
+
+export interface ResearchDecisionRegistration {
+  id: "research-decisions-v1";
+  licence: ResearchLicence;
+  analystIdentityId: ResearchId;
+  reviewerIdentityId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  statisticId: string;
+  repair: ResearchDecisionRegistrationRepair;
+  control: ResearchDecisionRegistrationControl;
+  branching: ResearchDecisionRegistrationBranching;
+  /**
+   * Schema constraints this type cannot express: minItems=5, maxItems=5
+   */
+  cases: Array<ResearchDecisionRegistrationCasesItem>;
+}
+
+
+export interface ResearchDecisionProbe {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  expected: "Proceed" | "Refine" | "Pivot" | "Stop";
+  matched: boolean;
+  review: ResearchExecutionWireArtifact;
+  analysis: Analysis;
+  decision: ResearchDecision;
+  selection: ResearchBranchSelection;
+  contract: ResearchContract;
+  plan: ExperimentPlan;
+  branches: Array<ExperimentBranch>;
+  manifests: Array<ExecutionManifest>;
+  runs: Array<ExperimentRun>;
+  observations: Array<MetricObservation>;
+  cost: ResearchCost;
+}
+
+
+export interface ResearchAnalysisTopic {
+  topicId: ResearchId;
+  nativeStatus: "completed" | "failed";
+  state: ResearchState;
+  runIdentityId: Sha256;
+  workflowVersionId: Sha256;
+  contract: ResearchContract;
+  plan: ExperimentPlan;
+  attempts: Array<StageAttempt>;
+  branches: Array<ExperimentBranch>;
+  manifests: Array<ExecutionManifest>;
+  runs: Array<ExperimentRun>;
+  observations: Array<MetricObservation>;
+  analyses: Array<Analysis>;
+  reviews: Array<ResearchExecutionWireArtifact>;
+  decisions: Array<ResearchDecision>;
+  selections: Array<ResearchBranchSelection>;
+  cost: ResearchCost;
+  finalAnalysisId: ResearchId;
+  finalDecisionId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceBytes: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reviewCalls: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.passed","$.total"]},{"$eq":["$.value",{"$div":["$.passed","$.total"]}]}]}
+ */
+export interface ResearchScore {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  passed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  value: number;
+}
+
+
+export interface ResearchAnalysisRow {
+  id: "fixed-single-agent" | "fixed-plus-branching";
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  topics: Array<ResearchAnalysisTopic>;
+  confoundDetection: ResearchScore;
+  negativeResultHandling: ResearchScore;
+  branchSelectionCompliance: ResearchScore;
+  cost: ResearchCost;
+}
+
+
 export interface ResearchExecutionRegistrationTopicsItem {
   topicId: ResearchId;
   /**
@@ -2538,25 +3029,6 @@ export interface ResearchExecutionTopicInterventions {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   approvals: number;
-}
-
-
-/**
- * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.passed","$.total"]},{"$eq":["$.value",{"$div":["$.passed","$.total"]}]}]}
- */
-export interface ResearchScore {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  passed: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  total: number;
-  /**
-   * Schema constraints this type cannot express: minimum=0, maximum=1
-   */
-  value: number;
 }
 
 
@@ -3753,6 +4225,14 @@ export interface ResearchFixtureTopic {
 }
 
 
+export interface ResearchFixtureManifestAnalysis {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  registration: string;
+}
+
+
 export interface ResearchFixtureManifestTopicsItem {
   id: ResearchId;
   /**
@@ -3850,6 +4330,7 @@ export interface ResearchFixtureManifestMembersItem {
 export interface ResearchFixtureManifest {
   id: "research-computational-v1";
   version: 1;
+  analysis: ResearchFixtureManifestAnalysis;
   /**
    * Schema constraints this type cannot express: minItems=3, maxItems=3
    */
@@ -4837,13 +5318,30 @@ export interface ResearchReportExecution {
 }
 
 
+export interface ResearchReportAnalysis {
+  registrationHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: maxItems=2
+   */
+  rows: Array<ResearchAnalysisRow>;
+  /**
+   * Schema constraints this type cannot express: maxItems=5
+   */
+  probes: Array<ResearchDecisionProbe>;
+  /**
+   * Schema constraints this type cannot express: maxItems=2
+   */
+  repair: Array<ResearchAnalysisTopic>;
+}
+
+
 /**
  * Schema constraints this type cannot express: minLength=1
  */
 export type ResearchReportLimitationsItem = string;
 
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].id"],["artifact-oracle","no-model-runner","single-pass-retrieve-draft","fixed-single-agent","fixed-plus-debate","fixed-plus-branching","gate-only-full","full-auto-full"]]},{"$eq":[["$.identity.rows[*].rowId"],["$.rows[*].id"]]},{"$eq":[{"$count":"$.bundles[*]"},{"$count":"$.registration.bundles[*]"}]},{"$eq":[["$.bundles[*].id"],["$.registration.bundles[*].id"]]},{"$eq":[{"$count":"$.registration.topics[*]"},{"$count":{"$distinct":"$.registration.topics[*]"}}]},{"$eq":[{"$count":"$.registration.bundles[*].id"},{"$count":{"$distinct":"$.registration.bundles[*].id"}}]},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":[["$row.topics[*].topicId"],["$.registration.topics[*]"]]}},{"$every":{"bundle":"$.bundles[*]"},"$satisfies":{"$eq":["$bundle.refusedAsRegistered",{"$and":[{"$eq":["$bundle.expected.code","$bundle.observed.code"]},{"$eq":["$bundle.expected.path","$bundle.observed.path"]}]}]}},{"$every":{"bundle":"$.bundles[*]"},"$satisfies":{"$some":{"registered":"$.registration.bundles[*]"},"$satisfies":{"$and":[{"$eq":["$bundle.id","$registered.id"]},{"$eq":["$bundle.expected","$registered.expected"]}]}}},{"$eq":["$.gate.bundles",{"$every":{"bundle":"$.bundles[*]"},"$satisfies":"$bundle.refusedAsRegistered"}]},{"$eq":[["$.disclosure[*].rowId"],["$.rows[*].id"]]},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.preregistrationIntegrity.passed",{"$sum":"$row.topics[*].preregistrationIntegrity.passed"}]},{"$eq":["$row.preregistrationIntegrity.total",{"$sum":"$row.topics[*].preregistrationIntegrity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.literatureRecall.passed",{"$sum":"$row.topics[*].literatureRecall.passed"}]},{"$eq":["$row.literatureRecall.total",{"$sum":"$row.topics[*].literatureRecall.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.literaturePrecision.passed",{"$sum":"$row.topics[*].literaturePrecision.passed"}]},{"$eq":["$row.literaturePrecision.total",{"$sum":"$row.topics[*].literaturePrecision.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.citationIdentity.passed",{"$sum":"$row.topics[*].citationIdentity.passed"}]},{"$eq":["$row.citationIdentity.total",{"$sum":"$row.topics[*].citationIdentity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.claimSupport.passed",{"$sum":"$row.topics[*].claimSupport.passed"}]},{"$eq":["$row.claimSupport.total",{"$sum":"$row.topics[*].claimSupport.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.registryAccuracy.passed",{"$sum":"$row.topics[*].registryAccuracy.passed"}]},{"$eq":["$row.registryAccuracy.total",{"$sum":"$row.topics[*].registryAccuracy.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.rerunRate.passed",{"$sum":"$row.topics[*].rerunRate.passed"}]},{"$eq":["$row.rerunRate.total",{"$sum":"$row.topics[*].rerunRate.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.confoundDetection.passed",{"$sum":"$row.topics[*].confoundDetection.passed"}]},{"$eq":["$row.confoundDetection.total",{"$sum":"$row.topics[*].confoundDetection.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.negativeResultHandling.passed",{"$sum":"$row.topics[*].negativeResultHandling.passed"}]},{"$eq":["$row.negativeResultHandling.total",{"$sum":"$row.topics[*].negativeResultHandling.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.branchSelectionCompliance.passed",{"$sum":"$row.topics[*].branchSelectionCompliance.passed"}]},{"$eq":["$row.branchSelectionCompliance.total",{"$sum":"$row.topics[*].branchSelectionCompliance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.gateBehaviour.passed",{"$sum":"$row.topics[*].gateBehaviour.passed"}]},{"$eq":["$row.gateBehaviour.total",{"$sum":"$row.topics[*].gateBehaviour.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.tracesCompleteness.passed",{"$sum":"$row.topics[*].tracesCompleteness.passed"}]},{"$eq":["$row.tracesCompleteness.total",{"$sum":"$row.topics[*].tracesCompleteness.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.completion.passed",{"$sum":"$row.topics[*].completion.passed"}]},{"$eq":["$row.completion.total",{"$sum":"$row.topics[*].completion.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.hypothesisValidity.passed",{"$sum":"$row.topics[*].hypothesisValidity.passed"}]},{"$eq":["$row.hypothesisValidity.total",{"$sum":"$row.topics[*].hypothesisValidity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.evidenceLinkage.passed",{"$sum":"$row.topics[*].evidenceLinkage.passed"}]},{"$eq":["$row.evidenceLinkage.total",{"$sum":"$row.topics[*].evidenceLinkage.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.designIntegrity.passed",{"$sum":"$row.topics[*].designIntegrity.passed"}]},{"$eq":["$row.designIntegrity.total",{"$sum":"$row.topics[*].designIntegrity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.hiddenIsolation.passed",{"$sum":"$row.topics[*].hiddenIsolation.passed"}]},{"$eq":["$row.hiddenIsolation.total",{"$sum":"$row.topics[*].hiddenIsolation.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.refusalConformance.passed",{"$sum":"$row.topics[*].refusalConformance.passed"}]},{"$eq":["$row.refusalConformance.total",{"$sum":"$row.topics[*].refusalConformance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.roles",{"$sum":"$row.topics[*].usage.roles"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.completion",{"$sum":"$row.topics[*].usage.completion"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.normalization",{"$sum":"$row.topics[*].usage.normalization"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.repair",{"$sum":"$row.topics[*].usage.repair"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.physical",{"$sum":"$row.topics[*].usage.physical"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.promptTokens",{"$sum":"$row.topics[*].usage.promptTokens"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.completionTokens",{"$sum":"$row.topics[*].usage.completionTokens"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.unknownTokenRequests",{"$sum":"$row.topics[*].usage.unknownTokenRequests"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.traceBytes",{"$sum":"$row.topics[*].usage.traceBytes"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$every":{"topic":"$row.topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.state.status","DESIGN_GATE"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$eq":["$topic.plan.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.usage.physical",{"$add":[{"$add":["$topic.usage.completion","$topic.usage.normalization"]},"$topic.usage.repair"]}]},{"$eq":["$topic.usage.physical",{"$count":"$topic.requests[*]"}]},{"$eq":["$topic.cost.physical","$topic.usage.physical"]},{"$eq":["$topic.cost.calls","$topic.usage.physical"]},{"$eq":["$topic.cost.tokens",{"$add":["$topic.usage.promptTokens","$topic.usage.completionTokens"]}]},{"$le":["$topic.usage.traceBytes","$.registration.caps.traceBytes"]},{"$le":[{"$count":"$topic.visibleCardIds[*]"},"$topic.availableCards"]},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.calls",{"$sum":"$row.topics[*].cost.calls"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.tokens",{"$sum":"$row.topics[*].cost.tokens"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.ms",{"$sum":"$row.topics[*].cost.ms"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.physical",{"$sum":"$row.topics[*].cost.physical"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.total",{"$sum":"$row.topics[*].interventions.total"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.substantive",{"$sum":"$row.topics[*].interventions.substantive"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.approvals",{"$sum":"$row.topics[*].interventions.approvals"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.program",{"$sum":"$row.topics[*].failures.program"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.verification",{"$sum":"$row.topics[*].failures.verification"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.leakage",{"$sum":"$row.topics[*].failures.leakage"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.confound",{"$sum":"$row.topics[*].failures.confound"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.budget",{"$sum":"$row.topics[*].failures.budget"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.provider",{"$sum":"$row.topics[*].failures.provider"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.unsupported",{"$sum":"$row.topics[*].failures.unsupported"}]}},{"$eq":[["$.ceilings[*].topicId"],["$.registration.topics[*]"]]},{"$every":{"row":"$.disclosure[*]"},"$satisfies":{"$eq":[["$row.items[*].item"],["human-review","runnable-implementation","reconstructible-execution","novelty-audit","attempt-selection-registration","baseline-audit","independent-verification","frozen-hypotheses"]]}},{"$eq":[{"$eq":["$.decision","conformant"]},{"$and":["$.gate.registration","$.gate.oracle","$.gate.bundles"]}]}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].id"],["artifact-oracle","no-model-runner","single-pass-retrieve-draft","fixed-single-agent","fixed-plus-debate","fixed-plus-branching","gate-only-full","full-auto-full"]]},{"$eq":[["$.identity.rows[*].rowId"],["$.rows[*].id"]]},{"$eq":[{"$count":"$.bundles[*]"},{"$count":"$.registration.bundles[*]"}]},{"$eq":[["$.bundles[*].id"],["$.registration.bundles[*].id"]]},{"$eq":[{"$count":"$.registration.topics[*]"},{"$count":{"$distinct":"$.registration.topics[*]"}}]},{"$eq":[{"$count":"$.registration.bundles[*].id"},{"$count":{"$distinct":"$.registration.bundles[*].id"}}]},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":[["$row.topics[*].topicId"],["$.registration.topics[*]"]]}},{"$every":{"bundle":"$.bundles[*]"},"$satisfies":{"$eq":["$bundle.refusedAsRegistered",{"$and":[{"$eq":["$bundle.expected.code","$bundle.observed.code"]},{"$eq":["$bundle.expected.path","$bundle.observed.path"]}]}]}},{"$every":{"bundle":"$.bundles[*]"},"$satisfies":{"$some":{"registered":"$.registration.bundles[*]"},"$satisfies":{"$and":[{"$eq":["$bundle.id","$registered.id"]},{"$eq":["$bundle.expected","$registered.expected"]}]}}},{"$eq":["$.gate.bundles",{"$every":{"bundle":"$.bundles[*]"},"$satisfies":"$bundle.refusedAsRegistered"}]},{"$eq":[["$.disclosure[*].rowId"],["$.rows[*].id"]]},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.preregistrationIntegrity.passed",{"$sum":"$row.topics[*].preregistrationIntegrity.passed"}]},{"$eq":["$row.preregistrationIntegrity.total",{"$sum":"$row.topics[*].preregistrationIntegrity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.literatureRecall.passed",{"$sum":"$row.topics[*].literatureRecall.passed"}]},{"$eq":["$row.literatureRecall.total",{"$sum":"$row.topics[*].literatureRecall.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.literaturePrecision.passed",{"$sum":"$row.topics[*].literaturePrecision.passed"}]},{"$eq":["$row.literaturePrecision.total",{"$sum":"$row.topics[*].literaturePrecision.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.citationIdentity.passed",{"$sum":"$row.topics[*].citationIdentity.passed"}]},{"$eq":["$row.citationIdentity.total",{"$sum":"$row.topics[*].citationIdentity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.claimSupport.passed",{"$sum":"$row.topics[*].claimSupport.passed"}]},{"$eq":["$row.claimSupport.total",{"$sum":"$row.topics[*].claimSupport.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.registryAccuracy.passed",{"$sum":"$row.topics[*].registryAccuracy.passed"}]},{"$eq":["$row.registryAccuracy.total",{"$sum":"$row.topics[*].registryAccuracy.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.rerunRate.passed",{"$sum":"$row.topics[*].rerunRate.passed"}]},{"$eq":["$row.rerunRate.total",{"$sum":"$row.topics[*].rerunRate.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.confoundDetection.passed",{"$sum":"$row.topics[*].confoundDetection.passed"}]},{"$eq":["$row.confoundDetection.total",{"$sum":"$row.topics[*].confoundDetection.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.negativeResultHandling.passed",{"$sum":"$row.topics[*].negativeResultHandling.passed"}]},{"$eq":["$row.negativeResultHandling.total",{"$sum":"$row.topics[*].negativeResultHandling.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.branchSelectionCompliance.passed",{"$sum":"$row.topics[*].branchSelectionCompliance.passed"}]},{"$eq":["$row.branchSelectionCompliance.total",{"$sum":"$row.topics[*].branchSelectionCompliance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.gateBehaviour.passed",{"$sum":"$row.topics[*].gateBehaviour.passed"}]},{"$eq":["$row.gateBehaviour.total",{"$sum":"$row.topics[*].gateBehaviour.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.tracesCompleteness.passed",{"$sum":"$row.topics[*].tracesCompleteness.passed"}]},{"$eq":["$row.tracesCompleteness.total",{"$sum":"$row.topics[*].tracesCompleteness.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.completion.passed",{"$sum":"$row.topics[*].completion.passed"}]},{"$eq":["$row.completion.total",{"$sum":"$row.topics[*].completion.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.hypothesisValidity.passed",{"$sum":"$row.topics[*].hypothesisValidity.passed"}]},{"$eq":["$row.hypothesisValidity.total",{"$sum":"$row.topics[*].hypothesisValidity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.evidenceLinkage.passed",{"$sum":"$row.topics[*].evidenceLinkage.passed"}]},{"$eq":["$row.evidenceLinkage.total",{"$sum":"$row.topics[*].evidenceLinkage.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.designIntegrity.passed",{"$sum":"$row.topics[*].designIntegrity.passed"}]},{"$eq":["$row.designIntegrity.total",{"$sum":"$row.topics[*].designIntegrity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.hiddenIsolation.passed",{"$sum":"$row.topics[*].hiddenIsolation.passed"}]},{"$eq":["$row.hiddenIsolation.total",{"$sum":"$row.topics[*].hiddenIsolation.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.refusalConformance.passed",{"$sum":"$row.topics[*].refusalConformance.passed"}]},{"$eq":["$row.refusalConformance.total",{"$sum":"$row.topics[*].refusalConformance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.roles",{"$sum":"$row.topics[*].usage.roles"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.completion",{"$sum":"$row.topics[*].usage.completion"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.normalization",{"$sum":"$row.topics[*].usage.normalization"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.repair",{"$sum":"$row.topics[*].usage.repair"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.physical",{"$sum":"$row.topics[*].usage.physical"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.promptTokens",{"$sum":"$row.topics[*].usage.promptTokens"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.completionTokens",{"$sum":"$row.topics[*].usage.completionTokens"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.unknownTokenRequests",{"$sum":"$row.topics[*].usage.unknownTokenRequests"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.traceBytes",{"$sum":"$row.topics[*].usage.traceBytes"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$every":{"topic":"$row.topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.state.status","DESIGN_GATE"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$eq":["$topic.plan.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.usage.physical",{"$add":[{"$add":["$topic.usage.completion","$topic.usage.normalization"]},"$topic.usage.repair"]}]},{"$eq":["$topic.usage.physical",{"$count":"$topic.requests[*]"}]},{"$eq":["$topic.cost.physical","$topic.usage.physical"]},{"$eq":["$topic.cost.calls","$topic.usage.physical"]},{"$eq":["$topic.cost.tokens",{"$add":["$topic.usage.promptTokens","$topic.usage.completionTokens"]}]},{"$le":["$topic.usage.traceBytes","$.registration.caps.traceBytes"]},{"$le":[{"$count":"$topic.visibleCardIds[*]"},"$topic.availableCards"]},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.calls",{"$sum":"$row.topics[*].cost.calls"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.tokens",{"$sum":"$row.topics[*].cost.tokens"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.ms",{"$sum":"$row.topics[*].cost.ms"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.physical",{"$sum":"$row.topics[*].cost.physical"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.total",{"$sum":"$row.topics[*].interventions.total"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.substantive",{"$sum":"$row.topics[*].interventions.substantive"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.approvals",{"$sum":"$row.topics[*].interventions.approvals"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.program",{"$sum":"$row.topics[*].failures.program"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.verification",{"$sum":"$row.topics[*].failures.verification"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.leakage",{"$sum":"$row.topics[*].failures.leakage"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.confound",{"$sum":"$row.topics[*].failures.confound"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.budget",{"$sum":"$row.topics[*].failures.budget"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.provider",{"$sum":"$row.topics[*].failures.provider"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.unsupported",{"$sum":"$row.topics[*].failures.unsupported"}]}},{"$eq":[["$.ceilings[*].topicId"],["$.registration.topics[*]"]]},{"$every":{"row":"$.disclosure[*]"},"$satisfies":{"$eq":[["$row.items[*].item"],["human-review","runnable-implementation","reconstructible-execution","novelty-audit","attempt-selection-registration","baseline-audit","independent-verification","frozen-hypotheses"]]}},{"$eq":["$.gate.analysis",{"$and":[{"$eq":[{"$count":"$.analysis.rows[*]"},2]},{"$eq":[{"$count":"$.analysis.probes[*]"},5]},{"$eq":[{"$count":"$.analysis.repair[*]"},2]},{"$every":{"probe":"$.analysis.probes[*]"},"$satisfies":"$probe.matched"},{"$every":{"row":"$.analysis.rows[*]"},"$satisfies":{"$and":[{"$eq":["$row.confoundDetection.value",1]},{"$eq":["$row.negativeResultHandling.value",1]},{"$eq":["$row.branchSelectionCompliance.value",1]}]}}]}]},{"$every":{"probe":"$.analysis.probes[*]"},"$satisfies":{"$eq":["$probe.matched",{"$eq":["$probe.expected","$probe.decision.kind"]}]}},{"$every":{"row":"$.analysis.rows[*]"},"$satisfies":{"$and":[{"$eq":[["$row.topics[*].topicId"],["$.registration.topics[*]"]]},{"$eq":["$row.cost.calls",{"$sum":"$row.topics[*].cost.calls"}]},{"$eq":["$row.cost.tokens",{"$sum":"$row.topics[*].cost.tokens"}]},{"$eq":["$row.cost.ms",{"$sum":"$row.topics[*].cost.ms"}]},{"$eq":["$row.cost.physical",{"$sum":"$row.topics[*].cost.physical"}]}]}},{"$every":{"topic":"$.analysis.rows[*].topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.nativeStatus","completed"]},{"$eq":["$topic.state.status","STOPPED"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$le":["$topic.traceBytes","$.registration.caps.traceBytes"]},{"$eq":["$topic.cost.physical",{"$add":["$topic.cost.calls",{"$count":"$topic.runs[*]"}]}]},{"$eq":["$topic.reviewCalls",{"$sum":"$topic.attempts[?(@.stage==\"DECIDE\")].spend.calls"}]},{"$some":{"decision":"$topic.decisions[*]"},"$satisfies":{"$and":[{"$eq":["$decision.id","$topic.finalDecisionId"]},{"$eq":["$decision.kind","Stop"]},{"$eq":["$decision.details.analysisId","$topic.finalAnalysisId"]}]}},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}},{"$every":{"topic":"$.analysis.repair[*]"},"$satisfies":{"$and":[{"$eq":["$topic.nativeStatus","completed"]},{"$eq":["$topic.state.status","STOPPED"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$le":["$topic.traceBytes","$.registration.caps.traceBytes"]},{"$eq":["$topic.cost.physical",{"$add":["$topic.cost.calls",{"$count":"$topic.runs[*]"}]}]},{"$eq":["$topic.reviewCalls",{"$sum":"$topic.attempts[?(@.stage==\"DECIDE\")].spend.calls"}]},{"$some":{"decision":"$topic.decisions[*]"},"$satisfies":{"$and":[{"$eq":["$decision.id","$topic.finalDecisionId"]},{"$eq":["$decision.kind","Stop"]},{"$eq":["$decision.details.analysisId","$topic.finalAnalysisId"]}]}},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}},{"$eq":[{"$eq":["$.decision","conformant"]},{"$and":["$.gate.registration","$.gate.oracle","$.gate.bundles","$.gate.analysis"]}]}]}
  */
 export interface ResearchReport {
   benchmark: "research";
@@ -4861,6 +5359,7 @@ export interface ResearchReport {
    */
   rows: Array<ResearchMeasuredRow | ResearchReasoningRow | ResearchExecutionRow | ResearchMissingRow>;
   execution: ResearchReportExecution;
+  analysis: ResearchReportAnalysis;
   /**
    * Schema constraints this type cannot express: maxItems=3
    */
@@ -4873,7 +5372,7 @@ export interface ResearchReport {
    * Schema constraints this type cannot express: minItems=8, maxItems=8
    */
   disclosure: Array<{ rowId: "artifact-oracle" | "no-model-runner" | "single-pass-retrieve-draft" | "fixed-single-agent" | "fixed-plus-debate" | "fixed-plus-branching" | "gate-only-full" | "full-auto-full"; items: DisclosureChecklist; }>;
-  gate: { registration: boolean; oracle: boolean; bundles: boolean; networkCalls: 0; };
+  gate: { registration: boolean; oracle: boolean; bundles: boolean; analysis: boolean; networkCalls: 0; };
   decision: "conformant" | "drift";
   /**
    * Schema constraints this type cannot express: minItems=1

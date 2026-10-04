@@ -1,5 +1,5 @@
 /** Nested native loops retain one checkpoint per experiment without growing control payloads. */
-import { defineMasWorkflow, taskInvocation, loopInvocation, agentInvocation, masMessage, masRevisionOf,
+import { defineMasWorkflow, taskInvocation, loopInvocation, switchInvocation, agentInvocation, masMessage, masRevisionOf,
   type JsonSchema, type WorkflowLimits, type MasRegistry, type MasHostBindings, type Invocation } from '@tangleai/mas';
 import { researchSchemaOf } from './schema.ts';
 import { RESEARCH_PREPARATION_SCHEMA } from './reasoning-contract.ts';
@@ -34,7 +34,7 @@ export async function createResearchExecutionWorkflow(policy: ResearchExecutionP
   const seeds = loopInvocation({ id: 'seeds', body: seed.workflowId, input: { initial: cursor }, output: { cursor },
     init: [{ port: 'initial', to: '/cursor' }], feedback: [{ from: '/cursor', to: '/cursor' }], result: [{ port: 'cursor', from: '/cursor' }],
     maxIterations: policy.maxSeeds, termination: { $eq: ['$.output.cursor.done', true] } });
-  const nodes: Invocation[] = [task('prepare', 'research-prepare-execute', { frame }, { preparation, cursor, execution: RESEARCH_EXECUTION_REF_SCHEMA }), seeds,
+  const nodes: Invocation[] = [task('prepare', 'research-prepare-execute', { frame }, { preparation, cursor, execution: RESEARCH_EXECUTION_REF_SCHEMA, reuse: { type: 'boolean' } }), seeds,
     task('commit', 'research-commit-execute', { preparation, cursor }, { frame })];
   const messages = [masMessage(['prepare', 'preparation'], ['commit', 'preparation']), masMessage(['seeds', 'cursor'], ['commit', 'cursor'])];
   const roles: MasRegistry['roles'] = [], messageAdapters: MasRegistry['messageAdapters'] = [];
@@ -45,16 +45,23 @@ export async function createResearchExecutionWorkflow(policy: ResearchExecutionP
     messageAdapters.push({ id: 'research-code-author', version: revision });
     adapters.set('research-code-author', { id: 'research-code-author', version: revision,
       render: () => 'Read the frozen plan and workspace, write the required code into an allowed immutable slot, and return its entrypoint path.' });
-    nodes.push(agentInvocation({ id: 'author', role: 'research-code-author', profile, instructionsRevision,
+    nodes.push(switchInvocation({ id: 'author-route', input: { cursor, execution: RESEARCH_EXECUTION_REF_SCHEMA, reuse: { type: 'boolean' } },
+      output: { routed: cursor }, mode: 'one-of', default: 'author', branches: [
+        { id: 'reuse', when: { $eq: ['$.reuse', true] }, nodes: ['reuse'], result: { node: 'reuse', port: 'cursor' } },
+        { id: 'author', when: { $eq: ['$.reuse', false] }, nodes: ['author', 'seal'], result: { node: 'seal', port: 'cursor' } },
+      ] }), task('reuse', 'research-execution-reuse', { cursor }, { cursor }),
+    agentInvocation({ id: 'author', role: 'research-code-author', profile, instructionsRevision,
       messageAdapter: 'research-code-author', tools: [...RESEARCH_AUTHOR_TOOLS], input: { execution: RESEARCH_EXECUTION_REF_SCHEMA }, output: { out: RESEARCH_AUTHOR_PROPOSAL } }),
     task('seal', 'research-execution-seal', { cursor, proposal: RESEARCH_AUTHOR_PROPOSAL }, { cursor }));
-    messages.push(masMessage(['prepare', 'execution'], ['author', 'execution']), masMessage(['author', 'out'], ['seal', 'proposal']),
-      masMessage(['prepare', 'cursor'], ['seal', 'cursor']), masMessage(['seal', 'cursor'], ['seeds', 'initial']));
+    messages.push(...['cursor', 'execution', 'reuse'].map(port => masMessage(['prepare', port], ['author-route', port], { id: 'prepare-' + port + '-author-route' })),
+      masMessage(['author-route', 'execution'], ['author', 'execution']), masMessage(['author', 'out'], ['seal', 'proposal']),
+      masMessage(['author-route', 'cursor'], ['seal', 'cursor']), masMessage(['author-route', 'cursor'], ['reuse', 'cursor']),
+      masMessage(['author-route', 'routed'], ['seeds', 'initial']));
   } else messages.push(masMessage(['prepare', 'cursor'], ['seeds', 'initial']));
   const root = await finish('research-execution', nodes, messages, [{ port: 'frame', to: { node: 'prepare', port: 'frame' } }],
     [{ port: 'frame', from: { node: 'commit', port: 'frame' } }], object({ frame }), object({ frame }));
   const handlers = ['research-prepare-execute', 'research-commit-execute', 'research-experiment', 'research-execution-advance',
-    ...(policy.mode === 'authored' ? ['research-execution-seal'] : [])].map(id => ({ id, title: id, effect: 'effectful' as const, idempotency: 'honored' as const }));
+    ...(policy.mode === 'authored' ? ['research-execution-seal', 'research-execution-reuse'] : [])].map(id => ({ id, title: id, effect: 'effectful' as const, idempotency: 'honored' as const }));
   return { policy, revision, roles, handlers, messageAdapters, adapters, tools: policy.mode === 'authored' ? await researchAuthorDeclarations() : [], subgraphs: [condition, seed, root] };
 }
 export type PreparedResearchExecution = Awaited<ReturnType<typeof createResearchExecutionWorkflow>>;

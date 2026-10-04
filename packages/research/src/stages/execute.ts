@@ -17,7 +17,9 @@ import { createResearchWorkspace, validateResearchWorkspace, buildExecutionManif
 import { validateResearchExecutionResult, RESEARCH_EXECUTOR_CONTRACT, type ResearchExecutor } from '../execution/executor.ts';
 import type { ResearchEvaluator } from '../execution/registry.ts';
 import { createEvaluationRegistry } from '../execution/registry.ts';
-import { createResearchAuthorTools, researchCodeWriteId, researchCodeStaticIssues } from './author.ts';
+import { createResearchAuthorTools, researchCodeWriteId, researchCodeStaticIssues, type ResearchRepairContext } from './author.ts';
+import { readResearchAnalysisInputs, RESEARCH_EXECUTION_RECORDS_MEDIA } from '../analysis-records.ts';
+import { planResearchReplication } from './replicate.ts';
 
 const PREPARATION_MEDIA = 'application/vnd.tangleai.research-execution-preparation+json';
 const RECEIPT_MEDIA = 'application/vnd.tangleai.research-execution-receipt+json';
@@ -29,6 +31,10 @@ interface ExecutionPreparation {
   inputs: ResearchInputArtifact[];
   branchId: string;
   parentId: string | null;
+  seeds: number[];
+  kind: 'initial' | 'replicate' | 'repair';
+  reusedCode: ResearchCodeWrite[];
+  repair: ResearchRepairContext | null;
 }
 interface ExperimentReceipt {
   manifest: ExecutionManifest;
@@ -100,6 +106,7 @@ export async function createResearchExecutionTools<Labels>(base: ResearchTaskToo
     return { data, workspace, trace, path: prepared.preparation.scope };
   }
   async function authored(current: Awaited<ReturnType<typeof scope>>) {
+    if (current.data.kind === 'replicate') return current.data.reusedCode;
     const rows: ResearchCodeWrite[] = [];
     for (const slot of policy.codeFiles) {
       const row = researchValue(await store.getRecord(current.data.operation.frame.projectId, 'ResearchCodeWrite', await researchCodeWriteId(current.data.operation.attemptId, slot.path)));
@@ -114,6 +121,12 @@ export async function createResearchExecutionTools<Labels>(base: ResearchTaskToo
   }
   async function executionWorkspace(current: Awaited<ReturnType<typeof scope>>) {
     if (policy.mode === 'fixture') return { workspace: current.workspace, codeArtifactId: undefined };
+    if (current.data.kind === 'replicate') {
+      const main = current.data.reusedCode[0];
+      if (!main || !current.workspace.manifest.entries.some(row => row.path === main.path && row.artifactId === main.artifactId && row.role === 'code'))
+        researchFail('TRSH1005', '/code', 'Replication needs its unchanged original code entrypoint.');
+      return { workspace: current.workspace, codeArtifactId: main.artifactId };
+    }
     const author = current.trace.attempts.find(row => row.path === current.path + '/author' && row.status === 'completed' && row.kind === 'agent');
     const seal = current.trace.attempts.find(row => row.path === current.path + '/seal' && row.status === 'completed' && row.kind === 'task');
     if (!author || !seal) researchFail('TRSH1005', '/author', 'Authored execution requires the completed native author and seal.');
@@ -140,7 +153,41 @@ export async function createResearchExecutionTools<Labels>(base: ResearchTaskToo
       const contract = snapshot.records.find(row => row.kind === 'ResearchContract' && row.value.contractHash === snapshot.state.contractHash)?.value as ResearchContract | undefined;
       const plan = snapshot.records.find(row => row.kind === 'ExperimentPlan' && row.value.planHash === snapshot.state.planHash)?.value as ExperimentPlan | undefined;
       if (!contract || !plan) researchFail('TRSH1009', '/preregistration', 'Execution requires the actively frozen contract and plan.');
-      const count = contract.replicatePolicy.seeds.length * plan.conditions.length;
+      let seeds = contract.replicatePolicy.seeds.slice(0, contract.analysisPolicy?.seedBatchSize ?? contract.replicatePolicy.seeds.length);
+      let parentId: string | null = null, kind: ExecutionPreparation['kind'] = 'initial', reusedCode: ResearchCodeWrite[] = [];
+      let repair: ResearchRepairContext | null = null;
+      if (contract.analysisPolicy && operation.frame.decision === 'Refine') {
+        const admitted = await readResearchAnalysisInputs(operation, access);
+        const decisions = admitted.of('ResearchDecision').filter(row => row.contractHash === contract.contractHash && row.kind === 'Refine');
+        const decision = decisions.find(row => row.details?.attemptOrdinal === operation.frame.attempt && row.details.pivotOrdinal === operation.frame.pivot);
+        const analysis = admitted.of('Analysis').find(row => row.id === decision?.details?.analysisId);
+        if (!decision?.details || !analysis) researchFail('TRSH1005', '/decision', 'Continuation needs its admitted analysis and decision.');
+        parentId = analysis.branchId;
+        if (decision.details.action === 'replicate') {
+          kind = 'replicate';
+          seeds = researchValue(planResearchReplication(analysis, contract, plan, admitted.of('ExperimentBranch').filter(row => analysis.branchIds.includes(row.id)), operation.frame.attempt));
+          const source = admitted.of('ExecutionManifest').find(row => analysis.branchIds.includes(row.branchId) && row.codeArtifactId);
+          if (policy.mode === 'authored') {
+            const workspace = admitted.of('WorkspaceManifest').find(row => row.workspaceHash === source?.workspaceHash);
+            if (!workspace || !source?.entrypoint) researchFail('TRSH1005', '/code', 'Authored replication needs the admitted original workspace and entrypoint.');
+            reusedCode = admitted.of('ResearchCodeWrite').filter(row => workspace.entries.some(entry => entry.role === 'code' && entry.artifactId === row.artifactId));
+            const entrypoint = reusedCode.find(row => row.path === source.entrypoint);
+            if (!entrypoint || reusedCode.length !== workspace.entries.filter(row => row.role === 'code').length)
+              researchFail('TRSH1005', '/code', 'Replication cannot change or omit frozen code files.');
+            reusedCode = [entrypoint, ...reusedCode.filter(row => row !== entrypoint)];
+          }
+        } else if (decision.details.action === 'repair') {
+          kind = 'repair'; seeds = [...contract.replicatePolicy.seeds];
+          const sources = admitted.of('ExecutionManifest').filter(row => analysis.branchIds.includes(row.branchId) && row.codeArtifactId);
+          const workspaces = admitted.of('WorkspaceManifest').filter(row => sources.some(source => source.workspaceHash === row.workspaceHash));
+          repair = { decision, analysis, code: admitted.of('ResearchCodeWrite').filter(row => workspaces.some(workspace =>
+            workspace.entries.some(entry => entry.role === 'code' && entry.artifactId === row.artifactId))) };
+          const candidates = admitted.of('ExperimentBranch').filter(row => row.contractHash === contract.contractHash && row.kind !== 'replicate');
+          if (contract.branchSelectionRule?.kind !== 'best-of-n' || candidates.length >= contract.branchSelectionRule.n)
+            researchFail('TRSH1006', '/branchSelectionRule', 'A repair must fit the declared candidate count.');
+        } else researchFail('TRSH1006', '/decision', 'Refine must name a declared replication or implementation repair.');
+      }
+      const count = seeds.length * plan.conditions.length;
       if (contract.replicatePolicy.seeds.length > policy.maxSeeds || plan.conditions.length > policy.maxConditions
         || policy.resources.wallMs * count > operation.manifest.reservation.ms || count > operation.manifest.reservation.physical
         || plan.design && (policy.resources.wallMs * count > plan.design.resources.ms || count > plan.design.resources.physical))
@@ -155,14 +202,16 @@ export async function createResearchExecutionTools<Labels>(base: ResearchTaskToo
         files.push({ path: row.path, bytes: await access.readArtifact(ref), role: 'input' as const, mode: 'read-only' as const });
       }
       const workspace = researchValue(await createResearchWorkspace({ projectId: contract.projectId, datasetIds: contract.datasets.map(row => row.id),
-        splitIds: [...contract.splits.train, ...contract.splits.test], files: [...files, { path: 'evaluation/registry.json', bytes: evaluatorBytes, role: 'evaluator', mode: 'read-only' }] }));
+        splitIds: [...contract.splits.train, ...contract.splits.test], files: [...files, { path: 'evaluation/registry.json', bytes: evaluatorBytes, role: 'evaluator', mode: 'read-only' },
+          ...reusedCode.map(row => ({ path: row.path, bytes: new TextEncoder().encode(row.text), role: 'code' as const, mode: 'read-only' as const }))] }));
       const inputs = [];
       for (const row of workspace.artifacts) inputs.push(await stage(operation, row.bytes, 'application/octet-stream'));
       const previous = snapshot.records.filter(row => row.kind === 'ExperimentBranch' && row.value.planHash === plan.planHash)
         .map(row => row.value as ExperimentBranch).sort((a, b) => b.attemptOrdinal - a.attemptOrdinal)[0];
       const data: ExecutionPreparation = { operation, contract, plan, workspace: workspace.manifest, inputs,
-        branchId: 'branch-' + await researchRevisionOf({ attemptId: operation.attemptId, planHash: plan.planHash }), parentId: previous?.id ?? null };
-      return { execution: await stage(operation, jsonBytes(data), PREPARATION_MEDIA), cursor: { seed: 0, condition: 0, conditionDone: false, done: false } };
+        branchId: 'branch-' + await researchRevisionOf({ attemptId: operation.attemptId, planHash: plan.planHash }),
+        parentId: contract.analysisPolicy ? parentId : previous?.id ?? null, seeds, kind, reusedCode, repair };
+      return { execution: await stage(operation, jsonBytes(data), PREPARATION_MEDIA), reuse: kind === 'replicate', cursor: { seed: 0, condition: 0, conditionDone: false, done: false } };
     },
     async complete(operation, modelSpend, path, partial) {
       const current = await scope({ runId: operation.frame.projectId, path: path + '/commit' }, false);
@@ -192,26 +241,33 @@ export async function createResearchExecutionTools<Labels>(base: ResearchTaskToo
         records.push({ kind: 'ExecutionManifest', value: receipt.manifest }); receipts.push(receipt);
       }
       for (const code of await authored(current)) { records.push({ kind: 'ResearchCodeWrite', value: code }); artifacts.push({ bytes: new TextEncoder().encode(code.text), mediaType: 'text/javascript' }); }
-      const total = cost([modelSpend, ...receipts.map(row => row.spend)]), expected = current.data.contract.replicatePolicy.seeds.length * current.data.plan.conditions.length;
+      const total = cost([modelSpend, ...receipts.map(row => row.spend)]), expected = current.data.seeds.length * current.data.plan.conditions.length;
       const error = receipts.find(row => row.error)?.error ?? (partial || receipts.length !== expected ? researchIssue('TRSH1008', '/execution', 'Execution stopped with an incomplete replicate set; completed receipts are retained.') : undefined);
       const branch: ExperimentBranch = { id: current.data.branchId, projectId: operation.frame.projectId, contractHash: current.data.contract.contractHash,
         planHash: current.data.plan.planHash, hypothesisHash: current.data.plan.hypothesisHash, parentId: current.data.parentId,
-        attemptOrdinal: operation.frame.attempt + 1, status: error ? 'failed' : 'completed', runIds: receipts.flatMap(row => row.run ? [row.run.id] : []), spend: total };
+        attemptOrdinal: operation.frame.attempt + 1, status: error ? 'failed' : 'completed', runIds: receipts.flatMap(row => row.run ? [row.run.id] : []), spend: total,
+        ...(current.data.contract.analysisPolicy ? { kind: current.data.kind } : {}) };
       records.push({ kind: 'ExperimentBranch', value: branch });
       artifacts.push({ bytes: jsonBytes({ kind: 'execution-branch', branch, expected, attempted: receipts.length, failed: receipts.filter(row => row.error).length }), mediaType: 'application/json' });
       const unique = new Map(records.map(row => [row.kind + ':' + ('id' in row.value ? row.value.id : ''), row]));
-      return { artifacts, records: [...unique.values()], spend: total, ...(error ? { error } : {}) };
+      if (current.data.contract.analysisPolicy) artifacts.push({ mediaType: RESEARCH_EXECUTION_RECORDS_MEDIA,
+        bytes: jsonBytes({ kind: 'execution-records', value: [{ kind: 'ResearchContract', value: current.data.contract },
+          { kind: 'ExperimentPlan', value: current.data.plan }, ...unique.values()] }) });
+      const recoverable = !partial && current.data.contract.analysisPolicy?.recoverProgramFailure && receipts.some(row => row.error)
+        && receipts.filter(row => row.error).every(row => row.run?.status === 'failed' && row.run.stopReason === 'completed'
+          && row.run.exitStatus !== null && row.run.exitStatus !== undefined && row.run.exitStatus !== 0 && row.error?.code === 'TRSH1008');
+      return { artifacts, records: [...unique.values()], spend: total, ...(error && !recoverable ? { error } : {}) };
     },
   };
   runtime.taskHandlers['research-experiment'] = wrap(async input => {
     const current = await scope(input), cursor = immutableResearchJson(input.value.cursor) as ResearchExecutionCursor;
     const { contract, plan, operation, branchId } = current.data;
     if (cursor.done || cursor.conditionDone || !Number.isSafeInteger(cursor.seed) || !Number.isSafeInteger(cursor.condition)
-      || !contract.replicatePolicy.seeds.includes(contract.replicatePolicy.seeds[cursor.seed]) || !plan.conditions[cursor.condition])
+      || !contract.replicatePolicy.seeds.includes(current.data.seeds[cursor.seed]) || !plan.conditions[cursor.condition])
       researchFail('TRSH1004', '/cursor', 'Execution cursor is outside its frozen replicate set.');
     const { workspace, codeArtifactId } = await executionWorkspace(current), condition = plan.conditions[cursor.condition];
     const manifest = researchValue(await buildExecutionManifest({ contract, plan, workspace, branchId, condition: condition.id,
-      seed: contract.replicatePolicy.seeds[cursor.seed], imageDigest: policy.imageDigest, dependencyLockHash: policy.dependencyLockHash, resources: policy.resources,
+      seed: current.data.seeds[cursor.seed], imageDigest: policy.imageDigest, dependencyLockHash: policy.dependencyLockHash, resources: policy.resources,
       ...(codeArtifactId && condition.id === contract.successRule.condition ? { codeArtifactId } : {}) }));
     const receipt: ExperimentReceipt = { manifest, run: null, artifacts: [], observations: [], error: null,
       spend: { calls: 0, tokens: 0, ms: 0, physical: 1 } };
@@ -234,7 +290,7 @@ export async function createResearchExecutionTools<Labels>(base: ResearchTaskToo
     const current = await scope(input), cursor = immutableResearchJson(input.value.cursor) as ResearchExecutionCursor;
     if (!cursor.conditionDone) researchFail('TRSH1004', '/cursor', 'A seed cannot advance before its conditions settle.');
     return { cursor: { seed: cursor.seed + 1, condition: 0, conditionDone: false,
-      done: cursor.done || cursor.seed + 1 === current.data.contract.replicatePolicy.seeds.length } };
+      done: cursor.done || cursor.seed + 1 === current.data.seeds.length } };
   });
   runtime.taskHandlers['research-execution-seal'] = wrap(async input => {
     const current = await scope(input), author = current.trace.attempts.find(row => row.path === current.path + '/author' && row.status === 'completed');
@@ -243,10 +299,15 @@ export async function createResearchExecutionTools<Labels>(base: ResearchTaskToo
     if (!codes.some(row => row.path === entrypoint) || codes.some(row => row.staticIssues.length)) researchFail('TRSH1010', '/code', 'Code entrypoint is missing or its static checks refused execution.');
     return { cursor: input.value.cursor };
   });
+  runtime.taskHandlers['research-execution-reuse'] = wrap(async input => {
+    const current = await scope(input);
+    if (current.data.kind !== 'replicate' || policy.mode !== 'authored') researchFail('TRSH1005', '/code', 'Only declared replication can reuse code.');
+    await executionWorkspace(current); return { cursor: input.value.cursor };
+  });
   runtime.toolBindings = policy.mode === 'authored' ? createResearchAuthorTools({ store, policy, scope: async invocation => {
     const current = await scope(invocation);
     if (invocation.path !== current.path + '/author') researchFail('TRSH1005', '/invocation', 'Only the native code-author node may access this toolbox.');
-    return { operation: current.data.operation, contract: current.data.contract, plan: current.data.plan, workspace: current.workspace };
+    return { operation: current.data.operation, contract: current.data.contract, plan: current.data.plan, workspace: current.workspace, repair: current.data.repair };
   } }) : {};
   return { ...base, execution: runtime };
 }

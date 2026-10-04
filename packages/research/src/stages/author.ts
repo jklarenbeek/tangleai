@@ -4,26 +4,28 @@ import { masRevisionOf, type MasRegistry, type MasHostBindings } from '@tangleai
 import type { ResearchStore } from '../store.ts';
 import type { ResearchExecutionPolicy } from '../execution-contract.ts';
 import type { ResearchStageOperation } from '../handlers.ts';
-import type { ResearchContract, ExperimentPlan, ResearchCodeWrite, ResearchIssue } from '../contracts.gen.ts';
+import type { ResearchContract, ExperimentPlan, ResearchCodeWrite, ResearchIssue, ResearchDecision, Analysis } from '../contracts.gen.ts';
 import type { ResearchWorkspace } from '../execution/manifest.ts';
 import { immutableResearchJson, researchArtifactIdOf, researchRevisionOf } from '../identity.ts';
 import { researchIssue } from '../errors.ts';
 import { researchFail, researchValue } from '../workflow-contract.ts';
 import { validateResearchShape } from '../schema.ts';
 
-export const RESEARCH_AUTHOR_TOOLS = ['read-plan', 'read-workspace', 'write-code'] as const;
-export const RESEARCH_AUTHOR_INSTRUCTIONS = 'Implement only the candidate condition in the frozen research plan. Read features and the declared seed and parameters from the workspace. Write canonical raw experiment output to output/raw.json. Never produce evaluator metrics, access hidden labels, use the network, or change the evaluator or preregistration. Use read-plan and read-workspace to inspect authorized inputs, and write-code to fill an allowed immutable .mjs slot. Return the entrypoint path. Static checks are advisory defense in depth; the host container supplies isolation.';
+export const RESEARCH_AUTHOR_TOOLS = ['read-plan', 'read-workspace', 'read-previous-code', 'write-code'] as const;
+export const RESEARCH_AUTHOR_INSTRUCTIONS = 'Implement only the candidate condition in the frozen research plan. Read features and the declared seed and parameters from the workspace. Write canonical raw experiment output to output/raw.json. Never produce evaluator metrics, access hidden labels, use the network, or change the evaluator or preregistration. Use read-plan and read-workspace to inspect authorized inputs, read-previous-code for bounded slices of an admitted repair parent, and write-code to fill an allowed immutable .mjs slot. Return the entrypoint path. Static checks are advisory defense in depth; the host container supplies isolation.';
 export const RESEARCH_AUTHOR_PROPOSAL = { type: 'object', additionalProperties: false, required: ['entrypoint'],
   properties: { entrypoint: { type: 'string', minLength: 1, maxLength: 256 } } };
 export async function researchAuthorDeclarations(): Promise<MasRegistry['tools']> {
   return Promise.all(RESEARCH_AUTHOR_TOOLS.map(async id => {
     const properties = id === 'read-plan' ? {} : id === 'read-workspace' ? { path: { type: 'string', minLength: 1, maxLength: 256 } }
+      : id === 'read-previous-code' ? { path: { type: 'string', minLength: 1, maxLength: 256 }, offset: { type: 'integer', minimum: 0 }, chars: { type: 'integer', minimum: 1, maximum: 2048 } }
       : { path: { type: 'string', minLength: 1, maxLength: 256 }, text: { type: 'string', minLength: 1, maxLength: 65536 } };
     const input = { type: 'object', additionalProperties: false, required: Object.keys(properties), properties };
     return { id, title: id, effect: id === 'write-code' ? 'effectful' as const : 'pure' as const, input, inputRevision: await masRevisionOf(input) };
   }));
 }
-export interface ResearchAuthorScope { operation: ResearchStageOperation; contract: ResearchContract; plan: ExperimentPlan; workspace: ResearchWorkspace }
+export interface ResearchRepairContext { decision: ResearchDecision; analysis: Analysis; code: ResearchCodeWrite[] }
+export interface ResearchAuthorScope { operation: ResearchStageOperation; contract: ResearchContract; plan: ExperimentPlan; workspace: ResearchWorkspace; repair?: ResearchRepairContext | null }
 export function researchCodeStaticIssues(text: string): ResearchIssue[] {
   const checked = checkOutcome(composeChecks(
     () => !/hidden[\\/]/i.test(text) || { valid: false, errors: [researchIssue('TRSH1010', '/code', 'Source mentions an excluded hidden path.')] },
@@ -40,11 +42,23 @@ export function createResearchAuthorTools(options: { store: ResearchStore; polic
   const store = options.store, policy = immutableResearchJson(options.policy), scope = options.scope;
   return Object.fromEntries(RESEARCH_AUTHOR_TOOLS.map(name => [name, { ...(name === 'write-code' ? { idempotency: 'honored' as const } : {}), handler: async (input, context) => {
     if (!context.invocation || policy.mode !== 'authored') researchFail('TRSH1005', '/invocation', 'Authoring requires an admitted native execution author.');
-    const requested = immutableResearchJson(input) as { path?: string; text?: string };
+    const requested = immutableResearchJson(input) as { path?: string; text?: string; offset?: number; chars?: number };
     const current = await scope(context.invocation);
     if (name === 'read-plan') return { contract: current.contract, plan: current.plan, allowedCode: policy.codeFiles,
       workspace: current.workspace.manifest, rawOutputPath: 'output/raw.json', requestPath: 'execution.json',
+      ...(current.repair ? { repair: { decision: { id: current.repair.decision.id, kind: current.repair.decision.kind, reason: current.repair.decision.reason },
+        analysis: { id: current.repair.analysis.id, support: current.repair.analysis.support, diagnostics: current.repair.analysis.diagnostics },
+        code: current.repair.code.map(({ path, artifactId, bytes }) => ({ path, artifactId, bytes })) } } : {}),
       note: 'The host supplies the frozen execution manifest in execution.json. Only the candidate condition uses authored code.' };
+    if (name === 'read-previous-code') {
+      const code = current.repair?.code.find(row => row.path === requested.path);
+      if (!code || !Number.isSafeInteger(requested.offset) || typeof requested.offset !== 'number' || requested.offset < 0
+        || !Number.isSafeInteger(requested.chars) || typeof requested.chars !== 'number' || requested.chars < 1 || requested.chars > 2048 || requested.offset > code.text.length)
+        researchFail('TRSH1005', '/path', 'Previous-code reads require an admitted repair parent and a bounded character range.');
+      const end = Math.min(code.text.length, requested.offset + requested.chars);
+      return { path: code.path, artifactId: code.artifactId, text: code.text.slice(requested.offset, end),
+        totalChars: code.text.length, nextOffset: end < code.text.length ? end : null };
+    }
     if (name === 'read-workspace') {
       const entry = current.workspace.manifest.entries.find(row => row.path === requested.path && row.mode === 'read-only' && row.role === 'input');
       if (!entry) researchFail('TRSH1005', '/path', 'The author may read only declared feature inputs.');

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { planStateTransition, planStageCommit, type ResearchStore, type LiteratureRecord } from '@tangleai/research';
-import { attempt, checked, manifest } from './fixtures.ts';
+import { planStateTransition, planStageCommit, researchRevisionOf, type ResearchStore, type LiteratureRecord } from '@tangleai/research';
+import { attempt, checked, frozen, manifest } from './fixtures.ts';
 import { start, stored, output, addObservation, type ResearchHarness } from './store-harness.ts';
 import { reasoningFixture } from './reasoning-fixtures.ts';
 
@@ -54,6 +54,55 @@ export function researchDesignStoreSuite(name: string, open: () => Promise<Resea
           assert.equal(stored(await next.store.commitStage(plan)).nextState.contractHash, plan.preregistration!.contract.contractHash);
         } finally { await next.close(); }
       }
+    });
+    it('pivot preregistration, exploratory marks and the design receipt commit atomically with no partial lineage', async () => {
+      async function pivot(store: ResearchStore) {
+        const initial = await admission(store);
+        let state = stored(await store.commitStage(initial.plan)).nextState;
+        const observation = await addObservation(store);
+        for (const edge of ['EXECUTE', 'ANALYZE', 'DECIDE', 'SYNTHESIS', 'HYPOTHESIS_GATE', 'DESIGN'] as const)
+          state = stored(await store.transition(checked(planStateTransition(state, edge))));
+        const next = await frozen(state.projectId, '-pivot', 0.1), input = manifest(state.projectId, 'DESIGN');
+        const hypothesis = initial.f.hypotheses[1];
+        next.contract.hypothesisSpace = [hypothesis.statement];
+        const { contractHash: _contractHash, ...contractBody } = next.contract;
+        next.contract.contractHash = await researchRevisionOf(contractBody);
+        next.plan.contractHash = next.contract.contractHash; next.plan.hypothesisHash = hypothesis.hypothesisHash;
+        const { planHash: _planHash, ...planBody } = next.plan; next.plan.planHash = await researchRevisionOf(planBody);
+        const amendment = { id: 'pivot-amendment', before: initial.f.design.contract.contractHash, after: next.contract.contractHash,
+          reason: 'The admitted confound requires a new preregistration lineage.', marksExploratory: [observation.id] };
+        const plan = checked(await planStageCommit({ state, attempt: await attempt(input, [], 2), manifest: input,
+          artifactAdmissionIds: [], nextStatus: 'DESIGN_GATE', preregistration: { ...next, amendment } }));
+        return { initial, state, observation, next, amendment, plan };
+      }
+      const sample = await open(); let boundaries: string[];
+      try {
+        const f = await pivot(sample.store); sample.arm(null);
+        const receipt = stored(await sample.store.commitStage(f.plan)); boundaries = sample.steps();
+        assert.equal(receipt.nextState.revision, f.state.revision + 1);
+        assert.equal(receipt.nextState.contractHash, f.next.contract.contractHash);
+        assert.deepEqual(receipt.nextState.exploratoryObservationIds, [f.observation.id]);
+        assert.deepEqual(stored(await sample.store.getRecord(f.state.projectId, 'Amendment', f.amendment.id)), f.amendment);
+        assert.deepEqual(stored(await sample.store.getRecord(f.state.projectId, 'ResearchContract', f.initial.f.design.contract.id)), f.initial.f.design.contract);
+        assert.deepEqual(stored(await sample.store.getRecord(f.state.projectId, 'MetricObservation', f.observation.id)), f.observation);
+        const before = await sample.capture(); assert.ok((await sample.store.commitStage(f.plan)).ok); assert.deepEqual(await sample.capture(), before);
+      } finally { await sample.close(); }
+      for (let boundary = 1; boundary <= boundaries!.length; boundary++) {
+        const h = await open();
+        try {
+          const f = await pivot(h.store), before = await h.capture(); h.arm(boundary);
+          const refused = await h.store.commitStage(f.plan); assert.equal(refused.ok, false, boundaries![boundary - 1]);
+          h.arm(null); assert.deepEqual(await h.capture(), before);
+          assert.equal(stored(await h.store.commitStage(f.plan)).nextState.contractHash, f.next.contract.contractHash);
+        } finally { await h.close(); }
+      }
+      const raced = await open();
+      try {
+        const f = await pivot(raced.store), changed = structuredClone(f.plan);
+        changed.preregistration!.amendment!.marksExploratory = [];
+        const before = await raced.capture(), refused = await raced.store.commitStage(changed);
+        assert.equal(refused.ok, false); assert.deepEqual(await raced.capture(), before);
+      } finally { await raced.close(); }
     });
     it('an observation inserted after planning prevents initial preregistration without partial state', async () => {
       const h = await open();

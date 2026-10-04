@@ -1,0 +1,128 @@
+{
+  "id": "research-decisions-v1",
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  },
+  "analystIdentityId": "research-deterministic-analyst",
+  "reviewerIdentityId": "research-independent-result-reviewers",
+  "statisticId": "jaren-paired-bootstrap-nearest-rank",
+  "repair": {
+    "topicId": "kmeans-seeding",
+    "programId": "kmeans-seeding/initializer-fault-v1",
+    "fault": "Registered persistent initializer fault; repeating the implementation cannot repair it."
+  },
+  "control": {
+    "attemptCap": 1,
+    "seedBatchSize": 5,
+    "rule": {
+      "kind": "single"
+    }
+  },
+  "branching": {
+    "attemptCap": 3,
+    "seedBatchSize": 2,
+    "rule": {
+      "kind": "best-of-n",
+      "n": 3,
+      "selector": "preregistered-metric"
+    }
+  },
+  "cases": [
+    {
+      "id": "success",
+      "baseline": [
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "candidate": [
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "variationCheck": false,
+      "confounded": false,
+      "expected": "Proceed"
+    },
+    {
+      "id": "bug",
+      "baseline": [
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "candidate": null,
+      "variationCheck": false,
+      "confounded": false,
+      "expected": "Refine"
+    },
+    {
+      "id": "degenerate",
+      "baseline": [
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "candidate": [
+        12,
+        12,
+        12,
+        12,
+        12
+      ],
+      "variationCheck": true,
+      "confounded": false,
+      "expected": "Refine"
+    },
+    {
+      "id": "confound",
+      "baseline": [
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "candidate": [
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "variationCheck": false,
+      "confounded": true,
+      "expected": "Pivot"
+    },
+    {
+      "id": "negative",
+      "baseline": [
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "candidate": [
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "variationCheck": false,
+      "confounded": false,
+      "expected": "Stop"
+    }
+  ]
+}

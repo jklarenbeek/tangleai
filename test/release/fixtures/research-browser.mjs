@@ -1,7 +1,8 @@
 import { createMemoryResearchStore, planProjectCreate, planStateTransition, planStageCommit,
   inputManifestHashOf, stageAttemptIdOf, researchArtifactIdOf, validateResearchShape, createReplayTransport, discoverCrossref,
   researchArtifacts, createResearchPatternHost, prepareResearchPattern, researchRevisionOf, createResearchWorkspace,
-  buildExecutionManifest, createFixtureExecutor, createEvaluationRegistry, researchObservationSignature } from '@tangleai/research';
+  buildExecutionManifest, createFixtureExecutor, createEvaluationRegistry, researchObservationSignature, createResearchAnalysis, selectBranch, planResearchDecision } from '@tangleai/research';
+import { pairedBootstrap } from '@jarenjs/core/stats';
 import { GMPL_LIMITS } from '@tangleai/gmpl';
 import { createAttemptBudget, sleep } from '@jarenjs/core/retry';
 import schema from '@tangleai/research/schemas/research' with { type: 'json' };
@@ -57,7 +58,7 @@ export async function qualifyResearchDiscoveryBrowser() {
   return { doi: result.records[0].canonicalIds.doi, rawHash: result.records[0].rawHashes[0].sha256 === (await researchArtifactIdOf(new TextEncoder().encode(body))).slice(4),
     ...replay.stats() };
 }
-export async function qualifyResearchExecutionBrowser() {
+export async function qualifyResearchExecutionBrowser(analyze = false) {
   const bytes = new TextEncoder().encode('{"features":[1,2]}'), artifactId = await researchArtifactIdOf(bytes);
   const contractBody = { id: 'packed-contract', projectId: 'packed-execution', hypothesisSpace: ['Retain every feature.'],
     successRule: { metric: 'count', baseline: 'baseline', condition: 'candidate', minImprovement: 0, confidenceLevel: 0.95 },
@@ -67,6 +68,10 @@ export async function qualifyResearchExecutionBrowser() {
       licence: { spdx: 'MIT', provenance: 'tangle-authored-synthetic', source: 'installed fixture' } }],
     replicatePolicy: { seeds: [1], minimum: 1, resamples: 10, bootstrapSeed: 1 }, attemptCap: 1, pivotCap: 1, reviewCap: 1,
     selectionRule: { kind: 'all', n: 1, metric: 'count' }, stopConditions: ['invalid'] };
+  if (analyze) {
+    contractBody.branchSelectionRule = { kind: 'single' };
+    contractBody.analysisPolicy = { seedBatchSize: 1, recoverProgramFailure: false, confoundAction: 'Stop', seedVariationChecks: [] };
+  }
   const contract = { ...contractBody, contractHash: await researchRevisionOf(contractBody) };
   const planBody = { id: 'packed-plan', projectId: contract.projectId, contractHash: contract.contractHash,
     hypothesisHash: await researchRevisionOf(contract.hypothesisSpace), inputPaths: ['features.json'], evaluator: { id: 'counter', version: '1' },
@@ -94,6 +99,27 @@ export async function qualifyResearchExecutionBrowser() {
   const refusal = await registry.registerObservations(evidence, [forged]);
   const network = await buildExecutionManifest({ ...input, network: { setup: 'off', measured: 'on' } });
   if (refusal.valid || network.valid) throw Error('Packed execution admitted a forgery or network escape');
+  if (analyze) {
+    const baselineManifest = value(await buildExecutionManifest({ ...input, condition: 'baseline' }));
+    const baselineResult = value(await executor.run(baselineManifest, workspace, context));
+    const baseline = value(await registry.evaluate({ ...evidence, manifest: baselineManifest, result: baselineResult }));
+    const branch = { id: input.branchId, projectId: contract.projectId, contractHash: contract.contractHash, planHash: plan.planHash,
+      hypothesisHash: plan.hypothesisHash, parentId: null, kind: 'initial', attemptOrdinal: 1, status: 'completed',
+      runIds: [baselineResult.run.id, result.run.id], spend: { calls: 0, tokens: 0, ms: 0, physical: 2 } };
+    const analysis = value(await createResearchAnalysis({ contract, plan, branch, ancestors: [], runs: [baselineResult.run, result.run],
+      manifests: [baselineManifest, manifest], observations: [...baseline, ...observations], exploratoryObservationIds: [], analystIdentityId: 'packed-analyst' },
+      (pairs, options) => pairedBootstrap(pairs, { ...options, quantile: 'nearest-rank' })));
+    const selection = value(await selectBranch([{ analysis, branches: [branch] }], contract));
+    const cost = { calls: 10, tokens: 100, ms: 10000, physical: 10 };
+    const decision = value(await planResearchDecision(analysis, contract, { attempt: 1, pivot: 1, selection },
+      { remaining: cost, nextAttempt: cost, nextPivot: cost }, { reviewerIdentityId: 'packed-reviewer', findings: [], artifactIds: ['component-review'] }));
+    const review = await prepareResearchPattern('result-review', await createResearchPatternHost('packed-analysis', { ...GMPL_LIMITS }));
+    const nodes = [review.validated.workflow, ...review.snapshot.subgraphs.values()].flatMap(workflow => workflow.nodes);
+    return { support: analysis.support, underpowered: analysis.evidence.underpowered, decision: decision.kind,
+      candidates: selection.candidates.length, reviewers: nodes.filter(node => node.kind === 'agent' && node.id.startsWith('reviewer-')).length };
+  }
   return { status: result.run.status, value: accepted[0].value, signature: accepted[0].registrySignature === await researchObservationSignature(accepted[0]),
     physical: result.run.spend.physical, isolated: result.run.isolation.verified, forged: refusal.issues[0].code, network: network.issues[0].code };
 }
+
+export function qualifyResearchAnalysisBrowser() { return qualifyResearchExecutionBrowser(true); }

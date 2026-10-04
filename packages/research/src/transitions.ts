@@ -22,6 +22,7 @@ export interface StateTransitionPlan { expectedState: ResearchState; nextState: 
 export interface ContractFreezePlan extends StateTransitionPlan { contract: ResearchContract; plan: ExperimentPlan }
 export interface AmendmentPlan extends ContractFreezePlan { amendment: Amendment }
 export interface ResearchProjection { stage: ResearchLifecycle; status: 'ok' | 'error' | 'cancelled'; ms: number }
+export interface ResearchPreregistration { contract: ResearchContract; plan: ExperimentPlan; amendment?: Amendment }
 export interface StageCommitPlan extends StateTransitionPlan {
   attempt: StageAttempt;
   manifest: InputManifest;
@@ -29,7 +30,7 @@ export interface StageCommitPlan extends StateTransitionPlan {
   records: ResearchRecordWrite[];
   projection: ResearchProjection;
   /** Activated with the design receipt, never in a preceding transaction. */
-  preregistration?: { contract: ResearchContract; plan: ExperimentPlan };
+  preregistration?: ResearchPreregistration;
 }
 
 export function planProjectCreate(input: unknown): ResearchOutcome<ProjectCreatePlan> {
@@ -109,7 +110,7 @@ export async function planAmendment(current: ResearchState, amendmentInput: Amen
 export async function planStageCommit(input: {
   state: ResearchState; attempt: StageAttempt; manifest: InputManifest; nextStatus: ResearchLifecycle;
   artifactAdmissionIds: readonly string[]; records?: readonly ResearchRecordWrite[];
-  preregistration?: { contract: ResearchContract; plan: ExperimentPlan };
+  preregistration?: ResearchPreregistration;
 }): Promise<ResearchOutcome<StageCommitPlan>> {
   let snapshot: typeof input;
   try { snapshot = immutableResearchJson(input); }
@@ -123,9 +124,11 @@ export async function planStageCommit(input: {
   if (snapshot.preregistration) {
     if (snapshot.state.status !== 'DESIGN' || snapshot.nextStatus !== 'DESIGN_GATE' || attempt.value.stopReason !== 'completed')
       return researchRefuse('TRSH1009', '/preregistration', 'Only a successfully verified design can atomically activate preregistration.');
-    const frozen = await planContractFreeze(snapshot.state, snapshot.preregistration.contract, snapshot.preregistration.plan, []);
+    const { contract, plan, amendment } = snapshot.preregistration;
+    const frozen = amendment ? await planAmendment(snapshot.state, amendment, contract, plan, amendment.marksExploratory)
+      : await planContractFreeze(snapshot.state, contract, plan, []);
     if (!frozen.valid) return frozen;
-    preregistration = { contract: frozen.value.contract, plan: frozen.value.plan };
+    preregistration = { contract: frozen.value.contract, plan: frozen.value.plan, ...(amendment ? { amendment } : {}) };
     activated = { ...frozen.value.nextState, revision: snapshot.state.revision };
   }
   const transition = planStateTransition(activated, snapshot.nextStatus);

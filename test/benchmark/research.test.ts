@@ -4,6 +4,7 @@ import { readFile, writeFile, mkdtemp, rm, readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { researchArtifactIdOf } from '@tangleai/research';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { compileJSONPointer, JSONPOINTER_NOTHING } from '@jarenjs/json/pointer';
 import { researchContext, buildReport, renderReport, renderDocument, validateResearchReport, REPORT_PATH, DOCUMENT_PATH } from '../../benchmark/lib/research.ts';
@@ -46,7 +47,7 @@ describe('research instrument', () => {
     assert.equal(renderDocument(rebuilt), await readFile(DOCUMENT_PATH, 'utf8'));
   });
   it('the oracle reaches every dimension ceiling while the no-model floor omits half the claims', () => {
-    assert.equal(report.decision, 'conformant'); assert.deepEqual(report.gate, { registration: true, oracle: true, bundles: true, networkCalls: 0 });
+    assert.equal(report.decision, 'conformant'); assert.deepEqual(report.gate, { registration: true, oracle: true, bundles: true, analysis: true, networkCalls: 0 });
     const oracle = measured(report, 0), floor = measured(report, 1);
     for (const topic of oracle.topics) for (const dimension of RESEARCH_DIMENSIONS)
       assert.equal(topic[dimension].value, dimension === 'literatureRecall' ? 0.75 : 1, topic.topicId + '/' + dimension);
@@ -163,11 +164,33 @@ describe('research instrument', () => {
       assert.equal(row.observations.some(observation => failed.has(observation.experimentRunId)), false);
     }
   });
+  it('decision controls retain honest negative results and the cost of ineffective replication and repair', async () => {
+    assert.equal(report.gate.analysis, true); assert.ok(report.analysis.probes.every(row => row.matched));
+    for (const row of report.analysis.rows) {
+      assert.equal(row.confoundDetection.value, 1); assert.equal(row.negativeResultHandling.value, 1); assert.equal(row.branchSelectionCompliance.value, 1);
+      for (const topic of row.topics) {
+        for (const review of topic.reviews) assert.equal(review.artifactId, await researchArtifactIdOf(new Uint8Array(review.bytes)));
+        assert.ok(topic.decisions.every(decision => decision.details!.reviewArtifactIds.every(id => topic.reviews.some(review => review.artifactId === id))));
+      }
+      const embedding = row.topics.find(topic => topic.topicId === 'embedder-width')!;
+      assert.equal(embedding.analyses.find(value => value.id === embedding.finalAnalysisId)!.support, 'not-supported');
+      assert.equal(embedding.decisions.find(value => value.id === embedding.finalDecisionId)!.kind, 'Stop');
+    }
+    const [control, branching] = report.analysis.rows.map(row => row.topics[0]);
+    assert.equal(branching.runs.length - control.runs.length, 0); assert.equal(branching.cost.calls - control.cost.calls, 12);
+    const [a, b] = report.analysis.repair;
+    assert.equal(b.runs.length - a.runs.length, 4); assert.equal(b.cost.calls - a.cost.calls, 12);
+    assert.ok(b.branches.every(branch => branch.status === 'failed'));
+    assert.ok(b.decisions.every(decision => decision.kind !== 'Proceed'));
+    assert.match(renderDocument(report), /Persistent initializer fault/);
+  });
   it('selection retains not-run rows and cannot silently enable an unknown or duplicate id', async () => {
     const selected = await buildReport({ context, rows: ['artifact-oracle'] });
     assert.equal(selected.rows.length, 8); assert.equal(selected.rows[0].state, 'measured');
     assert.ok(selected.rows.slice(1).every(row => row.state === 'not-run'));
     assert.equal(selected.gate.oracle, true);
+    assert.equal(selected.gate.analysis, false); assert.equal(selected.decision, 'drift');
+    assert.equal(validateResearchReportShape(selected).valid, true);
     await assert.rejects(buildReport({ context, rows: ['invented'] }), /subset/);
     await assert.rejects(buildReport({ context, rows: ['artifact-oracle', 'artifact-oracle'] }), /subset/);
   });
@@ -199,6 +222,10 @@ describe('research instrument', () => {
       value => { measured(value, 1).failures.unsupported--; },
       value => { measured(value, 0).claimSupport.total++; },
       value => { value.gate.bundles = false; },
+      value => { value.gate.analysis = false; },
+      value => { value.analysis.probes[0].matched = false; },
+      value => { value.analysis.rows[0].cost.physical++; },
+      value => { value.analysis.repair[0].reviewCalls++; },
       value => { value.decision = 'drift'; },
       value => { const row = value.rows.find(row => row.state === 'measured' && row.scope === 'pre-execution')!;
         if (row.state === 'measured' && row.scope === 'pre-execution') row.topics[0].state.planHash = '0'.repeat(64); },

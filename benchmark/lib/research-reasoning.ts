@@ -7,7 +7,8 @@ import { createResearchBinding, researchArtifacts, researchReasoningRevisionOf, 
   prepareResearchWorkflow, initialResearchFrame, planProjectCreate, researchValue, createResearchTaskHandlers, createResearchHostBindings,
   createReplayTransport, createResearchDesign, validateResearchShape, researchExecutionRevisionOf, type ResearchReasoningPolicy, type ResearchProject,
   type ResearchWorkflowFrame, type EvidenceCard, type Synthesis, type ResearchHypothesis, type ResearchContract,
-  type ExperimentPlan, type HypothesisSet, type NoveltyReport, type ResearchExecutionPolicy, type ResearchTaskTools, type ResearchStore } from '@tangleai/research';
+  type ExperimentPlan, type HypothesisSet, type NoveltyReport, type ResearchExecutionPolicy, type ResearchTaskTools, type ResearchStore,
+  researchAnalysisRevisionOf, type ResearchAnalysisRuntimePolicy } from '@tangleai/research';
 import { researchExampleTools, type ResearchExampleDecisions } from '../../examples/research.ts';
 import { createResearchDiscoveryFixture, researchDiscoveryConfiguration } from './research-discovery.ts';
 import { requireResearchShape } from './research-validation.ts';
@@ -15,14 +16,16 @@ import { researchScore } from './research-oracle.ts';
 import type { LoadedResearchFixture } from './research-fixture.ts';
 import type { ResearchReasoningScript, ResearchReasoningTopic, ResearchModelUsage, ResearchFixtureTopic, ResearchExecutionTopic } from './research.types.ts';
 
-export interface ResearchReasoningExecution {
+export interface ResearchReasoningExecution<T = ResearchExecutionTopic> {
   policy: ResearchExecutionPolicy;
   script: ResearchReasoningScript;
   decisions: ResearchExampleDecisions;
   revision: string;
   signal?: AbortSignal;
+  analysis?: ResearchAnalysisRuntimePolicy;
+  reviewResponse?: (node: Parameters<NonNullable<MasHostBindings['clientFor']>>[0], request: unknown) => unknown;
   tools(base: ResearchTaskTools, store: ResearchStore): Promise<ResearchTaskTools>;
-  collect(store: ResearchStore, masStore: MasStore, reasoning: ResearchReasoningTopic): Promise<ResearchExecutionTopic>;
+  collect(store: ResearchStore, masStore: MasStore, reasoning: ResearchReasoningTopic): Promise<T>;
 }
 
 async function identityFor(caps: LoadedResearchFixture['manifest']['caps']) {
@@ -38,7 +41,7 @@ async function identityFor(caps: LoadedResearchFixture['manifest']['caps']) {
   const resolved = await resolveProfile({ registry, host, request: { kind: 'profile', profile: 'scripted-v1', overrides: null } });
   if (!resolved.ok) throw Error(JSON.stringify(resolved.issues)); return resolved.identity;
 }
-export async function runResearchReasoningFixture(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic, mode: ResearchReasoningPolicy['mode'], execution?: ResearchReasoningExecution) {
+export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic, mode: ResearchReasoningPolicy['mode'], execution?: ResearchReasoningExecution<T>) {
   const script = requireResearchShape<ResearchReasoningScript>('ResearchReasoningScript', execution?.script ?? JSON.parse(new TextDecoder().decode(loaded.files.get('scripts/' + topic.id + '.json')!)));
   if (script.topicId !== topic.id) throw Error('Research reasoning script belongs to another topic.');
   const caps = loaded.manifest.caps, limits = { ...caps, toolRounds: 4, fanOut: 8, iterations: 8 }, identity = await identityFor(caps);
@@ -49,8 +52,10 @@ export async function runResearchReasoningFixture(loaded: LoadedResearchFixture,
     reservation: { calls: 32, tokens: 32768, ms: 30000, physical: 32 }, toolVersions: [
       { name: 'scholarly-discovery', version: discoveryConfiguration.revision }, { name: 'research-reasoning', version: await researchReasoningRevisionOf(policy) },
       ...(execution ? [{ name: 'research-execution-fixture', version: execution.revision },
-        { name: 'research-execution', version: await researchExecutionRevisionOf(execution.policy) }] : [])] });
-  const prepared = await prepareResearchWorkflow(topic.contract, { binding, profile: 'scripted-v1', limits, reasoning: policy, ...(execution ? { execution: execution.policy } : {}) });
+        { name: 'research-execution', version: await researchExecutionRevisionOf(execution.policy) }] : []),
+      ...(execution?.analysis ? [{ name: 'research-analysis', version: await researchAnalysisRevisionOf(execution.analysis) }] : [])] });
+  const prepared = await prepareResearchWorkflow(topic.contract, { binding, profile: 'scripted-v1', limits, reasoning: policy,
+    ...(execution ? { execution: execution.policy } : {}), ...(execution?.analysis ? { analysis: execution.analysis } : {}) });
   const project: ResearchProject = { id: topic.contract.projectId, topic: topic.title, question: topic.title, domainProfile: 'computational', owner: 'scripted-fixture',
     mode: 'gate-only', safetyClass: 'computational', status: 'CREATED', budget: { calls: caps.calls, tokens: caps.tokens, ms: caps.ms, physical: caps.calls }, createdAt: '2026-01-01T00:00:00.000Z' };
   const frame = await initialResearchFrame(project, topic.plan, binding), now = () => '2026-01-01T00:00:00.000Z';
@@ -97,6 +102,10 @@ export async function runResearchReasoningFixture(loaded: LoadedResearchFixture,
         const result = { answer: JSON.stringify(proposal), disposition: 'completed', claims: [{ text: 'Prospective fixture comparison.', citations }], findings: [] };
         proposal = node.id.startsWith('position-') ? { result, stance: node.id } : node.id.startsWith('rebuttal-')
           ? { result, addresses: ['position-1:claim-1'] } : node.id === 'judge' ? { result, action: 'accept' } : { result };
+      }
+      if (node.role.startsWith('research-result-')) {
+        if (!execution?.reviewResponse) throw Error('Result review requires a registered scripted response.');
+        proposal = execution.reviewResponse(node, request);
       }
       const base = researchArtifacts.prompts.find(pack => pack.role.id === node.role)!;
       executedPacks.add(base.id.replace(/-(analysis-analyst|analysis-merge|debate-position|debate-rebuttal|debate-judge)$/, ''));

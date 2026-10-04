@@ -90,6 +90,11 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
       }
       if (digest !== await researchRevisionOf(body)) refuse('TRSH1002', '/record/' + hashKey, 'Record content hash does not recompute.');
     }
+    if (write.kind === 'Analysis' || write.kind === 'ResearchBranchSelection' || write.kind === 'ResearchDecision' && 'details' in value) {
+      const { id: _id, ...body } = value as { id: string };
+      const prefix = write.kind === 'Analysis' ? 'analysis-' : write.kind === 'ResearchBranchSelection' ? 'selection-' : 'decision-';
+      if (id !== prefix + await researchRevisionOf(body)) refuse('TRSH1002', '/record/id', 'Analysis or decision content address changed.');
+    }
     return { kind: write.kind, value, id, projectId } as ResearchRecordEntry;
   }
   async function readEntry(tx: ResearchTransaction, projectId: string, kind: ResearchRecordKind, id: string): Promise<ResearchRecordEntry | null> {
@@ -179,6 +184,20 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
       for (const id of row.value.overlapLiteratureIds) await reference('LiteratureRecord', id);
     }
     if (row.kind === 'MetricObservation') await reference('ExperimentRun', row.value.experimentRunId);
+    if (row.kind === 'Analysis') {
+      for (const id of row.value.branchIds) await reference('ExperimentBranch', id);
+      for (const id of row.value.runIds) await reference('ExperimentRun', id);
+      for (const id of row.value.observationIds) await reference('MetricObservation', id);
+    }
+    if (row.kind === 'ResearchBranchSelection') for (const candidate of row.value.candidates) {
+      await reference('Analysis', candidate.analysisId);
+      for (const id of candidate.branchIds) await reference('ExperimentBranch', id);
+    }
+    if (row.kind === 'ResearchDecision' && row.value.details) {
+      await reference('Analysis', row.value.details.analysisId);
+      await reference('ResearchBranchSelection', row.value.details.selectionId);
+      await reference('ExperimentBranch', row.value.details.selectedBranchId);
+    }
     if (row.kind === 'ResearchClaim') {
       for (const id of row.value.literatureIds) await reference('LiteratureRecord', id);
       for (const id of row.value.evidenceIds) await reference('EvidenceCard', id);
@@ -320,8 +339,13 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
       }
       if (valid.preregistration) {
         const known = await entries(tx, projectId);
-        checked(await planContractFreeze(valid.expectedState, valid.preregistration.contract, valid.preregistration.plan,
-          known.filter(row => row.kind === 'MetricObservation').map(row => row.id)));
+        const observations = known.filter(row => row.kind === 'MetricObservation').map(row => row.id), amendment = valid.preregistration.amendment;
+        if (amendment) {
+          checked(await planAmendment(valid.expectedState, amendment, valid.preregistration.contract, valid.preregistration.plan, observations));
+          if (amendment.marksExploratory.some(id => !observations.includes(id)))
+            refuse('TRSH1003', '/preregistration/amendment/marksExploratory', 'An amendment cannot mark an unknown observation.');
+          records.push(await entry(projectId, { kind: 'Amendment', value: amendment }));
+        } else checked(await planContractFreeze(valid.expectedState, valid.preregistration.contract, valid.preregistration.plan, observations));
         const hypothesis = [...known, ...records].find(row => row.kind === 'ResearchHypothesis'
           && row.value.hypothesisHash === valid.preregistration!.plan.hypothesisHash);
         if (!hypothesis || hypothesis.kind !== 'ResearchHypothesis')

@@ -16,6 +16,8 @@ export async function createResearchDesign(projectId: string, proposal: unknown,
   const shape = validateResearchShape<ResearchDesignProposal>('ResearchDesignProposal', proposal);
   if (!shape.valid) return { valid: false, issues: shape.issues.map(issue => ({ ...issue, code: 'TRSH1009' })) };
   const input = shape.value, { contract, plan } = input;
+  for (const field of ['analysisPolicy', 'branchSelectionRule'] as const) if (!equalsJson(contract[field] ?? null, bounds.contract[field] ?? null))
+    return researchRefuse('TRSH1009', '/contract/' + field, 'The design must retain its admitted analysis, recovery and branch-selection declarations.');
   const paths = checkResearchDesignPaths(plan.inputPaths, bounds.plan.inputPaths); if (!paths.valid) return paths;
   const hypothesis = hypotheses.find(row => row.id === input.hypothesisId && row.projectId === projectId);
   if (!hypothesis) return researchRefuse('TRSH1003', '/hypothesisId', 'The design names no admitted hypothesis in this project.');

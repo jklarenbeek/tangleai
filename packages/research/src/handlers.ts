@@ -19,6 +19,7 @@ import { createResearchReadTools } from './tools.ts';
 
 import { RESEARCH_FRAME_MEDIA_TYPE, restoredResearchFrame as restoredFrame, resolveResearchFrame, researchWireFrame } from './frames.ts';
 import type { ResearchExecutionRuntime } from './execution-contract.ts';
+import type { ResearchAnalysisRuntime } from './analysis-contract.ts';
 export { RESEARCH_FRAME_MEDIA_TYPE } from './frames.ts';
 const zero: ResearchCost = { calls: 0, tokens: 0, ms: 0, physical: 0 };
 const stages: Record<ResearchStageName, ResearchLifecycle> = { create: 'CREATED', discovery: 'DISCOVERY', literature: 'LITERATURE_GATE',
@@ -42,7 +43,7 @@ export interface ResearchStageResult {
   spend: ResearchCost;
   decision?: 'Proceed' | 'Refine' | 'Pivot' | 'Stop';
   error?: ResearchIssue;
-  preregistration?: { contract: ResearchContract; plan: ExperimentPlan };
+  preregistration?: import('./transitions.ts').ResearchPreregistration;
 }
 export interface ResearchStageAccess {
   signal: AbortSignal;
@@ -57,6 +58,7 @@ export interface ResearchTaskTools {
   masStore: Pick<MasStore, 'getInteraction' | 'readTrace'>;
   reasoning?: ResearchReasoningRuntime;
   execution?: ResearchExecutionRuntime;
+  analysis?: ResearchAnalysisRuntime;
   execute(operation: ResearchStageOperation, access: ResearchStageAccess): Promise<ResearchStageResult>;
   /** Independent deterministic verification, outside the executing stage body. */
   verify(operation: ResearchStageOperation, result: ResearchStageResult, access: ResearchStageAccess): Promise<ResearchOutcome<null>>;
@@ -87,6 +89,9 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
   const execute = tools.execute, verify = tools.verify, onOperation = tools.onOperation, masStore = tools.masStore;
   const reasoning = tools.reasoning ? { ...tools.reasoning, policy: immutableResearchJson(tools.reasoning.policy) } : undefined;
   const execution = tools.execution ? { ...tools.execution, policy: immutableResearchJson(tools.execution.policy), taskHandlers: { ...tools.execution.taskHandlers }, toolBindings: { ...tools.execution.toolBindings } } : undefined;
+  const analysis = tools.analysis ? { ...tools.analysis, policy: immutableResearchJson(tools.analysis.policy) } : undefined;
+  const nativeMode = (stage: string) => stage === 'decide' ? 'debate' : stage === 'execute'
+    ? execution!.policy.mode === 'authored' ? 'single-agent' : 'scripted' : reasoning!.policy.mode;
   const handlers: ResearchTaskHandlers = { ...execution?.taskHandlers };
   handlers['research-refuse'] = () => { throw new MasTaskRefusal({ code: 'TMAS2004', detail: 'Research control input has no registered lifecycle edge.',
     cause: { code: 'TRSH1004', docPath: '/frame/status', message: 'Research control input has no registered lifecycle edge.' } }); };
@@ -104,15 +109,16 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
     handlers['research-prepare-' + name] = bind(name, 'prepare'); handlers['research-commit-' + name] = bind(name, 'commit');
   }
   if (execution) { handlers['research-prepare-execute'] = bind('execute', 'prepare'); handlers['research-commit-execute'] = bind('execute', 'commit'); }
+  if (analysis) { handlers['research-prepare-decide'] = bind('decide', 'prepare'); handlers['research-commit-decide'] = bind('decide', 'commit'); }
   admissions.set(handlers, { binding, store, ...(reasoning ? { reasoning: reasoning.policy } : {}),
-    ...(execution ? { execution: execution.policy } : {}), ...(reasoning || execution ? { reconcileFailure, toolBindings: {
+    ...(execution ? { execution: execution.policy } : {}), ...(analysis ? { analysis: analysis.policy } : {}), ...(reasoning || execution || analysis ? { reconcileFailure, toolBindings: {
       ...(reasoning ? createResearchReadTools({ researchStore: store, masStore, maxCards: reasoning.policy.maxCards, contract, mode: reasoning.policy.mode }) : {}),
       ...execution?.toolBindings,
     } } : {}) });
   return Object.freeze(handlers);
 
   async function reconcileFailure(runId: string, failure: import('@tangleai/mas').MasRun['failure']) {
-    if ((!reasoning && !execution) || !failure) return;
+    if ((!reasoning && !execution && !analysis) || !failure) return;
     const trace = await masStore.readTrace(runId), snapshot = researchValue(await store.snapshot(runId));
     if (!trace || !snapshot || snapshot.state.status === 'STOPPED' || snapshot.state.status === 'COMPLETE') return;
     const native = failure.error;
@@ -157,7 +163,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       const attempt: StageAttempt = { ...key, id: preparation.attemptId, masPath: preparation.commitPath,
         promptRevision: binding.promptRevision, runIdentityId: binding.runIdentityId, toolVersions: binding.toolVersions,
         spend, stopReason: 'failed', interventions: [], outputArtifactIds: [...new Set(retainedOutputs.map(row => row.artifact.id))].sort(), error: issue,
-        mode: preparation.stage === 'execute' ? execution!.policy.mode === 'authored' ? 'single-agent' : 'scripted' : reasoning!.policy.mode };
+        mode: nativeMode(preparation.stage) };
       researchValue(await store.commitStage(researchValue(await planStageCommit({ state: snapshot.state, attempt, manifest, nextStatus: 'STOPPED', artifactAdmissionIds: retainedOutputs.map(row => row.id), records: retained?.records ?? [] }))));
       return;
     }
@@ -233,7 +239,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       inputManifestHash: manifestHash };
     const attempt: StageAttempt = { ...key, id: await stageAttemptIdOf(key), masPath: commitPath,
       promptRevision: binding.promptRevision, runIdentityId: binding.runIdentityId, toolVersions: binding.toolVersions,
-      spend: zero, stopReason: 'completed', interventions: [], outputArtifactIds: [], error: null, mode: phase === 'stage' ? 'scripted' : name === 'execute' ? execution!.policy.mode === 'authored' ? 'single-agent' : 'scripted' : reasoning!.policy.mode };
+      spend: zero, stopReason: 'completed', interventions: [], outputArtifactIds: [], error: null, mode: phase === 'stage' ? 'scripted' : nativeMode(name) };
     const operation: ResearchStageOperation = immutableResearchJson({ stage: name, path: commitPath, idempotencyKey: input.idempotencyKey,
       frame, manifest, attemptId: attempt.id, expectedState: state });
     const admitted = async (requested: ResearchInputArtifact) => {
@@ -247,7 +253,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       readArtifact: async ref => copyResearchBytes((await admitted(ref)).bytes),
       describeArtifact: async ref => immutableResearchJson((await admitted(ref)).admission.artifact) };
     onOperation?.('planned', operation);
-    const preparation: ResearchPreparation = { stage: name as ResearchModelStage | 'execute', scope, commitPath,
+    const preparation: ResearchPreparation = { stage: name as ResearchPreparation['stage'], scope, commitPath,
       manifestHash, attemptId: attempt.id, stateRevision: state.revision, frame: researchWireFrame(frame, !!execution) };
     if (phase === 'prepare') {
       for (const dimension of ['calls', 'tokens', 'ms', 'physical'] as const)
@@ -256,6 +262,9 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       researchValue(await store.putRecord(frame.projectId, { kind: 'InputManifest', value: manifest }));
       if (name === 'execute' && execution) {
         const prepared = await execution.prepare(operation, access); onOperation?.('prepared', operation); return { preparation, ...prepared };
+      }
+      if (name === 'decide' && analysis) {
+        const prepared = await analysis.prepare(operation, access); onOperation?.('prepared', operation); return { preparation, ...prepared };
       }
       const prepared = await reasoning!.prepare(operation, access); onOperation?.('prepared', operation);
       return { preparation, ...(reasoning!.policy.mode === 'debate' && name !== 'design' ? { input: prepared.input } : { variables: prepared.variables }) };
@@ -292,6 +301,12 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
           if (!equalsJson(retained, preparation) || !equalsJson(supplied, retained))
             researchFail('TRSH1005', '/preparation', 'Commit must consume its exact retained native preparation.');
           if (name === 'execute' && execution) result = resultSnapshot(await execution.complete(operation, result.spend, scope, false));
+          else if (name === 'decide' && analysis) {
+            const model = native.attempts.find(row => row.path === scope + '/model' && row.status === 'completed');
+            if (!model || !equalsJson((model.output as { result: unknown }).result, input.value.proposal))
+              researchFail('TRSH1005', '/proposal', 'Decision requires its exact completed native peer-review result.');
+            result = resultSnapshot(await analysis.complete(operation, access, input.value.proposal, result.spend));
+          }
           else {
           const model = native.attempts.find(row => row.path === scope + '/model' && row.status === 'completed');
           const port = reasoning!.policy.mode === 'debate' && name !== 'design' ? 'result' : 'out';
@@ -311,6 +326,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
           if (!result.decision || !['Proceed', 'Refine', 'Pivot', 'Stop'].includes(result.decision)) researchFail('TRSH1001', '/decision', 'Decision stage must produce a registered edge.');
           const bounded = result.decision === 'Refine' && frame.attempt >= activeContract.attemptCap
             || result.decision === 'Pivot' && frame.pivot >= activeContract.pivotCap ? 'Stop' : result.decision;
+          if (analysis && bounded !== result.decision) researchFail('TRSH1006', '/decision', 'The deterministic decision must terminate explicitly at its declared cap.');
           nextFrame.decision = bounded;
           target = bounded === 'Proceed' ? 'WRITE' : bounded === 'Refine' ? 'EXECUTE' : bounded === 'Pivot' ? 'SYNTHESIS' : 'STOPPED';
         } else target = next[name]!;

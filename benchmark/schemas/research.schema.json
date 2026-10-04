@@ -271,6 +271,42 @@
       ],
       "additionalProperties": false
     },
+    "analysis": {
+      "type": "object",
+      "properties": {
+        "registrationHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchAnalysisRow"
+          },
+          "maxItems": 2
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchDecisionProbe"
+          },
+          "maxItems": 5
+        },
+        "repair": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchAnalysisTopic"
+          },
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "registrationHash",
+        "rows",
+        "probes",
+        "repair"
+      ],
+      "additionalProperties": false
+    },
     "discovery": {
       "type": "array",
       "items": {
@@ -356,6 +392,9 @@
         "bundles": {
           "type": "boolean"
         },
+        "analysis": {
+          "type": "boolean"
+        },
         "networkCalls": {
           "const": 0
         }
@@ -364,6 +403,7 @@
         "registration",
         "oracle",
         "bundles",
+        "analysis",
         "networkCalls"
       ],
       "additionalProperties": false
@@ -396,6 +436,7 @@
     "ceilings",
     "rows",
     "execution",
+    "analysis",
     "discovery",
     "bundles",
     "disclosure",
@@ -406,6 +447,416 @@
   ],
   "additionalProperties": false,
   "$defs": {
+    "ResearchDecisionRegistration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "research-decisions-v1"
+        },
+        "licence": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLicence"
+        },
+        "analystIdentityId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "reviewerIdentityId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "statisticId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repair": {
+          "type": "object",
+          "properties": {
+            "topicId": {
+              "const": "kmeans-seeding"
+            },
+            "programId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fault": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "topicId",
+            "programId",
+            "fault"
+          ],
+          "additionalProperties": false
+        },
+        "control": {
+          "type": "object",
+          "properties": {
+            "attemptCap": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "seedBatchSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "rule": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchBranchSelectionRule"
+            }
+          },
+          "required": [
+            "attemptCap",
+            "seedBatchSize",
+            "rule"
+          ],
+          "additionalProperties": false
+        },
+        "branching": {
+          "type": "object",
+          "properties": {
+            "attemptCap": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "seedBatchSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "rule": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchBranchSelectionRule"
+            }
+          },
+          "required": [
+            "attemptCap",
+            "seedBatchSize",
+            "rule"
+          ],
+          "additionalProperties": false
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "success",
+                  "bug",
+                  "degenerate",
+                  "confound",
+                  "negative"
+                ]
+              },
+              "baseline": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 5,
+                "maxItems": 5
+              },
+              "candidate": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 5,
+                    "maxItems": 5
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "variationCheck": {
+                "type": "boolean"
+              },
+              "confounded": {
+                "type": "boolean"
+              },
+              "expected": {
+                "enum": [
+                  "Proceed",
+                  "Refine",
+                  "Pivot",
+                  "Stop"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "baseline",
+              "candidate",
+              "variationCheck",
+              "confounded",
+              "expected"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 5,
+          "maxItems": 5
+        }
+      },
+      "required": [
+        "id",
+        "licence",
+        "analystIdentityId",
+        "reviewerIdentityId",
+        "statisticId",
+        "repair",
+        "control",
+        "branching",
+        "cases"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchDecisionProbe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "enum": [
+            "Proceed",
+            "Refine",
+            "Pivot",
+            "Stop"
+          ]
+        },
+        "matched": {
+          "type": "boolean"
+        },
+        "review": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchExecutionWireArtifact"
+        },
+        "analysis": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Analysis"
+        },
+        "decision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchDecision"
+        },
+        "selection": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchBranchSelection"
+        },
+        "contract": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchContract"
+        },
+        "plan": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentPlan"
+        },
+        "branches": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentBranch"
+          }
+        },
+        "manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExecutionManifest"
+          }
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentRun"
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/MetricObservation"
+          }
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        }
+      },
+      "required": [
+        "id",
+        "expected",
+        "matched",
+        "review",
+        "analysis",
+        "decision",
+        "selection",
+        "contract",
+        "plan",
+        "branches",
+        "manifests",
+        "runs",
+        "observations",
+        "cost"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchAnalysisTopic": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "nativeStatus": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        },
+        "state": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchState"
+        },
+        "runIdentityId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "workflowVersionId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "contract": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchContract"
+        },
+        "plan": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentPlan"
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/StageAttempt"
+          }
+        },
+        "branches": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentBranch"
+          }
+        },
+        "manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExecutionManifest"
+          }
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentRun"
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/MetricObservation"
+          }
+        },
+        "analyses": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Analysis"
+          }
+        },
+        "reviews": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchExecutionWireArtifact"
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchDecision"
+          }
+        },
+        "selections": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchBranchSelection"
+          }
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "finalAnalysisId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "finalDecisionId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "traceBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reviewCalls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "topicId",
+        "nativeStatus",
+        "state",
+        "runIdentityId",
+        "workflowVersionId",
+        "contract",
+        "plan",
+        "attempts",
+        "branches",
+        "manifests",
+        "runs",
+        "observations",
+        "analyses",
+        "reviews",
+        "decisions",
+        "selections",
+        "cost",
+        "finalAnalysisId",
+        "finalDecisionId",
+        "traceBytes",
+        "reviewCalls"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchAnalysisRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "fixed-single-agent",
+            "fixed-plus-branching"
+          ]
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchAnalysisTopic"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "confoundDetection": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "negativeResultHandling": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "branchSelectionCompliance": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        }
+      },
+      "required": [
+        "id",
+        "topics",
+        "confoundDetection",
+        "negativeResultHandling",
+        "branchSelectionCompliance",
+        "cost"
+      ],
+      "additionalProperties": false
+    },
     "ResearchExecutionRegistration": {
       "type": "object",
       "properties": {
@@ -2247,6 +2698,19 @@
         "version": {
           "const": 1
         },
+        "analysis": {
+          "type": "object",
+          "properties": {
+            "registration": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "registration"
+          ],
+          "additionalProperties": false
+        },
         "topics": {
           "type": "array",
           "items": {
@@ -2487,6 +2951,7 @@
       "required": [
         "id",
         "version",
+        "analysis",
         "topics",
         "literature",
         "programs",
@@ -4044,6 +4509,377 @@
       },
       {
         "$eq": [
+          "$.gate.analysis",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  {
+                    "$count": "$.analysis.rows[*]"
+                  },
+                  2
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.analysis.probes[*]"
+                  },
+                  5
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.analysis.repair[*]"
+                  },
+                  2
+                ]
+              },
+              {
+                "$every": {
+                  "probe": "$.analysis.probes[*]"
+                },
+                "$satisfies": "$probe.matched"
+              },
+              {
+                "$every": {
+                  "row": "$.analysis.rows[*]"
+                },
+                "$satisfies": {
+                  "$and": [
+                    {
+                      "$eq": [
+                        "$row.confoundDetection.value",
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$row.negativeResultHandling.value",
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$row.branchSelectionCompliance.value",
+                        1
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$every": {
+          "probe": "$.analysis.probes[*]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$probe.matched",
+            {
+              "$eq": [
+                "$probe.expected",
+                "$probe.decision.kind"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.analysis.rows[*]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                [
+                  "$row.topics[*].topicId"
+                ],
+                [
+                  "$.registration.topics[*]"
+                ]
+              ]
+            },
+            {
+              "$eq": [
+                "$row.cost.calls",
+                {
+                  "$sum": "$row.topics[*].cost.calls"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.cost.tokens",
+                {
+                  "$sum": "$row.topics[*].cost.tokens"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.cost.ms",
+                {
+                  "$sum": "$row.topics[*].cost.ms"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.cost.physical",
+                {
+                  "$sum": "$row.topics[*].cost.physical"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "topic": "$.analysis.rows[*].topics[*]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$topic.nativeStatus",
+                "completed"
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.state.status",
+                "STOPPED"
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.state.contractHash",
+                "$topic.contract.contractHash"
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.state.planHash",
+                "$topic.plan.planHash"
+              ]
+            },
+            {
+              "$le": [
+                "$topic.traceBytes",
+                "$.registration.caps.traceBytes"
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.cost.physical",
+                {
+                  "$add": [
+                    "$topic.cost.calls",
+                    {
+                      "$count": "$topic.runs[*]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.reviewCalls",
+                {
+                  "$sum": "$topic.attempts[?(@.stage==\"DECIDE\")].spend.calls"
+                }
+              ]
+            },
+            {
+              "$some": {
+                "decision": "$topic.decisions[*]"
+              },
+              "$satisfies": {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$decision.id",
+                      "$topic.finalDecisionId"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$decision.kind",
+                      "Stop"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$decision.details.analysisId",
+                      "$topic.finalAnalysisId"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "$eq": [
+                "$topic.cost.calls",
+                {
+                  "$sum": "$topic.attempts[*].spend.calls"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.cost.tokens",
+                {
+                  "$sum": "$topic.attempts[*].spend.tokens"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.cost.ms",
+                {
+                  "$sum": "$topic.attempts[*].spend.ms"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.cost.physical",
+                {
+                  "$sum": "$topic.attempts[*].spend.physical"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "topic": "$.analysis.repair[*]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$topic.nativeStatus",
+                "completed"
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.state.status",
+                "STOPPED"
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.state.contractHash",
+                "$topic.contract.contractHash"
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.state.planHash",
+                "$topic.plan.planHash"
+              ]
+            },
+            {
+              "$le": [
+                "$topic.traceBytes",
+                "$.registration.caps.traceBytes"
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.cost.physical",
+                {
+                  "$add": [
+                    "$topic.cost.calls",
+                    {
+                      "$count": "$topic.runs[*]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.reviewCalls",
+                {
+                  "$sum": "$topic.attempts[?(@.stage==\"DECIDE\")].spend.calls"
+                }
+              ]
+            },
+            {
+              "$some": {
+                "decision": "$topic.decisions[*]"
+              },
+              "$satisfies": {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$decision.id",
+                      "$topic.finalDecisionId"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$decision.kind",
+                      "Stop"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$decision.details.analysisId",
+                      "$topic.finalAnalysisId"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "$eq": [
+                "$topic.cost.calls",
+                {
+                  "$sum": "$topic.attempts[*].spend.calls"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.cost.tokens",
+                {
+                  "$sum": "$topic.attempts[*].spend.tokens"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.cost.ms",
+                {
+                  "$sum": "$topic.attempts[*].spend.ms"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$topic.cost.physical",
+                {
+                  "$sum": "$topic.attempts[*].spend.physical"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$eq": [
           {
             "$eq": [
               "$.decision",
@@ -4054,7 +4890,8 @@
             "$and": [
               "$.gate.registration",
               "$.gate.oracle",
-              "$.gate.bundles"
+              "$.gate.bundles",
+              "$.gate.analysis"
             ]
           }
         ]

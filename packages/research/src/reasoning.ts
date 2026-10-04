@@ -11,6 +11,7 @@ import { researchFail, researchProjectHash, researchValue } from './workflow-con
 import { researchArtifacts } from './domain.ts';
 import { researchReasoningRevisionOf } from './reasoning-contract.ts';
 import { readResearchReasoningInputs, RESEARCH_REASONING_MEDIA_TYPE } from './reasoning-records.ts';
+import { readResearchAnalysisInputs } from './analysis-records.ts';
 import { createResearchSynthesis } from './stages/synthesis.ts';
 import { createResearchHypotheses } from './stages/hypothesis.ts';
 import { createResearchDesign, checkResearchDesignPaths } from './stages/design.ts';
@@ -34,6 +35,27 @@ export async function createResearchReasoningTools(base: ResearchTaskTools, opti
   async function visible(op: ResearchStageOperation, access: ResearchStageAccess) {
     if (op.frame.projectHash !== projectHash) researchFail('TRSH1004', '/projectHash', 'Reasoning project differs from the pinned native root.');
     return readResearchReasoningInputs(op, access, policy.maxCards);
+  }
+  async function design(op: ResearchStageOperation, access: ResearchStageAccess, proposal: unknown,
+    hypotheses: Parameters<typeof createResearchDesign>[2]): Promise<import('./transitions.ts').ResearchPreregistration> {
+    const generated = researchValue(await createResearchDesign(op.frame.projectId, proposal, hypotheses, bounds));
+    if (op.expectedState.contractHash === null) return generated;
+    const admitted = await readResearchAnalysisInputs(op, access);
+    const decision = admitted.of('ResearchDecision').find(row => row.contractHash === op.expectedState.contractHash && row.kind === 'Pivot');
+    const previous = admitted.of('ExperimentPlan').find(row => row.planHash === op.expectedState.planHash);
+    if (!decision || !previous || previous.hypothesisHash === generated.plan.hypothesisHash)
+      researchFail('TRSH1009', '/preregistration', 'A pivot requires its admitted decision and a distinct hypothesized comparison.');
+    const { contractHash: _contractHash, id: _contractId, ...contractContent } = generated.contract;
+    const contractBody = { ...contractContent, id: 'contract-' + await researchRevisionOf({ contractContent,
+      parent: op.expectedState.contractHash, hypothesisHash: generated.plan.hypothesisHash }) };
+    const contract = { ...contractBody, contractHash: await researchRevisionOf(contractBody) };
+    const { planHash: _planHash, id: _planId, ...content } = generated.plan;
+    const planContent = { ...content, contractHash: contract.contractHash }, planBody = { ...planContent, id: 'plan-' + await researchRevisionOf(planContent) };
+    const plan = { ...planBody, planHash: await researchRevisionOf(planBody) };
+    const amendmentBody = { before: op.expectedState.contractHash, after: contract.contractHash, reason: decision.reason,
+      marksExploratory: admitted.of('MetricObservation').map(row => row.id).sort() };
+    if (!amendmentBody.marksExploratory.length) researchFail('TRSH1009', '/amendment', 'A result-driven pivot must retain its affected observations.');
+    return { contract, plan, amendment: { id: 'amendment-' + await researchRevisionOf(amendmentBody), ...amendmentBody } };
   }
   const reasoning: ResearchReasoningRuntime = { policy,
     async retainLiteratureInputs(op, access) {
@@ -87,7 +109,7 @@ export async function createResearchReasoningTools(base: ResearchTaskTools, opti
         records.push({ kind: 'NoveltyReport', value: novelty.report });
         artifacts.push(jsonArtifact(novelty.plan), ...novelty.artifacts);
       } else if (op.stage === 'design') {
-        preregistration = researchValue(await createResearchDesign(op.frame.projectId, proposal, inputs.hypotheses, bounds));
+        preregistration = await design(op, access, proposal, inputs.hypotheses);
         artifacts.push(jsonArtifact(preregistration));
       } else researchFail('TRSH1004', '/stage', 'This is not a model reasoning stage.');
       artifacts.push({ ...jsonArtifact({ kind: 'reasoning-records', pivot: op.frame.pivot + (op.stage === 'synthesis' ? 1 : 0), value: records }),
@@ -113,7 +135,7 @@ export async function createResearchReasoningTools(base: ResearchTaskTools, opti
           researchFail('TRSH1005', '/proposal', 'Verification requires the exact proposal and visible evidence census.');
         const proposal = envelopes[0].proposal;
         if (op.stage === 'design') {
-          const expected = researchValue(await createResearchDesign(op.frame.projectId, proposal, inputs.hypotheses, bounds));
+          const expected = await design(op, access, proposal, inputs.hypotheses);
           if (!equalsJson(expected, result.preregistration) || result.records.length)
             researchFail('TRSH1009', '/preregistration', 'Frozen design differs from independent proposal verification.');
         } else if (op.stage === 'synthesis') {

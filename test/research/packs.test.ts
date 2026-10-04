@@ -19,18 +19,18 @@ for (const name of RESEARCH_PROMPT_NAMES) it(`research ${name} renders minimal a
   const full = renderGmplPrompt(artifact, { question, cards: [{ id: f.cards[0].id, digest: f.cards[0].contentHash, text: f.cards[0].excerpt }],
     synthesis: name === 'designer' ? f.hypotheses : f.synthesis,
     constraints: { baselineIds: ['control'], metrics: f.bounds.contract.metrics, inputPaths: f.bounds.plan.inputPaths, budget: f.bounds.budget } });
-  assert.ok(full.valid, JSON.stringify(full)); assert.ok(full.value.user.includes('Declared constraints:'));
+  assert.ok(full.valid, JSON.stringify(full)); assert.ok(full.value.user.includes(name.startsWith('result-') ? 'Review context:' : 'Declared constraints:'));
   assert.ok(full.value.user.includes(f.cards[0].id)); assert.ok(full.value.user.includes('control'));
   assert.equal(full.value.system, artifact.pack.system.content);
   assert.equal(renderGmplPrompt(artifact, { question, cards: [], hidden: 'undeclared input' }).valid, false);
 });
 it('each native research binding retains its source role instructions and uses the declared native schema', () => {
   const native = researchArtifacts.prompts.filter(prompt => RESEARCH_PROMPT_NAMES.some(name => prompt.id.startsWith(`research-${name}-`)));
-  assert.equal(native.length, 10);
+  assert.equal(native.length, 12);
   for (const artifact of native) {
     const base = researchArtifacts.prompts.find(prompt => RESEARCH_PROMPT_NAMES.some(name => prompt.id === 'research-' + name) && artifact.id.startsWith(prompt.id + '-'))!;
     assert.ok(artifact.pack.system.content.startsWith(base.pack.system.content));
-    assert.ok(artifact.pack.system.content.includes('Proposal schema:'));
+    assert.ok(artifact.pack.system.content.includes(artifact.pack.meta.pattern === 'peer-review' ? 'advisory prose' : 'Proposal schema:'));
     assert.deepEqual(Object.keys(artifact.variables).sort(), ['context', 'evidence', 'query']);
     assert.notEqual(artifact.sourceDigest, base.sourceDigest);
   }

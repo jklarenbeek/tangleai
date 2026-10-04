@@ -11,6 +11,7 @@ import { createResearchLifecycleFixture } from '../lib/research-lifecycle-fixtur
 import { researchDiscoveryTranscripts } from '../lib/research-discovery-fixture.ts';
 import { researchReasoningScripts } from '../lib/research-reasoning-fixture.ts';
 import { researchExecutionRegistration, RESEARCH_EXECUTION_REFUSALS } from '../lib/research-execution-fixture.ts';
+import { researchDecisionRegistration } from '../lib/research-decision-fixture.ts';
 import { verifyResearchBundle } from '../lib/research-oracle.ts';
 import { requireResearchShape } from '../lib/research-validation.ts';
 import type { ResearchDataset, ResearchFixtureTopic, ResearchFixtureManifest, ResearchHiddenLabels,
@@ -133,6 +134,7 @@ for (const [path, transcript] of researchDiscoveryTranscripts(literature)) put(p
 put('literature/gold.json', topics.map(topic => ({ topicId: topic.id, relevantLiterature: hidden.get(topic.id)!.relevantLiterature })));
 const source = 'benchmark/lib/research-programs.ts', sourceHash = researchBytesSha256(await readFile(join(root, source)));
 const manifest: ResearchFixtureManifest = { id: 'research-computational-v1', version: 1,
+  analysis: { registration: 'analysis/registration.json' },
   topics: topics.map(topic => ({ id: topic.id, path: 'topics/' + topic.id + '.json' })),
   literature: { records: 'literature/records.json', gold: 'literature/gold.json' },
   programs: RESEARCH_PROGRAM_IDS.map(id => ({ id, source, sha256: sourceHash, licence })), datasets: [...datasets.keys()],
@@ -190,6 +192,7 @@ for (const [id, code, path, mutate] of invalid) {
 }
 for (const [path, script] of await researchReasoningScripts(loaded)) put(path, script);
 put(manifest.execution.registration, await researchExecutionRegistration(loaded));
+put(manifest.analysis.registration, researchDecisionRegistration(licence));
 for (const fixture of RESEARCH_EXECUTION_REFUSALS) put('bundles/invalid/' + fixture.id + '.json', fixture);
 manifest.members = [...files].sort(([a], [b]) => a.localeCompare(b)).map(([path, content]) => ({ path, sha256: researchBytesSha256(content), licence }));
 const { revision: _revision, ...registration } = manifest;

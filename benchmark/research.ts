@@ -9,7 +9,7 @@ import type { ResearchReport } from './lib/research.types.ts';
 
 export function requireResearchGate(report: ResearchReport, gate: string | undefined): void {
   if (gate === undefined) return;
-  if (gate !== 'registration' && gate !== 'oracle' && gate !== 'bundles') throw new Error('Unknown research gate: ' + gate);
+  if (gate !== 'registration' && gate !== 'oracle' && gate !== 'bundles' && gate !== 'analysis') throw new Error('Unknown research gate: ' + gate);
   if (!report.gate[gate]) throw new Error('Required research gate failed: ' + gate);
 }
 export async function runResearchCli(argv: string[]): Promise<ResearchReport> {
@@ -21,7 +21,7 @@ export async function runResearchCli(argv: string[]): Promise<ResearchReport> {
   if (rows && (!rows.length || new Set(rows).size !== rows.length || rows.some(id => !RESEARCH_ROW_IDS.some(row => row === id))))
     throw new Error('Research rows must be a nonempty unique subset of registered ids.');
   const gate = args.values.get('require');
-  if (gate && !['registration', 'oracle', 'bundles'].includes(gate)) throw new Error('Unknown research gate: ' + gate);
+  if (gate && !['registration', 'oracle', 'bundles', 'analysis'].includes(gate)) throw new Error('Unknown research gate: ' + gate);
   const out = args.values.get('out'), json = out ?? REPORT_PATH, md = out ? out + '.md' : DOCUMENT_PATH;
   const previousFetch = globalThis.fetch; let requests = 0;
   globalThis.fetch = async () => { requests++; throw new Error('The keyless research instrument attempted a network request.'); };

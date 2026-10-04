@@ -22,7 +22,7 @@ export interface ResearchExecutionRuntime {
   policy: ResearchExecutionPolicy;
   taskHandlers: MasHostBindings['taskHandlers'];
   toolBindings: MasHostBindings['toolBindings'];
-  prepare(operation: ResearchStageOperation, access: ResearchStageAccess): Promise<{ execution: ResearchInputArtifact; cursor: ResearchExecutionCursor }>;
+  prepare(operation: ResearchStageOperation, access: ResearchStageAccess): Promise<{ execution: ResearchInputArtifact; cursor: ResearchExecutionCursor; reuse: boolean }>;
   complete(operation: ResearchStageOperation, spend: ResearchCost, scope: string, partial: boolean): Promise<ResearchStageResult>;
 }
 export async function researchExecutionRevisionOf(input: ResearchExecutionPolicy): Promise<string> {
