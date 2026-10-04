@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.openalex.org/works?per_page=5&search=lexical-ranking&cursor=page-8",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"meta\":{\"count\":8,\"next_cursor\":null},\"results\":[]}"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.semanticscholar.org/graph/v1/paper/search?fields=title%2Cauthors%2CpublicationDate%2CexternalIds%2Curl%2CopenAccessPdf&limit=5&query=embedder-width&offset=5",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"total\":8,\"offset\":5,\"data\":[{\"paperId\":\"synthetic-21\",\"title\":\"Synthetic embedder-width protocol note 6\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/embedder-width-paper-6\",\"ArXiv\":\"0000.00022\"},\"url\":\"https://fixture.invalid/sources/embedder-width-paper-6.md\"},{\"paperId\":\"synthetic-22\",\"title\":\"Synthetic embedder-width protocol note 7\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/embedder-width-paper-7\",\"ArXiv\":\"0000.00023\"},\"url\":\"https://fixture.invalid/sources/embedder-width-paper-7.md\"},{\"paperId\":\"synthetic-23\",\"title\":\"Synthetic embedder-width protocol note 8\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/embedder-width-paper-8\",\"ArXiv\":\"0000.00024\"},\"url\":\"https://fixture.invalid/sources/embedder-width-paper-8.md\"}]}"
+  }
+}

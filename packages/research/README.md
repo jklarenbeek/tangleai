@@ -122,3 +122,56 @@ reopens SQLite after each approval and verifies zero provider spend. Queue,
 worker, clock and database lifetimes belong to the executable host. Scripted
 complete-path controls qualify durability; they do not establish scientific
 quality or replace a retained scientific Stop decision.
+
+`createInclusionCriteria` and `createQueryPlan` build immutable discovery inputs.
+Pin `discoveryRevisionOf(options)` as the `scholarly-discovery` tool version
+before preparing a workflow, then wrap its stage tools with
+`createDiscoveryStageTools`. CREATE commits the query plan and criteria; DISCOVERY
+reads their exact admitted artifacts before making any request. Its normalized
+literature, screening decisions, candidates, acquisition results and receipt
+commit together through the existing stage transaction. Related records share
+an artifact so durable frames remain within their declared trace budget.
+
+The three JSON scholarly adapters compile native provider descriptors. arXiv
+uses the same injected executor and a bounded namespace-aware Atom reader.
+Executors own attempts, scheduling, Retry-After and cancellation. Supply transport,
+clock, sleep, randomness, request limits and metadata licence provenance in
+`ResearchProviderHost`; credentials belong only to private host transport. Live
+arXiv hosts must configure its documented request spacing. No adapter accesses
+ambient fetch. SearxNG wraps the native search client and returns candidates;
+snippets never become evidence cards.
+
+`createReplayTransport` snapshots transcripts and uses the native
+`providerReplayKey`, including method, exact URL query ordering, public headers,
+body and explicit visibility scope. Its custom transport preserves non-success
+status, headers and malformed response bodies, which the native success-only
+cache deliberately does not retain. A miss returns a counted `TRSH1008` through
+the adapter, with no network fallback. The receipt retains native pull observations
+and raw-byte hashes even on incomplete or refused pulls. Partial rows are not
+admitted as complete literature. Per-query counts distinguish HTTP successes,
+failures, rate limits and admission refusals. Byte accounting spans retries and
+concurrent queries; aborted capture cancels its body reader.
+
+Canonical DOI, arXiv, OpenAlex and Semantic Scholar identities drive deduplication.
+The arXiv version, update timestamp and primary category remain available. Metadata
+fallbacks cannot merge conflicting or disjoint canonical works; receipts expose
+accepted and refused fallback pairs. The scripted reviewer uses frozen title/date
+and source criteria, with `keep`, `exclude` and `unresolved` decisions. It does not
+assert relevance, novelty or claim support.
+
+Acquisition receives a native document ingester/store and an exact retained-body
+reader. It requests full source bodies and verifies their SHA-256 against the
+native immutable version. Cards retain their excerpt, full-source artifact/hash,
+version and element locator. `resolveEvidenceCard` checks all of those without
+reading chunks, including after a newer version becomes active.
+`toAdmittedArtifact` projects a card to the shared claim-evidence descriptor.
+Hosts must bound actual document transfer through the native fetcher's limits and
+aggregate byte callback as well as the frozen acquisition limits. Source failures
+remain per-source `TRSH1008` records. A source licence is never inferred from the
+fixture's MIT grant or a provider metadata licence.
+
+The benchmark runs committed synthetic transcripts only. The separate
+`benchmark/scripts/research-transcripts.ts` recorder requires explicit live-tier
+approval and writes a new private capture; it never edits the fixture or applies
+its licence to external content. Scholarly discovery does not qualify live API
+availability or scientific support.

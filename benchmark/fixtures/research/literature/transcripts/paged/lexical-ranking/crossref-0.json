@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.crossref.org/works?query=lexical-ranking&rows=5&cursor=*",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-5\",\"items\":[{\"DOI\":\"10.5555/lexical-ranking-paper-1\",\"title\":[\"Synthetic lexical-ranking protocol note 1\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-1.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-2\",\"title\":[\"Synthetic lexical-ranking protocol note 2\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-2.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-3\",\"title\":[\"Synthetic lexical-ranking protocol note 3\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-3.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-4\",\"title\":[\"Synthetic lexical-ranking protocol note 4\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-4.md\"}}},{\"DOI\":\"10.5555/lexical-ranking-paper-5\",\"title\":[\"Synthetic lexical-ranking protocol note 5\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/lexical-ranking-paper-5.md\"}}}]}}"
+  }
+}

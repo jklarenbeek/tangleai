@@ -65,6 +65,19 @@ describe('research instrument', () => {
     assert.equal(floor.completion.value, 1); assert.equal(floor.topics[2].result, 'SATURATED');
     assert.deepEqual(floor.cost, { calls: 0, tokens: 0, ms: 0, physical: 0 });
   });
+  it('discovery measures metadata screening separately from oracle support and retains all raw provenance', () => {
+    assert.equal(report.discovery.length, 3);
+    for (const row of report.discovery) {
+      assert.deepEqual(row.literatureRecall, { passed: 6, total: 8, value: 0.75 });
+      assert.deepEqual(row.literaturePrecision, { passed: 6, total: 8, value: 0.75 });
+      assert.equal(row.absentRelevant, 2); assert.equal(row.receipt.dedupe.identityMerges, 24);
+      assert.deepEqual(row.cards, { total: 16, resolvable: 16, unresolvable: 0 });
+      assert.deepEqual(row.replay, { requests: 20, misses: 0, networkCalls: 0 });
+      assert.deepEqual(row.providerOutcomes.counts, { ok: 11, failed: 0, refused: 0, unresolved: 0, cancelled: 0, rateLimited: 0 });
+      assert.ok(row.literature.every(record => record.rawHashes.length === 4));
+      assert.ok(row.acquisitions.every(a => a.status === 'resolved' && a.issues.length === 0));
+    }
+  });
   it('every registered mechanism and its absent provider identity remain explicit', () => {
     assert.deepEqual(report.rows.map(row => row.id), RESEARCH_ROW_IDS);
     for (const row of report.rows.slice(2)) {

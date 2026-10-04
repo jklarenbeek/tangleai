@@ -276,7 +276,19 @@ STOPPED projection. Terminal runs reject new semantic writes. A clock never
 creates an approval. The [research instrument](RESEARCH_BENCHMARK.md) retains
 stage-specific scripted approvals, honest scientific Stop decisions, and separate
 complete-path controls. These are keyless durability and fixture measurements;
-the later model, scholarly-adapter and learning mechanisms remain explicit gaps.
+the later model and learning mechanisms remain explicit gaps.
+
+Scholarly discovery composes into the same CREATE and DISCOVERY tasks. CREATE
+commits the query plan and metadata screening criteria before any provider call.
+The tool revision pins those inputs. Three JSON adapters use native provider
+descriptors; arXiv uses native HTTP attempts and one bounded Atom reader. Exact
+replay captures raw byte hashes, response headers and native observations,
+including partial pulls and failed requests. Incomplete literature is not
+admitted as a complete provider result. SearxNG contributes candidates only.
+The native document lane retains source versions and elements; evidence cards
+bind retained full-source bytes, excerpts and version locators without depending
+on chunk rows. The instrument measures discovery against the frozen gold labels
+after screening, with the absent relevant sources still in the denominator.
 
 ## Evaluated orchestration learning
 

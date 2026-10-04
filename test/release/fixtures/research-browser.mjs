@@ -1,5 +1,6 @@
 import { createMemoryResearchStore, planProjectCreate, planStateTransition, planStageCommit,
-  inputManifestHashOf, stageAttemptIdOf, researchArtifactIdOf, validateResearchShape } from '@tangleai/research';
+  inputManifestHashOf, stageAttemptIdOf, researchArtifactIdOf, validateResearchShape, createReplayTransport, discoverCrossref } from '@tangleai/research';
+import { createAttemptBudget, sleep } from '@jarenjs/core/retry';
 import schema from '@tangleai/research/schemas/research' with { type: 'json' };
 
 const value = result => {
@@ -31,3 +32,16 @@ export async function exerciseResearchConsumer(store) {
     replayed: replay.replayed === true, bytes: [...reread.bytes], artifactId: await researchArtifactIdOf(bytes), refusal: invalid.issues[0].code } };
 }
 export async function qualifyResearchBrowser() { return (await exerciseResearchConsumer(createMemoryResearchStore())).summary; }
+export async function qualifyResearchDiscoveryBrowser() {
+  const body = JSON.stringify({ message: { items: [{ DOI: '10.5555/packed', title: ['Packed scholarly fixture'],
+    author: [{ name: 'Fixture Author' }], published: { 'date-parts': [[2026, 1, 1]] }, URL: 'https://fixture.invalid/packed' }] } });
+  const replay = await createReplayTransport([{ method: 'GET', url: 'https://api.crossref.org/works?query=packed&rows=5&cursor=*', body: null,
+    response: { status: 200, headers: { 'content-type': 'application/json' }, body } }], { scope: 'packed-public-fixture' });
+  const result = await discoverCrossref({ id: 'packed-query', provider: 'crossref', text: 'packed', pages: 2, rows: 10, bytes: 4096, pageSize: 5 },
+    { transport: replay.transport, now: () => 0, sleep, random: () => 0.5, attempts: 1, overallMs: 10000, attemptMs: 5000, spacingMs: 0,
+      licence: { spdx: 'MIT', provenance: 'tangle-authored-synthetic', source: 'installed fixture' } },
+    { signal: new AbortController().signal, budget: createAttemptBudget(1), bytes: { remaining: 4096, consumed: 0 } });
+  if (result.outcome.state !== 'complete' || result.records.length !== 1) throw new Error('Installed discovery refused: ' + JSON.stringify(result.outcome));
+  return { doi: result.records[0].canonicalIds.doi, rawHash: result.records[0].rawHashes[0].sha256 === (await researchArtifactIdOf(new TextEncoder().encode(body))).slice(4),
+    ...replay.stats() };
+}

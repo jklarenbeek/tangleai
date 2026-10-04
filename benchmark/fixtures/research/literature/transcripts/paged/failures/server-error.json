@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.crossref.org/works?query=server-error&rows=5&cursor=*",
+  "body": null,
+  "response": {
+    "status": 500,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"message\":\"synthetic failure\"}"
+  }
+}

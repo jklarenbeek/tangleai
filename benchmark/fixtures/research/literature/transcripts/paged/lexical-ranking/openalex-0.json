@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.openalex.org/works?per_page=5&search=lexical-ranking&cursor=*",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"meta\":{\"count\":8,\"next_cursor\":\"page-5\"},\"results\":[{\"id\":\"https://openalex.org/W10008\",\"doi\":\"https://doi.org/10.5555/lexical-ranking-paper-1\",\"display_name\":\"Synthetic lexical-ranking protocol note 1\",\"publication_date\":\"2026-01-01\",\"authorships\":[{\"author\":{\"display_name\":\"Tangle Fixture Authors\"}}],\"primary_location\":{\"landing_page_url\":\"https://fixture.invalid/sources/lexical-ranking-paper-1.md\"}},{\"id\":\"https://openalex.org/W10009\",\"doi\":\"https://doi.org/10.5555/lexical-ranking-paper-2\",\"display_name\":\"Synthetic lexical-ranking protocol note 2\",\"publication_date\":\"2026-01-01\",\"authorships\":[{\"author\":{\"display_name\":\"Tangle Fixture Authors\"}}],\"primary_location\":{\"landing_page_url\":\"https://fixture.invalid/sources/lexical-ranking-paper-2.md\"}},{\"id\":\"https://openalex.org/W10010\",\"doi\":\"https://doi.org/10.5555/lexical-ranking-paper-3\",\"display_name\":\"Synthetic lexical-ranking protocol note 3\",\"publication_date\":\"2026-01-01\",\"authorships\":[{\"author\":{\"display_name\":\"Tangle Fixture Authors\"}}],\"primary_location\":{\"landing_page_url\":\"https://fixture.invalid/sources/lexical-ranking-paper-3.md\"}},{\"id\":\"https://openalex.org/W10011\",\"doi\":\"https://doi.org/10.5555/lexical-ranking-paper-4\",\"display_name\":\"Synthetic lexical-ranking protocol note 4\",\"publication_date\":\"2026-01-01\",\"authorships\":[{\"author\":{\"display_name\":\"Tangle Fixture Authors\"}}],\"primary_location\":{\"landing_page_url\":\"https://fixture.invalid/sources/lexical-ranking-paper-4.md\"}},{\"id\":\"https://openalex.org/W10012\",\"doi\":\"https://doi.org/10.5555/lexical-ranking-paper-5\",\"display_name\":\"Synthetic lexical-ranking protocol note 5\",\"publication_date\":\"2026-01-01\",\"authorships\":[{\"author\":{\"display_name\":\"Tangle Fixture Authors\"}}],\"primary_location\":{\"landing_page_url\":\"https://fixture.invalid/sources/lexical-ranking-paper-5.md\"}}]}"
+  }
+}

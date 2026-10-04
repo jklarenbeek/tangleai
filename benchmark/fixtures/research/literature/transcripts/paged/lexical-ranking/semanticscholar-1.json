@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.semanticscholar.org/graph/v1/paper/search?fields=title%2Cauthors%2CpublicationDate%2CexternalIds%2Curl%2CopenAccessPdf&limit=5&query=lexical-ranking&offset=5",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"total\":8,\"offset\":5,\"data\":[{\"paperId\":\"synthetic-13\",\"title\":\"Synthetic lexical-ranking protocol note 6\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/lexical-ranking-paper-6\",\"ArXiv\":\"0000.00014\"},\"url\":\"https://fixture.invalid/sources/lexical-ranking-paper-6.md\"},{\"paperId\":\"synthetic-14\",\"title\":\"Synthetic lexical-ranking protocol note 7\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/lexical-ranking-paper-7\",\"ArXiv\":\"0000.00015\"},\"url\":\"https://fixture.invalid/sources/lexical-ranking-paper-7.md\"},{\"paperId\":\"synthetic-15\",\"title\":\"Synthetic lexical-ranking protocol note 8\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/lexical-ranking-paper-8\",\"ArXiv\":\"0000.00016\"},\"url\":\"https://fixture.invalid/sources/lexical-ranking-paper-8.md\"}]}"
+  }
+}

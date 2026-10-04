@@ -1,0 +1,12 @@
+export { normalizeDoi, normalizeArxiv, normalizeOpenalex, normalizeLiterature, dedupeLiterature } from './normalize.ts';
+export type { ScholarlyMetadata, ScholarlyProvider } from './normalize.ts';
+export { readAtomEntries } from './atom.ts';
+export type { AtomReadResult } from './atom.ts';
+export { createReplayTransport } from './replay.ts';
+export type { ResearchTranscript, ResearchReplayTransport } from './replay.ts';
+export { discoverOpenalex } from './openalex.ts';
+export { discoverCrossref } from './crossref.ts';
+export { discoverSemanticScholar } from './semanticscholar.ts';
+export { discoverArxiv } from './arxiv.ts';
+export { discoverSearxng } from './searxng.ts';
+export type { ResearchProviderHost, ResearchTransport, ResearchAdapterContext, ResearchByteBudget, ResearchAdapterArtifact, ScholarlyResult } from './runtime.ts';

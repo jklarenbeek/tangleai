@@ -641,6 +641,348 @@
       }
     },
     {
+      "path": "literature/transcripts/paged/collisions/distinct-title.json",
+      "sha256": "08a22e35e7a92b45a2561ad54b567bff8e8dbfa9f436279ed1abb2a0e9c7ee83",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/arxiv-0.json",
+      "sha256": "7669315f7fbf70b6972a7be7a4839a53e2b640d242ff80abb779c3760daf53b4",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/arxiv-1.json",
+      "sha256": "6c45913a60bff79d9a2f5d9916d5a9fdf62ee2f939b90804a73559c5c4e8f3b8",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/crossref-0.json",
+      "sha256": "53180f00a16b694e2a0562b91721f25d8a8d57aa5d39cf93036beaa78c917009",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/crossref-1.json",
+      "sha256": "78ed2ed913ab877d6304c229dff240af82604fba1b233b649cc6ceb5f766ec16",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/openalex-0.json",
+      "sha256": "5107c1e7cd3e53b9c96b516c2dd4e8d251d4b2e2f817f24e4fb262231bbf2849",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/openalex-1.json",
+      "sha256": "05b1a4d99374c2eaad504563c7fd262e3d8714c8bb20e5dbdccbb3a29980944e",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/openalex-2.json",
+      "sha256": "2179110afa6b186931de97fe666f4b9b3ac4fa60defa320b432bfb3cf9af75d0",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/searxng-1.json",
+      "sha256": "736c5823f51c72410897f4e2540b04086947b9dee3d6dd72e484297a0a128802",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/searxng-2.json",
+      "sha256": "24076e7c191af1471cf2014fe1f4b2976e1fcf1cce98658aa626927a6869844f",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/semanticscholar-0.json",
+      "sha256": "658d5f89427d1933697be9d67ed1f39e287066970c08cf1ca1d834242db7de5e",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/embedder-width/semanticscholar-1.json",
+      "sha256": "9f0398731ad1add1d9951679cd49552784ec2c44375fb8df1c6be8ab2d5e6d09",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/failures/malformed-atom.json",
+      "sha256": "27d55168589067ffa4bc796b510b63f4d1bd17519839b3173448b5167727ad84",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/failures/malformed-json.json",
+      "sha256": "b119d93778086948bd40496cce082ca92182d60dfc6338b7cebb7ee9ff3c6cbc",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/failures/rate-limited.json",
+      "sha256": "50747b495241543d980fd25f1864b2a0547d29a613959d2f2d210f01bd2c2a2d",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/failures/server-error.json",
+      "sha256": "b69b4ce8458334131d748a49278daa15965f41c7f30cf22e01fb1b889e50f967",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/arxiv-0.json",
+      "sha256": "bf1f07a2c0c38df178e0e849a9a00ab9b50c63cc739a65169a511617706c604c",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/arxiv-1.json",
+      "sha256": "2e3df81fc29ecd5fd3cb68c37638274644032e821b39894f1dbc79e4062c6e00",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/crossref-0.json",
+      "sha256": "a3b99f2f18168ea35d262e4b38d6205e6fe0334d7cff785f1d7345ae360d6628",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/crossref-1.json",
+      "sha256": "92c29836b3c19c1213898806e890c7af201956351b3c0c9d849519994826e365",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/openalex-0.json",
+      "sha256": "709eb545e9e48c6d1dd04b05263583f1d5c1e71abca0c27a9357e7621db24be6",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/openalex-1.json",
+      "sha256": "d67f1332feaa9ddb70f6b9633c3415ceb8e2b0bfc933a3b93514369f24ed9306",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/openalex-2.json",
+      "sha256": "67961bc66ae8d1405cd46e1371cb7b555bdff0817a60f32ae153a4181353b3a3",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/searxng-1.json",
+      "sha256": "c6ca79adf13699a5614a26453e8d96e1464c08e429d0141bf4009c9306146859",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/searxng-2.json",
+      "sha256": "703ac3c9608de9fb654093c5d700d03172da35c928a26139904676b25d8b8652",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/semanticscholar-0.json",
+      "sha256": "a01b800a634ff44a36145fb782525cce17a65bf535bdde2a62bc1bd7600784d4",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/kmeans-seeding/semanticscholar-1.json",
+      "sha256": "502217c56acc326e2e0f5ed2f19d623a9840534f6390b5697c4d7943b1edf0e3",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/arxiv-0.json",
+      "sha256": "61cabe403646abe5a919babb444529fc4c599773dda62abe7a6c29c269e8c21f",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/arxiv-1.json",
+      "sha256": "3c7d4aa3ea61ae86e043c9aef56551c11caf3884cd63027dc00509d5bf0983b0",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/crossref-0.json",
+      "sha256": "af2c807d8adccad9f832feb5afcd353d1a6c8a29f2b5f3a0c9f079da3fdfa882",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/crossref-1.json",
+      "sha256": "2387e60993cc97218efcac0c2d9f33cce4da4eae5e2a18a0d17c1c3da24f8cdc",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/openalex-0.json",
+      "sha256": "cc47b81816f117b5372e776d5e9cee38727ab36fb13a3cb0b5c6ce489bd8a2ab",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/openalex-1.json",
+      "sha256": "c59d333c87ef9a451f0adb3bdafb36bc4d0c1dd70e722b8f896a0ed4c5a17e86",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/openalex-2.json",
+      "sha256": "91edf53ab270b4c8938e18bd4b235d53a847848d2f6fd1133fbcfeb516aa57e3",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/searxng-1.json",
+      "sha256": "3c7104d9ccd24227cd14fa69a1d3ad4cc9a67ec03c4df11709bf67d5070b99ef",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/searxng-2.json",
+      "sha256": "8fe78b0617d791aa7daf68a1d62d3c5d3b0817d7aea87385a2edc427d5fa8247",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/semanticscholar-0.json",
+      "sha256": "d7f54cb7a0eb1036bfeb83f803f32e7e01f4cc1beed6f0b764b31783308fd114",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "literature/transcripts/paged/lexical-ranking/semanticscholar-1.json",
+      "sha256": "095ae995bde10378d5faf75d4e1cdb20ee50740d3f0f7a7c5961a3d97c94152a",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
       "path": "literature/transcripts/semanticscholar/search.json",
       "sha256": "9836f86c530fb29bae92d0f90caa49f7fcdd8aca9f705f96d0646b52bf6fa2c8",
       "licence": {
@@ -911,5 +1253,5 @@
       }
     }
   ],
-  "revision": "21ac1400e7c3c144bf0e5a56fd4b61da5843e8cbfed4cc8e9729c8da9ba7c503"
+  "revision": "fc9fadb43116bad3a4b4f02a5fdbe88d142cfbcbcab33953c12a445beb1f60b7"
 }

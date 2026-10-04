@@ -89,17 +89,20 @@ export function sniffMime(bytes: Uint8Array, declared?: string): string {
 }
 
 /** Shared bounded reader for fetch and capture; count delivered chunks before enforcing the ceiling. */
-export async function readBoundedResponseBytes(response: Response, maxBytes: number, onBytesRead?: (bytes: number) => void): Promise<Uint8Array> {
+export async function readBoundedResponseBytes(response: Response, maxBytes: number, onBytesRead?: (bytes: number) => void, signal?: AbortSignal): Promise<Uint8Array> {
   if (!Number.isSafeInteger(maxBytes) || maxBytes < 0) throw new TypeError('A response byte ceiling must be a nonnegative integer.');
+  signal?.throwIfAborted();
   const body = response.body;
   if (body === null) return new Uint8Array();
   const reader = body.getReader();
+  const cancel = () => { void reader.cancel(signal?.reason).catch(() => {}); };
+  signal?.addEventListener('abort', cancel, { once: true });
   const chunks: Uint8Array[] = [];
   let total = 0;
   try {
     while (true) {
       const item = await reader.read();
-      if (item.done) break;
+      if (item.done) { signal?.throwIfAborted(); break; }
       total += item.value.byteLength;
       if (onBytesRead) {
         try { onBytesRead(item.value.byteLength); }
@@ -109,9 +112,11 @@ export async function readBoundedResponseBytes(response: Response, maxBytes: num
         await reader.cancel('document byte budget exceeded');
         throw new DocumentError('response-too-large', `Document exceeds the ${maxBytes}-byte decompressed limit`);
       }
+      signal?.throwIfAborted();
       chunks.push(item.value);
     }
   } finally {
+    signal?.removeEventListener('abort', cancel);
     reader.releaseLock();
   }
   const joined = new Uint8Array(total);

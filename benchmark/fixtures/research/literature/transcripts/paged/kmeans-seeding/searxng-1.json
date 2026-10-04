@@ -1,0 +1,15 @@
+{
+  "method": "GET",
+  "url": "https://search.fixture.invalid/search?format=json&q=kmeans-seeding&pageno=1",
+  "headers": {
+    "accept": "application/json"
+  },
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"results\":[{\"title\":\"Unverified search snippet\",\"url\":\"https://fixture.invalid/proposal\",\"content\":\"A snippet is not supporting evidence.\"}],\"suggestions\":[]}"
+  }
+}

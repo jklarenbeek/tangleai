@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.semanticscholar.org/graph/v1/paper/search?fields=title%2Cauthors%2CpublicationDate%2CexternalIds%2Curl%2CopenAccessPdf&limit=5&query=kmeans-seeding&offset=5",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"total\":8,\"offset\":5,\"data\":[{\"paperId\":\"synthetic-5\",\"title\":\"Synthetic kmeans-seeding protocol note 6\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/kmeans-seeding-paper-6\",\"ArXiv\":\"0000.00006\"},\"url\":\"https://fixture.invalid/sources/kmeans-seeding-paper-6.md\"},{\"paperId\":\"synthetic-6\",\"title\":\"Synthetic kmeans-seeding protocol note 7\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/kmeans-seeding-paper-7\",\"ArXiv\":\"0000.00007\"},\"url\":\"https://fixture.invalid/sources/kmeans-seeding-paper-7.md\"},{\"paperId\":\"synthetic-7\",\"title\":\"Synthetic kmeans-seeding protocol note 8\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/kmeans-seeding-paper-8\",\"ArXiv\":\"0000.00008\"},\"url\":\"https://fixture.invalid/sources/kmeans-seeding-paper-8.md\"}]}"
+  }
+}

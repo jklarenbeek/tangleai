@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.semanticscholar.org/graph/v1/paper/search?fields=title%2Cauthors%2CpublicationDate%2CexternalIds%2Curl%2CopenAccessPdf&limit=5&query=lexical-ranking&offset=0",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"total\":8,\"offset\":0,\"next\":5,\"data\":[{\"paperId\":\"synthetic-8\",\"title\":\"Synthetic lexical-ranking protocol note 1\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/lexical-ranking-paper-1\",\"ArXiv\":\"0000.00009\"},\"url\":\"https://fixture.invalid/sources/lexical-ranking-paper-1.md\"},{\"paperId\":\"synthetic-9\",\"title\":\"Synthetic lexical-ranking protocol note 2\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/lexical-ranking-paper-2\",\"ArXiv\":\"0000.00010\"},\"url\":\"https://fixture.invalid/sources/lexical-ranking-paper-2.md\"},{\"paperId\":\"synthetic-10\",\"title\":\"Synthetic lexical-ranking protocol note 3\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/lexical-ranking-paper-3\",\"ArXiv\":\"0000.00011\"},\"url\":\"https://fixture.invalid/sources/lexical-ranking-paper-3.md\"},{\"paperId\":\"synthetic-11\",\"title\":\"Synthetic lexical-ranking protocol note 4\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/lexical-ranking-paper-4\",\"ArXiv\":\"0000.00012\"},\"url\":\"https://fixture.invalid/sources/lexical-ranking-paper-4.md\"},{\"paperId\":\"synthetic-12\",\"title\":\"Synthetic lexical-ranking protocol note 5\",\"authors\":[{\"name\":\"Tangle Fixture Authors\"}],\"publicationDate\":\"2026-01-01\",\"externalIds\":{\"DOI\":\"10.5555/lexical-ranking-paper-5\",\"ArXiv\":\"0000.00013\"},\"url\":\"https://fixture.invalid/sources/lexical-ranking-paper-5.md\"}]}"
+  }
+}

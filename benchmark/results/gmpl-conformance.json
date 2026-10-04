@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "32cba1de265f7e6d49e28dbdd63aac60a3364b01",
+    "head": "e6a6f5cd0acfdba1ca7835d03dafa73feb107f3b",
     "clean": false,
     "files": [
       {
@@ -1019,7 +1019,7 @@
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "50b3aaab745425f70e9b3569e955e8fb2b77818be8e39ce892dd70116722f605"
+        "sha256": "35ece3cf1f297ae4752926d4226072f75c7e91b6f931f42c8fcd125ec822aa55"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -1111,7 +1111,7 @@
       },
       {
         "path": "test/release/fixtures/browser.mjs",
-        "sha256": "376fbf827b577f0402970658ba73ffbd33750b006dec55319e42cdcdc2370c39"
+        "sha256": "66bc773d6bc1a752e771f0984b2ac230f9d1b3368bd3706716faaff16035a4df"
       },
       {
         "path": "test/release/fixtures/gmpl-browser.mjs",
@@ -1126,7 +1126,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "1a2055809fe6bb55e7df7ebb00f01c4f3bd2baf7c960ed82dea9d0df020a3994"
+    "sha256": "f2026ba49ae4b988e18f695e4228afce41e3dd558731a79b30eb48f706818f2d"
   },
   "ablations": [
     {
@@ -76680,5 +76680,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "e5f2abd3f6d3f91b6cf8c3921d73e00626e4db562e78ca22863ca71109cbe9d5"
+  "reportId": "68373e21ac156e4c7f7bdc8fe27e49b5572445ce66606c3d3095adf8e724a0c2"
 }

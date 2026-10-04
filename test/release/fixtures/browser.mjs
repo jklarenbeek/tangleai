@@ -5,7 +5,7 @@ import { qualifyGmplBrowser } from './gmpl-browser.mjs';
 import { qualifyHeraBrowser } from './hera-browser.mjs';
 import { qualifyForecastBrowser } from './forecast-browser.mjs';
 import { qualifyTradingBrowser } from './trading-browser.mjs';
-import { qualifyResearchBrowser } from './research-browser.mjs';
+import { qualifyResearchBrowser, qualifyResearchDiscoveryBrowser } from './research-browser.mjs';
 import { qualifyTemporal } from './temporal-browser.mjs';
 import { qualifyPlace } from './place-browser.mjs';
 import { qualifyTrace2SkillBrowser } from './trace2skill-browser.mjs';
@@ -28,6 +28,7 @@ globalThis.tangleConsumer = {
   forecast: qualifyForecastBrowser(),
   trading: qualifyTradingBrowser(),
   research: qualifyResearchBrowser(),
+  researchDiscovery: qualifyResearchDiscoveryBrowser(),
   consolidation: qualifyConsolidation(),
   temporal: qualifyTemporal(),
   place: qualifyPlace().then(result => result.summary),

@@ -38,6 +38,23 @@
             "detail": {
               "type": "string",
               "minLength": 1
+            },
+            "state": {
+              "type": "string",
+              "minLength": 1
+            },
+            "attempts": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "integer",
+              "minimum": 100,
+              "maximum": 599
             }
           },
           "required": [
@@ -59,10 +76,16 @@
       "type": "object",
       "properties": {
         "spdx": {
-          "const": "MIT"
+          "type": "string",
+          "minLength": 1
         },
         "provenance": {
-          "const": "tangle-authored-synthetic"
+          "enum": [
+            "tangle-authored-synthetic",
+            "provider-metadata",
+            "explicit-source-grant",
+            "unasserted"
+          ]
         },
         "source": {
           "type": "string",
@@ -874,6 +897,18 @@
             "arxiv": {
               "type": "string",
               "minLength": 1
+            },
+            "openalex": {
+              "type": "string",
+              "pattern": "^W[0-9]+$"
+            },
+            "s2": {
+              "type": "string",
+              "minLength": 1
+            },
+            "arxivVersion": {
+              "type": "integer",
+              "minimum": 1
             }
           },
           "required": [],
@@ -932,6 +967,18 @@
         },
         "licence": {
           "$ref": "#/$defs/ResearchLicence"
+        },
+        "updatedAt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
         }
       },
       "required": [
@@ -968,7 +1015,8 @@
           "$ref": "#/$defs/Sha256"
         },
         "versionId": {
-          "$ref": "#/$defs/Sha256"
+          "type": "string",
+          "pattern": "^([0-9a-f]{64}|ver-[0-9a-f]{32})$"
         },
         "locator": {
           "type": "object",
@@ -2139,6 +2187,13 @@
         },
         "screenerRevision": {
           "$ref": "#/$defs/Sha256"
+        },
+        "criteriaId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 1
         }
       },
       "required": [
@@ -3028,6 +3083,444 @@
         "response",
         "projectHash",
         "planHash"
+      ],
+      "additionalProperties": false
+    },
+    "DiscoveryQuery": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "provider": {
+          "enum": [
+            "openalex",
+            "crossref",
+            "semanticscholar",
+            "arxiv",
+            "searxng"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pages": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pageSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "id",
+        "provider",
+        "text",
+        "pages",
+        "rows",
+        "bytes",
+        "pageSize"
+      ],
+      "additionalProperties": false
+    },
+    "QueryPlan": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "criteriaId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DiscoveryQuery"
+          },
+          "minItems": 1,
+          "maxItems": 64
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "maxRequests": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "criteriaId",
+        "queries",
+        "concurrency",
+        "maxRequests",
+        "maxBytes"
+      ],
+      "additionalProperties": false
+    },
+    "InclusionCriteria": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "revision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "titleTerms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 64
+        },
+        "dateFrom": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dateTo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requireSource": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "reviewer",
+        "titleTerms",
+        "dateFrom",
+        "dateTo",
+        "requireSource"
+      ],
+      "additionalProperties": false
+    },
+    "DiscoveryCandidate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "queryId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snippet": {
+          "type": "string"
+        },
+        "rawHash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "queryId",
+        "title",
+        "url",
+        "snippet",
+        "rawHash"
+      ],
+      "additionalProperties": false
+    },
+    "DiscoveryQueryOutcome": {
+      "type": "object",
+      "properties": {
+        "queryId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "provider": {
+          "enum": [
+            "openalex",
+            "crossref",
+            "semanticscholar",
+            "arxiv",
+            "searxng"
+          ]
+        },
+        "state": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "refused"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "malformed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observationArtifactId": {
+          "type": "string",
+          "pattern": "^art-[0-9a-f]{64}$"
+        },
+        "rawHashes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Sha256"
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchIssue"
+          }
+        },
+        "counts": {
+          "$ref": "#/$defs/DiscoveryProviderCounts"
+        }
+      },
+      "required": [
+        "queryId",
+        "provider",
+        "state",
+        "reason",
+        "attempts",
+        "rows",
+        "malformed",
+        "observationArtifactId",
+        "rawHashes",
+        "issues",
+        "counts"
+      ],
+      "additionalProperties": false
+    },
+    "DiscoveryDedupe": {
+      "type": "object",
+      "properties": {
+        "identityMerges": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fallbackMerges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "left": {
+                "type": "string",
+                "minLength": 1
+              },
+              "right": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "enum": [
+                  "merged",
+                  "refused"
+                ]
+              }
+            },
+            "required": [
+              "left",
+              "right",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "distinctPreserved": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "identityMerges",
+        "fallbackMerges",
+        "distinctPreserved"
+      ],
+      "additionalProperties": false
+    },
+    "DiscoveryReceipt": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "queryPlanId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "criteriaId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DiscoveryQueryOutcome"
+          }
+        },
+        "literatureIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          }
+        },
+        "candidateIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          }
+        },
+        "dedupe": {
+          "$ref": "#/$defs/DiscoveryDedupe"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "queryPlanId",
+        "criteriaId",
+        "outcomes",
+        "literatureIds",
+        "candidateIds",
+        "dedupe"
+      ],
+      "additionalProperties": false
+    },
+    "SourceAcquisition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "literatureId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "status": {
+          "enum": [
+            "resolved",
+            "unresolved"
+          ]
+        },
+        "versionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contentHash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "artifactId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchIssue"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "literatureId",
+        "status",
+        "versionId",
+        "contentHash",
+        "artifactId",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
+    "DiscoveryProviderCounts": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cancelled": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rateLimited": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "ok",
+        "failed",
+        "refused",
+        "unresolved",
+        "cancelled",
+        "rateLimited"
       ],
       "additionalProperties": false
     }

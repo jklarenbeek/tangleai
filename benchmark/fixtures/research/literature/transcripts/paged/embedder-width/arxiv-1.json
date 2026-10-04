@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://export.arxiv.org/api/query?search_query=embedder-width&start=5&max_results=5",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/atom+xml"
+    },
+    "body": "<feed xmlns=\"http://www.w3.org/2005/Atom\" xmlns:a=\"http://arxiv.org/schemas/atom\" xmlns:o=\"http://a9.com/-/spec/opensearch/1.1/\"><o:totalResults>8</o:totalResults><o:startIndex>5</o:startIndex><o:itemsPerPage>5</o:itemsPerPage><entry><id>https://arxiv.org/abs/0000.00022v2</id><title>Synthetic embedder-width protocol note 6</title><author><name>Tangle Fixture Authors</name></author><published>2026-01-01T00:00:00Z</published><updated>2026-01-02T00:00:00Z</updated><a:doi>10.5555/embedder-width-paper-6</a:doi><a:primary_category term=\"cs.AI\"/><link rel=\"related\" href=\"https://fixture.invalid/sources/embedder-width-paper-6.md\"/></entry><entry><id>https://arxiv.org/abs/0000.00023v2</id><title>Synthetic embedder-width protocol note 7</title><author><name>Tangle Fixture Authors</name></author><published>2026-01-01T00:00:00Z</published><updated>2026-01-02T00:00:00Z</updated><a:doi>10.5555/embedder-width-paper-7</a:doi><a:primary_category term=\"cs.AI\"/><link rel=\"related\" href=\"https://fixture.invalid/sources/embedder-width-paper-7.md\"/></entry><entry><id>https://arxiv.org/abs/0000.00024v2</id><title>Synthetic embedder-width protocol note 8</title><author><name>Tangle Fixture Authors</name></author><published>2026-01-01T00:00:00Z</published><updated>2026-01-02T00:00:00Z</updated><a:doi>10.5555/embedder-width-paper-8</a:doi><a:primary_category term=\"cs.AI\"/><link rel=\"related\" href=\"https://fixture.invalid/sources/embedder-width-paper-8.md\"/></entry></feed>"
+  }
+}

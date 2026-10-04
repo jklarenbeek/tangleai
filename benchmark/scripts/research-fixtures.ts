@@ -8,6 +8,7 @@ import { RESEARCH_PROGRAM_IDS } from '../lib/research-programs.ts';
 import { RESEARCH_EVALUATOR, researchComparison } from '../lib/research-evaluator.ts';
 import { runResearchFixture } from '../lib/research-runner.ts';
 import { createResearchLifecycleFixture } from '../lib/research-lifecycle-fixture.ts';
+import { researchDiscoveryTranscripts } from '../lib/research-discovery-fixture.ts';
 import { verifyResearchBundle } from '../lib/research-oracle.ts';
 import { requireResearchShape } from '../lib/research-validation.ts';
 import type { ResearchDataset, ResearchFixtureTopic, ResearchFixtureManifest, ResearchHiddenLabels,
@@ -126,6 +127,7 @@ for (const response of responses) {
   for (const record of literature) record.rawHashes.push({ source: response.source, sha256 });
 }
 put('literature/records.json', literature);
+for (const [path, transcript] of researchDiscoveryTranscripts(literature)) put(path, transcript);
 put('literature/gold.json', topics.map(topic => ({ topicId: topic.id, relevantLiterature: hidden.get(topic.id)!.relevantLiterature })));
 const source = 'benchmark/lib/research-programs.ts', sourceHash = researchBytesSha256(await readFile(join(root, source)));
 const manifest: ResearchFixtureManifest = { id: 'research-computational-v1', version: 1,

@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "32cba1de265f7e6d49e28dbdd63aac60a3364b01",
-      "sha256": "7545cf17d5b9db0bd334ad3b8e9e3a105c753ca16f2f9038646d91538653113c",
+      "head": "e6a6f5cd0acfdba1ca7835d03dafa73feb107f3b",
+      "sha256": "a15f73716edc31058a97a88b2ed6f516aead7b99282b18b6f8dbc0ee80d8ca50",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -673,12 +673,20 @@
           "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
         },
         {
+          "path": "benchmark/lib/research-discovery-fixture.ts",
+          "sha256": "30c9c0dbfe9db0842a866464e46ac959c0c06218a124a9749f0dd8dac94d6da9"
+        },
+        {
+          "path": "benchmark/lib/research-discovery.ts",
+          "sha256": "88fbfa3ecc791526719dc5174e113637c36d2b466af17217428ec5073581e635"
+        },
+        {
           "path": "benchmark/lib/research-evaluator.ts",
           "sha256": "d83f01e80bc6cab800bfd6e5b8edb7e81dbcbda7edaa72f3f48e87c58061e5e5"
         },
         {
           "path": "benchmark/lib/research-fixture.ts",
-          "sha256": "0b7a29765883b1e12fa2c222112d8ec2591637a32590abe516cf4a0104e61b6f"
+          "sha256": "a58a5c75906bbd9b25ead10f13ae07ff22a3d85bc146392c672f9fb65f54f924"
         },
         {
           "path": "benchmark/lib/research-lifecycle-fixture.ts",
@@ -698,7 +706,7 @@
         },
         {
           "path": "benchmark/lib/research-schema.ts",
-          "sha256": "651cf4c0fea8dcd9d33589163cc390e9a945daf5b73363b0a86b212497135e73"
+          "sha256": "0e679577777419a9a2727144ff9a509aae12e6c38de255eefbf5b974d953a625"
         },
         {
           "path": "benchmark/lib/research-validation.ts",
@@ -706,15 +714,15 @@
         },
         {
           "path": "benchmark/lib/research-workflow.ts",
-          "sha256": "c4513d048ace8a80714caca790794a7c3111e8654449392c577ee68f0bd40af8"
+          "sha256": "0251b2d7d48b37336f4bfc1fb387b569e09ebef4be0bbf07604bee90edeaa292"
         },
         {
           "path": "benchmark/lib/research.ts",
-          "sha256": "ad82864b3fd4da58e7caff155da882efc768891bf75bd58544e52d9c5166cbce"
+          "sha256": "f05335b8236cf4eea2337c186917a67aa17dc3548ca992c98add74c3f2360c0b"
         },
         {
           "path": "benchmark/lib/research.types.ts",
-          "sha256": "a7906c7297f96811fe0940978caf0df66ec744cd696313eca15fdf68641c3618"
+          "sha256": "d9cf12f230a01d11b6699dac104487e5c848854ef59aafb149fc8010f29498c5"
         },
         {
           "path": "benchmark/lib/retention.ts",
@@ -1082,7 +1090,7 @@
         },
         {
           "path": "packages/documents/src/fetch.ts",
-          "sha256": "94e7f86a00fed8f673b6707edb285e7f73a2ea367b19cd9d55c38ad43dce091c"
+          "sha256": "c16c63edbe192aaa6273a16b115149fe8e2fbf9b6519985450df576f39a85920"
         },
         {
           "path": "packages/documents/src/grounding.ts",
@@ -1889,7 +1897,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "a602dae85005eb79650d4d442c27bd2a685be849ee17894a41730dcadd6adb1d",
+    "planId": "2ecac8b30ff2390decc8b15605be00c2801bd04d5e7acd5e473471d6b753ce72",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

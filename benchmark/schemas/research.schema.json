@@ -218,6 +218,13 @@
       "minItems": 8,
       "maxItems": 8
     },
+    "discovery": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ResearchDiscoveryMeasurement"
+      },
+      "maxItems": 3
+    },
     "bundles": {
       "type": "array",
       "items": {
@@ -335,6 +342,7 @@
     "identity",
     "ceilings",
     "rows",
+    "discovery",
     "bundles",
     "disclosure",
     "gate",
@@ -344,6 +352,144 @@
   ],
   "additionalProperties": false,
   "$defs": {
+    "ResearchDiscoveryMeasurement": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "receipt": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/DiscoveryReceipt"
+        },
+        "literature": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LiteratureRecord"
+          }
+        },
+        "screening": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ScreeningDecision"
+          }
+        },
+        "acquisitions": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/SourceAcquisition"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/EvidenceCard"
+          }
+        },
+        "literatureRecall": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "literaturePrecision": {
+          "$ref": "#/$defs/ResearchScore"
+        },
+        "absentRelevant": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "providerOutcomes": {
+          "type": "object",
+          "properties": {
+            "complete": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "incomplete": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refused": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "attempts": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "counts": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/DiscoveryProviderCounts"
+            }
+          },
+          "required": [
+            "complete",
+            "incomplete",
+            "refused",
+            "attempts",
+            "counts"
+          ],
+          "additionalProperties": false
+        },
+        "replay": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "misses": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "networkCalls": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "requests",
+            "misses",
+            "networkCalls"
+          ],
+          "additionalProperties": false
+        },
+        "cards": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "resolvable": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unresolvable": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "total",
+            "resolvable",
+            "unresolvable"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "topicId",
+        "receipt",
+        "literature",
+        "screening",
+        "acquisitions",
+        "evidence",
+        "literatureRecall",
+        "literaturePrecision",
+        "absentRelevant",
+        "providerOutcomes",
+        "replay",
+        "cards"
+      ],
+      "additionalProperties": false
+    },
     "ResearchWorkflowMeasurement": {
       "type": "object",
       "properties": {

@@ -12,6 +12,11 @@ export interface ResearchRecordMap {
   InputManifest: R.InputManifest;
   ResearchArtifact: R.ResearchArtifact;
   ArtifactAdmission: R.ArtifactAdmission;
+  QueryPlan: R.QueryPlan;
+  InclusionCriteria: R.InclusionCriteria;
+  DiscoveryCandidate: R.DiscoveryCandidate;
+  DiscoveryReceipt: R.DiscoveryReceipt;
+  SourceAcquisition: R.SourceAcquisition;
   LiteratureRecord: R.LiteratureRecord;
   ScreeningDecision: R.ScreeningDecision;
   EvidenceCard: R.EvidenceCard;
@@ -37,6 +42,7 @@ export type ResearchRecordEntry = ResearchRecordWrite & { id: string; projectId:
 const kinds: Record<ResearchRecordKind, true> = {
   ResearchProject: true, ResearchContract: true, Amendment: true, StageAttempt: true, InputManifest: true,
   ResearchArtifact: true, ArtifactAdmission: true, LiteratureRecord: true, ScreeningDecision: true,
+  QueryPlan: true, InclusionCriteria: true, DiscoveryCandidate: true, DiscoveryReceipt: true, SourceAcquisition: true,
   EvidenceCard: true, Synthesis: true, ResearchHypothesis: true, ExperimentPlan: true, ExperimentBranch: true,
   WorkspaceManifest: true, ExecutionManifest: true, ExperimentRun: true, MetricObservation: true,
   ResearchDecision: true, ResearchClaim: true, Review: true, Intervention: true, ResearchLesson: true,

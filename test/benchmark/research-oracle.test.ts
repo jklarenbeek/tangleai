@@ -180,6 +180,12 @@ describe('research fixture oracle', () => {
   });
   it('preregistration hashes and licence references are verified beyond member digests', async () => {
     await fixtureCopy(async (root, directory) => {
+      await changeRegisteredJson(directory, 'topics/kmeans-seeding.json', (topic: ResearchFixtureTopic) => {
+        topic.licence.spdx = 'NOASSERTION'; topic.licence.provenance = 'provider-metadata';
+      });
+      await assert.rejects(loadResearchFixture(root), /licence/);
+    });
+    await fixtureCopy(async (root, directory) => {
       await changeRegisteredJson(directory, 'topics/kmeans-seeding.json', (topic: ResearchFixtureTopic) => { topic.contract.successRule.minImprovement = 1; });
       await assert.rejects(loadResearchFixture(root), /contract hash/);
     });

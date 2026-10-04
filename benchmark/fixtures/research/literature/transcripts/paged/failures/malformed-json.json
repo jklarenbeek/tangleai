@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.crossref.org/works?query=malformed-json&rows=5&cursor=*",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"message\":"
+  }
+}

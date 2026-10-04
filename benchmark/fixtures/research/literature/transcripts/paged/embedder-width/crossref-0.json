@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.crossref.org/works?query=embedder-width&rows=5&cursor=*",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-5\",\"items\":[{\"DOI\":\"10.5555/embedder-width-paper-1\",\"title\":[\"Synthetic embedder-width protocol note 1\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/embedder-width-paper-1.md\"}}},{\"DOI\":\"10.5555/embedder-width-paper-2\",\"title\":[\"Synthetic embedder-width protocol note 2\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/embedder-width-paper-2.md\"}}},{\"DOI\":\"10.5555/embedder-width-paper-3\",\"title\":[\"Synthetic embedder-width protocol note 3\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/embedder-width-paper-3.md\"}}},{\"DOI\":\"10.5555/embedder-width-paper-4\",\"title\":[\"Synthetic embedder-width protocol note 4\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/embedder-width-paper-4.md\"}}},{\"DOI\":\"10.5555/embedder-width-paper-5\",\"title\":[\"Synthetic embedder-width protocol note 5\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/embedder-width-paper-5.md\"}}}]}}"
+  }
+}

@@ -53,7 +53,8 @@ export async function loadResearchFixture(root = process.cwd()): Promise<LoadedR
     .filter(path => path !== 'manifest.json').sort();
   if (JSON.stringify(inventory) !== JSON.stringify([...files.keys()].sort())) throw new Error('Research fixture contains unregistered or missing members.');
   const checkLicence = (licence: ResearchLicence) => {
-    if (licence.source !== 'LICENSE.md' || !files.has(licence.source)) throw new Error('Research licence does not resolve to the registered MIT grant.');
+    if (licence.spdx !== 'MIT' || licence.provenance !== 'tangle-authored-synthetic'
+      || licence.source !== 'LICENSE.md' || !files.has(licence.source)) throw new Error('Research licence does not resolve to the registered MIT grant.');
   };
   checkLicence(manifest.licence);
   for (const member of manifest.members) checkLicence(member.licence);

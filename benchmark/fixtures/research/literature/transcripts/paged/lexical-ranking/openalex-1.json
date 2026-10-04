@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.openalex.org/works?per_page=5&search=lexical-ranking&cursor=page-5",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"meta\":{\"count\":8,\"next_cursor\":\"page-8\"},\"results\":[{\"id\":\"https://openalex.org/W10013\",\"doi\":\"https://doi.org/10.5555/lexical-ranking-paper-6\",\"display_name\":\"Synthetic lexical-ranking protocol note 6\",\"publication_date\":\"2026-01-01\",\"authorships\":[{\"author\":{\"display_name\":\"Tangle Fixture Authors\"}}],\"primary_location\":{\"landing_page_url\":\"https://fixture.invalid/sources/lexical-ranking-paper-6.md\"}},{\"id\":\"https://openalex.org/W10014\",\"doi\":\"https://doi.org/10.5555/lexical-ranking-paper-7\",\"display_name\":\"Synthetic lexical-ranking protocol note 7\",\"publication_date\":\"2026-01-01\",\"authorships\":[{\"author\":{\"display_name\":\"Tangle Fixture Authors\"}}],\"primary_location\":{\"landing_page_url\":\"https://fixture.invalid/sources/lexical-ranking-paper-7.md\"}},{\"id\":\"https://openalex.org/W10015\",\"doi\":\"https://doi.org/10.5555/lexical-ranking-paper-8\",\"display_name\":\"Synthetic lexical-ranking protocol note 8\",\"publication_date\":\"2026-01-01\",\"authorships\":[{\"author\":{\"display_name\":\"Tangle Fixture Authors\"}}],\"primary_location\":{\"landing_page_url\":\"https://fixture.invalid/sources/lexical-ranking-paper-8.md\"}}]}"
+  }
+}

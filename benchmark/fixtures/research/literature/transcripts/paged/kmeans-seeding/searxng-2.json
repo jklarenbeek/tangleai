@@ -1,0 +1,15 @@
+{
+  "method": "GET",
+  "url": "https://search.fixture.invalid/search?format=json&q=kmeans-seeding&pageno=2",
+  "headers": {
+    "accept": "application/json"
+  },
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"results\":[],\"suggestions\":[]}"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.crossref.org/works?query=distinct-title&rows=5&cursor=*",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"message\":{\"items\":[{\"DOI\":\"10.5555/distinct-a\",\"title\":[\"Identical normalized title\"],\"author\":[{\"name\":\"Fixture Author\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"URL\":\"https://fixture.invalid/a\"},{\"DOI\":\"10.5555/distinct-b\",\"title\":[\"Identical normalized title\"],\"author\":[{\"name\":\"Fixture Author\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"URL\":\"https://fixture.invalid/b\"}]}}"
+  }
+}

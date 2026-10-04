@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://export.arxiv.org/api/query?search_query=malformed-atom&start=0&max_results=5",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/atom+xml"
+    },
+    "body": "<feed><entry></feed>"
+  }
+}

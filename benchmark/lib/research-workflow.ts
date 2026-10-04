@@ -5,7 +5,7 @@ import { JarenValidator } from '@jarenjs/validate';
 import { compileMasRuntime, validateRuntimeRecord, interactionIdOf, type MasStore } from '@tangleai/mas';
 import { openTangleDb, createMasStore, createResearchStore, createMasSegmentDriver, ensurePendingMasSegments } from '@tangleai/store';
 import { researchValue, createResearchBinding, planProjectCreate, initialResearchFrame, prepareResearchWorkflow,
-  createResearchTaskHandlers, createResearchHostBindings, inputManifestHashOf, checkResearchGate, gateResponseSchema,
+  createResearchTaskHandlers, createResearchHostBindings, createDiscoveryStageTools, inputManifestHashOf, checkResearchGate, gateResponseSchema,
   type ResearchTaskTools, type ResearchStageOperation, type ResearchStageAccess, type ResearchStageResult,
   type ResearchProject, type ResearchWorkflowFrame, type ResearchWorkflowBinding } from '@tangleai/research';
 import { researchExampleIdentity, researchExampleTools, researchExampleLimits } from '../../examples/research.ts';
@@ -13,9 +13,10 @@ import { executeResearchFixturePrograms, evaluateResearchFixturePrograms, assemb
 import { researchMechanicalDecision, evaluateResearchRun } from './research-evaluator.ts';
 import { researchBytesSha256, type LoadedResearchFixture } from './research-fixture.ts';
 import { requireResearchShape } from './research-validation.ts';
+import { researchDiscoveryConfiguration, createResearchDiscoveryFixture } from './research-discovery.ts';
 import type { ResearchFixtureTopic, ResearchDataset, ExperimentRun, MetricObservation, ResearchWorkflowMeasurement } from './research.types.ts';
 
-const artifact = (value: unknown) => ({ mediaType: 'application/json', bytes: new TextEncoder().encode(canonicalizeJson(value)) });
+const artifact = (value: unknown) => ({ mediaType: 'application/vnd.tangleai.research-value+json', bytes: new TextEncoder().encode(canonicalizeJson(value)) });
 const zero = { calls: 0, tokens: 0, ms: 0, physical: 0 };
 function orderRuns(topic: ResearchFixtureTopic, values: ExperimentRun[]): ExperimentRun[] {
   const ordered = topic.plan.conditions.flatMap(condition => topic.contract.replicatePolicy.seeds.map(seed =>
@@ -31,6 +32,7 @@ function orderObservations(runs: ExperimentRun[], values: MetricObservation[]): 
 async function tagged<T>(op: ResearchStageOperation, access: ResearchStageAccess, kind: string): Promise<T[]> {
   const found: T[] = [];
   for (const ref of op.frame.artifacts) {
+    if ((await access.describeArtifact(ref)).mediaType !== 'application/vnd.tangleai.research-value+json') continue;
     const value = JSON.parse(new TextDecoder().decode(await access.readArtifact(ref)));
     if (value.kind === kind) found.push(value.value);
   }
@@ -111,9 +113,11 @@ function scientificTools(loaded: LoadedResearchFixture, topic: ResearchFixtureTo
 
 export async function runNativeResearchFixture(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic,
   sourceRevision: string, kind: ResearchWorkflowMeasurement['kind'] = 'scientific') {
+  const discoveryConfiguration = await researchDiscoveryConfiguration(topic);
   const identity = await researchExampleIdentity(), binding = await createResearchBinding(topic.contract, {
     identity, promptRevision: researchBytesSha256(loaded.files.get('prompts/fixture-writer.json')!),
     toolVersions: [{ name: 'native-stages', version: await canonicalSha256({ sourceRevision, kind }) },
+      { name: 'scholarly-discovery', version: discoveryConfiguration.revision },
       ...loaded.manifest.programs.map(program => ({ name: program.id, version: program.sha256 }))],
     evaluator: topic.plan.evaluator, reservation: zero });
   const limits = { ...researchExampleLimits, ms: loaded.manifest.caps.ms, contextChars: loaded.manifest.caps.contextChars, traceBytes: loaded.manifest.caps.traceBytes };
@@ -124,10 +128,20 @@ export async function runNativeResearchFixture(loaded: LoadedResearchFixture, to
   const prepared = await prepareResearchWorkflow(topic.contract, { binding, profile: 'research-scripted', limits });
   const frame = await initialResearchFrame(project, topic.plan, binding), now = () => '2026-01-01T00:00:00.000Z';
   const db = await openTangleDb({ jobs: { now: () => 1000000, random: () => 0.5 } });
+  let discoveryHost: Awaited<ReturnType<typeof createResearchDiscoveryFixture>> | undefined;
   try {
     const masStore = createMasStore(db, { now }), researchStore = createResearchStore(db, { now }), taskExecutions: string[] = [];
-    const tools = kind === 'scientific' ? scientificTools(loaded, topic, binding, masStore)
+    let tools = kind === 'scientific' ? scientificTools(loaded, topic, binding, masStore)
       : researchExampleTools({ binding, contract: topic.contract, plan: topic.plan, masStore });
+    if (kind === 'scientific') {
+      discoveryHost = await createResearchDiscoveryFixture(loaded, topic, db, async () => {
+        const current = researchValue(await researchStore.snapshot(project.id))!;
+        if (current.state.status !== 'DISCOVERY' || !current.records.some(r => r.kind === 'QueryPlan' && r.id === discoveryConfiguration.plan.id)
+          || !current.records.some(r => r.kind === 'InclusionCriteria' && r.id === discoveryConfiguration.criteria.id))
+          throw Error('Provider request preceded durable discovery plan admission.');
+      });
+      tools = await createDiscoveryStageTools(tools, discoveryHost.options);
+    }
     const execute = tools.execute;
     const handlers = createResearchTaskHandlers(researchStore, { ...tools, execute: async (op, access) => { taskExecutions.push(op.stage); return execute(op, access); } });
     const compiled = compileMasRuntime(prepared.validated, prepared.plan, prepared.snapshot,
@@ -180,6 +194,6 @@ export async function runNativeResearchFixture(loaded: LoadedResearchFixture, to
     const runs = kind === 'scientific' ? orderRuns(topic, snapshot.records.filter(r => r.kind === 'ExperimentRun').map(r => r.value)) : [];
     const observations = kind === 'scientific' ? orderObservations(runs, snapshot.records.filter(r => r.kind === 'MetricObservation').map(r => r.value)) : [];
     const bundle = kind === 'scientific' ? await assembleResearchFixtureBundle(loaded, topic, 'no-model-runner', runs, observations) : null;
-    return { bundle, measurement, identity };
-  } finally { await db.close(); }
+    return { bundle, measurement, identity, discovery: discoveryHost ? await discoveryHost.measure(snapshot) : null };
+  } finally { await discoveryHost?.close(); await db.close(); }
 }

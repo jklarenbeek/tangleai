@@ -140,6 +140,14 @@ contract and the trace retention states.
 **Build it here — the suite genuinely does not have it.** Written down so nobody
 spends an afternoon looking:
 
+- **Scholarly metadata and arXiv Atom.** `@tangleai/research` owns normalized
+  OpenAlex, Crossref, Semantic Scholar and arXiv records, identifier deduplication
+  and one bounded namespace-aware Atom reader. The JSON adapters compile native
+  `@jarenjs/contract/provider` descriptors; arXiv uses its executor. Native
+  attempts, scheduling and request identity remain suite-owned. Broad web reuses
+  `createSearxngClient`; source acquisition reuses the document ingester. Exact
+  replay retains failure bodies and headers that the native success-only cache
+  does not store. No provider response type is a research record.
 - **A filesystem watcher.** The suite ships none, and it must not: watching a
   folder is host policy — a debounce, an overflow ceiling, a restart scan and
   a bounded admission are decisions about one application's corpus, not a

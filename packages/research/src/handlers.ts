@@ -4,7 +4,7 @@ import { MasTaskRefusal, MasInfrastructureCrash, interactionIdOf, type MasTaskIn
 import type { ResearchStore } from './store.ts';
 import type { ResearchRecordWrite } from './records.ts';
 import type { ResearchContract, ExperimentPlan, ResearchWorkflowFrame, ResearchLifecycle, ResearchCost, ResearchIssue,
-  ResearchGateResponse, InputManifest, StageAttempt, StageCommitReceipt, ResearchInputArtifact, ResearchState, ArtifactAdmission } from './contracts.gen.ts';
+  ResearchGateResponse, InputManifest, StageAttempt, StageCommitReceipt, ResearchInputArtifact, ResearchState, ArtifactAdmission, ResearchArtifact } from './contracts.gen.ts';
 import { immutableResearchJson, copyResearchBytes, inputManifestHashOf, stageAttemptIdOf } from './identity.ts';
 import { researchIssue, type ResearchOutcome } from './errors.ts';
 import { validateResearchShape } from './schema.ts';
@@ -42,6 +42,7 @@ export interface ResearchStageAccess {
   signal: AbortSignal;
   /** Only exact committed admissions from this operation's manifest are readable. */
   readArtifact(ref: ResearchInputArtifact): Promise<Uint8Array>;
+  describeArtifact(ref: ResearchInputArtifact): Promise<ResearchArtifact>;
 }
 export interface ResearchTaskTools {
   binding: ResearchWorkflowBinding;
@@ -150,13 +151,16 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       spend: zero, stopReason: 'completed', interventions: [], outputArtifactIds: [], error: null, mode: 'scripted' };
     const operation: ResearchStageOperation = immutableResearchJson({ stage: name, path: input.path, idempotencyKey: input.idempotencyKey,
       frame, manifest, attemptId: attempt.id, expectedState: state });
-    const access: ResearchStageAccess = { signal: input.signal, readArtifact: async requested => {
+    const admitted = async (requested: ResearchInputArtifact) => {
       const ref = immutableResearchJson(requested);
       if (!researchFrameInputs(frame).some(r => equalsJson(r, ref))) researchFail('TRSH1005', '/artifact', 'Stage read is outside its declared manifest.');
       const row = researchValue(await store.readArtifact(frame.projectId, ref.admissionId));
       if (row.admission.artifact.id !== ref.artifactId) researchFail('TRSH1002', '/artifact', 'Input content address differs from its admitted reference.');
-      return copyResearchBytes(row.bytes);
-    } };
+      return row;
+    };
+    const access: ResearchStageAccess = { signal: input.signal,
+      readArtifact: async ref => copyResearchBytes((await admitted(ref)).bytes),
+      describeArtifact: async ref => immutableResearchJson((await admitted(ref)).admission.artifact) };
     onOperation?.('planned', operation);
     let result: ResearchStageResult = { artifacts: [], records: [], spend: zero };
     let target: ResearchLifecycle, nextFrame: ResearchWorkflowFrame = { ...frame, checkpoint: null, response: null, gate: null };

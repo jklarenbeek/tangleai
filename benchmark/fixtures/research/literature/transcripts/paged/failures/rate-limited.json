@@ -1,0 +1,13 @@
+{
+  "method": "GET",
+  "url": "https://api.crossref.org/works?query=rate-limited&rows=5&cursor=*",
+  "body": null,
+  "response": {
+    "status": 429,
+    "headers": {
+      "content-type": "application/json",
+      "retry-after": "1"
+    },
+    "body": "{\"message\":\"synthetic rate limit\"}"
+  }
+}

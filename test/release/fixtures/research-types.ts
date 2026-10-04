@@ -5,6 +5,9 @@ import type { ResearchClaim } from '@tangleai/research/contracts';
 import { createResearchBinding, prepareResearchWorkflow, initialResearchFrame, inputManifestOf, createResearchTaskHandlers,
   createResearchHostBindings, gateResponseSchema, applyOverduePolicy, type ResearchTaskTools } from '@tangleai/research';
 import type { RunIdentity } from '@tangleai/config';
+import { discoverCrossref, createReplayTransport, createQueryPlan, createInclusionCriteria, createDiscoveryStageTools,
+  extractEvidenceCards, toAdmittedArtifact, type DiscoveryQuery, type ResearchProviderHost, type ResearchAdapterContext,
+  type ResearchDiscoveryOptions, type EvidenceCard } from '@tangleai/research';
 import type { MasStore, WorkflowLimits } from '@tangleai/mas';
 import schema from '@tangleai/research/schemas/research' with { type: 'json' };
 import { createResearchStore, createResearchDbPersistence, researchRunLogId, type TangleDb } from '@tangleai/store';
@@ -39,3 +42,17 @@ researchArtifactIdOf('abc');
 // @ts-expect-error Kind and record shape must agree.
 memory.putRecord(project.id, { kind: 'ResearchClaim', value: project });
 void schema;
+declare const discoveryQuery: DiscoveryQuery, providerHost: ResearchProviderHost, adapterContext: ResearchAdapterContext,
+  discoveryOptions: ResearchDiscoveryOptions, evidenceCard: EvidenceCard;
+const discovery = await discoverCrossref(discoveryQuery, providerHost, adapterContext);
+const complete: 'complete' | 'incomplete' | 'refused' = discovery.outcome.state;
+const rawHashes: string[] = discovery.outcome.rawHashes;
+const replayTransport = await createReplayTransport([], { scope: 'public-fixture' });
+await createQueryPlan(discoveryOptions.plan);
+await createInclusionCriteria({ reviewer: 'rules', titleTerms: ['term'], dateFrom: null, dateTo: null, requireSource: true });
+await createDiscoveryStageTools(taskTools, discoveryOptions);
+const admitted = toAdmittedArtifact(evidenceCard);
+void [complete, rawHashes, replayTransport, admitted, extractEvidenceCards];
+// @ts-expect-error Unknown providers cannot enter a frozen query.
+const unregisteredQuery: DiscoveryQuery = { ...discoveryQuery, provider: 'unknown' };
+void unregisteredQuery;

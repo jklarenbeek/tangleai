@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "url": "https://api.crossref.org/works?query=embedder-width&rows=5&cursor=page-5",
+  "body": null,
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": "{\"status\":\"ok\",\"message\":{\"total-results\":8,\"next-cursor\":\"page-10\",\"items\":[{\"DOI\":\"10.5555/embedder-width-paper-6\",\"title\":[\"Synthetic embedder-width protocol note 6\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/embedder-width-paper-6.md\"}}},{\"DOI\":\"10.5555/embedder-width-paper-7\",\"title\":[\"Synthetic embedder-width protocol note 7\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/embedder-width-paper-7.md\"}}},{\"DOI\":\"10.5555/embedder-width-paper-8\",\"title\":[\"Synthetic embedder-width protocol note 8\"],\"author\":[{\"name\":\"Tangle Fixture Authors\"}],\"published\":{\"date-parts\":[[2026,1,1]]},\"resource\":{\"primary\":{\"URL\":\"https://fixture.invalid/sources/embedder-width-paper-8.md\"}}}]}}"
+  }
+}
