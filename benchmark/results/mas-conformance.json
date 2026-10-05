@@ -4,7 +4,7 @@
     "entry": "benchmark/mas-conformance.ts"
   },
   "source": {
-    "head": "8d988df343c10c6507dd660dfb8d2393741d16a5",
+    "head": "8a5af4889ca87b8d5255c191f1c22cd764fe949b",
     "clean": false,
     "files": [
       {
@@ -132,7 +132,7 @@
         "sha256": "3b05fd2e51a975a9b4bc25ab13813f6e887bf1fcbc1b48c37f6529b4c235f409"
       }
     ],
-    "sha256": "b275ed440da6006e5336f78d7dfd6c12569848d733d9b212aa33a0a14aedac30"
+    "sha256": "b08abe0d4755c961bd1fbb680ed4b7b2e1fca15ae52fa91bfc1b01a956216388"
   },
   "suite": {
     "packages": [
@@ -230,15 +230,15 @@
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.37.0"
+        "version": "0.38.0"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.37.0"
+        "version": "0.38.0"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.37.0"
+        "version": "0.38.0"
       }
     ]
   },
@@ -944,7 +944,7 @@
       "reason": null,
       "workflowVersionId": "6c963ac5efeeeaaf62c0a123233b753c9e92af7adf278a165322b6cfd759860a",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "dcd7805b8ed1e5b10a4bcee697fc1dc498746e33894aabc47e0bbd705cf8fb01",
+      "executableRevision": "108ff12550093d1ef485def75ec7e618158c5baaf63511cb9aade3f679cc9446",
       "attempts": 2,
       "calls": 0,
       "toolCalls": 0,
@@ -960,7 +960,7 @@
       "reason": null,
       "workflowVersionId": "2b83d4eeebca28c90fd85667a951a1ce5d14ca0e6810d37279d863453a52e856",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "1eab1d456f9fcdbad6a2d4fcc5f1acff3cb6b8789fc2c30bb3c38567c84ecb08",
+      "executableRevision": "0c5b86bf1b5b56f4ee8945156de2777e9d8dd1c22f1197afedac64324c6266af",
       "attempts": 4,
       "calls": 0,
       "toolCalls": 0,
@@ -976,7 +976,7 @@
       "reason": null,
       "workflowVersionId": "c8a9efd06e90e794899424b94f6c68cc4bdc058523507958df4ec0d6e0deb27e",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "032da846106ace6fa425eff8b0f9fb1baf9dabc0996273989181220eb50f2b90",
+      "executableRevision": "513f665f4eb9022db81fd6d7d8937c11e88be3a202199e03203c6eb22221ad29",
       "attempts": 4,
       "calls": 0,
       "toolCalls": 0,
@@ -992,7 +992,7 @@
       "reason": null,
       "workflowVersionId": "38e3553996de9c2ae7c5038b61a766f7d9b06ab92bca802ce0f2045e21b4b4ff",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "52296a88070bfca6b63a0ceb94ab3b0ad8323a7c24b087df3eade89cc94a3417",
+      "executableRevision": "6008c974bb3e800a02a11034e4fe61cf6f8458fa1f1f565dd422a46cdf4bf9cf",
       "attempts": 2,
       "calls": 0,
       "toolCalls": 0,
@@ -1008,7 +1008,7 @@
       "reason": null,
       "workflowVersionId": "302680e43d029a6360bfe000ab1bc315bc1ee3639db7fa3da21d8f41102cf971",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "52a8377d2e7941dc283aaca04eee289b1391b58ce7623020f6d7a7abbccebec5",
+      "executableRevision": "b0b5b61d3ff8638bd51f9dcd7e496fdfef06833c6505d16f27d5539e19f6feb6",
       "attempts": 3,
       "calls": 0,
       "toolCalls": 0,
@@ -1024,7 +1024,7 @@
       "reason": null,
       "workflowVersionId": "5815c9b9943c576afaba21f5b984dde2668c3cbe6f26f64d92198908f9779a85",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "eadffba5956faebf003c10c038213b3e5e13745571203296e0ccd34da2a7c437",
+      "executableRevision": "a73d600fc5e5afc89daf9b079a5f56e4ef400c8b9a417c17307f8957ecff5ff2",
       "attempts": 4,
       "calls": 0,
       "toolCalls": 0,
@@ -1040,7 +1040,7 @@
       "reason": null,
       "workflowVersionId": "3db23ac13f12dc3e83f4f2ee39b11ffe3cfa2422d3b494adf767351d5709a71d",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "08fa52108f11a4207cee87e485ec46001b8cf9dedda2a7c205dcdb184c4fade0",
+      "executableRevision": "b8b59beeac7dadce853a101254751ad31e90ad5c9f3a910d3c4f3ea36cf16495",
       "attempts": 3,
       "calls": 0,
       "toolCalls": 0,
@@ -1056,7 +1056,7 @@
       "reason": null,
       "workflowVersionId": "c4eb677f27e06f17fcd64a2330800a3abb2061bcf50c96387f136cfcebe1458a",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "9f7d9d8c3435b6d5f295765e9b4d5b058f5e83a0206770d7e0c16638198a8074",
+      "executableRevision": "ad50ab295a30c8c821f99283e77d73e260f6d6c01deb17c0ef0ce52c1ff68b48",
       "attempts": 4,
       "calls": 0,
       "toolCalls": 0,
@@ -1072,7 +1072,7 @@
       "reason": null,
       "workflowVersionId": "5ffb2979ab85fa2cee8e42c7c84bf8668d62bfaf68977d53dbd2fd7621a9db23",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "c6ad52ef24b67750e8f59ac652f854560226cf7192be3401cc0a605a55344f55",
+      "executableRevision": "e69aaa90b6e5913d2f3dce1ea800df480bda94a070315d6afb2451f049e34fde",
       "attempts": 3,
       "calls": 1,
       "toolCalls": 0,
@@ -1088,7 +1088,7 @@
       "reason": null,
       "workflowVersionId": "e0cb4b4a150c535d742696cd06b4f742cc53fe0daea786f09f9b4d4634460341",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "c3f6a779d26106186665acfad08dfb3145610df3ad7c301d1a48aa30b6f087fe",
+      "executableRevision": "fc5d548d7ca27e64f1ecd0739cff0640a0c71ae755f4c766d25ab740ae60efc2",
       "attempts": 2,
       "calls": 0,
       "toolCalls": 0,
@@ -1104,7 +1104,7 @@
       "reason": null,
       "workflowVersionId": "8f835f3a240bb51b8266fa7fd96d9c201f6341fe204f21398c1905b22ff42486",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "647b4a3c3eb51eb999e20fc86f65fc72eb5c0fb111e077f34045979a71c11f8b",
+      "executableRevision": "5e724d8cb8e067f464ebc5349c3586d0ffac58ed763d78fec82fd875458b094f",
       "attempts": 4,
       "calls": 11,
       "toolCalls": 3,
@@ -1279,7 +1279,7 @@
     "state": "not-run",
     "reason": "no authorized live plan"
   },
-  "reportId": "031e238591c3d44d314fb08b3ed67616702e46b57dbfa8da069979385c1d19a9",
+  "reportId": "9ef9d986e92c89b3ba6f903042d4fa5aff5fb7257c8fb9033a787311eb32eb2a",
   "decision": {
     "outcome": "runtime-conformant",
     "failedClauses": [],

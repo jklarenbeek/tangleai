@@ -1,5 +1,42 @@
 # @tangleai/store
 
+## 0.38.0
+
+### Minor Changes
+
+- 8a5af48: Add attributable research commands, guarded immutable proposal edits and bounded
+  human retries. Record cancellation responses atomically, disclose experimental
+  automatic gate tasks, and export exact intervention counts with the measured
+  core research handoff.
+
+### Patch Changes
+
+- e6a6f5c: Run the research lifecycle through one durable MAS workflow with bounded refinement, pivot and review, manifest-bound gates, exact stage replay and counted overdue policy. Preserve task-refusal causes and atomically fence terminal interaction, run and attempt writes in the native store.
+- 32cba1d: Introduce closed research records, content-addressed artifact provenance and atomic lifecycle persistence. Preserve run-log identities across recreated writers and compose frame writes inside caller transactions.
+- Updated dependencies [accf91e]
+- Updated dependencies [e6a6f5c]
+- Updated dependencies [de8a412]
+- Updated dependencies [802642f]
+- Updated dependencies [32cba1d]
+- Updated dependencies [dc083d7]
+- Updated dependencies [e229e63]
+- Updated dependencies [8a5af48]
+- Updated dependencies [8d988df]
+  - @tangleai/research@0.38.0
+  - @tangleai/evolve@0.38.0
+  - @tangleai/mas@0.38.0
+  - @tangleai/documents@0.38.0
+  - @tangleai/core@0.38.0
+  - @tangleai/forecast@0.38.0
+  - @tangleai/grounding@0.38.0
+  - @tangleai/hera@0.38.0
+  - @tangleai/trace2skill@0.38.0
+  - @tangleai/trading@0.38.0
+  - @tangleai/lightrag@0.38.0
+  - @tangleai/memory@0.38.0
+  - @tangleai/outcomes@0.38.0
+  - @tangleai/config@0.38.0
+
 ## 0.37.0
 
 ### Minor Changes

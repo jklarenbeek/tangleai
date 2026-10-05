@@ -1,5 +1,21 @@
 # @tangleai/mas
 
+## 0.38.0
+
+### Minor Changes
+
+- 8a5af48: Add attributable research commands, guarded immutable proposal edits and bounded
+  human retries. Record cancellation responses atomically, disclose experimental
+  automatic gate tasks, and export exact intervention counts with the measured
+  core research handoff.
+
+### Patch Changes
+
+- e6a6f5c: Run the research lifecycle through one durable MAS workflow with bounded refinement, pivot and review, manifest-bound gates, exact stage replay and counted overdue policy. Preserve task-refusal causes and atomically fence terminal interaction, run and attempt writes in the native store.
+- @tangleai/agents@0.38.0
+  - @tangleai/context@0.38.0
+  - @tangleai/models@0.38.0
+
 ## 0.37.0
 
 ### Patch Changes

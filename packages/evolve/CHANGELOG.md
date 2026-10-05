@@ -1,5 +1,20 @@
 # @tangleai/evolve
 
+## 0.38.0
+
+### Patch Changes
+
+- accf91e: Bind research experiments to immutable workspaces and execution manifests, independently reproduce registered metrics, and preserve replicate receipts through native workflow recovery. Expose bounded native process settlement evidence to injected hosts without changing existing runner outcomes.
+- Updated dependencies [e6a6f5c]
+- Updated dependencies [e229e63]
+- Updated dependencies [8a5af48]
+  - @tangleai/mas@0.38.0
+  - @tangleai/core@0.38.0
+  - @tangleai/outcomes@0.38.0
+  - @tangleai/config@0.38.0
+  - @tangleai/context@0.38.0
+  - @tangleai/models@0.38.0
+
 ## 0.37.0
 
 ### Patch Changes

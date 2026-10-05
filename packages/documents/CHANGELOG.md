@@ -1,5 +1,15 @@
 # @tangleai/documents
 
+## 0.38.0
+
+### Patch Changes
+
+- dc083d7: Add native-provider scholarly discovery with durable query plans, exact offline replay, explicit screening and immutable source evidence cards. Retain failed and partial request observations without admitting incomplete literature. Allow bounded document response readers to cancel pending reads through an injected signal.
+- Updated dependencies [e229e63]
+  - @tangleai/core@0.38.0
+  - @tangleai/context@0.38.0
+  - @tangleai/models@0.38.0
+
 ## 0.37.0
 
 ### Patch Changes

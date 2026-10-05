@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "8d988df343c10c6507dd660dfb8d2393741d16a5",
+    "head": "8a5af4889ca87b8d5255c191f1c22cd764fe949b",
     "clean": false,
     "files": [
       {
@@ -211,15 +211,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "721642ab25fdd188e0fc90427bcb6190de55393d74cb097452e7b0e82113116d"
+        "sha256": "bd586834be71be1d64c0521c5ec212340b65fbeaa30c6b6bfeae7d03dc24a6a2"
       },
       {
         "path": "package.json",
-        "sha256": "48b0d05297ede35cf0ee51bb66ef4193cec58846e7940ddc7b2df126deb2212a"
+        "sha256": "cc6d2d98d5d0de4885d7372a91c6e1dd1173f8a782fc9e04a9ed768b4a686699"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "acdd480819442fa8e1840083d51c1f7b7c177f6dd8d8d0c5bf2a3dee5b98dd48"
+        "sha256": "7260d30cf9926a55618da03196b77dbf92c0ae298893b73a1129069ee69e2726"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -263,7 +263,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "dfe3a2219ff4b4571faa6c882fd943daf13dc84f970bad29540690105b78301a"
+        "sha256": "96a49664315f7da1a9f47aef3e747d54e2a5468e61223b74e28755044cfaaf78"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -299,7 +299,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "f95e8c526ff29f2cb96f8616bb861a1620564db7ce07cc702379861255503a67"
+        "sha256": "45b7c9215da4083308599e4b21dedaded1fd169826f10597b9c85dca2cb736e5"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -355,7 +355,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "6cecabad2673951bedb262a43b84737be10b7cb6e3a586a33c33e7dc51417717"
+        "sha256": "cc9563fa80780972466959f6a7dae06b8554eab61612d2810cfc38a69111c4b9"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -435,7 +435,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "1f4a6225d8a8d6e1f06e47646070478be8ad5d987e4dd05b0ab879f8f6cabc30"
+        "sha256": "a9760f134521516aeff11a749b4d7adb7f920b98a0bacb9b8a69f2615fc74ff9"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -551,7 +551,7 @@
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "bf2dddcbff4392a8bc5ca5b4de7ebbda9c5e10072239a8472601ce938390e172"
+        "sha256": "25312d4b896ffe68e5904f616d693a205c94e15648aeb30dfd33114f401f4cf4"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -683,7 +683,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "1531653518a0a92a7c501a5d1f9675495b1d9081c447d314cf6ba2b77647dfb1"
+        "sha256": "c99360e0816bb2c59a4942f35867dbe5b899f65ece4a89925c61ff0c05f836b7"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -739,7 +739,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "bec22691f5889073cef28c370553cb5bf6df9bc461fb74288a2d8de498d5738e"
+        "sha256": "f3661a41278cbea7315a86eb3fb666e6ecf3eae3c933d23a2d8d13c252ad8f0a"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -911,7 +911,7 @@
       },
       {
         "path": "packages/trading/package.json",
-        "sha256": "7d7b7c70bfc461ef39d628f009ee613ac045733e762073de93e0c0a64c1cdd2b"
+        "sha256": "4e75a12e1033de0559712d58614ea7aedf2cc5da34e04052e8553231b44a4c46"
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
@@ -1242,10 +1242,10 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "f3de573910cac8279b009a9d29c4418d3599ee6a03bfedc6bde4e98b11dff26c"
+    "sha256": "4f862f23239e0f032274dd4d99fca352bc9e04da09a34a53d9564652404ce971"
   },
   "suite": {
-    "tangle": "0.37.0",
+    "tangle": "0.38.0",
     "jaren": "0.91.4"
   },
   "fixture": {
@@ -26043,5 +26043,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "625adb81de3a689c4477b35f836f00db223ab8fa85e33afb81b17267b56d4e88"
+  "reportId": "49e7ac2ac75b5acd9403137092ef33fe37bb619ffb43d996de2302f8f3f5ed6d"
 }

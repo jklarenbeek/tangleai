@@ -1,5 +1,15 @@
 # @tangleai/trading
 
+## 0.38.0
+
+### Patch Changes
+
+- Updated dependencies [e6a6f5c]
+- Updated dependencies [802642f]
+- Updated dependencies [8a5af48]
+  - @tangleai/mas@0.38.0
+  - @tangleai/gmpl@0.38.0
+
 ## 0.37.0
 
 ### Patch Changes

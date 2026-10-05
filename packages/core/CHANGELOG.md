@@ -1,5 +1,15 @@
 # @tangleai/core
 
+## 0.38.0
+
+### Minor Changes
+
+- e229e63: Expose uniform distinct-index initialization beside the default k-means++ initializer. Both use the same bounded iteration and injected random source. Refuse zero-weight weighted selections at a zero draw, and reassign points after the first centroid update before declaring convergence.
+
+### Patch Changes
+
+- @tangleai/context@0.38.0
+
 ## 0.37.0
 
 ### Minor Changes

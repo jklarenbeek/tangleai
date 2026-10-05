@@ -1,5 +1,17 @@
 # @tangleai/gmpl
 
+## 0.38.0
+
+### Patch Changes
+
+- 802642f: Run evidence-linked synthesis, hypothesis generation and preregistration through
+  native single-agent or GMPL debate stages, with read-only tools, retained model
+  costs, atomic plan freezing and advisory novelty replay. Bind participant-specific
+  GMPL prompts without changing pattern topology and preserve typed native refusals.
+- Updated dependencies [e6a6f5c]
+- Updated dependencies [8a5af48]
+  - @tangleai/mas@0.38.0
+
 ## 0.37.0
 
 ### Patch Changes

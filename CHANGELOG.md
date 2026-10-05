@@ -1,5 +1,38 @@
 # Tangle releases
 
+## 0.38.0
+
+Bind research experiments to immutable workspaces and execution manifests, independently reproduce registered metrics, and preserve replicate receipts through native workflow recovery. Expose bounded native process settlement evidence to injected hosts without changing existing runner outcomes.
+
+Run the research lifecycle through one durable MAS workflow with bounded refinement, pivot and review, manifest-bound gates, exact stage replay and counted overdue policy. Preserve task-refusal causes and atomically fence terminal interaction, run and attempt writes in the native store.
+
+Analyze registered experiments with independent aggregates, explicit replication
+power and frozen branch selection. Retain native peer-review findings and every
+candidate cost when planning bounded Proceed, Refine, Pivot or Stop decisions.
+
+Resume missing seeds with unchanged authored code, expose bounded repair inputs,
+and atomically activate pivot amendments while preserving exploratory results.
+
+Run evidence-linked synthesis, hypothesis generation and preregistration through
+native single-agent or GMPL debate stages, with read-only tools, retained model
+costs, atomic plan freezing and advisory novelty replay. Bind participant-specific
+GMPL prompts without changing pattern topology and preserve typed native refusals.
+
+Introduce closed research records, content-addressed artifact provenance and atomic lifecycle persistence. Preserve run-log identities across recreated writers and compose frame writes inside caller transactions.
+
+Add native-provider scholarly discovery with durable query plans, exact offline replay, explicit screening and immutable source evidence cards. Retain failed and partial request observations without admitting incomplete literature. Allow bounded document response readers to cancel pending reads through an injected signal.
+
+Expose uniform distinct-index initialization beside the default k-means++ initializer. Both use the same bounded iteration and injected random source. Refuse zero-weight weighted selections at a zero draw, and reassign points after the first centroid update before declaring convergence.
+
+Add attributable research commands, guarded immutable proposal edits and bounded
+human retries. Record cancellation responses atomically, disclose experimental
+automatic gate tasks, and export exact intervention counts with the measured
+core research handoff.
+
+Bind reviewable research drafts to admitted quotations and registered observations,
+verify claims independently, and reproduce Markdown and optional TeX exports with
+complete provenance, explicit unresolved claims and file checksums.
+
 ## 0.37.0
 
 Add closed sourced-place contracts, exact cited alias matching, temporal location claims and atomic gazetteer persistence with verified zero-write replay. Support explicit spatial intent and recognize location, residence and proximity questions in the existing authoring gates.

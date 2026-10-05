@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "8d988df343c10c6507dd660dfb8d2393741d16a5",
+    "head": "8a5af4889ca87b8d5255c191f1c22cd764fe949b",
     "clean": false,
     "files": [
       {
@@ -203,15 +203,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "721642ab25fdd188e0fc90427bcb6190de55393d74cb097452e7b0e82113116d"
+        "sha256": "bd586834be71be1d64c0521c5ec212340b65fbeaa30c6b6bfeae7d03dc24a6a2"
       },
       {
         "path": "package.json",
-        "sha256": "48b0d05297ede35cf0ee51bb66ef4193cec58846e7940ddc7b2df126deb2212a"
+        "sha256": "cc6d2d98d5d0de4885d7372a91c6e1dd1173f8a782fc9e04a9ed768b4a686699"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "acdd480819442fa8e1840083d51c1f7b7c177f6dd8d8d0c5bf2a3dee5b98dd48"
+        "sha256": "7260d30cf9926a55618da03196b77dbf92c0ae298893b73a1129069ee69e2726"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -255,7 +255,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "dfe3a2219ff4b4571faa6c882fd943daf13dc84f970bad29540690105b78301a"
+        "sha256": "96a49664315f7da1a9f47aef3e747d54e2a5468e61223b74e28755044cfaaf78"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -291,7 +291,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "f95e8c526ff29f2cb96f8616bb861a1620564db7ce07cc702379861255503a67"
+        "sha256": "45b7c9215da4083308599e4b21dedaded1fd169826f10597b9c85dca2cb736e5"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -347,7 +347,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "6cecabad2673951bedb262a43b84737be10b7cb6e3a586a33c33e7dc51417717"
+        "sha256": "cc9563fa80780972466959f6a7dae06b8554eab61612d2810cfc38a69111c4b9"
       },
       {
         "path": "packages/core/src/clustering.ts",
@@ -411,15 +411,15 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "c73b1e3c75a7b2979e8bb08c551762d2ec26b6e4e138738c41ddf772a870a10d"
+        "sha256": "47e764afc68daa7abbb621159e660cbbf6b08133c4e9fd489fdcb7ddbbc38fc4"
       },
       {
         "path": "packages/evolve/package.json",
-        "sha256": "3338828a4a212108e2a6b8f2d983e1db6e997035c9371973620939d779548ee1"
+        "sha256": "dc7543b4c1d75542fb7ab3fe60c271ea6b61018e822d0e58687d4a38a3e440ba"
       },
       {
         "path": "packages/forecast/package.json",
-        "sha256": "d0955502c8d2c04354fd0cb41a52750a7d398f52baecf2e19e353ef868d071dc"
+        "sha256": "4ec544164e0cb33cab5fe921c2bc03c67c01dcfa44b2d15e0fab89168c23b13d"
       },
       {
         "path": "packages/gmpl/artifacts/catalog.json",
@@ -427,7 +427,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "1f4a6225d8a8d6e1f06e47646070478be8ad5d987e4dd05b0ab879f8f6cabc30"
+        "sha256": "a9760f134521516aeff11a749b4d7adb7f920b98a0bacb9b8a69f2615fc74ff9"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -543,27 +543,27 @@
       },
       {
         "path": "packages/grounding/package.json",
-        "sha256": "17177a8a5d6baf108274562e0ed3172ae2dcfc81113b7ab6bc777e2797ffc230"
+        "sha256": "7b9a5874b45f739b807484412c2b7fb7fe745a3ad1c6a2814f2ab23c20d8572e"
       },
       {
         "path": "packages/hera/package.json",
-        "sha256": "f966590b2a5b4fc7c7a07cf9874337783b9cacc30e131659cf94cce78952e360"
+        "sha256": "51f18e2d031a23697b582d7f30d9c6607677aa0fe9e5a3031a1e436bac80e521"
       },
       {
         "path": "packages/jaren/package.json",
-        "sha256": "fbbf0676d16e84c840a9b668c6f1a51d9df53237c007f9465eaf9ca96363b150"
+        "sha256": "537a4e76943e28b3006e2a7e043b92a44cf9906f8222d8e775d8aae0468a13a6"
       },
       {
         "path": "packages/lightrag/package.json",
-        "sha256": "caa82f304dde508767c84c6df40c36801ec6a30133bbe8f6ec1a1fdac82dca1e"
+        "sha256": "110356d9871f130800ef1c00f47a2ace042f6f8eb70250964a6b8e88e5c33ce2"
       },
       {
         "path": "packages/linq/package.json",
-        "sha256": "3e46fdb42c5bf860b1220ac705d094d8ccbb03c3cd1c3215ebb0e7de0108a578"
+        "sha256": "f11aa1d2c8099c062e2bd4ea3a91fd13144a02ecc84eb68a3626decb57078651"
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "bf2dddcbff4392a8bc5ca5b4de7ebbda9c5e10072239a8472601ce938390e172"
+        "sha256": "25312d4b896ffe68e5904f616d693a205c94e15648aeb30dfd33114f401f4cf4"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -695,11 +695,11 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "5843b28addd6604ce81cdd1f4357ba8ce30464afc9f5c563fde288665bb857af"
+        "sha256": "66e6401ee28cc76c7d7e15b7b6605be39d8f73e82722fd6bd4c0cecb59cd9a37"
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "1531653518a0a92a7c501a5d1f9675495b1d9081c447d314cf6ba2b77647dfb1"
+        "sha256": "c99360e0816bb2c59a4942f35867dbe5b899f65ece4a89925c61ff0c05f836b7"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -755,23 +755,23 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "d62fe760295bbee5fd08635e475cee8af59593ac7f0bce2aae9f18612f680895"
+        "sha256": "f2e088297d27f782ae695ba5bd5ec64ded25694d434d5ef69f9f0a52cb4a90a2"
       },
       {
         "path": "packages/pipeline/package.json",
-        "sha256": "78a3a6e451680e6c8b1176ccae0dee298c195420318fe0f0194347841caec19d"
+        "sha256": "e9cc968bfd1a5be1cdf134c618fb15f089752b406f2595e8c4f33e86e01a9051"
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "2adf667e8cc78c5c5f1311bf04696d99fcee96d3ce1ab1fcaa088c6595e25e79"
+        "sha256": "6981decea61769cdefbc8a3ab69db2b1ab369da34c93031676b1facd847cce4e"
       },
       {
         "path": "packages/search/package.json",
-        "sha256": "35155c10cf87c77c1989a5fd85302c993898b0c53a232764e6d645606b6cc408"
+        "sha256": "fea21a099bd293e532b27d9e396147cfed8a542ab124c558e7eaf5007ce14a50"
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "bec22691f5889073cef28c370553cb5bf6df9bc461fb74288a2d8de498d5738e"
+        "sha256": "f3661a41278cbea7315a86eb3fb666e6ecf3eae3c933d23a2d8d13c252ad8f0a"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -939,11 +939,11 @@
       },
       {
         "path": "packages/trace2skill/package.json",
-        "sha256": "9e32934fd70cfd27b5f4f668d9015451506c926aa98dc7a9fc3e8b8f4c3edcfa"
+        "sha256": "6b2b54bcf6b0206523c6bbdac7811fddd828dbbd9934da6c73d3e693fd2609c3"
       },
       {
         "path": "packages/trading/package.json",
-        "sha256": "7d7b7c70bfc461ef39d628f009ee613ac045733e762073de93e0c0a64c1cdd2b"
+        "sha256": "4e75a12e1033de0559712d58614ea7aedf2cc5da34e04052e8553231b44a4c46"
       },
       {
         "path": "prompts/gmpl/analysis/analyst.toml",
@@ -1130,7 +1130,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "95041929ab32473628830bac68470e04db54315c6e6c6a940c0a67b1a7ab00f2"
+    "sha256": "9c785e201af07c36f54642fd0dcd4724ac8c5babfbd6f80dd4cce0082db7a295"
   },
   "ablations": [
     {
@@ -3612,7 +3612,7 @@
     "catalogRevision": "fcd08dd3306f267d5719d79b3d832aecd42cb0aaa0aa7de66cb257460fb815ef"
   },
   "suite": {
-    "tangle": "0.37.0",
+    "tangle": "0.38.0",
     "jaren": "0.91.4"
   },
   "registrationId": "7eabacf078c23663d796bc6ac2438fce7ec241cf467751deb30707d511306873",
@@ -76684,5 +76684,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "20662e53a5aacf4c8c8a32616542cf2e4f1109ae84430a283e7fa5149ce8c969"
+  "reportId": "37ccc7d18cc784145f0ee8ad14ab3266699537e022e141d5e1e0a4711bd00d4f"
 }
