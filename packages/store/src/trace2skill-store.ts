@@ -15,7 +15,7 @@ interface PhysicalRow { id: string, scope: string, payload: Trace2SkillTables[Tr
 
 export interface Trace2SkillDbOptions { applyProbe?: (step: string) => void }
 
-export function createTrace2SkillDbPersistence(db: TangleDb, options: Trace2SkillDbOptions = {}): Trace2SkillPersistence {
+export function createTrace2SkillDbPersistence(db: Pick<TangleDb, 'transaction'>, options: Trace2SkillDbOptions = {}): Trace2SkillPersistence {
   return { transaction: <T>(task: (view: Trace2SkillTransaction) => Promise<T>) => db.transaction(async tx => {
     const view: Trace2SkillTransaction = {
       async get<K extends Trace2SkillTable>(table: K, id: string) {
@@ -44,6 +44,6 @@ export function createTrace2SkillDbPersistence(db: TangleDb, options: Trace2Skil
   }, { mode: 'immediate' }) };
 }
 
-export function createTrace2SkillDbStore(db: TangleDb, options: Trace2SkillDbOptions = {}): Trace2SkillStore {
+export function createTrace2SkillDbStore(db: Pick<TangleDb, 'transaction'>, options: Trace2SkillDbOptions = {}): Trace2SkillStore {
   return createTrace2SkillStoreAdapter(createTrace2SkillDbPersistence(db, options));
 }

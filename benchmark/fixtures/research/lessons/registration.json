@@ -1,0 +1,89 @@
+{
+  "id": "research-lessons-v1",
+  "topics": [
+    {
+      "id": "kmeans-seeding",
+      "sha256": "b7fd2c98a8f726fd03df0f407fc0ba352068f65344088a6a1d755b1c36895622"
+    },
+    {
+      "id": "lexical-ranking",
+      "sha256": "e8ec8c026dc009c4629ebe63f71bfa79df5870ecb609cdbb8488348bd586ce7e"
+    },
+    {
+      "id": "embedder-width",
+      "sha256": "d4552ccda165fe26fc089028daa8d96c521ee55901b71089b76f3feef7520d1d"
+    }
+  ],
+  "scope": {
+    "domainProfileId": "computational",
+    "taskFamily": "registered-experiment"
+  },
+  "seed": 17753,
+  "resamples": 2000,
+  "primary": "claimSupport*registryAccuracy*preregistrationIntegrity",
+  "maxCalls": 128,
+  "maxTokens": 131072,
+  "maxPhysical": 128,
+  "decay": [
+    {
+      "id": "none",
+      "horizon": 4
+    },
+    {
+      "id": "age-linear",
+      "horizon": 4
+    },
+    {
+      "id": "severity-weighted-age",
+      "horizon": 4
+    }
+  ],
+  "negatives": [
+    {
+      "id": "poisoned",
+      "code": "TRSH2007",
+      "cause": "OUTC1011"
+    },
+    {
+      "id": "volatile",
+      "code": "TRSH2007",
+      "cause": "OUTC1011"
+    },
+    {
+      "id": "cross-domain",
+      "code": "TRSH2003",
+      "cause": null
+    },
+    {
+      "id": "unsupported",
+      "code": "TRSH2002",
+      "cause": "EVIDENCE_UNADMITTED"
+    },
+    {
+      "id": "regression-inducing",
+      "code": "TRSH2007",
+      "cause": "OUTC1011"
+    },
+    {
+      "id": "web-uncorroborated",
+      "code": "TRSH2006",
+      "cause": null
+    },
+    {
+      "id": "leaked-origin",
+      "code": "TRSH2005",
+      "cause": null
+    },
+    {
+      "id": "active-edit-attempt",
+      "code": "TRSH2007",
+      "cause": null
+    },
+    {
+      "id": "async-validator",
+      "code": "TRSH2004",
+      "cause": "GUARDED"
+    }
+  ],
+  "revision": "3cc78a1474ca929c5a02929ecc427c4f928a04c956ae1c4062d54044ab22ebc1"
+}

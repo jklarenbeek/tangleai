@@ -26,6 +26,12 @@ it('deleting all document_chunks leaves cards resolvable against retained versio
     }
     const original = acquired.cards[0], altered = { ...original, excerpt: original.excerpt + ' fabricated text' };
     assert.equal((await resolveEvidenceCard(altered, host.store, async id => sourceBytes.get(id)!)).valid, false);
+    const foreignSource = await resolveEvidenceCard(original, { getVersion: id => host.store.getVersion(id),
+      listElements: async id => (await host.store.listElements(id)).map(element => ({ ...element, sourceId: 'foreign-source' })) }, async id => sourceBytes.get(id)!);
+    assert.equal(foreignSource.valid, false); if (!foreignSource.valid) assert.equal(foreignSource.issues[0].code, 'TRSH1005');
+    const foreignVersion = await resolveEvidenceCard(original, { getVersion: async id => ({ ...(await host.store.getVersion(id))!, id: 'foreign-version' }),
+      listElements: id => host.store.listElements(id) }, async id => sourceBytes.get(id)!);
+    assert.equal(foreignVersion.valid, false); if (!foreignVersion.valid) assert.equal(foreignVersion.issues[0].code, 'TRSH1003');
     assert.equal((await resolveEvidenceCard(original, host.store, async () => new Uint8Array([0]))).valid, false);
     const unavailable = await resolveEvidenceCard(original, host.store, async () => { throw Error('Missing retained body.'); });
     assert.equal(unavailable.valid, false); if (!unavailable.valid) assert.equal(unavailable.issues[0].code, 'TRSH1008');

@@ -1,0 +1,109 @@
+{
+  "id": "web-uncorroborated",
+  "expected": {
+    "code": "TRSH2006",
+    "cause": null
+  },
+  "lesson": {
+    "corroboration": null,
+    "decay": {
+      "hypothesisId": "none",
+      "observedAtRun": "lesson-origin-run",
+      "relevanceRows": []
+    },
+    "id": "b5a0c7874d282aadea1d5a94965e0f7ff021d902dfa9ce4e521f82979cae8eda",
+    "origin": {
+      "artifactIds": [
+        "art-c52b8faf38eb01eebca3ca0ea6280a0b892414ab8435e80a9195161c0233e240"
+      ],
+      "envelope": {
+        "artifacts": [
+          {
+            "digest": "c52b8faf38eb01eebca3ca0ea6280a0b892414ab8435e80a9195161c0233e240",
+            "id": "art-c52b8faf38eb01eebca3ca0ea6280a0b892414ab8435e80a9195161c0233e240",
+            "kind": "verification",
+            "locator": "research-artifact:c52b8faf38eb01eebca3ca0ea6280a0b892414ab8435e80a9195161c0233e240"
+          }
+        ],
+        "claims": [
+          {
+            "critical": true,
+            "evidence": [
+              "checked-unit-failure"
+            ],
+            "id": "unit-mismatch",
+            "status": "supported",
+            "text": "A proposed metric had the wrong unit; the independent registry refused it."
+          }
+        ],
+        "evidence": [
+          {
+            "artifact": "art-c52b8faf38eb01eebca3ca0ea6280a0b892414ab8435e80a9195161c0233e240",
+            "id": "checked-unit-failure",
+            "quote": "TRSH1006",
+            "selector": "/code"
+          }
+        ],
+        "version": 1,
+        "visibleEvidence": [
+          "checked-unit-failure"
+        ]
+      },
+      "hashes": [
+        "c52b8faf38eb01eebca3ca0ea6280a0b892414ab8435e80a9195161c0233e240"
+      ],
+      "kind": "retrieved-web",
+      "runId": "lesson-origin-run",
+      "topicContentHashes": [
+        "ba24188a2f3a75fc9c80c0d34f042fd023c02cc5ca4fb3b71d475a07e6075902"
+      ],
+      "topicIds": [
+        "lesson-training-unit-check"
+      ]
+    },
+    "parentId": null,
+    "projectId": "lesson-origin-project",
+    "promotion": null,
+    "proposal": {
+      "baseHash": "9a6abffd1b05c5c7102493fd39f6af54b23f2f2fc79cb0e6587e04f0d3591dd7",
+      "edit": {
+        "operations": [
+          {
+            "anchor": "## Evidence",
+            "content": "\nCheck the registered metric name, unit and direction before admitting any result.\n",
+            "group": "metric-integrity",
+            "op": "insert_after",
+            "path": "SKILL.md"
+          }
+        ],
+        "reasoning": "Validate a metric against the registered unit before accepting its observation."
+      }
+    },
+    "recordedAt": "2026-01-01T00:00:00.000Z",
+    "revision": "b5a0c7874d282aadea1d5a94965e0f7ff021d902dfa9ce4e521f82979cae8eda",
+    "schemaVersion": 2,
+    "scope": {
+      "domainProfileId": "computational",
+      "taskFamily": "registered-experiment"
+    },
+    "severity": "high",
+    "validation": {
+      "issues": [],
+      "state": "proposed",
+      "validationRunIds": []
+    }
+  },
+  "admittedOrigin": true,
+  "activeBundleHash": "9a6abffd1b05c5c7102493fd39f6af54b23f2f2fc79cb0e6587e04f0d3591dd7",
+  "candidateUtilities": [
+    1,
+    1,
+    1
+  ],
+  "baselineUtilities": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "asyncValidator": false
+}

@@ -58,7 +58,8 @@ export async function researchWritingBundle(input: ResearchWritingInputs, proven
       metricOrigin: { evaluatorId: input.plan.evaluator.id, evaluatorVersion: input.plan.evaluator.version },
       searchedLiterature: input.literature.map(row => row.id), frozenBeforeResults: true,
       experimental: provenance.mode === undefined ? provenance.interventions.some(row => row.actor === 'full-auto') : provenance.mode === 'full-auto',
-      interventionReport: researchInterventionReport(provenance.interventions) };
+      interventionReport: researchInterventionReport(provenance.interventions),
+      ...(provenance.lessons ? { lessons: provenance.lessons } : {}) };
     scientific = { ...manifest, manifestHash: await canonicalSha256(manifest) };
   }
   const source = { ...body, disclosure: researchDisclosure(body, scientific) };

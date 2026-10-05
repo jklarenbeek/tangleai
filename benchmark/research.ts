@@ -17,7 +17,8 @@ export async function runResearchCli(argv: string[]): Promise<ResearchReport> {
   const args = parseArgs(argv, { flags: ['check'], values: ['out', 'rows', 'require'] });
   if (args.rest.length || [...args.values.values()].some(value => !value.trim() || value.startsWith('--')))
     throw new Error('Unexpected research argument or missing option value.');
-  const rows = args.values.get('rows')?.split(',');
+  const selection = args.values.get('rows');
+  const rows = selection === 'lessons' ? ['artifact-oracle', 'no-model-runner'] : selection?.split(',');
   if (rows && (!rows.length || new Set(rows).size !== rows.length || rows.some(id => !RESEARCH_ROW_IDS.some(row => row === id))))
     throw new Error('Research rows must be a nonempty unique subset of registered ids.');
   const gate = args.values.get('require');

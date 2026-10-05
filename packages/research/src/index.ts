@@ -4,7 +4,7 @@ export { RESEARCH_ERRORS, researchIssue, researchRefuse, researchValidationIssue
 export type { ResearchCode, ResearchOutcome } from './errors.ts';
 export { researchArtifactIdOf, researchRevisionOf, inputManifestHashOf, stageAttemptIdOf,
   artifactAdmissionIdOf, immutableResearchJson } from './identity.ts';
-export { researchSchema, researchSchemaOf, validateResearchShape } from './schema.ts';
+export { researchSchema, researchSchemaReferences, researchSchemaOf, validateResearchShape } from './schema.ts';
 export type { ResearchSchemaName } from './schema.ts';
 export type { ResearchRecordMap, ResearchRecordKind, ResearchRecordWrite, ResearchRecordEntry } from './records.ts';
 export { RESEARCH_RECORD_KINDS } from './records.ts';
@@ -12,6 +12,25 @@ export { RESEARCH_EDGES, planProjectCreate, planStateTransition, planContractFre
 export type { ProjectCreatePlan, StateTransitionPlan, ContractFreezePlan, AmendmentPlan,
   StageCommitPlan, ResearchProjection, ResearchPreregistration } from './transitions.ts';
 export { createMemoryResearchStore, createMemoryResearchPersistence, createResearchStoreAdapter } from './store.ts';
+export type { LessonStore } from './lessons/store.ts';
+export { lessonInputHash, lessonScopeKey, lessonValidity, lessonOriginContext, sealResearchLesson, sealLessonValidationRun,
+  sealLessonSetRecord, sealLessonInjection, checkLessonRecord } from './lessons/records.ts';
+export { DECAY_HYPOTHESES, lessonDecayWeight } from './lessons/decay.ts';
+export { createLessonRefiner } from './lessons/refine.ts';
+export { proposeLessons } from './lessons/propose.ts';
+export type { LessonProposerOptions, LessonProposerResult } from './lessons/propose.ts';
+export { createResearchLessonAdapter, researchLessonArtifactKey, researchLessonOutcomeScope, LESSON_MISSING_OUTPUT } from './lessons/outcome.ts';
+export type { ResearchLessonAdapterOptions } from './lessons/outcome.ts';
+export { prepareResearchLessonSlot } from './lessons/outcome-slot.ts';
+export type { ResearchLessonSlotOptions, ResearchLessonEvaluationSlot } from './lessons/outcome-slot.ts';
+export { recordLessonActivation } from './lessons/activation.ts';
+export type { ResearchLessonActivationOptions, ResearchLessonActivation } from './lessons/activation.ts';
+export { injectLessons, researchLessonManifest, RESEARCH_LESSON_DEFAULTS } from './lessons/inject.ts';
+export { RESEARCH_DOMAIN_LESSON_POLICIES } from './domains/registry.ts';
+export type { InjectLessonsOptions, LessonInjectionResult, ResearchLessonProcedure } from './lessons/inject.ts';
+export type { LessonRefiner, LessonRefinerOptions, LessonProcedureView, LessonMaterializeRequest, LessonRefineRequest,
+  MaterializedLessonCandidate, PreparedLessonCandidate } from './lessons/refine.ts';
+export type { StagedLessonResult } from './lessons/stage.ts';
 export type { ResearchStore, ResearchStoreOutcome, ResearchSnapshot, ResearchTables, ResearchTable,
   ResearchTransaction, ResearchPersistence, ResearchPhysicalRow, ResearchMemoryState, ResearchMemoryOptions } from './store.ts';
 export { ResearchFailure, researchValue, createResearchBinding, initialResearchFrame, researchProjectHash } from './workflow-contract.ts';

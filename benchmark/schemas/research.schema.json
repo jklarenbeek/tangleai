@@ -9,6 +9,9 @@
     "schemaVersion": {
       "const": 1
     },
+    "lessons": {
+      "$ref": "https://tangleai.dev/schemas/research-lessons"
+    },
     "recordNames": {
       "type": "array",
       "items": {
@@ -479,6 +482,7 @@
   "required": [
     "benchmark",
     "schemaVersion",
+    "lessons",
     "recordNames",
     "source",
     "suite",

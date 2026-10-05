@@ -51,7 +51,10 @@ it('the public schema owns every research record and closes object definitions',
     if (Array.isArray(value)) { value.forEach((item, i) => visit(item, path + '/' + i)); return; }
     if (value === null || typeof value !== 'object') return;
     const schema = value as Record<string, unknown>;
-    if (schema.type === 'object') assert.equal(schema.additionalProperties, false, path);
+    if (path === '/LessonSet/properties/rows') {
+      assert.deepEqual(schema.additionalProperties, { $ref: '#/$defs/LessonValidityOutput' });
+      assert.equal(schema.maxProperties, 4096);
+    } else if (schema.type === 'object') assert.equal(schema.additionalProperties, false, path);
     Object.entries(schema).forEach(([key, item]) => visit(item, path + '/' + key));
   };
   visit(researchSchema.$defs);

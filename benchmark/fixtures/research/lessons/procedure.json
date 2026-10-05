@@ -1,0 +1,32 @@
+{
+  "bundle": {
+    "id": "9a6abffd1b05c5c7102493fd39f6af54b23f2f2fc79cb0e6587e04f0d3591dd7",
+    "scopeKey": "research-lessons/computational",
+    "mode": "deepening",
+    "parentId": null,
+    "rootFile": "SKILL.md",
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "aee34091e3b7e09fd92d4b0212dfb00c5917821ee5e83bef3c15a71566d7fb74",
+        "size": 102
+      }
+    ],
+    "origin": "human-import",
+    "status": "staged",
+    "formatProfile": "minimal"
+  },
+  "files": [
+    {
+      "bundleId": "9a6abffd1b05c5c7102493fd39f6af54b23f2f2fc79cb0e6587e04f0d3591dd7",
+      "path": "SKILL.md",
+      "encoding": "utf-8",
+      "mediaType": "text/markdown",
+      "executable": false,
+      "content": "# Research procedure\n\n## Evidence\n\nRetain the complete experiment registry and every negative result.\n",
+      "address": null,
+      "sha256": "aee34091e3b7e09fd92d4b0212dfb00c5917821ee5e83bef3c15a71566d7fb74",
+      "size": 102
+    }
+  ]
+}

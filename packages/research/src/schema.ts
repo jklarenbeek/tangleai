@@ -1,10 +1,16 @@
 import { JarenValidator } from '@jarenjs/validate';
 import { gmplSchemaDefinition } from '@tangleai/gmpl';
+import { trace2SkillSchemaOf } from '@tangleai/trace2skill';
+import { outcomesSchema } from '@tangleai/outcomes';
 import schema from '../schemas/research.schema.json' with { type: 'json' };
 import { researchRefuse, researchValidationIssues } from './errors.ts';
 import type { ResearchOutcome } from './errors.ts';
 import { immutableResearchJson } from './identity.ts';
 
+export const researchSchemaReferences = immutableResearchJson([
+  trace2SkillSchemaOf('authoredPatch'),
+  gmplSchemaDefinition(outcomesSchema, 'json', 'https://tangleai.dev/schemas/outcomes/json'),
+]);
 export const researchSchema = immutableResearchJson(schema);
 export type ResearchSchemaName = keyof typeof schema.$defs;
 type Validator = (value: unknown) => { valid: boolean; errors?: Array<{
@@ -28,8 +34,9 @@ export function validateResearchShape<T = unknown>(name: ResearchSchemaName, inp
   catch (cause) { return researchRefuse('TRSH1001', '', 'Research records must be finite JSON.', cause); }
   let validate = validators.get(name);
   if (!validate) {
-    validate = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' })
-      .compile(researchSchemaOf(name)) as Validator;
+    const validator = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' });
+    validator.addSchema(researchSchemaReferences);
+    validate = validator.compile(researchSchemaOf(name)) as Validator;
     validators.set(name, validate);
   }
   const result = validate(value);

@@ -2,14 +2,15 @@
 import { runIdentitySchema } from '@tangleai/config';
 import { masRuntimeSchema, masWorkflowSchema, masRegistrySchema } from '@tangleai/mas';
 import { canonicalizeJson } from '@jarenjs/json/canonical';
-import { researchSchema as records, validateResearchShape, researchValidationIssues, type ResearchSchemaName } from '@tangleai/research';
+import { researchSchema as records, researchSchemaReferences, validateResearchShape, researchValidationIssues, type ResearchSchemaName } from '@tangleai/research';
 import report from '../schemas/research.schema.json' with { type: 'json' };
+import { RESEARCH_LESSONS_SCHEMA } from './research-lessons-schema.ts';
 import { createReportValidator, type ReportValidator } from './validate.ts';
 import type { ResearchIssue } from './research.types.ts';
 
 export { records as researchRecordSchema, report as researchReportSchema };
 const cache = new Map<string, ReportValidator>();
-const dependencies = [records, runIdentitySchema, masRuntimeSchema, masWorkflowSchema, masRegistrySchema];
+const dependencies = [RESEARCH_LESSONS_SCHEMA, ...researchSchemaReferences, records, runIdentitySchema, masRuntimeSchema, masWorkflowSchema, masRegistrySchema];
 export function researchShape(name: string, value: unknown): ResearchIssue[] {
   if (Object.hasOwn(records.$defs, name)) {
     const result = validateResearchShape(name as ResearchSchemaName, value);

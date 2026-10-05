@@ -751,6 +751,132 @@
       }
     },
     {
+      "path": "lessons/beneficial.json",
+      "sha256": "0c368d840b5f61323424d5d69b748a1ed27e8cce414c3da370f8ed0f6330d44f",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/manifest.json",
+      "sha256": "1bf97d1012acc6e35c48f44ff77cd66c1d6f63e2de47613e77534817ae1045ef",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/negative/active-edit-attempt.json",
+      "sha256": "944bc170bfcd7d44a5edc64a375148e95d97bbbfac5e38d6e6f0e76f326addec",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/negative/async-validator.json",
+      "sha256": "3a8850457d5e087e11b6736de16bdbefc20d050699f3ecb0a6382d8cd59c1bf7",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/negative/cross-domain.json",
+      "sha256": "0292963d3bd7ba84ede6ab801052916bb23036eb7515421cb3ef88f0360d2895",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/negative/leaked-origin.json",
+      "sha256": "fec87e91fd68ebe0565965ef936d31c6b542398f3671b5088064aec2b752626b",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/negative/poisoned.json",
+      "sha256": "abd237c760c24029bf3ecfdff10033a66d5a4776819ae484cef819434533adb2",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/negative/regression-inducing.json",
+      "sha256": "3bcfcea5ea2cf895aae072378de9683700d5c523e533b649c76d62302383da56",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/negative/unsupported.json",
+      "sha256": "3ba7386c9e6a51b4c19c62384962d03ce419047314e4efcd9970642bc3d900b1",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/negative/volatile.json",
+      "sha256": "c13c9098d7863cd2c4439dcf70ac3cd12cc3bf5eb9699a42cce38f0e67469c94",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/negative/web-uncorroborated.json",
+      "sha256": "d4a0baafbe0b9f0e0c2653387d46710cb24f25981726c23a4a66e89242da96cf",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/origin.json",
+      "sha256": "c52b8faf38eb01eebca3ca0ea6280a0b892414ab8435e80a9195161c0233e240",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/procedure.json",
+      "sha256": "d998c4f5532196ee42a905bb7f914ad82044f50f7c7cc860084758dfc635a798",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "lessons/registration.json",
+      "sha256": "eb8f45a33723975a1f7a865772a4a52d472f795390aa1e7a230ed610afaa825d",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
       "path": "LICENSE.md",
       "sha256": "4082f73b1655b94f45130965b02e4df32ab3493c9291494647b74bb78aec0fc5",
       "licence": {
@@ -1436,7 +1562,7 @@
     },
     {
       "path": "workflows/lifecycle.json",
-      "sha256": "652752a3be21bb9cb9b60beb92f9fa1e3cfe398915fdc6b130269f453a953d06",
+      "sha256": "a06610fada06fad0dbe639a830a462238943c882d6d3d7d3f2966c3da61c8e6f",
       "licence": {
         "spdx": "MIT",
         "provenance": "tangle-authored-synthetic",
@@ -1471,5 +1597,5 @@
       }
     }
   ],
-  "revision": "340c1c3d285527a6a1ba4536af9058c31f5d6f2f95ad5ed52bb8976a6d3b67fb"
+  "revision": "a2c0d70b6f8dd8657386439f8abca190c26db1e05df90752d5d36e246e05d048"
 }

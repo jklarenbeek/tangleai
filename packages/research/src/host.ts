@@ -7,6 +7,7 @@ import { checkResearchGate, gateResponseSchema, researchGateKind } from './gates
 import { ResearchFailure, researchFail, researchValue } from './workflow-contract.ts';
 import { researchHandlerAdmission, type ResearchTaskHandlers } from './handlers.ts';
 import type { PreparedResearchWorkflow } from './workflow.ts';
+import { lessonWorkflowTools } from './lessons/workflow.ts';
 
 /** Assemble injected capabilities only; the caller owns opening stores, jobs and workers. */
 export function createResearchHostBindings(options: {
@@ -15,6 +16,7 @@ export function createResearchHostBindings(options: {
   clientFor?: MasHostBindings['clientFor'];
 }): MasHostBindings {
   const { masStore, researchStore, taskHandlers, prepared } = options, admitted = researchHandlerAdmission(taskHandlers);
+  const lessonTools = prepared.lessons ? lessonWorkflowTools(prepared.lessons, researchStore, masStore) : {};
   if (!admitted || admitted.store !== researchStore || !equalsJson(admitted.binding, prepared.binding))
     researchFail('TRSH1007', '/taskHandlers', 'Research handlers must match the compiled store and content binding.');
   if (!equalsJson(admitted.reasoning ?? null, prepared.model?.policy ?? null))
@@ -30,11 +32,15 @@ export function createResearchHostBindings(options: {
       || run.executableRevision !== prepared.plan.executableRevision || run.configRegistryRevision !== prepared.catalog.revision)
       researchFail('TRSH1004', '/run', 'A native run cannot resume under a changed research stack or workflow.');
     const frame = researchValue(validateResearchShape<ResearchWorkflowFrame>('ResearchWorkflowFrame', (run.input as { frame?: unknown }).frame));
-    if (frame.bindingId !== prepared.binding.id || frame.projectId !== run.id)
+    if (frame.bindingId !== prepared.binding.id || frame.projectId !== run.id
+      || !equalsJson(frame.lessonProcedure ?? null, prepared.binding.lessonProcedure ?? null))
       researchFail('TRSH1004', '/run/input', 'Root input does not bind this native research run.');
     const project = researchValue(await researchStore.getProject(run.id));
     if (!project || project.mode !== prepared.mode || (project.experimental === true) !== prepared.experimental)
       researchFail('TRSH1004', '/run/mode', 'The project mode must match its explicitly prepared topology.');
+    const injections = researchValue(await researchStore.lessons.listInjections(run.id));
+    if (!equalsJson(injections, prepared.lessons?.injection ? [prepared.lessons.injection] : []))
+      researchFail('TRSH2007', '/run/lessons', 'The run must retain exactly the injection captured in its prepared workflow.');
   };
   const store: MasStore = { ...masStore,
     async getRun(id) { const run = await masStore.getRun(id); if (run) await checkRun(run); return run; },
@@ -66,7 +72,7 @@ export function createResearchHostBindings(options: {
       }
     },
   };
-  return { store, taskHandlers: { ...prepared.model?.taskHandlers, ...prepared.analysisGraph?.taskHandlers, ...prepared.writingGraph?.taskHandlers, ...taskHandlers }, toolBindings: admitted.toolBindings ?? {}, contextProviders: prepared.writingGraph?.contextProviders ?? {}, now: options.now, clock: options.clock,
+  return { store, taskHandlers: { ...prepared.model?.taskHandlers, ...prepared.analysisGraph?.taskHandlers, ...prepared.writingGraph?.taskHandlers, ...taskHandlers }, toolBindings: { ...admitted.toolBindings, ...lessonTools }, contextProviders: prepared.writingGraph?.contextProviders ?? {}, now: options.now, clock: options.clock,
     ...(prepared.model || prepared.executionGraph || prepared.analysisGraph || prepared.writingGraph ? { messageAdapters: new Map([...prepared.model?.adapters ?? [], ...prepared.executionGraph?.adapters ?? [], ...prepared.analysisGraph?.adapters ?? [], ...prepared.writingGraph?.adapters ?? []]) } : {}), ...(options.clientFor ? { clientFor: options.clientFor } : {}),
     ...(options.deadlineFor ? { deadlineFor: options.deadlineFor } : {}), ...(options.observer ? { observer: options.observer } : {}) };
 }

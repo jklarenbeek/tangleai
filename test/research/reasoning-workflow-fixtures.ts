@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
-import { compileMasRuntime, MasInfrastructureCrash, masIssue, type MasHostBindings, type MasChatClient } from '@tangleai/mas';
+import { compileMasRuntime, MasInfrastructureCrash, masIssue, type MasHostBindings, type MasChatClient, type MasStore } from '@tangleai/mas';
 import { openTangleDb, createMasStore, createResearchStore, createMasSegmentDriver, ensurePendingMasSegments } from '@tangleai/store';
 import { createResearchBinding, createResearchReasoningTools, researchReasoningRevisionOf, researchArtifacts, prepareResearchWorkflow,
   initialResearchFrame, planProjectCreate, researchValue, createResearchTaskHandlers, createResearchHostBindings, createReplayTransport,
-  type ResearchReasoningPolicy, type ResearchWorkflowFrame, type ResearchTaskTools, type ResearchStageOperation } from '@tangleai/research';
+  type ResearchReasoningPolicy, type ResearchWorkflowFrame, type ResearchTaskTools, type ResearchStageOperation,
+  type ResearchStore, type ResearchProject, type ResearchLessonProcedure } from '@tangleai/research';
 import { researchExampleIdentity, researchExampleTools, researchExampleLimits } from '../../examples/research.ts';
 import { reasoningFixture } from './reasoning-fixtures.ts';
 import { project } from './fixtures.ts';
@@ -15,16 +16,13 @@ export async function reasoningWorkflowHarness(mode: ResearchReasoningPolicy['mo
   failTransition?: () => boolean;
   failInteraction?: (node: string) => boolean;
   inputPaths?: string[];
+  lessons?: (store: ResearchStore, owner: ResearchProject, masStore: MasStore) => Promise<ResearchLessonProcedure>;
 } = {}) {
-  const f = await reasoningFixture(), owner = { ...project(), budget: { calls: 100, tokens: 100000, ms: 600000, physical: 100 } };
+  const f = await reasoningFixture(), owner = { ...project(), budget: { calls: 100, tokens: 100000, ms: 600000, physical: 100 },
+    ...(options.lessons ? { lessonContext: { topicId: 'workflow-held-out', taskFamily: 'registered-experiment', input: { experiment: 'workflow-held-out' } } } : {}) };
   const policy: ResearchReasoningPolicy = { mode, maxCards: 8, novelty: { criteriaId: 'novelty', concurrency: 1, maxRequests: 8, maxBytes: 1048576,
     query: { provider: 'crossref', pages: 3, rows: 100, bytes: 262144, pageSize: 5 } } };
-  const binding = await createResearchBinding(f.bounds.contract, { identity: await researchExampleIdentity(), promptRevision: researchArtifacts.revision,
-    toolVersions: [{ name: 'research-reasoning', version: await researchReasoningRevisionOf(policy) }], evaluator: f.bounds.plan.evaluator,
-    reservation: { calls: 30, tokens: 30000, ms: 60000, physical: 30 } });
-  const limits = { ...researchExampleLimits, traceBytes: 1048576 }, prepared = await prepareResearchWorkflow(f.bounds.contract,
-    { binding, profile: 'research-scripted', limits, reasoning: policy });
-  const frame = await initialResearchFrame(owner, f.bounds.plan, binding), entries = [];
+  const limits = { ...researchExampleLimits, traceBytes: 1048576 }, entries = [];
   for (const query of f.set.queries) for (const page of [0, 1]) {
     const entry = await transcript('kmeans-seeding/crossref-' + page), url = new URL(entry.url);
     url.searchParams.set('query', query.query); entries.push({ ...entry, url: url.href });
@@ -60,6 +58,14 @@ export async function reasoningWorkflowHarness(mode: ResearchReasoningPolicy['mo
         ? { ok: false as const, issue: masIssue('TMAS2007', '/interaction', 'Injected native interaction admission failure.') }
         : native.createInteraction(plan);
     } }, researchStore = createResearchStore(db, { now });
+    if (options.lessons) researchValue(await researchStore.createProject(researchValue(planProjectCreate(owner))));
+    const lessons = await options.lessons?.(researchStore, owner, masStore);
+    const binding = await createResearchBinding(f.bounds.contract, { identity: await researchExampleIdentity(), promptRevision: researchArtifacts.revision,
+      toolVersions: [{ name: 'research-reasoning', version: await researchReasoningRevisionOf(policy) }], evaluator: f.bounds.plan.evaluator,
+      reservation: { calls: 30, tokens: 30000, ms: 60000, physical: 30 },
+      ...(lessons ? { lessonProcedure: { bundleHash: lessons.snapshot.bundle.id, injection: lessons.injection } } : {}) });
+    const prepared = await prepareResearchWorkflow(f.bounds.contract, { binding, profile: 'research-scripted', limits, reasoning: policy, ...(lessons ? { lessons } : {}) });
+    const frame = await initialResearchFrame(owner, f.bounds.plan, binding);
     const base = researchExampleTools({ contract: f.bounds.contract, plan: f.bounds.plan, binding, masStore,
       onOperation: (step, op) => { operations.push(op); options.onOperation?.(step, op); }, onExecute: op => { if (op.stage === 'execute') downstream++; } });
     const records = [{ kind: 'LiteratureRecord' as const, value: f.literature }, ...f.cards.map(value => ({ kind: 'EvidenceCard' as const, value }))];
@@ -72,13 +78,15 @@ export async function reasoningWorkflowHarness(mode: ResearchReasoningPolicy['mo
       prepared, now, clock: () => 0, clientFor });
     const compiled = compileMasRuntime(prepared.validated, prepared.plan, prepared.snapshot, bindings);
     assert.ok(compiled.valid, JSON.stringify(compiled));
-    return { masStore, researchStore, handlers, bindings, runtime: compiled.value,
+    return { masStore, researchStore, handlers, bindings, binding, prepared, frame, runtime: compiled.value,
       driver: createMasSegmentDriver(db, masStore, { owner: 'reasoning-test', leaseMs: 1000 }) };
   };
   let host: Awaited<ReturnType<typeof bind>>;
   try { host = await bind(); } catch (cause) { await db.close(); throw cause; }
-  return { f, owner, binding, prepared, limits, replay, systems, operations, get calls() { return calls; }, get downstream() { return downstream; }, get host() { return host; },
+  return { f, owner, get binding() { return host.binding; }, get prepared() { return host.prepared; }, limits, replay, systems, operations,
+    get calls() { return calls; }, get downstream() { return downstream; }, get host() { return host; },
     async start() {
+      const { prepared, frame } = host;
       researchValue(await host.researchStore.createProject(researchValue(planProjectCreate(owner))));
       const created = await host.masStore.createRun({ runId: owner.id, workflowId: prepared.workflow.workflowId, workflowVersionId: prepared.workflow.versionId,
         registryRevision: prepared.snapshot.revision, executableRevision: prepared.plan.executableRevision, configRegistryRevision: prepared.catalog.revision,
@@ -86,6 +94,7 @@ export async function reasoningWorkflowHarness(mode: ResearchReasoningPolicy['mo
       assert.ok(created.ok, JSON.stringify(created)); await host.driver.enqueue(created.value);
     },
     async segment() {
+      const { prepared } = host;
       await ensurePendingMasSegments(db, host.masStore);
       assert.ok(await host.driver.drive(prepared.plan.executableRevision, host.runtime.executeSegment, new AbortController().signal));
       return (await host.masStore.readTrace(owner.id))!;

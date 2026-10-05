@@ -1,13 +1,14 @@
 /** A finite file inventory; the enclosing receipt hashes manifest.json itself. */
 import { equalsJson } from '@jarenjs/core/object';
 import { canonicalizeJson } from '@jarenjs/json/canonical';
-import type { ResearchExportManifest, ResearchManifest, DisclosureChecklist } from '../contracts.gen.ts';
+import type { ResearchExportManifest, ResearchManifest, DisclosureChecklist, LessonInjection } from '../contracts.gen.ts';
 import { researchArtifactIdOf, researchRevisionOf, immutableResearchJson, stageAttemptIdOf } from '../identity.ts';
 import { researchRefuse, type ResearchOutcome } from '../errors.ts';
 import { validateResearchShape } from '../schema.ts';
 import { verifyResearchDraft } from '../stages/verify.ts';
 import { researchCostTotal } from '../selection.ts';
 import { researchInterventionReport } from '../commands.ts';
+import { checkLessonRecord } from '../lessons/records.ts';
 
 export type ResearchExportSource = ResearchExportManifest['source'];
 export const RESEARCH_BUNDLE_FILES = ['audit.md', 'claims.json', 'disclosure.json', 'draft.md', 'literature.json', 'metrics.json'] as const;
@@ -48,6 +49,14 @@ export async function researchExportManifestOf(source: ResearchExportSource, sci
     if (verified.value.state !== 'verified') return { valid: false, issues: verified.value.issues };
     if (!equalsJson(verified.value, source.verification)) return researchRefuse('TRSH1002', '/verification', 'The export must retain independently recomputed verification.');
     const interventionReport = researchInterventionReport(source.provenance.interventions);
+    const emptyLessons = { injected: [], proposed: [], promoted: [] };
+    if (!equalsJson(scientific?.lessons ?? emptyLessons, source.provenance.lessons ?? emptyLessons))
+      return researchRefuse('TRSH2007', '/lessons', 'Scientific and export provenance must name the same retained lesson records.');
+    for (const injection of source.provenance.lessons?.injected ?? []) {
+      const checked = await checkLessonRecord<LessonInjection>('LessonInjection', injection);
+      if (!checked.valid || checked.value.projectId !== source.inputs.projectId || checked.value.runId !== source.inputs.projectId)
+        return researchRefuse('TRSH2007', '/lessons/injected', 'Export injection identity must bind its actual run.');
+    }
     const experimental = source.provenance.mode === undefined ? interventionReport.automatic > 0 : source.provenance.mode === 'full-auto';
     if (source.provenance.mode === 'gate-only' && interventionReport.automatic > 0
       || source.provenance.mode === 'full-auto' && interventionReport.automatic !== interventionReport.total)

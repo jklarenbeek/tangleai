@@ -18,6 +18,8 @@
     "@tangleai/research": "0.38.0",
     "@tangleai/evolve": "0.38.0",
     "@tangleai/store": "0.38.0",
-    "@tangleai/documents": "0.38.0"
+    "@tangleai/documents": "0.38.0",
+    "@tangleai/outcomes": "0.38.0",
+    "@tangleai/trace2skill": "0.38.0"
   }
 }

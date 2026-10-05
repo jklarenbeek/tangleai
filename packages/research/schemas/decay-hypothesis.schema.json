@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/research/decay-hypothesis/v2",
+  "title": "DecayHypothesis",
+  "$ref": "https://tangleai.dev/schemas/research-records#/$defs/DecayHypothesis"
+}

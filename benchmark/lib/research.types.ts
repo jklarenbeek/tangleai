@@ -2,6 +2,80 @@
 // Do not edit: regenerate instead.
 
 /**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchDependency0_id = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=512, pattern="^[A-Za-z0-9._][A-Za-z0-9._/-]*$"
+ */
+export type ResearchDependency0_skillPath = string;
+
+export interface ResearchDependency0_createFileOperation {
+  content: string;
+  group: ResearchDependency0_id;
+  op: "create_file";
+  path: ResearchDependency0_skillPath;
+}
+
+
+export interface ResearchDependency0_insertOperation {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  anchor: string;
+  content: string;
+  group: ResearchDependency0_id;
+  op: "insert_before" | "insert_after";
+  path: ResearchDependency0_skillPath;
+}
+
+
+export interface ResearchDependency0_sectionOperation {
+  content: string | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  from: string;
+  group: ResearchDependency0_id;
+  op: "replace_section" | "delete_section";
+  path: ResearchDependency0_skillPath;
+  to: string | null;
+}
+
+
+export type ResearchDependency0_patchOperation = ResearchDependency0_createFileOperation | ResearchDependency0_insertOperation | ResearchDependency0_sectionOperation;
+
+/**
+ * A directory patch as a role writes it: the edits and the reason for them. Identity, run, frozen base hash, provenance and support are sealed by the dispatcher from what it already knows, so nothing here asks a model for a receipt it cannot compute.
+ */
+export interface ResearchDependency0_Root {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=16
+   */
+  operations: Array<ResearchDependency0_patchOperation>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reasoning: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minItems=0
+ */
+export type ResearchDependency1_jsonAnyOf5 = Array<ResearchDependency1_json>;
+
+export type ResearchDependency1_json = null | string | number | boolean | ResearchDependency1_jsonAnyOf5 | { [key: string]: ResearchDependency1_json; };
+
+/**
+ * Schema constraints this type cannot express: minItems=0
+ */
+export type ResearchDependency1_RootAnyOf5 = Array<ResearchDependency1_json>;
+
+export type ResearchDependency1_Root = null | string | number | boolean | ResearchDependency1_RootAnyOf5 | { [key: string]: ResearchDependency1_json; };
+
+/**
  * Schema constraints this type cannot express: if={"required":["beforeResults"]}, then={"properties":{"marksExploratory":{"maxItems":0}}}, else={"properties":{"marksExploratory":{"minItems":1}}}
  */
 export type AmendmentPart1 = unknown;
@@ -23,12 +97,218 @@ export type AmendmentMarksExploratoryItem = string;
 
 export type Amendment = AmendmentPart1 & { after: Sha256; before: Sha256; beforeResults?: true; id: ResearchId; marksExploratory: Array<AmendmentMarksExploratoryItem>; reason: string; };
 
-export interface ResearchAnalysisDiagnostic {
+export interface ResearchBundleClaimLedgerArtifactsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  digest?: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  kind: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  locator?: string;
+  metadata?: { [key: string]: unknown; };
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchBundleClaimLedgerClaimsItemEvidenceItem = string;
+
+export interface ResearchBundleClaimLedgerClaimsItem {
+  critical: boolean;
   /**
    * Schema constraints this type cannot express: uniqueItems=true
    */
-  evidenceIds: Array<ResearchId>;
-  kind: "program-error" | "degenerate" | "confound" | "invalid-execution";
+  evidence: Array<ResearchBundleClaimLedgerClaimsItemEvidenceItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  status: "supported" | "unresolved";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+}
+
+
+export interface ResearchBundleClaimLedgerEvidenceItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  artifact: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  quote?: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  selector?: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchBundleClaimLedgerVisibleEvidenceItem = string;
+
+export interface ResearchBundleClaimLedger {
+  artifacts: Array<ResearchBundleClaimLedgerArtifactsItem>;
+  claims: Array<ResearchBundleClaimLedgerClaimsItem>;
+  evidence: Array<ResearchBundleClaimLedgerEvidenceItem>;
+  version: 1;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  visibleEvidence: Array<ResearchBundleClaimLedgerVisibleEvidenceItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchClaimEvidenceIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchClaimLiteratureIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type MetricBindingSeedsItem = number;
+
+export interface MetricBinding {
+  aggregate: "individual" | "mean";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  seeds: Array<MetricBindingSeedsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  unit: string;
+  value: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchClaimObservationIdsItem = string;
+
+export interface ResearchClaimProofCitationAnyOf1CanonicalIds {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  arxiv?: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  arxivVersion?: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  doi?: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^W[0-9]+$"
+   */
+  openalex?: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  s2?: string;
+}
+
+
+export interface ResearchClaimProofCitationAnyOf1 {
+  canonicalIds: ResearchClaimProofCitationAnyOf1CanonicalIds;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  rawHashes: Array<{ sha256: Sha256; source: "openalex" | "crossref" | "semanticscholar" | "arxiv"; }>;
+  recordId: ResearchId;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type ResearchClaimProofNAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchClaimProofQuoteAnyOf1 = string;
+
+export interface ResearchClaimProof {
+  cardId: ResearchId | null;
+  citation: ResearchClaimProofCitationAnyOf1 | null;
+  n: ResearchClaimProofNAnyOf1 | null;
+  quote: ResearchClaimProofQuoteAnyOf1 | null;
+  strength: "exact" | "supports" | "suggests";
+  type: "literature" | "result" | "method" | "interpretation";
+}
+
+
+export interface ResearchClaim {
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  evidenceIds: Array<ResearchClaimEvidenceIdsItem>;
+  id: ResearchId;
+  kind: "literature" | "metric" | "interpretation";
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  literatureIds: Array<ResearchClaimLiteratureIdsItem>;
+  metricBinding: MetricBinding | null;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  observationIds: Array<ResearchClaimObservationIdsItem>;
+  proof?: ResearchClaimProof;
+  section: "abstract" | "methods" | "experiments" | "results" | "conclusion" | "discussion";
+  strength: "descriptive" | "causal";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+}
+
+
+export interface ResearchAnalysisPolicySeedVariationChecksItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -36,222 +316,82 @@ export interface ResearchAnalysisDiagnostic {
 }
 
 
-export interface ResearchPairedInterval {
-  estimate: number;
+export interface ResearchAnalysisPolicy {
+  confoundAction: "Stop" | "Pivot";
+  recoverProgramFailure: boolean;
   /**
-   * Schema constraints this type cannot express: exclusiveMinimum=0, exclusiveMaximum=1
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
    */
-  level: number;
-  lower: number;
-  method: "paired-bootstrap";
-  quantile: "nearest-rank" | "linear";
+  seedBatchSize: number;
+  seedVariationChecks: Array<ResearchAnalysisPolicySeedVariationChecksItem>;
+}
+
+
+export interface ResearchBranchSelectionRuleOneOf2 {
+  kind: "best-of-n";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
+   */
+  n: number;
+  selector: "preregistered-metric" | "lowest-variance";
+}
+
+
+export type ResearchBranchSelectionRule = { kind: "single"; } | ResearchBranchSelectionRuleOneOf2;
+
+export interface ResearchContractDatasetsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  sha256: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchContractHypothesisSpaceItem = string;
+
+export interface MetricDefinition {
+  direction: "minimize" | "maximize";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=12
+   */
+  roundingDigits?: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  unit: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type ReplicatePolicySeedsItem = number;
+
+export interface ReplicatePolicy {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  bootstrapSeed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  minimum: number;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   resamples: number;
   /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  seed: number;
-  upper: number;
-}
-
-
-/**
- * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
- */
-export type ResearchAnalysisEvidenceMissingSeedsItem = number;
-
-/**
- * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
- */
-export type ResearchAnalysisEvidenceSeedsItem = number;
-
-export interface ResearchAnalysisEvidence {
-  interval: ResearchPairedInterval | null;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=2
-   */
-  minimum: number;
-  missingSeeds: Array<ResearchAnalysisEvidenceMissingSeedsItem>;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  n: number;
-  outcome: "positive" | "negative" | "neutral" | "inconclusive" | "unmeasured";
-  seeds: Array<ResearchAnalysisEvidenceSeedsItem>;
-  underpowered: boolean;
-}
-
-
-export interface AnalysisExecution {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  completed: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  failed: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  partial: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  runs: number;
-  success: boolean;
-}
-
-
-export interface ResearchMetricAggregateValuesItem {
-  observationId: ResearchId;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  seed: number;
-  value: number;
-}
-
-
-export interface ResearchMetricAggregate {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  condition: string;
-  mean: number | null;
-  median: number | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  metric: string;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  n: number;
-  sampleStddev: number | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  unit: string;
-  values: Array<ResearchMetricAggregateValuesItem>;
-}
-
-
-export interface AnalysisMovement {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  baseline: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  condition: string;
-  direction: "maximize" | "minimize";
-  estimate: number | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  metric: string;
-  outcome: "improved" | "unchanged" | "worsened" | "unmeasured";
-}
-
-
-export interface Analysis {
-  analystIdentityId: ResearchId;
-  branchId: ResearchId;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  branchIds: Array<ResearchId>;
-  contractHash: Sha256;
-  diagnostics: Array<ResearchAnalysisDiagnostic>;
-  evidence: ResearchAnalysisEvidence;
-  execution: AnalysisExecution;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  exploratoryObservationIds: Array<ResearchId>;
-  hypothesisHash: Sha256;
-  id: ResearchId;
-  metrics: Array<ResearchMetricAggregate>;
-  movement: AnalysisMovement;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  observationIds: Array<ResearchId>;
-  planHash: Sha256;
-  practical: { met: boolean | null; minimumImprovement: number; };
-  projectId: ResearchId;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  runIds: Array<ResearchId>;
-  support: "supported" | "not-supported" | "inconclusive" | "exploratory";
-}
-
-
-export type ResearchLifecycle = "CREATED" | "DISCOVERY" | "LITERATURE_GATE" | "SYNTHESIS" | "HYPOTHESIS_GATE" | "DESIGN" | "DESIGN_GATE" | "EXECUTE" | "ANALYZE" | "DECIDE" | "WRITE" | "VERIFY" | "QUALITY_GATE" | "COMPLETE" | "STOPPED";
-
-export interface ResearchArtifactStorage {
-  /**
-   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
-   */
-  address: string;
-  kind: "content";
-}
-
-
-export interface ResearchArtifact {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  bytes: number;
-  /**
-   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  mediaType: string;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  parentIds: Array<ResearchId>;
-  producingStage: ResearchLifecycle;
-  storage: ResearchArtifactStorage;
-  verification: "pending" | "verified" | "refused";
-}
-
-
-export interface StageAttemptKey {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
-   */
-  attemptOrdinal: number;
-  inputManifestHash: Sha256;
-  projectId: ResearchId;
-  stage: ResearchLifecycle;
-}
-
-
-export interface ArtifactParent {
-  admissionId: ResearchId | null;
-  artifactId: ResearchId;
-}
-
-
-export interface ArtifactAdmission {
-  artifact: ResearchArtifact;
-  attempt: StageAttemptKey;
-  id: ResearchId;
-  /**
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */
-  parents: Array<ArtifactParent>;
-  projectId: ResearchId;
+  seeds: Array<ReplicatePolicySeedsItem>;
 }
 
 
@@ -285,6 +425,231 @@ export interface BaselineProvenance {
 }
 
 
+export interface SelectionRule {
+  kind: "all" | "best-of-n";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  n: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchContractSplitsTestItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchContractSplitsTrainItem = string;
+
+export interface ResearchContractSplits {
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  test: Array<ResearchContractSplitsTestItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  train: Array<ResearchContractSplitsTrainItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchContractStopConditionsItem = string;
+
+export interface SuccessRule {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  baseline: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition: string;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0, exclusiveMaximum=1
+   */
+  confidenceLevel: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  minImprovement: number;
+}
+
+
+export interface ResearchContract {
+  analysisPolicy?: ResearchAnalysisPolicy;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attemptCap: number;
+  branchSelectionRule?: ResearchBranchSelectionRule;
+  contractHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  datasets: Array<ResearchContractDatasetsItem>;
+  failureRule: "stop-on-invalid";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  hypothesisSpace: Array<ResearchContractHypothesisSpaceItem>;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  metrics: Array<MetricDefinition>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  pivotCap: number;
+  projectId: ResearchId;
+  replicatePolicy: ReplicatePolicy;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  requiredBaselines: Array<BaselineProvenance>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  reviewCap: number;
+  selectionRule: SelectionRule;
+  splits: ResearchContractSplits;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  stopConditions: Array<ResearchContractStopConditionsItem>;
+  successRule: SuccessRule;
+}
+
+
+export interface ResearchBudgetEffect {
+  /**
+   * Schema constraints this type cannot express: maximum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: maximum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: maximum=0
+   */
+  physical: number;
+  /**
+   * Schema constraints this type cannot express: maximum=0
+   */
+  tokens: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchDecisionDetailsReviewArtifactIdsItem = string;
+
+export interface ResearchGmplCitation {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  digest: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+}
+
+
+export interface ResearchGmplFinding {
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  citations: Array<ResearchGmplCitation>;
+  contradictory?: boolean;
+  critical?: boolean;
+  disposition: "supported" | "contested" | "rejected-with-reason" | "unresolved";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  origin: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface ResearchDecisionDetails {
+  action: "write" | "replicate" | "repair" | "pivot" | "none";
+  analysisId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  attemptOrdinal: number;
+  budgetEffect: ResearchBudgetEffect;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  opposing: Array<ResearchId>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  pivotOrdinal: number;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  reviewArtifactIds: Array<ResearchDecisionDetailsReviewArtifactIdsItem>;
+  reviewerFindings: Array<ResearchGmplFinding>;
+  reviewerIdentityId: ResearchId;
+  selectedBranchId: ResearchId;
+  selectionId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  supporting: Array<ResearchId>;
+  targetStage: "WRITE" | "EXECUTE" | "SYNTHESIS" | "STOPPED";
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchDecisionObservationIdsItem = string;
+
+export interface ResearchDecision {
+  contractHash: Sha256;
+  details?: ResearchDecisionDetails;
+  exploratory: boolean;
+  id: ResearchId;
+  kind: "Proceed" | "Refine" | "Pivot" | "Stop";
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  observationIds: Array<ResearchDecisionObservationIdsItem>;
+  projectId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
 /**
  * Schema constraints this type cannot express: minLength=1
  */
@@ -305,218 +670,6 @@ export interface DisclosureItem {
  * Schema constraints this type cannot express: minItems=8, maxItems=8
  */
 export type DisclosureChecklist = Array<DisclosureItem>;
-
-export interface DiscoveryCandidate {
-  id: ResearchId;
-  queryId: ResearchId;
-  rawHash: Sha256;
-  snippet: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  title: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  url: string;
-}
-
-
-export interface DiscoveryDedupeFallbackMergesItem {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  left: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  right: string;
-  status: "merged" | "refused";
-}
-
-
-export interface DiscoveryDedupe {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  distinctPreserved: number;
-  fallbackMerges: Array<DiscoveryDedupeFallbackMergesItem>;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  identityMerges: number;
-}
-
-
-export interface DiscoveryProviderCounts {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  cancelled: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  failed: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  ok: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  rateLimited: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  refused: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  unresolved: number;
-}
-
-
-export interface DiscoveryQuery {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  bytes: number;
-  id: ResearchId;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=100
-   */
-  pageSize: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  pages: number;
-  provider: "openalex" | "crossref" | "semanticscholar" | "arxiv" | "searxng";
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  rows: number;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  text: string;
-}
-
-
-export interface ResearchIssueCause {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  attempts?: number;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  code: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  detail: string;
-  path: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  reason?: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  state?: string;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=100, maximum=599
-   */
-  status?: number;
-}
-
-
-export interface ResearchIssue {
-  cause?: ResearchIssueCause;
-  /**
-   * Schema constraints this type cannot express: pattern="^TRSH10(0[1-9]|10)$"
-   */
-  code: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  detail: string;
-  path: string;
-}
-
-
-export interface DiscoveryQueryOutcome {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  attempts: number;
-  counts: DiscoveryProviderCounts;
-  issues: Array<ResearchIssue>;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  malformed: number;
-  /**
-   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
-   */
-  observationArtifactId: string;
-  provider: "openalex" | "crossref" | "semanticscholar" | "arxiv" | "searxng";
-  queryId: ResearchId;
-  rawHashes: Array<Sha256>;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  reason: string;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  rows: number;
-  state: "complete" | "incomplete" | "refused";
-}
-
-
-export interface DiscoveryReceipt {
-  candidateIds: Array<ResearchId>;
-  criteriaId: ResearchId;
-  dedupe: DiscoveryDedupe;
-  id: ResearchId;
-  literatureIds: Array<ResearchId>;
-  outcomes: Array<DiscoveryQueryOutcome>;
-  projectId: ResearchId;
-  queryPlanId: ResearchId;
-}
-
-
-export interface DraftSectionsItem {
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  claimIds: Array<ResearchId>;
-  id: "abstract" | "methods" | "experiments" | "results" | "conclusion" | "discussion";
-  kind: "strict" | "open";
-  text: string;
-}
-
-
-export interface ResearchRoleIdentity {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  modelIdentity: string;
-  promptRevision: Sha256;
-  roleId: ResearchId;
-}
-
-
-export interface Draft {
-  id: ResearchId;
-  ledgerId: ResearchId;
-  mode: "template" | "agent";
-  projectId: ResearchId;
-  sections: Array<DraftSectionsItem>;
-  writer: ResearchRoleIdentity;
-}
-
 
 /**
  * Schema constraints this type cannot express: minLength=1
@@ -566,22 +719,240 @@ export interface EvidenceCard {
 /**
  * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
  */
-export type ExecutionManifestCodeArtifactIdAnyOf1 = string;
+export type ResearchInterventionEffectEditedArtifactIdAnyOf1 = string;
+
+export type ResearchLifecycle = "CREATED" | "DISCOVERY" | "LITERATURE_GATE" | "SYNTHESIS" | "HYPOTHESIS_GATE" | "DESIGN" | "DESIGN_GATE" | "EXECUTE" | "ANALYZE" | "DECIDE" | "WRITE" | "VERIFY" | "QUALITY_GATE" | "COMPLETE" | "STOPPED";
+
+export interface ResearchInterventionEffect {
+  editedArtifactId: ResearchInterventionEffectEditedArtifactIdAnyOf1 | null;
+  guidanceHash: Sha256 | null;
+  kind: "approval" | "retry" | "stop";
+  target: ResearchLifecycle | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+ */
+export type InterventionViewedArtifactIdsItem = string;
+
+export interface Intervention {
+  action: "approve" | "reject" | "edit" | "guidance" | "stop";
+  actor: "human" | "timeout" | "scripted" | "full-auto";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128
+   */
+  actorId?: string;
+  approvedManifestHash: Sha256 | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   */
+  at?: string;
+  effect?: ResearchInterventionEffect;
+  experimental?: boolean;
+  gate: "literature" | "design" | "quality";
+  id: ResearchId;
+  reviewedManifestHash: Sha256;
+  stage?: ResearchLifecycle;
+  substantive: boolean;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  viewedArtifactIds?: Array<InterventionViewedArtifactIdsItem>;
+}
+
 
 /**
  * Schema constraints this type cannot express: minLength=1
  */
-export type ExecutionManifestEntrypointAnyOf1 = string;
+export type ResearchBundleLiteratureItem = string;
 
-export interface ResearchEvaluatorIdentity {
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchManifestBaselineSourcesItem = string;
+
+export interface ResearchManifestEnvironment {
   /**
    * Schema constraints this type cannot express: minLength=1
    */
-  id: string;
+  executor: string;
+  programSourceHash: Sha256;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
   version: string;
+}
+
+
+export interface ResearchManifestInputsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  sha256: Sha256;
+}
+
+
+export interface ResearchInterventionReport {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  approvals: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  automatic: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  human: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  scripted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  stops: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  substantive: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+}
+
+
+export interface ResearchLessonScope {
+  domainProfileId: ResearchId;
+  taskFamily: ResearchId;
+}
+
+
+export interface LessonInjection {
+  activationEventId: Sha256;
+  bundleHash: Sha256;
+  id: Sha256;
+  lessonSetHash: Sha256;
+  outcomeVersionId: Sha256;
+  projectId: ResearchId;
+  runId: ResearchId;
+  scope: ResearchLessonScope;
+}
+
+
+export interface ResearchManifestLessons {
+  injected: Array<LessonInjection>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  promoted: Array<Sha256>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  proposed: Array<Sha256>;
+}
+
+
+export interface ResearchManifestMetricOrigin {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  evaluatorId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  evaluatorVersion: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchManifestObservationIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchManifestRunIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchManifestSearchedLiteratureItem = string;
+
+export interface ResearchManifest {
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  baselineSources: Array<ResearchManifestBaselineSourcesItem>;
+  contractHash: Sha256;
+  environment: ResearchManifestEnvironment;
+  experimental?: boolean;
+  frozenBeforeResults: boolean;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  inputs: Array<ResearchManifestInputsItem>;
+  interventionReport?: ResearchInterventionReport;
+  lessons?: ResearchManifestLessons;
+  manifestHash: Sha256;
+  metricOrigin: ResearchManifestMetricOrigin;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  observationIds: Array<ResearchManifestObservationIdsItem>;
+  planHash: Sha256;
+  projectId: ResearchId;
+  promptRevision: Sha256;
+  reviewedEvidenceHash: Sha256;
+  runIdentityId: Sha256 | null;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  runIds: Array<ResearchManifestRunIdsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  searchedLiterature: Array<ResearchManifestSearchedLiteratureItem>;
+  selectionRule: SelectionRule;
+}
+
+
+export interface MetricObservation {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  evaluatorId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  evaluatorVersion: string;
+  experimentRunId: ResearchId;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
+  projectId: ResearchId;
+  registrySignature: Sha256;
+  runArtifactHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  seed: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  unit: string;
+  value: number;
 }
 
 
@@ -602,113 +973,6 @@ export interface ProgramParams {
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   maxIterations?: number;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ExecutionManifestProgramIdAnyOf1 = string;
-
-export interface ExecutionManifestResources {
-  /**
-   * Schema constraints this type cannot express: exclusiveMinimum=0
-   */
-  cpu: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
-   */
-  memoryBytes: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
-   */
-  outputBytes: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
-   */
-  pids: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
-   */
-  wallMs: number;
-}
-
-
-export interface ExecutionManifest {
-  branchId: ResearchId;
-  codeArtifactId: ExecutionManifestCodeArtifactIdAnyOf1 | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  condition?: string;
-  contractHash: Sha256;
-  datasetId?: ResearchId;
-  dependencyLockHash: Sha256;
-  entrypoint?: ExecutionManifestEntrypointAnyOf1 | null;
-  evaluator: ResearchEvaluatorIdentity;
-  executionManifestHash: Sha256;
-  executorContractHash?: Sha256;
-  id: ResearchId;
-  /**
-   * Schema constraints this type cannot express: pattern="^sha256:[0-9a-f]{64}$"
-   */
-  imageDigest: string;
-  network: { measured: "off"; setup: "logged" | "off"; };
-  params: ProgramParams;
-  planHash: Sha256;
-  programId: ExecutionManifestProgramIdAnyOf1 | null;
-  projectId: ResearchId;
-  resources: ExecutionManifestResources;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  seed: number;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  stopReasons: Array<"completed" | "timeout" | "memory" | "pids" | "output-bytes" | "cancelled" | "isolation-refused">;
-  workspaceHash: Sha256;
-}
-
-
-export interface ResearchCost {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  calls: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  ms: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  physical: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  tokens: number;
-}
-
-
-export interface ExperimentBranch {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
-   */
-  attemptOrdinal: number;
-  contractHash: Sha256;
-  hypothesisHash: Sha256;
-  id: ResearchId;
-  kind?: "initial" | "replicate" | "repair";
-  parentId: ResearchId | null;
-  planHash: Sha256;
-  projectId: ResearchId;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  runIds: Array<ResearchId>;
-  spend: ResearchCost;
-  status: "planned" | "executing" | "completed" | "failed" | "stopped";
 }
 
 
@@ -755,6 +1019,26 @@ export interface ResearchDesignMetadataHazardsItem {
    * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
    */
   mitigation: string;
+}
+
+
+export interface ResearchCost {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physical: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
 }
 
 
@@ -860,34 +1144,46 @@ export interface ExperimentPlan {
 }
 
 
-export interface ExperimentPlanProposalEvaluator {
+export interface ResearchIssueCause {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  attempts?: number;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
-  id: string;
+  code: string;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
-  version: string;
+  detail: string;
+  path: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason?: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  state?: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=100, maximum=599
+   */
+  status?: number;
 }
 
 
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ExperimentPlanProposalInputPathsItem = string;
-
-export interface ExperimentPlanProposal {
+export interface ResearchIssue {
+  cause?: ResearchIssueCause;
   /**
-   * Schema constraints this type cannot express: minItems=2
+   * Schema constraints this type cannot express: pattern="^TRSH(10(0[1-9]|10)|20(0[1-9]|1[0-2]))$"
    */
-  conditions: Array<ExperimentCondition>;
-  design: ResearchDesignMetadata;
-  evaluator: ExperimentPlanProposalEvaluator;
+  code: string;
   /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   * Schema constraints this type cannot express: minLength=1
    */
-  inputPaths: Array<ExperimentPlanProposalInputPathsItem>;
+  detail: string;
+  path: string;
 }
 
 
@@ -1083,6 +1379,601 @@ export interface ExperimentRun {
    * Schema constraints this type cannot express: minItems=1
    */
   trace: Array<ExperimentRunTraceItem>;
+}
+
+
+export interface ResearchBundle {
+  amendments: Array<Amendment>;
+  claimLedger: ResearchBundleClaimLedger;
+  claims: Array<ResearchClaim>;
+  contract: ResearchContract;
+  decision: ResearchDecision;
+  disclosure: DisclosureChecklist;
+  evidence: Array<EvidenceCard>;
+  interventions: Array<Intervention>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  literature: Array<ResearchBundleLiteratureItem>;
+  manifest: ResearchManifest;
+  observations: Array<MetricObservation>;
+  plan: ExperimentPlan;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  runs: Array<ExperimentRun>;
+  topicId: ResearchId;
+}
+
+
+export type Root = ResearchBundle;
+
+export interface ResearchAnalysisDiagnostic {
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  evidenceIds: Array<ResearchId>;
+  kind: "program-error" | "degenerate" | "confound" | "invalid-execution";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface ResearchPairedInterval {
+  estimate: number;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0, exclusiveMaximum=1
+   */
+  level: number;
+  lower: number;
+  method: "paired-bootstrap";
+  quantile: "nearest-rank" | "linear";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  resamples: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  seed: number;
+  upper: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+ */
+export type ResearchAnalysisEvidenceMissingSeedsItem = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+ */
+export type ResearchAnalysisEvidenceSeedsItem = number;
+
+export interface ResearchAnalysisEvidence {
+  interval: ResearchPairedInterval | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=2
+   */
+  minimum: number;
+  missingSeeds: Array<ResearchAnalysisEvidenceMissingSeedsItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  n: number;
+  outcome: "positive" | "negative" | "neutral" | "inconclusive" | "unmeasured";
+  seeds: Array<ResearchAnalysisEvidenceSeedsItem>;
+  underpowered: boolean;
+}
+
+
+export interface AnalysisExecution {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  completed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  failed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  partial: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  runs: number;
+  success: boolean;
+}
+
+
+export interface ResearchMetricAggregateValuesItem {
+  observationId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  seed: number;
+  value: number;
+}
+
+
+export interface ResearchMetricAggregate {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition: string;
+  mean: number | null;
+  median: number | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  n: number;
+  sampleStddev: number | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  unit: string;
+  values: Array<ResearchMetricAggregateValuesItem>;
+}
+
+
+export interface AnalysisMovement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  baseline: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition: string;
+  direction: "maximize" | "minimize";
+  estimate: number | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  metric: string;
+  outcome: "improved" | "unchanged" | "worsened" | "unmeasured";
+}
+
+
+export interface Analysis {
+  analystIdentityId: ResearchId;
+  branchId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  branchIds: Array<ResearchId>;
+  contractHash: Sha256;
+  diagnostics: Array<ResearchAnalysisDiagnostic>;
+  evidence: ResearchAnalysisEvidence;
+  execution: AnalysisExecution;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  exploratoryObservationIds: Array<ResearchId>;
+  hypothesisHash: Sha256;
+  id: ResearchId;
+  metrics: Array<ResearchMetricAggregate>;
+  movement: AnalysisMovement;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  observationIds: Array<ResearchId>;
+  planHash: Sha256;
+  practical: { met: boolean | null; minimumImprovement: number; };
+  projectId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  runIds: Array<ResearchId>;
+  support: "supported" | "not-supported" | "inconclusive" | "exploratory";
+}
+
+
+export interface ResearchArtifactStorage {
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  address: string;
+  kind: "content";
+}
+
+
+export interface ResearchArtifact {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  bytes: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  mediaType: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  parentIds: Array<ResearchId>;
+  producingStage: ResearchLifecycle;
+  storage: ResearchArtifactStorage;
+  verification: "pending" | "verified" | "refused";
+}
+
+
+export interface StageAttemptKey {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  attemptOrdinal: number;
+  inputManifestHash: Sha256;
+  projectId: ResearchId;
+  stage: ResearchLifecycle;
+}
+
+
+export interface ArtifactParent {
+  admissionId: ResearchId | null;
+  artifactId: ResearchId;
+}
+
+
+export interface ArtifactAdmission {
+  artifact: ResearchArtifact;
+  attempt: StageAttemptKey;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  parents: Array<ArtifactParent>;
+  projectId: ResearchId;
+}
+
+
+export interface DecayHypothesisAnyOf2ParametersSeverityWeights {
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  high: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  low: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  medium: number;
+}
+
+
+export interface DecayHypothesisAnyOf2Parameters {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  horizon: number;
+  severityWeights: DecayHypothesisAnyOf2ParametersSeverityWeights;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.id","$.kind"]}
+ */
+export type DecayHypothesis = { id: "none"; kind: "none"; parameters: Record<string, never>; revision: Sha256; } | { id: "age-linear" | "severity-weighted-age"; kind: "age-linear" | "severity-weighted-age"; parameters: DecayHypothesisAnyOf2Parameters; revision: Sha256; };
+
+export interface DiscoveryCandidate {
+  id: ResearchId;
+  queryId: ResearchId;
+  rawHash: Sha256;
+  snippet: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  url: string;
+}
+
+
+export interface DiscoveryDedupeFallbackMergesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  left: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  right: string;
+  status: "merged" | "refused";
+}
+
+
+export interface DiscoveryDedupe {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  distinctPreserved: number;
+  fallbackMerges: Array<DiscoveryDedupeFallbackMergesItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  identityMerges: number;
+}
+
+
+export interface DiscoveryProviderCounts {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cancelled: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ok: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rateLimited: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refused: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unresolved: number;
+}
+
+
+export interface DiscoveryQuery {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  bytes: number;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=100
+   */
+  pageSize: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  pages: number;
+  provider: "openalex" | "crossref" | "semanticscholar" | "arxiv" | "searxng";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  rows: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+}
+
+
+export interface DiscoveryQueryOutcome {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  attempts: number;
+  counts: DiscoveryProviderCounts;
+  issues: Array<ResearchIssue>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  malformed: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  observationArtifactId: string;
+  provider: "openalex" | "crossref" | "semanticscholar" | "arxiv" | "searxng";
+  queryId: ResearchId;
+  rawHashes: Array<Sha256>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rows: number;
+  state: "complete" | "incomplete" | "refused";
+}
+
+
+export interface DiscoveryReceipt {
+  candidateIds: Array<ResearchId>;
+  criteriaId: ResearchId;
+  dedupe: DiscoveryDedupe;
+  id: ResearchId;
+  literatureIds: Array<ResearchId>;
+  outcomes: Array<DiscoveryQueryOutcome>;
+  projectId: ResearchId;
+  queryPlanId: ResearchId;
+}
+
+
+export interface DraftSectionsItem {
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  claimIds: Array<ResearchId>;
+  id: "abstract" | "methods" | "experiments" | "results" | "conclusion" | "discussion";
+  kind: "strict" | "open";
+  text: string;
+}
+
+
+export interface ResearchRoleIdentity {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  modelIdentity: string;
+  promptRevision: Sha256;
+  roleId: ResearchId;
+}
+
+
+export interface Draft {
+  id: ResearchId;
+  ledgerId: ResearchId;
+  mode: "template" | "agent";
+  projectId: ResearchId;
+  sections: Array<DraftSectionsItem>;
+  writer: ResearchRoleIdentity;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+ */
+export type ExecutionManifestCodeArtifactIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ExecutionManifestEntrypointAnyOf1 = string;
+
+export interface ResearchEvaluatorIdentity {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ExecutionManifestProgramIdAnyOf1 = string;
+
+export interface ExecutionManifestResources {
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  cpu: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  memoryBytes: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  outputBytes: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  pids: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  wallMs: number;
+}
+
+
+export interface ExecutionManifest {
+  branchId: ResearchId;
+  codeArtifactId: ExecutionManifestCodeArtifactIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  condition?: string;
+  contractHash: Sha256;
+  datasetId?: ResearchId;
+  dependencyLockHash: Sha256;
+  entrypoint?: ExecutionManifestEntrypointAnyOf1 | null;
+  evaluator: ResearchEvaluatorIdentity;
+  executionManifestHash: Sha256;
+  executorContractHash?: Sha256;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: pattern="^sha256:[0-9a-f]{64}$"
+   */
+  imageDigest: string;
+  network: { measured: "off"; setup: "logged" | "off"; };
+  params: ProgramParams;
+  planHash: Sha256;
+  programId: ExecutionManifestProgramIdAnyOf1 | null;
+  projectId: ResearchId;
+  resources: ExecutionManifestResources;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  seed: number;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  stopReasons: Array<"completed" | "timeout" | "memory" | "pids" | "output-bytes" | "cancelled" | "isolation-refused">;
+  workspaceHash: Sha256;
+}
+
+
+export interface ExperimentBranch {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  attemptOrdinal: number;
+  contractHash: Sha256;
+  hypothesisHash: Sha256;
+  id: ResearchId;
+  kind?: "initial" | "replicate" | "repair";
+  parentId: ResearchId | null;
+  planHash: Sha256;
+  projectId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  runIds: Array<ResearchId>;
+  spend: ResearchCost;
+  status: "planned" | "executing" | "completed" | "failed" | "stopped";
+}
+
+
+export interface ExperimentPlanProposalEvaluator {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ExperimentPlanProposalInputPathsItem = string;
+
+export interface ExperimentPlanProposal {
+  /**
+   * Schema constraints this type cannot express: minItems=2
+   */
+  conditions: Array<ExperimentCondition>;
+  design: ResearchDesignMetadata;
+  evaluator: ExperimentPlanProposalEvaluator;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  inputPaths: Array<ExperimentPlanProposalInputPathsItem>;
 }
 
 
@@ -1436,6 +2327,12 @@ export interface InputManifestInputsItem {
 }
 
 
+export interface LessonProcedureBinding {
+  bundleHash: Sha256;
+  injection: LessonInjection | null;
+}
+
+
 export interface ResearchToolVersionsItem {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -1464,6 +2361,7 @@ export interface InputManifest {
    * Schema constraints this type cannot express: uniqueItems=true
    */
   inputs: Array<InputManifestInputsItem>;
+  lessonProcedure?: LessonProcedureBinding;
   projectId: ResearchId;
   promptRevision: Sha256;
   reservation: ResearchCost;
@@ -1473,47 +2371,156 @@ export interface InputManifest {
 }
 
 
-/**
- * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
- */
-export type ResearchInterventionEffectEditedArtifactIdAnyOf1 = string;
+export interface LessonOutcomeInput {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  inputHash: string;
+  topicId: ResearchId;
+}
 
-export interface ResearchInterventionEffect {
-  editedArtifactId: ResearchInterventionEffectEditedArtifactIdAnyOf1 | null;
-  guidanceHash: Sha256 | null;
-  kind: "approval" | "retry" | "stop";
-  target: ResearchLifecycle | null;
+
+export interface LessonValidityOutput {
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  claimSupport: number;
+  completion: boolean;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  preregistrationIntegrity: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  registryAccuracy: number;
+}
+
+
+export interface LessonSet {
+  bundleHash: Sha256;
+  decayHypothesisId: "none" | "age-linear" | "severity-weighted-age";
+  /**
+   * Schema constraints this type cannot express: maxItems=64, uniqueItems=true
+   */
+  lessonIds: Array<Sha256>;
+  /**
+   * Schema constraints this type cannot express: maxProperties=4096
+   */
+  rows: { [key: string]: LessonValidityOutput; };
+}
+
+
+export interface LessonSetRecord {
+  candidateId: Sha256;
+  id: Sha256;
+  payload: LessonSet;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64, uniqueItems=true
+   */
+  proposalIds: Array<Sha256>;
+  revision: Sha256;
+  scope: ResearchLessonScope;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  validationRunIds: Array<Sha256>;
 }
 
 
 /**
- * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+ * Schema constraints this type cannot express: minimum=0
  */
-export type InterventionViewedArtifactIdsItem = string;
+export type LessonSpendCostAnyOf1 = number;
 
-export interface Intervention {
-  action: "approve" | "reject" | "edit" | "guidance" | "stop";
-  actor: "human" | "timeout" | "scripted" | "full-auto";
+export interface LessonSpend {
   /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=128
+   * Schema constraints this type cannot express: type="integer", minimum=0
    */
-  actorId?: string;
-  approvedManifestHash: Sha256 | null;
+  calls: number;
+  cost: LessonSpendCostAnyOf1 | null;
   /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   * Schema constraints this type cannot express: minimum=0
    */
-  at?: string;
-  effect?: ResearchInterventionEffect;
-  experimental?: boolean;
-  gate: "literature" | "design" | "quality";
-  id: ResearchId;
-  reviewedManifestHash: Sha256;
-  stage?: ResearchLifecycle;
-  substantive: boolean;
+  ms: number;
   /**
-   * Schema constraints this type cannot express: uniqueItems=true
+   * Schema constraints this type cannot express: type="integer", minimum=0
    */
-  viewedArtifactIds?: Array<InterventionViewedArtifactIdsItem>;
+  physical: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+}
+
+
+export interface LessonValidationRow {
+  baselineOutput: LessonValidityOutput;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  baselineScore: number;
+  /**
+   * Preregistered evaluation stratum; omitted records use the scope domain profile.
+   * Schema constraints this type cannot express: minLength=1
+   */
+  domain?: string;
+  input: ResearchDependency1_Root;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  inputHash: string;
+  output: LessonValidityOutput;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  score: number;
+  spend: LessonSpend;
+  topicContentHash: Sha256;
+  topicId: ResearchId;
+  truth: LessonValidityOutput;
+}
+
+
+export interface LessonValidationRun {
+  baseBundleHash: Sha256;
+  bundleHash: Sha256;
+  evaluatorRevision: Sha256;
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  finishedAt: string;
+  id: Sha256;
+  identityId: Sha256;
+  issues: Array<ResearchIssue>;
+  lessonSetHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  promptVersions: Array<Sha256>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  proposalIds: Array<Sha256>;
+  registrationId: Sha256;
+  revision: Sha256;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  rows: Array<LessonValidationRow>;
+  scope: ResearchLessonScope;
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  startedAt: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  topicIds: Array<ResearchId>;
 }
 
 
@@ -1587,84 +2594,6 @@ export interface LiteratureRecord {
 }
 
 
-/**
- * Schema constraints this type cannot express: type="integer", minimum=0
- */
-export type MetricBindingSeedsItem = number;
-
-export interface MetricBinding {
-  aggregate: "individual" | "mean";
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  condition: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  metric: string;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  seeds: Array<MetricBindingSeedsItem>;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  unit: string;
-  value: number;
-}
-
-
-export interface MetricDefinition {
-  direction: "minimize" | "maximize";
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=12
-   */
-  roundingDigits?: number;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  unit: string;
-}
-
-
-export interface MetricObservation {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  condition: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  evaluatorId: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  evaluatorVersion: string;
-  experimentRunId: ResearchId;
-  id: ResearchId;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  metric: string;
-  projectId: ResearchId;
-  registrySignature: Sha256;
-  runArtifactHash: Sha256;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  seed: number;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  unit: string;
-  value: number;
-}
-
-
 export interface NoveltyReportCoverage {
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
@@ -1720,58 +2649,6 @@ export interface QueryPlan {
 }
 
 
-/**
- * Schema constraints this type cannot express: type="integer", minimum=0
- */
-export type ReplicatePolicySeedsItem = number;
-
-export interface ReplicatePolicy {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  bootstrapSeed: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  minimum: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  resamples: number;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  seeds: Array<ReplicatePolicySeedsItem>;
-}
-
-
-export interface ResearchAnalysisPolicySeedVariationChecksItem {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  condition: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  metric: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  reason: string;
-}
-
-
-export interface ResearchAnalysisPolicy {
-  confoundAction: "Stop" | "Pivot";
-  recoverProgramFailure: boolean;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
-   */
-  seedBatchSize: number;
-  seedVariationChecks: Array<ResearchAnalysisPolicySeedVariationChecksItem>;
-}
-
-
 export interface ResearchBranchSelectionCandidatesItem {
   analysisId: ResearchId;
   branchId: ResearchId;
@@ -1786,18 +2663,6 @@ export interface ResearchBranchSelectionCandidatesItem {
 }
 
 
-export interface ResearchBranchSelectionRuleOneOf2 {
-  kind: "best-of-n";
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
-   */
-  n: number;
-  selector: "preregistered-metric" | "lowest-variance";
-}
-
-
-export type ResearchBranchSelectionRule = { kind: "single"; } | ResearchBranchSelectionRuleOneOf2;
-
 export interface ResearchBranchSelection {
   candidates: Array<ResearchBranchSelectionCandidatesItem>;
   contractHash: Sha256;
@@ -1806,573 +2671,6 @@ export interface ResearchBranchSelection {
   rule: ResearchBranchSelectionRule;
   selectedBranchId: ResearchId;
   totalCost: ResearchCost;
-}
-
-
-export interface ResearchBudgetEffect {
-  /**
-   * Schema constraints this type cannot express: maximum=0
-   */
-  calls: number;
-  /**
-   * Schema constraints this type cannot express: maximum=0
-   */
-  ms: number;
-  /**
-   * Schema constraints this type cannot express: maximum=0
-   */
-  physical: number;
-  /**
-   * Schema constraints this type cannot express: maximum=0
-   */
-  tokens: number;
-}
-
-
-export interface ResearchBundleClaimLedgerArtifactsItem {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  digest?: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  kind: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  locator?: string;
-  metadata?: { [key: string]: unknown; };
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchBundleClaimLedgerClaimsItemEvidenceItem = string;
-
-export interface ResearchBundleClaimLedgerClaimsItem {
-  critical: boolean;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  evidence: Array<ResearchBundleClaimLedgerClaimsItemEvidenceItem>;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-  status: "supported" | "unresolved";
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  text: string;
-}
-
-
-export interface ResearchBundleClaimLedgerEvidenceItem {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  artifact: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  quote?: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  selector?: string;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchBundleClaimLedgerVisibleEvidenceItem = string;
-
-export interface ResearchBundleClaimLedger {
-  artifacts: Array<ResearchBundleClaimLedgerArtifactsItem>;
-  claims: Array<ResearchBundleClaimLedgerClaimsItem>;
-  evidence: Array<ResearchBundleClaimLedgerEvidenceItem>;
-  version: 1;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  visibleEvidence: Array<ResearchBundleClaimLedgerVisibleEvidenceItem>;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchClaimEvidenceIdsItem = string;
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchClaimLiteratureIdsItem = string;
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchClaimObservationIdsItem = string;
-
-export interface ResearchClaimProofCitationAnyOf1CanonicalIds {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  arxiv?: string;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  arxivVersion?: number;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  doi?: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^W[0-9]+$"
-   */
-  openalex?: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  s2?: string;
-}
-
-
-export interface ResearchClaimProofCitationAnyOf1 {
-  canonicalIds: ResearchClaimProofCitationAnyOf1CanonicalIds;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  rawHashes: Array<{ sha256: Sha256; source: "openalex" | "crossref" | "semanticscholar" | "arxiv"; }>;
-  recordId: ResearchId;
-}
-
-
-/**
- * Schema constraints this type cannot express: type="integer", minimum=1
- */
-export type ResearchClaimProofNAnyOf1 = number;
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchClaimProofQuoteAnyOf1 = string;
-
-export interface ResearchClaimProof {
-  cardId: ResearchId | null;
-  citation: ResearchClaimProofCitationAnyOf1 | null;
-  n: ResearchClaimProofNAnyOf1 | null;
-  quote: ResearchClaimProofQuoteAnyOf1 | null;
-  strength: "exact" | "supports" | "suggests";
-  type: "literature" | "result" | "method" | "interpretation";
-}
-
-
-export interface ResearchClaim {
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  evidenceIds: Array<ResearchClaimEvidenceIdsItem>;
-  id: ResearchId;
-  kind: "literature" | "metric" | "interpretation";
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  literatureIds: Array<ResearchClaimLiteratureIdsItem>;
-  metricBinding: MetricBinding | null;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  observationIds: Array<ResearchClaimObservationIdsItem>;
-  proof?: ResearchClaimProof;
-  section: "abstract" | "methods" | "experiments" | "results" | "conclusion" | "discussion";
-  strength: "descriptive" | "causal";
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  text: string;
-}
-
-
-export interface ResearchContractDatasetsItem {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-  sha256: Sha256;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchContractHypothesisSpaceItem = string;
-
-export interface SelectionRule {
-  kind: "all" | "best-of-n";
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  metric: string;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  n: number;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchContractSplitsTestItem = string;
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchContractSplitsTrainItem = string;
-
-export interface ResearchContractSplits {
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  test: Array<ResearchContractSplitsTestItem>;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  train: Array<ResearchContractSplitsTrainItem>;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchContractStopConditionsItem = string;
-
-export interface SuccessRule {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  baseline: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  condition: string;
-  /**
-   * Schema constraints this type cannot express: exclusiveMinimum=0, exclusiveMaximum=1
-   */
-  confidenceLevel: number;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  metric: string;
-  /**
-   * Schema constraints this type cannot express: minimum=0
-   */
-  minImprovement: number;
-}
-
-
-export interface ResearchContract {
-  analysisPolicy?: ResearchAnalysisPolicy;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  attemptCap: number;
-  branchSelectionRule?: ResearchBranchSelectionRule;
-  contractHash: Sha256;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  datasets: Array<ResearchContractDatasetsItem>;
-  failureRule: "stop-on-invalid";
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  hypothesisSpace: Array<ResearchContractHypothesisSpaceItem>;
-  id: ResearchId;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  metrics: Array<MetricDefinition>;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  pivotCap: number;
-  projectId: ResearchId;
-  replicatePolicy: ReplicatePolicy;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  requiredBaselines: Array<BaselineProvenance>;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  reviewCap: number;
-  selectionRule: SelectionRule;
-  splits: ResearchContractSplits;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  stopConditions: Array<ResearchContractStopConditionsItem>;
-  successRule: SuccessRule;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchDecisionDetailsReviewArtifactIdsItem = string;
-
-export interface ResearchGmplCitation {
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
-   */
-  digest: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-}
-
-
-export interface ResearchGmplFinding {
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  citations: Array<ResearchGmplCitation>;
-  contradictory?: boolean;
-  critical?: boolean;
-  disposition: "supported" | "contested" | "rejected-with-reason" | "unresolved";
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  origin: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  reason: string;
-}
-
-
-export interface ResearchDecisionDetails {
-  action: "write" | "replicate" | "repair" | "pivot" | "none";
-  analysisId: ResearchId;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
-   */
-  attemptOrdinal: number;
-  budgetEffect: ResearchBudgetEffect;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  opposing: Array<ResearchId>;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
-   */
-  pivotOrdinal: number;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  reviewArtifactIds: Array<ResearchDecisionDetailsReviewArtifactIdsItem>;
-  reviewerFindings: Array<ResearchGmplFinding>;
-  reviewerIdentityId: ResearchId;
-  selectedBranchId: ResearchId;
-  selectionId: ResearchId;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  supporting: Array<ResearchId>;
-  targetStage: "WRITE" | "EXECUTE" | "SYNTHESIS" | "STOPPED";
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchDecisionObservationIdsItem = string;
-
-export interface ResearchDecision {
-  contractHash: Sha256;
-  details?: ResearchDecisionDetails;
-  exploratory: boolean;
-  id: ResearchId;
-  kind: "Proceed" | "Refine" | "Pivot" | "Stop";
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  observationIds: Array<ResearchDecisionObservationIdsItem>;
-  projectId: ResearchId;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  reason: string;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchBundleLiteratureItem = string;
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchManifestBaselineSourcesItem = string;
-
-export interface ResearchManifestEnvironment {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  executor: string;
-  programSourceHash: Sha256;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  version: string;
-}
-
-
-export interface ResearchManifestInputsItem {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  path: string;
-  sha256: Sha256;
-}
-
-
-export interface ResearchInterventionReport {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  approvals: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  automatic: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  human: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  scripted: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  stops: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  substantive: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  total: number;
-}
-
-
-export interface ResearchManifestMetricOrigin {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  evaluatorId: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  evaluatorVersion: string;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchManifestObservationIdsItem = string;
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchManifestRunIdsItem = string;
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type ResearchManifestSearchedLiteratureItem = string;
-
-export interface ResearchManifest {
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  baselineSources: Array<ResearchManifestBaselineSourcesItem>;
-  contractHash: Sha256;
-  environment: ResearchManifestEnvironment;
-  experimental?: boolean;
-  frozenBeforeResults: boolean;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  inputs: Array<ResearchManifestInputsItem>;
-  interventionReport?: ResearchInterventionReport;
-  manifestHash: Sha256;
-  metricOrigin: ResearchManifestMetricOrigin;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  observationIds: Array<ResearchManifestObservationIdsItem>;
-  planHash: Sha256;
-  projectId: ResearchId;
-  promptRevision: Sha256;
-  reviewedEvidenceHash: Sha256;
-  runIdentityId: Sha256 | null;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  runIds: Array<ResearchManifestRunIdsItem>;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  searchedLiterature: Array<ResearchManifestSearchedLiteratureItem>;
-  selectionRule: SelectionRule;
-}
-
-
-export interface ResearchBundle {
-  amendments: Array<Amendment>;
-  claimLedger: ResearchBundleClaimLedger;
-  claims: Array<ResearchClaim>;
-  contract: ResearchContract;
-  decision: ResearchDecision;
-  disclosure: DisclosureChecklist;
-  evidence: Array<EvidenceCard>;
-  interventions: Array<Intervention>;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  literature: Array<ResearchBundleLiteratureItem>;
-  manifest: ResearchManifest;
-  observations: Array<MetricObservation>;
-  plan: ExperimentPlan;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  runs: Array<ExperimentRun>;
-  topicId: ResearchId;
 }
 
 
@@ -2852,6 +3150,19 @@ export type ResearchExportManifestSourceProvenanceCodeItem = string;
  */
 export type ResearchExportManifestSourceProvenanceEnvironmentsItem = string;
 
+export interface ResearchExportManifestSourceProvenanceLessons {
+  injected: Array<LessonInjection>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  promoted: Array<Sha256>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  proposed: Array<Sha256>;
+}
+
+
 /**
  * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
  */
@@ -2882,6 +3193,7 @@ export interface ResearchExportManifestSourceProvenance {
   data: Array<ResearchId>;
   environments: Array<ResearchExportManifestSourceProvenanceEnvironmentsItem>;
   interventions: Array<Intervention>;
+  lessons?: ResearchExportManifestSourceProvenanceLessons;
   mode?: "gate-only" | "full-auto";
   prompts: Array<ResearchRoleIdentity>;
   /**
@@ -3044,13 +3356,13 @@ export interface ResearchHypothesis {
 /**
  * Schema constraints this type cannot express: minLength=1
  */
-export type ResearchLessonApplicabilityItem = string;
+export type ResearchLessonLegacyApplicabilityItem = string;
 
-export interface ResearchLesson {
+export interface ResearchLessonLegacy {
   /**
    * Schema constraints this type cannot express: minItems=1
    */
-  applicability: Array<ResearchLessonApplicabilityItem>;
+  applicability: Array<ResearchLessonLegacyApplicabilityItem>;
   /**
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */
@@ -3067,6 +3379,127 @@ export interface ResearchLesson {
   projectId: ResearchId;
   revision: Sha256;
   validationRecordId: ResearchId | null;
+}
+
+
+export interface ResearchLessonV2CorroborationAnyOf1 {
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  originIds: Array<Sha256>;
+}
+
+
+export interface ResearchLessonRelevance {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  age: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contradictions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  negativeTransfer: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  relevance: number;
+  runId: ResearchId;
+}
+
+
+export interface ResearchLessonOrigin {
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  artifactIds: Array<ResearchId>;
+  envelope: ResearchClaimEnvelope;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  hashes: Array<Sha256>;
+  kind: "attempt" | "decision" | "review" | "intervention" | "verification" | "retrieved-web";
+  runId: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  topicContentHashes: Array<Sha256>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  topicIds: Array<ResearchId>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$le":[{"$count":"$.edit.operations[*]"},6]}
+ */
+export interface ResearchLessonProposal {
+  baseHash: Sha256;
+  edit: ResearchDependency0_Root;
+}
+
+
+export interface ResearchLessonV2Validation {
+  issues: Array<ResearchIssue>;
+  state: "proposed" | "staged" | "validated" | "rejected" | "promoted" | "rolled-back" | "expired";
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  validationRunIds: Array<Sha256>;
+}
+
+
+export interface ResearchLessonV2 {
+  corroboration: ResearchLessonV2CorroborationAnyOf1 | null;
+  decay: { hypothesisId: "none" | "age-linear" | "severity-weighted-age"; observedAtRun: ResearchId; relevanceRows: Array<ResearchLessonRelevance>; };
+  id: Sha256;
+  origin: ResearchLessonOrigin;
+  parentId: Sha256 | null;
+  projectId: ResearchId;
+  promotion: { activationEventId: Sha256; outcomeVersionId: Sha256; } | null;
+  proposal: ResearchLessonProposal;
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  recordedAt: string;
+  revision: Sha256;
+  schemaVersion: 2;
+  scope: ResearchLessonScope;
+  severity: "low" | "medium" | "high";
+  validation: ResearchLessonV2Validation;
+}
+
+
+/**
+ * One immutable lesson kind. Legacy records remain readable; only version 2 participates in guarded learning.
+ */
+export type ResearchLesson = ResearchLessonLegacy | ResearchLessonV2;
+
+export interface ResearchLessonDraft {
+  decayHypothesisId: "none" | "age-linear" | "severity-weighted-age";
+  origin: { envelope: ResearchClaimEnvelope; kind: "attempt" | "decision" | "review" | "intervention" | "verification" | "retrieved-web"; };
+  proposal: ResearchLessonProposal;
+  scope: ResearchLessonScope;
+  severity: "low" | "medium" | "high";
+}
+
+
+export interface ResearchLessonDraftBatch {
+  /**
+   * Schema constraints this type cannot express: maxItems=6
+   */
+  proposals: Array<ResearchLessonDraft>;
+}
+
+
+export interface ResearchLessonOriginContext {
+  input: ResearchDependency1_Root;
+  taskFamily: ResearchId;
+  topicId: ResearchId;
 }
 
 
@@ -3113,6 +3546,10 @@ export interface ResearchProject {
    */
   experimental?: boolean;
   id: ResearchId;
+  /**
+   * Optional immutable host-owned training input. Historical projects without this binding cannot propose reusable lessons.
+   */
+  lessonContext?: ResearchLessonOriginContext;
   mode: "gate-only" | "full-auto";
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -3237,6 +3674,7 @@ export interface ResearchWorkflowFrame {
   decisionId?: ResearchId;
   gate: ResearchGateReview | null;
   guidanceHash?: Sha256;
+  lessonProcedure?: LessonProcedureBinding;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
    */
@@ -3342,6 +3780,1643 @@ export interface SynthesisProposal {
 
 
 /**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type Config_sha256 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z0-9]+(-[a-z0-9]+)*$"
+ */
+export type Config_name = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-zA-Z0-9_-]{1,64}$"
+ */
+export type Config_toolName = string;
+
+/**
+ * What a request may override per role — never a credential slot, host availability or a permission.
+ */
+export interface Config_roleOverride {
+  capability?: Config_name | null;
+  candidate?: Config_name | null;
+  prompt?: Config_name | null;
+  responseSchema?: Config_name | null;
+  tools?: Array<Config_toolName>;
+  toolsRequired?: boolean;
+  inference?: Config_name | null;
+  ranker?: Config_name | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: propertyNames={"pattern":"^[a-z0-9]+(-[a-z0-9]+)*$"}
+ */
+export interface Config_profileRequestOneOf1OverridesOneOf2 {
+  [key: string]: Config_roleOverride;
+}
+
+
+/**
+ * Schema constraints this type cannot express: propertyNames={"pattern":"^[a-z0-9]+(-[a-z0-9]+)*$"}
+ */
+export interface Config_profileRequestOneOf2OverridesOneOf2 {
+  [key: string]: Config_roleOverride;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^https?://[^@?#\\s]+$"
+ */
+export type Config_safeBaseUrl = string;
+
+export interface Config_inferenceControlsRetryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attempts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  baseMs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxMs: number;
+}
+
+
+export interface Config_inferenceControlsReasoningOneOf2 {
+  effort?: "none" | "minimal" | "low" | "medium" | "high";
+  enabled?: boolean;
+  exclude?: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxTokens?: number;
+}
+
+
+export interface Config_inferenceControls {
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=2
+   */
+  temperature: number | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxTokens: number | null;
+  retry: null | Config_inferenceControlsRetryOneOf2;
+  reasoning: null | Config_inferenceControlsReasoningOneOf2;
+  maxTokensField?: "max_tokens" | "max_completion_tokens";
+}
+
+
+export interface Config_legacyWireStateOneOf2 {
+  state: "configured";
+  provider: "openrouter" | "ollama" | "lmstudio" | "custom";
+  baseUrl: Config_safeBaseUrl | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  credentialSlot: Config_name | null;
+  inference?: Config_inferenceControls;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Config_legacyWireStateOneOf3MissingItem = string;
+
+export interface Config_legacyWireStateOneOf3 {
+  state: "incomplete";
+  requested: { provider?: string | null; baseUrl?: string | null; model?: string | null; };
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  missing: Array<Config_legacyWireStateOneOf3MissingItem>;
+}
+
+
+export interface Config_legacyWireStateOneOf4 {
+  state: "configured-unproven";
+  provider: "openrouter" | "ollama" | "lmstudio" | "custom";
+  baseUrl: Config_safeBaseUrl | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  credentialSlot: Config_name | null;
+}
+
+
+/**
+ * The generated projection of pre-profile desktop/environment settings for ONE wire. `unconfigured` is the only state eligible for built-in/grounded fallback; `incomplete` names what was requested and resolves to an issue, never to a silent substitute. `configured-unproven` records a wire that was configured but whose width no work of this run ever observed: the stack claims NO embedding identity rather than guessing one.
+ */
+export type Config_legacyWireState = { state: "unconfigured"; } | Config_legacyWireStateOneOf2 | Config_legacyWireStateOneOf3 | Config_legacyWireStateOneOf4;
+
+export type Config_componentRevision = null | { id: Config_name; revision: Config_sha256; };
+
+export interface Config_contentRevision {
+  id: Config_name;
+  revision: Config_sha256;
+}
+
+
+export interface Config_profileRequestOneOf3 {
+  kind: "legacy";
+  chat: Config_legacyWireState;
+  embed: Config_legacyWireState;
+  /**
+   * The component references the host product genuinely runs for a legacy request — the shipped policy pipeline and ranker — recorded by the adapter that generated the projection, never guessed.
+   */
+  components: { policy: Config_componentRevision; ranker: Config_componentRevision; };
+  /**
+   * The versioned chat template the legacy host actually uses, as a content revision; null when no chat surface exists.
+   */
+  chatPrompt: Config_contentRevision | null;
+}
+
+
+/**
+ * Exactly what was asked for: a named profile, a capability tag, or the generated legacy projection of pre-profile settings.
+ */
+export type Config_profileRequest = { kind: "profile"; profile: Config_name; overrides: null | Config_profileRequestOneOf1OverridesOneOf2; } | { kind: "tag"; tag: Config_name; overrides: null | Config_profileRequestOneOf2OverridesOneOf2; } | Config_profileRequestOneOf3;
+
+/**
+ * Requested set and the effective intersection with the host allowlist. A missing required tool refuses before an identity exists, so an identity's manifest never carries one.
+ */
+export interface Config_toolManifest {
+  requested: Array<Config_toolName>;
+  effective: Array<{ name: Config_toolName; inputSchemaRevision: Config_sha256; }>;
+}
+
+
+export interface Config_rateCard {
+  /**
+   * Schema constraints this type cannot express: pattern="^[A-Z]{3}$"
+   */
+  currency: string;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  inputPerMillionTokens: number | null;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  outputPerMillionTokens: number | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  source: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+   */
+  asOf: string;
+}
+
+
+/**
+ * Everything that role actually runs with — the values, not the intent that selected them.
+ */
+export interface Config_effectiveRole {
+  provider: "openrouter" | "ollama" | "lmstudio" | "custom";
+  base: Config_safeBaseUrl;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  credentialSlot: Config_name | null;
+  inference: Config_inferenceControls;
+  prompt: Config_contentRevision | null;
+  responseSchema: Config_contentRevision | null;
+  tools: Config_toolManifest;
+  rateCard: Config_rateCard | null;
+}
+
+
+/**
+ * The one embedding identity of the run — every corpus and query vector in the run uses it. Dims are the registry value CONFIRMED against a probe/reply, never guessed from a model label.
+ */
+export interface Config_effectiveEmbedding {
+  provider: "openrouter" | "ollama" | "lmstudio" | "custom" | "builtin";
+  base: Config_safeBaseUrl | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dims: number;
+  credentialSlot: Config_name | null;
+}
+
+
+export interface Config_budgetCeilings {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxCalls: number | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxTokens: number | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxMs: number | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxConcurrency: number | null;
+}
+
+
+/**
+ * One complete, credential-free run identity: the exact request (profile, tag or generated legacy projection, plus role overrides) AND the complete effective stack — provider, suite-normalized base, model, inference controls, prompt and response-schema revisions, effective tool manifest, the one singleton embedding identity, policy/ranker component references, the effective budget and rate-card provenance. `identityId` is canonical SHA-256 over the identity's own payload excluding the id field; no clock, observation, usage, latency, key, secret or cache identifier is ever part of that payload. Reports and stores carry these in the `identityEnvelope` shape defined here: a table of identities and rows that either reference one (`run`), state that they are analysis that never ran a stack (`not-run`), or state that their facts were never recorded (`legacy-unrecorded`) — an absence is a stated absence, never a fabricated identity. Every object closes its properties, so a credential-shaped member cannot be carried.
+ */
+export interface Config_Root {
+  identityId: Config_sha256;
+  registryRevision: Config_sha256 | null;
+  hostManifestRevision: Config_sha256;
+  requested: Config_profileRequest;
+  /**
+   * Schema constraints this type cannot express: propertyNames={"pattern":"^[a-z0-9]+(-[a-z0-9]+)*$"}
+   */
+  roles: { [key: string]: Config_effectiveRole; };
+  /**
+   * The one embedding identity of the run, or null when the stack resolved no embedding component (a legacy request whose configured wire was never proven by this run's work). A profile request always resolves one.
+   */
+  embedding: Config_effectiveEmbedding | null;
+  components: { policy: Config_componentRevision; ranker: Config_componentRevision; };
+  budget: Config_budgetCeilings;
+}
+
+
+/**
+ * Stable machine refusal/validation codes. TCFG1001 unknown capability tag; TCFG1002 unknown parent; TCFG1003 inheritance cycle; TCFG1004 duplicate id; TCFG1005 unresolvable reference; TCFG1006 role/candidate kind mismatch; TCFG1007 invalid document; TCFG1008 unavailable credential slot; TCFG1009 provider/model unavailable on host; TCFG1010 required feature unavailable; TCFG1011 missing required tool; TCFG1012 embedding identity disagreement; TCFG1013 credential-bearing URL; TCFG1014 secret-shaped member; TCFG1015 no available candidate for tag; TCFG1016 profile attempts to raise a host ceiling; TCFG1017 component unavailable at revision; TCFG1018 row references no identity; TCFG1019 registry revision mismatch; TCFG1020 invalid role override; TCFG1021 incomplete wire request.
+ * Schema constraints this type cannot express: pattern="^TCFG1[0-9]{3}$"
+ */
+export type Config_issueCode = string;
+
+export interface Config_issue {
+  code: Config_issueCode;
+  path: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  detail: string;
+}
+
+
+/**
+ * Slot presence only. `source` names WHERE a value would come from (an environment variable name, `settings`), never the value.
+ */
+export interface Config_credentialSlotStatus {
+  name: Config_name;
+  configured: boolean;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  source: string | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Config_hostManifestProvidersItemModelsOneOf1Item = string;
+
+export interface Config_hostManifestEmbeddingItem {
+  provider: "openrouter" | "ollama" | "lmstudio" | "custom" | "builtin";
+  base: Config_safeBaseUrl | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dims: number | null;
+}
+
+
+export interface Config_hostManifestObservationOneOf2 {
+  kind: "declared" | "probed";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  at: string | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failures: number;
+}
+
+
+/**
+ * The credential-free host facts pure resolution consumes. Endpoints are suite-normalized bases; models/features are declared or probed; `observation` dates a LIVE refresh and stays null for synthetic/keyless manifests, which must be clock-free.
+ */
+export interface Config_hostManifest {
+  sourceClass: "desktop-settings" | "environment" | "synthetic" | "scripted";
+  credentialSlots: Array<Config_credentialSlotStatus>;
+  providers: Array<{ provider: "openrouter" | "ollama" | "lmstudio" | "custom"; base: Config_safeBaseUrl; models: Array<Config_hostManifestProvidersItemModelsOneOf1Item> | null; features: Array<Config_name>; }>;
+  embedding: Array<Config_hostManifestEmbeddingItem>;
+  /**
+   * The compiled toolbox manifest — `createToolbox().list()` with each input schema's canonical revision.
+   */
+  tools: Array<{ name: Config_toolName; description: string; inputSchemaRevision: Config_sha256; }>;
+  components: Array<{ id: Config_name; revision: Config_sha256; }>;
+  budget: Config_budgetCeilings;
+  observation: null | Config_hostManifestObservationOneOf2;
+}
+
+
+export interface Config_rowIdentityRefOneOf1 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  rowId: string;
+  identityStatus: "run";
+  identityId: Config_sha256;
+}
+
+
+export interface Config_rowIdentityRefOneOf2 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  rowId: string;
+  identityStatus: "not-run" | "legacy-unrecorded";
+}
+
+
+/**
+ * How a result row refers to the identity table. `run` rows name an identity that exists; `not-run` rows are analytic (a ceiling, a census) and cannot pretend to a provider; `legacy-unrecorded` rows keep historic results whose stack was never captured — honest absence, never a backfilled guess.
+ */
+export type Config_rowIdentityRef = Config_rowIdentityRefOneOf1 | Config_rowIdentityRefOneOf2;
+
+/**
+ * The identity table plus the rows that refer to it — the shape every identity-bearing report and store carries. The `$query` assertions bind at validation time: identity ids are unique, row ids are unique, and every `run` row resolves to exactly one identity in the table.
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.identities[*].identityId"},{"$count":{"$distinct":"$.identities[*].identityId"}}]},{"$eq":[{"$count":"$.rows[*].rowId"},{"$count":{"$distinct":"$.rows[*].rowId"}}]},{"$every":{"r":"$.rows[?(@.identityStatus=='run')]"},"$satisfies":{"$exists":{"$index-of":["$.identities[*].identityId","$r.identityId"]}}}]}
+ */
+export interface Config_identityEnvelope {
+  identities: Array<Config_Root>;
+  rows: Array<Config_rowIdentityRef>;
+}
+
+
+export interface Config_resolutionOneOf2 {
+  ok: false;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  issues: Array<Config_issue>;
+}
+
+
+/**
+ * The pure resolver's only two outcomes. Refusal is a value: sorted stable issues with document paths, no secret in any detail.
+ */
+export type Config_resolution = { ok: true; identity: Config_Root; } | Config_resolutionOneOf2;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_recordId = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+ */
+export type MasRuntime_runtimeName = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type MasRuntime_runtimeSha256 = string;
+
+export type MasRuntime_runStatus = "queued" | "running" | "waiting_for_input" | "resume_pending" | "completed" | "failed" | "cancelled";
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_masRunClaimOwnerOneOf2 = string;
+
+/**
+ * The worker claim epoch: bumped on every segment claim/reclaim, never by ordinary record writes. A semantic commit carrying a stale claim seq refuses TMAS2005 — a zombie worker whose lease expired cannot write a completion.
+ */
+export interface MasRuntime_masRunClaim {
+  owner: null | MasRuntime_masRunClaimOwnerOneOf2;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  seq: number;
+}
+
+
+/**
+ * The hierarchical invocation address `<region>/<branch>/<iteration>/<node>` segments joined by `/`; iterations are 1-based decimals.
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_invocationPath = string;
+
+export interface MasRuntime_runtimeErrorCauseOneOf2 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  docPath: string;
+  message: string;
+}
+
+
+export interface MasRuntime_runtimeError {
+  /**
+   * Schema constraints this type cannot express: pattern="^(TMAS[12][0-9]{3}|JF[0-9]{4}|JQ[0-9]{4}|JD[0-9]{4})$"
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  detail: string;
+  cause: null | MasRuntime_runtimeErrorCauseOneOf2;
+}
+
+
+export interface MasRuntime_runFailure {
+  node: null | MasRuntime_invocationPath;
+  error: MasRuntime_runtimeError;
+}
+
+
+export interface MasRuntime_budgetSpend {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
+/**
+ * An injected-clock reading, ISO-8601 shaped. Deterministic ticks under conformance; never part of a canonical identity.
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_tick = string;
+
+export interface MasRuntime_masRun {
+  id: MasRuntime_recordId;
+  workflowId: MasRuntime_runtimeName;
+  workflowVersionId: MasRuntime_runtimeSha256;
+  registryRevision: MasRuntime_runtimeSha256;
+  executableRevision: MasRuntime_runtimeSha256;
+  configRegistryRevision: null | MasRuntime_runtimeSha256;
+  profile: MasRuntime_runtimeName;
+  status: MasRuntime_runStatus;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  revision: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  segment: number;
+  /**
+   * The worker claim epoch: bumped on every segment claim/reclaim, never by ordinary record writes. A semantic commit carrying a stale claim seq refuses TMAS2005 — a zombie worker whose lease expired cannot write a completion.
+   */
+  claim: MasRuntime_masRunClaim;
+  /**
+   * The per-run trace sequence authority: record ids derive from it transactionally, so the trace order is committed state, never a process-local counter.
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceSeq: number;
+  jobId: null | MasRuntime_recordId;
+  input: unknown;
+  output: unknown;
+  failure: null | MasRuntime_runFailure;
+  /**
+   * Persisted suite FSM snapshots and host context per control descriptor id — the whole durable control state of the run.
+   */
+  fsm: { [key: string]: unknown; };
+  budget: { limits: { [key: string]: unknown; }; spent: MasRuntime_budgetSpend; };
+  createdAt: MasRuntime_tick;
+  updatedAt: MasRuntime_tick;
+}
+
+
+export type MasRuntime_attemptStatus = "running" | "completed" | "failed" | "aborted" | "uncertain";
+
+export interface MasRuntime_usageCounts {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextReads: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  promptTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completionTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unknownTokenRequests?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  estimatedTokens?: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_masNodeAttemptStopReasonOneOf2 = string;
+
+/**
+ * A bounded, redaction-safe view of a larger value. `state` says exactly why bytes may be absent; `text` is the retained bounded rendering.
+ */
+export interface MasRuntime_boundedView {
+  state: "retained" | "redacted" | "truncated" | "expired" | "not-configured" | "not-run";
+  text: null | string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  size: number;
+  artifact: null | MasRuntime_recordId;
+}
+
+
+export interface MasRuntime_toolStep {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  name: string;
+  arguments: MasRuntime_boundedView;
+  result: MasRuntime_boundedView;
+  state: "ok" | "invalid-input" | "handler-error" | "aborted" | "uncertain";
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_contextReadAddressesItem = string;
+
+export interface MasRuntime_contextRead {
+  adapter: MasRuntime_runtimeName;
+  outcome: "ok" | "unavailable" | "failed";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  units: number;
+  addresses: Array<MasRuntime_contextReadAddressesItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chars: number;
+}
+
+
+export interface MasRuntime_masNodeAttempt {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  seq: number;
+  path: MasRuntime_invocationPath;
+  invocationId: MasRuntime_runtimeName;
+  kind: "agent" | "task" | "graph" | "loop" | "switch" | "interaction";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attempt: number;
+  status: MasRuntime_attemptStatus;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  idempotencyKey: string;
+  output: unknown;
+  error: null | MasRuntime_runtimeError;
+  usage: MasRuntime_usageCounts;
+  spend: MasRuntime_budgetSpend;
+  stopReason: null | MasRuntime_masNodeAttemptStopReasonOneOf2;
+  transcript: MasRuntime_boundedView;
+  toolSteps: Array<MasRuntime_toolStep>;
+  contextReads: Array<MasRuntime_contextRead>;
+  restored: boolean;
+  startedAt: MasRuntime_tick;
+  finishedAt: null | MasRuntime_tick;
+}
+
+
+export interface MasRuntime_messageEnd {
+  path: MasRuntime_invocationPath;
+  port: MasRuntime_runtimeName;
+}
+
+
+export interface MasRuntime_masMessage {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  seq: number;
+  edgeId: MasRuntime_runtimeName;
+  from: MasRuntime_messageEnd;
+  to: MasRuntime_messageEnd;
+  adapter: MasRuntime_runtimeName;
+  aggregation: "one" | "ordered-list" | "named-object";
+  /**
+   * The edge-document-order position among the target port's inbound edges — the aggregation order, independent of completion timing.
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  index: number;
+  payload: unknown;
+  payloadState: "retained" | "redacted" | "truncated" | "expired";
+  artifact: null | MasRuntime_recordId;
+  at: MasRuntime_tick;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^/"
+ */
+export type MasRuntime_masStateRevisionProvenanceMembersItem = string;
+
+export interface MasRuntime_masStateRevision {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  seq: number;
+  /**
+   * The state owner: '' for the workflow root, or the graph invocation path for an isolated child namespace.
+   */
+  namespace: string;
+  parent: null | MasRuntime_recordId;
+  value: unknown;
+  provenance: { path: MasRuntime_invocationPath; members: Array<MasRuntime_masStateRevisionProvenanceMembersItem>; };
+  at: MasRuntime_tick;
+}
+
+
+export interface MasRuntime_masInteractionExpiryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  afterMs: number;
+  deadline: MasRuntime_tick;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRuntime_masInteractionResponseKeyOneOf2 = string;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type MasRuntime_masInteractionResumeSegmentOneOf2 = number;
+
+export interface MasRuntime_masInteraction {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  node: MasRuntime_runtimeName;
+  path: MasRuntime_invocationPath;
+  status: "waiting" | "responded" | "cancelled" | "expired";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  revision: number;
+  prompt: unknown;
+  responseSchema: { [key: string]: unknown; } | boolean;
+  expiry: null | MasRuntime_masInteractionExpiryOneOf2;
+  response: unknown;
+  responseKey: null | MasRuntime_masInteractionResponseKeyOneOf2;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  segment: number;
+  resumeSegment: null | MasRuntime_masInteractionResumeSegmentOneOf2;
+  requestedAt: MasRuntime_tick;
+  resolvedAt: null | MasRuntime_tick;
+}
+
+
+export interface MasRuntime_masTraceArtifact {
+  id: MasRuntime_recordId;
+  runId: MasRuntime_recordId;
+  kind: "transcript" | "tool-arguments" | "tool-result" | "message-payload" | "context-unit" | "normalization";
+  state: "retained" | "redacted" | "truncated" | "expired";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  size: number;
+  bytes: null | string;
+  at: MasRuntime_tick;
+}
+
+
+/**
+ * Store-neutral runtime records: the run, the node attempt, the message, the state revision, the interaction and the bounded trace artifact. Persistence implements collections over exactly these shapes; the runtime constructs them; the conformance instrument reads them. Timestamps come from the injected host clock (deterministic ticks under conformance) and never enter a canonical identity. Credential values have no representable member, and every omitted payload is an explicit state — `retained`, `redacted`, `truncated`, `expired`, `not-configured` or `not-run` — never a silent absence.
+ */
+export type MasRuntime_Root = MasRuntime_masRun | MasRuntime_masNodeAttempt | MasRuntime_masMessage | MasRuntime_masStateRevision | MasRuntime_masInteraction | MasRuntime_masTraceArtifact;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+ */
+export type MasWorkflow_name = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type MasWorkflow_sha256 = string;
+
+export interface MasWorkflow_RootProvenance {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  author: string;
+}
+
+
+/**
+ * An embedded JSON Schema document. The semantic validator compiles it; a schema that does not compile refuses.
+ */
+export type MasWorkflow_jsonSchema = { [key: string]: unknown; } | boolean;
+
+export interface MasWorkflow_schemaCarrier {
+  schema: MasWorkflow_jsonSchema;
+}
+
+
+export interface MasWorkflow_portRef {
+  node: MasWorkflow_name;
+  port: MasWorkflow_name;
+}
+
+
+export interface MasWorkflow_ports {
+  /**
+   * Schema constraints this type cannot express: minProperties=1, propertyNames={"pattern":"^[a-z][a-z0-9-]*$"}
+   */
+  ports: { [key: string]: { schema: MasWorkflow_jsonSchema; }; };
+}
+
+
+export interface MasWorkflow_statePullItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  member: string;
+  as: MasWorkflow_name;
+}
+
+
+export type MasWorkflow_statePull = Array<MasWorkflow_statePullItem>;
+
+export interface MasWorkflow_statePushItem {
+  from: MasWorkflow_name;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  member: string;
+}
+
+
+export type MasWorkflow_statePush = Array<MasWorkflow_statePushItem>;
+
+/**
+ * Schema constraints this type cannot express: minProperties=1
+ */
+export interface MasWorkflow_nodeLimitsOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolRounds?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextChars?: number;
+}
+
+
+export type MasWorkflow_nodeLimits = null | MasWorkflow_nodeLimitsOneOf2;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9_-]*$"
+ */
+export type MasWorkflow_agentNodeToolsItem = string;
+
+export interface MasWorkflow_agentNode {
+  id: MasWorkflow_name;
+  kind: "agent";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  role: MasWorkflow_name;
+  profile: MasWorkflow_name;
+  instructionsRevision: MasWorkflow_sha256;
+  tools: Array<MasWorkflow_agentNodeToolsItem>;
+  context: Array<MasWorkflow_name>;
+  messageAdapter: MasWorkflow_name;
+  executor?: MasWorkflow_name;
+}
+
+
+export interface MasWorkflow_taskNode {
+  id: MasWorkflow_name;
+  kind: "task";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  handler: MasWorkflow_name;
+  effect: "pure" | "read" | "effectful";
+}
+
+
+export interface MasWorkflow_graphNodePullItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  parent: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  child: string;
+}
+
+
+export interface MasWorkflow_graphNodePushItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  child: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  parent: string;
+}
+
+
+export interface MasWorkflow_graphNode {
+  id: MasWorkflow_name;
+  kind: "graph";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  subgraph: MasWorkflow_name;
+  pull: Array<MasWorkflow_graphNodePullItem>;
+  push: Array<MasWorkflow_graphNodePushItem>;
+}
+
+
+/**
+ * A Jaren JSON Query document — an operator object, a `$`-rooted path string, or a literal; never null, so a nullable member's oneOf stays decidable. Compilability is a semantic gate.
+ * Schema constraints this type cannot express: not={"type":"null"}
+ */
+export type MasWorkflow_queryDocument = unknown;
+
+export interface MasWorkflow_loopNode {
+  id: MasWorkflow_name;
+  kind: "loop";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  body: MasWorkflow_name;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  init: Array<{ port: MasWorkflow_name; to: string; }>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  feedback: Array<{ from: string; to: string; }>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  result: Array<{ port: MasWorkflow_name; from: string; }>;
+  /**
+   * The host-owned iteration cap. Positivity is the semantic gate, so an unbounded declaration refuses at its own pointer rather than as a shape error.
+   * Schema constraints this type cannot express: type="integer"
+   */
+  maxIterations: number;
+  termination: MasWorkflow_queryDocument;
+}
+
+
+export interface MasWorkflow_switchNodeBranchesItem {
+  id: MasWorkflow_name;
+  when: MasWorkflow_queryDocument;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  nodes: Array<MasWorkflow_name>;
+  result: MasWorkflow_portRef;
+}
+
+
+export interface MasWorkflow_switchNode {
+  id: MasWorkflow_name;
+  kind: "switch";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  mode: "one-of" | "multi-select";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  branches: Array<MasWorkflow_switchNodeBranchesItem>;
+  default: null | MasWorkflow_name;
+}
+
+
+export interface MasWorkflow_interactionNodeExpiryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  afterMs: number;
+}
+
+
+export interface MasWorkflow_interactionNode {
+  id: MasWorkflow_name;
+  kind: "interaction";
+  input: MasWorkflow_ports;
+  output: MasWorkflow_ports;
+  statePull: MasWorkflow_statePull;
+  statePush: MasWorkflow_statePush;
+  limits: MasWorkflow_nodeLimits;
+  prompt: MasWorkflow_schemaCarrier;
+  response: MasWorkflow_schemaCarrier;
+  expiry: null | MasWorkflow_interactionNodeExpiryOneOf2;
+}
+
+
+export type MasWorkflow_invocation = MasWorkflow_agentNode | MasWorkflow_taskNode | MasWorkflow_graphNode | MasWorkflow_loopNode | MasWorkflow_switchNode | MasWorkflow_interactionNode;
+
+export interface MasWorkflow_messageEdge {
+  id: MasWorkflow_name;
+  from: MasWorkflow_portRef;
+  to: MasWorkflow_portRef;
+  adapter: MasWorkflow_name;
+  select: null | MasWorkflow_queryDocument;
+  aggregation: "one" | "ordered-list" | "named-object";
+}
+
+
+export interface MasWorkflow_workflowLimits {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  toolRounds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  fanOut: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  concurrency: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  iterations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  contextChars: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  traceBytes: number;
+}
+
+
+/**
+ * The immutable, content-addressed intermediate representation every authoring path emits and the only shape the runtime executes. A version carries its stable workflow id, its canonical `versionId` (the SHA-256 of the document with `versionId`, `provenance` and `compile` excluded, so authorship and source provenance can never move a version), closed input/output/state schemas, named entry/exit ports, the closed six-kind invocation union, control dependencies, ordered typed message edges, workflow/node caps, pinned registry and CONFIG references and compile metadata. Secrets, clocks and observed results have no representable member. Unknown members refuse at every object.
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.nodes[*].id"},{"$count":{"$distinct":"$.nodes[*].id"}}]},{"$eq":[{"$count":"$.messages[*].id"},{"$count":{"$distinct":"$.messages[*].id"}}]},{"$every":{"n":"$.nodes[?(@.kind=='switch')]"},"$satisfies":{"$eq":[{"$count":"$n.branches[*].id"},{"$count":{"$distinct":"$n.branches[*].id"}}]}}]}
+ */
+export interface MasWorkflow_Root {
+  $mas: "0.1";
+  workflowId: MasWorkflow_name;
+  versionId: MasWorkflow_sha256;
+  parentVersionId: null | MasWorkflow_sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  description: string;
+  provenance: MasWorkflow_RootProvenance;
+  input: MasWorkflow_schemaCarrier;
+  output: MasWorkflow_schemaCarrier;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  entry: Array<{ port: MasWorkflow_name; to: MasWorkflow_portRef; }>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  exit: Array<{ port: MasWorkflow_name; from: MasWorkflow_portRef; }>;
+  state: { schema: MasWorkflow_jsonSchema; init: unknown; };
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  nodes: Array<MasWorkflow_invocation>;
+  control: Array<{ from: MasWorkflow_name; to: MasWorkflow_name; }>;
+  messages: Array<MasWorkflow_messageEdge>;
+  limits: MasWorkflow_workflowLimits;
+  /**
+   * The pinned MAS registry snapshot revision. `null` is legal only for a subgraph-embedded child, which inherits the enclosing pin.
+   */
+  registry: { revision: null | MasWorkflow_sha256; };
+  config: { registryRevision: null | MasWorkflow_sha256; profile: MasWorkflow_name; };
+  compile: { schemaVersion: "0.1"; sourceMode: "declarative" | "imperative"; sourceDesignRevision: null | MasWorkflow_sha256; executableRevision: null | MasWorkflow_sha256; };
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+ */
+export type MasRegistry_registryName = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type MasRegistry_registrySha256 = string;
+
+export interface MasRegistry_RootRolesItem {
+  id: MasRegistry_registryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  instructions: string;
+  instructionsRevision: MasRegistry_registrySha256;
+  capabilities: Array<MasRegistry_registryName>;
+}
+
+
+export interface MasRegistry_RootHandlersItem {
+  id: MasRegistry_registryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  effect: "pure" | "read" | "effectful";
+  /**
+   * `honored` — the bound host handler accepts and honors an out-of-band idempotency key; required before an effectful handler may bind.
+   */
+  idempotency: "not-required" | "honored";
+}
+
+
+export interface MasRegistry_RootToolsItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9_-]*$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  effect: "pure" | "read" | "effectful";
+  input: { [key: string]: unknown; } | boolean;
+  inputRevision: MasRegistry_registrySha256;
+}
+
+
+export interface MasRegistry_RootMessageAdaptersItem {
+  id: MasRegistry_registryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+}
+
+
+export interface MasRegistry_RootContextAdaptersItem {
+  id: MasRegistry_registryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  capabilities: Array<MasRegistry_registryName>;
+}
+
+
+export interface MasRegistry_RootTemplatesItem {
+  id: MasRegistry_registryName;
+  versionId: MasRegistry_registrySha256;
+  /**
+   * The embedded MasTemplateVersion document, validated against its own schema by the snapshot constructor.
+   */
+  template: { [key: string]: unknown; };
+}
+
+
+export interface MasRegistry_RootSubgraphsItem {
+  id: MasRegistry_registryName;
+  versionId: MasRegistry_registrySha256;
+  /**
+   * The embedded MasWorkflowVersion document, validated against the workflow schema by the snapshot constructor; its versionId must recompute.
+   */
+  workflow: { [key: string]: unknown; };
+}
+
+
+/**
+ * The validated capability snapshot a workflow pins by revision: role identities with content-addressed instructions, named task handler contracts, schema-checked tool declarations, message and context adapter identities, immutable template versions and embedded subgraph workflow versions. Entries are data descriptions only — a function, credential, URL or mutable reference has no representable member; host registries bind functions to these ids only after the snapshot validates. The snapshot revision is the canonical SHA-256 of this whole document.
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.roles[*].id"},{"$count":{"$distinct":"$.roles[*].id"}}]},{"$eq":[{"$count":"$.handlers[*].id"},{"$count":{"$distinct":"$.handlers[*].id"}}]},{"$eq":[{"$count":"$.tools[*].id"},{"$count":{"$distinct":"$.tools[*].id"}}]},{"$eq":[{"$count":"$.messageAdapters[*].id"},{"$count":{"$distinct":"$.messageAdapters[*].id"}}]},{"$eq":[{"$count":"$.contextAdapters[*].id"},{"$count":{"$distinct":"$.contextAdapters[*].id"}}]},{"$eq":[{"$count":"$.templates[*].id"},{"$count":{"$distinct":"$.templates[*].id"}}]},{"$eq":[{"$count":"$.subgraphs[*].id"},{"$count":{"$distinct":"$.subgraphs[*].id"}}]}]}
+ */
+export interface MasRegistry_Root {
+  $masRegistry: "0.1";
+  registryId: MasRegistry_registryName;
+  agentExecutors?: Array<{ id: MasRegistry_registryName; version: MasRegistry_registrySha256; }>;
+  roles: Array<MasRegistry_RootRolesItem>;
+  handlers: Array<MasRegistry_RootHandlersItem>;
+  tools: Array<MasRegistry_RootToolsItem>;
+  messageAdapters: Array<MasRegistry_RootMessageAdaptersItem>;
+  contextAdapters: Array<MasRegistry_RootContextAdaptersItem>;
+  templates: Array<MasRegistry_RootTemplatesItem>;
+  subgraphs: Array<MasRegistry_RootSubgraphsItem>;
+}
+
+
+export interface Lessons_LessonRegistrationTopicsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  sha256: Sha256;
+}
+
+
+export interface Lessons_LessonRegistrationDecayItem {
+  id: "none" | "age-linear" | "severity-weighted-age";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  horizon: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonRegistrationNegativesItemCauseAnyOf1 = string;
+
+export interface Lessons_LessonRegistrationNegativesItem {
+  id: "poisoned" | "volatile" | "cross-domain" | "unsupported" | "regression-inducing" | "web-uncorroborated" | "leaked-origin" | "active-edit-attempt" | "async-validator";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  cause: Lessons_LessonRegistrationNegativesItemCauseAnyOf1 | null;
+}
+
+
+export interface Lessons_LessonRegistration {
+  id: "research-lessons-v1";
+  revision: Sha256;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  topics: Array<Lessons_LessonRegistrationTopicsItem>;
+  scope: ResearchLessonScope;
+  seed: 17753;
+  resamples: 2000;
+  primary: "claimSupport*registryAccuracy*preregistrationIntegrity";
+  maxCalls: 128;
+  maxTokens: 131072;
+  maxPhysical: 128;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  decay: Array<Lessons_LessonRegistrationDecayItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=9, maxItems=9
+   */
+  negatives: Array<Lessons_LessonRegistrationNegativesItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonMeasurementRowReasonAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type Lessons_LessonMeasurementRowPrimaryAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type Lessons_LessonMeasurementRowCompletionAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.primary",{"$mul":["$.output.claimSupport",{"$mul":["$.output.registryAccuracy","$.output.preregistrationIntegrity"]}]}]},{"$eq":["$.completion","$.output.completion"]}]}
+ */
+export interface Lessons_LessonTopicMeasurement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  topicId: string;
+  topicHash: Sha256;
+  output: LessonValidityOutput;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  primary: number;
+  completion: boolean;
+  spend: LessonSpend;
+}
+
+
+export interface Lessons_LessonCounts {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  proposed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  staged: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  validated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rejected: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  promoted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rolledBack: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  expired: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  uncorroborated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  leaked: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonNativeMeasurementCodeAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonNativeMeasurementCauseAnyOf1 = string;
+
+export interface Lessons_LessonNativeMeasurementDecayItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  runId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  hypothesisId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  age: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  relevance: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  weight: number;
+}
+
+
+export interface Lessons_LessonNativeMeasurementProcedureReadsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  runId: string;
+  bundleHash: Sha256;
+  rootHash: Sha256;
+}
+
+
+export interface Lessons_LessonNativeMeasurement {
+  phase: "proposal" | "materialization" | "validation" | "staging" | "approval" | "activation" | "injection";
+  fixtureKind: "topic-quality" | "synthetic-refusal";
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  proposalIds: Array<Sha256>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  stagedIds: Array<Sha256>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  validatedIds: Array<Sha256>;
+  candidateBundleHash: Sha256 | null;
+  candidateSetHash: Sha256 | null;
+  validationRun: LessonValidationRun | null;
+  versionId: Sha256 | null;
+  evaluationId: Sha256 | null;
+  activationEventId: Sha256 | null;
+  injections: Array<LessonInjection>;
+  code: Lessons_LessonNativeMeasurementCodeAnyOf1 | null;
+  cause: Lessons_LessonNativeMeasurementCauseAnyOf1 | null;
+  issues: Array<ResearchIssue>;
+  matched: boolean;
+  proposerSpend: LessonSpend;
+  validationSpend: LessonSpend;
+  decay: Array<Lessons_LessonNativeMeasurementDecayItem>;
+  procedureReads: Array<Lessons_LessonNativeMeasurementProcedureReadsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonMeasurementRowRefusalsItemCauseAnyOf1 = string;
+
+export interface Lessons_LessonMeasurementRowRefusalsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  count: number;
+  cause: Lessons_LessonMeasurementRowRefusalsItemCauseAnyOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonMeasurementRowExpectedCodeAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonMeasurementRowObservedCodeAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonMeasurementRowExpectedCauseAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonMeasurementRowObservedCauseAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonMeasurementRowEligibilityIssuesItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.spend.calls",{"$add":[{"$sum":"$.topics[*].spend.calls"},"$.preparationSpend.calls"]}]},{"$eq":["$.spend.tokens",{"$add":[{"$sum":"$.topics[*].spend.tokens"},"$.preparationSpend.tokens"]}]},{"$eq":["$.spend.physical",{"$add":[{"$sum":"$.topics[*].spend.physical"},"$.preparationSpend.physical"]}]},{"$eq":["$.spend.ms",{"$add":[{"$sum":"$.topics[*].spend.ms"},"$.preparationSpend.ms"]}]},{"$eq":["$.spend.replayed",{"$add":[{"$sum":"$.topics[*].spend.replayed"},"$.preparationSpend.replayed"]}]},{"$or":[{"$and":[{"$eq":[{"$count":"$.topics[*]"},0]},{"$eq":["$.primary",null]},{"$eq":["$.completion",null]}]},{"$and":[{"$eq":[{"$count":"$.topics[*]"},3]},{"$eq":["$.primary",{"$div":[{"$sum":"$.topics[*].primary"},3]}]},{"$eq":["$.completion",{"$div":[{"$count":"$.topics[?(@.completion==true)]"},3]}]}]}]},{"$or":[{"$eq":["$.state","implementation-missing"]},{"$eq":["$.reason",null]}]},{"$or":[{"$eq":["$.state","implementation-missing"]},{"$eq":["$.id","lessons-off"]},{"$eq":["$.id","lesson-oracle"]},{"$ne":["$.native",null]}]},{"$or":[{"$eq":["$.state","measured"]},{"$and":[{"$eq":["$.reason","implementation-missing"]},{"$eq":["$.primary",null]},{"$eq":[{"$count":"$.topics[*]"},0]}]}]},{"$eq":["$.matched",{"$and":[{"$ne":["$.expectedCode",null]},{"$eq":["$.expectedCode","$.observedCode"]},{"$eq":["$.expectedCause","$.observedCause"]}]}]},{"$le":["$.counts.promoted","$.counts.validated"]},{"$le":["$.counts.rolledBack","$.counts.promoted"]},{"$le":["$.counts.staged","$.counts.proposed"]},{"$le":["$.counts.validated","$.counts.proposed"]},{"$le":["$.counts.rejected","$.counts.proposed"]},{"$le":["$.counts.promoted","$.counts.proposed"]},{"$le":["$.counts.rolledBack","$.counts.proposed"]},{"$le":["$.counts.expired","$.counts.proposed"]},{"$le":["$.counts.uncorroborated","$.counts.proposed"]},{"$le":["$.counts.leaked","$.counts.proposed"]},{"$or":[{"$eq":["$.activated",false]},{"$gt":["$.counts.promoted",0]}]},{"$or":[{"$eq":["$.native",null]},{"$and":[{"$eq":["$.counts.proposed",{"$count":"$.native.proposalIds[*]"}]},{"$eq":["$.counts.staged",{"$count":"$.native.stagedIds[*]"}]},{"$eq":["$.counts.validated",{"$count":"$.native.validatedIds[*]"}]},{"$eq":["$.native.matched",{"$and":[{"$ne":["$.expectedCode",null]},{"$eq":["$.native.code","$.expectedCode"]}]}]},{"$or":[{"$and":[{"$eq":["$.native.code",null]},{"$eq":[{"$count":"$.native.issues[*]"},0]}]},{"$eq":["$.native.code","$.native.issues[0].code"]}]},{"$or":[{"$eq":["$.native.validationRun",null]},{"$and":[{"$eq":["$.validationRunId","$.native.validationRun.id"]},{"$eq":["$.native.candidateBundleHash","$.native.validationRun.bundleHash"]}]}]},{"$eq":["$.preparationSpend.calls",{"$add":["$.native.proposerSpend.calls","$.native.validationSpend.calls"]}]},{"$eq":["$.preparationSpend.tokens",{"$add":["$.native.proposerSpend.tokens","$.native.validationSpend.tokens"]}]},{"$eq":["$.preparationSpend.physical",{"$add":["$.native.proposerSpend.physical","$.native.validationSpend.physical"]}]},{"$eq":["$.preparationSpend.ms",{"$add":["$.native.proposerSpend.ms","$.native.validationSpend.ms"]}]},{"$eq":["$.preparationSpend.replayed",{"$add":["$.native.proposerSpend.replayed","$.native.validationSpend.replayed"]}]},{"$eq":["$.activated",{"$ne":["$.native.activationEventId",null]}]}]}]}]}
+ */
+export interface Lessons_LessonMeasurementRow {
+  id: "lessons-off" | "lessons-on" | "lessons-on/decay:none" | "lessons-on/decay:age-linear" | "lessons-on/decay:severity-weighted-age" | "lesson-oracle" | "lesson-refusal:poisoned" | "lesson-refusal:volatile" | "lesson-refusal:cross-domain" | "lesson-refusal:unsupported" | "lesson-refusal:regression-inducing" | "lesson-refusal:web-uncorroborated" | "lesson-refusal:leaked-origin" | "lesson-refusal:active-edit-attempt" | "lesson-refusal:async-validator";
+  state: "measured" | "implementation-missing";
+  reason: Lessons_LessonMeasurementRowReasonAnyOf1 | null;
+  scope: ResearchLessonScope;
+  identityStatus: "run" | "not-run";
+  comparisonIdentity: Sha256;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  originIds: Array<Sha256>;
+  validationRunId: Sha256 | null;
+  bundleHash: Sha256;
+  lessonSetHash: Sha256;
+  primary: Lessons_LessonMeasurementRowPrimaryAnyOf1 | null;
+  completion: Lessons_LessonMeasurementRowCompletionAnyOf1 | null;
+  topics: Array<Lessons_LessonTopicMeasurement>;
+  counts: Lessons_LessonCounts;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  drift: number;
+  spend: LessonSpend;
+  preparationSpend: LessonSpend;
+  native: Lessons_LessonNativeMeasurement | null;
+  refusals: Array<Lessons_LessonMeasurementRowRefusalsItem>;
+  expectedCode: Lessons_LessonMeasurementRowExpectedCodeAnyOf1 | null;
+  observedCode: Lessons_LessonMeasurementRowObservedCodeAnyOf1 | null;
+  expectedCause: Lessons_LessonMeasurementRowExpectedCauseAnyOf1 | null;
+  observedCause: Lessons_LessonMeasurementRowObservedCauseAnyOf1 | null;
+  matched: boolean;
+  eligibilityIssues: Array<Lessons_LessonMeasurementRowEligibilityIssuesItem>;
+  activated: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonComparisonIssuesItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonComparisonTopicIdsItem = string;
+
+export interface Lessons_LessonComparisonIntervalAnyOf1 {
+  mean: number;
+  low: number;
+  high: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  n: number;
+}
+
+
+export interface Lessons_LessonComparison {
+  comparable: boolean;
+  issues: Array<Lessons_LessonComparisonIssuesItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  topicIds: Array<Lessons_LessonComparisonTopicIdsItem>;
+  deltas: Array<number>;
+  mean: number | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  negativeTransfer: number;
+  interval: Lessons_LessonComparisonIntervalAnyOf1 | null;
+  seed: 17753;
+  resamples: 2000;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_RootLimitationsItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].id"],["lessons-off","lessons-on","lessons-on/decay:none","lessons-on/decay:age-linear","lessons-on/decay:severity-weighted-age","lesson-oracle","lesson-refusal:poisoned","lesson-refusal:volatile","lesson-refusal:cross-domain","lesson-refusal:unsupported","lesson-refusal:regression-inducing","lesson-refusal:web-uncorroborated","lesson-refusal:leaked-origin","lesson-refusal:active-edit-attempt","lesson-refusal:async-validator"]]},{"$eq":[["$.identity.rows[*].rowId"],["$.rows[*].id"]]},{"$eq":["$.gate.writebackEligible",{"$and":["$.gate.mechanism","$.gate.comparable","$.gate.safety","$.gate.cost","$.gate.outcome",{"$gt":["$.pair.interval.low",0]}]}]},{"$eq":["$.gate.comparable","$.pair.comparable"]},{"$eq":["$.pair.comparable",{"$and":[{"$eq":["$.rows[0].state","measured"]},{"$eq":["$.rows[1].state","measured"]},{"$eq":["$.rows[0].scope","$.rows[1].scope"]},{"$eq":["$.rows[0].identityStatus","$.rows[1].identityStatus"]},{"$eq":["$.rows[0].comparisonIdentity","$.rows[1].comparisonIdentity"]},{"$eq":[["$.rows[0].topics[*].topicId"],["$.rows[1].topics[*].topicId"]]},{"$eq":[["$.rows[0].topics[*].topicHash"],["$.rows[1].topics[*].topicHash"]]},{"$eq":[{"$count":"$.rows[0].topics[*]"},3]}]}]},{"$eq":["$.pair.comparable",{"$eq":[{"$count":"$.pair.issues[*]"},0]}]},{"$eq":["$.pair.negativeTransfer",{"$count":"$.pair.deltas[?(@<0)]"}]},{"$or":[{"$and":[{"$eq":["$.pair.comparable",false]},{"$eq":["$.pair.mean",null]},{"$eq":["$.pair.interval",null]},{"$eq":[{"$count":"$.pair.deltas[*]"},0]},{"$eq":[{"$count":"$.pair.topicIds[*]"},0]}]},{"$and":[{"$eq":["$.pair.comparable",true]},{"$eq":[["$.pair.topicIds[*]"],["$.registration.topics[*].id"]]},{"$eq":[{"$count":"$.pair.deltas[*]"},3]},{"$eq":["$.pair.mean",{"$div":[{"$sum":"$.pair.deltas[*]"},3]}]},{"$eq":["$.pair.interval.mean","$.pair.mean"]},{"$eq":["$.pair.interval.n",3]},{"$le":["$.pair.interval.low","$.pair.interval.high"]},{"$eq":["$.pair.deltas[0]",{"$sub":["$.rows[1].topics[0].primary","$.rows[0].topics[0].primary"]}]},{"$eq":["$.pair.deltas[1]",{"$sub":["$.rows[1].topics[1].primary","$.rows[0].topics[1].primary"]}]},{"$eq":["$.pair.deltas[2]",{"$sub":["$.rows[1].topics[2].primary","$.rows[0].topics[2].primary"]}]}]}]},{"$eq":["$.gate.outcome",{"$and":[{"$eq":["$.rows[1].state","measured"]},{"$gt":["$.rows[1].counts.validated",0]},{"$eq":[{"$count":"$.rows[1].eligibilityIssues[*]"},0]}]}]},{"$eq":[["$.registration.negatives[*].id"],["poisoned","volatile","cross-domain","unsupported","regression-inducing","web-uncorroborated","leaked-origin","active-edit-attempt","async-validator"]]},{"$eq":[["$.registration.decay[*].id"],["none","age-linear","severity-weighted-age"]]},{"$and":[{"$eq":["$.rows[6].expectedCode","$.registration.negatives[0].code"]},{"$eq":["$.rows[6].expectedCause","$.registration.negatives[0].cause"]}]},{"$and":[{"$eq":["$.rows[7].expectedCode","$.registration.negatives[1].code"]},{"$eq":["$.rows[7].expectedCause","$.registration.negatives[1].cause"]}]},{"$and":[{"$eq":["$.rows[8].expectedCode","$.registration.negatives[2].code"]},{"$eq":["$.rows[8].expectedCause","$.registration.negatives[2].cause"]}]},{"$and":[{"$eq":["$.rows[9].expectedCode","$.registration.negatives[3].code"]},{"$eq":["$.rows[9].expectedCause","$.registration.negatives[3].cause"]}]},{"$and":[{"$eq":["$.rows[10].expectedCode","$.registration.negatives[4].code"]},{"$eq":["$.rows[10].expectedCause","$.registration.negatives[4].cause"]}]},{"$and":[{"$eq":["$.rows[11].expectedCode","$.registration.negatives[5].code"]},{"$eq":["$.rows[11].expectedCause","$.registration.negatives[5].cause"]}]},{"$and":[{"$eq":["$.rows[12].expectedCode","$.registration.negatives[6].code"]},{"$eq":["$.rows[12].expectedCause","$.registration.negatives[6].cause"]}]},{"$and":[{"$eq":["$.rows[13].expectedCode","$.registration.negatives[7].code"]},{"$eq":["$.rows[13].expectedCause","$.registration.negatives[7].cause"]}]},{"$and":[{"$eq":["$.rows[14].expectedCode","$.registration.negatives[8].code"]},{"$eq":["$.rows[14].expectedCause","$.registration.negatives[8].cause"]}]},{"$every":{"row":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$row.scope","$.registration.scope"]},{"$or":[{"$eq":[{"$count":"$row.topics[*]"},0]},{"$and":[{"$eq":[["$row.topics[*].topicId"],["$.registration.topics[*].id"]]},{"$eq":[["$row.topics[*].topicHash"],["$.registration.topics[*].sha256"]]}]}]},{"$some":{"identity":"$.identity.rows[*]"},"$satisfies":{"$and":[{"$eq":["$identity.rowId","$row.id"]},{"$eq":["$identity.identityStatus","$row.identityStatus"]}]}}]}},{"$every":{"row":"$.rows[?(@.expectedCode!=null)]"},"$satisfies":{"$and":[{"$eq":["$row.counts.proposed",1]},{"$eq":["$row.counts.rejected",{"$count":"$row.refusals[*]"}]},{"$eq":[{"$count":"$row.originIds[*]"},1]},{"$or":[{"$eq":["$row.observedCode",null]},{"$and":[{"$eq":[{"$count":"$row.refusals[*]"},1]},{"$eq":["$row.refusals[0].code","$row.observedCode"]},{"$eq":["$row.refusals[0].cause","$row.observedCause"]},{"$eq":["$row.refusals[0].count",1]}]}]}]}},{"$or":[{"$eq":["$.rows[1].state","implementation-missing"]},{"$and":[{"$ne":["$.rows[1].validationRunId",null]},{"$gt":[{"$count":"$.rows[1].originIds[*]"},0]},{"$eq":[{"$count":"$.rows[1].topics[*]"},3]}]}]},{"$or":[{"$eq":["$.rows[2].state","implementation-missing"]},{"$and":[{"$ne":["$.rows[2].validationRunId",null]},{"$gt":[{"$count":"$.rows[2].originIds[*]"},0]},{"$eq":[{"$count":"$.rows[2].topics[*]"},3]}]}]},{"$or":[{"$eq":["$.rows[3].state","implementation-missing"]},{"$and":[{"$ne":["$.rows[3].validationRunId",null]},{"$gt":[{"$count":"$.rows[3].originIds[*]"},0]},{"$eq":[{"$count":"$.rows[3].topics[*]"},3]}]}]},{"$or":[{"$eq":["$.rows[4].state","implementation-missing"]},{"$and":[{"$ne":["$.rows[4].validationRunId",null]},{"$gt":[{"$count":"$.rows[4].originIds[*]"},0]},{"$eq":[{"$count":"$.rows[4].topics[*]"},3]}]}]},{"$eq":["$.gate.mechanism",{"$every":{"row":"$.rows[*]"},"$satisfies":{"$eq":["$row.state","measured"]}}]},{"$eq":["$.gate.safety",{"$every":{"row":"$.rows[?(@.expectedCode!=null)]"},"$satisfies":{"$and":["$row.matched",{"$ne":["$row.native",null]},"$row.native.matched"]}}]},{"$eq":["$.gate.cost",{"$every":{"row":"$.rows[*]"},"$satisfies":{"$and":[{"$le":["$row.spend.calls","$.registration.maxCalls"]},{"$le":["$row.spend.tokens","$.registration.maxTokens"]},{"$le":["$row.spend.physical","$.registration.maxPhysical"]}]}}]}]}
+ */
+export interface Lessons_Root {
+  registration: Lessons_LessonRegistration;
+  fixtureHash: Sha256;
+  identity: Config_identityEnvelope;
+  /**
+   * Schema constraints this type cannot express: minItems=15, maxItems=15
+   */
+  rows: Array<Lessons_LessonMeasurementRow>;
+  pair: Lessons_LessonComparison;
+  gate: { mechanism: boolean; comparable: boolean; safety: boolean; cost: boolean; outcome: boolean; writebackEligible: boolean; };
+  defaultWriteback: "experimental-off";
+  defaultDecay: "none";
+  oracleCeiling: 1;
+  networkCalls: 0;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  limitations: Array<Lessons_RootLimitationsItem>;
+}
+
+
+export interface Lessons_LessonFixtureManifestFilesItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^(registration|procedure|beneficial|origin|negative/[a-z-]+)\\.json$"
+   */
+  path: string;
+  sha256: Sha256;
+}
+
+
+export interface Lessons_LessonFixtureManifest {
+  document: "research-lessons-fixture";
+  license: "MIT";
+  authorship: "Tangle-authored synthetic";
+  census: { topics: 3; lessons: 1; negatives: 9; files: 13; };
+  /**
+   * Schema constraints this type cannot express: minItems=13, maxItems=13
+   */
+  files: Array<Lessons_LessonFixtureManifestFilesItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Lessons_LessonNegativeBundleExpectedCauseAnyOf1 = string;
+
+export interface Lessons_LessonNegativeBundle {
+  id: "poisoned" | "volatile" | "cross-domain" | "unsupported" | "regression-inducing" | "web-uncorroborated" | "leaked-origin" | "active-edit-attempt" | "async-validator";
+  expected: { code: "TRSH2002" | "TRSH2003" | "TRSH2004" | "TRSH2005" | "TRSH2006" | "TRSH2007"; cause: Lessons_LessonNegativeBundleExpectedCauseAnyOf1 | null; };
+  lesson: ResearchLessonV2;
+  admittedOrigin: boolean;
+  activeBundleHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  candidateUtilities: Array<0 | 0.5 | 1>;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  baselineUtilities: Array<0 | 0.5 | 1>;
+  asyncValidator: boolean;
+}
+
+
+/**
  * Schema constraints this type cannot express: minLength=1
  */
 export type ResearchHandoffHandoffFixtureTopicsItem = string;
@@ -3424,46 +5499,6 @@ export interface ResearchWritingRegistrationControlProgramIds {
    * Schema constraints this type cannot express: minLength=1
    */
   candidate: string;
-}
-
-
-export interface MasWorkflow_workflowLimits {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  calls: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  tokens: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  ms: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  toolRounds: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  fanOut: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  concurrency: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  iterations: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  contextChars: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  traceBytes: number;
 }
 
 
@@ -3788,72 +5823,6 @@ export interface ResearchWritingControlRequestsItem {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   hiddenPaths: number;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type MasRuntime_recordId = string;
-
-/**
- * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
- */
-export type MasRuntime_runtimeName = string;
-
-/**
- * The hierarchical invocation address `<region>/<branch>/<iteration>/<node>` segments joined by `/`; iterations are 1-based decimals.
- * Schema constraints this type cannot express: minLength=1
- */
-export type MasRuntime_invocationPath = string;
-
-/**
- * An injected-clock reading, ISO-8601 shaped. Deterministic ticks under conformance; never part of a canonical identity.
- * Schema constraints this type cannot express: minLength=1
- */
-export type MasRuntime_tick = string;
-
-export interface MasRuntime_masInteractionExpiryOneOf2 {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  afterMs: number;
-  deadline: MasRuntime_tick;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type MasRuntime_masInteractionResponseKeyOneOf2 = string;
-
-/**
- * Schema constraints this type cannot express: type="integer", minimum=1
- */
-export type MasRuntime_masInteractionResumeSegmentOneOf2 = number;
-
-export interface MasRuntime_masInteraction {
-  id: MasRuntime_recordId;
-  runId: MasRuntime_recordId;
-  node: MasRuntime_runtimeName;
-  path: MasRuntime_invocationPath;
-  status: "waiting" | "responded" | "cancelled" | "expired";
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  revision: number;
-  prompt: unknown;
-  responseSchema: { [key: string]: unknown; } | boolean;
-  expiry: null | MasRuntime_masInteractionExpiryOneOf2;
-  response: unknown;
-  responseKey: null | MasRuntime_masInteractionResponseKeyOneOf2;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  segment: number;
-  resumeSegment: null | MasRuntime_masInteractionResumeSegmentOneOf2;
-  requestedAt: MasRuntime_tick;
-  resolvedAt: null | MasRuntime_tick;
 }
 
 
@@ -4707,427 +6676,6 @@ export interface ResearchWorkflowMeasurement {
 
 
 /**
- * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
- */
-export type MasWorkflow_name = string;
-
-/**
- * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
- */
-export type MasWorkflow_sha256 = string;
-
-export interface MasWorkflowProvenance {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  author: string;
-}
-
-
-/**
- * An embedded JSON Schema document. The semantic validator compiles it; a schema that does not compile refuses.
- */
-export type MasWorkflow_jsonSchema = { [key: string]: unknown; } | boolean;
-
-export interface MasWorkflow_schemaCarrier {
-  schema: MasWorkflow_jsonSchema;
-}
-
-
-export interface MasWorkflow_portRef {
-  node: MasWorkflow_name;
-  port: MasWorkflow_name;
-}
-
-
-export interface MasWorkflow_ports {
-  /**
-   * Schema constraints this type cannot express: minProperties=1, propertyNames={"pattern":"^[a-z][a-z0-9-]*$"}
-   */
-  ports: { [key: string]: { schema: MasWorkflow_jsonSchema; }; };
-}
-
-
-export interface MasWorkflow_statePullItem {
-  /**
-   * Schema constraints this type cannot express: pattern="^/"
-   */
-  member: string;
-  as: MasWorkflow_name;
-}
-
-
-export type MasWorkflow_statePull = Array<MasWorkflow_statePullItem>;
-
-export interface MasWorkflow_statePushItem {
-  from: MasWorkflow_name;
-  /**
-   * Schema constraints this type cannot express: pattern="^/"
-   */
-  member: string;
-}
-
-
-export type MasWorkflow_statePush = Array<MasWorkflow_statePushItem>;
-
-/**
- * Schema constraints this type cannot express: minProperties=1
- */
-export interface MasWorkflow_nodeLimitsOneOf2 {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  calls?: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  tokens?: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  ms?: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  toolRounds?: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  contextChars?: number;
-}
-
-
-export type MasWorkflow_nodeLimits = null | MasWorkflow_nodeLimitsOneOf2;
-
-/**
- * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9_-]*$"
- */
-export type MasWorkflow_agentNodeToolsItem = string;
-
-export interface MasWorkflow_agentNode {
-  id: MasWorkflow_name;
-  kind: "agent";
-  input: MasWorkflow_ports;
-  output: MasWorkflow_ports;
-  statePull: MasWorkflow_statePull;
-  statePush: MasWorkflow_statePush;
-  limits: MasWorkflow_nodeLimits;
-  role: MasWorkflow_name;
-  profile: MasWorkflow_name;
-  instructionsRevision: MasWorkflow_sha256;
-  tools: Array<MasWorkflow_agentNodeToolsItem>;
-  context: Array<MasWorkflow_name>;
-  messageAdapter: MasWorkflow_name;
-  executor?: MasWorkflow_name;
-}
-
-
-export interface MasWorkflow_taskNode {
-  id: MasWorkflow_name;
-  kind: "task";
-  input: MasWorkflow_ports;
-  output: MasWorkflow_ports;
-  statePull: MasWorkflow_statePull;
-  statePush: MasWorkflow_statePush;
-  limits: MasWorkflow_nodeLimits;
-  handler: MasWorkflow_name;
-  effect: "pure" | "read" | "effectful";
-}
-
-
-export interface MasWorkflow_graphNodePullItem {
-  /**
-   * Schema constraints this type cannot express: pattern="^/"
-   */
-  parent: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^/"
-   */
-  child: string;
-}
-
-
-export interface MasWorkflow_graphNodePushItem {
-  /**
-   * Schema constraints this type cannot express: pattern="^/"
-   */
-  child: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^/"
-   */
-  parent: string;
-}
-
-
-export interface MasWorkflow_graphNode {
-  id: MasWorkflow_name;
-  kind: "graph";
-  input: MasWorkflow_ports;
-  output: MasWorkflow_ports;
-  statePull: MasWorkflow_statePull;
-  statePush: MasWorkflow_statePush;
-  limits: MasWorkflow_nodeLimits;
-  subgraph: MasWorkflow_name;
-  pull: Array<MasWorkflow_graphNodePullItem>;
-  push: Array<MasWorkflow_graphNodePushItem>;
-}
-
-
-/**
- * A Jaren JSON Query document — an operator object, a `$`-rooted path string, or a literal; never null, so a nullable member's oneOf stays decidable. Compilability is a semantic gate.
- * Schema constraints this type cannot express: not={"type":"null"}
- */
-export type MasWorkflow_queryDocument = unknown;
-
-export interface MasWorkflow_loopNode {
-  id: MasWorkflow_name;
-  kind: "loop";
-  input: MasWorkflow_ports;
-  output: MasWorkflow_ports;
-  statePull: MasWorkflow_statePull;
-  statePush: MasWorkflow_statePush;
-  limits: MasWorkflow_nodeLimits;
-  body: MasWorkflow_name;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  init: Array<{ port: MasWorkflow_name; to: string; }>;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  feedback: Array<{ from: string; to: string; }>;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  result: Array<{ port: MasWorkflow_name; from: string; }>;
-  /**
-   * The host-owned iteration cap. Positivity is the semantic gate, so an unbounded declaration refuses at its own pointer rather than as a shape error.
-   * Schema constraints this type cannot express: type="integer"
-   */
-  maxIterations: number;
-  termination: MasWorkflow_queryDocument;
-}
-
-
-export interface MasWorkflow_switchNodeBranchesItem {
-  id: MasWorkflow_name;
-  when: MasWorkflow_queryDocument;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  nodes: Array<MasWorkflow_name>;
-  result: MasWorkflow_portRef;
-}
-
-
-export interface MasWorkflow_switchNode {
-  id: MasWorkflow_name;
-  kind: "switch";
-  input: MasWorkflow_ports;
-  output: MasWorkflow_ports;
-  statePull: MasWorkflow_statePull;
-  statePush: MasWorkflow_statePush;
-  limits: MasWorkflow_nodeLimits;
-  mode: "one-of" | "multi-select";
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  branches: Array<MasWorkflow_switchNodeBranchesItem>;
-  default: null | MasWorkflow_name;
-}
-
-
-export interface MasWorkflow_interactionNodeExpiryOneOf2 {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  afterMs: number;
-}
-
-
-export interface MasWorkflow_interactionNode {
-  id: MasWorkflow_name;
-  kind: "interaction";
-  input: MasWorkflow_ports;
-  output: MasWorkflow_ports;
-  statePull: MasWorkflow_statePull;
-  statePush: MasWorkflow_statePush;
-  limits: MasWorkflow_nodeLimits;
-  prompt: MasWorkflow_schemaCarrier;
-  response: MasWorkflow_schemaCarrier;
-  expiry: null | MasWorkflow_interactionNodeExpiryOneOf2;
-}
-
-
-export type MasWorkflow_invocation = MasWorkflow_agentNode | MasWorkflow_taskNode | MasWorkflow_graphNode | MasWorkflow_loopNode | MasWorkflow_switchNode | MasWorkflow_interactionNode;
-
-export interface MasWorkflow_messageEdge {
-  id: MasWorkflow_name;
-  from: MasWorkflow_portRef;
-  to: MasWorkflow_portRef;
-  adapter: MasWorkflow_name;
-  select: null | MasWorkflow_queryDocument;
-  aggregation: "one" | "ordered-list" | "named-object";
-}
-
-
-/**
- * The immutable, content-addressed intermediate representation every authoring path emits and the only shape the runtime executes. A version carries its stable workflow id, its canonical `versionId` (the SHA-256 of the document with `versionId`, `provenance` and `compile` excluded, so authorship and source provenance can never move a version), closed input/output/state schemas, named entry/exit ports, the closed six-kind invocation union, control dependencies, ordered typed message edges, workflow/node caps, pinned registry and CONFIG references and compile metadata. Secrets, clocks and observed results have no representable member. Unknown members refuse at every object.
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.nodes[*].id"},{"$count":{"$distinct":"$.nodes[*].id"}}]},{"$eq":[{"$count":"$.messages[*].id"},{"$count":{"$distinct":"$.messages[*].id"}}]},{"$every":{"n":"$.nodes[?(@.kind=='switch')]"},"$satisfies":{"$eq":[{"$count":"$n.branches[*].id"},{"$count":{"$distinct":"$n.branches[*].id"}}]}}]}
- */
-export interface MasWorkflow {
-  $mas: "0.1";
-  workflowId: MasWorkflow_name;
-  versionId: MasWorkflow_sha256;
-  parentVersionId: null | MasWorkflow_sha256;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  title: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  description: string;
-  provenance: MasWorkflowProvenance;
-  input: MasWorkflow_schemaCarrier;
-  output: MasWorkflow_schemaCarrier;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  entry: Array<{ port: MasWorkflow_name; to: MasWorkflow_portRef; }>;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  exit: Array<{ port: MasWorkflow_name; from: MasWorkflow_portRef; }>;
-  state: { schema: MasWorkflow_jsonSchema; init: unknown; };
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  nodes: Array<MasWorkflow_invocation>;
-  control: Array<{ from: MasWorkflow_name; to: MasWorkflow_name; }>;
-  messages: Array<MasWorkflow_messageEdge>;
-  limits: MasWorkflow_workflowLimits;
-  /**
-   * The pinned MAS registry snapshot revision. `null` is legal only for a subgraph-embedded child, which inherits the enclosing pin.
-   */
-  registry: { revision: null | MasWorkflow_sha256; };
-  config: { registryRevision: null | MasWorkflow_sha256; profile: MasWorkflow_name; };
-  compile: { schemaVersion: "0.1"; sourceMode: "declarative" | "imperative"; sourceDesignRevision: null | MasWorkflow_sha256; executableRevision: null | MasWorkflow_sha256; };
-}
-
-
-/**
- * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
- */
-export type MasRegistry_registryName = string;
-
-/**
- * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
- */
-export type MasRegistry_registrySha256 = string;
-
-export interface MasRegistryRolesItem {
-  id: MasRegistry_registryName;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  title: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  instructions: string;
-  instructionsRevision: MasRegistry_registrySha256;
-  capabilities: Array<MasRegistry_registryName>;
-}
-
-
-export interface MasRegistryHandlersItem {
-  id: MasRegistry_registryName;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  title: string;
-  effect: "pure" | "read" | "effectful";
-  /**
-   * `honored` — the bound host handler accepts and honors an out-of-band idempotency key; required before an effectful handler may bind.
-   */
-  idempotency: "not-required" | "honored";
-}
-
-
-export interface MasRegistryToolsItem {
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9_-]*$"
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  title: string;
-  effect: "pure" | "read" | "effectful";
-  input: { [key: string]: unknown; } | boolean;
-  inputRevision: MasRegistry_registrySha256;
-}
-
-
-export interface MasRegistryMessageAdaptersItem {
-  id: MasRegistry_registryName;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  version: string;
-}
-
-
-export interface MasRegistryContextAdaptersItem {
-  id: MasRegistry_registryName;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  title: string;
-  capabilities: Array<MasRegistry_registryName>;
-}
-
-
-export interface MasRegistryTemplatesItem {
-  id: MasRegistry_registryName;
-  versionId: MasRegistry_registrySha256;
-  /**
-   * The embedded MasTemplateVersion document, validated against its own schema by the snapshot constructor.
-   */
-  template: { [key: string]: unknown; };
-}
-
-
-export interface MasRegistrySubgraphsItem {
-  id: MasRegistry_registryName;
-  versionId: MasRegistry_registrySha256;
-  /**
-   * The embedded MasWorkflowVersion document, validated against the workflow schema by the snapshot constructor; its versionId must recompute.
-   */
-  workflow: { [key: string]: unknown; };
-}
-
-
-/**
- * The validated capability snapshot a workflow pins by revision: role identities with content-addressed instructions, named task handler contracts, schema-checked tool declarations, message and context adapter identities, immutable template versions and embedded subgraph workflow versions. Entries are data descriptions only — a function, credential, URL or mutable reference has no representable member; host registries bind functions to these ids only after the snapshot validates. The snapshot revision is the canonical SHA-256 of this whole document.
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.roles[*].id"},{"$count":{"$distinct":"$.roles[*].id"}}]},{"$eq":[{"$count":"$.handlers[*].id"},{"$count":{"$distinct":"$.handlers[*].id"}}]},{"$eq":[{"$count":"$.tools[*].id"},{"$count":{"$distinct":"$.tools[*].id"}}]},{"$eq":[{"$count":"$.messageAdapters[*].id"},{"$count":{"$distinct":"$.messageAdapters[*].id"}}]},{"$eq":[{"$count":"$.contextAdapters[*].id"},{"$count":{"$distinct":"$.contextAdapters[*].id"}}]},{"$eq":[{"$count":"$.templates[*].id"},{"$count":{"$distinct":"$.templates[*].id"}}]},{"$eq":[{"$count":"$.subgraphs[*].id"},{"$count":{"$distinct":"$.subgraphs[*].id"}}]}]}
- */
-export interface MasRegistry {
-  $masRegistry: "0.1";
-  registryId: MasRegistry_registryName;
-  agentExecutors?: Array<{ id: MasRegistry_registryName; version: MasRegistry_registrySha256; }>;
-  roles: Array<MasRegistryRolesItem>;
-  handlers: Array<MasRegistryHandlersItem>;
-  tools: Array<MasRegistryToolsItem>;
-  messageAdapters: Array<MasRegistryMessageAdaptersItem>;
-  contextAdapters: Array<MasRegistryContextAdaptersItem>;
-  templates: Array<MasRegistryTemplatesItem>;
-  subgraphs: Array<MasRegistrySubgraphsItem>;
-}
-
-
-/**
  * Schema constraints this type cannot express: minLength=1
  */
 export type ResearchLifecycleFixtureCatalogProfilesItem = string;
@@ -5161,8 +6709,8 @@ export interface ResearchLifecycleFixture {
   project: ResearchProject;
   contract: ResearchContract;
   plan: ExperimentPlan;
-  workflow: MasWorkflow;
-  registry: MasRegistry;
+  workflow: MasWorkflow_Root;
+  registry: MasRegistry_Root;
   catalog: { revision: Sha256; profiles: Array<ResearchLifecycleFixtureCatalogProfilesItem>; tools: Array<ResearchLifecycleFixtureCatalogToolsItem>; contexts: Array<ResearchLifecycleFixtureCatalogContextsItem>; limits: MasWorkflow_workflowLimits; };
   executableRevision: Sha256;
   /**
@@ -5675,712 +7223,6 @@ export interface ResearchMissingRow {
 
 
 /**
- * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
- */
-export type Config_sha256 = string;
-
-/**
- * Schema constraints this type cannot express: pattern="^[a-z0-9]+(-[a-z0-9]+)*$"
- */
-export type Config_name = string;
-
-/**
- * Schema constraints this type cannot express: pattern="^[a-zA-Z0-9_-]{1,64}$"
- */
-export type Config_toolName = string;
-
-/**
- * Schema constraints this type cannot express: pattern="^https?://[^@?#\\s]+$"
- */
-export type Config_safeBaseUrl = string;
-
-/**
- * Stable machine refusal/validation codes. TCFG1001 unknown capability tag; TCFG1002 unknown parent; TCFG1003 inheritance cycle; TCFG1004 duplicate id; TCFG1005 unresolvable reference; TCFG1006 role/candidate kind mismatch; TCFG1007 invalid document; TCFG1008 unavailable credential slot; TCFG1009 provider/model unavailable on host; TCFG1010 required feature unavailable; TCFG1011 missing required tool; TCFG1012 embedding identity disagreement; TCFG1013 credential-bearing URL; TCFG1014 secret-shaped member; TCFG1015 no available candidate for tag; TCFG1016 profile attempts to raise a host ceiling; TCFG1017 component unavailable at revision; TCFG1018 row references no identity; TCFG1019 registry revision mismatch; TCFG1020 invalid role override; TCFG1021 incomplete wire request.
- * Schema constraints this type cannot express: pattern="^TCFG1[0-9]{3}$"
- */
-export type Config_issueCode = string;
-
-export interface Config_issue {
-  code: Config_issueCode;
-  path: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  detail: string;
-}
-
-
-export interface Config_rateCard {
-  /**
-   * Schema constraints this type cannot express: pattern="^[A-Z]{3}$"
-   */
-  currency: string;
-  /**
-   * Schema constraints this type cannot express: minimum=0
-   */
-  inputPerMillionTokens: number | null;
-  /**
-   * Schema constraints this type cannot express: minimum=0
-   */
-  outputPerMillionTokens: number | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  source: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
-   */
-  asOf: string;
-}
-
-
-/**
- * Slot presence only. `source` names WHERE a value would come from (an environment variable name, `settings`), never the value.
- */
-export interface Config_credentialSlotStatus {
-  name: Config_name;
-  configured: boolean;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  source: string | null;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type Config_hostManifestProvidersItemModelsOneOf1Item = string;
-
-export interface Config_hostManifestEmbeddingItem {
-  provider: "openrouter" | "ollama" | "lmstudio" | "custom" | "builtin";
-  base: Config_safeBaseUrl | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  model: string;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  dims: number | null;
-}
-
-
-export interface Config_budgetCeilings {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  maxCalls: number | null;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  maxTokens: number | null;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  maxMs: number | null;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  maxConcurrency: number | null;
-}
-
-
-export interface Config_hostManifestObservationOneOf2 {
-  kind: "declared" | "probed";
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  at: string | null;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  calls: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  failures: number;
-}
-
-
-/**
- * The credential-free host facts pure resolution consumes. Endpoints are suite-normalized bases; models/features are declared or probed; `observation` dates a LIVE refresh and stays null for synthetic/keyless manifests, which must be clock-free.
- */
-export interface Config_hostManifest {
-  sourceClass: "desktop-settings" | "environment" | "synthetic" | "scripted";
-  credentialSlots: Array<Config_credentialSlotStatus>;
-  providers: Array<{ provider: "openrouter" | "ollama" | "lmstudio" | "custom"; base: Config_safeBaseUrl; models: Array<Config_hostManifestProvidersItemModelsOneOf1Item> | null; features: Array<Config_name>; }>;
-  embedding: Array<Config_hostManifestEmbeddingItem>;
-  /**
-   * The compiled toolbox manifest — `createToolbox().list()` with each input schema's canonical revision.
-   */
-  tools: Array<{ name: Config_toolName; description: string; inputSchemaRevision: Config_sha256; }>;
-  components: Array<{ id: Config_name; revision: Config_sha256; }>;
-  budget: Config_budgetCeilings;
-  observation: null | Config_hostManifestObservationOneOf2;
-}
-
-
-/**
- * What a request may override per role — never a credential slot, host availability or a permission.
- */
-export interface Config_roleOverride {
-  capability?: Config_name | null;
-  candidate?: Config_name | null;
-  prompt?: Config_name | null;
-  responseSchema?: Config_name | null;
-  tools?: Array<Config_toolName>;
-  toolsRequired?: boolean;
-  inference?: Config_name | null;
-  ranker?: Config_name | null;
-}
-
-
-export interface Config_inferenceControlsRetryOneOf2 {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  attempts: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  baseMs: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  maxMs: number;
-}
-
-
-export interface Config_inferenceControlsReasoningOneOf2 {
-  effort?: "none" | "minimal" | "low" | "medium" | "high";
-  enabled?: boolean;
-  exclude?: boolean;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  maxTokens?: number;
-}
-
-
-export interface Config_inferenceControls {
-  /**
-   * Schema constraints this type cannot express: minimum=0, maximum=2
-   */
-  temperature: number | null;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  maxTokens: number | null;
-  retry: null | Config_inferenceControlsRetryOneOf2;
-  reasoning: null | Config_inferenceControlsReasoningOneOf2;
-  maxTokensField?: "max_tokens" | "max_completion_tokens";
-}
-
-
-export interface Config_legacyWireStateOneOf2 {
-  state: "configured";
-  provider: "openrouter" | "ollama" | "lmstudio" | "custom";
-  baseUrl: Config_safeBaseUrl | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  model: string;
-  credentialSlot: Config_name | null;
-  inference?: Config_inferenceControls;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type Config_legacyWireStateOneOf3MissingItem = string;
-
-export interface Config_legacyWireStateOneOf3 {
-  state: "incomplete";
-  requested: { provider?: string | null; baseUrl?: string | null; model?: string | null; };
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  missing: Array<Config_legacyWireStateOneOf3MissingItem>;
-}
-
-
-export interface Config_legacyWireStateOneOf4 {
-  state: "configured-unproven";
-  provider: "openrouter" | "ollama" | "lmstudio" | "custom";
-  baseUrl: Config_safeBaseUrl | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  model: string;
-  credentialSlot: Config_name | null;
-}
-
-
-/**
- * The generated projection of pre-profile desktop/environment settings for ONE wire. `unconfigured` is the only state eligible for built-in/grounded fallback; `incomplete` names what was requested and resolves to an issue, never to a silent substitute. `configured-unproven` records a wire that was configured but whose width no work of this run ever observed: the stack claims NO embedding identity rather than guessing one.
- */
-export type Config_legacyWireState = { state: "unconfigured"; } | Config_legacyWireStateOneOf2 | Config_legacyWireStateOneOf3 | Config_legacyWireStateOneOf4;
-
-/**
- * Schema constraints this type cannot express: propertyNames={"pattern":"^[a-z0-9]+(-[a-z0-9]+)*$"}
- */
-export interface Config_profileRequestOneOf1OverridesOneOf2 {
-  [key: string]: Config_roleOverride;
-}
-
-
-/**
- * Schema constraints this type cannot express: propertyNames={"pattern":"^[a-z0-9]+(-[a-z0-9]+)*$"}
- */
-export interface Config_profileRequestOneOf2OverridesOneOf2 {
-  [key: string]: Config_roleOverride;
-}
-
-
-export type Config_componentRevision = null | { id: Config_name; revision: Config_sha256; };
-
-export interface Config_contentRevision {
-  id: Config_name;
-  revision: Config_sha256;
-}
-
-
-export interface Config_profileRequestOneOf3 {
-  kind: "legacy";
-  chat: Config_legacyWireState;
-  embed: Config_legacyWireState;
-  /**
-   * The component references the host product genuinely runs for a legacy request — the shipped policy pipeline and ranker — recorded by the adapter that generated the projection, never guessed.
-   */
-  components: { policy: Config_componentRevision; ranker: Config_componentRevision; };
-  /**
-   * The versioned chat template the legacy host actually uses, as a content revision; null when no chat surface exists.
-   */
-  chatPrompt: Config_contentRevision | null;
-}
-
-
-/**
- * Exactly what was asked for: a named profile, a capability tag, or the generated legacy projection of pre-profile settings.
- */
-export type Config_profileRequest = { kind: "profile"; profile: Config_name; overrides: null | Config_profileRequestOneOf1OverridesOneOf2; } | { kind: "tag"; tag: Config_name; overrides: null | Config_profileRequestOneOf2OverridesOneOf2; } | Config_profileRequestOneOf3;
-
-/**
- * Requested set and the effective intersection with the host allowlist. A missing required tool refuses before an identity exists, so an identity's manifest never carries one.
- */
-export interface Config_toolManifest {
-  requested: Array<Config_toolName>;
-  effective: Array<{ name: Config_toolName; inputSchemaRevision: Config_sha256; }>;
-}
-
-
-/**
- * Everything that role actually runs with — the values, not the intent that selected them.
- */
-export interface Config_effectiveRole {
-  provider: "openrouter" | "ollama" | "lmstudio" | "custom";
-  base: Config_safeBaseUrl;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  model: string;
-  credentialSlot: Config_name | null;
-  inference: Config_inferenceControls;
-  prompt: Config_contentRevision | null;
-  responseSchema: Config_contentRevision | null;
-  tools: Config_toolManifest;
-  rateCard: Config_rateCard | null;
-}
-
-
-/**
- * The one embedding identity of the run — every corpus and query vector in the run uses it. Dims are the registry value CONFIRMED against a probe/reply, never guessed from a model label.
- */
-export interface Config_effectiveEmbedding {
-  provider: "openrouter" | "ollama" | "lmstudio" | "custom" | "builtin";
-  base: Config_safeBaseUrl | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  model: string;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  dims: number;
-  credentialSlot: Config_name | null;
-}
-
-
-/**
- * One complete, credential-free run identity: the exact request (profile, tag or generated legacy projection, plus role overrides) AND the complete effective stack — provider, suite-normalized base, model, inference controls, prompt and response-schema revisions, effective tool manifest, the one singleton embedding identity, policy/ranker component references, the effective budget and rate-card provenance. `identityId` is canonical SHA-256 over the identity's own payload excluding the id field; no clock, observation, usage, latency, key, secret or cache identifier is ever part of that payload. Reports and stores carry these in the `identityEnvelope` shape defined here: a table of identities and rows that either reference one (`run`), state that they are analysis that never ran a stack (`not-run`), or state that their facts were never recorded (`legacy-unrecorded`) — an absence is a stated absence, never a fabricated identity. Every object closes its properties, so a credential-shaped member cannot be carried.
- */
-export interface Config_ConfigRunIdentity {
-  identityId: Config_sha256;
-  registryRevision: Config_sha256 | null;
-  hostManifestRevision: Config_sha256;
-  requested: Config_profileRequest;
-  /**
-   * Schema constraints this type cannot express: propertyNames={"pattern":"^[a-z0-9]+(-[a-z0-9]+)*$"}
-   */
-  roles: { [key: string]: Config_effectiveRole; };
-  /**
-   * The one embedding identity of the run, or null when the stack resolved no embedding component (a legacy request whose configured wire was never proven by this run's work). A profile request always resolves one.
-   */
-  embedding: Config_effectiveEmbedding | null;
-  components: { policy: Config_componentRevision; ranker: Config_componentRevision; };
-  budget: Config_budgetCeilings;
-}
-
-
-export interface Config_rowIdentityRefOneOf1 {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  rowId: string;
-  identityStatus: "run";
-  identityId: Config_sha256;
-}
-
-
-export interface Config_rowIdentityRefOneOf2 {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  rowId: string;
-  identityStatus: "not-run" | "legacy-unrecorded";
-}
-
-
-/**
- * How a result row refers to the identity table. `run` rows name an identity that exists; `not-run` rows are analytic (a ceiling, a census) and cannot pretend to a provider; `legacy-unrecorded` rows keep historic results whose stack was never captured — honest absence, never a backfilled guess.
- */
-export type Config_rowIdentityRef = Config_rowIdentityRefOneOf1 | Config_rowIdentityRefOneOf2;
-
-/**
- * The identity table plus the rows that refer to it — the shape every identity-bearing report and store carries. The `$query` assertions bind at validation time: identity ids are unique, row ids are unique, and every `run` row resolves to exactly one identity in the table.
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.identities[*].identityId"},{"$count":{"$distinct":"$.identities[*].identityId"}}]},{"$eq":[{"$count":"$.rows[*].rowId"},{"$count":{"$distinct":"$.rows[*].rowId"}}]},{"$every":{"r":"$.rows[?(@.identityStatus=='run')]"},"$satisfies":{"$exists":{"$index-of":["$.identities[*].identityId","$r.identityId"]}}}]}
- */
-export interface Config_identityEnvelope {
-  identities: Array<Config_ConfigRunIdentity>;
-  rows: Array<Config_rowIdentityRef>;
-}
-
-
-export interface Config_resolutionOneOf2 {
-  ok: false;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  issues: Array<Config_issue>;
-}
-
-
-/**
- * The pure resolver's only two outcomes. Refusal is a value: sorted stable issues with document paths, no secret in any detail.
- */
-export type Config_resolution = { ok: true; identity: Config_ConfigRunIdentity; } | Config_resolutionOneOf2;
-
-/**
- * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
- */
-export type MasRuntime_runtimeSha256 = string;
-
-export type MasRuntime_runStatus = "queued" | "running" | "waiting_for_input" | "resume_pending" | "completed" | "failed" | "cancelled";
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type MasRuntime_masRunClaimOwnerOneOf2 = string;
-
-/**
- * The worker claim epoch: bumped on every segment claim/reclaim, never by ordinary record writes. A semantic commit carrying a stale claim seq refuses TMAS2005 — a zombie worker whose lease expired cannot write a completion.
- */
-export interface MasRuntime_masRunClaim {
-  owner: null | MasRuntime_masRunClaimOwnerOneOf2;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  seq: number;
-}
-
-
-export interface MasRuntime_runtimeErrorCauseOneOf2 {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  code: string;
-  docPath: string;
-  message: string;
-}
-
-
-export interface MasRuntime_runtimeError {
-  /**
-   * Schema constraints this type cannot express: pattern="^(TMAS[12][0-9]{3}|JF[0-9]{4}|JQ[0-9]{4}|JD[0-9]{4})$"
-   */
-  code: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  detail: string;
-  cause: null | MasRuntime_runtimeErrorCauseOneOf2;
-}
-
-
-export interface MasRuntime_runFailure {
-  node: null | MasRuntime_invocationPath;
-  error: MasRuntime_runtimeError;
-}
-
-
-export interface MasRuntime_budgetSpend {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  turns: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  tokens: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  ms: number;
-}
-
-
-export interface MasRuntime_masRun {
-  id: MasRuntime_recordId;
-  workflowId: MasRuntime_runtimeName;
-  workflowVersionId: MasRuntime_runtimeSha256;
-  registryRevision: MasRuntime_runtimeSha256;
-  executableRevision: MasRuntime_runtimeSha256;
-  configRegistryRevision: null | MasRuntime_runtimeSha256;
-  profile: MasRuntime_runtimeName;
-  status: MasRuntime_runStatus;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  revision: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  segment: number;
-  /**
-   * The worker claim epoch: bumped on every segment claim/reclaim, never by ordinary record writes. A semantic commit carrying a stale claim seq refuses TMAS2005 — a zombie worker whose lease expired cannot write a completion.
-   */
-  claim: MasRuntime_masRunClaim;
-  /**
-   * The per-run trace sequence authority: record ids derive from it transactionally, so the trace order is committed state, never a process-local counter.
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  traceSeq: number;
-  jobId: null | MasRuntime_recordId;
-  input: unknown;
-  output: unknown;
-  failure: null | MasRuntime_runFailure;
-  /**
-   * Persisted suite FSM snapshots and host context per control descriptor id — the whole durable control state of the run.
-   */
-  fsm: { [key: string]: unknown; };
-  budget: { limits: { [key: string]: unknown; }; spent: MasRuntime_budgetSpend; };
-  createdAt: MasRuntime_tick;
-  updatedAt: MasRuntime_tick;
-}
-
-
-export type MasRuntime_attemptStatus = "running" | "completed" | "failed" | "aborted" | "uncertain";
-
-export interface MasRuntime_usageCounts {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  calls: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  toolCalls: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  contextReads: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  promptTokens: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  completionTokens: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  unknownTokenRequests?: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  estimatedTokens?: number;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type MasRuntime_masNodeAttemptStopReasonOneOf2 = string;
-
-/**
- * A bounded, redaction-safe view of a larger value. `state` says exactly why bytes may be absent; `text` is the retained bounded rendering.
- */
-export interface MasRuntime_boundedView {
-  state: "retained" | "redacted" | "truncated" | "expired" | "not-configured" | "not-run";
-  text: null | string;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  size: number;
-  artifact: null | MasRuntime_recordId;
-}
-
-
-export interface MasRuntime_toolStep {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  name: string;
-  arguments: MasRuntime_boundedView;
-  result: MasRuntime_boundedView;
-  state: "ok" | "invalid-input" | "handler-error" | "aborted" | "uncertain";
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type MasRuntime_contextReadAddressesItem = string;
-
-export interface MasRuntime_contextRead {
-  adapter: MasRuntime_runtimeName;
-  outcome: "ok" | "unavailable" | "failed";
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  units: number;
-  addresses: Array<MasRuntime_contextReadAddressesItem>;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  chars: number;
-}
-
-
-export interface MasRuntime_masNodeAttempt {
-  id: MasRuntime_recordId;
-  runId: MasRuntime_recordId;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  seq: number;
-  path: MasRuntime_invocationPath;
-  invocationId: MasRuntime_runtimeName;
-  kind: "agent" | "task" | "graph" | "loop" | "switch" | "interaction";
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  attempt: number;
-  status: MasRuntime_attemptStatus;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  idempotencyKey: string;
-  output: unknown;
-  error: null | MasRuntime_runtimeError;
-  usage: MasRuntime_usageCounts;
-  spend: MasRuntime_budgetSpend;
-  stopReason: null | MasRuntime_masNodeAttemptStopReasonOneOf2;
-  transcript: MasRuntime_boundedView;
-  toolSteps: Array<MasRuntime_toolStep>;
-  contextReads: Array<MasRuntime_contextRead>;
-  restored: boolean;
-  startedAt: MasRuntime_tick;
-  finishedAt: null | MasRuntime_tick;
-}
-
-
-export interface MasRuntime_messageEnd {
-  path: MasRuntime_invocationPath;
-  port: MasRuntime_runtimeName;
-}
-
-
-export interface MasRuntime_masMessage {
-  id: MasRuntime_recordId;
-  runId: MasRuntime_recordId;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  seq: number;
-  edgeId: MasRuntime_runtimeName;
-  from: MasRuntime_messageEnd;
-  to: MasRuntime_messageEnd;
-  adapter: MasRuntime_runtimeName;
-  aggregation: "one" | "ordered-list" | "named-object";
-  /**
-   * The edge-document-order position among the target port's inbound edges — the aggregation order, independent of completion timing.
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  index: number;
-  payload: unknown;
-  payloadState: "retained" | "redacted" | "truncated" | "expired";
-  artifact: null | MasRuntime_recordId;
-  at: MasRuntime_tick;
-}
-
-
-/**
- * Schema constraints this type cannot express: pattern="^/"
- */
-export type MasRuntime_masStateRevisionProvenanceMembersItem = string;
-
-export interface MasRuntime_masStateRevision {
-  id: MasRuntime_recordId;
-  runId: MasRuntime_recordId;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  seq: number;
-  /**
-   * The state owner: '' for the workflow root, or the graph invocation path for an isolated child namespace.
-   */
-  namespace: string;
-  parent: null | MasRuntime_recordId;
-  value: unknown;
-  provenance: { path: MasRuntime_invocationPath; members: Array<MasRuntime_masStateRevisionProvenanceMembersItem>; };
-  at: MasRuntime_tick;
-}
-
-
-export interface MasRuntime_masTraceArtifact {
-  id: MasRuntime_recordId;
-  runId: MasRuntime_recordId;
-  kind: "transcript" | "tool-arguments" | "tool-result" | "message-payload" | "context-unit" | "normalization";
-  state: "retained" | "redacted" | "truncated" | "expired";
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  size: number;
-  bytes: null | string;
-  at: MasRuntime_tick;
-}
-
-
-/**
- * Store-neutral runtime records: the run, the node attempt, the message, the state revision, the interaction and the bounded trace artifact. Persistence implements collections over exactly these shapes; the runtime constructs them; the conformance instrument reads them. Timestamps come from the injected host clock (deterministic ticks under conformance) and never enter a canonical identity. Credential values have no representable member, and every omitted payload is an explicit state — `retained`, `redacted`, `truncated`, `expired`, `not-configured` or `not-run` — never a silent absence.
- */
-export type MasRuntime = MasRuntime_masRun | MasRuntime_masNodeAttempt | MasRuntime_masMessage | MasRuntime_masStateRevision | MasRuntime_masInteraction | MasRuntime_masTraceArtifact;
-
-/**
  * Schema constraints this type cannot express: minLength=1
  */
 export type ResearchReportRecordNamesItem = string;
@@ -6482,6 +7324,7 @@ export type ResearchReportLimitationsItem = string;
 export interface ResearchReport {
   benchmark: "research";
   schemaVersion: 1;
+  lessons: Lessons_Root;
   /**
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */

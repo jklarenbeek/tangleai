@@ -114,6 +114,18 @@ function lineDelta(compiled: CompiledPatch): { linesAdded: number, linesRemoved:
   return { linesAdded, linesRemoved };
 }
 
+/** Native patch receipts own line counts; native JSON patch owns file changes. */
+export function candidateDiff(previous: readonly SkillFileDraft[], next: readonly SkillFileDraft[], compiled: CompiledPatch): { diffSummary: CandidateDiff; churn: number } {
+  const manifest = (files: readonly SkillFileDraft[]): Record<string, string> =>
+    Object.fromEntries([...files].sort((a, b) => byPath(a.path, b.path)).map(file => [file.path, file.content ?? '']));
+  const moved = createJSONPatch(manifest(previous), manifest(next)) as Array<{ op: string }>;
+  const previousLines = previous.reduce((total, file) => total + splitLines(file.content ?? '').length, 0);
+  const { linesAdded, linesRemoved } = lineDelta(compiled);
+  return { diffSummary: { filesAdded: moved.filter(operation => operation.op === 'add').length,
+    filesChanged: moved.filter(operation => operation.op === 'replace').length, linesAdded, linesRemoved },
+    churn: previousLines === 0 ? 0 : (linesAdded + linesRemoved) / previousLines };
+}
+
 /** The site an operation edits, so a merged hunk can be traced back to what proposed it. */
 function siteOf(operation: PatchOperation): string {
   const prefix = `${operation.path} ${operation.op} `;
@@ -158,7 +170,6 @@ export function createCandidateCommitter(options: CandidateCommitterOptions): Ca
   const forbidden = options.forbidden ?? [];
   const leaves = options.leaves ?? [];
   const frozen: FrozenSkill = { bundle: options.frozen.bundle, files: draftsOf(options.frozen.files) };
-  const previousText = new Map(frozen.files.map(file => [file.path, file.content ?? '']));
   let compiled: CompiledPatch | null = null;
   let applications = 0;
 
@@ -216,21 +227,11 @@ export function createCandidateCommitter(options: CandidateCommitterOptions): Ca
       if (compiled === null) {
         return { valid: false, errors: asErrors([trace2SkillIssue('TT2S1004', '/operations', 'the plan has no compiled patch behind it')]) };
       }
-      const manifest = (document: SkillDocument): Record<string, string> =>
-        Object.fromEntries([...document.files].sort((a, b) => byPath(a.path, b.path)).map(file => [file.path, file.content ?? '']));
-      const moved = createJSONPatch(manifest(previous), manifest(next)) as Array<{ op: string }>;
       const attribution = hunkProvenance(compiled, leaves);
       const unattributed = attribution.filter(entry => entry.sourceRolloutIds.length === 0);
-      const previousLines = [...previousText.values()].reduce((total, text) => total + splitLines(text).length, 0);
-      const { linesAdded, linesRemoved } = lineDelta(compiled);
       const plan: CandidatePlan = {
         files: next.files,
-        diffSummary: {
-          filesAdded: moved.filter(operation => operation.op === 'add').length,
-          filesChanged: moved.filter(operation => operation.op === 'replace').length,
-          linesAdded, linesRemoved,
-        },
-        churn: previousLines === 0 ? 0 : (linesAdded + linesRemoved) / previousLines,
+        ...candidateDiff(previous.files, next.files, compiled),
         semantic: {
           valid: unattributed.length === 0,
           issues: unattributed.map(entry => trace2SkillIssue('TT2S1007', `/hunks/${entry.opIndex}`,

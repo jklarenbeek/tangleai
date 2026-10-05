@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "8a5af4889ca87b8d5255c191f1c22cd764fe949b",
+    "head": "b0473f998a4eefd4bf7a5d0c9ec61fbdd9ecc8ed",
     "clean": false,
     "files": [
       {
@@ -203,11 +203,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "bd586834be71be1d64c0521c5ec212340b65fbeaa30c6b6bfeae7d03dc24a6a2"
+        "sha256": "2054ba42831814e95165d0e725f3c81b3b5e360136dc514d5c4582a7e1b30bfd"
       },
       {
         "path": "package.json",
-        "sha256": "cc6d2d98d5d0de4885d7372a91c6e1dd1173f8a782fc9e04a9ed768b4a686699"
+        "sha256": "5b94a5da80af9a7b2b3c01d5a65fd8a414490213a838afc0684ed66a8dfa41fd"
       },
       {
         "path": "packages/agents/package.json",
@@ -763,7 +763,7 @@
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "6981decea61769cdefbc8a3ab69db2b1ab369da34c93031676b1facd847cce4e"
+        "sha256": "08a2d8de66b9b47d2c9740cf06cd026c05c0b231c11fc17ea98a9bae6808f717"
       },
       {
         "path": "packages/search/package.json",
@@ -899,11 +899,11 @@
       },
       {
         "path": "packages/store/src/research-model.ts",
-        "sha256": "98b23720420f9741ff815d6816c4c18022dfaa40f0134a8fcc7aa8f33f652770"
+        "sha256": "fee2f3393aedab0a596d6c52af82270cc387e32d197ec6b96919240cb9617534"
       },
       {
         "path": "packages/store/src/research-store.ts",
-        "sha256": "44853118163a636edf1a20e58d381a02e3fc0f0db06b69360f4d244225f69389"
+        "sha256": "d2d649525389499cba1b25f2a10d50581780868ca6a121bc8c4cf7f70eebb9dd"
       },
       {
         "path": "packages/store/src/runs.ts",
@@ -927,7 +927,7 @@
       },
       {
         "path": "packages/store/src/trace2skill-store.ts",
-        "sha256": "654063b4bd7fa36042a1b67a44b04a2210f77ed72ef132bfc61cb9fe9d19caf9"
+        "sha256": "a1db4f236119b2c3a60faae0315ab72917fafc20ce808b581dbca6c68c209b54"
       },
       {
         "path": "packages/store/src/trading-model.ts",
@@ -1130,7 +1130,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "9c785e201af07c36f54642fd0dcd4724ac8c5babfbd6f80dd4cce0082db7a295"
+    "sha256": "926038433461c6843dee17f73a1cc234c7ae15b48bf24b91f569d1cc3489448e"
   },
   "ablations": [
     {
@@ -76684,5 +76684,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "37ccc7d18cc784145f0ee8ad14ab3266699537e022e141d5e1e0a4711bd00d4f"
+  "reportId": "86812d37427d4c9f6d4193433d9c057104a736832a7c7ec8ae47e2e2487a4b5d"
 }

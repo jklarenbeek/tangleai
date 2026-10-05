@@ -16,7 +16,7 @@
       "properties": {
         "code": {
           "type": "string",
-          "pattern": "^TRSH10(0[1-9]|10)$"
+          "pattern": "^TRSH(10(0[1-9]|10)|20(0[1-9]|1[0-2]))$"
         },
         "path": {
           "type": "string"
@@ -1529,6 +1529,37 @@
         },
         "interventionReport": {
           "$ref": "#/$defs/ResearchInterventionReport"
+        },
+        "lessons": {
+          "type": "object",
+          "properties": {
+            "injected": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/LessonInjection"
+              }
+            },
+            "proposed": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Sha256"
+              },
+              "uniqueItems": true
+            },
+            "promoted": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Sha256"
+              },
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "injected",
+            "proposed",
+            "promoted"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1912,6 +1943,10 @@
         "experimental": {
           "type": "boolean",
           "description": "New full-auto projects must explicitly opt into their experimental native task topology."
+        },
+        "lessonContext": {
+          "$ref": "#/$defs/ResearchLessonOriginContext",
+          "description": "Optional immutable host-owned training input. Historical projects without this binding cannot propose reusable lessons."
         }
       },
       "required": [
@@ -2057,6 +2092,9 @@
         },
         "guidanceHash": {
           "$ref": "#/$defs/Sha256"
+        },
+        "lessonProcedure": {
+          "$ref": "#/$defs/LessonProcedureBinding"
         }
       },
       "required": [
@@ -2822,65 +2860,6 @@
       ],
       "additionalProperties": false
     },
-    "ResearchLesson": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/ResearchId"
-        },
-        "projectId": {
-          "$ref": "#/$defs/ResearchId"
-        },
-        "failurePattern": {
-          "type": "string",
-          "minLength": 1
-        },
-        "fix": {
-          "type": "string",
-          "minLength": 1
-        },
-        "evidenceIds": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/ResearchId"
-          },
-          "minItems": 1,
-          "uniqueItems": true
-        },
-        "applicability": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "minItems": 1
-        },
-        "validationRecordId": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ResearchId"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "revision": {
-          "$ref": "#/$defs/Sha256"
-        }
-      },
-      "required": [
-        "id",
-        "projectId",
-        "failurePattern",
-        "fix",
-        "evidenceIds",
-        "applicability",
-        "validationRecordId",
-        "revision"
-      ],
-      "additionalProperties": false
-    },
     "StageArtifactDescriptor": {
       "type": "object",
       "additionalProperties": false,
@@ -3219,6 +3198,9 @@
         },
         "decisionId": {
           "$ref": "#/$defs/ResearchId"
+        },
+        "lessonProcedure": {
+          "$ref": "#/$defs/LessonProcedureBinding"
         }
       },
       "required": [
@@ -6434,6 +6416,37 @@
                 },
                 "cost": {
                   "$ref": "#/$defs/ResearchCost"
+                },
+                "lessons": {
+                  "type": "object",
+                  "properties": {
+                    "injected": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/LessonInjection"
+                      }
+                    },
+                    "proposed": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/Sha256"
+                      },
+                      "uniqueItems": true
+                    },
+                    "promoted": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/Sha256"
+                      },
+                      "uniqueItems": true
+                    }
+                  },
+                  "required": [
+                    "injected",
+                    "proposed",
+                    "promoted"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "required": [
@@ -7313,6 +7326,974 @@
         "edit"
       ],
       "additionalProperties": false
+    },
+    "ResearchLessonLegacy": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "failurePattern": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "applicability": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "validationRecordId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "failurePattern",
+        "fix",
+        "evidenceIds",
+        "applicability",
+        "validationRecordId",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchLessonScope": {
+      "type": "object",
+      "properties": {
+        "domainProfileId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "taskFamily": {
+          "$ref": "#/$defs/ResearchId"
+        }
+      },
+      "required": [
+        "domainProfileId",
+        "taskFamily"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchLessonOrigin": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "attempt",
+            "decision",
+            "review",
+            "intervention",
+            "verification",
+            "retrieved-web"
+          ]
+        },
+        "runId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "topicIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "topicContentHashes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Sha256"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "artifactIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "hashes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Sha256"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "envelope": {
+          "$ref": "#/$defs/ResearchClaimEnvelope"
+        }
+      },
+      "required": [
+        "kind",
+        "runId",
+        "topicIds",
+        "topicContentHashes",
+        "artifactIds",
+        "hashes",
+        "envelope"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchLessonProposal": {
+      "type": "object",
+      "properties": {
+        "baseHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "edit": {
+          "$ref": "https://tangleai.dev/schemas/trace2skill/authoredPatch"
+        }
+      },
+      "required": [
+        "baseHash",
+        "edit"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$le": [
+          {
+            "$count": "$.edit.operations[*]"
+          },
+          6
+        ]
+      }
+    },
+    "ResearchLessonRelevance": {
+      "type": "object",
+      "properties": {
+        "runId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "age": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relevance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "contradictions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "negativeTransfer": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "runId",
+        "age",
+        "relevance",
+        "contradictions",
+        "negativeTransfer"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchLessonV2": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "id": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "revision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ResearchLessonScope"
+        },
+        "origin": {
+          "$ref": "#/$defs/ResearchLessonOrigin"
+        },
+        "corroboration": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "originIds": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/Sha256"
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "originIds"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "proposal": {
+          "$ref": "#/$defs/ResearchLessonProposal"
+        },
+        "severity": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "enum": [
+                "proposed",
+                "staged",
+                "validated",
+                "rejected",
+                "promoted",
+                "rolled-back",
+                "expired"
+              ]
+            },
+            "validationRunIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Sha256"
+              },
+              "uniqueItems": true
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ResearchIssue"
+              }
+            }
+          },
+          "required": [
+            "state",
+            "validationRunIds",
+            "issues"
+          ],
+          "additionalProperties": false
+        },
+        "decay": {
+          "type": "object",
+          "properties": {
+            "hypothesisId": {
+              "enum": [
+                "none",
+                "age-linear",
+                "severity-weighted-age"
+              ]
+            },
+            "observedAtRun": {
+              "$ref": "#/$defs/ResearchId"
+            },
+            "relevanceRows": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ResearchLessonRelevance"
+              }
+            }
+          },
+          "required": [
+            "hypothesisId",
+            "observedAtRun",
+            "relevanceRows"
+          ],
+          "additionalProperties": false
+        },
+        "promotion": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "outcomeVersionId": {
+                  "$ref": "#/$defs/Sha256"
+                },
+                "activationEventId": {
+                  "$ref": "#/$defs/Sha256"
+                }
+              },
+              "required": [
+                "outcomeVersionId",
+                "activationEventId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recordedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "revision",
+        "parentId",
+        "projectId",
+        "scope",
+        "origin",
+        "corroboration",
+        "proposal",
+        "severity",
+        "validation",
+        "decay",
+        "promotion",
+        "recordedAt"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchLesson": {
+      "description": "One immutable lesson kind. Legacy records remain readable; only version 2 participates in guarded learning.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ResearchLessonLegacy"
+        },
+        {
+          "$ref": "#/$defs/ResearchLessonV2"
+        }
+      ]
+    },
+    "LessonValidityOutput": {
+      "type": "object",
+      "properties": {
+        "claimSupport": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "registryAccuracy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "preregistrationIntegrity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "completion": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "claimSupport",
+        "registryAccuracy",
+        "preregistrationIntegrity",
+        "completion"
+      ],
+      "additionalProperties": false
+    },
+    "LessonSpend": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "physical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "calls",
+        "tokens",
+        "ms",
+        "physical",
+        "replayed",
+        "cost"
+      ],
+      "additionalProperties": false
+    },
+    "LessonValidationRow": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "inputHash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input": {
+          "$ref": "https://tangleai.dev/schemas/outcomes/json"
+        },
+        "topicContentHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "output": {
+          "$ref": "#/$defs/LessonValidityOutput"
+        },
+        "baselineOutput": {
+          "$ref": "#/$defs/LessonValidityOutput"
+        },
+        "truth": {
+          "$ref": "#/$defs/LessonValidityOutput"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "baselineScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "spend": {
+          "$ref": "#/$defs/LessonSpend"
+        },
+        "domain": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Preregistered evaluation stratum; omitted records use the scope domain profile."
+        }
+      },
+      "required": [
+        "topicId",
+        "inputHash",
+        "input",
+        "topicContentHash",
+        "output",
+        "baselineOutput",
+        "truth",
+        "score",
+        "baselineScore",
+        "spend"
+      ],
+      "additionalProperties": false
+    },
+    "LessonValidationRun": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "revision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "lessonSetHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "bundleHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "baseBundleHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "proposalIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Sha256"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "scope": {
+          "$ref": "#/$defs/ResearchLessonScope"
+        },
+        "topicIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LessonValidationRow"
+          },
+          "minItems": 1
+        },
+        "identityId": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "promptVersions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Sha256"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "evaluatorRevision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "registrationId": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "finishedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchIssue"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "lessonSetHash",
+        "bundleHash",
+        "baseBundleHash",
+        "proposalIds",
+        "scope",
+        "topicIds",
+        "rows",
+        "identityId",
+        "promptVersions",
+        "evaluatorRevision",
+        "registrationId",
+        "startedAt",
+        "finishedAt",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
+    "LessonSet": {
+      "type": "object",
+      "properties": {
+        "bundleHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "lessonIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Sha256"
+          },
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "decayHypothesisId": {
+          "enum": [
+            "none",
+            "age-linear",
+            "severity-weighted-age"
+          ]
+        },
+        "rows": {
+          "type": "object",
+          "maxProperties": 4096,
+          "additionalProperties": {
+            "$ref": "#/$defs/LessonValidityOutput"
+          }
+        }
+      },
+      "required": [
+        "bundleHash",
+        "lessonIds",
+        "decayHypothesisId",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "LessonInjection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "runId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ResearchLessonScope"
+        },
+        "lessonSetHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "bundleHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "activationEventId": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "outcomeVersionId": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "runId",
+        "projectId",
+        "scope",
+        "lessonSetHash",
+        "bundleHash",
+        "activationEventId",
+        "outcomeVersionId"
+      ],
+      "additionalProperties": false
+    },
+    "DecayHypothesis": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "none"
+            },
+            "revision": {
+              "$ref": "#/$defs/Sha256"
+            },
+            "kind": {
+              "const": "none"
+            },
+            "parameters": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "revision",
+            "kind",
+            "parameters"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "enum": [
+                "age-linear",
+                "severity-weighted-age"
+              ]
+            },
+            "revision": {
+              "$ref": "#/$defs/Sha256"
+            },
+            "kind": {
+              "enum": [
+                "age-linear",
+                "severity-weighted-age"
+              ]
+            },
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "horizon": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "severityWeights": {
+                  "type": "object",
+                  "properties": {
+                    "low": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "medium": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "high": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "low",
+                    "medium",
+                    "high"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "horizon",
+                "severityWeights"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "revision",
+            "kind",
+            "parameters"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "$query": {
+        "$eq": [
+          "$.id",
+          "$.kind"
+        ]
+      }
+    },
+    "ResearchLessonOriginContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "topicId",
+        "taskFamily",
+        "input"
+      ],
+      "properties": {
+        "topicId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "taskFamily": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "input": {
+          "$ref": "https://tangleai.dev/schemas/outcomes/json"
+        }
+      }
+    },
+    "LessonSetRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "scope",
+        "payload",
+        "candidateId",
+        "proposalIds",
+        "validationRunIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "revision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "scope": {
+          "$ref": "#/$defs/ResearchLessonScope"
+        },
+        "payload": {
+          "$ref": "#/$defs/LessonSet"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "proposalIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/Sha256"
+          }
+        },
+        "validationRunIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/Sha256"
+          }
+        }
+      }
+    },
+    "ResearchLessonDraft": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/$defs/ResearchLessonScope"
+        },
+        "origin": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "attempt",
+                "decision",
+                "review",
+                "intervention",
+                "verification",
+                "retrieved-web"
+              ]
+            },
+            "envelope": {
+              "$ref": "#/$defs/ResearchClaimEnvelope"
+            }
+          },
+          "required": [
+            "kind",
+            "envelope"
+          ],
+          "additionalProperties": false
+        },
+        "proposal": {
+          "$ref": "#/$defs/ResearchLessonProposal"
+        },
+        "severity": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "decayHypothesisId": {
+          "enum": [
+            "none",
+            "age-linear",
+            "severity-weighted-age"
+          ]
+        }
+      },
+      "required": [
+        "scope",
+        "origin",
+        "proposal",
+        "severity",
+        "decayHypothesisId"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchLessonDraftBatch": {
+      "type": "object",
+      "properties": {
+        "proposals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchLessonDraft"
+          },
+          "maxItems": 6
+        }
+      },
+      "required": [
+        "proposals"
+      ],
+      "additionalProperties": false
+    },
+    "LessonOutcomeInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "topicId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "inputHash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "topicId",
+        "inputHash"
+      ]
+    },
+    "LessonProcedureBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bundleHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "injection": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LessonInjection"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "bundleHash",
+        "injection"
+      ]
     }
   }
 }

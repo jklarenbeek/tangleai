@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "8a5af4889ca87b8d5255c191f1c22cd764fe949b",
+    "head": "b0473f998a4eefd4bf7a5d0c9ec61fbdd9ecc8ed",
     "clean": false,
     "files": [
       {
@@ -211,11 +211,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "bd586834be71be1d64c0521c5ec212340b65fbeaa30c6b6bfeae7d03dc24a6a2"
+        "sha256": "2054ba42831814e95165d0e725f3c81b3b5e360136dc514d5c4582a7e1b30bfd"
       },
       {
         "path": "package.json",
-        "sha256": "cc6d2d98d5d0de4885d7372a91c6e1dd1173f8a782fc9e04a9ed768b4a686699"
+        "sha256": "5b94a5da80af9a7b2b3c01d5a65fd8a414490213a838afc0684ed66a8dfa41fd"
       },
       {
         "path": "packages/agents/package.json",
@@ -867,11 +867,11 @@
       },
       {
         "path": "packages/store/src/research-model.ts",
-        "sha256": "98b23720420f9741ff815d6816c4c18022dfaa40f0134a8fcc7aa8f33f652770"
+        "sha256": "fee2f3393aedab0a596d6c52af82270cc387e32d197ec6b96919240cb9617534"
       },
       {
         "path": "packages/store/src/research-store.ts",
-        "sha256": "44853118163a636edf1a20e58d381a02e3fc0f0db06b69360f4d244225f69389"
+        "sha256": "d2d649525389499cba1b25f2a10d50581780868ca6a121bc8c4cf7f70eebb9dd"
       },
       {
         "path": "packages/store/src/runs.ts",
@@ -895,7 +895,7 @@
       },
       {
         "path": "packages/store/src/trace2skill-store.ts",
-        "sha256": "654063b4bd7fa36042a1b67a44b04a2210f77ed72ef132bfc61cb9fe9d19caf9"
+        "sha256": "a1db4f236119b2c3a60faae0315ab72917fafc20ce808b581dbca6c68c209b54"
       },
       {
         "path": "packages/store/src/trading-model.ts",
@@ -1242,7 +1242,7 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "4f862f23239e0f032274dd4d99fca352bc9e04da09a34a53d9564652404ce971"
+    "sha256": "db1f5c89a1df47dbdccdd9701fceb613af3cb8cb459e4d097b5e4c9f06451a34"
   },
   "suite": {
     "tangle": "0.38.0",
@@ -26043,5 +26043,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "49e7ac2ac75b5acd9403137092ef33fe37bb619ffb43d996de2302f8f3f5ed6d"
+  "reportId": "58f3e1275106d076265df380211fa06cdc5946b3e8a8eb7602c008cb83d3b5de"
 }

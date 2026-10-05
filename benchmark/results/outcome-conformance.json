@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "8a5af4889ca87b8d5255c191f1c22cd764fe949b",
+    "head": "b0473f998a4eefd4bf7a5d0c9ec61fbdd9ecc8ed",
     "clean": false,
     "files": [
       {
@@ -107,11 +107,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "bd586834be71be1d64c0521c5ec212340b65fbeaa30c6b6bfeae7d03dc24a6a2"
+        "sha256": "2054ba42831814e95165d0e725f3c81b3b5e360136dc514d5c4582a7e1b30bfd"
       },
       {
         "path": "package.json",
-        "sha256": "cc6d2d98d5d0de4885d7372a91c6e1dd1173f8a782fc9e04a9ed768b4a686699"
+        "sha256": "5b94a5da80af9a7b2b3c01d5a65fd8a414490213a838afc0684ed66a8dfa41fd"
       },
       {
         "path": "packages/agents/package.json",
@@ -1939,11 +1939,31 @@
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "6981decea61769cdefbc8a3ab69db2b1ab369da34c93031676b1facd847cce4e"
+        "sha256": "08a2d8de66b9b47d2c9740cf06cd026c05c0b231c11fc17ea98a9bae6808f717"
+      },
+      {
+        "path": "packages/research/schemas/decay-hypothesis.schema.json",
+        "sha256": "4922dc8a455960c50acd2fdf3342ea9f043c7715870e8b6d7b0fab1db2e80c9f"
+      },
+      {
+        "path": "packages/research/schemas/lesson-injection.schema.json",
+        "sha256": "760d7431b53ff3181fe0579820db6e73146f593652c56d791602650ed69162ed"
+      },
+      {
+        "path": "packages/research/schemas/lesson-set.schema.json",
+        "sha256": "c4df36fb3ba1fc8deecf56a18cf53be368b0ceec84cad4a72be48739fa99a881"
+      },
+      {
+        "path": "packages/research/schemas/lesson-validation-run.schema.json",
+        "sha256": "3be8adc54cb656f0889122833e9f4091cebbde0c89c12b48ee9578ebdbdbf517"
+      },
+      {
+        "path": "packages/research/schemas/lesson.schema.json",
+        "sha256": "6197f19e377971a53f8b9d44520cc128a41cd9e5b440b048a2f21b03231ce5cd"
       },
       {
         "path": "packages/research/schemas/research.schema.json",
-        "sha256": "d6ddc43db83048edd466a30f71366e91094b587da98efaf1ab997da93e940aee"
+        "sha256": "f42055131d3aceb645635303db28b544dd70a05874eb722e39a5a3e3f0fa00b1"
       },
       {
         "path": "packages/research/src/adapters/arxiv.ts",
@@ -2007,7 +2027,7 @@
       },
       {
         "path": "packages/research/src/contracts.gen.ts",
-        "sha256": "e21a6261882e492488fdd86220adf2f27dcd261cf4b294f8dda35b2d7a15fb4a"
+        "sha256": "2c0b42726692c9cab6fdb624618e884b555563f742588154c01cb30638a00196"
       },
       {
         "path": "packages/research/src/directives.ts",
@@ -2018,8 +2038,12 @@
         "sha256": "068b0912514ed2a527c6093b14ed1ac46e5cee59289fafc7c8a1ba09f5721dba"
       },
       {
+        "path": "packages/research/src/domains/registry.ts",
+        "sha256": "a430beadffdf97e41aa97f4dba51afcc139f6ef8511d6d5b201df1f08aa10400"
+      },
+      {
         "path": "packages/research/src/errors.ts",
-        "sha256": "ce988e24b2f99a7bee7b7dd2b418fd7ccf5260cad4f104b029463ef82878d486"
+        "sha256": "95f5e332be6c1978865e4594477a1aa9d357b1be55f282bc84f78928afc3639d"
       },
       {
         "path": "packages/research/src/execution-contract.ts",
@@ -2059,7 +2083,7 @@
       },
       {
         "path": "packages/research/src/export/manifest.ts",
-        "sha256": "495341f89099f5503e3fccac2cf30286023be9b735c593710984982a54889464"
+        "sha256": "47bba8ab836f0764d72ef9049ef9cee037ea4beb6705012e8da49725946153f9"
       },
       {
         "path": "packages/research/src/export/markdown.ts",
@@ -2075,11 +2099,11 @@
       },
       {
         "path": "packages/research/src/handlers.ts",
-        "sha256": "a0bcc38b2e1bd1e6fdffab782dd3deafb1e2e5eab1c7d3a4bed18dc87e3d3003"
+        "sha256": "1243771e8f63621bce9e0a7e2cbf3e011786b6cbe54170e8992036502d5080c4"
       },
       {
         "path": "packages/research/src/host.ts",
-        "sha256": "718982b7bccf99891f9cf4e4e1e65e5d9b7e9a44b200e3b10b16c10a96d548ce"
+        "sha256": "b655299e357c19ffba54832e0a231f43acd5af9944db108b77583e3147f464f0"
       },
       {
         "path": "packages/research/src/identity.ts",
@@ -2087,11 +2111,75 @@
       },
       {
         "path": "packages/research/src/index.ts",
-        "sha256": "b36d9c7017cdb0fbc8b27a83afdd79b36ed9d05680c454329202e2afac660a21"
+        "sha256": "c1ec8c61ee900cd0ca84b9bf64e3e68dc81b547207fad9680692f03c63320702"
+      },
+      {
+        "path": "packages/research/src/lessons/access.ts",
+        "sha256": "fc5b06947aaa12950004e4bb30f876c3bf03c7bbc9c0d68dc1ada502dcf4bff2"
+      },
+      {
+        "path": "packages/research/src/lessons/activation.ts",
+        "sha256": "6b05dd84689529e9a6c5849c766930f3f273cb1b8513509eafcd65d8b4d4d0b4"
+      },
+      {
+        "path": "packages/research/src/lessons/compile.ts",
+        "sha256": "4daa98bcb44d51b9a1c4fe45cf991b6ae7498a1d87436d9c15c89025943d49ca"
+      },
+      {
+        "path": "packages/research/src/lessons/decay.ts",
+        "sha256": "1f35bfe6df742f833fd782c422ab8c6598e47fe49dc1038ac28c6ec44b31fa79"
+      },
+      {
+        "path": "packages/research/src/lessons/inject.ts",
+        "sha256": "1e34887840f624bedcb21a2c7fa00dc591fae87044a9689ca48b598f62a7cb99"
+      },
+      {
+        "path": "packages/research/src/lessons/origins.ts",
+        "sha256": "602c40f631f34cd8d31a68e42fdc52f241bc06a804e6bb3f48ea22c53db22132"
+      },
+      {
+        "path": "packages/research/src/lessons/outcome-records.ts",
+        "sha256": "ffdf64faa2846fe48da9ccaacf81705b9f89a822b16d31565b70a57fa3f09bde"
+      },
+      {
+        "path": "packages/research/src/lessons/outcome-slot.ts",
+        "sha256": "447e1bfeb7713ac68f439244bc903fc2e63522787eb0ded270958293e4d5aac0"
+      },
+      {
+        "path": "packages/research/src/lessons/outcome.ts",
+        "sha256": "347bd2e69ee5b80cfa4918a37df6d1e75826952e0b162a55d2c3406ed5bba3b4"
+      },
+      {
+        "path": "packages/research/src/lessons/propose.ts",
+        "sha256": "f09059bed1d553d028af9f7632999dd624bedc53593d0540a2134d24c9609bae"
+      },
+      {
+        "path": "packages/research/src/lessons/records.ts",
+        "sha256": "8ab96f2e5dea576ee241f69f34a424faa6c4c09d92914ae7b22f3d468154a19e"
+      },
+      {
+        "path": "packages/research/src/lessons/refine.ts",
+        "sha256": "da608194f289a96ec4d3df7ec9732f72d39b473b4f145493a8a5d22846408fc0"
+      },
+      {
+        "path": "packages/research/src/lessons/stage.ts",
+        "sha256": "ed18bf239da696a3fedb9a0f49c2643bcf9b5d3801467922aa7678e3a56a154f"
+      },
+      {
+        "path": "packages/research/src/lessons/store-policy.ts",
+        "sha256": "d0b5fdaa5f31416d0bad4ac4bde97cd75630068c540a200ac6ed57ded68b9ec4"
+      },
+      {
+        "path": "packages/research/src/lessons/store.ts",
+        "sha256": "041347a79bf126f70eebfee869a62471cbc2df15cc9e3b0587f7e89699c4d6f2"
+      },
+      {
+        "path": "packages/research/src/lessons/workflow.ts",
+        "sha256": "703acb96f78131592de16ddc2083c267829651b36963856d15ea7e819e443eb7"
       },
       {
         "path": "packages/research/src/manifest.ts",
-        "sha256": "8924c99efd3a9df5d00a7e8bbef5465e2f6c4b3f2f0db4bcaa51b7b486c52f35"
+        "sha256": "34b3b9bc16fa5970673c4fa7655ba492533de74087c7b06f2481a5008e53546d"
       },
       {
         "path": "packages/research/src/modes.ts",
@@ -2131,7 +2219,7 @@
       },
       {
         "path": "packages/research/src/schema.ts",
-        "sha256": "3fab14e5ebb04c02639611c9c6b241b7092d63584b779782348b54d0d4b1f48e"
+        "sha256": "2791de6894d8d5b21618e65cb9f968e218bd6a80b3a94ec6ad9496700a4875c2"
       },
       {
         "path": "packages/research/src/selection.ts",
@@ -2151,7 +2239,7 @@
       },
       {
         "path": "packages/research/src/stages/cards.ts",
-        "sha256": "a39eabecca335327fdf8867ea780a33bd28426d7a7e3f46b3cfc966374ae0b42"
+        "sha256": "4b22f6c04e3278f45f8b28cc0b85c8b061f234b1326e66918f72cba34c9ac4ff"
       },
       {
         "path": "packages/research/src/stages/claims.ts",
@@ -2211,11 +2299,11 @@
       },
       {
         "path": "packages/research/src/store-policy.ts",
-        "sha256": "b71a0c6dfb49aa69d5c9fc5aa844aadf4d0d7e580b5dd2a6358c02b8bc90f6bd"
+        "sha256": "cb8fb1c4adbb1ece51952e0c6e20de45b5eff9c51d2d61c707f03622c617b445"
       },
       {
         "path": "packages/research/src/store.ts",
-        "sha256": "944182364917bc2e725c8671961a0c0514011df837b63f7a1473e06b00f526dc"
+        "sha256": "cc4ce8a64c6823b69ac63754bcfde31d7f4062957eab452831321359e1451a88"
       },
       {
         "path": "packages/research/src/tools.ts",
@@ -2227,11 +2315,11 @@
       },
       {
         "path": "packages/research/src/workflow-contract.ts",
-        "sha256": "eb278b31c05e73e46514b434ef81063ea38245ab1b509467d8348fca9281318e"
+        "sha256": "056d0ec51b39cbb5e9e63f4c76b8dcad8698e4c28e3fa614eafc4acc576cb54d"
       },
       {
         "path": "packages/research/src/workflow.ts",
-        "sha256": "527ac40d548831fc58a25ece398e4d219f37e166eb8137e869906076c0b0b0e5"
+        "sha256": "375a169cacbee7be2ddf696b624062645c5ea8dd1eb959945bc48f80402e9029"
       },
       {
         "path": "packages/research/src/writing-contract.ts",
@@ -2395,11 +2483,11 @@
       },
       {
         "path": "packages/store/src/research-model.ts",
-        "sha256": "98b23720420f9741ff815d6816c4c18022dfaa40f0134a8fcc7aa8f33f652770"
+        "sha256": "fee2f3393aedab0a596d6c52af82270cc387e32d197ec6b96919240cb9617534"
       },
       {
         "path": "packages/store/src/research-store.ts",
-        "sha256": "44853118163a636edf1a20e58d381a02e3fc0f0db06b69360f4d244225f69389"
+        "sha256": "d2d649525389499cba1b25f2a10d50581780868ca6a121bc8c4cf7f70eebb9dd"
       },
       {
         "path": "packages/store/src/runs.ts",
@@ -2423,7 +2511,7 @@
       },
       {
         "path": "packages/store/src/trace2skill-store.ts",
-        "sha256": "654063b4bd7fa36042a1b67a44b04a2210f77ed72ef132bfc61cb9fe9d19caf9"
+        "sha256": "a1db4f236119b2c3a60faae0315ab72917fafc20ce808b581dbca6c68c209b54"
       },
       {
         "path": "packages/store/src/trading-model.ts",
@@ -2471,7 +2559,7 @@
       },
       {
         "path": "packages/trace2skill/src/commit.ts",
-        "sha256": "cdf639f4090e346fa061d4c00887108cf70ba2e0506a5389b139ecf4571da07b"
+        "sha256": "8e13c460755b3e2d74a58bb9b07b04be432c73333cb25109107ba5c072fdda7b"
       },
       {
         "path": "packages/trace2skill/src/consume.ts",
@@ -2507,7 +2595,7 @@
       },
       {
         "path": "packages/trace2skill/src/index.ts",
-        "sha256": "953898d9890b67a7a571ad7d6c9d1780997a029c84cf6a977681135f84b445e2"
+        "sha256": "5a15f00a9e8cec7b950f0003fd8c9b538b5cf19900244fb61b9896435fc3fc7b"
       },
       {
         "path": "packages/trace2skill/src/init.ts",
@@ -2706,7 +2794,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "5bc162ea61626310b53636657d60d98e75e2cb5e593e180d00146206e7969d18"
+    "sha256": "09a537d3aace30e38afbaa907a03a8e9997e293125e56ec775e5532e568ff3ae"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85892,5 +85980,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "4ef09c829639424453835742f3aee64c80e67cc20b7fed22d796660d2003e6b2"
+  "reportId": "2f2a0a55bcc0f76d24fd9ff3e8003f67cd75431d35fba63d274086ccd116827f"
 }

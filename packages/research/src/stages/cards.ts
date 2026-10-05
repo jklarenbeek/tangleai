@@ -1,4 +1,4 @@
-import type { DocumentVersion, DocumentElement, DocumentCorpusStore } from '@tangleai/documents';
+import type { DocumentVersion, DocumentElement } from '@tangleai/documents';
 import type { ArtifactRecord } from '@tangleai/context/schemas/evidence';
 import type { EvidenceCard } from '../contracts.gen.ts';
 import type { ResearchOutcome } from '../errors.ts';
@@ -33,14 +33,17 @@ export function toAdmittedArtifact(card: EvidenceCard): ArtifactRecord {
     digest: checked.contentHash };
 }
 /** Resolves immutable elements and retained full-source bytes; chunks are never consulted. */
-export async function resolveEvidenceCard(card: EvidenceCard, store: Pick<DocumentCorpusStore, 'getVersion' | 'listElements'>,
+export async function resolveEvidenceCard(card: EvidenceCard, store: {
+  getVersion(id: string): Promise<Pick<DocumentVersion, 'id' | 'sourceId' | 'contentHash'> | null | undefined>;
+  listElements(id: string): Promise<DocumentElement[]>;
+},
   readSource: (artifactId: string) => Promise<Uint8Array>): Promise<ResearchOutcome<EvidenceCard>> {
   const checked = validateResearchShape<EvidenceCard>('EvidenceCard', card); if (!checked.valid) return checked;
   try {
     const pinned = checked.value, version = await store.getVersion(pinned.versionId);
-    if (!version || version.contentHash !== pinned.contentHash) return researchRefuse('TRSH1003', '/versionId', 'Evidence version does not resolve.');
+    if (!version || version.id !== pinned.versionId || version.contentHash !== pinned.contentHash) return researchRefuse('TRSH1003', '/versionId', 'Evidence version does not resolve.');
     const element = (await store.listElements(version.id)).find(e => e.order === pinned.locator.elementOrder);
-    if (!element || element.versionId !== version.id || element.text !== pinned.excerpt || element.page !== pinned.locator.page
+    if (!element || element.versionId !== version.id || element.sourceId !== version.sourceId || element.text !== pinned.excerpt || element.page !== pinned.locator.page
       || JSON.stringify(element.headingPath) !== JSON.stringify(pinned.locator.headingPath)) return researchRefuse('TRSH1005', '/locator', 'Excerpt differs from its version locator.');
     const bytes = await readSource(pinned.artifactId);
     if (await researchArtifactIdOf(bytes) !== pinned.artifactId || pinned.artifactId !== 'art-' + pinned.contentHash)

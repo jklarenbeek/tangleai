@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/research/lesson-injection/v2",
+  "title": "LessonInjection",
+  "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonInjection"
+}

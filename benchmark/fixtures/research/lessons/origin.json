@@ -1,0 +1,12 @@
+{
+  "document": "research-lesson-checked-failure",
+  "runId": "lesson-origin-run",
+  "projectId": "lesson-origin-project",
+  "topicId": "lesson-training-unit-check",
+  "status": "refused",
+  "code": "TRSH1006",
+  "detail": "A proposed metric had the wrong unit; the independent registry refused it.",
+  "expectedUnit": "squared-distance",
+  "suppliedUnit": "percent",
+  "authority": "authored-verification-control"
+}

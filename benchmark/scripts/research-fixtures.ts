@@ -1,4 +1,5 @@
 /** Reproduce the authored registration and its raw oracle artifacts; never select seeds by outcome. */
+import { researchLessonFixtureFiles } from '../lib/research-lessons-fixture.ts';
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { mulberry32 } from '@jarenjs/core/random';
@@ -208,6 +209,7 @@ put('bundles/invalid/wrong-number.json', { id: 'wrong-number', licence, scope: '
   mutation: 'Increase the first registered result value by one while retaining its observations and complete seed set.',
   expectedCode: 'TRSH1002', expectedState: 'unresolved' });
 for (const fixture of RESEARCH_EXECUTION_REFUSALS) put('bundles/invalid/' + fixture.id + '.json', fixture);
+for (const [path, content] of await researchLessonFixtureFiles(loaded)) files.set(path, content);
 manifest.members = [...files].sort(([a], [b]) => a.localeCompare(b)).map(([path, content]) => ({ path, sha256: researchBytesSha256(content), licence }));
 const { revision: _revision, ...registration } = manifest;
 manifest.revision = await canonicalSha256(registration);

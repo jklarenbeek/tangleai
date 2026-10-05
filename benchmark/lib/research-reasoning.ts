@@ -93,6 +93,12 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
     if (writingPolicy) tools = await createResearchWritingTools(tools, { policy: writingPolicy });
     const usage: ResearchModelUsage = { roles: 0, completion: 0, normalization: 0, repair: 0, physical: 0, promptTokens: 0, completionTokens: 0, unknownTokenRequests: 0, traceBytes: 0 };
     const requests: ResearchReasoningTopic['requests'] = [], executedPacks = new Set<string>(), visibleIds = new Set<string>();
+    // This report inventories requests; native traces retain execution order.
+    // Parallel hash completion must not reorder an otherwise identical measurement.
+    const requestInventory = () => [...requests].sort((left, right) => {
+      const a = canonicalizeJson(left), b = canonicalizeJson(right);
+      return a < b ? -1 : a > b ? 1 : 0;
+    });
     const cursors = new Map<string, 'completion' | 'normalization' | 'repair'>();
     const clientFor: NonNullable<MasHostBindings['clientFor']> = node => ({ endpoint: { provider: 'scripted' }, complete: async request => {
       const messages = (request as { messages: Array<{ role: string; content: unknown }> }).messages;
@@ -154,7 +160,7 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
       usage.traceBytes = new TextEncoder().encode(JSON.stringify(trace)).byteLength;
       const executionResult = await execution!.collect(researchStore, masStore, { runIdentityId: identity.identityId,
         workflowVersionId: prepared.workflow.versionId, executableRevision: prepared.plan.executableRevision, cost, usage },
-      { runGraph: canonicalizeJson(prepared.mermaid), requests });
+      { runGraph: canonicalizeJson(prepared.mermaid), requests: requestInventory() });
       return { measurement: null, identity, execution: executionResult };
     }
     for (let segment = 0; segment < 2; segment++) {
@@ -200,7 +206,7 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
       manifests: snapshot.records.filter(row => row.kind === 'InputManifest').map(row => row.value),
       artifacts: snapshot.artifacts.filter(row => snapshot.committedAdmissionIds.includes(row.id)), interactions: trace.interactions,
       synthesis, hypotheses, hypothesisSet: set, contract, plan, novelty: noveltyReport, visibleCardIds: [...visibleIds].sort(), availableCards: cards.length,
-      requests, executedPacks: [...executedPacks].sort(), probes, discoveryReplay: discovery.replay.stats(), noveltyReplay: novelty.stats(),
+      requests: requestInventory(), executedPacks: [...executedPacks].sort(), probes, discoveryReplay: discovery.replay.stats(), noveltyReplay: novelty.stats(),
       hypothesisValidity: score(hypotheses.map(row => validateResearchShape('ResearchHypothesis', row).valid)),
       evidenceLinkage: score(hypotheses.map(row => row.evidenceIds.length > 0 && row.evidenceIds.every(id => visibleIds.has(id) && cards.some(card => card.id === id)))),
       designIntegrity: score([snapshot.state.contractHash === contract.contractHash, snapshot.state.planHash === plan.planHash,
@@ -228,6 +234,7 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
       await ensurePendingMasSegments(db, masStore);
       if (!await driver.drive(prepared.plan.executableRevision, compiled.value.executeSegment, new AbortController().signal)) throw Error('Quality continuation was not queued.');
     }
-    return { measurement, identity, execution: await execution.collect(researchStore, masStore, measurement, { runGraph: canonicalizeJson(prepared.mermaid), requests }) };
+    return { measurement, identity, execution: await execution.collect(researchStore, masStore, measurement,
+      { runGraph: canonicalizeJson(prepared.mermaid), requests: requestInventory() }) };
   } finally { await discovery?.close(); await db.close(); }
 }

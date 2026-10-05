@@ -412,13 +412,75 @@ retrieval-only controls. A Stop is never relabelled as successful research.
 separate bounded compiler records compilation, missing-tool skips or refusals;
 compilation is not a research quality gate.
 
+`ResearchStore.lessons` retains immutable, content-addressed proposals and
+held-out validation records on memory and SQLite. Origins bind the project's
+explicit `lessonContext`, committed artifact admissions and exact quotations.
+Validation refuses overlapping training inputs, colliding lookup addresses and
+scores that do not reproduce from the retained validity factors. Native skill
+snapshots share the research transaction and are rechecked against their file
+bytes; storage gives them no activation authority. The registered decay rules
+require retained observations. Learning remains experimental and writeback off.
+
+`createLessonRefiner({ store, scope, read, now })` materializes a copied procedure
+through the native guarded editor and skill compiler. `materialize({ proposalIds })`
+returns exact candidate bytes without staging a candidate or changing a lesson.
+The host can retain that procedure, evaluate it on disjoint inputs and retain a
+`LessonValidationRun`. `prepare` and `commit` then require those validation IDs
+and independently reproduce the candidate. The injected `read` supplies the
+host's checked outcome procedure or its registered empty base.
+
+Origin eligibility comes from exact committed decisions, review findings,
+verification failures, substantive interventions or failed attempts. A web
+origin additionally resolves its native document version, element and full
+source bytes and requires an independent non-web correction for the same edit.
+Held-out disjointness includes the corroborating run's complete input content.
+The native compiler owns edits, format checks and file-change accounting. An
+injected synchronous hook returning a thenable is refused as `TRSH2004` before
+staging, with the hook name and native refusal cause retained.
+
+Staging writes native patches, a staged skill candidate, immutable staged and
+validated lesson descendants, and their set in one transaction. Exact replays
+keep the original timestamps and write nothing. Reads used by the guarded
+boundary recompile retained candidates and reproduce their lineage. These are
+checked staging records; activation still requires the outcome service. No
+evolutionary run, rollout, active skill head or quality improvement is invented
+by this operation.
+
+`proposeLessons` reads eligible source classes from one retained run, calls the
+injected structured-output client under shared call/token/time bounds, and
+returns admitted proposals, counted refusals and actual spend. A proposal cannot
+choose its own origin run, validation state or promotion. Hidden inputs and
+foreign lessons are refused before a call; uncorroborated web proposals stay
+proposed. Missing token usage is estimated and counted as unknown; physical
+requests remain unknown unless the host supplies a transport counter.
+
+`createResearchLessonAdapter` asynchronously checks the retained procedures,
+candidate sets and predeclared validation pool before returning synchronous
+lookup and scoring hooks. `prepareResearchLessonSlot` binds actual parent
+outputs and independent truth. Reflect, evaluate, approve, promote and rollback
+use the native outcome service; `recordLessonActivation` retains immutable
+audit descendants from its activation event. Outcome lookup cost is zero;
+validation execution spend is reported separately.
+
+Call `injectLessons` before a run's first stage, then pass its returned
+`procedure` as `lessons` to `prepareResearchWorkflow` and its bundle/injection
+as `lessonProcedure` to `createResearchBinding`. The registry binds the frozen
+root text and native `skill_read` tool before compilation. Every stage manifest
+preserves that binding. Reopening the store requires a new `injectLessons`
+call, which recovers the original procedure even after another promotion. Pass
+the native `masStore` when recovering a run before its first stage committed.
+`researchLessonManifest` supplies retained lesson provenance for scientific
+and export manifests. Only native `OUTC1004` means no active lessons; other
+checked-head failures remain refusals. The profile policy registry defaults to
+`writeback: 'experimental-off'` and decay `none`.
+
 The [instrument](../../docs/RESEARCH_BENCHMARK.md) measures eight registered rows
 on three authored computational topics, with matched scripted gate-only and
 experimental full-auto operation. Both modes retain the original inconclusive
 and negative decisions. A separate positive control reaches writer, independent
 review and all three gates. These tiers qualify implementation and accounting;
 they do not establish live research quality, actual human-review efficacy or
-paper parity. Cross-run lessons, a second domain and the research operations UI
-remain outside this core package. The
+paper parity. Guarded lesson staging does not establish a measured improvement;
+the second domain and research operations UI are not included here. The
 [query handoff](../../queries/research/core-baseline.json) retains fixture/report
 identities, all eight rows, public record names, costs and those limits.

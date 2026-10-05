@@ -1,0 +1,2425 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/research-lessons",
+  "type": "object",
+  "properties": {
+    "registration": {
+      "$ref": "#/$defs/LessonRegistration"
+    },
+    "fixtureHash": {
+      "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+    },
+    "identity": {
+      "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/LessonMeasurementRow"
+      },
+      "minItems": 15,
+      "maxItems": 15
+    },
+    "pair": {
+      "$ref": "#/$defs/LessonComparison"
+    },
+    "gate": {
+      "type": "object",
+      "properties": {
+        "mechanism": {
+          "type": "boolean"
+        },
+        "comparable": {
+          "type": "boolean"
+        },
+        "safety": {
+          "type": "boolean"
+        },
+        "cost": {
+          "type": "boolean"
+        },
+        "outcome": {
+          "type": "boolean"
+        },
+        "writebackEligible": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "mechanism",
+        "comparable",
+        "safety",
+        "cost",
+        "outcome",
+        "writebackEligible"
+      ],
+      "additionalProperties": false
+    },
+    "defaultWriteback": {
+      "const": "experimental-off"
+    },
+    "defaultDecay": {
+      "const": "none"
+    },
+    "oracleCeiling": {
+      "const": 1
+    },
+    "networkCalls": {
+      "const": 0
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "registration",
+    "fixtureHash",
+    "identity",
+    "rows",
+    "pair",
+    "gate",
+    "defaultWriteback",
+    "defaultDecay",
+    "oracleCeiling",
+    "networkCalls",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "LessonFixtureManifest": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "research-lessons-fixture"
+        },
+        "license": {
+          "const": "MIT"
+        },
+        "authorship": {
+          "const": "Tangle-authored synthetic"
+        },
+        "census": {
+          "type": "object",
+          "properties": {
+            "topics": {
+              "const": 3
+            },
+            "lessons": {
+              "const": 1
+            },
+            "negatives": {
+              "const": 9
+            },
+            "files": {
+              "const": 13
+            }
+          },
+          "required": [
+            "topics",
+            "lessons",
+            "negatives",
+            "files"
+          ],
+          "additionalProperties": false
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^(registration|procedure|beneficial|origin|negative/[a-z-]+)\\.json$"
+              },
+              "sha256": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 13,
+          "maxItems": 13
+        }
+      },
+      "required": [
+        "document",
+        "license",
+        "authorship",
+        "census",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "LessonNegativeBundle": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "poisoned",
+            "volatile",
+            "cross-domain",
+            "unsupported",
+            "regression-inducing",
+            "web-uncorroborated",
+            "leaked-origin",
+            "active-edit-attempt",
+            "async-validator"
+          ]
+        },
+        "expected": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "enum": [
+                "TRSH2002",
+                "TRSH2003",
+                "TRSH2004",
+                "TRSH2005",
+                "TRSH2006",
+                "TRSH2007"
+              ]
+            },
+            "cause": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "code",
+            "cause"
+          ],
+          "additionalProperties": false
+        },
+        "lesson": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLessonV2"
+        },
+        "admittedOrigin": {
+          "type": "boolean"
+        },
+        "activeBundleHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "candidateUtilities": {
+          "type": "array",
+          "items": {
+            "enum": [
+              0,
+              0.5,
+              1
+            ]
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "baselineUtilities": {
+          "type": "array",
+          "items": {
+            "enum": [
+              0,
+              0.5,
+              1
+            ]
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "asyncValidator": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "expected",
+        "lesson",
+        "admittedOrigin",
+        "activeBundleHash",
+        "candidateUtilities",
+        "baselineUtilities",
+        "asyncValidator"
+      ],
+      "additionalProperties": false
+    },
+    "LessonRegistration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "research-lessons-v1"
+        },
+        "revision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "id",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "scope": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLessonScope"
+        },
+        "seed": {
+          "const": 17753
+        },
+        "resamples": {
+          "const": 2000
+        },
+        "primary": {
+          "const": "claimSupport*registryAccuracy*preregistrationIntegrity"
+        },
+        "maxCalls": {
+          "const": 128
+        },
+        "maxTokens": {
+          "const": 131072
+        },
+        "maxPhysical": {
+          "const": 128
+        },
+        "decay": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "none",
+                  "age-linear",
+                  "severity-weighted-age"
+                ]
+              },
+              "horizon": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "id",
+              "horizon"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "negatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "poisoned",
+                  "volatile",
+                  "cross-domain",
+                  "unsupported",
+                  "regression-inducing",
+                  "web-uncorroborated",
+                  "leaked-origin",
+                  "active-edit-attempt",
+                  "async-validator"
+                ]
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "cause": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "code",
+              "cause"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 9,
+          "maxItems": 9
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "topics",
+        "scope",
+        "seed",
+        "resamples",
+        "primary",
+        "maxCalls",
+        "maxTokens",
+        "maxPhysical",
+        "decay",
+        "negatives"
+      ],
+      "additionalProperties": false
+    },
+    "LessonTopicMeasurement": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "topicHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "output": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonValidityOutput"
+        },
+        "primary": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "completion": {
+          "type": "boolean"
+        },
+        "spend": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonSpend"
+        }
+      },
+      "required": [
+        "topicId",
+        "topicHash",
+        "output",
+        "primary",
+        "completion",
+        "spend"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.primary",
+              {
+                "$mul": [
+                  "$.output.claimSupport",
+                  {
+                    "$mul": [
+                      "$.output.registryAccuracy",
+                      "$.output.preregistrationIntegrity"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.completion",
+              "$.output.completion"
+            ]
+          }
+        ]
+      }
+    },
+    "LessonCounts": {
+      "type": "object",
+      "properties": {
+        "proposed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "staged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "validated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promoted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rolledBack": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expired": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uncorroborated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "leaked": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "proposed",
+        "staged",
+        "validated",
+        "rejected",
+        "promoted",
+        "rolledBack",
+        "expired",
+        "uncorroborated",
+        "leaked"
+      ],
+      "additionalProperties": false
+    },
+    "LessonNativeMeasurement": {
+      "type": "object",
+      "properties": {
+        "phase": {
+          "enum": [
+            "proposal",
+            "materialization",
+            "validation",
+            "staging",
+            "approval",
+            "activation",
+            "injection"
+          ]
+        },
+        "fixtureKind": {
+          "enum": [
+            "topic-quality",
+            "synthetic-refusal"
+          ]
+        },
+        "proposalIds": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+          },
+          "uniqueItems": true
+        },
+        "stagedIds": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+          },
+          "uniqueItems": true
+        },
+        "validatedIds": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+          },
+          "uniqueItems": true
+        },
+        "candidateBundleHash": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidateSetHash": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "validationRun": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonValidationRun"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "versionId": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evaluationId": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activationEventId": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "injections": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonInjection"
+          }
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cause": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchIssue"
+          }
+        },
+        "matched": {
+          "type": "boolean"
+        },
+        "proposerSpend": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonSpend"
+        },
+        "validationSpend": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonSpend"
+        },
+        "decay": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hypothesisId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "age": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "relevance": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "weight": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "runId",
+              "hypothesisId",
+              "age",
+              "relevance",
+              "weight"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "procedureReads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "bundleHash": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+              },
+              "rootHash": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "runId",
+              "bundleHash",
+              "rootHash"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "phase",
+        "fixtureKind",
+        "proposalIds",
+        "stagedIds",
+        "validatedIds",
+        "candidateBundleHash",
+        "candidateSetHash",
+        "validationRun",
+        "versionId",
+        "evaluationId",
+        "activationEventId",
+        "injections",
+        "code",
+        "cause",
+        "issues",
+        "matched",
+        "proposerSpend",
+        "validationSpend",
+        "decay",
+        "procedureReads"
+      ],
+      "additionalProperties": false
+    },
+    "LessonMeasurementRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "lessons-off",
+            "lessons-on",
+            "lessons-on/decay:none",
+            "lessons-on/decay:age-linear",
+            "lessons-on/decay:severity-weighted-age",
+            "lesson-oracle",
+            "lesson-refusal:poisoned",
+            "lesson-refusal:volatile",
+            "lesson-refusal:cross-domain",
+            "lesson-refusal:unsupported",
+            "lesson-refusal:regression-inducing",
+            "lesson-refusal:web-uncorroborated",
+            "lesson-refusal:leaked-origin",
+            "lesson-refusal:active-edit-attempt",
+            "lesson-refusal:async-validator"
+          ]
+        },
+        "state": {
+          "enum": [
+            "measured",
+            "implementation-missing"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scope": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLessonScope"
+        },
+        "identityStatus": {
+          "enum": [
+            "run",
+            "not-run"
+          ]
+        },
+        "comparisonIdentity": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "originIds": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+          },
+          "uniqueItems": true
+        },
+        "validationRunId": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bundleHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "lessonSetHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "primary": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "completion": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LessonTopicMeasurement"
+          }
+        },
+        "counts": {
+          "$ref": "#/$defs/LessonCounts"
+        },
+        "drift": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "spend": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonSpend"
+        },
+        "preparationSpend": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonSpend"
+        },
+        "native": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LessonNativeMeasurement"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "refusals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "cause": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "code",
+              "count",
+              "cause"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "expectedCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observedCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedCause": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observedCause": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "matched": {
+          "type": "boolean"
+        },
+        "eligibilityIssues": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "activated": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "state",
+        "reason",
+        "scope",
+        "identityStatus",
+        "comparisonIdentity",
+        "originIds",
+        "validationRunId",
+        "bundleHash",
+        "lessonSetHash",
+        "primary",
+        "completion",
+        "topics",
+        "counts",
+        "drift",
+        "spend",
+        "preparationSpend",
+        "native",
+        "refusals",
+        "expectedCode",
+        "observedCode",
+        "expectedCause",
+        "observedCause",
+        "matched",
+        "eligibilityIssues",
+        "activated"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.spend.calls",
+              {
+                "$add": [
+                  {
+                    "$sum": "$.topics[*].spend.calls"
+                  },
+                  "$.preparationSpend.calls"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.spend.tokens",
+              {
+                "$add": [
+                  {
+                    "$sum": "$.topics[*].spend.tokens"
+                  },
+                  "$.preparationSpend.tokens"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.spend.physical",
+              {
+                "$add": [
+                  {
+                    "$sum": "$.topics[*].spend.physical"
+                  },
+                  "$.preparationSpend.physical"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.spend.ms",
+              {
+                "$add": [
+                  {
+                    "$sum": "$.topics[*].spend.ms"
+                  },
+                  "$.preparationSpend.ms"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.spend.replayed",
+              {
+                "$add": [
+                  {
+                    "$sum": "$.topics[*].spend.replayed"
+                  },
+                  "$.preparationSpend.replayed"
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.topics[*]"
+                      },
+                      0
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.primary",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.completion",
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.topics[*]"
+                      },
+                      3
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.primary",
+                      {
+                        "$div": [
+                          {
+                            "$sum": "$.topics[*].primary"
+                          },
+                          3
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.completion",
+                      {
+                        "$div": [
+                          {
+                            "$count": "$.topics[?(@.completion==true)]"
+                          },
+                          3
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.state",
+                  "implementation-missing"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.reason",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.state",
+                  "implementation-missing"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.id",
+                  "lessons-off"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.id",
+                  "lesson-oracle"
+                ]
+              },
+              {
+                "$ne": [
+                  "$.native",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.state",
+                  "measured"
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.reason",
+                      "implementation-missing"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.primary",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.topics[*]"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.matched",
+              {
+                "$and": [
+                  {
+                    "$ne": [
+                      "$.expectedCode",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.expectedCode",
+                      "$.observedCode"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.expectedCause",
+                      "$.observedCause"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.promoted",
+              "$.counts.validated"
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.rolledBack",
+              "$.counts.promoted"
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.staged",
+              "$.counts.proposed"
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.validated",
+              "$.counts.proposed"
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.rejected",
+              "$.counts.proposed"
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.promoted",
+              "$.counts.proposed"
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.rolledBack",
+              "$.counts.proposed"
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.expired",
+              "$.counts.proposed"
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.uncorroborated",
+              "$.counts.proposed"
+            ]
+          },
+          {
+            "$le": [
+              "$.counts.leaked",
+              "$.counts.proposed"
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.activated",
+                  false
+                ]
+              },
+              {
+                "$gt": [
+                  "$.counts.promoted",
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.native",
+                  null
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.counts.proposed",
+                      {
+                        "$count": "$.native.proposalIds[*]"
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.counts.staged",
+                      {
+                        "$count": "$.native.stagedIds[*]"
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.counts.validated",
+                      {
+                        "$count": "$.native.validatedIds[*]"
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.native.matched",
+                      {
+                        "$and": [
+                          {
+                            "$ne": [
+                              "$.expectedCode",
+                              null
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$.native.code",
+                              "$.expectedCode"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$or": [
+                      {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$.native.code",
+                              null
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              {
+                                "$count": "$.native.issues[*]"
+                              },
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$.native.code",
+                          "$.native.issues[0].code"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$or": [
+                      {
+                        "$eq": [
+                          "$.native.validationRun",
+                          null
+                        ]
+                      },
+                      {
+                        "$and": [
+                          {
+                            "$eq": [
+                              "$.validationRunId",
+                              "$.native.validationRun.id"
+                            ]
+                          },
+                          {
+                            "$eq": [
+                              "$.native.candidateBundleHash",
+                              "$.native.validationRun.bundleHash"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.preparationSpend.calls",
+                      {
+                        "$add": [
+                          "$.native.proposerSpend.calls",
+                          "$.native.validationSpend.calls"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.preparationSpend.tokens",
+                      {
+                        "$add": [
+                          "$.native.proposerSpend.tokens",
+                          "$.native.validationSpend.tokens"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.preparationSpend.physical",
+                      {
+                        "$add": [
+                          "$.native.proposerSpend.physical",
+                          "$.native.validationSpend.physical"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.preparationSpend.ms",
+                      {
+                        "$add": [
+                          "$.native.proposerSpend.ms",
+                          "$.native.validationSpend.ms"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.preparationSpend.replayed",
+                      {
+                        "$add": [
+                          "$.native.proposerSpend.replayed",
+                          "$.native.validationSpend.replayed"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.activated",
+                      {
+                        "$ne": [
+                          "$.native.activationEventId",
+                          null
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "LessonComparison": {
+      "type": "object",
+      "properties": {
+        "comparable": {
+          "type": "boolean"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "topicIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "deltas": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "mean": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "negativeTransfer": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "mean": {
+                  "type": "number"
+                },
+                "low": {
+                  "type": "number"
+                },
+                "high": {
+                  "type": "number"
+                },
+                "n": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "mean",
+                "low",
+                "high",
+                "n"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "seed": {
+          "const": 17753
+        },
+        "resamples": {
+          "const": 2000
+        }
+      },
+      "required": [
+        "comparable",
+        "issues",
+        "topicIds",
+        "deltas",
+        "mean",
+        "negativeTransfer",
+        "interval",
+        "seed",
+        "resamples"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          [
+            "$.rows[*].id"
+          ],
+          [
+            "lessons-off",
+            "lessons-on",
+            "lessons-on/decay:none",
+            "lessons-on/decay:age-linear",
+            "lessons-on/decay:severity-weighted-age",
+            "lesson-oracle",
+            "lesson-refusal:poisoned",
+            "lesson-refusal:volatile",
+            "lesson-refusal:cross-domain",
+            "lesson-refusal:unsupported",
+            "lesson-refusal:regression-inducing",
+            "lesson-refusal:web-uncorroborated",
+            "lesson-refusal:leaked-origin",
+            "lesson-refusal:active-edit-attempt",
+            "lesson-refusal:async-validator"
+          ]
+        ]
+      },
+      {
+        "$eq": [
+          [
+            "$.identity.rows[*].rowId"
+          ],
+          [
+            "$.rows[*].id"
+          ]
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.writebackEligible",
+          {
+            "$and": [
+              "$.gate.mechanism",
+              "$.gate.comparable",
+              "$.gate.safety",
+              "$.gate.cost",
+              "$.gate.outcome",
+              {
+                "$gt": [
+                  "$.pair.interval.low",
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.comparable",
+          "$.pair.comparable"
+        ]
+      },
+      {
+        "$eq": [
+          "$.pair.comparable",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.rows[0].state",
+                  "measured"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.rows[1].state",
+                  "measured"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.rows[0].scope",
+                  "$.rows[1].scope"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.rows[0].identityStatus",
+                  "$.rows[1].identityStatus"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.rows[0].comparisonIdentity",
+                  "$.rows[1].comparisonIdentity"
+                ]
+              },
+              {
+                "$eq": [
+                  [
+                    "$.rows[0].topics[*].topicId"
+                  ],
+                  [
+                    "$.rows[1].topics[*].topicId"
+                  ]
+                ]
+              },
+              {
+                "$eq": [
+                  [
+                    "$.rows[0].topics[*].topicHash"
+                  ],
+                  [
+                    "$.rows[1].topics[*].topicHash"
+                  ]
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.rows[0].topics[*]"
+                  },
+                  3
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.pair.comparable",
+          {
+            "$eq": [
+              {
+                "$count": "$.pair.issues[*]"
+              },
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.pair.negativeTransfer",
+          {
+            "$count": "$.pair.deltas[?(@<0)]"
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.pair.comparable",
+                  false
+                ]
+              },
+              {
+                "$eq": [
+                  "$.pair.mean",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.pair.interval",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.pair.deltas[*]"
+                  },
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.pair.topicIds[*]"
+                  },
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.pair.comparable",
+                  true
+                ]
+              },
+              {
+                "$eq": [
+                  [
+                    "$.pair.topicIds[*]"
+                  ],
+                  [
+                    "$.registration.topics[*].id"
+                  ]
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.pair.deltas[*]"
+                  },
+                  3
+                ]
+              },
+              {
+                "$eq": [
+                  "$.pair.mean",
+                  {
+                    "$div": [
+                      {
+                        "$sum": "$.pair.deltas[*]"
+                      },
+                      3
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.pair.interval.mean",
+                  "$.pair.mean"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.pair.interval.n",
+                  3
+                ]
+              },
+              {
+                "$le": [
+                  "$.pair.interval.low",
+                  "$.pair.interval.high"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.pair.deltas[0]",
+                  {
+                    "$sub": [
+                      "$.rows[1].topics[0].primary",
+                      "$.rows[0].topics[0].primary"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.pair.deltas[1]",
+                  {
+                    "$sub": [
+                      "$.rows[1].topics[1].primary",
+                      "$.rows[0].topics[1].primary"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.pair.deltas[2]",
+                  {
+                    "$sub": [
+                      "$.rows[1].topics[2].primary",
+                      "$.rows[0].topics[2].primary"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.outcome",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.rows[1].state",
+                  "measured"
+                ]
+              },
+              {
+                "$gt": [
+                  "$.rows[1].counts.validated",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.rows[1].eligibilityIssues[*]"
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          [
+            "$.registration.negatives[*].id"
+          ],
+          [
+            "poisoned",
+            "volatile",
+            "cross-domain",
+            "unsupported",
+            "regression-inducing",
+            "web-uncorroborated",
+            "leaked-origin",
+            "active-edit-attempt",
+            "async-validator"
+          ]
+        ]
+      },
+      {
+        "$eq": [
+          [
+            "$.registration.decay[*].id"
+          ],
+          [
+            "none",
+            "age-linear",
+            "severity-weighted-age"
+          ]
+        ]
+      },
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[6].expectedCode",
+              "$.registration.negatives[0].code"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[6].expectedCause",
+              "$.registration.negatives[0].cause"
+            ]
+          }
+        ]
+      },
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[7].expectedCode",
+              "$.registration.negatives[1].code"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[7].expectedCause",
+              "$.registration.negatives[1].cause"
+            ]
+          }
+        ]
+      },
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[8].expectedCode",
+              "$.registration.negatives[2].code"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[8].expectedCause",
+              "$.registration.negatives[2].cause"
+            ]
+          }
+        ]
+      },
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[9].expectedCode",
+              "$.registration.negatives[3].code"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[9].expectedCause",
+              "$.registration.negatives[3].cause"
+            ]
+          }
+        ]
+      },
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[10].expectedCode",
+              "$.registration.negatives[4].code"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[10].expectedCause",
+              "$.registration.negatives[4].cause"
+            ]
+          }
+        ]
+      },
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[11].expectedCode",
+              "$.registration.negatives[5].code"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[11].expectedCause",
+              "$.registration.negatives[5].cause"
+            ]
+          }
+        ]
+      },
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[12].expectedCode",
+              "$.registration.negatives[6].code"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[12].expectedCause",
+              "$.registration.negatives[6].cause"
+            ]
+          }
+        ]
+      },
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[13].expectedCode",
+              "$.registration.negatives[7].code"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[13].expectedCause",
+              "$.registration.negatives[7].cause"
+            ]
+          }
+        ]
+      },
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[14].expectedCode",
+              "$.registration.negatives[8].code"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[14].expectedCause",
+              "$.registration.negatives[8].cause"
+            ]
+          }
+        ]
+      },
+      {
+        "$every": {
+          "row": "$.rows[*]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.scope",
+                "$.registration.scope"
+              ]
+            },
+            {
+              "$or": [
+                {
+                  "$eq": [
+                    {
+                      "$count": "$row.topics[*]"
+                    },
+                    0
+                  ]
+                },
+                {
+                  "$and": [
+                    {
+                      "$eq": [
+                        [
+                          "$row.topics[*].topicId"
+                        ],
+                        [
+                          "$.registration.topics[*].id"
+                        ]
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        [
+                          "$row.topics[*].topicHash"
+                        ],
+                        [
+                          "$.registration.topics[*].sha256"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "$some": {
+                "identity": "$.identity.rows[*]"
+              },
+              "$satisfies": {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$identity.rowId",
+                      "$row.id"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$identity.identityStatus",
+                      "$row.identityStatus"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.expectedCode!=null)]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.counts.proposed",
+                1
+              ]
+            },
+            {
+              "$eq": [
+                "$row.counts.rejected",
+                {
+                  "$count": "$row.refusals[*]"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                {
+                  "$count": "$row.originIds[*]"
+                },
+                1
+              ]
+            },
+            {
+              "$or": [
+                {
+                  "$eq": [
+                    "$row.observedCode",
+                    null
+                  ]
+                },
+                {
+                  "$and": [
+                    {
+                      "$eq": [
+                        {
+                          "$count": "$row.refusals[*]"
+                        },
+                        1
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$row.refusals[0].code",
+                        "$row.observedCode"
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$row.refusals[0].cause",
+                        "$row.observedCause"
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$row.refusals[0].count",
+                        1
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$or": [
+          {
+            "$eq": [
+              "$.rows[1].state",
+              "implementation-missing"
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$ne": [
+                  "$.rows[1].validationRunId",
+                  null
+                ]
+              },
+              {
+                "$gt": [
+                  {
+                    "$count": "$.rows[1].originIds[*]"
+                  },
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.rows[1].topics[*]"
+                  },
+                  3
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$eq": [
+              "$.rows[2].state",
+              "implementation-missing"
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$ne": [
+                  "$.rows[2].validationRunId",
+                  null
+                ]
+              },
+              {
+                "$gt": [
+                  {
+                    "$count": "$.rows[2].originIds[*]"
+                  },
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.rows[2].topics[*]"
+                  },
+                  3
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$eq": [
+              "$.rows[3].state",
+              "implementation-missing"
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$ne": [
+                  "$.rows[3].validationRunId",
+                  null
+                ]
+              },
+              {
+                "$gt": [
+                  {
+                    "$count": "$.rows[3].originIds[*]"
+                  },
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.rows[3].topics[*]"
+                  },
+                  3
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$eq": [
+              "$.rows[4].state",
+              "implementation-missing"
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$ne": [
+                  "$.rows[4].validationRunId",
+                  null
+                ]
+              },
+              {
+                "$gt": [
+                  {
+                    "$count": "$.rows[4].originIds[*]"
+                  },
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.rows[4].topics[*]"
+                  },
+                  3
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.mechanism",
+          {
+            "$every": {
+              "row": "$.rows[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$row.state",
+                "measured"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.safety",
+          {
+            "$every": {
+              "row": "$.rows[?(@.expectedCode!=null)]"
+            },
+            "$satisfies": {
+              "$and": [
+                "$row.matched",
+                {
+                  "$ne": [
+                    "$row.native",
+                    null
+                  ]
+                },
+                "$row.native.matched"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.cost",
+          {
+            "$every": {
+              "row": "$.rows[*]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$le": [
+                    "$row.spend.calls",
+                    "$.registration.maxCalls"
+                  ]
+                },
+                {
+                  "$le": [
+                    "$row.spend.tokens",
+                    "$.registration.maxTokens"
+                  ]
+                },
+                {
+                  "$le": [
+                    "$row.spend.physical",
+                    "$.registration.maxPhysical"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

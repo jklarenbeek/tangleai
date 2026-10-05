@@ -36,7 +36,7 @@ export type { AnalystCounts, AnalystDeps, AnalystFanOut, AnalystInput, AnalystRo
 export { ANALYST_TOOL_NAMES, REPAIR_PASSES, createAnalystToolbox, createRepairSandbox } from './analyst-tools.ts';
 export { MERGE_PROMPT_VERSION, MERGE_STAGE, mergePatches, planMergeTree, renderMergeEvidence, supportOf } from './merge.ts';
 export type { MergeCounts, MergeDeps, MergeDispatch, MergeFanOut, MergeGroup, MergeLevel, MergePlan, MergeTerminal, MergeUnit } from './merge.ts';
-export { consolidate, createCandidateCommitter, hunkProvenance } from './commit.ts';
+export { consolidate, createCandidateCommitter, candidateDiff, hunkProvenance } from './commit.ts';
 export type { CandidateCommitter, CandidateCommitterOptions, CandidateDiff, CandidatePlan, Consolidation, ConsolidateDeps, ConsolidationCounts, CommittedCandidate, PreparedCandidate } from './commit.ts';
 export type { AnalystProposal, AnalystToolboxOptions, RepairAttempt, RepairSandbox, RepairSandboxOptions } from './analyst-tools.ts';
 export { ANALYST_EXCLUSIONS, AUTHORED_PATCH_SCHEMA, ERROR_DIAGNOSIS_SCHEMA, ERROR_PROPOSAL_SCHEMA, SUCCESS_ANALYSIS_SCHEMA } from './schemas/analysis.ts';

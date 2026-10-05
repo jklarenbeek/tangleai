@@ -1,21 +1,23 @@
 import { cloneJson, equalsJson } from '@jarenjs/core/object';
-import type { ArtifactAdmission, ResearchProject, ResearchState, StageArtifactDescriptor, StageAttemptKey, StageCommitReceipt } from './contracts.gen.ts';
+import type { ArtifactAdmission, LessonInjection, ResearchLessonV2, ResearchProject, ResearchState, StageArtifactDescriptor, StageAttemptKey, StageCommitReceipt } from './contracts.gen.ts';
 import { researchIssue, type ResearchCode, type ResearchOutcome } from './errors.ts';
 import { artifactAdmissionIdOf, copyResearchBytes, immutableResearchJson, researchArtifactIdOf, researchRevisionOf } from './identity.ts';
 import { researchRecordIdOf, validateResearchRecord, type ResearchRecordEntry, type ResearchRecordKind, type ResearchRecordWrite } from './records.ts';
 import { validateResearchShape, type ResearchSchemaName } from './schema.ts';
 import type { ResearchPersistence, ResearchStore, ResearchStoreOutcome, ResearchTransaction } from './store.ts';
 import { planAmendment, planContractFreeze, planProjectCreate, planStageCommit, planStateTransition } from './transitions.ts';
+import { createLessonStore } from './lessons/store-policy.ts';
+import { checkLessonRecord, lessonOriginContext, lessonScopeKey } from './lessons/records.ts';
 
 class ResearchRollback extends Error {
   readonly issue;
-  constructor(code: ResearchCode, path: string, detail: string) { super(detail); this.issue = researchIssue(code, path, detail); }
+  constructor(code: ResearchCode, path: string, detail: string, cause?: unknown) { super(detail); this.issue = researchIssue(code, path, detail, cause); }
 }
-function refuse(code: ResearchCode, path: string, detail: string): never { throw new ResearchRollback(code, path, detail); }
+function refuse(code: ResearchCode, path: string, detail: string, cause?: unknown): never { throw new ResearchRollback(code, path, detail, cause); }
 function checked<T>(outcome: ResearchOutcome<T>): T {
   if (outcome.valid) return outcome.value;
   const issue = outcome.issues[0];
-  throw new ResearchRollback(issue.code as ResearchCode, issue.path, issue.detail);
+  throw new ResearchRollback(issue.code as ResearchCode, issue.path, issue.detail, issue.cause);
 }
 const shape = <T>(name: ResearchSchemaName, value: unknown): T => checked(validateResearchShape<T>(name, value));
 const result = <T>(value: T, replayed = false) => ({ value, ...(replayed ? { replayed: true } : {}) });
@@ -70,6 +72,8 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
     if (!write || typeof write !== 'object' || !equalsJson(Object.keys(write).sort(), ['kind', 'value']))
       refuse('TRSH1001', '/record', 'A record write contains only kind and value.');
     const value = checked(validateResearchRecord(write.kind, write.value));
+    if (write.kind === 'ResearchLesson' && !Array.isArray(value) && 'schemaVersion' in value)
+      checked(await checkLessonRecord<ResearchLessonV2>('ResearchLessonV2', value));
     if (!Array.isArray(value) && 'projectId' in value && value.projectId !== projectId)
       refuse('TRSH1005', '/record/projectId', 'Record belongs to another project.');
     const id = await researchRecordIdOf(write.kind, value);
@@ -105,8 +109,18 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
     return { kind: write.kind, value, id, projectId } as ResearchRecordEntry;
   }
   async function readEntry(tx: ResearchTransaction, projectId: string, kind: ResearchRecordKind, id: string): Promise<ResearchRecordEntry | null> {
+    if (kind === 'ResearchLesson') {
+      const lesson = await tx.get('lessons', projectId, id);
+      if (lesson !== undefined) {
+        const row = await entry(projectId, { kind, value: lesson });
+        if (row.id !== id) refuse('TRSH2001', '/id', 'The lesson address differs from its content.');
+        return row;
+      }
+    }
     const raw = await tx.get('records', projectId, recordKey(kind, id));
     if (raw === undefined) return null;
+    if (raw.kind === 'ResearchLesson' && 'schemaVersion' in raw.value)
+      refuse('TRSH2007', '/record', 'Guarded lesson records belong to the lesson lifecycle owner.');
     const row = await entry(projectId, { kind: raw.kind, value: raw.value } as ResearchRecordWrite);
     if (row.id !== id || row.kind !== kind || !equalsJson(raw, row)) refuse('TRSH1002', '/record', 'Stored record address does not match its immutable payload.');
     return row;
@@ -114,10 +128,13 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
   async function entries(tx: ResearchTransaction, projectId: string): Promise<ResearchRecordEntry[]> {
     const rows: ResearchRecordEntry[] = [];
     for (const raw of await tx.list('records', projectId)) {
+      if (raw.kind === 'ResearchLesson' && 'schemaVersion' in raw.value)
+        refuse('TRSH2007', '/record', 'Guarded lesson records belong to the lesson lifecycle owner.');
       const row = await entry(projectId, { kind: raw.kind, value: raw.value } as ResearchRecordWrite);
       if (!equalsJson(raw, row)) refuse('TRSH1002', '/record', 'Stored record scope or identity is invalid.');
       rows.push(row);
     }
+    for (const lesson of await tx.list('lessons', projectId)) rows.push(await entry(projectId, { kind: 'ResearchLesson', value: lesson }));
     return rows;
   }
   async function put(tx: ResearchTransaction, row: ResearchRecordEntry): Promise<boolean> {
@@ -163,6 +180,44 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
     async function reference(kind: ResearchRecordKind, id: string) {
       if (!pending.some(item => item.kind === kind && item.id === id) && !(await readEntry(tx, row.projectId, kind, id)))
         refuse('TRSH1003', '/record/' + kind, `Unknown ${kind} reference ${id}.`);
+    }
+    if (row.kind === 'InputManifest' || row.kind === 'ResearchManifest') {
+      const injections = [];
+      for (const raw of await tx.list('lessonInjections', row.projectId)) {
+        const injection = checked(await checkLessonRecord<LessonInjection>('LessonInjection', raw));
+        if (injection.projectId !== row.projectId || injection.runId !== row.projectId)
+          refuse('TRSH2007', '/lessons/injected', 'An injection differs from its actual run.');
+        injections.push(injection);
+      }
+      const declared = row.kind === 'InputManifest' ? row.value.lessonProcedure?.injection ? [row.value.lessonProcedure.injection] : []
+        : row.value.lessons?.injected ?? [];
+      if (!equalsJson(declared, injections)) refuse('TRSH2007', '/lessons/injected', 'Every manifest must retain the exact frozen injection for this run.');
+      if (row.kind === 'InputManifest' && row.value.lessonProcedure?.injection
+        && row.value.lessonProcedure.bundleHash !== row.value.lessonProcedure.injection.bundleHash)
+        refuse('TRSH2007', '/lessonProcedure/bundleHash', 'The manifest procedure differs from its injection.');
+      if (row.kind === 'InputManifest') {
+        const owner = await project(tx, row.projectId);
+        if (row.value.lessonProcedure) {
+          const snapshot = await tx.skills.getSnapshot(row.value.lessonProcedure.bundleHash);
+          if (!snapshot.valid) refuse('TRSH2004', '/lessonProcedure/bundleHash', 'The manifest procedure is not retained.');
+          const context = checked(await lessonOriginContext(owner!));
+          if (snapshot.value.bundle.scopeKey !== lessonScopeKey(context.scope))
+            refuse('TRSH2003', '/lessonProcedure/bundleHash', 'The manifest procedure belongs to another scope.');
+        }
+        if (owner?.lessonContext) for (const receipt of await receipts(tx, row.projectId)) {
+          const previous = await readEntry(tx, row.projectId, 'InputManifest', 'manifest-' + receipt.attempt.inputManifestHash);
+          if (!previous || previous.kind !== 'InputManifest' || !equalsJson(previous.value.lessonProcedure ?? null, row.value.lessonProcedure ?? null))
+            refuse('TRSH2007', '/lessonProcedure', 'Every stage must preserve the procedure first used by the run.');
+        }
+      }
+      if (row.kind === 'ResearchManifest' && row.value.lessons) for (const state of ['proposed', 'promoted'] as const)
+        for (const id of row.value.lessons[state]) {
+          const raw = await tx.get('lessons', row.projectId, id);
+          if (!raw) refuse('TRSH2004', '/lessons/' + state, 'A manifest names an unknown lesson.');
+          const lesson = checked(await checkLessonRecord<ResearchLessonV2>('ResearchLessonV2', raw));
+          if (lesson.projectId !== row.projectId || lesson.validation.state !== state)
+            refuse('TRSH2004', '/lessons/' + state, 'The manifest lesson state differs from its immutable record.');
+        }
     }
     if (row.kind === 'ScreeningDecision') await reference('LiteratureRecord', row.value.literatureId);
     if (row.kind === 'EvidenceCard') {
@@ -236,6 +291,16 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
     if (terminal(next)) await tx.finishProjection(next.projectId, next, status);
   }
   return {
+    lessons: createLessonStore({ apply, checked, refuse, project, receipts,
+      async record(tx, projectId, kind, id) { const row = await readEntry(tx, projectId, kind, id); return row ? row.value as never : null; },
+      async origins(tx, projectId) {
+      const values: Array<{ admission: ArtifactAdmission; bytes: Uint8Array }> = [];
+      for (const id of committed(await receipts(tx, projectId))) {
+        const row = await admission(tx, projectId, id);
+        values.push({ admission: row, bytes: await blob(tx, row) });
+      }
+      return values;
+    } }),
     createProject: input => apply(input, async (tx, plan) => {
       const valid = checked(planProjectCreate(plan.project)); samePlan(plan, valid);
       const prior = await project(tx, valid.project.id, false);
@@ -252,6 +317,8 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
     putRecord: (projectId, record) => apply({ projectId, record }, async (tx, value) => {
       await project(tx, value.projectId);
       const row = await entry(value.projectId, value.record);
+      if (row.kind === 'ResearchLesson' && 'schemaVersion' in row.value)
+        refuse('TRSH2007', '/record/kind', 'Guarded lesson records require their dedicated lifecycle operation.');
       if (managed.has(row.kind)) refuse('TRSH1004', '/record/kind', 'This record is admitted through its atomic lifecycle operation.');
       await references(tx, row);
       return result(row, await put(tx, row));
@@ -356,6 +423,8 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
       ] : [])];
       for (const write of writes) {
         const row = await entry(projectId, write);
+        if (row.kind === 'ResearchLesson' && 'schemaVersion' in row.value)
+          refuse('TRSH2007', '/records/kind', 'Stage writes cannot bypass guarded lesson admission.');
         if (managed.has(row.kind)) refuse('TRSH1004', '/records/kind', 'Stage writes cannot replace lifecycle-managed records.');
         if (records.some(other => other.kind === row.kind && other.id === row.id)) refuse('TRSH1002', '/records', 'Stage record addresses must be unique.');
         records.push(row);

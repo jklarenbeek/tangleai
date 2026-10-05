@@ -5,4 +5,6 @@ const collection = { schema, key: '/id', indexes: [{ name: 'by_scope_id', path: 
 export const RESEARCH_COLLECTIONS = {
   research_projects: collection, research_records: collection, research_artifacts: collection,
   research_attempts: collection, research_state: collection,
+  research_lessons: collection, research_lesson_validations: collection,
+  research_lesson_sets: collection, research_lesson_injections: collection,
 };

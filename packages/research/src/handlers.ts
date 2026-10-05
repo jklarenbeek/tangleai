@@ -229,7 +229,8 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
     const kind = name in gates ? gates[name as keyof typeof gates] : null;
     const response = kind ? researchValue(validateResearchShape<ResearchGateResponse>('ResearchGateResponse', input.value.response)) : null;
     const frame = immutableResearchJson({ ...original, response });
-    if (frame.projectId !== input.runId || frame.bindingId !== binding.id)
+    if (frame.projectId !== input.runId || frame.bindingId !== binding.id
+      || !equalsJson(frame.lessonProcedure ?? null, binding.lessonProcedure ?? null))
       researchFail('TRSH1004', '/frame', 'The incoming frame belongs to another native run, plan or stack.');
     if (frame.status !== stages[name]) researchFail('TRSH1004', '/frame/status', 'The task does not implement this incoming stage.');
     const manifest = await inputManifestOf(frame.status, frame, binding.promptRevision, binding.runIdentityId,

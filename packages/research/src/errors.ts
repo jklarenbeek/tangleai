@@ -12,6 +12,18 @@ export const RESEARCH_ERRORS = {
   TRSH1008: 'Provider, adapter or persistence failure',
   TRSH1009: 'Preregistration violation',
   TRSH1010: 'Isolation refusal',
+  TRSH2001: 'Lesson, set, profile or manifest shape violation',
+  TRSH2002: 'Lesson origin chain is incomplete',
+  TRSH2003: 'Lesson domain or task scope mismatch',
+  TRSH2004: 'Lesson validation must be synchronous and bound',
+  TRSH2005: 'Lesson origin or hidden result leakage',
+  TRSH2006: 'Web lesson lacks independent corroboration',
+  TRSH2007: 'Lesson promotion or active-procedure edit refused',
+  TRSH2008: 'Domain profile is unsupported or incomplete',
+  TRSH2009: 'External research slice is unpinned or unaudited',
+  TRSH2010: 'Research live operation is unavailable',
+  TRSH2011: 'Lesson decay hypothesis is unregistered',
+  TRSH2012: 'Research ablation pair is incomparable',
 } as const;
 export type ResearchCode = keyof typeof RESEARCH_ERRORS;
 export type ResearchOutcome<T> = { valid: true; value: T } | { valid: false; issues: ResearchIssue[] };

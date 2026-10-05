@@ -1,9 +1,13 @@
 import { cloneJson } from '@jarenjs/core/object';
 import { createScheduler } from '@jarenjs/core/schedule';
-import type { ArtifactAdmission, Intervention, ResearchIssue, ResearchProject, ResearchState, StageArtifactDescriptor, StageAttemptKey, StageCommitReceipt } from './contracts.gen.ts';
+import { createTrace2SkillStoreAdapter, trace2SkillRowId, trace2SkillRowScope,
+  type Trace2SkillStore, type Trace2SkillTable, type Trace2SkillTables, type Trace2SkillTransaction } from '@tangleai/trace2skill';
+import type { ArtifactAdmission, Intervention, LessonInjection, LessonSetRecord, LessonValidationRun, ResearchLessonV2,
+  ResearchIssue, ResearchProject, ResearchState, StageArtifactDescriptor, StageAttemptKey, StageCommitReceipt } from './contracts.gen.ts';
 import type { ResearchRecordEntry, ResearchRecordKind, ResearchRecordMap, ResearchRecordWrite } from './records.ts';
 import type { AmendmentPlan, ContractFreezePlan, ProjectCreatePlan, ResearchProjection, StageCommitPlan, StateTransitionPlan } from './transitions.ts';
 import { createResearchStoreAdapter } from './store-policy.ts';
+import type { LessonStore } from './lessons/store.ts';
 
 export type ResearchStoreOutcome<T> = { ok: true; value: T; replayed?: boolean } | { ok: false; issue: ResearchIssue };
 export type { StageCommitReceipt } from './contracts.gen.ts';
@@ -16,6 +20,7 @@ export interface ResearchSnapshot {
   committedAdmissionIds: string[];
 }
 export interface ResearchStore {
+  readonly lessons: LessonStore;
   createProject(plan: ProjectCreatePlan): Promise<ResearchStoreOutcome<ResearchState>>;
   getProject(projectId: string): Promise<ResearchStoreOutcome<ResearchProject | null>>;
   getState(projectId: string): Promise<ResearchStoreOutcome<ResearchState | null>>;
@@ -42,11 +47,22 @@ export interface ResearchTables {
   artifacts: { kind: 'blob'; id: string; data: number[] } | { kind: 'admission'; admission: ArtifactAdmission };
   attempts: StageCommitReceipt;
   state: ResearchState;
+  lessons: ResearchLessonV2;
+  lessonValidations: LessonValidationRun;
+  lessonSets: LessonSetRecord;
+  lessonInjections: LessonInjection;
 }
 export type ResearchTable = keyof ResearchTables;
+/** No skill head or activation operation is available to a research transaction. */
+export type ResearchSkillStore = Pick<Trace2SkillStore, 'getBundle' | 'getSnapshot' | 'putSnapshot' | 'putStagedCandidate' | 'putPatch'> & {
+  listCandidates(scope: string): Promise<Trace2SkillTables['candidates'][]>;
+  listPatches(scope: string): Promise<Trace2SkillTables['patches'][]>;
+};
 export interface ResearchTransaction {
+  readonly skills: ResearchSkillStore;
   get<K extends ResearchTable>(table: K, scope: string, id: string): Promise<ResearchTables[K] | undefined>;
   list<K extends ResearchTable>(table: K, scope: string): Promise<ResearchTables[K][]>;
+  scopes(table: ResearchTable): Promise<string[]>;
   put<K extends ResearchTable>(table: K, scope: string, id: string, value: ResearchTables[K]): Promise<void>;
   createProjection(projectId: string): Promise<void>;
   appendProjection(projectId: string, projection: ResearchProjection): Promise<void>;
@@ -63,6 +79,7 @@ export interface ResearchPhysicalRow {
 }
 export interface ResearchMemoryState {
   rows: ResearchPhysicalRow[];
+  skillRows?: Array<{ table: Trace2SkillTable; id: string; payload: Trace2SkillTables[Trace2SkillTable] }>;
   projections: Array<{ projectId: string; frames: ResearchProjection[]; terminal: { state: ResearchState; status: ResearchProjection['status'] } | null }>;
 }
 export interface ResearchMemoryOptions { state?: ResearchMemoryState; applyProbe?: (step: string) => void }
@@ -75,17 +92,44 @@ export function createMemoryResearchPersistence(options: ResearchMemoryOptions =
   const key = (table: ResearchTable, scope: string, id: string) => JSON.stringify([table, scope, id]);
   let rows = new Map((options.state?.rows ?? []).map(row => [key(row.table, row.scope, row.id), cloneJson(row)]));
   let projections = new Map((options.state?.projections ?? []).map(row => [row.projectId, cloneJson(row)]));
+  const skillKey = (table: Trace2SkillTable, id: string) => JSON.stringify([table, id]);
+  let skillRows = new Map((options.state?.skillRows ?? []).map(row => [skillKey(row.table, row.id), cloneJson(row)]));
   const scheduler = createScheduler({ concurrency: 1, maxQueue: 64 });
   return {
-    exportState: () => cloneJson({ rows: [...rows.values()], projections: [...projections.values()] }),
+    exportState: () => cloneJson({ rows: [...rows.values()], projections: [...projections.values()], skillRows: [...skillRows.values()] }),
     close: () => scheduler.close(),
     transaction<T>(body: (tx: ResearchTransaction) => Promise<T>): Promise<T> {
       return scheduler.run(async () => {
         const staged = new Map(rows), projected = new Map([...projections].map(([id, value]) => [id, cloneJson(value)]));
+        const stagedSkills = new Map(skillRows);
         let active = true;
         const guard = () => { if (!active) throw new TypeError('Research transaction is no longer active.'); };
+        const skillView: Trace2SkillTransaction = {
+          async get<K extends Trace2SkillTable>(table: K, id: string) {
+            guard(); const row = stagedSkills.get(skillKey(table, id));
+            return row === undefined ? undefined : cloneJson(row.payload) as Trace2SkillTables[K];
+          },
+          async list<K extends Trace2SkillTable>(table: K, scope: string) {
+            guard(); return [...stagedSkills.values()].filter(row => row.table === table && trace2SkillRowScope(table, row.payload as Trace2SkillTables[K]) === scope)
+              .sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0).map(row => cloneJson(row.payload) as Trace2SkillTables[K]);
+          },
+          async scopes(table) {
+            guard(); return [...new Set([...stagedSkills.values()].filter(row => row.table === table)
+              .map(row => trace2SkillRowScope(table, row.payload)))].sort();
+          },
+          async put(table, payload) {
+            guard(); options.applyProbe?.('skill:put:' + table);
+            const id = trace2SkillRowId(table, payload);
+            stagedSkills.set(skillKey(table, id), cloneJson({ table, id, payload }));
+          },
+        };
+        const nativeSkills = createTrace2SkillStoreAdapter({ transaction: async body => { guard(); return body(skillView); } });
+        const skills: ResearchSkillStore = { getBundle: nativeSkills.getBundle, getSnapshot: nativeSkills.getSnapshot,
+          listCandidates: scope => nativeSkills.listBy(scope, 'candidates'), listPatches: scope => nativeSkills.listBy(scope, 'patches'),
+          putSnapshot: nativeSkills.putSnapshot, putStagedCandidate: nativeSkills.putStagedCandidate, putPatch: nativeSkills.putPatch };
         try {
           const result = await body({
+            skills,
             async get<K extends ResearchTable>(table: K, scope: string, id: string) {
               guard(); const row = staged.get(key(table, scope, id));
               return row === undefined ? undefined : cloneJson(row.payload) as ResearchTables[K];
@@ -94,6 +138,7 @@ export function createMemoryResearchPersistence(options: ResearchMemoryOptions =
               guard(); return [...staged.values()].filter(row => row.table === table && row.scope === scope)
                 .sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0).map(row => cloneJson(row.payload) as ResearchTables[K]);
             },
+            async scopes(table) { guard(); return [...new Set([...staged.values()].filter(row => row.table === table).map(row => row.scope))].sort(); },
             async put(table, scope, id, payload) {
               guard(); options.applyProbe?.('put:' + table);
               staged.set(key(table, scope, id), cloneJson({ table, scope, id, payload }));
@@ -117,7 +162,7 @@ export function createMemoryResearchPersistence(options: ResearchMemoryOptions =
               row.terminal = cloneJson({ state, status });
             },
           });
-          options.applyProbe?.('commit'); rows = staged; projections = projected; return result;
+          options.applyProbe?.('commit'); rows = staged; projections = projected; skillRows = stagedSkills; return result;
         } finally { active = false; }
       });
     },

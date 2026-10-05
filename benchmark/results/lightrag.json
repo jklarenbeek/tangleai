@@ -10834,11 +10834,11 @@
           },
           {
             "path": "packages/store/src/research-model.ts",
-            "sha256": "98b23720420f9741ff815d6816c4c18022dfaa40f0134a8fcc7aa8f33f652770"
+            "sha256": "fee2f3393aedab0a596d6c52af82270cc387e32d197ec6b96919240cb9617534"
           },
           {
             "path": "packages/store/src/research-store.ts",
-            "sha256": "44853118163a636edf1a20e58d381a02e3fc0f0db06b69360f4d244225f69389"
+            "sha256": "d2d649525389499cba1b25f2a10d50581780868ca6a121bc8c4cf7f70eebb9dd"
           },
           {
             "path": "packages/store/src/runs.ts",
@@ -10862,7 +10862,7 @@
           },
           {
             "path": "packages/store/src/trace2skill-store.ts",
-            "sha256": "654063b4bd7fa36042a1b67a44b04a2210f77ed72ef132bfc61cb9fe9d19caf9"
+            "sha256": "a1db4f236119b2c3a60faae0315ab72917fafc20ce808b581dbca6c68c209b54"
           },
           {
             "path": "packages/store/src/trading-model.ts",
@@ -10877,7 +10877,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "b38c9286ef7524574bf0c08febbb917a92f73be537d058ea8747e3607dd3bfd2"
+        "sha256": "8c313c118cf12def6046030e045d6710c7254fbb5ae12953cd5ae454610231e5"
       },
       "questionIds": [
         "q-relay-port",
@@ -10988,7 +10988,7 @@
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)",
         "The conservative 56953-request bound exceeds TANGLE_AI_MAX_CALLS=200; model-dependent profiling and review allowances cannot be silently discarded."
       ],
-      "planId": "ca237a8dde4fc50f5c9eb31732ddef7db843ca0e0c3db7ee6677745f31aa6873"
+      "planId": "887558fe97c68eecdf4d1b9c2e28669b0523d2a7417c66fde12159a58c134ba9"
     },
     "rows": [],
     "indexing": {
@@ -11020,7 +11020,7 @@
       "defaultChanged": false,
       "clauses": []
     },
-    "reportId": "a7a20e4c44e40aa867cc3c843ecf64a6da6599d56f9fb62e096ba109eb1e95cd"
+    "reportId": "13237bf7a015c74a8f468969fc18f716089fae0b73938eddf424c894f2390a50"
   },
   "judge": {
     "document": "lightrag-judge",
@@ -11490,11 +11490,11 @@
           },
           {
             "path": "packages/store/src/research-model.ts",
-            "sha256": "98b23720420f9741ff815d6816c4c18022dfaa40f0134a8fcc7aa8f33f652770"
+            "sha256": "fee2f3393aedab0a596d6c52af82270cc387e32d197ec6b96919240cb9617534"
           },
           {
             "path": "packages/store/src/research-store.ts",
-            "sha256": "44853118163a636edf1a20e58d381a02e3fc0f0db06b69360f4d244225f69389"
+            "sha256": "d2d649525389499cba1b25f2a10d50581780868ca6a121bc8c4cf7f70eebb9dd"
           },
           {
             "path": "packages/store/src/runs.ts",
@@ -11518,7 +11518,7 @@
           },
           {
             "path": "packages/store/src/trace2skill-store.ts",
-            "sha256": "654063b4bd7fa36042a1b67a44b04a2210f77ed72ef132bfc61cb9fe9d19caf9"
+            "sha256": "a1db4f236119b2c3a60faae0315ab72917fafc20ce808b581dbca6c68c209b54"
           },
           {
             "path": "packages/store/src/trading-model.ts",
@@ -11533,7 +11533,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "b38c9286ef7524574bf0c08febbb917a92f73be537d058ea8747e3607dd3bfd2"
+        "sha256": "8c313c118cf12def6046030e045d6710c7254fbb5ae12953cd5ae454610231e5"
       },
       "reportId": null,
       "promptRevision": "1d390f8d00465dc21cc63a21d762343b5d869519b1030daa53a0461bb5c9ae82",
@@ -11584,7 +11584,7 @@
         "A completed graph live report with retained per-question attempts is required.",
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)"
       ],
-      "planId": "f053701c8359ea6f4f2dea930457787f7361fe65cd95271ef43b4d2a0b20eb44"
+      "planId": "ce6c2837e8530b1ea3ef2c7be9e9d332dcf0763f9c3ae3a89c3b276433f59f84"
     },
     "status": "not-run",
     "tier": "not-run",
@@ -11599,7 +11599,7 @@
     },
     "physicalRequests": 0,
     "defaultInput": false,
-    "reportId": "f03d4700a7689a83216dfa0392e79db90fc9b78ee562762707ea9cabc69d1ea6"
+    "reportId": "6bc126365df60e83ad8a8de70b6e63ff909a053fefe6d2a8ad26cf6b10c95e94"
   },
   "parity": {
     "document": "lightrag-parity",
@@ -12833,5 +12833,5 @@
     "defaultChanged": false,
     "clauses": []
   },
-  "reportId": "b58d9ac4037944c36c3ec86cb228282f904b848e5760090dad59c15690cab061"
+  "reportId": "686742d80a233ad171a605662e6ab30bc579bdd14e8b57c70022ccecb78cabe3"
 }

@@ -9,7 +9,12 @@
     ".": "./src/index.ts",
     "./contracts": "./src/contracts.gen.ts",
     "./schemas/research": "./schemas/research.schema.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./schemas/lesson": "./schemas/lesson.schema.json",
+    "./schemas/lesson-validation-run": "./schemas/lesson-validation-run.schema.json",
+    "./schemas/lesson-set": "./schemas/lesson-set.schema.json",
+    "./schemas/lesson-injection": "./schemas/lesson-injection.schema.json",
+    "./schemas/decay-hypothesis": "./schemas/decay-hypothesis.schema.json"
   },
   "engines": {
     "node": ">=24"
@@ -29,7 +34,9 @@
     "@tangleai/agents": "^0.38.0",
     "@tangleai/models": "^0.38.0",
     "@tangleai/evolve": "^0.38.0",
-    "@jarenjs/md": "0.91.4"
+    "@jarenjs/md": "0.91.4",
+    "@tangleai/trace2skill": "^0.38.0",
+    "@tangleai/outcomes": "^0.38.0"
   },
   "private": false,
   "types": "./src/index.ts",

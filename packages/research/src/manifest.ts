@@ -20,6 +20,7 @@ export async function inputManifestOf(stage: ResearchLifecycle, frame: ResearchW
   if (new Set(tools.map(tool => tool.name)).size !== tools.length) researchFail('TRSH1002', '/toolVersions', 'Tool names must be unique.');
   const candidate = researchValue(validateResearchShape<InputManifest>('InputManifest', { projectId: value.projectId, stage,
     inputs, promptRevision, runIdentityId, toolVersions: tools, evaluator, reservation,
-    ...(value.guidanceHash ? { guidanceHash: value.guidanceHash } : {}) }));
+    ...(value.guidanceHash ? { guidanceHash: value.guidanceHash } : {}),
+    ...(value.lessonProcedure ? { lessonProcedure: value.lessonProcedure } : {}) }));
   return researchValue(validateResearchShape<InputManifest>('InputManifest', { ...candidate, controlHash: await researchRevisionOf(value) }));
 }
