@@ -30,7 +30,7 @@ export async function runResearchExecutionFixture(loaded: LoadedResearchFixture,
     return program(input);
   }])), { now: () => 0 }) : f.executor;
   const decisions = mode === 'branching' ? f.registered.branching : f.registered.control;
-  return runResearchReasoningFixture(loaded, topic, 'single-agent', { policy: f.policy, script, decisions: [decisions], signal: controller.signal,
+  return runResearchReasoningFixture(loaded, topic, 'single-agent', { domain: f.domain, policy: f.policy, script, decisions: [decisions], signal: controller.signal,
     revision: await canonicalSha256({ registration: f.registration, mode }),
     async tools(base, store) {
       const execute = base.execute, verify = base.verify;

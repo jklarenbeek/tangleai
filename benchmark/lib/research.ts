@@ -4,6 +4,7 @@ import { sourceManifest } from './source-manifest.ts';
 import { installedSuitePackages } from './suite-packages.ts';
 import { analyticEnvelope } from './report-envelope.ts';
 import { buildResearchLessonsReport, renderResearchLessons } from './research-lessons.ts';
+import { buildResearchDomainsReport, renderResearchDomains } from './research-domains.ts';
 import { loadResearchFixture, RESEARCH_FIXTURE_PATH, MANIFEST_PATH, type LoadedResearchFixture } from './research-fixture.ts';
 import { researchCeilings, researchScore, verifyResearchBundle } from './research-oracle.ts';
 import { runNativeResearchFixture } from './research-workflow.ts';
@@ -38,6 +39,13 @@ export const SOURCE_MANIFEST = [
   'benchmark/lib/research-discovery.ts', 'benchmark/lib/research-discovery-fixture.ts', 'benchmark/scripts/research-transcripts.ts',
   'benchmark/lib/research-reasoning.ts', 'benchmark/lib/research-reasoning-fixture.ts', 'scripts/research-artifacts.ts', 'scripts/research-sources.ts',
   'benchmark/lib/research-execution.ts', 'benchmark/lib/research-execution-fixture.ts',
+  'apps/research-runner/src/domains.ts',
+  'benchmark/lib/research-domains.ts', 'benchmark/lib/research-domains-schema.ts', 'benchmark/lib/research-domains.types.ts',
+  'benchmark/lib/research-domain-inputs.ts', 'benchmark/lib/research-domain-runtime.ts', 'benchmark/lib/research-domain-probes.ts',
+  'benchmark/lib/research-tabular-fixture.ts', 'benchmark/scripts/tabular-statistics-fixture.ts',
+  'benchmark/lib/research-arc.ts', 'benchmark/lib/research-arc-schema.ts', 'benchmark/schemas/arc-bench-topic.schema.json',
+  'benchmark/schemas/research-domains.schema.json', 'scripts/research-domains-schema.ts', 'scripts/research-domain-artifacts.ts',
+  'prompts/research/domains/tabular-context.toml',
   'benchmark/lib/research-decisions.ts', 'benchmark/lib/research-decision-fixture.ts', 'benchmark/lib/research-statistics.ts',
   'benchmark/lib/research-writing.ts', 'benchmark/lib/research-writing-fixture.ts', 'benchmark/lib/research-latex.ts',
   'benchmark/lib/research-lessons.ts', 'benchmark/lib/research-lessons-oracle.ts', 'benchmark/lib/research-lessons-fixture.ts',
@@ -329,7 +337,8 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
     registration: { id: loaded.manifest.id, revision: loaded.manifest.revision, topics: loaded.topics.map(topic => topic.id),
       caps: loaded.manifest.caps, replicatePolicy: loaded.manifest.replicatePolicy,
       bundles: [...loaded.manifest.bundles, ...loaded.manifest.execution.refusals].map(bundle => ({ id: bundle.id, expected: structuredClone(bundle.expected) })) },
-    identity, ceilings, rows, discovery, execution, analysis, writing, lessons: await buildResearchLessonsReport(loaded), bundles, disclosure: disclosures(rows), gate,
+    identity, ceilings, rows, discovery, execution, analysis, writing, lessons: await buildResearchLessonsReport(loaded),
+    domains: await buildResearchDomainsReport(loaded), bundles, disclosure: disclosures(rows), gate,
     decision: gate.registration && gate.oracle && gate.bundles && gate.analysis && gate.writing ? 'conformant' : 'drift', limitations: [...RESEARCH_LIMITATIONS] };
   const report = { ...payload, reportId: await canonicalSha256(payload) };
   const validated = validateResearchReportShape(report);
@@ -481,7 +490,8 @@ export function renderDocument(report: ResearchReport): string {
     '## Disclosure', '', table(['Row', ...RESEARCH_DISCLOSURES], report.disclosure.map(row => [row.rowId, ...row.items.map(item => item.satisfied ? 'yes' : 'no')])), '',
     'Evidence pointers in the JSON resolve to retained bundle artifacts. Human review, runnable implementation, reconstructible execution, novelty audit and baseline audit follow the five measured categories in [the research survey](https://arxiv.org/html/2608.05179#S14Table10). Independent verification, attempt/selection registration and frozen hypotheses are additional operational requirements. No external study rates are reproduced.', '',
     ...renderResearchLessons(report.lessons),
-    '## Reproduce', '', 'Run `npm run benchmark:research` and `npm run benchmark:research -- --check`. `--rows artifact-oracle` retains seven explicit not-run rows. `--rows lessons` includes the complete lesson family, the artifact oracle and the no-model core floor; six other core rows remain explicitly not-run. `--require registration`, `--require oracle`, `--require bundles`, `--require analysis` or `--require writing` refuses a failed gate before writing. `--out PATH` writes JSON and a sibling `PATH.md`; `--check --out PATH` checks those files without writing.', '',
+    ...renderResearchDomains(report.domains),
+    '## Reproduce', '', 'Run `npm run benchmark:research` and `npm run benchmark:research -- --check`. `--rows artifact-oracle` retains seven explicit not-run rows. `--rows lessons` includes the complete lesson family, the artifact oracle and the no-model core floor; six other core rows remain explicitly not-run. `--rows domains` selects the same keyless core floor and retains both complete domain families, the parity and unsupported-profile probes, and the stated external deferral. `--require registration`, `--require oracle`, `--require bundles`, `--require analysis` or `--require writing` refuses a failed gate before writing. `--out PATH` writes JSON and a sibling `PATH.md`; `--check --out PATH` checks those files without writing.', '',
     '## Limits', '', ...report.limitations.map(text => '- ' + text), '',
     'Installed identities: ' + report.suite.packages.map(pkg => '`' + pkg.name + '@' + pkg.version + '`').join(', ') + '.', '',
   ].join('\n');

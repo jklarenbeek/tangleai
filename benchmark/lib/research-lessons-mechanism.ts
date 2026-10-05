@@ -12,7 +12,11 @@ import type { LoadedLessonFixture } from './research-lessons-fixture.ts';
 import type { LessonTopicMeasurement, LessonNativeMeasurement, LessonCounts } from './research-lessons.types.ts';
 
 export type LessonTopicRunner = (snapshot: SkillSnapshot) => Promise<LessonTopicMeasurement[]>;
-export async function researchLessonFixtureProcedure(fixture: LoadedLessonFixture): Promise<SkillSnapshot> {
+export type LessonMechanismFixture = Pick<LoadedLessonFixture, 'procedure'> & {
+  registration: Pick<LoadedLessonFixture['registration'], 'scope' | 'topics' | 'revision'>;
+  beneficial: Pick<LoadedLessonFixture['beneficial'], 'proposal'>;
+};
+export async function researchLessonFixtureProcedure(fixture: Pick<LessonMechanismFixture, 'procedure' | 'registration'>): Promise<SkillSnapshot> {
   const result = await sealSkillBundle(draftsOf(fixture.procedure.files), { ...fixture.procedure.bundle,
     scopeKey: lessonScopeKey(fixture.registration.scope) });
   if (!result.valid) throw Error('The native scoped procedure refused: ' + JSON.stringify(result.issues));
@@ -53,7 +57,7 @@ export async function retainLessonValidation(options: { store: ResearchStore; le
     startedAt: LESSON_FIXTURE_TIME, finishedAt: LESSON_FIXTURE_TIME, issues: [] }));
   return store.lessons.putValidation(run);
 }
-export async function measureResearchLessonMechanism(loaded: LoadedResearchFixture, fixture: LoadedLessonFixture,
+export async function measureResearchLessonMechanism(loaded: { topics: Array<Pick<LoadedResearchFixture['topics'][number], 'id' | 'contract' | 'plan'>> }, fixture: LessonMechanismFixture,
   hypothesisId: 'none' | 'age-linear' | 'severity-weighted-age', runTopics: LessonTopicRunner) {
   const persistence = createMemoryResearchPersistence(), store = createResearchStoreAdapter(persistence), native = nativeLessonMeasurement('topic-quality');
   try {

@@ -715,8 +715,107 @@
       }
     },
     {
+      "path": "domains/tabular-statistics/datasets/negative.csv",
+      "sha256": "e73f9aff1253191f6ad8b715625ef843a28ad39185a0edcf2eb299aa57326409",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "domains/tabular-statistics/datasets/null.csv",
+      "sha256": "847b2022e064a7f53ef375343c44c9a45fcd9977184fa94f9270048787202595",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "domains/tabular-statistics/datasets/positive.csv",
+      "sha256": "6c87faa7ac448a0890e72b7c5cbf8582149c997fc6e4410cb8d401d7f5228065",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "domains/tabular-statistics/manifest.json",
+      "sha256": "90274ede0928bebc9f78d469a3ff8d644b06f80b495160429c6b9df875937259",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "domains/tabular-statistics/rubric.json",
+      "sha256": "b591fc722bcfcabbaba2f39d282e38bafd60ec9ede54a63656626f2e683b3280",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "domains/tabular-statistics/topics/negative-effect.json",
+      "sha256": "1db32022ff22c41a7d7187259da3ed8efeb3eee5da9cb781b79c775e76e7edf9",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "domains/tabular-statistics/topics/null-effect.json",
+      "sha256": "d76c8f9a76d52050a96cdacdd04c64144dff1f3a65e370ae11fd19982ed92c62",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "domains/tabular-statistics/topics/positive-effect.json",
+      "sha256": "610057fb1c9c8d16b7a0a5f5b0dfcbf7de7e604c39b7ad3f76e5bed7154c9c1a",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "domains/tabular-statistics/topics/threshold-failure.json",
+      "sha256": "ed2881bf432e3ed4388f16eebb9667209fa6954f8aca7bf3e5e03b3c430b791b",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "domains/tabular-statistics/units.json",
+      "sha256": "da1d5a8a91c59c1fe5dcab373f85d46e42949e28b4641c9dc43ed7b4342be7fd",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
       "path": "execution/registration.json",
       "sha256": "c00a4cb44a83cab6d25019524ba838b5167b0eb6391ea8bf0de493bd034bf743",
+      "licence": {
+        "spdx": "MIT",
+        "provenance": "tangle-authored-synthetic",
+        "source": "LICENSE.md"
+      }
+    },
+    {
+      "path": "external/arc-bench.manifest.schema.json",
+      "sha256": "6640f57f6dd9fb2f346ee3312d76192302f9cdd6ceb534b2c8473f050e1f9bf5",
       "licence": {
         "spdx": "MIT",
         "provenance": "tangle-authored-synthetic",
@@ -1597,5 +1696,5 @@
       }
     }
   ],
-  "revision": "a2c0d70b6f8dd8657386439f8abca190c26db1e05df90752d5d36e246e05d048"
+  "revision": "a1a97758ab203d738623c3bd4acf34a31bb00c870f68c23b9d39b4fadf73141d"
 }

@@ -670,12 +670,20 @@
         "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
       },
       {
+        "path": "benchmark/lib/research-arc-schema.ts",
+        "sha256": "49761da20409561d864fdd202b85935aa44c633b49b52f691b74d498244f880d"
+      },
+      {
+        "path": "benchmark/lib/research-arc.ts",
+        "sha256": "a40b1a39786d7861890843891f84e3b6e61959984eb1e337987e57457feaabb6"
+      },
+      {
         "path": "benchmark/lib/research-decision-fixture.ts",
         "sha256": "3588ad446aaaa3d23b66c0140e45737e354b031328333acc0f92f8c6dcb6846b"
       },
       {
         "path": "benchmark/lib/research-decisions.ts",
-        "sha256": "6b4429b7726fad1883c750e20c4a5b9c5c5c51ccb33c283f6e2cc0f14d361bf5"
+        "sha256": "c6792b538e9231e73bda47c0f69d78e0898adb039153164f3c0d5b9b75817ab1"
       },
       {
         "path": "benchmark/lib/research-discovery-fixture.ts",
@@ -686,16 +694,40 @@
         "sha256": "88fbfa3ecc791526719dc5174e113637c36d2b466af17217428ec5073581e635"
       },
       {
+        "path": "benchmark/lib/research-domain-inputs.ts",
+        "sha256": "28663d2bdead69c0701ae18a53d089cfe17e60e123e7e46431a4d292cd69a373"
+      },
+      {
+        "path": "benchmark/lib/research-domain-probes.ts",
+        "sha256": "bda5329651050431dce1d3cc75f3b88fe9364c0e0278e9ceef8715b0044e9d5e"
+      },
+      {
+        "path": "benchmark/lib/research-domain-runtime.ts",
+        "sha256": "ef850a2fe9c8696e493b2d2af4fe530e103b79fcb16d3779237b46a999c2fb65"
+      },
+      {
+        "path": "benchmark/lib/research-domains-schema.ts",
+        "sha256": "43aebf06cc24ca20b1e20d8c44af27babda14058582a6b1b6719c6255c5050dd"
+      },
+      {
+        "path": "benchmark/lib/research-domains.ts",
+        "sha256": "16003249e7ac0dc5b5433a882f2836d1109511d360660e02c263ac92ef0e6367"
+      },
+      {
+        "path": "benchmark/lib/research-domains.types.ts",
+        "sha256": "65934c35d6c472b7803dd57b1472f0323f2c363e5682e0b6f0a6575b41925538"
+      },
+      {
         "path": "benchmark/lib/research-evaluator.ts",
         "sha256": "b4e0837093b68cacd5f7cf0dbd3792fde6060f5afac8643a61c510ce46584642"
       },
       {
         "path": "benchmark/lib/research-execution-fixture.ts",
-        "sha256": "e739025081039a40f3c87f0b602459d0cc37e1803336a194726da787654692cb"
+        "sha256": "8f0895833c7f461dd9a25d5ef895dcb1b2ccc98a318693deff21f856df1ccb30"
       },
       {
         "path": "benchmark/lib/research-execution.ts",
-        "sha256": "75a7b68d19da7506a09d7b44b8da12944104529954b443e0a9951467a2ede640"
+        "sha256": "9979ea4d81d5c8346d66052bddafa77d736074bbe1bf0c869d2d7f938a0138f9"
       },
       {
         "path": "benchmark/lib/research-fixture.ts",
@@ -715,7 +747,7 @@
       },
       {
         "path": "benchmark/lib/research-lessons-mechanism.ts",
-        "sha256": "2b95f01f356f158d6d61bd35446bedfd69ab7a815d56f8c343367379b43f9f30"
+        "sha256": "d98018cb0bb0fab69cd4e5dc98fa4d9614af68c75beb34835c6d3bdf5e60bb56"
       },
       {
         "path": "benchmark/lib/research-lessons-oracle.ts",
@@ -735,7 +767,7 @@
       },
       {
         "path": "benchmark/lib/research-lessons.types.ts",
-        "sha256": "a9bf78f8dd2b4cf3c7b7e47a462a0c1d5f2856bca33893cc86873c0ce17c6f9f"
+        "sha256": "6cc921b77cf450b6bff0adb9bfe9a6c2617bf8edee3eebf3ea839df2b6e45f29"
       },
       {
         "path": "benchmark/lib/research-lifecycle-fixture.ts",
@@ -755,7 +787,7 @@
       },
       {
         "path": "benchmark/lib/research-reasoning.ts",
-        "sha256": "61294d20395e3171868e3e12ca787e8bcb977e5eaebb3b397b88ce974d235934"
+        "sha256": "0f92f254281daa67b4cb20883aa17ef0b9faf847b2a8e415d1df9aea7f46308e"
       },
       {
         "path": "benchmark/lib/research-runner.ts",
@@ -763,19 +795,23 @@
       },
       {
         "path": "benchmark/lib/research-schema.ts",
-        "sha256": "2701617f142f1b0f87d84c08cf20d054a480eb82bceac2068aaf4f47e12f467d"
+        "sha256": "cc8b2473e666a482d62d2a28483ddae2eb333d52f6603f6731ae0324a8223a57"
       },
       {
         "path": "benchmark/lib/research-statistics.ts",
         "sha256": "c1a397897e883dbd6c2049c032d8699df222ba01bfb3c803f857431218bfceed"
       },
       {
+        "path": "benchmark/lib/research-tabular-fixture.ts",
+        "sha256": "d8ad7d362bf2d028c17c639a34626461b1cd1a50146a2064605cd0113139b89c"
+      },
+      {
         "path": "benchmark/lib/research-validation.ts",
-        "sha256": "2b2b3d49fcee7b58927096c33d5c348fd3188fe3883f9111e8fb1da747abc0a6"
+        "sha256": "ca1b440035da860576e4f1d5bb92db6ea76e550072d3aaef67b341bd7b6253c3"
       },
       {
         "path": "benchmark/lib/research-workflow.ts",
-        "sha256": "0251b2d7d48b37336f4bfc1fb387b569e09ebef4be0bbf07604bee90edeaa292"
+        "sha256": "21e47600a7a81f63e8af1cf1230581cbe40b4358121dfe42b896cf8c34863852"
       },
       {
         "path": "benchmark/lib/research-writing-fixture.ts",
@@ -783,15 +819,15 @@
       },
       {
         "path": "benchmark/lib/research-writing.ts",
-        "sha256": "131b48bc3747587cd004f2d1dc63e6ef277297ebb5f7642c32cd000981a3c888"
+        "sha256": "630f5d0c6460ba1d74dc917a120b45bdae29f1412bf5421e9c18476fde77fdd9"
       },
       {
         "path": "benchmark/lib/research.ts",
-        "sha256": "ec3ea933a1b4fb572addf4745d78c13a245dcee4fe7c2d60a5ac0a5ce98c29b9"
+        "sha256": "5b35dcdcb3a931a598a6cbe93af436f85d36cb086814aecafe9dbe53397290a6"
       },
       {
         "path": "benchmark/lib/research.types.ts",
-        "sha256": "2d7118320bc0aac3ee0baae794473be5100b193a7bbc74a0cf51e6aca3f9c8e8"
+        "sha256": "e6a133a861bd12c870273deeeff65e1be2f557d1af50bb33a8fb4e98ff9897f5"
       },
       {
         "path": "benchmark/lib/retention.ts",
@@ -1023,11 +1059,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "2054ba42831814e95165d0e725f3c81b3b5e360136dc514d5c4582a7e1b30bfd"
+        "sha256": "97bcd296a21874dc7780da4792b986c8b565e3b30cb627e483cb06fc9202d435"
       },
       {
         "path": "package.json",
-        "sha256": "5b94a5da80af9a7b2b3c01d5a65fd8a414490213a838afc0684ed66a8dfa41fd"
+        "sha256": "f6df9c541d439cd30b67a549d6ba5d3b1a5665ea2ce4494952bd01f1ffdc48a7"
       },
       {
         "path": "packages/agents/package.json",
@@ -1730,7 +1766,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "c5806d8b858e28b3f84cbdfba1ee776bbbf26c481754b3661fca9dcb0b8454de"
+    "sha256": "739058eaad55a09544a880d319c0ae6c65c6be37f3f3c6426fd18962974de4b1"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45195,5 +45231,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "770c8bfbd3bfe4eecf87d9ed0ff64f6561ba7989b08c8ca63b44ab14d1bc3d87"
+  "reportId": "f6f6d0c969958d7b22f9c3aa031f64093f33c96bbeaac2133adba59b78579841"
 }

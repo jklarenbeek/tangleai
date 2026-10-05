@@ -14,6 +14,7 @@ import { researchMechanicalDecision, evaluateResearchRun } from './research-eval
 import { researchBytesSha256, type LoadedResearchFixture } from './research-fixture.ts';
 import { requireResearchShape } from './research-validation.ts';
 import { researchDiscoveryConfiguration, createResearchDiscoveryFixture } from './research-discovery.ts';
+import { researchExecutionFixture } from './research-execution-fixture.ts';
 import type { ResearchFixtureTopic, ResearchDataset, ExperimentRun, MetricObservation, ResearchWorkflowMeasurement } from './research.types.ts';
 
 const artifact = (value: unknown) => ({ mediaType: 'application/vnd.tangleai.research-value+json', bytes: new TextEncoder().encode(canonicalizeJson(value)) });
@@ -114,12 +115,13 @@ function scientificTools(loaded: LoadedResearchFixture, topic: ResearchFixtureTo
 export async function runNativeResearchFixture(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic,
   sourceRevision: string, kind: ResearchWorkflowMeasurement['kind'] = 'scientific') {
   const discoveryConfiguration = await researchDiscoveryConfiguration(topic);
+  const domain = (await researchExecutionFixture(loaded, topic)).domain;
   const identity = await researchExampleIdentity(), binding = await createResearchBinding(topic.contract, {
     identity, promptRevision: researchBytesSha256(loaded.files.get('prompts/fixture-writer.json')!),
     toolVersions: [{ name: 'native-stages', version: await canonicalSha256({ sourceRevision, kind }) },
       { name: 'scholarly-discovery', version: discoveryConfiguration.revision },
       ...loaded.manifest.programs.map(program => ({ name: program.id, version: program.sha256 }))],
-    evaluator: topic.plan.evaluator, reservation: zero });
+    evaluator: topic.plan.evaluator, reservation: zero, domain: domain.manifest });
   const limits = { ...researchExampleLimits, ms: loaded.manifest.caps.ms, contextChars: loaded.manifest.caps.contextChars, traceBytes: loaded.manifest.caps.traceBytes };
   const project: ResearchProject = { id: topic.contract.projectId, topic: topic.title, domainProfile: 'computational',
     question: kind === 'scientific' ? topic.contract.hypothesisSpace.join('; ') : 'Scripted complete-path control; no scientific decision claim',
@@ -133,6 +135,7 @@ export async function runNativeResearchFixture(loaded: LoadedResearchFixture, to
     const masStore = createMasStore(db, { now }), researchStore = createResearchStore(db, { now }), taskExecutions: string[] = [];
     let tools = kind === 'scientific' ? scientificTools(loaded, topic, binding, masStore)
       : researchExampleTools({ binding, contract: topic.contract, plan: topic.plan, masStore });
+    tools = { ...tools, domain };
     if (kind === 'scientific') {
       discoveryHost = await createResearchDiscoveryFixture(loaded, topic, db, async () => {
         const current = researchValue(await researchStore.snapshot(project.id))!;

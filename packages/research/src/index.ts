@@ -26,7 +26,7 @@ export type { ResearchLessonSlotOptions, ResearchLessonEvaluationSlot } from './
 export { recordLessonActivation } from './lessons/activation.ts';
 export type { ResearchLessonActivationOptions, ResearchLessonActivation } from './lessons/activation.ts';
 export { injectLessons, researchLessonManifest, RESEARCH_LESSON_DEFAULTS } from './lessons/inject.ts';
-export { RESEARCH_DOMAIN_LESSON_POLICIES } from './domains/registry.ts';
+export * from './domains/index.ts';
 export type { InjectLessonsOptions, LessonInjectionResult, ResearchLessonProcedure } from './lessons/inject.ts';
 export type { LessonRefiner, LessonRefinerOptions, LessonProcedureView, LessonMaterializeRequest, LessonRefineRequest,
   MaterializedLessonCandidate, PreparedLessonCandidate } from './lessons/refine.ts';

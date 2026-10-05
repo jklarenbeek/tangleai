@@ -5,7 +5,7 @@ import { qualifyGmplBrowser } from './gmpl-browser.mjs';
 import { qualifyHeraBrowser } from './hera-browser.mjs';
 import { qualifyForecastBrowser } from './forecast-browser.mjs';
 import { qualifyTradingBrowser } from './trading-browser.mjs';
-import { qualifyResearchBrowser, qualifyResearchDiscoveryBrowser, qualifyResearchReasoningBrowser, qualifyResearchExecutionBrowser, qualifyResearchAnalysisBrowser, qualifyResearchWritingBrowser, qualifyResearchCommandsBrowser } from './research-browser.mjs';
+import { qualifyResearchBrowser, qualifyResearchDiscoveryBrowser, qualifyResearchReasoningBrowser, qualifyResearchExecutionBrowser, qualifyResearchAnalysisBrowser, qualifyResearchWritingBrowser, qualifyResearchCommandsBrowser, qualifyResearchDomainsBrowser } from './research-browser.mjs';
 import { qualifyTemporal } from './temporal-browser.mjs';
 import { qualifyPlace } from './place-browser.mjs';
 import { qualifyTrace2SkillBrowser } from './trace2skill-browser.mjs';
@@ -34,6 +34,7 @@ globalThis.tangleConsumer = {
   researchAnalysis: qualifyResearchAnalysisBrowser(),
   researchWriting: qualifyResearchWritingBrowser(),
   researchCommands: qualifyResearchCommandsBrowser(),
+  researchDomains: qualifyResearchDomainsBrowser(),
   consolidation: qualifyConsolidation(),
   temporal: qualifyTemporal(),
   place: qualifyPlace().then(result => result.summary),

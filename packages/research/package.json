@@ -14,7 +14,9 @@
     "./schemas/lesson-validation-run": "./schemas/lesson-validation-run.schema.json",
     "./schemas/lesson-set": "./schemas/lesson-set.schema.json",
     "./schemas/lesson-injection": "./schemas/lesson-injection.schema.json",
-    "./schemas/decay-hypothesis": "./schemas/decay-hypothesis.schema.json"
+    "./schemas/decay-hypothesis": "./schemas/decay-hypothesis.schema.json",
+    "./schemas/domain-profile": "./schemas/domain-profile.schema.json",
+    "./schemas/domain-bindings": "./schemas/domain-bindings.schema.json"
   },
   "engines": {
     "node": ">=24"
@@ -36,7 +38,8 @@
     "@tangleai/evolve": "^0.38.0",
     "@jarenjs/md": "0.91.4",
     "@tangleai/trace2skill": "^0.38.0",
-    "@tangleai/outcomes": "^0.38.0"
+    "@tangleai/outcomes": "^0.38.0",
+    "@jarenjs/josl": "0.91.4"
   },
   "private": false,
   "types": "./src/index.ts",

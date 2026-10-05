@@ -927,6 +927,7 @@ export interface MetricObservation {
    * Schema constraints this type cannot express: minLength=1
    */
   condition: string;
+  direction?: "maximize" | "minimize";
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -957,6 +958,10 @@ export interface MetricObservation {
 
 
 export interface ProgramParams {
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1000000
+   */
+  delta?: number;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
@@ -1288,7 +1293,38 @@ export interface RawFileOutput {
 }
 
 
-export type ResearchRawOutput = RawClusterOutput | RawRankingOutput | RawFileOutput;
+export interface TabularSample {
+  group: "A" | "B";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64, pattern="^[A-Za-z][A-Za-z0-9_-]*$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64, pattern="^[A-Za-z][A-Za-z0-9_-]*$"
+   */
+  pairId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   */
+  unit: string;
+  /**
+   * Schema constraints this type cannot express: minimum=-1000000, maximum=1000000
+   */
+  value: number;
+}
+
+
+export interface RawTabularOutput {
+  datasetSha256: Sha256;
+  kind: "tabular";
+  /**
+   * Schema constraints this type cannot express: minItems=4, maxItems=2048
+   */
+  rows: Array<TabularSample>;
+}
+
+
+export type ResearchRawOutput = RawClusterOutput | RawRankingOutput | RawFileOutput | RawTabularOutput;
 
 export interface ResearchOutputFile {
   /**
@@ -2966,6 +3002,111 @@ export interface ResearchDirective {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="^[A-Za-z][A-Za-z0-9_@-]*(/[A-Za-z0-9_-]+)*$"
+ */
+export type ResearchDomainName = string;
+
+export interface ResearchDomainBindingReference {
+  id: ResearchDomainName;
+  kind: "prompt" | "plan-validator" | "evaluator" | "rubric" | "exporter";
+  revision: Sha256;
+}
+
+
+export interface ResearchDomainBindingManifest {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=128, uniqueItems=true
+   */
+  bindings: Array<ResearchDomainBindingReference>;
+  /**
+   * Schema constraints this type cannot express: maxLength=128, pattern="^[a-z][a-z0-9-]*$"
+   */
+  profileId: string;
+  profileRevision: Sha256;
+}
+
+
+export interface ResearchDomainProfileLicence {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=512, pattern="^(?!/)(?!.*(?:\\.\\.|\\\\|://))[A-Za-z0-9_./-]+\\.json$"
+   */
+  manifestPath: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64, pattern="^[A-Za-z0-9.-]+$"
+   */
+  spdx: string;
+}
+
+
+export interface ResearchDomainRunnerTemplate {
+  bindings: {"codeFiles":"admitted-code-slots","datasetPaths":"preregistered-inputs","dependencyLockHash":"host-dependency-lock","imageDigest":"host-image-digest"};
+  executorContractHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
+   */
+  maxConditions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
+   */
+  maxSeeds: number;
+  mode: "fixture" | "authored";
+  network: { measured: "off"; setup: "off"; };
+  resources: ExecutionManifestResources;
+}
+
+
+export interface ResearchDomainProfileUnitsItem {
+  direction: "maximize" | "minimize";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="^[A-Za-z][A-Za-z0-9_@-]*$"
+   */
+  metricId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="^[A-Za-z][A-Za-z0-9 _-]*$"
+   */
+  unit: string;
+}
+
+
+export interface ResearchDomainProfile {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=128, uniqueItems=true
+   */
+  bindingRevisions: Array<ResearchDomainBindingReference>;
+  evaluatorId: ResearchDomainName;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="^[A-Za-z0-9_-]+$"
+   */
+  evaluatorVersion: string;
+  exportTemplateId: ResearchDomainName;
+  /**
+   * Schema constraints this type cannot express: maxLength=128, pattern="^[a-z][a-z0-9-]*$"
+   */
+  id: string;
+  licence: ResearchDomainProfileLicence;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64, uniqueItems=true
+   */
+  planValidatorIds: Array<ResearchDomainName>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64, uniqueItems=true
+   */
+  promptPackIds: Array<ResearchDomainName>;
+  revision: Sha256;
+  rubricId: ResearchDomainName;
+  runnerManifestTemplate: ResearchDomainRunnerTemplate;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64, uniqueItems=true
+   */
+  taskFamilies: Array<ResearchDomainName>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64, uniqueItems=true
+   */
+  units: Array<ResearchDomainProfileUnitsItem>;
+}
+
+
 export interface ResearchDraftVerification {
   claims: Array<ResearchClaimCheck>;
   draftId: ResearchId;
@@ -3776,6 +3917,63 @@ export interface SynthesisProposal {
    * Schema constraints this type cannot express: minLength=1
    */
   summary: string;
+}
+
+
+export interface TabularStatisticsSummaryInterval {
+  level: 0.95;
+  /**
+   * Schema constraints this type cannot express: minimum=-2000000, maximum=2000000
+   */
+  lower: number;
+  method: "paired-bootstrap";
+  quantile: "nearest-rank";
+  resamples: 2000;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4294967295
+   */
+  seed: number;
+  /**
+   * Schema constraints this type cannot express: minimum=-2000000, maximum=2000000
+   */
+  upper: number;
+}
+
+
+export interface TabularStatisticsSummary {
+  interval: TabularStatisticsSummaryInterval;
+  /**
+   * Schema constraints this type cannot express: minimum=-1000000, maximum=1000000
+   */
+  meanA: number;
+  /**
+   * Schema constraints this type cannot express: minimum=-1000000, maximum=1000000
+   */
+  meanB: number;
+  /**
+   * Schema constraints this type cannot express: minimum=-2000000, maximum=2000000
+   */
+  meanDifference: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=2, maximum=1024
+   */
+  pairs: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sampleStddevA: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sampleStddevB: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sampleVarianceA: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sampleVarianceB: number;
 }
 
 
@@ -5413,6 +5611,279 @@ export interface Lessons_LessonNegativeBundle {
    */
   baselineUtilities: Array<0 | 0.5 | 1>;
   asyncValidator: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.spend.calls",{"$sum":"$.attempts[*].spend.calls"}]},{"$eq":["$.spend.tokens",{"$sum":"$.attempts[*].spend.tokens"}]},{"$eq":["$.spend.physical",{"$sum":"$.attempts[*].spend.physical"}]},{"$eq":["$.spend.ms",{"$sum":"$.attempts[*].spend.ms"}]},{"$eq":["$.spend.physical",{"$count":"$.runs[*]"}]},{"$eq":["$.modelCalls","$.spend.calls"]},{"$eq":[{"$count":"$.observations[*]"},{"$count":"$.runs[*]"}]}]}
+ */
+export interface Domains_DomainLifecycleReceipt {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  runId: string;
+  bindingId: Sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  runIdentityId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  workflowVersionId: string;
+  executableRevision: Sha256;
+  status: "completed";
+  state: ResearchState;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  attempts: Array<StageAttempt>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  manifests: Array<InputManifest>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  runs: Array<ExperimentRun>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  observations: Array<MetricObservation>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateResponses: number;
+  modelCalls: 0;
+  spend: ResearchCost;
+}
+
+
+export interface Domains_DomainTopicMeasurement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  topicId: string;
+  topicHash: Sha256;
+  contractHash: Sha256;
+  planHash: Sha256;
+  lifecycle: Domains_DomainLifecycleReceipt;
+  tabular: TabularStatisticsSummary | null;
+  result: "improvement" | "no-improvement" | "inconclusive" | "SATURATED";
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  claimSupport: number;
+  registryAccuracy: 1;
+  preregistrationIntegrity: 1;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Domains_DomainMeasurementRowEligibilityIssuesItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Domains_DomainMeasurementRowLimitationsItem = string;
+
+export interface Domains_DomainMeasurementRow {
+  id: "domain:computational/fixed-pipeline" | "domain:computational/lessons-off" | "domain:computational/lessons-on" | "domain:tabular-statistics/fixed-pipeline" | "domain:tabular-statistics/lessons-off" | "domain:tabular-statistics/lessons-on";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  profileId: string;
+  profileRevision: Sha256;
+  identityStatus: "run";
+  comparisonIdentity: Sha256;
+  budget: ResearchCost;
+  spend: LessonSpend;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=4
+   */
+  topics: Array<Domains_DomainTopicMeasurement>;
+  lesson: Lessons_LessonNativeMeasurement | null;
+  activated: boolean;
+  eligibilityIssues: Array<Domains_DomainMeasurementRowEligibilityIssuesItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  limitations: Array<Domains_DomainMeasurementRowLimitationsItem>;
+}
+
+
+export interface Domains_RootUnsupported {
+  id: "domain:unsupported";
+  code: "TRSH2008";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  missingId: string;
+  modelCalls: 0;
+  runnerInvocations: 0;
+  issue: ResearchIssue;
+}
+
+
+export interface Domains_RootParitySourcesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  sha256: Sha256;
+}
+
+
+export interface Domains_RootParity {
+  id: "control-plane-parity";
+  sourceHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  sources: Array<Domains_RootParitySourcesItem>;
+  profileLiterals: 0;
+  domainComparisons: 0;
+}
+
+
+export interface Domains_RootExternal {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  state: "not-run";
+  reason: "submodule-absent" | "manifest-unpinned" | "licence-unaudited";
+  issues: Array<ResearchIssue>;
+  modelCalls: 0;
+  runnerInvocations: 0;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Domains_RootLimitationsItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].id"],["domain:computational/fixed-pipeline","domain:computational/lessons-off","domain:computational/lessons-on","domain:tabular-statistics/fixed-pipeline","domain:tabular-statistics/lessons-off","domain:tabular-statistics/lessons-on"]]},{"$eq":[["$.identity.rows[*].rowId"],["$.rows[*].id"]]},{"$eq":["$.gate.binding",{"$eq":["$.unsupported.code","TRSH2008"]}]},{"$eq":["$.gate.controlPlane",{"$and":[{"$eq":["$.parity.profileLiterals",0]},{"$eq":["$.parity.domainComparisons",0]}]}]},{"$eq":["$.gate.registry",{"$every":{"row":"$.rows[*]"},"$satisfies":{"$every":{"topic":"$row.topics[*]"},"$satisfies":{"$eq":["$topic.registryAccuracy",1]}}}]},{"$eq":["$.gate.comparable",{"$every":{"row":"$.rows[*]"},"$satisfies":{"$and":[{"$le":["$row.spend.calls","$row.budget.calls"]},{"$le":["$row.spend.tokens","$row.budget.tokens"]},{"$le":["$row.spend.physical","$row.budget.physical"]},{"$le":["$row.spend.ms","$row.budget.ms"]}]}}]},{"$eq":["$.rows[1].budget","$.rows[0].budget"]},{"$eq":["$.rows[2].budget","$.rows[0].budget"]},{"$eq":["$.rows[3].budget","$.rows[0].budget"]},{"$eq":["$.rows[4].budget","$.rows[0].budget"]},{"$eq":["$.rows[5].budget","$.rows[0].budget"]},{"$eq":["$.rows[1].comparisonIdentity","$.rows[2].comparisonIdentity"]},{"$eq":[["$.rows[1].topics[*].topicHash"],["$.rows[2].topics[*].topicHash"]]},{"$eq":["$.rows[4].comparisonIdentity","$.rows[5].comparisonIdentity"]},{"$eq":[["$.rows[4].topics[*].topicHash"],["$.rows[5].topics[*].topicHash"]]}]}
+ */
+export interface Domains_Root {
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=2
+   */
+  profiles: Array<ResearchDomainProfile>;
+  identity: Config_identityEnvelope;
+  /**
+   * Schema constraints this type cannot express: minItems=6, maxItems=6
+   */
+  rows: Array<Domains_DomainMeasurementRow>;
+  unsupported: Domains_RootUnsupported;
+  parity: Domains_RootParity;
+  external: Domains_RootExternal;
+  gate: { binding: boolean; controlPlane: boolean; registry: boolean; comparable: boolean; };
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  limitations: Array<Domains_RootLimitationsItem>;
+}
+
+
+export interface Domains_TabularFixtureManifestDatasetsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+}
+
+
+export interface Domains_TabularFixtureManifestTopicsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+}
+
+
+export interface Domains_TabularFixtureManifestMembersItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^(datasets/[a-z-]+\\.csv|topics/[a-z-]+\\.json|rubric\\.json|units\\.json)$"
+   */
+  path: string;
+  sha256: Sha256;
+}
+
+
+export interface Domains_TabularFixtureManifestProgram {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  source: string;
+  sha256: Sha256;
+}
+
+
+export interface Domains_TabularFixtureManifest {
+  document: "tabular-statistics-fixture";
+  revision: Sha256;
+  seed: 17753;
+  licence: ResearchLicence;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  datasets: Array<Domains_TabularFixtureManifestDatasetsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=4, maxItems=4
+   */
+  topics: Array<Domains_TabularFixtureManifestTopicsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=9, maxItems=9
+   */
+  members: Array<Domains_TabularFixtureManifestMembersItem>;
+  program: Domains_TabularFixtureManifestProgram;
+}
+
+
+export interface Domains_TabularResearchTopicHypothesis {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  H1: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  H0: string;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  delta: number;
+}
+
+
+export interface Domains_TabularResearchTopic {
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  taskFamily: "group-difference";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  datasetPath: string;
+  hypothesis: Domains_TabularResearchTopicHypothesis;
+  contract: ResearchContract;
+  plan: ExperimentPlan;
+  licence: ResearchLicence;
 }
 
 
@@ -7325,6 +7796,7 @@ export interface ResearchReport {
   benchmark: "research";
   schemaVersion: 1;
   lessons: Lessons_Root;
+  domains: Domains_Root;
   /**
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */

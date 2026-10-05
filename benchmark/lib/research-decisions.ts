@@ -48,7 +48,7 @@ export async function runResearchDecisionFixture(loaded: LoadedResearchFixture, 
     throw Error(registration.repair.fault);
   } }, { now: () => 0 }) : f.executor;
   let writingEvidence: { cards: EvidenceCard[]; literature: LiteratureRecord[]; interventions: Intervention[]; mode: 'gate-only' | 'full-auto'; runGraph: string; programSourceHash: string } | undefined;
-  const result = await runResearchReasoningFixture<ResearchAnalysisTopic>(loaded, topic, 'single-agent', { policy: f.policy, script, decisions: [['Stop']],
+  const result = await runResearchReasoningFixture<ResearchAnalysisTopic>(loaded, topic, 'single-agent', { domain: f.domain, policy: f.policy, script, decisions: [['Stop']],
     revision: await canonicalSha256({ registration, mode, repair }), analysis: analysisPolicy, reviewResponse: researchDecisionResponse,
     async tools(base, store) {
       const execute = base.execute, verify = base.verify;

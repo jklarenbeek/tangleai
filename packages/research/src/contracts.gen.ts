@@ -691,6 +691,10 @@ export interface ResearchEvaluatorIdentity {
 
 export interface ProgramParams {
   /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1000000
+   */
+  delta?: number;
+  /**
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   dims?: number;
@@ -1096,7 +1100,38 @@ export interface RawFileOutput {
 }
 
 
-export type ResearchRawOutput = RawClusterOutput | RawRankingOutput | RawFileOutput;
+export interface TabularSample {
+  group: "A" | "B";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64, pattern="^[A-Za-z][A-Za-z0-9_-]*$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64, pattern="^[A-Za-z][A-Za-z0-9_-]*$"
+   */
+  pairId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   */
+  unit: string;
+  /**
+   * Schema constraints this type cannot express: minimum=-1000000, maximum=1000000
+   */
+  value: number;
+}
+
+
+export interface RawTabularOutput {
+  datasetSha256: Sha256;
+  kind: "tabular";
+  /**
+   * Schema constraints this type cannot express: minItems=4, maxItems=2048
+   */
+  rows: Array<TabularSample>;
+}
+
+
+export type ResearchRawOutput = RawClusterOutput | RawRankingOutput | RawFileOutput | RawTabularOutput;
 
 export interface ResearchOutputFile {
   /**
@@ -1918,6 +1953,7 @@ export interface MetricObservation {
    * Schema constraints this type cannot express: minLength=1
    */
   condition: string;
+  direction?: "maximize" | "minimize";
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -2964,6 +3000,111 @@ export interface ResearchDirective {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="^[A-Za-z][A-Za-z0-9_@-]*(/[A-Za-z0-9_-]+)*$"
+ */
+export type ResearchDomainName = string;
+
+export interface ResearchDomainBindingReference {
+  id: ResearchDomainName;
+  kind: "prompt" | "plan-validator" | "evaluator" | "rubric" | "exporter";
+  revision: Sha256;
+}
+
+
+export interface ResearchDomainBindingManifest {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=128, uniqueItems=true
+   */
+  bindings: Array<ResearchDomainBindingReference>;
+  /**
+   * Schema constraints this type cannot express: maxLength=128, pattern="^[a-z][a-z0-9-]*$"
+   */
+  profileId: string;
+  profileRevision: Sha256;
+}
+
+
+export interface ResearchDomainProfileLicence {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=512, pattern="^(?!/)(?!.*(?:\\.\\.|\\\\|://))[A-Za-z0-9_./-]+\\.json$"
+   */
+  manifestPath: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64, pattern="^[A-Za-z0-9.-]+$"
+   */
+  spdx: string;
+}
+
+
+export interface ResearchDomainRunnerTemplate {
+  bindings: {"codeFiles":"admitted-code-slots","datasetPaths":"preregistered-inputs","dependencyLockHash":"host-dependency-lock","imageDigest":"host-image-digest"};
+  executorContractHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
+   */
+  maxConditions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=8
+   */
+  maxSeeds: number;
+  mode: "fixture" | "authored";
+  network: { measured: "off"; setup: "off"; };
+  resources: ExecutionManifestResources;
+}
+
+
+export interface ResearchDomainProfileUnitsItem {
+  direction: "maximize" | "minimize";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="^[A-Za-z][A-Za-z0-9_@-]*$"
+   */
+  metricId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="^[A-Za-z][A-Za-z0-9 _-]*$"
+   */
+  unit: string;
+}
+
+
+export interface ResearchDomainProfile {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=128, uniqueItems=true
+   */
+  bindingRevisions: Array<ResearchDomainBindingReference>;
+  evaluatorId: ResearchDomainName;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="^[A-Za-z0-9_-]+$"
+   */
+  evaluatorVersion: string;
+  exportTemplateId: ResearchDomainName;
+  /**
+   * Schema constraints this type cannot express: maxLength=128, pattern="^[a-z][a-z0-9-]*$"
+   */
+  id: string;
+  licence: ResearchDomainProfileLicence;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64, uniqueItems=true
+   */
+  planValidatorIds: Array<ResearchDomainName>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64, uniqueItems=true
+   */
+  promptPackIds: Array<ResearchDomainName>;
+  revision: Sha256;
+  rubricId: ResearchDomainName;
+  runnerManifestTemplate: ResearchDomainRunnerTemplate;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64, uniqueItems=true
+   */
+  taskFamilies: Array<ResearchDomainName>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64, uniqueItems=true
+   */
+  units: Array<ResearchDomainProfileUnitsItem>;
+}
+
+
 export interface ResearchDraftVerification {
   claims: Array<ResearchClaimCheck>;
   draftId: ResearchId;
@@ -3774,6 +3915,63 @@ export interface SynthesisProposal {
    * Schema constraints this type cannot express: minLength=1
    */
   summary: string;
+}
+
+
+export interface TabularStatisticsSummaryInterval {
+  level: 0.95;
+  /**
+   * Schema constraints this type cannot express: minimum=-2000000, maximum=2000000
+   */
+  lower: number;
+  method: "paired-bootstrap";
+  quantile: "nearest-rank";
+  resamples: 2000;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4294967295
+   */
+  seed: number;
+  /**
+   * Schema constraints this type cannot express: minimum=-2000000, maximum=2000000
+   */
+  upper: number;
+}
+
+
+export interface TabularStatisticsSummary {
+  interval: TabularStatisticsSummaryInterval;
+  /**
+   * Schema constraints this type cannot express: minimum=-1000000, maximum=1000000
+   */
+  meanA: number;
+  /**
+   * Schema constraints this type cannot express: minimum=-1000000, maximum=1000000
+   */
+  meanB: number;
+  /**
+   * Schema constraints this type cannot express: minimum=-2000000, maximum=2000000
+   */
+  meanDifference: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=2, maximum=1024
+   */
+  pairs: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sampleStddevA: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sampleStddevB: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sampleVarianceA: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sampleVarianceB: number;
 }
 
 

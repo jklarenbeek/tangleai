@@ -1,6 +1,7 @@
 /** Closed fixture contracts; the report references one record-definition owner. */
 import { researchSchema } from '@tangleai/research';
 import { RESEARCH_LESSON_REPORT_ID } from './research-lessons-schema.ts';
+import { RESEARCH_DOMAIN_REPORT_ID } from './research-domains-schema.ts';
 
 type Schema = Record<string, unknown>;
 const record = (properties: Record<string, Schema>, required = Object.keys(properties)): Schema =>
@@ -170,6 +171,7 @@ export const RESEARCH_REPORT_SCHEMA = {
   ...record({
     benchmark: { const: 'research' }, schemaVersion: { const: 1 },
     lessons: { $ref: RESEARCH_LESSON_REPORT_ID },
+    domains: { $ref: RESEARCH_DOMAIN_REPORT_ID },
     recordNames: array(text, { minItems: 1, uniqueItems: true }),
     source: record({ head: { type: 'string', pattern: '^[0-9a-f]{40}$' }, clean: { type: 'boolean' },
       files: array(record({ path: text, sha256: external('Sha256') }), { minItems: 1 }), sha256: external('Sha256') }),

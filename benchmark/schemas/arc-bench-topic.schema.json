@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/arc-bench-topic",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,127}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "taskFamily": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contract": {
+      "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchContract"
+    },
+    "plan": {
+      "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentPlan"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "question",
+    "taskFamily",
+    "contract",
+    "plan"
+  ],
+  "additionalProperties": false
+}

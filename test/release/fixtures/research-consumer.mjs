@@ -4,7 +4,7 @@ import { openTangleDb, createResearchStore, researchRunLogId, createRunLog, crea
 import { compileMasRuntime } from '@tangleai/mas';
 import { createResearchCommands, interventionReport, researchValue, planProjectCreate, initialResearchFrame, prepareResearchWorkflow,
   createResearchTaskHandlers, createResearchHostBindings } from '@tangleai/research';
-import { exerciseResearchConsumer, qualifyResearchBrowser, qualifyResearchDiscoveryBrowser, qualifyResearchReasoningBrowser, qualifyResearchExecutionBrowser, qualifyResearchAnalysisBrowser, qualifyResearchWritingBrowser, qualifyResearchCommandsBrowser } from './research-browser.mjs';
+import { exerciseResearchConsumer, qualifyResearchBrowser, qualifyResearchDiscoveryBrowser, qualifyResearchReasoningBrowser, qualifyResearchExecutionBrowser, qualifyResearchAnalysisBrowser, qualifyResearchWritingBrowser, qualifyResearchCommandsBrowser, qualifyResearchDomainsBrowser } from './research-browser.mjs';
 import { runResearchExample, researchExampleData, researchExampleBinding, researchExampleTools, researchExampleLimits } from './research-example.mjs';
 
 async function qualifyInstalledCommands(directory) {
@@ -71,6 +71,8 @@ try {
   assert.deepEqual(await qualifyResearchAnalysisBrowser(), { support: 'not-supported', underpowered: true, decision: 'Stop', candidates: 1, reviewers: 2 });
   assert.deepEqual(await qualifyResearchWritingBrowser(), { sections: 6, files: 7, rerun: true, disclosure: 8, tex: ['main.tex', 'references.bib'], refused: 'TRSH1002' });
   assert.deepEqual(await qualifyResearchCommandsBrowser(), { mode: 'gate-only', experimental: true, pending: true, parent: true, immutable: true, refused: 'TRSH1005', total: 3, substantive: 1 });
+  assert.deepEqual(await qualifyResearchDomainsBrowser(), { profile: 'tabular-statistics', schemas: true, pairs: 2, meanDifference: 2,
+    lower: 2, upper: 2, rawRows: 4, exporter: true, missing: 'TRSH2008', evaluations: 0 });
   await qualifyInstalledCommands(directory);
   const path = join(directory, 'research.db'); db = await openTangleDb({ path });
   const run = await exerciseResearchConsumer(createResearchStore(db)); assert.deepEqual(run.summary, expected);

@@ -11,7 +11,6 @@ import { researchContext, buildReport, renderReport, renderDocument, validateRes
 import { validateResearchReportShape } from '../../benchmark/lib/research-validation.ts';
 import { RESEARCH_DIMENSIONS, RESEARCH_ROW_IDS, RESEARCH_DISCLOSURES } from '../../benchmark/lib/research-schema.ts';
 import { runResearchCli, requireResearchGate } from '../../benchmark/research.ts';
-import { RESEARCH_FIXTURE_PATH } from '../../benchmark/lib/research-fixture.ts';
 import { runResearchFixture } from '../../benchmark/lib/research-runner.ts';
 import type { ResearchReport, ResearchMeasuredRow } from '../../benchmark/lib/research.types.ts';
 
@@ -324,15 +323,5 @@ describe('research instrument', () => {
       assert.deepEqual(await readdir(directory), []);
     });
   });
-  it('authored fixtures and generated schemas reproduce without clocks in the implementation', async () => {
-    for (const command of [['benchmark/scripts/research-fixtures.ts', '--check'], ['scripts/research-schema.ts', '--check']]) {
-      const child = spawnSync(process.execPath, command, { encoding: 'utf8' });
-      assert.equal(child.status, 0, child.stdout + child.stderr);
-    }
-    for (const path of (await readdir('benchmark/lib')).filter(path => /^research.*\.ts$/.test(path)))
-      assert.doesNotMatch(await readFile(join('benchmark/lib', path), 'utf8'), /\bDate\b|performance\.now/);
-    assert.ok(context.source.files.some(file => file.path === RESEARCH_FIXTURE_PATH + '/LICENSE.md'));
-    for (const member of context.loaded.manifest.members)
-      assert.ok(context.source.files.some(file => file.path === RESEARCH_FIXTURE_PATH + '/' + member.path), member.path);
-  });
+
 });

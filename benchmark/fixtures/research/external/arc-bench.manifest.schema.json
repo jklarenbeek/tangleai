@@ -1,0 +1,246 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/arc-bench-manifest",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "licence": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": "string",
+              "minLength": 1
+            },
+            "textSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "auditedBy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "auditedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "terms": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "spdx",
+            "textSha256",
+            "auditedBy",
+            "auditedAt",
+            "terms"
+          ],
+          "additionalProperties": false
+        },
+        "slice": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "enum": [
+                "ml-core-25",
+                "paper-45",
+                "tree-55"
+              ]
+            },
+            "topicIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,127}$"
+              },
+              "minItems": 1,
+              "maxItems": 55,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "name",
+            "topicIds"
+          ],
+          "additionalProperties": false
+        },
+        "protocol": {
+          "type": "object",
+          "properties": {
+            "judge": {
+              "type": "string",
+              "minLength": 1
+            },
+            "attempts": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "selection": {
+              "enum": [
+                "all",
+                "best-of-n"
+              ]
+            }
+          },
+          "required": [
+            "judge",
+            "attempts",
+            "selection"
+          ],
+          "additionalProperties": false
+        },
+        "localOnly": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        }
+      },
+      "required": [
+        "source",
+        "licence",
+        "slice",
+        "protocol",
+        "localOnly",
+        "commit"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "licence": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": "string",
+              "minLength": 1
+            },
+            "textSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "auditedBy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "auditedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "terms": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "spdx",
+            "textSha256",
+            "auditedBy",
+            "auditedAt",
+            "terms"
+          ],
+          "additionalProperties": false
+        },
+        "slice": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "enum": [
+                "ml-core-25",
+                "paper-45",
+                "tree-55"
+              ]
+            },
+            "topicIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,127}$"
+              },
+              "minItems": 1,
+              "maxItems": 55,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "name",
+            "topicIds"
+          ],
+          "additionalProperties": false
+        },
+        "protocol": {
+          "type": "object",
+          "properties": {
+            "judge": {
+              "type": "string",
+              "minLength": 1
+            },
+            "attempts": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "selection": {
+              "enum": [
+                "all",
+                "best-of-n"
+              ]
+            }
+          },
+          "required": [
+            "judge",
+            "attempts",
+            "selection"
+          ],
+          "additionalProperties": false
+        },
+        "localOnly": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "archiveSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "source",
+        "licence",
+        "slice",
+        "protocol",
+        "localOnly",
+        "archiveSha256"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

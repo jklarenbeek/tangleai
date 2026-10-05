@@ -1,0 +1,7 @@
+[
+  {
+    "direction": "maximize",
+    "metricId": "meanDifference",
+    "unit": "points"
+  }
+]

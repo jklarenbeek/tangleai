@@ -7,6 +7,37 @@ failed attempts, negative results and every incurred call.
 The public root performs no host I/O and works in browsers, Node and Bun. MAS
 owns workflow execution; this package plans and stores its research projection.
 
+Domain profiles are closed, versioned data. `sealDomainProfile` binds every
+field to its canonical revision; `bindDomainProfile` resolves exact prompt,
+plan-validator, evaluator, rubric and exporter capabilities before execution.
+Missing or mismatched bindings return `TRSH2008` without a model or runner call.
+Pass the admitted `manifest` as `domain` to `createResearchBinding` and the same
+bound profile as `domain` in `ResearchTaskTools`. Every stage then retains the
+profile revision, checks its project domain and validates the active plan.
+`domainExecutionPolicy` fills host-owned image, dependency and input references
+through the existing execution-policy validator. The computational profile
+keeps its existing programs, raw-output evaluator, metric units and Markdown
+renderer. Profiles do not contain functions, credentials or execution paths;
+their licence manifest reference names relative JSON provenance only.
+
+`TABULAR_STATISTICS_PROFILE` supplies the second profile. Its host binds
+`createTabularStatisticsEvaluator({ datasets })` to immutable CSV strings by
+dataset id. The evaluator reproduces every paired sample from the registered
+bytes before the existing registry signs a `meanDifference` observation in
+`points`, with direction `maximize` and the evaluator version. Scalar metric
+files, substituted values, undeclared metrics and changed units are refused.
+Sample variance uses the native sample convention; uncertainty uses a paired
+bootstrap over input pairs with nearest-rank quantiles. Reordering a complete
+CSV with three replay seeds does not create independent population samples.
+Both profiles bind the same Markdown exporter and keep lesson writeback
+`experimental-off`. The deterministic domain comparison retains tied lesson
+outcomes and their native approval refusal in
+[the research benchmark](../../docs/RESEARCH_BENCHMARK.md).
+
+ARC-Bench is not adopted. The external adapter contract and licence checks
+ship; its committed measurement is `not-run: manifest-unpinned`. There is no
+upstream parity claim or automatic external download.
+
 ```ts
 import { createMemoryResearchStore, planProjectCreate, planStateTransition } from '@tangleai/research';
 
@@ -480,7 +511,7 @@ experimental full-auto operation. Both modes retain the original inconclusive
 and negative decisions. A separate positive control reaches writer, independent
 review and all three gates. These tiers qualify implementation and accounting;
 they do not establish live research quality, actual human-review efficacy or
-paper parity. Guarded lesson staging does not establish a measured improvement;
-the second domain and research operations UI are not included here. The
+paper parity. Guarded lesson staging and the second domain do not establish a
+measured improvement; the research operations UI is not included here. The
 [query handoff](../../queries/research/core-baseline.json) retains fixture/report
 identities, all eight rows, public record names, costs and those limits.

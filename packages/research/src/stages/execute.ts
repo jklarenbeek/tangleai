@@ -20,6 +20,7 @@ import { createEvaluationRegistry } from '../execution/registry.ts';
 import { createResearchAuthorTools, researchCodeWriteId, researchCodeStaticIssues, type ResearchRepairContext } from './author.ts';
 import { readResearchAnalysisInputs, RESEARCH_EXECUTION_RECORDS_MEDIA } from '../analysis-records.ts';
 import { planResearchReplication } from './replicate.ts';
+import { isBoundDomainProfile, domainExecutionPolicy } from '../domains/bindings.ts';
 
 const PREPARATION_MEDIA = 'application/vnd.tangleai.research-execution-preparation+json';
 const RECEIPT_MEDIA = 'application/vnd.tangleai.research-execution-receipt+json';
@@ -60,7 +61,19 @@ export async function createResearchExecutionTools<Labels>(base: ResearchTaskToo
   const store = options.researchStore, masStore = base.masStore, policy = immutableResearchJson(options.policy);
   const hiddenLabels = immutableResearchJson(options.hiddenLabels), evaluatorBytes = copyResearchBytes(options.evaluatorBytes);
   const executor = { contract: immutableResearchJson(options.executor.contract), run: options.executor.run.bind(options.executor) };
-  const registry = createEvaluationRegistry(options.evaluators), revision = await researchExecutionRevisionOf(policy);
+  const evaluators = options.evaluators.map(row => ({ id: row.id, version: row.version, evaluate: row.evaluate }));
+  const registry = createEvaluationRegistry(evaluators);
+  const domain = base.domain;
+  if (domain) {
+    if (!isBoundDomainProfile(domain)) researchFail('TRSH2008', '/domain', 'Execution requires an admitted profile. Model calls: 0; runner invocations: 0 at binding.');
+    const evaluator = evaluators.find(row => row.id === domain.profile.evaluatorId && row.version === domain.profile.evaluatorVersion);
+    if (!evaluator || evaluator.evaluate !== domain.evaluator.evaluate)
+      researchFail('TRSH2008', '/domain/evaluator', 'Execution must use the exact bound evaluator capability. Model calls: 0; runner invocations: 0 at binding.');
+    const expected = researchValue(await domainExecutionPolicy(domain, { imageDigest: policy.imageDigest,
+      dependencyLockHash: policy.dependencyLockHash, datasetPaths: policy.datasetPaths, codeFiles: policy.codeFiles }));
+    if (!equalsJson(expected, policy)) researchFail('TRSH2008', '/domain/runnerManifestTemplate', 'Execution limits differ from the admitted profile. Model calls: 0; runner invocations: 0 at binding.');
+  }
+  const revision = await researchExecutionRevisionOf(policy);
   if (!equalsJson(executor.contract, RESEARCH_EXECUTOR_CONTRACT)
     || !base.binding.toolVersions.some(row => row.name === 'research-execution' && row.version === revision))
     researchFail('TRSH1007', '/execution', 'Execution handlers must bind the shipped executor and exact native execution policy.');
@@ -309,5 +322,5 @@ export async function createResearchExecutionTools<Labels>(base: ResearchTaskToo
     if (invocation.path !== current.path + '/author') researchFail('TRSH1005', '/invocation', 'Only the native code-author node may access this toolbox.');
     return { operation: current.data.operation, contract: current.data.contract, plan: current.data.plan, workspace: current.workspace, repair: current.data.repair };
   } }) : {};
-  return { ...base, execution: runtime };
+  return { ...base, ...(domain ? { domain } : {}), execution: runtime };
 }

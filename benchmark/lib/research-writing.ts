@@ -13,6 +13,7 @@ import { researchValue, researchArtifacts, researchRevisionOf, createResearchBin
 import { researchExampleIdentity, researchExampleTools, researchExampleLimits } from '../../examples/research.ts';
 import { createResearchDiscoveryFixture, researchDiscoveryConfiguration } from './research-discovery.ts';
 import { researchExecutionFixture } from './research-execution-fixture.ts';
+import { bindComputationalResearchDomain } from '../../apps/research-runner/src/domains.ts';
 import { researchDecisionResponse, type runResearchDecisionFixture } from './research-decisions.ts';
 import { runResearchReasoningFixture } from './research-reasoning.ts';
 import { researchInterventionReport } from '@tangleai/research';
@@ -75,8 +76,9 @@ export async function researchWritingBundle(input: ResearchWritingInputs, proven
 /** This baseline stops after native discovery. No experiment or result cost is hidden outside its receipt. */
 export async function runResearchRetrievalWriting(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic) {
   const identity = await researchExampleIdentity(), config = await researchDiscoveryConfiguration(topic);
+  const domain = (await researchExecutionFixture(loaded, topic)).domain;
   const binding = await createResearchBinding(topic.contract, { identity, promptRevision: researchArtifacts.revision,
-    evaluator: topic.plan.evaluator, reservation: zero, toolVersions: [{ name: 'scholarly-discovery', version: config.revision }] });
+    evaluator: topic.plan.evaluator, reservation: zero, domain: domain.manifest, toolVersions: [{ name: 'scholarly-discovery', version: config.revision }] });
   const limits = { ...researchExampleLimits, ...loaded.manifest.caps };
   const prepared = await prepareResearchWorkflow(topic.contract, { binding, limits, profile: 'research-scripted' });
   const project: ResearchProject = { id: topic.contract.projectId, topic: topic.title, question: topic.title, domainProfile: 'computational',
@@ -90,7 +92,7 @@ export async function runResearchRetrievalWriting(loaded: LoadedResearchFixture,
       if (!researchValue(await store.snapshot(project.id))?.records.some(row => row.kind === 'QueryPlan' && row.id === config.plan.id))
         throw Error('Retrieval writing dispatched before native query-plan admission.');
     });
-    const tools = await createDiscoveryStageTools(researchExampleTools({ binding, contract: topic.contract, plan: topic.plan, masStore }), discovery.options);
+    const tools = await createDiscoveryStageTools({ ...researchExampleTools({ binding, contract: topic.contract, plan: topic.plan, masStore }), domain }, discovery.options);
     const compiled = compileMasRuntime(prepared.validated, prepared.plan, prepared.snapshot, createResearchHostBindings({ masStore,
       researchStore: store, taskHandlers: createResearchTaskHandlers(store, tools), prepared, now, clock: () => 0 }));
     if (!compiled.valid) throw Error(JSON.stringify(compiled.issues));
@@ -211,11 +213,13 @@ export async function runResearchWritingControl(loaded: LoadedResearchFixture, r
       return { valid: false, issues: [{ code: 'TRSH1002', path: '/rawOutput', detail: 'Writing coordinate control requires its exact raw output shape.' }] };
     return { valid: true, value: [{ metric: control.metric.id, value: rawOutput.centroids[0][0], unit: control.metric.unit }] };
   } };
+  const domain = researchValue(await bindComputationalResearchDomain(evaluator, {
+    units: [{ metricId: control.metric.id, unit: control.metric.unit, direction: control.metric.direction }], resources: policy.resources }));
   const analysisRegistration = read<ResearchDecisionRegistration>(loaded, loaded.manifest.analysis.registration, 'ResearchDecisionRegistration');
   const analysisPolicy: ResearchAnalysisRuntimePolicy = { analystIdentityId: analysisRegistration.analystIdentityId,
     reviewerIdentityId: analysisRegistration.reviewerIdentityId, statisticId: analysisRegistration.statisticId };
   const executor = createFixtureExecutor(programs, { now: () => 0 });
-  return runResearchReasoningFixture<ResearchWritingControl>(loaded, topic, 'single-agent', { policy, revision: await canonicalSha256(registration), script, decisions: [['Proceed']],
+  return runResearchReasoningFixture<ResearchWritingControl>(loaded, topic, 'single-agent', { domain, policy, revision: await canonicalSha256(registration), script, decisions: [['Proceed']],
     analysis: analysisPolicy, reviewResponse: researchDecisionResponse, writing: { policy: control.policy, limits: control.limits,
       reservation: control.reservation, response: researchWritingResponse },
     async tools(base, store) {
@@ -225,7 +229,7 @@ export async function runResearchWritingControl(loaded: LoadedResearchFixture, r
         if (operation.stage === 'create') result.artifacts.push({ bytes: loaded.files.get(topic.datasetPath)!, mediaType: 'application/json' });
         return result;
       }, verify(operation, result, access) { return verify(operation, operation.stage === 'create' ? { ...result, artifacts: result.artifacts.slice(0, 1) } : result, access); } },
-      { researchStore: store, policy, executor, evaluators: [evaluator], hiddenLabels: null, evaluatorBytes: bytes(control.evaluator) });
+      { researchStore: store, policy, executor, evaluators: [domain.evaluator], hiddenLabels: null, evaluatorBytes: bytes(control.evaluator) });
       return createResearchAnalysisTools(bounded, { researchStore: store, policy: analysisPolicy, statistic: researchPairedStatistic });
     },
     async collect(store, masStore, reasoning, native) {

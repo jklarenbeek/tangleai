@@ -3,7 +3,8 @@ import { immutableResearchJson, researchRevisionOf } from './identity.ts';
 import { researchIssue, type ResearchCode, type ResearchOutcome } from './errors.ts';
 import { validateResearchShape } from './schema.ts';
 import type { ResearchContract, ResearchCost, ResearchEvaluatorIdentity, ResearchIssue,
-  ResearchProject, ResearchToolVersions, ResearchWorkflowFrame, ExperimentPlan, LessonProcedureBinding, LessonInjection } from './contracts.gen.ts';
+  ResearchProject, ResearchToolVersions, ResearchWorkflowFrame, ExperimentPlan, LessonProcedureBinding, LessonInjection,
+  ResearchDomainBindingManifest } from './contracts.gen.ts';
 import { checkLessonRecord } from './lessons/records.ts';
 import type { ResearchStoreOutcome } from './store.ts';
 import type { MasValidated } from '@tangleai/mas';
@@ -43,6 +44,7 @@ export interface ResearchBindingOptions {
   evaluator: ResearchEvaluatorIdentity;
   reservation: ResearchCost;
   lessonProcedure?: LessonProcedureBinding;
+  domain?: ResearchDomainBindingManifest;
 }
 /** The host supplies a complete CONFIG result, never an asserted opaque identity. */
 export async function createResearchBinding(contract: ResearchContract, options: ResearchBindingOptions): Promise<ResearchWorkflowBinding> {
@@ -61,7 +63,9 @@ export async function createResearchBinding(contract: ResearchContract, options:
         researchFail('TRSH2007', '/lessonProcedure', 'The injection must bind this run and frozen procedure.');
     }
   }
-  const tools = [...pinned.toolVersions].sort((a, b) => a.name.localeCompare(b.name));
+  const domain = pinned.domain ? researchValue(validateResearchShape<ResearchDomainBindingManifest>('ResearchDomainBindingManifest', pinned.domain)) : null;
+  const tools = [...pinned.toolVersions, ...(domain ? [{ name: 'research-domain-profile', version: domain.profileRevision }] : [])]
+    .sort((a, b) => a.name.localeCompare(b.name));
   if (new Set(tools.map(t => t.name)).size !== tools.length) researchFail('TRSH1002', '/toolVersions', 'Tool names must be unique.');
   researchValue(validateResearchShape('InputManifest', { projectId: c.projectId, stage: 'CREATED', inputs: [],
     promptRevision: pinned.promptRevision, runIdentityId: identityId, toolVersions: tools, evaluator: pinned.evaluator, reservation: pinned.reservation }));

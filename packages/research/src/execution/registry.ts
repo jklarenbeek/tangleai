@@ -8,7 +8,7 @@ import { researchFail, researchValue } from '../workflow-contract.ts';
 import { captureResearchWorkspace, researchExecutionOutcome, type ResearchWorkspace } from './manifest.ts';
 import { validateResearchExecutionResult, type ResearchExecutionResult } from './executor.ts';
 
-export interface ResearchMetricValue { metric: string; value: number; unit: string }
+export interface ResearchMetricValue { metric: string; value: number; unit: string; direction?: 'maximize' | 'minimize' }
 export interface ResearchEvaluator<Labels> {
   id: string;
   version: string;
@@ -25,9 +25,10 @@ export interface ResearchEvaluationInput<Labels> {
 }
 /** This digest proves provenance, not authentication; value reproduction remains mandatory. */
 export async function researchObservationSignature(value: Pick<MetricObservation,
-  'evaluatorId' | 'evaluatorVersion' | 'runArtifactHash' | 'condition' | 'metric' | 'value' | 'unit' | 'seed'>): Promise<string> {
-  const { evaluatorId, evaluatorVersion, runArtifactHash, condition, metric, value: observed, unit, seed } = value;
-  return researchRevisionOf({ evaluatorId, evaluatorVersion, runArtifactHash, condition, metric, value: observed, unit, seed });
+  'evaluatorId' | 'evaluatorVersion' | 'runArtifactHash' | 'condition' | 'metric' | 'value' | 'unit' | 'seed' | 'direction'>): Promise<string> {
+  const { evaluatorId, evaluatorVersion, runArtifactHash, condition, metric, value: observed, unit, seed, direction } = value;
+  return researchRevisionOf({ evaluatorId, evaluatorVersion, runArtifactHash, condition, metric, value: observed, unit, seed,
+    ...(direction === undefined ? {} : { direction }) });
 }
 async function observationId(experimentRunId: string, registrySignature: string): Promise<string> {
   return 'metric-' + await researchRevisionOf({ experimentRunId, registrySignature });
@@ -63,10 +64,11 @@ export function createEvaluationRegistry<Labels>(evaluators: readonly ResearchEv
     const observations: MetricObservation[] = [];
     for (const metric of values) {
       const declared = value.contract.metrics.find(row => row.id === metric.metric);
-      if (!declared || declared.unit !== metric.unit || !Number.isFinite(metric.value))
+      if (!declared || declared.unit !== metric.unit || metric.direction !== undefined && metric.direction !== declared.direction || !Number.isFinite(metric.value))
         researchFail('TRSH1006', '/metrics', 'Evaluator output differs from the preregistered metrics, units or finite-value policy.');
       const signed = { evaluatorId: evaluator.id, evaluatorVersion: evaluator.version, runArtifactHash: run.rawArtifactHash,
-        condition: run.condition, metric: metric.metric, value: metric.value, unit: metric.unit, seed: run.seed };
+        condition: run.condition, metric: metric.metric, value: metric.value, unit: metric.unit, seed: run.seed,
+        ...(metric.direction === undefined ? {} : { direction: metric.direction }) };
       const registrySignature = await researchObservationSignature(signed);
       observations.push(researchValue(validateResearchShape<MetricObservation>('MetricObservation', {
         ...signed, registrySignature, projectId: run.projectId, experimentRunId: run.id, id: await observationId(run.id, registrySignature),
@@ -83,7 +85,8 @@ export function createEvaluationRegistry<Labels>(evaluators: readonly ResearchEv
         researchValue(validateResearchShape('MetricObservation', row));
         if (row.condition !== manifest.condition) researchFail('TRSH1003', '/condition', 'Observation condition is not this execution condition.');
         const metric = contract.metrics.find(value => value.id === row.metric);
-        if (!metric || metric.unit !== row.unit) researchFail('TRSH1006', '/unit', 'Observation metric or unit is not preregistered.');
+        if (!metric || metric.unit !== row.unit || row.direction !== undefined && metric.direction !== row.direction)
+          researchFail('TRSH1006', '/unit', 'Observation metric, unit or direction is not preregistered.');
         if (row.evaluatorId !== manifest.evaluator.id || row.evaluatorVersion !== manifest.evaluator.version)
           researchFail('TRSH1003', '/evaluator', 'Observation evaluator is not pinned in the manifest.');
         if (row.registrySignature !== await researchObservationSignature(row)) researchFail('TRSH1002', '/registrySignature', 'Observation signature does not recompute.');

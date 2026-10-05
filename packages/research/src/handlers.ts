@@ -6,7 +6,8 @@ import type { ResearchRecordWrite } from './records.ts';
 import type { ResearchContract, ExperimentPlan, ResearchWorkflowFrame, ResearchLifecycle, ResearchCost, ResearchIssue,
   ResearchGateResponse, InputManifest, StageAttempt, StageCommitReceipt, ResearchInputArtifact, ResearchState, ArtifactAdmission, ResearchArtifact, ResearchDirective } from './contracts.gen.ts';
 import { immutableResearchJson, copyResearchBytes, inputManifestHashOf, stageAttemptIdOf, researchRevisionOf } from './identity.ts';
-import { researchIssue, type ResearchOutcome } from './errors.ts';
+import { RESEARCH_ERRORS, researchIssue, type ResearchOutcome } from './errors.ts';
+import { isBoundDomainProfile, type ResearchStageDomain } from './domains/bindings.ts';
 import { validateResearchShape } from './schema.ts';
 import { planContractFreeze, planStageCommit } from './transitions.ts';
 import { inputManifestOf, researchFrameInputs } from './manifest.ts';
@@ -63,6 +64,7 @@ export interface ResearchTaskTools {
   execution?: ResearchExecutionRuntime;
   analysis?: ResearchAnalysisRuntime;
   writing?: ResearchWritingRuntime;
+  domain?: ResearchStageDomain;
   execute(operation: ResearchStageOperation, access: ResearchStageAccess): Promise<ResearchStageResult>;
   /** Independent deterministic verification, outside the executing stage body. */
   verify(operation: ResearchStageOperation, result: ResearchStageResult, access: ResearchStageAccess): Promise<ResearchOutcome<null>>;
@@ -89,6 +91,11 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
   const binding = immutableResearchJson(tools.binding), contract = immutableResearchJson(tools.contract), experiment = immutableResearchJson(tools.plan);
   if (binding.contractHash !== contract.contractHash || experiment.contractHash !== contract.contractHash)
     researchFail('TRSH1002', '/binding', 'Handlers and experiment must use the pinned contract.');
+  const domain = tools.domain;
+  const domainRevision = binding.toolVersions.find(row => row.name === 'research-domain-profile');
+  if (domain ? !isBoundDomainProfile(domain) || domainRevision?.version !== domain.profile.revision : !!domainRevision)
+    researchFail('TRSH2008', '/domain', 'Stage capabilities must match the domain profile pinned in the workflow binding. Model calls: 0; runner invocations: 0 at binding.');
+  if (domain) researchValue(domain.validatePlan(contract, experiment));
   // Function capabilities are captured once; caller mutation cannot replace a body on resume.
   const execute = tools.execute, verify = tools.verify, onOperation = tools.onOperation, masStore = tools.masStore;
   const reasoning = tools.reasoning ? { ...tools.reasoning, policy: immutableResearchJson(tools.reasoning.policy) } : undefined;
@@ -150,7 +157,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
     const trace = await masStore.readTrace(runId), snapshot = researchValue(await store.snapshot(runId));
     if (!trace || !snapshot || snapshot.state.status === 'STOPPED' || snapshot.state.status === 'COMPLETE') return;
     const native = failure.error;
-    const nativeIssue: ResearchIssue = native.cause && /^TRSH10(0[1-9]|10)$/.test(native.cause.code)
+    const nativeIssue: ResearchIssue = native.cause && Object.hasOwn(RESEARCH_ERRORS, native.cause.code)
       ? { code: native.cause.code, path: native.cause.docPath, detail: native.cause.message }
       : researchIssue('TRSH1008', native.cause?.docPath ?? '', 'Native research workflow failed.', native.cause ?? native);
     const prepared = trace.attempts.filter(row => row.kind === 'task' && row.invocationId === 'prepare' && row.status === 'completed')
@@ -238,6 +245,8 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
     const manifestHash = await inputManifestHashOf(manifest);
     const snapshot = researchValue(await store.snapshot(frame.projectId));
     if (!snapshot) researchFail('TRSH1003', '/projectId', 'Host must create the research project before starting MAS.');
+    if (domain && snapshot.project.domainProfile !== domain.profile.id)
+      researchFail('TRSH2008', '/domain', 'The project belongs to another bound domain. Model calls: 0; runner invocations: 0 before stage execution.');
     if (frame.projectHash !== await researchProjectHash(snapshot.project)) researchFail('TRSH1004', '/frame/projectHash', 'Root project content changed.');
     // Native completion may lag this atomic receipt; consult the path before deriving an ordinal.
     const scope = input.path.slice(0, -(input.node.length + 1)), commitPath = phase === 'prepare' ? scope + '/commit' : input.path;
@@ -265,6 +274,11 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
     let state = snapshot.state;
     const activeContract = state.contractHash ? snapshot.records.find(row => row.kind === 'ResearchContract' && row.value.contractHash === state.contractHash)?.value as ResearchContract | undefined : contract;
     if (!activeContract) researchFail('TRSH1003', '/contractHash', 'The active frozen contract is unavailable.');
+    if (domain) {
+      const activePlan = state.planHash ? snapshot.records.find(row => row.kind === 'ExperimentPlan' && row.value.planHash === state.planHash)?.value as ExperimentPlan | undefined : experiment;
+      if (!activePlan) researchFail('TRSH1003', '/planHash', 'The active frozen plan is unavailable.');
+      researchValue(domain.validatePlan(activeContract, activePlan));
+    }
     if (name === 'create' && !reasoning) state = researchValue(await store.freezeContract(researchValue(await planContractFreeze(state, contract, experiment,
       snapshot.records.filter(r => r.kind === 'MetricObservation').map(r => r.id)))));
     const key = { projectId: frame.projectId, stage: frame.status,
@@ -412,6 +426,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
           researchValue(await verify(operation, resultSnapshot(result), access)); verifiedWriting = true;
         }
         if (result.error) throw new ResearchFailure(result.error);
+        if (domain && result.preregistration) researchValue(domain.validatePlan(result.preregistration.contract, result.preregistration.plan));
         if (!verifiedWriting && !(name === 'execute' && execution && phase === 'commit')) researchValue(await verify(operation, resultSnapshot(result), access));
         onOperation?.('verified', operation);
         if (name === 'decide') {

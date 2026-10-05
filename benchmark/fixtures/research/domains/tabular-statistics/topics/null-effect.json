@@ -1,0 +1,167 @@
+{
+  "id": "tabular-null-effect",
+  "title": "null effect",
+  "taskFamily": "group-difference",
+  "datasetPath": "domains/tabular-statistics/datasets/null.csv",
+  "hypothesis": {
+    "H1": "mean(A) - mean(B) > 0 points",
+    "H0": "mean(A) - mean(B) <= 0 points",
+    "delta": 0
+  },
+  "contract": {
+    "attemptCap": 1,
+    "contractHash": "3f0881033745bc3def383d7f45a3c9cff6d0cd81b08c0b040035fb2f763473da",
+    "datasets": [
+      {
+        "id": "tabular-null",
+        "sha256": "847b2022e064a7f53ef375343c44c9a45fcd9977184fa94f9270048787202595"
+      }
+    ],
+    "failureRule": "stop-on-invalid",
+    "hypothesisSpace": [
+      "mean(A) - mean(B) > 0 points",
+      "mean(A) - mean(B) <= 0 points"
+    ],
+    "id": "tabular-null-effect-contract",
+    "metrics": [
+      {
+        "direction": "maximize",
+        "id": "meanDifference",
+        "unit": "points"
+      }
+    ],
+    "pivotCap": 1,
+    "projectId": "tabular-null-effect-project",
+    "replicatePolicy": {
+      "bootstrapSeed": 17753,
+      "minimum": 3,
+      "resamples": 2000,
+      "seeds": [
+        1,
+        2,
+        3
+      ]
+    },
+    "requiredBaselines": [
+      {
+        "condition": "baseline",
+        "licence": {
+          "provenance": "tangle-authored-synthetic",
+          "source": "LICENSE.md",
+          "spdx": "MIT"
+        },
+        "programId": "tabular-null",
+        "source": "packages/research/src/domains/tabular-statistics.ts"
+      }
+    ],
+    "reviewCap": 1,
+    "selectionRule": {
+      "kind": "all",
+      "metric": "meanDifference",
+      "n": 3
+    },
+    "splits": {
+      "test": [
+        "pair-01-a",
+        "pair-01-b",
+        "pair-02-a",
+        "pair-02-b",
+        "pair-03-a",
+        "pair-03-b",
+        "pair-04-a",
+        "pair-04-b",
+        "pair-05-a",
+        "pair-05-b",
+        "pair-06-a",
+        "pair-06-b",
+        "pair-07-a",
+        "pair-07-b",
+        "pair-08-a",
+        "pair-08-b",
+        "pair-09-a",
+        "pair-09-b",
+        "pair-10-a",
+        "pair-10-b",
+        "pair-11-a",
+        "pair-11-b",
+        "pair-12-a",
+        "pair-12-b",
+        "pair-13-a",
+        "pair-13-b",
+        "pair-14-a",
+        "pair-14-b",
+        "pair-15-a",
+        "pair-15-b",
+        "pair-16-a",
+        "pair-16-b",
+        "pair-17-a",
+        "pair-17-b",
+        "pair-18-a",
+        "pair-18-b",
+        "pair-19-a",
+        "pair-19-b",
+        "pair-20-a",
+        "pair-20-b",
+        "pair-21-a",
+        "pair-21-b",
+        "pair-22-a",
+        "pair-22-b",
+        "pair-23-a",
+        "pair-23-b",
+        "pair-24-a",
+        "pair-24-b"
+      ],
+      "train": []
+    },
+    "stopConditions": [
+      "invalid evidence",
+      "registered attempt cap",
+      "retain every negative result",
+      "paired sample interval does not clear delta"
+    ],
+    "successRule": {
+      "baseline": "baseline",
+      "condition": "candidate",
+      "confidenceLevel": 0.95,
+      "metric": "meanDifference",
+      "minImprovement": 0
+    }
+  },
+  "plan": {
+    "conditions": [
+      {
+        "datasetId": "tabular-null",
+        "id": "baseline",
+        "params": {
+          "delta": 0
+        },
+        "programId": "tabular-null"
+      },
+      {
+        "datasetId": "tabular-null",
+        "id": "candidate",
+        "params": {
+          "delta": 0
+        },
+        "programId": "tabular-observed"
+      }
+    ],
+    "contractHash": "3f0881033745bc3def383d7f45a3c9cff6d0cd81b08c0b040035fb2f763473da",
+    "evaluator": {
+      "id": "tabular-statistics/v1",
+      "version": "1"
+    },
+    "hypothesisHash": "750d917ae543c963edbde0120e27b47152864b33dd30f8d250e0fb149fabd2e7",
+    "id": "tabular-null-effect-plan",
+    "inputPaths": [
+      "domains/tabular-statistics/datasets/null.csv"
+    ],
+    "planHash": "4d798e85e149cbf7fd83e407f42bb32b0a7b66362bb68047256a60680496de78",
+    "projectId": "tabular-null-effect-project"
+  },
+  "licence": {
+    "spdx": "MIT",
+    "provenance": "tangle-authored-synthetic",
+    "source": "LICENSE.md"
+  }
+}

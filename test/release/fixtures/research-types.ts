@@ -140,3 +140,25 @@ await editor.preview([]); await editor.commit([]);
 // @ts-expect-error Automatic operation requires explicit experimental opt-in.
 const unsafeMode: ResearchMode = { mode: 'full-auto' };
 void unsafeMode;
+
+import { bindDomainProfile, domainExecutionPolicy, validateDomainProfile, sealDomainProfile,
+  TABULAR_STATISTICS_PROFILE, createTabularStatisticsEvaluator, parseTabularSamples, tabularStatistics,
+  tabularStatisticsPrograms, type ResearchDomainProfile, type ResearchDomainBindings, type BoundDomainProfile,
+  type TabularSample, type TabularStatisticsSummary, type MetricObservation } from '@tangleai/research';
+import domainSchema from '@tangleai/research/schemas/domain-profile' with { type: 'json' };
+import bindingSchema from '@tangleai/research/schemas/domain-bindings' with { type: 'json' };
+declare const domainBindings: ResearchDomainBindings<null>, domainProfile: ResearchDomainProfile,
+  boundDomain: BoundDomainProfile<null>, samples: TabularSample[], observation: MetricObservation;
+await validateDomainProfile(TABULAR_STATISTICS_PROFILE);
+const { revision: profileRevision, ...profileBody } = domainProfile;
+await sealDomainProfile(profileBody); await bindDomainProfile(domainProfile, domainBindings);
+await domainExecutionPolicy(boundDomain, { imageDigest: executionPolicy.imageDigest,
+  dependencyLockHash: executionPolicy.dependencyLockHash, datasetPaths: [], codeFiles: [] });
+createTabularStatisticsEvaluator({ datasets: { data: 'id,pairId,group,value,unit' } });
+parseTabularSamples('id,pairId,group,value,unit');
+const statistics = tabularStatistics(samples, 17753);
+if (statistics.valid) { const summary: TabularStatisticsSummary = statistics.value; void summary; }
+const direction: 'maximize' | 'minimize' | undefined = observation.direction;
+// @ts-expect-error Metric direction must be one of the registered directions.
+const wrongDirection: MetricObservation = { ...observation, direction: 'up' };
+void [domainSchema, bindingSchema, tabularStatisticsPrograms, profileRevision, direction, wrongDirection];

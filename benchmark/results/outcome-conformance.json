@@ -107,11 +107,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "2054ba42831814e95165d0e725f3c81b3b5e360136dc514d5c4582a7e1b30bfd"
+        "sha256": "97bcd296a21874dc7780da4792b986c8b565e3b30cb627e483cb06fc9202d435"
       },
       {
         "path": "package.json",
-        "sha256": "5b94a5da80af9a7b2b3c01d5a65fd8a414490213a838afc0684ed66a8dfa41fd"
+        "sha256": "f6df9c541d439cd30b67a549d6ba5d3b1a5665ea2ce4494952bd01f1ffdc48a7"
       },
       {
         "path": "packages/agents/package.json",
@@ -1935,15 +1935,31 @@
       },
       {
         "path": "packages/research/artifacts/catalog.json",
-        "sha256": "6a4ccd27e65fe36413fce15f9c5d426dd50783d57df805cf0ff44e61391bb6ff"
+        "sha256": "c7cf4981e39d2de76059ceb15b64b2559957337a5dead27506fc75db0a567e3b"
+      },
+      {
+        "path": "packages/research/artifacts/tabular-context.json",
+        "sha256": "16c8bdaafb505bca72ae4859cb2fa60925b0fb88112004c4a2e28a2fa7ee69ba"
+      },
+      {
+        "path": "packages/research/artifacts/tabular-statistics.profile.json",
+        "sha256": "8e3b2240ebc4b8cf076a07a561eabe7a76d01af3218ec3cf900a1bbd9a2e5989"
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "08a2d8de66b9b47d2c9740cf06cd026c05c0b231c11fc17ea98a9bae6808f717"
+        "sha256": "06d4f66befdc629c1d7ce07d7127d470d861b10ed2f8db1b5e552db2ad466646"
       },
       {
         "path": "packages/research/schemas/decay-hypothesis.schema.json",
         "sha256": "4922dc8a455960c50acd2fdf3342ea9f043c7715870e8b6d7b0fab1db2e80c9f"
+      },
+      {
+        "path": "packages/research/schemas/domain-bindings.schema.json",
+        "sha256": "2d7d293802168eca3bd5c3238f6a0c2ac294074673be5430814e3b3ab91c01f6"
+      },
+      {
+        "path": "packages/research/schemas/domain-profile.schema.json",
+        "sha256": "a67e0f0eda1e3c6796bd123f5511d4b81ab4f7ca707d0e95477a24aac847b302"
       },
       {
         "path": "packages/research/schemas/lesson-injection.schema.json",
@@ -1963,7 +1979,7 @@
       },
       {
         "path": "packages/research/schemas/research.schema.json",
-        "sha256": "f42055131d3aceb645635303db28b544dd70a05874eb722e39a5a3e3f0fa00b1"
+        "sha256": "0719aab17a83f1330204553bd68c6321c53d8aff06ba48469bca247330bd09ba"
       },
       {
         "path": "packages/research/src/adapters/arxiv.ts",
@@ -2027,7 +2043,7 @@
       },
       {
         "path": "packages/research/src/contracts.gen.ts",
-        "sha256": "2c0b42726692c9cab6fdb624618e884b555563f742588154c01cb30638a00196"
+        "sha256": "5f4f16e8cc9234915a90aefcf7922df0c453511d4839098192102b4307f884a6"
       },
       {
         "path": "packages/research/src/directives.ts",
@@ -2038,8 +2054,36 @@
         "sha256": "068b0912514ed2a527c6093b14ed1ac46e5cee59289fafc7c8a1ba09f5721dba"
       },
       {
+        "path": "packages/research/src/domains/bindings.ts",
+        "sha256": "1653f334d2dc043cddf520fa8dd989a2c24302dc76507cf9f3935f536a30bb89"
+      },
+      {
+        "path": "packages/research/src/domains/computational.ts",
+        "sha256": "b6d82d0857945617c740fb9844a267b55b98a2961f85fa2f98b5410c1bc83c86"
+      },
+      {
+        "path": "packages/research/src/domains/index.ts",
+        "sha256": "8621070d7a19c5c218b8b86352c21ac291fd956e73f7230c078fcc9d5a93d5ea"
+      },
+      {
+        "path": "packages/research/src/domains/profile.ts",
+        "sha256": "3f680aaefbd9f2bcc23becbbba9d4d3e5dbb58e78c6a394306e26045544bcdd7"
+      },
+      {
         "path": "packages/research/src/domains/registry.ts",
-        "sha256": "a430beadffdf97e41aa97f4dba51afcc139f6ef8511d6d5b201df1f08aa10400"
+        "sha256": "16adf62d11b4e4d3e39ca535efd5eafc9975971c274040f5c98224f68f9c4ef6"
+      },
+      {
+        "path": "packages/research/src/domains/tabular-data.ts",
+        "sha256": "c0bc39b4978554dff33e2bca206a7c31082645579696534654ae3b0ba692291b"
+      },
+      {
+        "path": "packages/research/src/domains/tabular-definition.ts",
+        "sha256": "d9f01e5cc47f50b9286f94947800b65c11604bfd3f6755c592a83c57ec693474"
+      },
+      {
+        "path": "packages/research/src/domains/tabular-statistics.ts",
+        "sha256": "3596d3c77dea9f60e1e621bd249a301f18d36830fab6b263933bced69993cc1d"
       },
       {
         "path": "packages/research/src/errors.ts",
@@ -2067,7 +2111,7 @@
       },
       {
         "path": "packages/research/src/execution/registry.ts",
-        "sha256": "70b6aebb51a85dd8bd20bc607dcda3a0d7057b9cf15923c54e440492809b99b3"
+        "sha256": "4d13fbec7d4ad96b8bfac43c8f9b7215a93689af39f59e29e24c06d90fadbd94"
       },
       {
         "path": "packages/research/src/execution/remote-executor.ts",
@@ -2099,7 +2143,7 @@
       },
       {
         "path": "packages/research/src/handlers.ts",
-        "sha256": "1243771e8f63621bce9e0a7e2cbf3e011786b6cbe54170e8992036502d5080c4"
+        "sha256": "c656351b79b29c5be40306ac9fdc6b8b9a5241ff5a222b2abb7ef7bc35605a92"
       },
       {
         "path": "packages/research/src/host.ts",
@@ -2111,7 +2155,7 @@
       },
       {
         "path": "packages/research/src/index.ts",
-        "sha256": "c1ec8c61ee900cd0ca84b9bf64e3e68dc81b547207fad9680692f03c63320702"
+        "sha256": "7172b878e21cf683a62c23e3198083df13c1135c49c712589caa9e9d0f6aa4c9"
       },
       {
         "path": "packages/research/src/lessons/access.ts",
@@ -2259,7 +2303,7 @@
       },
       {
         "path": "packages/research/src/stages/execute.ts",
-        "sha256": "83a6a1631704ccd3bbddcd894f07a2ed4e47437683cb9e16216d757e16878af6"
+        "sha256": "d96a732e25a105bdf5079be8680eef3ea8c886836e22fb78da788289efd1c34e"
       },
       {
         "path": "packages/research/src/stages/hypothesis.ts",
@@ -2315,7 +2359,7 @@
       },
       {
         "path": "packages/research/src/workflow-contract.ts",
-        "sha256": "056d0ec51b39cbb5e9e63f4c76b8dcad8698e4c28e3fa614eafc4acc576cb54d"
+        "sha256": "1e0a34cde3ca782a22122d900741f3fbd45bc1faea961dd77b61a83afdd9870f"
       },
       {
         "path": "packages/research/src/workflow.ts",
@@ -2794,7 +2838,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "09a537d3aace30e38afbaa907a03a8e9997e293125e56ec775e5532e568ff3ae"
+    "sha256": "a47086ed524b38e8118dc2c1c9240e711e611cd9e899a74acd0b39ca6732619c"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85980,5 +86024,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "2f2a0a55bcc0f76d24fd9ff3e8003f67cd75431d35fba63d274086ccd116827f"
+  "reportId": "6eff9108653fc1b4a7af1f662fecb2850ab12c9e53a8b8d549763dd4f826a128"
 }

@@ -435,6 +435,11 @@
         "maxIterations": {
           "type": "integer",
           "minimum": 1
+        },
+        "delta": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000
         }
       },
       "required": [],
@@ -674,6 +679,9 @@
         },
         {
           "$ref": "#/$defs/RawFileOutput"
+        },
+        {
+          "$ref": "#/$defs/RawTabularOutput"
         }
       ]
     },
@@ -863,6 +871,12 @@
         },
         "registrySignature": {
           "$ref": "#/$defs/Sha256"
+        },
+        "direction": {
+          "enum": [
+            "maximize",
+            "minimize"
+          ]
         }
       },
       "required": [
@@ -8294,6 +8308,428 @@
         "bundleHash",
         "injection"
       ]
+    },
+    "ResearchDomainName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z][A-Za-z0-9_@-]*(/[A-Za-z0-9_-]+)*$"
+    },
+    "ResearchDomainBindingReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchDomainName"
+        },
+        "kind": {
+          "enum": [
+            "prompt",
+            "plan-validator",
+            "evaluator",
+            "rubric",
+            "exporter"
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchDomainRunnerTemplate": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "enum": [
+            "fixture",
+            "authored"
+          ]
+        },
+        "executorContractHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "resources": {
+          "$ref": "#/$defs/ExecutionManifestResources"
+        },
+        "maxSeeds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "maxConditions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "network": {
+          "type": "object",
+          "properties": {
+            "setup": {
+              "const": "off"
+            },
+            "measured": {
+              "const": "off"
+            }
+          },
+          "required": [
+            "setup",
+            "measured"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "const": {
+            "imageDigest": "host-image-digest",
+            "dependencyLockHash": "host-dependency-lock",
+            "datasetPaths": "preregistered-inputs",
+            "codeFiles": "admitted-code-slots"
+          }
+        }
+      },
+      "required": [
+        "mode",
+        "executorContractHash",
+        "resources",
+        "maxSeeds",
+        "maxConditions",
+        "network",
+        "bindings"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchDomainProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "maxLength": 128
+        },
+        "revision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "promptPackIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchDomainName"
+          },
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "planValidatorIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchDomainName"
+          },
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "runnerManifestTemplate": {
+          "$ref": "#/$defs/ResearchDomainRunnerTemplate"
+        },
+        "evaluatorId": {
+          "$ref": "#/$defs/ResearchDomainName"
+        },
+        "evaluatorVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "units": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metricId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z][A-Za-z0-9_@-]*$"
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z][A-Za-z0-9 _-]*$"
+              },
+              "direction": {
+                "enum": [
+                  "maximize",
+                  "minimize"
+                ]
+              }
+            },
+            "required": [
+              "metricId",
+              "unit",
+              "direction"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "rubricId": {
+          "$ref": "#/$defs/ResearchDomainName"
+        },
+        "exportTemplateId": {
+          "$ref": "#/$defs/ResearchDomainName"
+        },
+        "licence": {
+          "type": "object",
+          "properties": {
+            "spdx": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^[A-Za-z0-9.-]+$"
+            },
+            "manifestPath": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "pattern": "^(?!/)(?!.*(?:\\.\\.|\\\\|://))[A-Za-z0-9_./-]+\\.json$"
+            }
+          },
+          "required": [
+            "spdx",
+            "manifestPath"
+          ],
+          "additionalProperties": false
+        },
+        "taskFamilies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchDomainName"
+          },
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "bindingRevisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchDomainBindingReference"
+          },
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "promptPackIds",
+        "planValidatorIds",
+        "runnerManifestTemplate",
+        "evaluatorId",
+        "evaluatorVersion",
+        "units",
+        "rubricId",
+        "exportTemplateId",
+        "licence",
+        "taskFamilies",
+        "bindingRevisions"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchDomainBindingManifest": {
+      "type": "object",
+      "properties": {
+        "profileId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "maxLength": 128
+        },
+        "profileRevision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "bindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchDomainBindingReference"
+          },
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "profileId",
+        "profileRevision",
+        "bindings"
+      ],
+      "additionalProperties": false
+    },
+    "TabularSample": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "pairId": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "group": {
+          "enum": [
+            "A",
+            "B"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "id",
+        "pairId",
+        "group",
+        "value",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    "RawTabularOutput": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "tabular"
+        },
+        "datasetSha256": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TabularSample"
+          },
+          "minItems": 4,
+          "maxItems": 2048
+        }
+      },
+      "required": [
+        "kind",
+        "datasetSha256",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "TabularStatisticsSummary": {
+      "type": "object",
+      "properties": {
+        "pairs": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 1024
+        },
+        "meanA": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "meanB": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "meanDifference": {
+          "type": "number",
+          "minimum": -2000000,
+          "maximum": 2000000
+        },
+        "sampleVarianceA": {
+          "type": "number",
+          "minimum": 0
+        },
+        "sampleVarianceB": {
+          "type": "number",
+          "minimum": 0
+        },
+        "sampleStddevA": {
+          "type": "number",
+          "minimum": 0
+        },
+        "sampleStddevB": {
+          "type": "number",
+          "minimum": 0
+        },
+        "interval": {
+          "type": "object",
+          "properties": {
+            "lower": {
+              "type": "number",
+              "minimum": -2000000,
+              "maximum": 2000000
+            },
+            "upper": {
+              "type": "number",
+              "minimum": -2000000,
+              "maximum": 2000000
+            },
+            "level": {
+              "const": 0.95
+            },
+            "method": {
+              "const": "paired-bootstrap"
+            },
+            "quantile": {
+              "const": "nearest-rank"
+            },
+            "resamples": {
+              "const": 2000
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          },
+          "required": [
+            "lower",
+            "upper",
+            "level",
+            "method",
+            "quantile",
+            "resamples",
+            "seed"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "pairs",
+        "meanA",
+        "meanB",
+        "meanDifference",
+        "sampleVarianceA",
+        "sampleVarianceB",
+        "sampleStddevA",
+        "sampleStddevB",
+        "interval"
+      ],
+      "additionalProperties": false
     }
   }
 }

@@ -1,0 +1,270 @@
+{
+  "bindingRevisions": [
+    {
+      "id": "research-attacker",
+      "kind": "prompt",
+      "revision": "935aac13b9d0b6652110423ab837093a180673c18c19dde221e1b7eb93f19615"
+    },
+    {
+      "id": "research-contrarian",
+      "kind": "prompt",
+      "revision": "57567b2237289e0f292951070b196fb3311086c41d23d680f1b61e57a8a66f7a"
+    },
+    {
+      "id": "research-critic",
+      "kind": "prompt",
+      "revision": "2b3722c59aef7e1a605562c55147da3500013061a4c818602cc43b64e8cb804c"
+    },
+    {
+      "id": "research-defender",
+      "kind": "prompt",
+      "revision": "951fbd6cf7b0877214d1521174c5a44599b7bef4e88cf34ad2bd101e90311778"
+    },
+    {
+      "id": "research-designer",
+      "kind": "prompt",
+      "revision": "209efcaa626edd52fdf065165defcd32716a612720bd3b0a88db857b9458639f"
+    },
+    {
+      "id": "research-innovator",
+      "kind": "prompt",
+      "revision": "7fa9174111c9dfe84d7fd55878a7a20c3a03e7929a52dabf1594364d228fd000"
+    },
+    {
+      "id": "research-judge",
+      "kind": "prompt",
+      "revision": "cf0b5e8a1e5a3525efb1b05a80dac986631792371d12b932345d53832c557618"
+    },
+    {
+      "id": "research-pragmatist",
+      "kind": "prompt",
+      "revision": "801af77b2fb56465b050417dbefda53449f9c8803aac28b029f7f9da20f5ffa0"
+    },
+    {
+      "id": "research-result-reviewer",
+      "kind": "prompt",
+      "revision": "9f4433e5e64ebbb61713bd9138f0b04f4a17a7be1e3b6049417f8c3d8fe48245"
+    },
+    {
+      "id": "research-result-summarizer",
+      "kind": "prompt",
+      "revision": "088a44c31dac714edd6da76621ee274abb6d52f1f1ad4268fab65b15de5511ef"
+    },
+    {
+      "id": "research-screener",
+      "kind": "prompt",
+      "revision": "622b6a32b7ecb9e88dff77a44596207f699d3fe5623e4f39df13783908db6556"
+    },
+    {
+      "id": "research-synthesis",
+      "kind": "prompt",
+      "revision": "ebe2e45639b371715b5c5bcc8920deee67218e108bbd45a6c5024636686880ec"
+    },
+    {
+      "id": "research-synthesizer",
+      "kind": "prompt",
+      "revision": "c1bf549dc8baf9bd0bb9e71de9d386079fe658032365bd5b020573dfe784bd12"
+    },
+    {
+      "id": "research-writer",
+      "kind": "prompt",
+      "revision": "d3efb101348ea3b3f0ecd783d3e75cadb77edd5b8a0955aa2069f37239d48cc8"
+    },
+    {
+      "id": "research-synthesis-analysis-analyst",
+      "kind": "prompt",
+      "revision": "fecbc8a668068c0b3eb1abe443db50d4f50fc4f7c5ee7a890b2f53dc499e3e88"
+    },
+    {
+      "id": "research-synthesis-analysis-merge",
+      "kind": "prompt",
+      "revision": "dd1ac142ff5bd6fdb11e2f4fbd76c347b2af19162027ddf4dae67dae2d6021cb"
+    },
+    {
+      "id": "research-innovator-debate-position",
+      "kind": "prompt",
+      "revision": "4ee122ff53117210cff5499e26d63e4d4578f81c4b535e220d730007e41934d9"
+    },
+    {
+      "id": "research-pragmatist-debate-position",
+      "kind": "prompt",
+      "revision": "d62a9848581e6133cc47400249bdbf588a5c804f88a9594058ffb8002f29afc7"
+    },
+    {
+      "id": "research-contrarian-debate-position",
+      "kind": "prompt",
+      "revision": "018717414638228eff41ea2a9600a0df87e9686d7bb28f5a90fcbb7a1c14757d"
+    },
+    {
+      "id": "research-innovator-debate-rebuttal",
+      "kind": "prompt",
+      "revision": "3a5a1565808c273206314ae48efe140c9854617233e8e8b4889e0e41523d6e55"
+    },
+    {
+      "id": "research-pragmatist-debate-rebuttal",
+      "kind": "prompt",
+      "revision": "8d620b2a51aea7464066a0038cd34e86d485303400449787e8baf99ebf4668b2"
+    },
+    {
+      "id": "research-contrarian-debate-rebuttal",
+      "kind": "prompt",
+      "revision": "e216810327383d8ed24feeadfc3859ee0f8bf368d73c5cb79fe197488412680d"
+    },
+    {
+      "id": "research-screener-debate-judge",
+      "kind": "prompt",
+      "revision": "67b01f697f115bab59c2849d71f2bbea6edcbeddc42dd52e7c17b342fe9ebddc"
+    },
+    {
+      "id": "research-synthesizer-analysis-merge",
+      "kind": "prompt",
+      "revision": "b77aa6befd826f8bde1bba868df5e69f39236c3043117d21caa327b5bbefe746"
+    },
+    {
+      "id": "research-result-reviewer-peer-review-review",
+      "kind": "prompt",
+      "revision": "2b787bf743f618bd6acc05f4f761617e2b138f6301015a0826ffb5d5614a1c35"
+    },
+    {
+      "id": "research-result-summarizer-peer-review-revision",
+      "kind": "prompt",
+      "revision": "8d06c4a174862ece1dee0bc006c56f73e6c6b6e6ab8d9cc8e70a4ff39f228435"
+    },
+    {
+      "id": "research-critic-peer-review-review",
+      "kind": "prompt",
+      "revision": "aebbe19e49b172eb46ecaf3a7058bd49406e2a2264e8521ead06f9c616b7f2b8"
+    },
+    {
+      "id": "research-critic-peer-review-revision",
+      "kind": "prompt",
+      "revision": "d9df86a23e2b9f8a9cdb8a9dcc2d0e3d3bc439859206e6261b8a14792859d72e"
+    },
+    {
+      "id": "research-attacker-red-team-attack",
+      "kind": "prompt",
+      "revision": "81cc82c4f24d1fde143ed0862bdb33138dae21698b9694b5d9e49ceced3c4ecd"
+    },
+    {
+      "id": "research-defender-red-team-defense",
+      "kind": "prompt",
+      "revision": "76c2b08fdd19ad1a36e38d8d5922bb1349852949e96aef90a00eb6dc33d15d18"
+    },
+    {
+      "id": "research-defender-peer-review-revision",
+      "kind": "prompt",
+      "revision": "2d96889964ec85906dffdc4cc29addd564123f902a614ecd20b62c62e6cfd65b"
+    },
+    {
+      "id": "research-judge-red-team-resilience",
+      "kind": "prompt",
+      "revision": "1eeea5f18476c76cc5b8e8e74f9e65a8cd3a6d642a3855af7c1ba6f0d0a59163"
+    },
+    {
+      "id": "research-tabular-context",
+      "kind": "prompt",
+      "revision": "8ecba25ab6100f1321d76f528ef1622251952910f0135a861d92a77539432afb"
+    },
+    {
+      "id": "tabular-group-plan",
+      "kind": "plan-validator",
+      "revision": "27b321810bf2e53fb83fbed7aef64e264ab3cc1103850aa2217d946118f8dd8d"
+    },
+    {
+      "id": "tabular-statistics/v1",
+      "kind": "evaluator",
+      "revision": "89e12d6dca996e0ab38b9bce607f8eda10a81d7225e14c926a0784360df3943b"
+    },
+    {
+      "id": "tabular-group-rubric",
+      "kind": "rubric",
+      "revision": "b62b94404579ff4915ee4fe0e34e722ed8502f5ff7e9d818f8805172615c0bdf"
+    },
+    {
+      "id": "research-markdown",
+      "kind": "exporter",
+      "revision": "a0631178d80f99db2f5651c43add284dfdaa0b21a7bd0ddfcd7489995fa5370f"
+    }
+  ],
+  "evaluatorId": "tabular-statistics/v1",
+  "evaluatorVersion": "1",
+  "exportTemplateId": "research-markdown",
+  "id": "tabular-statistics",
+  "licence": {
+    "manifestPath": "benchmark/fixtures/research/domains/tabular-statistics/manifest.json",
+    "spdx": "MIT"
+  },
+  "planValidatorIds": [
+    "tabular-group-plan"
+  ],
+  "promptPackIds": [
+    "research-attacker",
+    "research-contrarian",
+    "research-critic",
+    "research-defender",
+    "research-designer",
+    "research-innovator",
+    "research-judge",
+    "research-pragmatist",
+    "research-result-reviewer",
+    "research-result-summarizer",
+    "research-screener",
+    "research-synthesis",
+    "research-synthesizer",
+    "research-writer",
+    "research-synthesis-analysis-analyst",
+    "research-synthesis-analysis-merge",
+    "research-innovator-debate-position",
+    "research-pragmatist-debate-position",
+    "research-contrarian-debate-position",
+    "research-innovator-debate-rebuttal",
+    "research-pragmatist-debate-rebuttal",
+    "research-contrarian-debate-rebuttal",
+    "research-screener-debate-judge",
+    "research-synthesizer-analysis-merge",
+    "research-result-reviewer-peer-review-review",
+    "research-result-summarizer-peer-review-revision",
+    "research-critic-peer-review-review",
+    "research-critic-peer-review-revision",
+    "research-attacker-red-team-attack",
+    "research-defender-red-team-defense",
+    "research-defender-peer-review-revision",
+    "research-judge-red-team-resilience",
+    "research-tabular-context"
+  ],
+  "revision": "25c413fbf7a75f5cbada11a1d5bbbb8020e4e772f7e3ceee3c6fcfac9c1ad627",
+  "rubricId": "tabular-group-rubric",
+  "runnerManifestTemplate": {
+    "bindings": {
+      "codeFiles": "admitted-code-slots",
+      "datasetPaths": "preregistered-inputs",
+      "dependencyLockHash": "host-dependency-lock",
+      "imageDigest": "host-image-digest"
+    },
+    "executorContractHash": "98ac4ca19ac0891ad46a5f53172b53f19ffe84e7c1121a8797508f64a5902f4c",
+    "maxConditions": 2,
+    "maxSeeds": 3,
+    "mode": "fixture",
+    "network": {
+      "measured": "off",
+      "setup": "off"
+    },
+    "resources": {
+      "cpu": 1,
+      "memoryBytes": 67108864,
+      "outputBytes": 65536,
+      "pids": 16,
+      "wallMs": 1000
+    }
+  },
+  "taskFamilies": [
+    "group-difference"
+  ],
+  "units": [
+    {
+      "direction": "maximize",
+      "metricId": "meanDifference",
+      "unit": "points"
+    }
+  ]
+}

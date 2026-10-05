@@ -9,7 +9,8 @@ import { createResearchBinding, researchArtifacts, researchReasoningRevisionOf, 
   type ResearchWorkflowFrame, type EvidenceCard, type Synthesis, type ResearchHypothesis, type ResearchContract,
   type ExperimentPlan, type HypothesisSet, type NoveltyReport, type ResearchExecutionPolicy, type ResearchTaskTools, type ResearchStore,
   researchAnalysisRevisionOf, type ResearchAnalysisRuntimePolicy, createResearchWritingTools, researchWritingRevisionOf,
-  type ResearchWritingPolicy, type ResearchCost } from '@tangleai/research';
+  type ResearchWritingPolicy, type ResearchCost, type ResearchStageDomain } from '@tangleai/research';
+import { researchExecutionFixture } from './research-execution-fixture.ts';
 import { researchExampleTools, type ResearchExampleDecisions } from '../../examples/research.ts';
 import { createResearchDiscoveryFixture, researchDiscoveryConfiguration } from './research-discovery.ts';
 import { requireResearchShape } from './research-validation.ts';
@@ -18,6 +19,7 @@ import type { LoadedResearchFixture } from './research-fixture.ts';
 import type { ResearchReasoningScript, ResearchReasoningTopic, ResearchModelUsage, ResearchFixtureTopic, ResearchExecutionTopic } from './research.types.ts';
 
 export interface ResearchReasoningExecution<T = ResearchExecutionTopic> {
+  domain?: ResearchStageDomain;
   policy: ResearchExecutionPolicy;
   script: ResearchReasoningScript;
   decisions: ResearchExampleDecisions;
@@ -55,10 +57,11 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
   if (script.topicId !== topic.id) throw Error('Research reasoning script belongs to another topic.');
   const caps = execution?.writing?.limits ?? loaded.manifest.caps, limits = execution?.writing?.limits ?? { ...caps, toolRounds: 4, fanOut: 8, iterations: 8 }, identity = await identityFor(caps);
   const writingPolicy = execution?.writing ? { ...execution.writing.policy, modelIdentity: identity.identityId } : undefined;
+  const domain = execution?.domain ?? (await researchExecutionFixture(loaded, topic)).domain;
   const policy: ResearchReasoningPolicy = { mode, maxCards: 8, novelty: { criteriaId: 'identifier-overlap', concurrency: 1, maxRequests: 8, maxBytes: 1048576,
     query: { provider: 'crossref', pages: 3, rows: 32, bytes: 262144, pageSize: 5 } } };
   const discoveryConfiguration = await researchDiscoveryConfiguration(topic), binding = await createResearchBinding(topic.contract, {
-    identity, promptRevision: researchArtifacts.revision, evaluator: topic.plan.evaluator,
+    identity, promptRevision: researchArtifacts.revision, evaluator: topic.plan.evaluator, domain: domain.manifest,
     reservation: execution?.writing?.reservation ?? { calls: 32, tokens: 32768, ms: 30000, physical: 32 }, toolVersions: [
       { name: 'scholarly-discovery', version: discoveryConfiguration.revision }, { name: 'research-reasoning', version: await researchReasoningRevisionOf(policy) },
       ...(execution ? [{ name: 'research-execution-fixture', version: execution.revision },
@@ -81,6 +84,7 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
     });
     const novelty = await createReplayTransport(script.noveltyTranscripts, { scope: 'research-reasoning-novelty' });
     let base = researchExampleTools({ binding, contract: topic.contract, plan: topic.plan, masStore, ...(execution ? { decisions: execution.decisions } : {}) });
+    base = { ...base, domain };
     if (execution) base = await execution.tools(base, researchStore);
     let tools = await createDiscoveryStageTools(base, discovery.options);
     tools = await createResearchReasoningTools(tools, { project, policy,

@@ -1,0 +1,839 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/research-domains",
+  "type": "object",
+  "properties": {
+    "profiles": {
+      "type": "array",
+      "items": {
+        "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchDomainProfile"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "identity": {
+      "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DomainMeasurementRow"
+      },
+      "minItems": 6,
+      "maxItems": 6
+    },
+    "unsupported": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "domain:unsupported"
+        },
+        "code": {
+          "const": "TRSH2008"
+        },
+        "missingId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "modelCalls": {
+          "const": 0
+        },
+        "runnerInvocations": {
+          "const": 0
+        },
+        "issue": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchIssue"
+        }
+      },
+      "required": [
+        "id",
+        "code",
+        "missingId",
+        "modelCalls",
+        "runnerInvocations",
+        "issue"
+      ],
+      "additionalProperties": false
+    },
+    "parity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "control-plane-parity"
+        },
+        "sourceHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "profileLiterals": {
+          "const": 0
+        },
+        "domainComparisons": {
+          "const": 0
+        }
+      },
+      "required": [
+        "id",
+        "sourceHash",
+        "sources",
+        "profileLiterals",
+        "domainComparisons"
+      ],
+      "additionalProperties": false
+    },
+    "external": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "const": "not-run"
+        },
+        "reason": {
+          "enum": [
+            "submodule-absent",
+            "manifest-unpinned",
+            "licence-unaudited"
+          ]
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchIssue"
+          }
+        },
+        "modelCalls": {
+          "const": 0
+        },
+        "runnerInvocations": {
+          "const": 0
+        }
+      },
+      "required": [
+        "id",
+        "state",
+        "reason",
+        "issues",
+        "modelCalls",
+        "runnerInvocations"
+      ],
+      "additionalProperties": false
+    },
+    "gate": {
+      "type": "object",
+      "properties": {
+        "binding": {
+          "type": "boolean"
+        },
+        "controlPlane": {
+          "type": "boolean"
+        },
+        "registry": {
+          "type": "boolean"
+        },
+        "comparable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "binding",
+        "controlPlane",
+        "registry",
+        "comparable"
+      ],
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "profiles",
+    "identity",
+    "rows",
+    "unsupported",
+    "parity",
+    "external",
+    "gate",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "TabularFixtureManifest": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "tabular-statistics-fixture"
+        },
+        "revision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "seed": {
+          "const": 17753
+        },
+        "licence": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLicence"
+        },
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^(datasets/[a-z-]+\\.csv|topics/[a-z-]+\\.json|rubric\\.json|units\\.json)$"
+              },
+              "sha256": {
+                "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 9,
+          "maxItems": 9
+        },
+        "program": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            }
+          },
+          "required": [
+            "source",
+            "sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "document",
+        "revision",
+        "seed",
+        "licence",
+        "datasets",
+        "topics",
+        "members",
+        "program"
+      ],
+      "additionalProperties": false
+    },
+    "TabularResearchTopic": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchId"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "taskFamily": {
+          "const": "group-difference"
+        },
+        "datasetPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hypothesis": {
+          "type": "object",
+          "properties": {
+            "H1": {
+              "type": "string",
+              "minLength": 1
+            },
+            "H0": {
+              "type": "string",
+              "minLength": 1
+            },
+            "delta": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "H1",
+            "H0",
+            "delta"
+          ],
+          "additionalProperties": false
+        },
+        "contract": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchContract"
+        },
+        "plan": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentPlan"
+        },
+        "licence": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchLicence"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "taskFamily",
+        "datasetPath",
+        "hypothesis",
+        "contract",
+        "plan",
+        "licence"
+      ],
+      "additionalProperties": false
+    },
+    "DomainLifecycleReceipt": {
+      "type": "object",
+      "properties": {
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bindingId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "runIdentityId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflowVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "executableRevision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "status": {
+          "const": "completed"
+        },
+        "state": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchState"
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/StageAttempt"
+          },
+          "minItems": 1
+        },
+        "manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/InputManifest"
+          },
+          "minItems": 1
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ExperimentRun"
+          },
+          "minItems": 1
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/research-records#/$defs/MetricObservation"
+          },
+          "minItems": 1
+        },
+        "duplicateResponses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modelCalls": {
+          "const": 0
+        },
+        "spend": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        }
+      },
+      "required": [
+        "runId",
+        "bindingId",
+        "runIdentityId",
+        "workflowVersionId",
+        "executableRevision",
+        "status",
+        "state",
+        "attempts",
+        "manifests",
+        "runs",
+        "observations",
+        "duplicateResponses",
+        "modelCalls",
+        "spend"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.spend.calls",
+              {
+                "$sum": "$.attempts[*].spend.calls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.spend.tokens",
+              {
+                "$sum": "$.attempts[*].spend.tokens"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.spend.physical",
+              {
+                "$sum": "$.attempts[*].spend.physical"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.spend.ms",
+              {
+                "$sum": "$.attempts[*].spend.ms"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.spend.physical",
+              {
+                "$count": "$.runs[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.modelCalls",
+              "$.spend.calls"
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.observations[*]"
+              },
+              {
+                "$count": "$.runs[*]"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "DomainTopicMeasurement": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "topicHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "contractHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "planHash": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/DomainLifecycleReceipt"
+        },
+        "tabular": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/TabularStatisticsSummary"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result": {
+          "enum": [
+            "improvement",
+            "no-improvement",
+            "inconclusive",
+            "SATURATED"
+          ]
+        },
+        "claimSupport": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "registryAccuracy": {
+          "const": 1
+        },
+        "preregistrationIntegrity": {
+          "const": 1
+        }
+      },
+      "required": [
+        "topicId",
+        "topicHash",
+        "contractHash",
+        "planHash",
+        "lifecycle",
+        "tabular",
+        "result",
+        "claimSupport",
+        "registryAccuracy",
+        "preregistrationIntegrity"
+      ],
+      "additionalProperties": false
+    },
+    "DomainMeasurementRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "domain:computational/fixed-pipeline",
+            "domain:computational/lessons-off",
+            "domain:computational/lessons-on",
+            "domain:tabular-statistics/fixed-pipeline",
+            "domain:tabular-statistics/lessons-off",
+            "domain:tabular-statistics/lessons-on"
+          ]
+        },
+        "profileId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profileRevision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "identityStatus": {
+          "const": "run"
+        },
+        "comparisonIdentity": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "budget": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+        },
+        "spend": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/LessonSpend"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DomainTopicMeasurement"
+          },
+          "minItems": 3,
+          "maxItems": 4
+        },
+        "lesson": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-lessons#/$defs/LessonNativeMeasurement"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activated": {
+          "type": "boolean"
+        },
+        "eligibilityIssues": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "profileId",
+        "profileRevision",
+        "identityStatus",
+        "comparisonIdentity",
+        "budget",
+        "spend",
+        "topics",
+        "lesson",
+        "activated",
+        "eligibilityIssues",
+        "limitations"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          [
+            "$.rows[*].id"
+          ],
+          [
+            "domain:computational/fixed-pipeline",
+            "domain:computational/lessons-off",
+            "domain:computational/lessons-on",
+            "domain:tabular-statistics/fixed-pipeline",
+            "domain:tabular-statistics/lessons-off",
+            "domain:tabular-statistics/lessons-on"
+          ]
+        ]
+      },
+      {
+        "$eq": [
+          [
+            "$.identity.rows[*].rowId"
+          ],
+          [
+            "$.rows[*].id"
+          ]
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.binding",
+          {
+            "$eq": [
+              "$.unsupported.code",
+              "TRSH2008"
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.controlPlane",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.parity.profileLiterals",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.parity.domainComparisons",
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.registry",
+          {
+            "$every": {
+              "row": "$.rows[*]"
+            },
+            "$satisfies": {
+              "$every": {
+                "topic": "$row.topics[*]"
+              },
+              "$satisfies": {
+                "$eq": [
+                  "$topic.registryAccuracy",
+                  1
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.gate.comparable",
+          {
+            "$every": {
+              "row": "$.rows[*]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$le": [
+                    "$row.spend.calls",
+                    "$row.budget.calls"
+                  ]
+                },
+                {
+                  "$le": [
+                    "$row.spend.tokens",
+                    "$row.budget.tokens"
+                  ]
+                },
+                {
+                  "$le": [
+                    "$row.spend.physical",
+                    "$row.budget.physical"
+                  ]
+                },
+                {
+                  "$le": [
+                    "$row.spend.ms",
+                    "$row.budget.ms"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[1].budget",
+          "$.rows[0].budget"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[2].budget",
+          "$.rows[0].budget"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[3].budget",
+          "$.rows[0].budget"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[4].budget",
+          "$.rows[0].budget"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[5].budget",
+          "$.rows[0].budget"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[1].comparisonIdentity",
+          "$.rows[2].comparisonIdentity"
+        ]
+      },
+      {
+        "$eq": [
+          [
+            "$.rows[1].topics[*].topicHash"
+          ],
+          [
+            "$.rows[2].topics[*].topicHash"
+          ]
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[4].comparisonIdentity",
+          "$.rows[5].comparisonIdentity"
+        ]
+      },
+      {
+        "$eq": [
+          [
+            "$.rows[4].topics[*].topicHash"
+          ],
+          [
+            "$.rows[5].topics[*].topicHash"
+          ]
+        ]
+      }
+    ]
+  }
+}

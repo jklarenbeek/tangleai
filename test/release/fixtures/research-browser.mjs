@@ -9,6 +9,11 @@ import { cloneJson } from '@jarenjs/core/object';
 import { GMPL_LIMITS } from '@tangleai/gmpl';
 import { createAttemptBudget, sleep } from '@jarenjs/core/retry';
 import schema from '@tangleai/research/schemas/research' with { type: 'json' };
+import domainSchema from '@tangleai/research/schemas/domain-profile' with { type: 'json' };
+import bindingSchema from '@tangleai/research/schemas/domain-bindings' with { type: 'json' };
+import { TABULAR_STATISTICS_PROFILE, TABULAR_CONTEXT_PROMPT, TABULAR_PLAN_POLICY, TABULAR_EVALUATOR, TABULAR_RUBRIC,
+  RESEARCH_MARKDOWN_EXPORT_POLICY, validateTabularPlan, createTabularStatisticsEvaluator, bindDomainProfile,
+  validateDomainProfile, parseTabularSamples, tabularStatistics, tabularStatisticsPrograms } from '@tangleai/research';
 
 const value = result => {
   if (result.valid === true || result.ok === true) return result.value;
@@ -39,6 +44,31 @@ export async function exerciseResearchConsumer(store) {
     replayed: replay.replayed === true, bytes: [...reread.bytes], artifactId: await researchArtifactIdOf(bytes), refusal: invalid.issues[0].code } };
 }
 export async function qualifyResearchBrowser() { return (await exerciseResearchConsumer(createMemoryResearchStore())).summary; }
+export async function qualifyResearchDomainsBrowser() {
+  const csv = 'id,pairId,group,value,unit\na1,p1,A,3,points\nb1,p1,B,1,points\na2,p2,A,5,points\nb2,p2,B,3,points\n';
+  const profile = value(await validateDomainProfile(TABULAR_STATISTICS_PROFILE));
+  const statistics = value(tabularStatistics(value(parseTabularSamples(csv)), 17753));
+  const evaluator = createTabularStatisticsEvaluator({ datasets: { packed: csv } });
+  let evaluations = 0;
+  const bindings = {
+    prompts: Object.fromEntries([...researchArtifacts.prompts, TABULAR_CONTEXT_PROMPT].map(row => [row.id, row])),
+    planValidators: { [TABULAR_PLAN_POLICY.id]: { revision: await researchRevisionOf(TABULAR_PLAN_POLICY), validate: validateTabularPlan } },
+    evaluators: { [TABULAR_EVALUATOR.id]: {
+      revision: await researchRevisionOf({ ...TABULAR_EVALUATOR, policy: TABULAR_PLAN_POLICY, rubric: TABULAR_RUBRIC }),
+      evaluator: { ...evaluator, evaluate: input => { evaluations++; return evaluator.evaluate(input); } },
+    } },
+    rubrics: { [TABULAR_RUBRIC.id]: { revision: await researchRevisionOf(TABULAR_RUBRIC), document: TABULAR_RUBRIC } },
+    exporters: { [RESEARCH_MARKDOWN_EXPORT_POLICY.id]: { revision: await researchRevisionOf(RESEARCH_MARKDOWN_EXPORT_POLICY), render: renderMarkdownBundle } },
+  };
+  const bound = value(await bindDomainProfile(profile, bindings));
+  const refused = await bindDomainProfile(profile, { ...bindings, evaluators: {} });
+  const raw = await tabularStatisticsPrograms()['tabular-observed']({ bytes: new TextEncoder().encode(csv), seed: 1 });
+  return { profile: bound.profile.id, schemas: domainSchema.$ref.endsWith('/ResearchDomainProfile')
+      && bindingSchema.$ref.endsWith('/ResearchDomainBindingManifest'),
+    pairs: statistics.pairs, meanDifference: statistics.meanDifference, lower: statistics.interval.lower, upper: statistics.interval.upper,
+    rawRows: raw.rows.length, exporter: bound.export === renderMarkdownBundle,
+    missing: refused.valid ? null : refused.issues[0].code, evaluations };
+}
 export async function qualifyResearchReasoningBrowser() {
   const prepared = await prepareResearchPattern('hypothesis', await createResearchPatternHost('packed-reasoning', { ...GMPL_LIMITS }));
   const nodes = [prepared.validated.workflow, ...prepared.snapshot.subgraphs.values()].flatMap(workflow => workflow.nodes);

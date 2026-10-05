@@ -2,7 +2,8 @@
 import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
 import { applyJSONPatch } from '@jarenjs/json/patch';
 import { createFixtureExecutor, createEvaluationRegistry, createResearchWorkspace, buildExecutionManifest, ResearchFailure, researchValue,
-  type ResearchFixtureProgram, type ResearchEvaluator, type ResearchExecutionManifestInput, type ResearchExecutionPolicy } from '@tangleai/research';
+  domainExecutionPolicy, type ResearchFixtureProgram, type ResearchEvaluator, type ResearchExecutionManifestInput } from '@tangleai/research';
+import { bindComputationalResearchDomain } from '../../apps/research-runner/src/domains.ts';
 import { RESEARCH_PROGRAM_IDS, executeResearchProgram } from './research-programs.ts';
 import { RESEARCH_EVALUATOR, researchMetricValues } from './research-evaluator.ts';
 import { requireResearchShape } from './research-validation.ts';
@@ -30,9 +31,6 @@ export async function researchExecutionFixture(loaded: LoadedResearchFixture, to
     JSON.parse(new TextDecoder().decode(loaded.files.get('execution/registration.json')!)));
   const registered = registration.topics.find(row => row.topicId === topic.id)!;
   if (!registered) throw Error('Unregistered execution topic.');
-  const policy: ResearchExecutionPolicy = { mode: 'fixture', imageDigest: registration.imageDigest, dependencyLockHash: registration.dependencyLockHash,
-    resources: registration.resources, maxSeeds: 5, maxConditions: 2,
-    datasetPaths: topic.contract.datasets.map((dataset, index) => ({ datasetId: dataset.id, path: topic.plan.inputPaths[index] })), codeFiles: [] };
   const programs: Record<string, ResearchFixtureProgram> = Object.fromEntries(RESEARCH_PROGRAM_IDS.map(id => [id, async (request: Parameters<ResearchFixtureProgram>[0]) => {
     const run = await executeResearchProgram(id, JSON.parse(new TextDecoder().decode(request.bytes)) as ResearchDataset, request.seed, request.params);
     if (!run.ok) throw new ResearchFailure(run.issue); return run.output;
@@ -42,6 +40,9 @@ export async function researchExecutionFixture(loaded: LoadedResearchFixture, to
       { condition: value.manifest.condition!, output: value.rawOutput });
     return result.valid ? { valid: true, value: result.values } : result;
   } };
+  const domain = researchValue(await bindComputationalResearchDomain(evaluator, { resources: registration.resources }));
+  const policy = researchValue(await domainExecutionPolicy(domain, { imageDigest: registration.imageDigest, dependencyLockHash: registration.dependencyLockHash,
+    datasetPaths: topic.contract.datasets.map((dataset, index) => ({ datasetId: dataset.id, path: topic.plan.inputPaths[index] })), codeFiles: [] }));
   const evaluatorBytes = new TextEncoder().encode(canonicalizeJson(RESEARCH_EVALUATOR)), hiddenLabels = loaded.hidden.get(topic.id)!;
   const workspace = researchValue(await createResearchWorkspace({ projectId: topic.contract.projectId, datasetIds: topic.contract.datasets.map(row => row.id),
     splitIds: [...topic.contract.splits.train, ...topic.contract.splits.test], files: [
@@ -50,8 +51,8 @@ export async function researchExecutionFixture(loaded: LoadedResearchFixture, to
   const input: ResearchExecutionManifestInput = { contract: topic.contract, plan: topic.plan, workspace, branchId: 'execution-refusal-probe',
     condition: topic.plan.conditions[0].id, seed: topic.contract.replicatePolicy.seeds[0], imageDigest: policy.imageDigest,
     dependencyLockHash: policy.dependencyLockHash, resources: policy.resources, network: { setup: 'off', measured: 'off' } };
-  return { registration, registered, policy, programs, executor: createFixtureExecutor(programs, { now: () => 0 }),
-    evaluator, evaluatorBytes, registry: createEvaluationRegistry([evaluator]), hiddenLabels, workspace, input };
+  return { registration, registered, domain, policy, programs, executor: createFixtureExecutor(programs, { now: () => 0 }),
+    evaluator: domain.evaluator, evaluatorBytes, registry: createEvaluationRegistry([domain.evaluator]), hiddenLabels, workspace, input };
 }
 export async function probeResearchExecutionRefusal(loaded: LoadedResearchFixture, fixture: ResearchExecutionRefusalFixture) {
   const f = await researchExecutionFixture(loaded, loaded.topics[0]);

@@ -227,6 +227,9 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
         { sections: 6, files: 7, rerun: true, disclosure: 8, tex: ['main.tex', 'references.bib'], refused: 'TRSH1002' });
       assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.researchCommands)),
         { mode: 'gate-only', experimental: true, pending: true, parent: true, immutable: true, refused: 'TRSH1005', total: 3, substantive: 1 });
+      assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.researchDomains)),
+        { profile: 'tabular-statistics', schemas: true, pairs: 2, meanDifference: 2, lower: 2, upper: 2,
+          rawRows: 4, exporter: true, missing: 'TRSH2008', evaluations: 0 });
       const groundingBrowser = await browser.tangleConsumer.grounding;
       const graphBrowser = await browser.tangleConsumer.lightrag;
       const graphPreparation = await browser.tangleConsumer.lightragPreparation;

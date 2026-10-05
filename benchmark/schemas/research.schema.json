@@ -12,6 +12,9 @@
     "lessons": {
       "$ref": "https://tangleai.dev/schemas/research-lessons"
     },
+    "domains": {
+      "$ref": "https://tangleai.dev/schemas/research-domains"
+    },
     "recordNames": {
       "type": "array",
       "items": {
@@ -483,6 +486,7 @@
     "benchmark",
     "schemaVersion",
     "lessons",
+    "domains",
     "recordNames",
     "source",
     "suite",

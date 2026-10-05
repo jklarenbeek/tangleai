@@ -1,0 +1,16 @@
+{
+  "direction": "maximize",
+  "id": "tabular-group-rubric",
+  "interval": "paired percentile bootstrap over input pairs; 2000 resamples; 95%; nearest-rank",
+  "metric": "meanDifference",
+  "requirements": [
+    "Every output value must reproduce from a declared input pair and its registered transform.",
+    "A metric scalar or program-written summary is not raw sample evidence.",
+    "Compare the observed mean difference with the preregistered delta and retain negative results.",
+    "Seed reordering checks reproducibility; repeated identical effects are not independent population observations.",
+    "Population uncertainty uses the interval over input pairs, never the interval over identical replay seeds."
+  ],
+  "unit": "points",
+  "variance": "sample; n-1",
+  "version": "1"
+}
