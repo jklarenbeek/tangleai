@@ -187,7 +187,8 @@
     "emit:research-contracts": "jaren-emit --schema packages/research/schemas/research.schema.json --out packages/research/src --bundle contracts.gen.ts",
     "test:research": "node --test \"test/research/*.test.ts\" \"test/store/research-store.test.ts\"",
     "research:artifacts": "node scripts/research-artifacts.ts",
-    "research:runner:smoke": "node scripts/research-runner-smoke.ts"
+    "research:runner:smoke": "node scripts/research-runner-smoke.ts",
+    "benchmark:research:handoff": "node benchmark/research-query.ts"
   },
   "devDependencies": {
     "@changesets/apply-release-plan": "8.1.0",

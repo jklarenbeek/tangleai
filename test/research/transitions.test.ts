@@ -74,3 +74,16 @@ it('stage plans bind stack, scope, input hashes, spend and the next legal state'
   refused(await planStageCommit({ ...request, nextStatus: 'COMPLETE' }), 'TRSH1004');
   refused(await planStageCommit({ ...request, artifactAdmissionIds: ['admission-wrong'] }), 'TRSH1001');
 });
+
+it('an explicitly pre-result amendment cannot hide known observations or claim an executed stage', async () => {
+  const first = await frozen(), second = await frozen('fixture-project', '-reviewed', 0.1);
+  const state = { ...checked(await planContractFreeze(checked(planProjectCreate(project())).state, first.contract, first.plan, [])).nextState,
+    status: 'DESIGN' as const };
+  const amendment = { id: 'before-results', before: first.contract.contractHash, after: second.contract.contractHash,
+    reason: 'Revise the reviewed design before execution.', marksExploratory: [], beforeResults: true as const };
+  assert.equal(checked(await planAmendment(state, amendment, second.contract, second.plan, [])).nextState.contractHash, second.contract.contractHash);
+  refused(await planAmendment(state, amendment, second.contract, second.plan, ['known-observation']), 'TRSH1009');
+  refused(await planAmendment({ ...state, status: 'ANALYZE' }, amendment, second.contract, second.plan, []), 'TRSH1009');
+  const { beforeResults: _flag, ...unmarked } = amendment;
+  refused(await planAmendment(state, unmarked, second.contract, second.plan, []), 'TRSH1001');
+});

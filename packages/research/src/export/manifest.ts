@@ -7,6 +7,7 @@ import { researchRefuse, type ResearchOutcome } from '../errors.ts';
 import { validateResearchShape } from '../schema.ts';
 import { verifyResearchDraft } from '../stages/verify.ts';
 import { researchCostTotal } from '../selection.ts';
+import { researchInterventionReport } from '../commands.ts';
 
 export type ResearchExportSource = ResearchExportManifest['source'];
 export const RESEARCH_BUNDLE_FILES = ['audit.md', 'claims.json', 'disclosure.json', 'draft.md', 'literature.json', 'metrics.json'] as const;
@@ -46,6 +47,11 @@ export async function researchExportManifestOf(source: ResearchExportSource, sci
     const verified = await verifyResearchDraft(source.inputs, source.ledger, source.draft); if (!verified.valid) return verified;
     if (verified.value.state !== 'verified') return { valid: false, issues: verified.value.issues };
     if (!equalsJson(verified.value, source.verification)) return researchRefuse('TRSH1002', '/verification', 'The export must retain independently recomputed verification.');
+    const interventionReport = researchInterventionReport(source.provenance.interventions);
+    const experimental = source.provenance.mode === undefined ? interventionReport.automatic > 0 : source.provenance.mode === 'full-auto';
+    if (source.provenance.mode === 'gate-only' && interventionReport.automatic > 0
+      || source.provenance.mode === 'full-auto' && interventionReport.automatic !== interventionReport.total)
+      return researchRefuse('TRSH1002', '/provenance/mode', 'Every accepted gate action must retain its project mode and actor.');
     if (scientific) {
       const checked = validateResearchShape<ResearchManifest>('ResearchManifest', scientific); if (!checked.valid) return checked;
       const { manifestHash, ...body } = scientific;
@@ -57,6 +63,10 @@ export async function researchExportManifestOf(source: ResearchExportSource, sci
         || !equalsJson(scientific.selectionRule, source.inputs.contract.selectionRule)
         || !equalsJson(scientific.metricOrigin, { evaluatorId: source.inputs.plan.evaluator.id, evaluatorVersion: source.inputs.plan.evaluator.version }))
         return researchRefuse('TRSH1002', '/research', 'The scientific export manifest must retain the exact selected lineage and observations.');
+      if (scientific.interventionReport && !equalsJson(scientific.interventionReport, interventionReport)
+        || scientific.experimental !== undefined && scientific.experimental !== experimental
+        || experimental && (!scientific.experimental || !scientific.interventionReport))
+        return researchRefuse('TRSH1002', '/research/interventionReport', 'Scientific manifests must reproduce every intervention and experimental-mode disclosure.');
       const scientificInputs = scientific.inputs;
       if (!source.inputs.contract!.datasets.every(dataset => scientificInputs.some(input => input.sha256 === dataset.sha256))
         || !source.inputs.plan!.inputPaths.every(path => scientificInputs.some(input => input.path === path)))
@@ -90,7 +100,8 @@ export async function researchExportManifestOf(source: ResearchExportSource, sci
         return researchRefuse('TRSH1005', '/reviews', 'A review must name this draft and its admitted claims.');
     }
     const inventory = await Promise.all(RESEARCH_BUNDLE_FILES.map(async path => ({ path, sha256: await researchFileHash(files[path]) })));
-    const body = { projectId: source.inputs.projectId, scope: source.inputs.scope, research: scientific, source, files: inventory };
+    const body = { projectId: source.inputs.projectId, scope: source.inputs.scope, research: scientific, source, files: inventory,
+      experimental, interventionReport };
     return validateResearchShape<ResearchExportManifest>('ResearchExportManifest', { id: 'export-' + await researchRevisionOf(body), ...body });
   } catch (cause) { return researchRefuse('TRSH1001', '/export', 'Export manifests require finite immutable records.', cause); }
 }

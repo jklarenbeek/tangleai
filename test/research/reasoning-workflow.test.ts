@@ -6,6 +6,26 @@ import { join } from 'node:path';
 import { MasInfrastructureCrash, MasTaskRefusal } from '@tangleai/mas';
 import type { ResearchDesignProposal, HypothesisSetProposal } from '@tangleai/research';
 import { reasoningWorkflowHarness } from './reasoning-workflow-fixtures.ts';
+import { resolveResearchFrame } from '../../packages/research/src/frames.ts';
+
+it('reasoning control resolves its retained evidence checkpoint and refuses altered control', async () => {
+  const h = await reasoningWorkflowHarness();
+  try {
+    await h.start(); await h.segment(); await h.respond(); const trace = await h.segment();
+    assert.equal(trace.run.status, 'waiting_for_input', JSON.stringify(trace.run.failure));
+    const operation = h.operations.find(row => row.stage === 'hypothesis')!;
+    const preparation = trace.attempts.find(row => row.kind === 'task' && row.path.endsWith('/hypothesis/prepare'))!.output as {
+      preparation: { frame: import('@tangleai/research').ResearchWorkflowFrame } };
+    const wire = preparation.preparation.frame;
+    assert.equal(wire.artifacts.length, 0); assert.ok(wire.checkpoint);
+    assert.deepEqual((await resolveResearchFrame(h.host.researchStore, wire)).artifacts, operation.frame.artifacts);
+    await assert.rejects(resolveResearchFrame(h.host.researchStore, { ...wire, pivot: wire.pivot + 1 }), /TRSH1002/);
+    const snapshot = await h.snapshot();
+    assert.ok(snapshot.committedAdmissionIds.includes(wire.checkpoint.admissionId));
+    assert.ok(operation.frame.artifacts.every(ref => snapshot.committedAdmissionIds.includes(ref.admissionId)));
+    assert.equal(h.calls, 6);
+  } finally { await h.close(); }
+});
 
 for (const mode of ['single-agent', 'debate'] as const) it(mode + ' uses one native research run and freezes its generated plan at the real design gate', async () => {
   const h = await reasoningWorkflowHarness(mode);

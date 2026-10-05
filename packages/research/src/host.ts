@@ -25,17 +25,20 @@ export function createResearchHostBindings(options: {
     researchFail('TRSH1007', '/analysis', 'Prepared result review and admitted analysis must use the same policy.');
   if (!equalsJson(admitted.writing ?? null, prepared.writingGraph?.policy ?? null))
     researchFail('TRSH1007', '/writing', 'Prepared writing and admitted writer/reviewer owners must use the same policy.');
-  const checkRun = (run: MasRun) => {
+  const checkRun = async (run: MasRun) => {
     if (run.workflowVersionId !== prepared.workflow.versionId || run.registryRevision !== prepared.snapshot.revision
       || run.executableRevision !== prepared.plan.executableRevision || run.configRegistryRevision !== prepared.catalog.revision)
       researchFail('TRSH1004', '/run', 'A native run cannot resume under a changed research stack or workflow.');
     const frame = researchValue(validateResearchShape<ResearchWorkflowFrame>('ResearchWorkflowFrame', (run.input as { frame?: unknown }).frame));
     if (frame.bindingId !== prepared.binding.id || frame.projectId !== run.id)
       researchFail('TRSH1004', '/run/input', 'Root input does not bind this native research run.');
+    const project = researchValue(await researchStore.getProject(run.id));
+    if (!project || project.mode !== prepared.mode || (project.experimental === true) !== prepared.experimental)
+      researchFail('TRSH1004', '/run/mode', 'The project mode must match its explicitly prepared topology.');
   };
   const store: MasStore = { ...masStore,
-    async getRun(id) { const run = await masStore.getRun(id); if (run) checkRun(run); return run; },
-    async readTrace(id) { const trace = await masStore.readTrace(id); if (trace) checkRun(trace.run); return trace; },
+    async getRun(id) { const run = await masStore.getRun(id); if (run) await checkRun(run); return run; },
+    async readTrace(id) { const trace = await masStore.readTrace(id); if (trace) await checkRun(trace.run); return trace; },
     async transitionRun(id, command) {
       if (command.kind === 'fail') await admitted.reconcileFailure?.(id, command.failure);
       return masStore.transitionRun(id, command);

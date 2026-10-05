@@ -1,6 +1,6 @@
 /** Measured scripted model paths stop at their actual preregistration gate. */
 import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
-import { resolveProfile, type ProfileRegistry, type HostManifest } from '@tangleai/config';
+import { resolveProfile, type ProfileRegistry, type HostManifest, type RunIdentity } from '@tangleai/config';
 import { compileMasRuntime, type MasHostBindings, type MasStore, type WorkflowLimits } from '@tangleai/mas';
 import { openTangleDb, createMasStore, createResearchStore, createMasSegmentDriver, ensurePendingMasSegments } from '@tangleai/store';
 import { createResearchBinding, researchArtifacts, researchReasoningRevisionOf, createDiscoveryStageTools, createResearchReasoningTools,
@@ -28,7 +28,7 @@ export interface ResearchReasoningExecution<T = ResearchExecutionTopic> {
   writing?: { policy: Omit<ResearchWritingPolicy, 'modelIdentity'>; limits: WorkflowLimits; reservation: ResearchCost;
     response: NonNullable<ResearchReasoningExecution['reviewResponse']> };
   tools(base: ResearchTaskTools, store: ResearchStore): Promise<ResearchTaskTools>;
-  collect(store: ResearchStore, masStore: MasStore, reasoning: ResearchReasoningTopic,
+  collect(store: ResearchStore, masStore: MasStore, reasoning: Pick<ResearchReasoningTopic, 'runIdentityId' | 'workflowVersionId' | 'executableRevision' | 'cost' | 'usage'>,
     native: { runGraph: string; requests: ResearchReasoningTopic['requests'] }): Promise<T>;
 }
 
@@ -45,7 +45,12 @@ async function identityFor(caps: Pick<WorkflowLimits, 'calls' | 'tokens' | 'ms' 
   const resolved = await resolveProfile({ registry, host, request: { kind: 'profile', profile: 'scripted-v1', overrides: null } });
   if (!resolved.ok) throw Error(JSON.stringify(resolved.issues)); return resolved.identity;
 }
-export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic, mode: ResearchReasoningPolicy['mode'], execution?: ResearchReasoningExecution<T>) {
+export function runResearchReasoningFixture<T = ResearchExecutionTopic>(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic,
+  mode: ResearchReasoningPolicy['mode'], execution?: ResearchReasoningExecution<T>): Promise<{ measurement: ResearchReasoningTopic; identity: RunIdentity; execution: T | undefined }>;
+export function runResearchReasoningFixture<T>(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic,
+  mode: ResearchReasoningPolicy['mode'], execution: ResearchReasoningExecution<T>, automatic: boolean): Promise<{ measurement: ResearchReasoningTopic | null; identity: RunIdentity; execution: T | undefined }>;
+export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic, mode: ResearchReasoningPolicy['mode'], execution?: ResearchReasoningExecution<T>, automatic = false) {
+  if (automatic && !execution?.analysis) throw Error('The autonomous fixture requires the complete bounded decision owner.');
   const script = requireResearchShape<ResearchReasoningScript>('ResearchReasoningScript', execution?.script ?? JSON.parse(new TextDecoder().decode(loaded.files.get('scripts/' + topic.id + '.json')!)));
   if (script.topicId !== topic.id) throw Error('Research reasoning script belongs to another topic.');
   const caps = execution?.writing?.limits ?? loaded.manifest.caps, limits = execution?.writing?.limits ?? { ...caps, toolRounds: 4, fanOut: 8, iterations: 8 }, identity = await identityFor(caps);
@@ -61,9 +66,10 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
       ...(execution?.analysis ? [{ name: 'research-analysis', version: await researchAnalysisRevisionOf(execution.analysis) }] : []),
       ...(writingPolicy ? [{ name: 'research-writing', version: await researchWritingRevisionOf(writingPolicy) }] : [])] });
   const prepared = await prepareResearchWorkflow(topic.contract, { binding, profile: 'scripted-v1', limits, reasoning: policy,
+    ...(automatic ? { mode: 'full-auto', experimental: true } as const : { mode: 'gate-only', experimental: false } as const),
     ...(execution ? { execution: execution.policy } : {}), ...(execution?.analysis ? { analysis: execution.analysis } : {}), ...(writingPolicy ? { writing: writingPolicy } : {}) });
   const project: ResearchProject = { id: topic.contract.projectId, topic: topic.title, question: topic.title, domainProfile: 'computational', owner: 'scripted-fixture',
-    mode: 'gate-only', safetyClass: 'computational', status: 'CREATED', budget: { calls: caps.calls, tokens: caps.tokens, ms: caps.ms, physical: caps.calls }, createdAt: '2026-01-01T00:00:00.000Z' };
+    mode: automatic ? 'full-auto' : 'gate-only', ...(automatic ? { experimental: true } : {}), safetyClass: 'computational', status: 'CREATED', budget: { calls: caps.calls, tokens: caps.tokens, ms: caps.ms, physical: caps.calls }, createdAt: '2026-01-01T00:00:00.000Z' };
   const frame = await initialResearchFrame(project, topic.plan, binding), now = () => '2026-01-01T00:00:00.000Z';
   const db = await openTangleDb({ jobs: { now: () => 1000000, random: () => 0.5 } });
   let discovery: Awaited<ReturnType<typeof createResearchDiscoveryFixture>> | undefined;
@@ -134,6 +140,23 @@ export async function runResearchReasoningFixture<T = ResearchExecutionTopic>(lo
       profile: 'scripted-v1', input: { frame }, limits: { ...limits } });
     if (!created.ok) throw Error(JSON.stringify(created));
     const driver = createMasSegmentDriver(db, masStore, { owner: 'research-reasoning', leaseMs: 1000 }); await driver.enqueue(created.value);
+    if (automatic) {
+      if (!await driver.drive(prepared.plan.executableRevision, compiled.value.executeSegment, execution!.signal ?? new AbortController().signal))
+        throw Error('Autonomous research was not queued.');
+      const trace = (await masStore.readTrace(project.id))!, snapshot = researchValue(await researchStore.snapshot(project.id))!;
+      if (trace.run.status !== 'completed' || trace.interactions.length || !['COMPLETE', 'STOPPED'].includes(snapshot.state.status))
+        throw Error('Autonomous research did not terminate in its native task topology: ' + JSON.stringify(trace.run.failure));
+      const cost = snapshot.attempts.reduce((sum, row) => ({ calls: sum.calls + row.attempt.spend.calls,
+        tokens: sum.tokens + row.attempt.spend.tokens, ms: sum.ms + row.attempt.spend.ms, physical: sum.physical + row.attempt.spend.physical }),
+      { calls: 0, tokens: 0, ms: 0, physical: 0 });
+      if (cost.calls !== requests.length || cost.calls !== trace.run.budget.spent.turns || cost.tokens !== trace.run.budget.spent.tokens)
+        throw Error('Autonomous research must retain every model request and its incurred cost.');
+      usage.traceBytes = new TextEncoder().encode(JSON.stringify(trace)).byteLength;
+      const executionResult = await execution!.collect(researchStore, masStore, { runIdentityId: identity.identityId,
+        workflowVersionId: prepared.workflow.versionId, executableRevision: prepared.plan.executableRevision, cost, usage },
+      { runGraph: canonicalizeJson(prepared.mermaid), requests });
+      return { measurement: null, identity, execution: executionResult };
+    }
     for (let segment = 0; segment < 2; segment++) {
       if (!await driver.drive(prepared.plan.executableRevision, compiled.value.executeSegment, new AbortController().signal)) throw Error('Research reasoning segment was not queued.');
       const trace = (await masStore.readTrace(project.id))!;

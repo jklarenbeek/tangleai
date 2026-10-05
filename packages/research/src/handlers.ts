@@ -4,8 +4,8 @@ import { MasTaskRefusal, MasInfrastructureCrash, interactionIdOf, type MasTaskIn
 import type { ResearchStore } from './store.ts';
 import type { ResearchRecordWrite } from './records.ts';
 import type { ResearchContract, ExperimentPlan, ResearchWorkflowFrame, ResearchLifecycle, ResearchCost, ResearchIssue,
-  ResearchGateResponse, InputManifest, StageAttempt, StageCommitReceipt, ResearchInputArtifact, ResearchState, ArtifactAdmission, ResearchArtifact } from './contracts.gen.ts';
-import { immutableResearchJson, copyResearchBytes, inputManifestHashOf, stageAttemptIdOf } from './identity.ts';
+  ResearchGateResponse, InputManifest, StageAttempt, StageCommitReceipt, ResearchInputArtifact, ResearchState, ArtifactAdmission, ResearchArtifact, ResearchDirective } from './contracts.gen.ts';
+import { immutableResearchJson, copyResearchBytes, inputManifestHashOf, stageAttemptIdOf, researchRevisionOf } from './identity.ts';
 import { researchIssue, type ResearchOutcome } from './errors.ts';
 import { validateResearchShape } from './schema.ts';
 import { planContractFreeze, planStageCommit } from './transitions.ts';
@@ -16,6 +16,8 @@ import { RESEARCH_STAGES, type ResearchStageName } from './workflow.ts';
 import { RESEARCH_MODEL_STAGES, researchNativeCost, researchPreparationFor,
   type ResearchReasoningRuntime, type ResearchPreparation, type ResearchModelStage, type ResearchHandlerAdmission } from './reasoning-contract.ts';
 import { createResearchReadTools } from './tools.ts';
+import { researchIntervention, planHumanCommand } from './commands.ts';
+import { researchGateEditor, RESEARCH_DIRECTIVE_MEDIA } from './directives.ts';
 
 import { RESEARCH_FRAME_MEDIA_TYPE, restoredResearchFrame as restoredFrame, resolveResearchFrame, researchWireFrame } from './frames.ts';
 import type { ResearchExecutionRuntime } from './execution-contract.ts';
@@ -93,6 +95,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
   const execution = tools.execution ? { ...tools.execution, policy: immutableResearchJson(tools.execution.policy), taskHandlers: { ...tools.execution.taskHandlers }, toolBindings: { ...tools.execution.toolBindings } } : undefined;
   const analysis = tools.analysis ? { ...tools.analysis, policy: immutableResearchJson(tools.analysis.policy) } : undefined;
   const writing = tools.writing ? { ...tools.writing, policy: immutableResearchJson(tools.writing.policy) } : undefined;
+  const compactFrames = !!(reasoning || execution);
   const nativeMode = (stage: string) => stage === 'write' ? writing!.policy.mode === 'agent' ? 'single-agent' : 'scripted'
     : stage === 'decide' || stage === 'verify' ? 'debate' : stage === 'execute'
     ? execution!.policy.mode === 'authored' ? 'single-agent' : 'scripted' : reasoning!.policy.mode;
@@ -100,6 +103,24 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
   handlers['research-refuse'] = () => { throw new MasTaskRefusal({ code: 'TMAS2004', detail: 'Research control input has no registered lifecycle edge.',
     cause: { code: 'TRSH1004', docPath: '/frame/status', message: 'Research control input has no registered lifecycle edge.' } }); };
   handlers['research-relay'] = input => ({ frame: researchValue(validateResearchShape<ResearchWorkflowFrame>('ResearchWorkflowFrame', input.value.frame)) });
+  handlers['research-auto-gate'] = async input => {
+    const frame = researchValue(validateResearchShape<ResearchWorkflowFrame>('ResearchWorkflowFrame', input.value.frame));
+    const snapshot = researchValue(await store.snapshot(input.runId)), native = await masStore.readTrace(input.runId);
+    if (!snapshot || snapshot.project.mode !== 'full-auto' || snapshot.project.experimental !== true
+      || frame.projectId !== input.runId || frame.projectHash !== await researchProjectHash(snapshot.project)
+      || frame.bindingId !== binding.id || frame.status !== snapshot.state.status
+      || native?.run.status !== 'running' || !native.attempts.some(row => row.path === input.path
+        && row.idempotencyKey === input.idempotencyKey && row.kind === 'task' && row.status === 'running'))
+      researchFail('TRSH1005', '/mode', 'Automatic approval requires its explicit experimental project and running native task.');
+    const kind = input.node === 'literature-gate' ? 'literature' : input.node === 'design-gate' ? 'design' : input.node === 'quality-gate' ? 'quality' : null;
+    if (!kind) researchFail('TRSH1005', '/node', 'Unknown automatic research gate.');
+    const review = await checkResearchGate(frame, kind);
+    if (review.stateRevision !== snapshot.state.revision || review.artifacts.some(ref => !snapshot.committedAdmissionIds.includes(ref.admissionId)
+      || !snapshot.artifacts.some(row => row.id === ref.admissionId && row.artifact.id === ref.artifactId)))
+      researchFail('TRSH1005', '/gate', 'Automatic approval requires the exact current committed review.');
+    return { response: { decision: 'approve', approvedManifestHash: review.manifestHash,
+      actor: 'full-auto', note: 'Explicit experimental automatic approval.' } satisfies ResearchGateResponse };
+  };
   const bind = (name: ResearchStageName, phase: 'stage' | 'prepare' | 'commit' = 'stage'): MasTaskHandlerBinding => async input => {
     try { return await runStage(name, input, phase); }
     catch (cause) {
@@ -142,7 +163,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       const manifest = researchValue(await store.getRecord(runId, 'InputManifest', 'manifest-' + preparation.manifestHash));
       if (!manifest) researchFail('TRSH1003', '/manifest', 'Failed model work must retain its admitted manifest.');
       let spend = researchNativeCost(trace.attempts, preparation.scope);
-      const expanded = execution ? await resolveResearchFrame(store, preparation.frame) : preparation.frame;
+      const expanded = compactFrames ? await resolveResearchFrame(store, preparation.frame) : preparation.frame;
       const retained = preparation.stage === 'execute' && execution ? await execution.complete({ stage: 'execute', path: preparation.commitPath,
         idempotencyKey: '', frame: expanded, manifest, attemptId: preparation.attemptId, expectedState: snapshot.state }, spend, preparation.scope, true)
         : writing && ['write', 'verify'].includes(preparation.stage) ? { spend, records: [], artifacts: [{
@@ -204,7 +225,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
   async function runStage(name: ResearchStageName, input: MasTaskInput, phase: 'stage' | 'prepare' | 'commit') {
     const supplied = input.value.preparation as ResearchPreparation | undefined;
     const wire = researchValue(validateResearchShape<ResearchWorkflowFrame>('ResearchWorkflowFrame', phase === 'commit' ? supplied?.frame : input.value.frame));
-    const original = execution ? await resolveResearchFrame(store, wire) : wire;
+    const original = compactFrames ? await resolveResearchFrame(store, wire) : wire;
     const kind = name in gates ? gates[name as keyof typeof gates] : null;
     const response = kind ? researchValue(validateResearchShape<ResearchGateResponse>('ResearchGateResponse', input.value.response)) : null;
     const frame = immutableResearchJson({ ...original, response });
@@ -224,7 +245,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       if (prior.attempt.inputManifestHash !== manifestHash || prior.attempt.stage !== frame.status)
         researchFail('TRSH1004', '/inputManifestHash', 'A committed MAS path cannot resume with changed content.');
       if (prior.attempt.error) throw new ResearchFailure(prior.attempt.error);
-      return { frame: researchWireFrame(await restoredFrame(store, prior), !!execution) };
+      return { frame: researchWireFrame(await restoredFrame(store, prior), compactFrames) };
     }
     const native = await masStore.readTrace(input.runId);
     if (native?.run.status !== 'running' || !native.attempts.some(a => a.status === 'running' && a.kind === 'task'
@@ -265,7 +286,7 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       describeArtifact: async ref => immutableResearchJson((await admitted(ref)).admission.artifact) };
     onOperation?.('planned', operation);
     const preparation: ResearchPreparation = { stage: name as ResearchPreparation['stage'], scope, commitPath,
-      manifestHash, attemptId: attempt.id, stateRevision: state.revision, frame: researchWireFrame(frame, !!execution) };
+      manifestHash, attemptId: attempt.id, stateRevision: state.revision, frame: researchWireFrame(frame, compactFrames) };
     if (phase === 'prepare') {
       for (const dimension of ['calls', 'tokens', 'ms', 'physical'] as const)
         if (snapshot.attempts.reduce((total, row) => total + row.attempt.spend[dimension], manifest.reservation[dimension]) > snapshot.project.budget[dimension])
@@ -286,28 +307,73 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
     let result: ResearchStageResult = { artifacts: [], records: [], spend: zero };
     let carriedInputs = frame.artifacts;
     let retainedFailure: ResearchIssue | undefined;
+    let acceptedGate: { id: string; at: string } | undefined;
     let verifiedWriting = false;
     let target: ResearchLifecycle, nextFrame: ResearchWorkflowFrame = { ...frame, checkpoint: null, response: null, gate: null };
+    delete nextFrame.guidanceHash;
     try {
       if (kind) {
         const gate = await checkResearchGate(original, kind);
         if (gate.stateRevision !== state.revision || response!.approvedManifestHash !== gate.manifestHash)
           researchFail('TRSH1004', '/response/approvedManifestHash', 'Response does not approve the current reviewed artifact set.');
         const node = kind + '-gate', path = input.path.slice(0, -input.node.length) + node;
-        const interaction = await masStore.getInteraction(interactionIdOf(input.runId, path));
-        if (!interaction || interaction.status !== 'responded' || !equalsJson(interaction.response, response) || !equalsJson(interaction.prompt, original))
-          researchFail('TRSH1005', '/response', 'Stage response must be the durable native interaction response.');
-        const id = researchValue(validateResearchShape<string>('ResearchId', interaction.responseKey));
-        if (response!.decision === 'edit' || response!.decision === 'guide' || response!.patch || response!.target && response!.target !== 'write')
-          researchFail('TRSH1007', '/response/decision', 'This scripted host does not bind guarded edits, guidance or targeted retries.');
-        result.records.push({ kind: 'Intervention', value: { id, gate: kind, actor: response!.actor,
-          action: response!.decision as 'approve' | 'reject' | 'stop', reviewedManifestHash: gate.manifestHash,
-          approvedManifestHash: response!.decision === 'approve' ? gate.manifestHash : null, substantive: response!.note.trim().length > 0 } });
-        result.artifacts.push({ bytes: new TextEncoder().encode(canonicalizeJson({ interactionId: interaction.id, responseKey: interaction.responseKey, response })), mediaType: 'application/json' });
-        attempt.interventions = [id];
-        if (response!.decision === 'stop' || response!.decision === 'reject' && (kind !== 'quality' || frame.review >= activeContract.reviewCap)) target = 'STOPPED';
-        else if (response!.decision === 'reject') target = 'WRITE';
+        let id: string, at: string;
+        if (snapshot.project.mode === 'full-auto') {
+          const automatic = native.attempts.find(row => row.path === path && row.kind === 'task' && row.status === 'completed');
+          if (!snapshot.project.experimental || !automatic || response!.actor !== 'full-auto' || response!.decision !== 'approve'
+            || response!.command || !equalsJson((automatic.output as { response?: unknown })?.response, response))
+            researchFail('TRSH1005', '/response', 'Automatic approval must be the exact completed native gate task.');
+          id = 'intervention-' + await researchRevisionOf({ path, key: automatic.idempotencyKey }); at = automatic.finishedAt!;
+        } else {
+          const interaction = await masStore.getInteraction(interactionIdOf(input.runId, path));
+          if (!interaction || interaction.status !== 'responded' || response!.actor === 'full-auto'
+            || !equalsJson(interaction.response, response) || !equalsJson(interaction.prompt, original))
+            researchFail('TRSH1005', '/response', 'Stage response must be the durable native interaction response.');
+          id = researchValue(validateResearchShape<string>('ResearchId', interaction.responseKey)); at = interaction.resolvedAt!;
+          if (response!.command) {
+            const planned = await planHumanCommand(native, response!.command);
+            if (!planned.ok || planned.value.interactionId !== interaction.id || !equalsJson(planned.value.response, response))
+              researchFail('TRSH1005', '/command', 'The durable response must reproduce its exact attributable command.');
+          }
+        }
+        if ((response!.decision === 'edit' || response!.decision === 'guide') && !response!.command)
+          researchFail('TRSH1005', '/command', 'Edits and guidance require an attributable typed command.');
+        if (response!.target && (kind === 'literature' || kind === 'design' && response!.target !== 'design'))
+          researchFail('TRSH1004', '/target', 'The requested retry has no input at this gate.');
+        const substantive = ['reject', 'edit', 'guide'].includes(response!.decision);
+        const used = snapshot.records.filter(row => row.kind === 'Intervention' && row.value.substantive).length;
+        const exhausted = used + 1 >= activeContract.reviewCap || kind === 'quality' && frame.review >= activeContract.reviewCap;
+        if (response!.decision === 'stop' || substantive && exhausted
+          || response!.decision === 'reject' && kind !== 'quality' && !response!.target) target = 'STOPPED';
+        else if (substantive) target = kind === 'literature' ? 'SYNTHESIS' : (response!.target ?? (kind === 'design' ? 'design' : 'write')).toUpperCase() as ResearchLifecycle;
         else target = kind === 'literature' ? 'SYNTHESIS' : kind === 'design' ? 'EXECUTE' : 'COMPLETE';
+        acceptedGate = { id, at };
+        let edit: ResearchDirective['edit'] = null;
+        const command = response!.command;
+        if (command?.kind === 'edit' && target !== 'STOPPED') {
+          if (!gate.artifacts.some(ref => ref.artifactId === command.artifactId && ref.admissionId === command.admissionId))
+            researchFail('TRSH1005', '/artifactId', 'The edited artifact was not reviewed at this gate.');
+          const editor = await researchGateEditor(store, frame.projectId, command, key);
+          const preview = researchValue(await editor.preview(command.patch)), staged = researchValue(await editor.commit(command.patch));
+          const source = { artifactId: command.artifactId, admissionId: command.admissionId };
+          edit = command.target === 'design' ? { kind: 'design', source, staged: refOf(staged),
+            candidate: researchValue(validateResearchShape('ResearchEditableDesign', preview.candidate)) }
+            : { kind: 'write', source, staged: refOf(staged), candidate: researchValue(validateResearchShape('ResearchEditableDraft', preview.candidate)) };
+        }
+        const intervention = await researchIntervention({ frame: original, response: response!, id, at, target,
+          editedArtifactId: edit?.staged.artifactId ?? null });
+        result.records.push({ kind: 'Intervention', value: intervention });
+        result.artifacts.push({ bytes: new TextEncoder().encode(canonicalizeJson({ responseKey: id, response, intervention })), mediaType: 'application/json' });
+        attempt.interventions = [id];
+        if (substantive && target !== 'STOPPED') {
+          const directive = researchValue(validateResearchShape<ResearchDirective>('ResearchDirective', { kind: 'research-directive',
+            interventionId: id, stage: target, stateRevision: state.revision + 1, text: response!.note,
+            guidanceHash: intervention.effect!.guidanceHash, edit }));
+          result.artifacts.push({ bytes: new TextEncoder().encode(canonicalizeJson(directive)), mediaType: RESEARCH_DIRECTIVE_MEDIA });
+          if (directive.guidanceHash) nextFrame.guidanceHash = directive.guidanceHash;
+          nextFrame.decision = null;
+          if (target === 'ANALYZE' || target === 'DESIGN' || target === 'SYNTHESIS') delete nextFrame.decisionId;
+        }
         if (reasoning && kind === 'literature' && target === 'SYNTHESIS') carriedInputs = await reasoning.retainLiteratureInputs(operation, access);
       } else {
         if (phase === 'commit') {
@@ -353,6 +419,8 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
             || result.decision === 'Pivot' && frame.pivot >= activeContract.pivotCap ? 'Stop' : result.decision;
           if (analysis && bounded !== result.decision) researchFail('TRSH1006', '/decision', 'The deterministic decision must terminate explicitly at its declared cap.');
           nextFrame.decision = bounded;
+          const decisionRecord = result.records.find(row => row.kind === 'ResearchDecision');
+          if (decisionRecord?.kind === 'ResearchDecision') nextFrame.decisionId = decisionRecord.value.id;
           target = bounded === 'Proceed' ? 'WRITE' : bounded === 'Refine' ? 'EXECUTE' : bounded === 'Pivot' ? 'SYNTHESIS' : 'STOPPED';
         } else target = next[name]!;
         if (name === 'synthesis') { nextFrame.pivot++; nextFrame.attempt = 0; nextFrame.decision = null; }
@@ -382,9 +450,11 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
             issue = researchIssue('TRSH1006', '/spend/' + dimension, 'Native work exceeded its reservation; all incurred cost and receipts are retained.', issue);
         retainedFailure = issue; target = 'STOPPED'; nextFrame.decision = 'Stop';
       } else {
-      const failed = { ...attempt, spend: result.spend, stopReason: 'failed' as const, error: issue, interventions: [] };
+      const intervention = acceptedGate ? await researchIntervention({ frame: original, response: response!, ...acceptedGate, target: 'STOPPED' }) : null;
+      const failed = { ...attempt, spend: result.spend, stopReason: 'failed' as const, error: issue,
+        interventions: intervention ? [intervention.id] : [] };
       researchValue(await store.commitStage(researchValue(await planStageCommit({ state, attempt: failed, manifest,
-        nextStatus: 'STOPPED', artifactAdmissionIds: [] }))));
+        nextStatus: 'STOPPED', artifactAdmissionIds: [], records: intervention ? [{ kind: 'Intervention', value: intervention }] : [] }))));
       throw new ResearchFailure(issue);
       }
     }
@@ -410,6 +480,6 @@ export function createResearchTaskHandlers(store: ResearchStore, tools: Research
       ...(result.preregistration ? { preregistration: result.preregistration } : {}) }))));
     onOperation?.('committed', operation);
     if (retainedFailure) throw new ResearchFailure(retainedFailure);
-    return { frame: researchWireFrame(await restoredFrame(store, committed), !!execution) };
+    return { frame: researchWireFrame(await restoredFrame(store, committed), compactFrames) };
   }
 }

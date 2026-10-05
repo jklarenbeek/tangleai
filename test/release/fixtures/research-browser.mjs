@@ -2,7 +2,8 @@ import { createMemoryResearchStore, planProjectCreate, planStateTransition, plan
   inputManifestHashOf, stageAttemptIdOf, researchArtifactIdOf, validateResearchShape, createReplayTransport, discoverCrossref,
   researchArtifacts, createResearchPatternHost, prepareResearchPattern, researchRevisionOf, createResearchWorkspace,
   buildExecutionManifest, createFixtureExecutor, createEvaluationRegistry, researchObservationSignature, createResearchAnalysis, selectBranch, planResearchDecision,
-  buildClaimLedger, writeResearchDraft, verifyResearchDraft, researchDisclosure, renderMarkdownBundle, rerunBundle, renderLatexBundle } from '@tangleai/research';
+  buildClaimLedger, writeResearchDraft, verifyResearchDraft, researchDisclosure, renderMarkdownBundle, rerunBundle, renderLatexBundle,
+  researchMode, createStagedArtifactRefiner, researchInterventionReport, RESEARCH_RECORD_KINDS } from '@tangleai/research';
 import { pairedBootstrap } from '@jarenjs/core/stats';
 import { cloneJson } from '@jarenjs/core/object';
 import { GMPL_LIMITS } from '@tangleai/gmpl';
@@ -139,4 +140,29 @@ export async function qualifyResearchWritingBrowser() {
   const refused = await verifyResearchDraft(inputs, ledger, bad);
   return { sections: draft.sections.length, files: Object.keys(bundle.files).length, rerun: JSON.stringify(bundle.files) === JSON.stringify(rerun.files),
     disclosure: bundle.manifest.source.disclosure.length, tex: Object.keys(tex.files).sort(), refused: refused.valid ? refused.value.state : refused.issues[0].code };
+}
+
+export async function qualifyResearchCommandsBrowser() {
+  const project = { id: 'packed-edit', topic: 'reviewed control', question: 'Original question', domainProfile: 'computational',
+    owner: 'fixture', mode: 'gate-only', safetyClass: 'computational', status: 'CREATED', createdAt: '2026-01-01T00:00:00Z',
+    budget: { calls: 1, tokens: 1, ms: 1, physical: 1 } };
+  const store = createMemoryResearchStore(); value(await store.createProject(value(planProjectCreate(project))));
+  const attempt = { projectId: project.id, stage: 'CREATED', attemptOrdinal: 1, inputManifestHash: 'a'.repeat(64) };
+  const original = value(await store.stageArtifact(new TextEncoder().encode(JSON.stringify(project)), { projectId: project.id,
+    attempt, mediaType: 'application/json', verification: 'verified', parents: [{ artifactId: project.id, admissionId: null }] }));
+  const editor = createStagedArtifactRefiner({ store, projectId: project.id, source: { artifactId: original.artifact.id, admissionId: original.id },
+    attempt, schema: 'ResearchProject', allowedPaths: ['/question'] });
+  const patch = [{ op: 'replace', path: '/question', value: 'Reviewed question' }];
+  value(await editor.preview(patch)); const edited = value(await editor.commit(patch));
+  const old = JSON.parse(new TextDecoder().decode(value(await store.readArtifact(project.id, original.id)).bytes));
+  const refused = await editor.preview([{ op: 'replace', path: '/budget/calls', value: 100 }]);
+  const actions = [['approve', 'human'], ['edit', 'human'], ['approve', 'full-auto']].map(([action, actor], index) => ({
+    id: 'action-' + index, gate: 'design', action, actor, reviewedManifestHash: 'a'.repeat(64),
+    approvedManifestHash: action === 'approve' ? 'a'.repeat(64) : null, substantive: action === 'edit', experimental: actor === 'full-auto' }));
+  const report = researchInterventionReport(actions);
+  if (!RESEARCH_RECORD_KINDS.includes('Intervention')) throw Error('The public record census omitted interventions.');
+  return { mode: researchMode().mode, experimental: researchMode({ mode: 'full-auto', experimental: true }).experimental,
+    pending: edited.artifact.verification === 'pending', parent: edited.artifact.parentIds[0] === original.artifact.id,
+    immutable: old.question === project.question, refused: refused.valid ? null : refused.issues[0].code,
+    total: report.total, substantive: report.substantive };
 }

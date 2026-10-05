@@ -124,3 +124,19 @@ await prepareResearchWorkflow(contract, { binding, profile: 'scripted', limits, 
 // @ts-expect-error Writing modes are closed and never grant an arbitrary toolbox.
 const unknownWriter: ResearchWritingPolicy = { ...writingPolicy, mode: 'unrestricted' };
 void unknownWriter;
+
+import { createResearchCommands, planHumanCommand, interventionReport, researchInterventionReport, researchMode,
+  createStagedArtifactRefiner, RESEARCH_RECORD_KINDS, type HumanCommand, type ResearchMode, type ResearchInputArtifact } from '@tangleai/research';
+import type { TraceView } from '@tangleai/mas';
+declare const command: HumanCommand, trace: TraceView, source: ResearchInputArtifact;
+const commands = createResearchCommands({ masStore, researchStore: sqlite });
+await commands.attach(project.id); await commands.execute(command); await planHumanCommand(trace, command);
+interventionReport(trace); researchInterventionReport([]); void RESEARCH_RECORD_KINDS;
+researchMode(); researchMode({ mode: 'full-auto', experimental: true });
+await masStore.resolveInteraction(command.interactionId, 'cancelled', command.revision, { response: { reason: 'stop' }, responseKey: command.id });
+const editor = createStagedArtifactRefiner({ store: sqlite, projectId: project.id, source, attempt,
+  schema: 'ResearchEditableDesign', allowedPaths: ['/proposal'] });
+await editor.preview([]); await editor.commit([]);
+// @ts-expect-error Automatic operation requires explicit experimental opt-in.
+const unsafeMode: ResearchMode = { mode: 'full-auto' };
+void unsafeMode;

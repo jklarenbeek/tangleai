@@ -22,7 +22,7 @@ export function researchDecisionResponse(node: { id: string }, request: unknown)
   return node.id.startsWith('reviewer-') ? { result, assessment: 'accept', issues: [], strengths: [] } : { result };
 }
 export async function runResearchDecisionFixture(loaded: LoadedResearchFixture, original: ResearchFixtureTopic,
-  registration: ResearchDecisionRegistration, mode: 'control' | 'branching', repair = false) {
+  registration: ResearchDecisionRegistration, mode: 'control' | 'branching', repair = false, automatic = false) {
   const f = await researchExecutionFixture(loaded, original), topic = structuredClone(original), declared = registration[mode];
   const { contractHash: _contractHash, ...body } = topic.contract;
   body.attemptCap = declared.attemptCap; body.branchSelectionRule = declared.rule;
@@ -47,7 +47,7 @@ export async function runResearchDecisionFixture(loaded: LoadedResearchFixture, 
   const executor = repair ? createFixtureExecutor({ ...f.programs, [registration.repair.programId]: async () => {
     throw Error(registration.repair.fault);
   } }, { now: () => 0 }) : f.executor;
-  let writingEvidence: { cards: EvidenceCard[]; literature: LiteratureRecord[]; interventions: Intervention[]; runGraph: string; programSourceHash: string } | undefined;
+  let writingEvidence: { cards: EvidenceCard[]; literature: LiteratureRecord[]; interventions: Intervention[]; mode: 'gate-only' | 'full-auto'; runGraph: string; programSourceHash: string } | undefined;
   const result = await runResearchReasoningFixture<ResearchAnalysisTopic>(loaded, topic, 'single-agent', { policy: f.policy, script, decisions: [['Stop']],
     revision: await canonicalSha256({ registration, mode, repair }), analysis: analysisPolicy, reviewResponse: researchDecisionResponse,
     async tools(base, store) {
@@ -81,7 +81,7 @@ export async function runResearchDecisionFixture(loaded: LoadedResearchFixture, 
       if (!final?.details || final.kind !== 'Stop') throw Error('Decision control omitted its final bounded decision.');
       writingEvidence = { cards: snapshot.records.filter(row => row.kind === 'EvidenceCard').map(row => row.value),
         literature: snapshot.records.filter(row => row.kind === 'LiteratureRecord').map(row => row.value),
-        interventions: snapshot.records.filter(row => row.kind === 'Intervention').map(row => row.value), runGraph: native.runGraph,
+        interventions: snapshot.records.filter(row => row.kind === 'Intervention').map(row => row.value), mode: snapshot.project.mode, runGraph: native.runGraph,
         programSourceHash: await canonicalSha256(loaded.manifest.programs) };
       return requireResearchShape<ResearchAnalysisTopic>('ResearchAnalysisTopic', { topicId: topic.id, nativeStatus: trace.run.status, state: snapshot.state,
         runIdentityId: reasoning.runIdentityId, workflowVersionId: reasoning.workflowVersionId, contract, plan, cost, branches, analyses, decisions, reviews,
@@ -91,7 +91,7 @@ export async function runResearchDecisionFixture(loaded: LoadedResearchFixture, 
         finalAnalysisId: final.details.analysisId, finalDecisionId: final.id, traceBytes,
         reviewCalls: snapshot.attempts.filter(row => row.attempt.stage === 'DECIDE').reduce((n, row) => n + row.attempt.spend.calls, 0) });
     },
-  });
+  }, automatic);
   if (!writingEvidence) throw Error('Decision control omitted its admitted writing evidence.');
   return { ...result, writingEvidence };
 }

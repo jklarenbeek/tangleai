@@ -1262,7 +1262,8 @@
           "enum": [
             "human",
             "timeout",
-            "scripted"
+            "scripted",
+            "full-auto"
           ]
         },
         "action": {
@@ -1288,6 +1289,33 @@
           ]
         },
         "substantive": {
+          "type": "boolean"
+        },
+        "stage": {
+          "$ref": "#/$defs/ResearchLifecycle"
+        },
+        "actorId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "viewedArtifactIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^art-[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "effect": {
+          "$ref": "#/$defs/ResearchInterventionEffect"
+        },
+        "at": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "experimental": {
           "type": "boolean"
         }
       },
@@ -1324,8 +1352,10 @@
             "type": "string",
             "minLength": 1
           },
-          "minItems": 1,
           "uniqueItems": true
+        },
+        "beforeResults": {
+          "const": true
         }
       },
       "required": [
@@ -1335,7 +1365,30 @@
         "reason",
         "marksExploratory"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "beforeResults"
+            ]
+          },
+          "then": {
+            "properties": {
+              "marksExploratory": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "marksExploratory": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "ResearchManifest": {
       "type": "object",
@@ -1470,6 +1523,12 @@
         },
         "manifestHash": {
           "$ref": "#/$defs/Sha256"
+        },
+        "experimental": {
+          "type": "boolean"
+        },
+        "interventionReport": {
+          "$ref": "#/$defs/ResearchInterventionReport"
         }
       },
       "required": [
@@ -1849,6 +1908,10 @@
         "createdAt": {
           "type": "string",
           "minLength": 1
+        },
+        "experimental": {
+          "type": "boolean",
+          "description": "New full-auto projects must explicitly opt into their experimental native task topology."
         }
       },
       "required": [
@@ -1991,6 +2054,9 @@
         "controlHash": {
           "$ref": "#/$defs/Sha256",
           "description": "Canonical stage control input, including root values, counters and the exact gate response; absent on pre-workflow manifests."
+        },
+        "guidanceHash": {
+          "$ref": "#/$defs/Sha256"
         }
       },
       "required": [
@@ -2970,7 +3036,8 @@
         "actor": {
           "enum": [
             "human",
-            "scripted"
+            "scripted",
+            "full-auto"
           ]
         },
         "target": {
@@ -3055,6 +3122,9 @@
           },
           "maxItems": 64,
           "description": "Reserved bounded RFC6902 request; execution requires the separately bound guarded editor."
+        },
+        "command": {
+          "$ref": "#/$defs/HumanCommand"
         }
       },
       "required": [
@@ -3143,6 +3213,12 @@
         },
         "planHash": {
           "$ref": "#/$defs/Sha256"
+        },
+        "guidanceHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "decisionId": {
+          "$ref": "#/$defs/ResearchId"
         }
       },
       "required": [
@@ -4283,6 +4359,34 @@
           "required": [
             "contract",
             "plan"
+          ],
+          "additionalProperties": false
+        },
+        "humanReview": {
+          "type": "object",
+          "properties": {
+            "interventionId": {
+              "$ref": "#/$defs/ResearchId"
+            },
+            "text": {
+              "type": "string",
+              "maxLength": 8192
+            },
+            "proposal": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ResearchDesignProposal"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "interventionId",
+            "text",
+            "proposal"
           ],
           "additionalProperties": false
         }
@@ -6238,6 +6342,13 @@
             "provenance": {
               "type": "object",
               "properties": {
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "gate-only",
+                    "full-auto"
+                  ]
+                },
                 "runGraph": {
                   "type": "string",
                   "minLength": 1
@@ -6377,6 +6488,12 @@
             ],
             "additionalProperties": false
           }
+        },
+        "experimental": {
+          "type": "boolean"
+        },
+        "interventionReport": {
+          "$ref": "#/$defs/ResearchInterventionReport"
         }
       },
       "required": [
@@ -6531,6 +6648,669 @@
         "n",
         "aggregate",
         "value"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchJsonPatch": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "add",
+                  "replace",
+                  "test"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^(/.*)?$"
+              },
+              "value": {}
+            },
+            "required": [
+              "op",
+              "path",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "remove"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^(/.*)?$"
+              }
+            },
+            "required": [
+              "op",
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "copy",
+                  "move"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^(/.*)?$"
+              },
+              "from": {
+                "type": "string",
+                "pattern": "^(/.*)?$"
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "from"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "maxItems": 64,
+      "description": "Reserved bounded RFC6902 request; execution requires the separately bound guarded editor.",
+      "minItems": 1
+    },
+    "ResearchCommandTarget": {
+      "enum": [
+        "write",
+        "analyze",
+        "design"
+      ]
+    },
+    "HumanCommand": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "approve"
+            },
+            "id": {
+              "$ref": "#/$defs/ResearchId"
+            },
+            "interactionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "gate": {
+              "$ref": "#/$defs/ResearchGateKind"
+            },
+            "approvedManifestHash": {
+              "$ref": "#/$defs/Sha256"
+            },
+            "actor": {
+              "enum": [
+                "human",
+                "scripted"
+              ]
+            },
+            "actorId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "at": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "note": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "interactionId",
+            "revision",
+            "gate",
+            "approvedManifestHash",
+            "actor",
+            "actorId",
+            "at",
+            "note"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "reject"
+            },
+            "id": {
+              "$ref": "#/$defs/ResearchId"
+            },
+            "interactionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "gate": {
+              "$ref": "#/$defs/ResearchGateKind"
+            },
+            "approvedManifestHash": {
+              "$ref": "#/$defs/Sha256"
+            },
+            "actor": {
+              "enum": [
+                "human",
+                "scripted"
+              ]
+            },
+            "actorId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "at": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "target": {
+              "$ref": "#/$defs/ResearchCommandTarget"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "interactionId",
+            "revision",
+            "gate",
+            "approvedManifestHash",
+            "actor",
+            "actorId",
+            "at",
+            "reason",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "edit"
+            },
+            "id": {
+              "$ref": "#/$defs/ResearchId"
+            },
+            "interactionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "gate": {
+              "$ref": "#/$defs/ResearchGateKind"
+            },
+            "approvedManifestHash": {
+              "$ref": "#/$defs/Sha256"
+            },
+            "actor": {
+              "enum": [
+                "human",
+                "scripted"
+              ]
+            },
+            "actorId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "at": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "artifactId": {
+              "type": "string",
+              "pattern": "^art-[0-9a-f]{64}$"
+            },
+            "admissionId": {
+              "type": "string",
+              "pattern": "^admission-[0-9a-f]{64}$"
+            },
+            "patch": {
+              "$ref": "#/$defs/ResearchJsonPatch"
+            },
+            "target": {
+              "$ref": "#/$defs/ResearchCommandTarget"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "interactionId",
+            "revision",
+            "gate",
+            "approvedManifestHash",
+            "actor",
+            "actorId",
+            "at",
+            "artifactId",
+            "admissionId",
+            "patch",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "guide"
+            },
+            "id": {
+              "$ref": "#/$defs/ResearchId"
+            },
+            "interactionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "gate": {
+              "$ref": "#/$defs/ResearchGateKind"
+            },
+            "approvedManifestHash": {
+              "$ref": "#/$defs/Sha256"
+            },
+            "actor": {
+              "enum": [
+                "human",
+                "scripted"
+              ]
+            },
+            "actorId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "at": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8192
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "interactionId",
+            "revision",
+            "gate",
+            "approvedManifestHash",
+            "actor",
+            "actorId",
+            "at",
+            "text"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "stop"
+            },
+            "id": {
+              "$ref": "#/$defs/ResearchId"
+            },
+            "interactionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "gate": {
+              "$ref": "#/$defs/ResearchGateKind"
+            },
+            "approvedManifestHash": {
+              "$ref": "#/$defs/Sha256"
+            },
+            "actor": {
+              "enum": [
+                "human",
+                "scripted"
+              ]
+            },
+            "actorId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "at": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "interactionId",
+            "revision",
+            "gate",
+            "approvedManifestHash",
+            "actor",
+            "actorId",
+            "at",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ResearchInterventionEffect": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "approval",
+            "retry",
+            "stop"
+          ]
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchLifecycle"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "editedArtifactId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^art-[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "guidanceHash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "target",
+        "editedArtifactId",
+        "guidanceHash"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchInterventionReport": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "approvals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "substantive": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stops": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "human": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scripted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "automatic": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "total",
+        "approvals",
+        "substantive",
+        "stops",
+        "human",
+        "scripted",
+        "automatic"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchEditableDesign": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "reasoning-proposal"
+        },
+        "stage": {
+          "const": "design"
+        },
+        "proposal": {
+          "$ref": "#/$defs/ResearchDesignProposal"
+        },
+        "visibleCards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "uniqueItems": true
+        },
+        "availableCards": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "kind",
+        "stage",
+        "proposal",
+        "visibleCards",
+        "availableCards"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchEditableDraft": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "research-writing-proposal"
+        },
+        "phase": {
+          "const": "write"
+        },
+        "proposal": {
+          "$ref": "#/$defs/ResearchDraftProposal"
+        }
+      },
+      "required": [
+        "kind",
+        "phase",
+        "proposal"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchDirective": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "research-directive"
+        },
+        "interventionId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "stage": {
+          "enum": [
+            "SYNTHESIS",
+            "DESIGN",
+            "ANALYZE",
+            "WRITE"
+          ]
+        },
+        "stateRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 8192
+        },
+        "guidanceHash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "edit": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "const": "design"
+                    },
+                    "source": {
+                      "$ref": "#/$defs/ResearchInputArtifact"
+                    },
+                    "staged": {
+                      "$ref": "#/$defs/ResearchInputArtifact"
+                    },
+                    "candidate": {
+                      "$ref": "#/$defs/ResearchEditableDesign"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "source",
+                    "staged",
+                    "candidate"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "const": "write"
+                    },
+                    "source": {
+                      "$ref": "#/$defs/ResearchInputArtifact"
+                    },
+                    "staged": {
+                      "$ref": "#/$defs/ResearchInputArtifact"
+                    },
+                    "candidate": {
+                      "$ref": "#/$defs/ResearchEditableDraft"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "source",
+                    "staged",
+                    "candidate"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "interventionId",
+        "stage",
+        "stateRevision",
+        "text",
+        "guidanceHash",
+        "edit"
       ],
       "additionalProperties": false
     }

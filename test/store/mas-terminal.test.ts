@@ -38,10 +38,10 @@ function completion(runId: string, attemptId: string): CommitCompletionPlan {
     stopReason: 'stop', transcript: { state: 'not-run', text: null, size: 0, artifact: null },
     toolSteps: [], contextReads: [], artifacts: [], restored: false };
 }
-async function wait(store: MasStore, id: string, expiry: { afterMs: number; deadline: string } | null = null) {
+async function wait(store: MasStore, id: string, expiry: { afterMs: number; deadline: string } | null = null, responseSchema: Record<string, unknown> = { type: 'string', const: 'approve-v1' }) {
   await run(store, id);
   const interaction = value(await store.createInteraction({ runId: id, node: 'review', path: 'review', prompt: 'v1',
-    responseSchema: { type: 'string', const: 'approve-v1' }, expiry, segment: 0 }));
+    responseSchema, expiry, segment: 0 }));
   value(await store.transitionRun(id, { kind: 'wait' })); return interaction;
 }
 
@@ -178,5 +178,95 @@ it('a cancelled queued segment settles on reclaim without executing its body', a
     assert.equal(await driver.drive(version.executableRevision, async () => { calls++; }, new AbortController().signal), true);
     assert.equal(calls, 0); assert.equal(await driver.settled((await store.getRun(current.id))!), true);
     assert.equal((await db.jobs!.counts()).failed, 0);
+  } finally { await db.close(); }
+});
+
+
+const attributedSchema = { type: 'object', properties: { decision: { enum: ['approve', 'stop'] }, actor: { type: 'string' }, note: { type: 'string' } },
+  required: ['decision', 'actor', 'note'], additionalProperties: false };
+it('terminal attribution snapshots caller bytes before its first asynchronous store read', async () => {
+  const db = await openTangleDb(), store = createMasStore(db);
+  try {
+    const gate = await wait(store, 'capture-stop', null, attributedSchema);
+    const resolution = { responseKey: 'captured-stop', response: { decision: 'stop', actor: 'operator', note: 'Captured.' } };
+    const expected = structuredClone(resolution), pending = store.resolveInteraction(gate.id, 'cancelled', 0, resolution);
+    resolution.response.note = 'Changed during the transaction.'; resolution.responseKey = 'changed-key';
+    const result = value(await pending); assert.equal(result.responseKey, expected.responseKey); assert.deepEqual(result.response, expected.response);
+  } finally { await db.close(); }
+});
+it('terminal attribution cannot exceed the native trace budget or partially cancel the run', async () => {
+  const db = await openTangleDb(), store = createMasStore(db);
+  try {
+    value(await store.createRun({ ...version, runId: 'bounded-stop', input: {}, limits: { traceBytes: 5000 } }));
+    value(await store.claimRunSegment('bounded-stop', 'owner'));
+    const gate = value(await store.createInteraction({ runId: 'bounded-stop', node: 'review', path: 'review', prompt: 'v1',
+      responseSchema: attributedSchema, expiry: null, segment: 0 }));
+    value(await store.transitionRun('bounded-stop', { kind: 'wait' })); const before = await store.readTrace('bounded-stop');
+    refused(await store.resolveInteraction(gate.id, 'cancelled', 0, { responseKey: 'large-stop',
+      response: { decision: 'stop', actor: 'operator', note: 'x'.repeat(10000) } }), 'TMAS2009');
+    assert.deepEqual(await store.readTrace('bounded-stop'), before);
+  } finally { await db.close(); }
+});
+it('resolveInteraction cannot manufacture a responded interaction through an untyped terminal status', async () => {
+  const db = await openTangleDb(), store = createMasStore(db);
+  try {
+    const gate = await wait(store, 'invalid-terminal-status', null, attributedSchema), before = await store.readTrace(gate.runId);
+    const result = await store.resolveInteraction(gate.id, 'responded' as never, 0,
+      { responseKey: 'false-approval', response: { decision: 'approve', actor: 'operator', note: '' } });
+    refused(result, 'TMAS2007'); assert.deepEqual(await store.readTrace(gate.runId), before);
+  } finally { await db.close(); }
+});
+it('attributed cancellation is durable and replays exact bytes after SQLite reopen without a resume job', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'mas-attributed-stop-')), path = join(dir, 'run.sqlite');
+  const open = () => openTangleDb({ path, jobs: { now: () => 1000, random: () => 0.5 } });
+  let db = await open();
+  try {
+    let store = createMasStore(db, { now: () => '2026-10-04T00:00:00Z' });
+    const gate = await wait(store, 'attributed-stop', null, attributedSchema);
+    const resolution = { responseKey: 'stop-action', response: { decision: 'stop', actor: 'operator', note: 'End this run.' } };
+    const cancelled = value(await store.resolveInteraction(gate.id, 'cancelled', 0, resolution));
+    assert.equal(cancelled.responseKey, resolution.responseKey); assert.deepEqual(cancelled.response, resolution.response);
+    assert.equal(cancelled.resumeSegment, null);
+    await db.close(); db = await open(); store = createMasStore(db, { now: () => '2026-10-05T00:00:00Z' });
+    const before = await store.readTrace(gate.runId);
+    assert.deepEqual(value(await store.resolveInteraction(gate.id, 'cancelled', 0, resolution)), cancelled);
+    refused(await store.resolveInteraction(gate.id, 'cancelled', 0, { ...resolution, response: { ...resolution.response, note: 'changed' } }), 'TMAS2007');
+    refused(await store.resolveInteraction(gate.id, 'cancelled', 0, { ...resolution, responseKey: 'different' }), 'TMAS2007');
+    refused(await store.resolveInteraction(gate.id, 'expired', 0, resolution), 'TMAS2007');
+    assert.deepEqual(await store.readTrace(gate.runId), before);
+    assert.deepEqual(await ensurePendingMasSegments(db, store), { examined: 0, enqueued: 0, queued: 0, skipped: 0 });
+  } finally { await db.close(); await rm(dir, { recursive: true, force: true }); }
+});
+it('attributed terminal writes roll back together and malformed attribution cannot terminate a waiting run', async () => {
+  const db = await openTangleDb(); let failAt = '';
+  const store = createMasStore(db, { now: () => '2026-10-04T00:00:00Z', applyProbe: step => { if (step === failAt) throw Error('injected attributed stop'); } });
+  try {
+    const gate = await wait(store, 'atomic-attribution', null, attributedSchema), before = await store.readTrace('atomic-attribution');
+    const resolution = { responseKey: 'stop-key', response: { decision: 'stop', actor: 'operator', note: 'bounded' } };
+    refused(await store.resolveInteraction(gate.id, 'cancelled', 0, { ...resolution, response: { decision: 'unknown' } }), 'TMAS2007');
+    refused(await store.resolveInteraction(gate.id, 'cancelled', 1, resolution), 'TMAS2007');
+    refused(await store.resolveInteraction(gate.id, 'cancelled', 0, { ...resolution, responseKey: '' }), 'TMAS2007');
+    assert.deepEqual(await store.readTrace(gate.runId), before);
+    for (const step of ['interaction', 'interaction-run', 'interaction-commit']) {
+      failAt = step;
+      await assert.rejects(store.resolveInteraction(gate.id, 'cancelled', 0, resolution), /injected attributed stop/);
+      assert.deepEqual(await store.readTrace(gate.runId), before);
+    }
+    failAt = ''; value(await store.resolveInteraction(gate.id, 'cancelled', 0, resolution));
+  } finally { await db.close(); }
+});
+for (const first of ['approve', 'stop'] as const) it(`attributed ${first} wins its native CAS without retaining the losing action`, async () => {
+  const db = await openTangleDb({ jobs: { now: () => 1000, random: () => 0.5 } });
+  const a = createMasStore(db), b = createMasStore(db);
+  try {
+    const gate = await wait(a, 'attribution-race-' + first, null, attributedSchema);
+    const approve = () => a.respondInteraction(gate.id, { decision: 'approve', actor: 'approver', note: '' }, 0, 'approved');
+    const stop = () => b.resolveInteraction(gate.id, 'cancelled', 0, { responseKey: 'stopped', response: { decision: 'stop', actor: 'stopper', note: 'Stop.' } });
+    const outcomes = await Promise.all(first === 'approve' ? [approve(), stop()] : [stop(), approve()]);
+    assert.equal(outcomes.filter(row => row.ok).length, 1); assert.ok(!outcomes[1].ok && outcomes[1].issue.code === 'TMAS2007');
+    const current = await a.getInteraction(gate.id); assert.ok(current);
+    assert.equal(current.responseKey, first === 'approve' ? 'approved' : 'stopped');
+    assert.equal((current.response as { actor: string }).actor, first === 'approve' ? 'approver' : 'stopper');
+    assert.equal((await ensurePendingMasSegments(db, a)).enqueued, first === 'approve' ? 1 : 0);
   } finally { await db.close(); }
 });

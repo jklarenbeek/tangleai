@@ -49,6 +49,7 @@ export function defineResearchDomainBinding(purpose: ResearchPatternPurpose, pro
   // Project the owner before resolving references: unused design definitions must
   // not be copied into every native round state or expand participant authority.
   Reflect.deleteProperty(scoped.$defs.ResearchReasoningConstraints.properties, 'design');
+  (scoped.$defs.ResearchReasoningConstraints.properties.humanReview.properties as Record<string, unknown>).proposal = { type: 'null' };
   const context = gmplSchemaDefinition(scoped, 'ResearchReasoningContext', 'https://tangleai.dev/schemas/research-context/' + purpose);
   payloadSchema.properties.payload = purpose.startsWith('draft-') ? { type: 'object', additionalProperties: false,
     properties: { draftId: { type: 'string', minLength: 1 }, ledgerId: { type: 'string', minLength: 1 } }, required: ['draftId', 'ledgerId'] }

@@ -16,7 +16,7 @@ it('validates and plans one pinned MAS lifecycle with native loops, switches and
   assert.equal(f.prepared.workflow.versionId, await masWorkflowVersionIdOf(f.prepared.workflow as unknown as Record<string, unknown>));
   const all = [f.prepared.workflow, ...f.prepared.snapshot.subgraphs.values()];
   const loops = all.flatMap(w => w.nodes).filter(n => n.kind === 'loop');
-  assert.deepEqual(loops.map(n => [n.id, n.maxIterations]).sort(), [['pivot', 2], ['refine', 3], ['review', 2]]);
+  assert.deepEqual(loops.map(n => [n.id, n.maxIterations]).sort(), [['design-review', 2], ['pivot', 2], ['refine', 3], ['review', 2]]);
   const gates = all.flatMap(w => w.nodes).filter(n => n.kind === 'interaction');
   assert.equal(gates.length, 3); assert.ok(gates.every(g => g.expiry === null));
   assert.ok(all.flatMap(w => w.nodes).some(n => n.kind === 'switch' && n.id === 'decision'));

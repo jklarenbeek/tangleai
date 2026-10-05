@@ -378,22 +378,12 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   *Closes on:* crash tests at both sides of removal converge through a fenced
   cleanup receipt, while stale settlement and recreated-workspace tests still
   refuse. Until then, terminal status alone is not evidence of cleanup.
-- [ ] **Verifiable autonomous research.** *Wanted:* a topic taken through
-  literature discovery, hypothesis formation, executable experiments, analysis,
-  review and a draft — with every important claim traceable to literature or
-  immutable experiment output. The remaining execution path must consume the
-  committed evidence, generated hypotheses and frozen design: generated code
-  executing outside the desktop process under a pinned,
-  resource-bounded, secret-free policy that cannot modify the evaluation harness
-  or the metric registry; Proceed / Refine / Pivot / Stop decisions schema-valid,
-  budgeted and resumable; every manuscript number resolving to a registered
-  measurement and every citation to a support passage; human approvals durable,
-  scoped, attributable and never inferred from a timeout; cross-run lessons
-  source-backed, reversible and off by default until measured. *Constraint:* a
-  SearxNG search followed by cited RAG is not autonomous research and a DAG event
-  history is not resumability; the experiment executor must be the evolution
-  loop's domain-general consumer or successor, not a parallel unsafe shell
-  wrapper, and research lessons must use the skill loop's guarded records, not a
-  second skill system. *Closes on:* fixed-pipeline, debate, self-healing,
-  human-in-the-loop and lesson ablations publishing gains and losses under
-  identical inputs and budgets.
+- [ ] **Research learning, coverage and operations.** *Wanted:* source-backed,
+  reversible cross-run lessons, a second measured domain and a read-only workspace
+  for the durable research records. Lessons remain off by default until measured.
+  *Constraint:* reuse the skill loop's guarded records and measured outcome
+  activation; preserve source identity, train/test isolation, immutable negative
+  results and the executor boundary. The operations page must use the existing
+  run-addressed subscription. *Closes on:* fixed-pipeline, debate, self-healing,
+  human-in-the-loop and lesson ablations publishing gains, losses, leakage and
+  complete costs under identical inputs and budgets across both domains.

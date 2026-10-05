@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "de8a41292f1798e60b5f95cf132a90e90b8e0c42",
+    "head": "8d988df343c10c6507dd660dfb8d2393741d16a5",
     "clean": false,
     "files": [
       {
@@ -207,7 +207,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "aefe5950786e8a6a2dfe5ae4d7e0512c1b529bbb236e49b3e32be27e673c994e"
+        "sha256": "48b0d05297ede35cf0ee51bb66ef4193cec58846e7940ddc7b2df126deb2212a"
       },
       {
         "path": "packages/agents/package.json",
@@ -675,7 +675,7 @@
       },
       {
         "path": "packages/mas/src/store.ts",
-        "sha256": "f6e82cbb543a2abf436aa4018eb4e0577089fdb54e97f39d558b5e24fb3e4319"
+        "sha256": "6a6eb1df96a48b3bf4ad509cee5744ffbc6808ad388796fb2a87b88e25c80304"
       },
       {
         "path": "packages/mas/src/template-bindings.ts",
@@ -875,7 +875,7 @@
       },
       {
         "path": "packages/store/src/mas-store.ts",
-        "sha256": "0b49811531691f1daecf9c8654a4bb89366600e8caca7734adeea3111f3a51d0"
+        "sha256": "dc2d8844ab8351f7d10b193433b4db32666f96c1406678c0a995af9532137f29"
       },
       {
         "path": "packages/store/src/memory-store.ts",
@@ -1023,7 +1023,7 @@
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "c7c1400e6f2d797a912b656a983bb04a2b848f1d1d631e15fab3fcd08b5cd033"
+        "sha256": "b857eb6bde51c84ae6f1817988093f217ad58e8624e707ef8b45a1159f7d5d38"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -1115,7 +1115,7 @@
       },
       {
         "path": "test/release/fixtures/browser.mjs",
-        "sha256": "214ebe214ed43b09b9b6f5e601b4e9c526f9c3fbfca2352542e16be9e54032e6"
+        "sha256": "cba4e0895eaa6bcd6863c9831cd86af63cca3824f74a4b0c0ae85b29fa12b3b8"
       },
       {
         "path": "test/release/fixtures/gmpl-browser.mjs",
@@ -1130,7 +1130,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "ec733231463f637f1b695d2edd4205dfea60ecd0ac306ae60fee7ef809e9332d"
+    "sha256": "95041929ab32473628830bac68470e04db54315c6e6c6a940c0a67b1a7ab00f2"
   },
   "ablations": [
     {
@@ -76684,5 +76684,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "84df6134744870544850d456e467b9636045440fda24b618eb675284784806ae"
+  "reportId": "20662e53a5aacf4c8c8a32616542cf2e4f1109ae84430a283e7fa5149ce8c969"
 }

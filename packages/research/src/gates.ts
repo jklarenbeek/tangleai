@@ -25,7 +25,8 @@ export function gateResponseSchema(kind: ResearchGateKind, reviewedManifestHash:
   researchValue(validateResearchShape('ResearchGateKind', kind)); researchValue(validateResearchShape('Sha256', reviewedManifestHash));
   const base = researchSchemaOf('ResearchGateResponse');
   return immutableResearchJson({ ...base, $id: `https://tangleai.dev/schemas/research-gates/${kind}/${reviewedManifestHash}`,
-    properties: { ...(base.properties as Record<string, unknown>), approvedManifestHash: { const: reviewedManifestHash } } }) as JsonSchema;
+    properties: { ...(base.properties as Record<string, unknown>), approvedManifestHash: { const: reviewedManifestHash },
+      actor: { enum: ['human', 'scripted'] } } }) as JsonSchema;
 }
 export interface ResearchOverduePolicy { kind: 'pause' | 'stop'; afterMs: number }
 export interface ResearchOverdueGate { id: string; revision: number; runId: string; path: string; ageMs: number; kind: ResearchGateKind }

@@ -9,6 +9,15 @@
     "schemaVersion": {
       "const": 1
     },
+    "recordNames": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
     "source": {
       "type": "object",
       "properties": {
@@ -325,11 +334,22 @@
               "type": "null"
             }
           ]
+        },
+        "autoControl": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchWritingControl"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
         "registrationHash",
-        "control"
+        "control",
+        "autoControl"
       ],
       "additionalProperties": false
     },
@@ -459,6 +479,7 @@
   "required": [
     "benchmark",
     "schemaVersion",
+    "recordNames",
     "source",
     "suite",
     "registration",
@@ -478,6 +499,195 @@
   ],
   "additionalProperties": false,
   "$defs": {
+    "ResearchHandoff": {
+      "type": "object",
+      "properties": {
+        "benchmark": {
+          "const": "research-handoff"
+        },
+        "query": {
+          "const": "queries/research/core-baseline.json"
+        },
+        "queryRevision": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "reportId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "artifactId": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+        },
+        "handoff": {
+          "type": "object",
+          "properties": {
+            "reportId": {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            },
+            "decision": {
+              "const": "conformant"
+            },
+            "fixture": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "const": "research-computational-v1"
+                },
+                "revision": {
+                  "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+                },
+                "topics": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "id",
+                "revision",
+                "topics"
+              ],
+              "additionalProperties": false
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "enum": [
+                      "artifact-oracle",
+                      "no-model-runner",
+                      "single-pass-retrieve-draft",
+                      "fixed-single-agent",
+                      "fixed-plus-debate",
+                      "fixed-plus-branching",
+                      "gate-only-full",
+                      "full-auto-full"
+                    ]
+                  },
+                  "state": {
+                    "const": "measured"
+                  },
+                  "scope": {
+                    "enum": [
+                      "full-lifecycle",
+                      "pre-execution",
+                      "execution",
+                      "writing"
+                    ]
+                  },
+                  "cost": {
+                    "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchCost"
+                  },
+                  "interventions": {
+                    "type": "object",
+                    "properties": {
+                      "total": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "substantive": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "approvals": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "total",
+                      "substantive",
+                      "approvals"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "state",
+                  "scope",
+                  "cost",
+                  "interventions"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 8,
+              "maxItems": 8
+            },
+            "recordNames": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "limitations": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "modes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "enum": [
+                      "gate-only-full",
+                      "full-auto-full"
+                    ]
+                  },
+                  "experimental": {
+                    "type": "boolean"
+                  },
+                  "interventions": {
+                    "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchInterventionReport"
+                  }
+                },
+                "required": [
+                  "id",
+                  "experimental",
+                  "interventions"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "reportId",
+            "decision",
+            "fixture",
+            "rows",
+            "recordNames",
+            "limitations",
+            "modes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "benchmark",
+        "query",
+        "queryRevision",
+        "reportId",
+        "artifactId",
+        "handoff"
+      ],
+      "additionalProperties": false
+    },
     "ResearchWritingRegistration": {
       "type": "object",
       "properties": {
@@ -889,6 +1099,9 @@
           ],
           "additionalProperties": false
         },
+        "interventionReport": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchInterventionReport"
+        },
         "failures": {
           "type": "object",
           "properties": {
@@ -953,6 +1166,7 @@
         "probes",
         "cost",
         "interventions",
+        "interventionReport",
         "failures",
         "resultClaims"
       ],
@@ -964,7 +1178,8 @@
         "id": {
           "enum": [
             "single-pass-retrieve-draft",
-            "gate-only-full"
+            "gate-only-full",
+            "full-auto-full"
           ]
         },
         "state": {
@@ -972,6 +1187,12 @@
         },
         "scope": {
           "const": "writing"
+        },
+        "experimental": {
+          "type": "boolean"
+        },
+        "interventionReport": {
+          "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchInterventionReport"
         },
         "topics": {
           "type": "array",
@@ -1073,6 +1294,8 @@
         "id",
         "state",
         "scope",
+        "experimental",
+        "interventionReport",
         "topics",
         "citationIdentity",
         "claimSupport",
@@ -5506,7 +5729,7 @@
                   {
                     "$count": "$.rows[?(@.scope==\"writing\")]"
                   },
-                  2
+                  3
                 ]
               },
               {
@@ -5524,6 +5747,32 @@
               {
                 "$gt": [
                   "$.writing.control.reviewCalls",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.writing.autoControl.state.status",
+                  "COMPLETE"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.writing.autoControl.bundle.experimental",
+                  true
+                ]
+              },
+              {
+                "$eq": [
+                  "$.writing.autoControl.bundle.interventionReport.automatic",
+                  3
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.writing.autoControl.interactions[*]"
+                  },
                   0
                 ]
               },
@@ -5584,9 +5833,19 @@
                         {
                           "$and": [
                             {
-                              "$eq": [
-                                "$row.id",
-                                "gate-only-full"
+                              "$or": [
+                                {
+                                  "$eq": [
+                                    "$row.id",
+                                    "gate-only-full"
+                                  ]
+                                },
+                                {
+                                  "$eq": [
+                                    "$row.id",
+                                    "full-auto-full"
+                                  ]
+                                }
                               ]
                             },
                             {
@@ -5617,6 +5876,82 @@
           "row": "$.rows[?(@.scope==\"writing\")]"
         },
         "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$row.experimental",
+                {
+                  "$eq": [
+                    "$row.id",
+                    "full-auto-full"
+                  ]
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.interventionReport.total",
+                {
+                  "$sum": "$row.topics[*].interventionReport.total"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.interventionReport.approvals",
+                {
+                  "$sum": "$row.topics[*].interventionReport.approvals"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.interventionReport.substantive",
+                {
+                  "$sum": "$row.topics[*].interventionReport.substantive"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.interventionReport.stops",
+                {
+                  "$sum": "$row.topics[*].interventionReport.stops"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.interventionReport.human",
+                {
+                  "$sum": "$row.topics[*].interventionReport.human"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.interventionReport.scripted",
+                {
+                  "$sum": "$row.topics[*].interventionReport.scripted"
+                }
+              ]
+            },
+            {
+              "$eq": [
+                "$row.interventionReport.automatic",
+                {
+                  "$sum": "$row.topics[*].interventionReport.automatic"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "row": "$.rows[?(@.scope==\"writing\")]"
+        },
+        "$satisfies": {
           "$every": {
             "topic": "$row.topics[*]"
           },
@@ -5626,6 +5961,18 @@
                 "$eq": [
                   "$topic.scope",
                   "$topic.bundle.scope"
+                ]
+              },
+              {
+                "$eq": [
+                  "$topic.interventionReport",
+                  "$topic.bundle.interventionReport"
+                ]
+              },
+              {
+                "$eq": [
+                  "$row.experimental",
+                  "$topic.bundle.experimental"
                 ]
               },
               {

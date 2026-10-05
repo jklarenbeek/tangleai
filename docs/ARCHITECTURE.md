@@ -253,7 +253,7 @@ omissions; they do not change the production topology guards. The paper profile
 retains an unavailable state with no corpus or invented runtime manifest.
 No licensed historical quality, live brokerage or operational parity is claimed.
 
-## Durable research lifecycle
+## Verifiable research (core lifecycle)
 
 `@tangleai/research` defines one MAS workflow per project. Native graphs host
 bounded refine, pivot and review loops; three indefinite interactions bind their
@@ -275,8 +275,19 @@ and fails its run with `TMAS2007` atomically, then reconciles the separate resea
 STOPPED projection. Terminal runs reject new semantic writes. A clock never
 creates an approval. The [research instrument](RESEARCH_BENCHMARK.md) retains
 stage-specific scripted approvals, honest scientific Stop decisions, and separate
-complete-path controls. These are keyless durability and fixture measurements;
-the later model and learning mechanisms remain explicit gaps.
+complete-path controls. Its eight rows measure scripted reasoning, execution,
+independent result review, claim-bound writing and both operating modes.
+Cross-run learning and a second domain remain open; no live quality claim follows.
+
+Typed approve, reject, edit, guide and stop commands settle through the native
+interaction revision fence. Every accepted action retains its actor, reviewed
+artifact set and effect. A guarded edit creates a pending child proposal and a
+new independently verified attempt; committed evidence remains immutable.
+Human redesign preserves the old frozen lineage and marks affected observations
+exploratory. Guidance enters the next input manifest and model request.
+Explicit experimental full-auto replaces interactions with native approval tasks,
+retains their automatic actor and discloses exact action counts in each manifest.
+It uses the same execution and verification owners as gate-only operation.
 
 Scholarly discovery composes into the same CREATE and DISCOVERY tasks. CREATE
 commits the query plan and metadata screening criteria before any provider call.

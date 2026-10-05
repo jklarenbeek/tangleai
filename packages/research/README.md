@@ -1,6 +1,9 @@
 # @tangleai/research
 
-Closed research records, content-addressed artifacts and atomic lifecycle storage.
+Verifiable research from scholarly discovery through frozen experiments,
+independent analysis, claim-bound drafts and attributable human decisions.
+Closed records, content-addressed artifacts and atomic lifecycle storage retain
+failed attempts, negative results and every incurred call.
 The public root performs no host I/O and works in browsers, Node and Bun. MAS
 owns workflow execution; this package plans and stores its research projection.
 
@@ -79,8 +82,8 @@ CONFIG identity and pins prompt, tools, evaluator and stage reservation.
 catalog, validated plan and Mermaid projection. `defineResearchWorkflow` is the
 root authoring function; `createResearchRegistry` supplies its exact child
 versions. Composition failures throw `ResearchFailure` with a typed `issue`.
-Native subgraphs host three bounded loops: refinement uses `attemptCap`, pivot
-uses `pivotCap`, and quality review uses `reviewCap`. A requested repetition at
+Native subgraphs host bounded loops: refinement uses `attemptCap`, pivot
+uses `pivotCap`, and design and quality review use `reviewCap`. A requested repetition at
 its cap takes the registered Stop edge; native `TMAS2009` remains a failure.
 
 Create the project before starting its MAS run, use the same project id as the
@@ -107,9 +110,48 @@ completed nodes without entering a handler. Each indefinite interaction stores
 `gateResponseSchema(kind, reviewedManifestHash)` with the reviewed artifact hash
 as a response const. The handler accepts only the actual durable response.
 Scripted approvals identify themselves as scripted; a digest does not establish
-who reviewed the artifacts. The initial scripted host supports approve, Stop
-and bounded quality rejection to write. Edit, guide and targeted rejection
-requests refuse until their guarded capabilities are bound.
+who reviewed the artifacts. Hosts authenticate actors before constructing commands.
+
+`createResearchCommands({ masStore, researchStore })` exposes read-only
+`attach(runId)` and `execute(command)`. `researchStatus(trace)` is the corresponding
+pure status projection. Each `HumanCommand` includes a unique `id`, interaction id,
+expected revision, gate kind, exact reviewed-manifest hash, actor (`human` or
+`scripted`), actor id and explicit RFC3339 `at`:
+
+- `approve` carries a note and advances to the next registered stage.
+- `reject` carries a reason and a target (`write`, `analyze` or `design`). The
+  quality gate can revisit all three; the design gate can revisit design.
+- `guide` carries text. Its next synthesis, design or writing attempt admits the
+  exact guidance hash and exposes the text as a human request in its model input.
+- `edit` names a reviewed artifact and admission, bounded JSON Patch and retry
+  target. Design and writer proposals can be edited; observations, source evidence
+  and committed records cannot. The guarded editor checks both read and write
+  paths and synchronous schema validity. It creates a pending descendant with
+  the old artifact as parent; the next attempt independently verifies its result.
+  The designer and agent writer must preserve the exact edited proposal before
+  independent verification. A template writer retains its fixed arrangement and
+  refuses an edit that changes it. A design revision before any execution uses an
+  explicit `beforeResults` amendment with no observations; after results exist,
+  every affected observation remains marked exploratory under the new lineage.
+- `stop` carries a reason. Native cancellation stores its attributable response
+  atomically with the terminal run; retry reconciles the separate research
+  `STOPPED` projection and intervention if that transaction was interrupted.
+
+`planHumanCommand(trace, command)` performs read-only admission. Changed review
+hashes, stale revisions and competing responses refuse `TMAS2007`; identical
+delivery replays by intervention id without another execution. Accepted actions
+retain their stage, actor, viewed artifact ids, effect and timestamp. A note on
+an approval is not substantive guidance. `interventionReport(trace)` and
+`researchInterventionReport(records)` use the same action accounting; exports
+carry the counts beside the complete records. Substantive corrections consume
+the finite review allowance, and reaching a cap records the action before Stop.
+
+Gate-only is the default topology. Experimental full-auto requires
+`{ mode: 'full-auto', experimental: true }` on both the project and prepared
+workflow. It replaces each gate interaction with a native task and records
+`actor: 'full-auto'`; exported manifests disclose `experimental: true`. An
+automatic response cannot be submitted to a human interaction. No mode infers
+approval from time or silently switches during resume.
 
 `overdueGates(trace, now, policy)` returns counted waiting gates using an explicit
 RFC3339 instant. Pause preserves the wait. Stop resolves the native interaction
@@ -249,7 +291,7 @@ Dataset artifacts must already belong to the committed input manifest. Native
 bounded seed/condition loops checkpoint each experiment before the branch's
 atomic commit. A failed or cancelled branch retains completed observations,
 the failed run, output artifacts and incurred spend. Resume consumes existing
-native receipts instead of repeating completed seeds. Execution workflows carry
+native receipts instead of repeating completed seeds. Reasoning and execution workflows carry
 compact frame references between tasks; the package expands only their exact
 committed checkpoint bytes before checking input scope.
 
@@ -369,3 +411,14 @@ retrieval-only controls. A Stop is never relabelled as successful research.
 `renderLatexBundle` emits escaped TeX and BibTeX without host I/O. The benchmark's
 separate bounded compiler records compilation, missing-tool skips or refusals;
 compilation is not a research quality gate.
+
+The [instrument](../../docs/RESEARCH_BENCHMARK.md) measures eight registered rows
+on three authored computational topics, with matched scripted gate-only and
+experimental full-auto operation. Both modes retain the original inconclusive
+and negative decisions. A separate positive control reaches writer, independent
+review and all three gates. These tiers qualify implementation and accounting;
+they do not establish live research quality, actual human-review efficacy or
+paper parity. Cross-run lessons, a second domain and the research operations UI
+remain outside this core package. The
+[query handoff](../../queries/research/core-baseline.json) retains fixture/report
+identities, all eight rows, public record names, costs and those limits.

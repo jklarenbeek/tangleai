@@ -2,6 +2,11 @@
 // Do not edit: regenerate instead.
 
 /**
+ * Schema constraints this type cannot express: if={"required":["beforeResults"]}, then={"properties":{"marksExploratory":{"maxItems":0}}}, else={"properties":{"marksExploratory":{"minItems":1}}}
+ */
+export type AmendmentPart1 = unknown;
+
+/**
  * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
  */
 export type Sha256 = string;
@@ -16,20 +21,7 @@ export type ResearchId = string;
  */
 export type AmendmentMarksExploratoryItem = string;
 
-export interface Amendment {
-  after: Sha256;
-  before: Sha256;
-  id: ResearchId;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  marksExploratory: Array<AmendmentMarksExploratoryItem>;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  reason: string;
-}
-
+export type Amendment = AmendmentPart1 & { after: Sha256; before: Sha256; beforeResults?: true; id: ResearchId; marksExploratory: Array<AmendmentMarksExploratoryItem>; reason: string; };
 
 export interface ResearchAnalysisDiagnostic {
   /**
@@ -1127,6 +1119,202 @@ export interface ExportReceipt {
 }
 
 
+export type ResearchGateKind = "literature" | "design" | "quality";
+
+export interface HumanCommandOneOf1 {
+  actor: "human" | "scripted";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128
+   */
+  actorId: string;
+  approvedManifestHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   */
+  at: string;
+  gate: ResearchGateKind;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=2048
+   */
+  interactionId: string;
+  kind: "approve";
+  /**
+   * Schema constraints this type cannot express: minLength=0, maxLength=4096
+   */
+  note: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  revision: number;
+}
+
+
+export type ResearchCommandTarget = "write" | "analyze" | "design";
+
+export interface HumanCommandOneOf2 {
+  actor: "human" | "scripted";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128
+   */
+  actorId: string;
+  approvedManifestHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   */
+  at: string;
+  gate: ResearchGateKind;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=2048
+   */
+  interactionId: string;
+  kind: "reject";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  revision: number;
+  target: ResearchCommandTarget;
+}
+
+
+export interface ResearchJsonPatchItemOneOf1 {
+  op: "add" | "replace" | "test";
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  path: string;
+  value: unknown;
+}
+
+
+export interface ResearchJsonPatchItemOneOf2 {
+  op: "remove";
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  path: string;
+}
+
+
+export interface ResearchJsonPatchItemOneOf3 {
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  from: string;
+  op: "copy" | "move";
+  /**
+   * Schema constraints this type cannot express: pattern="^(/.*)?$"
+   */
+  path: string;
+}
+
+
+/**
+ * Reserved bounded RFC6902 request; execution requires the separately bound guarded editor.
+ * Schema constraints this type cannot express: minItems=1, maxItems=64
+ */
+export type ResearchJsonPatch = Array<ResearchJsonPatchItemOneOf1 | ResearchJsonPatchItemOneOf2 | ResearchJsonPatchItemOneOf3>;
+
+export interface HumanCommandOneOf3 {
+  actor: "human" | "scripted";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128
+   */
+  actorId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^admission-[0-9a-f]{64}$"
+   */
+  admissionId: string;
+  approvedManifestHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  artifactId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   */
+  at: string;
+  gate: ResearchGateKind;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=2048
+   */
+  interactionId: string;
+  kind: "edit";
+  patch: ResearchJsonPatch;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  revision: number;
+  target: ResearchCommandTarget;
+}
+
+
+export interface HumanCommandOneOf4 {
+  actor: "human" | "scripted";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128
+   */
+  actorId: string;
+  approvedManifestHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   */
+  at: string;
+  gate: ResearchGateKind;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=2048
+   */
+  interactionId: string;
+  kind: "guide";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  revision: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=8192
+   */
+  text: string;
+}
+
+
+export interface HumanCommandOneOf5 {
+  actor: "human" | "scripted";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128
+   */
+  actorId: string;
+  approvedManifestHash: Sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   */
+  at: string;
+  gate: ResearchGateKind;
+  id: ResearchId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=2048
+   */
+  interactionId: string;
+  kind: "stop";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  revision: number;
+}
+
+
+export type HumanCommand = HumanCommandOneOf1 | HumanCommandOneOf2 | HumanCommandOneOf3 | HumanCommandOneOf4 | HumanCommandOneOf5;
+
 export interface NoveltyAdvisory {
   /**
    * Schema constraints this type cannot express: minimum=0, maximum=1
@@ -1271,6 +1459,7 @@ export interface InputManifest {
    */
   controlHash?: Sha256;
   evaluator: ResearchEvaluatorIdentity;
+  guidanceHash?: Sha256;
   /**
    * Schema constraints this type cannot express: uniqueItems=true
    */
@@ -1284,14 +1473,47 @@ export interface InputManifest {
 }
 
 
+/**
+ * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+ */
+export type ResearchInterventionEffectEditedArtifactIdAnyOf1 = string;
+
+export interface ResearchInterventionEffect {
+  editedArtifactId: ResearchInterventionEffectEditedArtifactIdAnyOf1 | null;
+  guidanceHash: Sha256 | null;
+  kind: "approval" | "retry" | "stop";
+  target: ResearchLifecycle | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+ */
+export type InterventionViewedArtifactIdsItem = string;
+
 export interface Intervention {
   action: "approve" | "reject" | "edit" | "guidance" | "stop";
-  actor: "human" | "timeout" | "scripted";
+  actor: "human" | "timeout" | "scripted" | "full-auto";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128
+   */
+  actorId?: string;
   approvedManifestHash: Sha256 | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=64
+   */
+  at?: string;
+  effect?: ResearchInterventionEffect;
+  experimental?: boolean;
   gate: "literature" | "design" | "quality";
   id: ResearchId;
   reviewedManifestHash: Sha256;
+  stage?: ResearchLifecycle;
   substantive: boolean;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  viewedArtifactIds?: Array<InterventionViewedArtifactIdsItem>;
 }
 
 
@@ -2034,6 +2256,38 @@ export interface ResearchManifestInputsItem {
 }
 
 
+export interface ResearchInterventionReport {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  approvals: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  automatic: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  human: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  scripted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  stops: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  substantive: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+}
+
+
 export interface ResearchManifestMetricOrigin {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -2068,11 +2322,13 @@ export interface ResearchManifest {
   baselineSources: Array<ResearchManifestBaselineSourcesItem>;
   contractHash: Sha256;
   environment: ResearchManifestEnvironment;
+  experimental?: boolean;
   frozenBeforeResults: boolean;
   /**
    * Schema constraints this type cannot express: minItems=1
    */
   inputs: Array<ResearchManifestInputsItem>;
+  interventionReport?: ResearchInterventionReport;
   manifestHash: Sha256;
   metricOrigin: ResearchManifestMetricOrigin;
   /**
@@ -2345,6 +2601,33 @@ export interface ResearchDesignProposal {
 }
 
 
+export interface ResearchEditableDesign {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  availableCards: number;
+  kind: "reasoning-proposal";
+  proposal: ResearchDesignProposal;
+  stage: "design";
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  visibleCards: Array<ResearchId>;
+}
+
+
+export interface ResearchInputArtifact {
+  /**
+   * Schema constraints this type cannot express: pattern="^admission-[0-9a-f]{64}$"
+   */
+  admissionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
+   */
+  artifactId: string;
+}
+
+
 export interface ResearchDraftProposalSectionsItem {
   /**
    * Schema constraints this type cannot express: uniqueItems=true
@@ -2358,6 +2641,30 @@ export interface ResearchDraftProposalSectionsItem {
 
 export interface ResearchDraftProposal {
   sections: Array<ResearchDraftProposalSectionsItem>;
+}
+
+
+export interface ResearchEditableDraft {
+  kind: "research-writing-proposal";
+  phase: "write";
+  proposal: ResearchDraftProposal;
+}
+
+
+export interface ResearchDirective {
+  edit: { candidate: ResearchEditableDesign; kind: "design"; source: ResearchInputArtifact; staged: ResearchInputArtifact; } | { candidate: ResearchEditableDraft; kind: "write"; source: ResearchInputArtifact; staged: ResearchInputArtifact; } | null;
+  guidanceHash: Sha256 | null;
+  interventionId: ResearchId;
+  kind: "research-directive";
+  stage: "SYNTHESIS" | "DESIGN" | "ANALYZE" | "WRITE";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  stateRevision: number;
+  /**
+   * Schema constraints this type cannot express: maxLength=8192
+   */
+  text: string;
 }
 
 
@@ -2575,6 +2882,7 @@ export interface ResearchExportManifestSourceProvenance {
   data: Array<ResearchId>;
   environments: Array<ResearchExportManifestSourceProvenanceEnvironmentsItem>;
   interventions: Array<Intervention>;
+  mode?: "gate-only" | "full-auto";
   prompts: Array<ResearchRoleIdentity>;
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -2622,16 +2930,16 @@ export interface Review {
 
 
 export interface ResearchExportManifest {
+  experimental?: boolean;
   files: Array<{ path: "draft.md" | "claims.json" | "metrics.json" | "literature.json" | "audit.md" | "disclosure.json"; sha256: Sha256; }>;
   id: ResearchId;
+  interventionReport?: ResearchInterventionReport;
   projectId: ResearchId;
   research: ResearchManifest | null;
   scope: ResearchWritingScope;
   source: { disclosure: DisclosureChecklist; draft: Draft; inputs: ResearchWritingInputs; ledger: ResearchClaimLedger; provenance: ResearchExportManifestSourceProvenance; reviews: Array<Review>; verification: ResearchDraftVerification; };
 }
 
-
-export type ResearchGateKind = "literature" | "design" | "quality";
 
 export interface ResearchGateResponsePatchItemOneOf1 {
   op: "add" | "replace" | "test";
@@ -2666,8 +2974,9 @@ export interface ResearchGateResponsePatchItemOneOf3 {
 
 
 export interface ResearchGateResponse {
-  actor: "human" | "scripted";
+  actor: "human" | "scripted" | "full-auto";
   approvedManifestHash: Sha256;
+  command?: HumanCommand;
   decision: "approve" | "reject" | "edit" | "guide" | "stop";
   note: string;
   /**
@@ -2676,18 +2985,6 @@ export interface ResearchGateResponse {
    */
   patch?: Array<ResearchGateResponsePatchItemOneOf1 | ResearchGateResponsePatchItemOneOf2 | ResearchGateResponsePatchItemOneOf3>;
   target?: "write" | "analyze" | "design";
-}
-
-
-export interface ResearchInputArtifact {
-  /**
-   * Schema constraints this type cannot express: pattern="^admission-[0-9a-f]{64}$"
-   */
-  admissionId: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^art-[0-9a-f]{64}$"
-   */
-  artifactId: string;
 }
 
 
@@ -2811,6 +3108,10 @@ export interface ResearchProject {
    */
   createdAt: string;
   domainProfile: ResearchId;
+  /**
+   * New full-auto projects must explicitly opt into their experimental native task topology.
+   */
+  experimental?: boolean;
   id: ResearchId;
   mode: "gate-only" | "full-auto";
   /**
@@ -2830,6 +3131,16 @@ export interface ResearchProject {
 }
 
 
+export interface ResearchReasoningConstraintsHumanReview {
+  interventionId: ResearchId;
+  proposal: ResearchDesignProposal | null;
+  /**
+   * Schema constraints this type cannot express: maxLength=8192
+   */
+  text: string;
+}
+
+
 /**
  * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
  */
@@ -2842,6 +3153,7 @@ export interface ResearchReasoningConstraints {
   baselineIds: Array<ResearchId>;
   budget: ResearchCost;
   design?: { contract: ResearchContract; plan: ExperimentPlan; };
+  humanReview?: ResearchReasoningConstraintsHumanReview;
   /**
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */
@@ -2922,7 +3234,9 @@ export interface ResearchWorkflowFrame {
   bindingId: Sha256;
   checkpoint: ResearchInputArtifact | null;
   decision: null | "Proceed" | "Refine" | "Pivot" | "Stop";
+  decisionId?: ResearchId;
   gate: ResearchGateReview | null;
+  guidanceHash?: Sha256;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
    */
@@ -3024,6 +3338,80 @@ export interface SynthesisProposal {
    * Schema constraints this type cannot express: minLength=1
    */
   summary: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchHandoffHandoffFixtureTopicsItem = string;
+
+export interface ResearchHandoffHandoffFixture {
+  id: "research-computational-v1";
+  revision: Sha256;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3, uniqueItems=true
+   */
+  topics: Array<ResearchHandoffHandoffFixtureTopicsItem>;
+}
+
+
+export interface ResearchHandoffHandoffRowsItemInterventions {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  substantive: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  approvals: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchHandoffHandoffRecordNamesItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchHandoffHandoffLimitationsItem = string;
+
+export interface ResearchHandoffHandoff {
+  reportId: Sha256;
+  decision: "conformant";
+  fixture: ResearchHandoffHandoffFixture;
+  /**
+   * Schema constraints this type cannot express: minItems=8, maxItems=8
+   */
+  rows: Array<{ id: "artifact-oracle" | "no-model-runner" | "single-pass-retrieve-draft" | "fixed-single-agent" | "fixed-plus-debate" | "fixed-plus-branching" | "gate-only-full" | "full-auto-full"; state: "measured"; scope: "full-lifecycle" | "pre-execution" | "execution" | "writing"; cost: ResearchCost; interventions: ResearchHandoffHandoffRowsItemInterventions; }>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  recordNames: Array<ResearchHandoffHandoffRecordNamesItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  limitations: Array<ResearchHandoffHandoffLimitationsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=2
+   */
+  modes: Array<{ id: "gate-only-full" | "full-auto-full"; experimental: boolean; interventions: ResearchInterventionReport; }>;
+}
+
+
+export interface ResearchHandoff {
+  benchmark: "research-handoff";
+  query: "queries/research/core-baseline.json";
+  queryRevision: Sha256;
+  reportId: Sha256;
+  artifactId: Sha256;
+  handoff: ResearchHandoffHandoff;
 }
 
 
@@ -3310,6 +3698,7 @@ export interface ResearchWritingTopic {
   probes: Array<ResearchWritingProbe>;
   cost: ResearchCost;
   interventions: ResearchWritingTopicInterventions;
+  interventionReport: ResearchInterventionReport;
   failures: ResearchWritingTopicFailures;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
@@ -3367,9 +3756,11 @@ export interface ResearchWritingRowFailures {
 
 
 export interface ResearchWritingRow {
-  id: "single-pass-retrieve-draft" | "gate-only-full";
+  id: "single-pass-retrieve-draft" | "gate-only-full" | "full-auto-full";
   state: "measured";
   scope: "writing";
+  experimental: boolean;
+  interventionReport: ResearchInterventionReport;
   /**
    * Schema constraints this type cannot express: minItems=3, maxItems=3
    */
@@ -5989,6 +6380,11 @@ export interface MasRuntime_masTraceArtifact {
  */
 export type MasRuntime = MasRuntime_masRun | MasRuntime_masNodeAttempt | MasRuntime_masMessage | MasRuntime_masStateRevision | MasRuntime_masInteraction | MasRuntime_masTraceArtifact;
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchReportRecordNamesItem = string;
+
 export interface ResearchReportSourceFilesItem {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -6081,11 +6477,15 @@ export interface ResearchReportAnalysis {
 export type ResearchReportLimitationsItem = string;
 
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].id"],["artifact-oracle","no-model-runner","single-pass-retrieve-draft","fixed-single-agent","fixed-plus-debate","fixed-plus-branching","gate-only-full","full-auto-full"]]},{"$eq":[["$.identity.rows[*].rowId"],["$.rows[*].id"]]},{"$eq":[{"$count":"$.bundles[*]"},{"$count":"$.registration.bundles[*]"}]},{"$eq":[["$.bundles[*].id"],["$.registration.bundles[*].id"]]},{"$eq":[{"$count":"$.registration.topics[*]"},{"$count":{"$distinct":"$.registration.topics[*]"}}]},{"$eq":[{"$count":"$.registration.bundles[*].id"},{"$count":{"$distinct":"$.registration.bundles[*].id"}}]},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":[["$row.topics[*].topicId"],["$.registration.topics[*]"]]}},{"$every":{"bundle":"$.bundles[*]"},"$satisfies":{"$eq":["$bundle.refusedAsRegistered",{"$and":[{"$eq":["$bundle.expected.code","$bundle.observed.code"]},{"$eq":["$bundle.expected.path","$bundle.observed.path"]}]}]}},{"$every":{"bundle":"$.bundles[*]"},"$satisfies":{"$some":{"registered":"$.registration.bundles[*]"},"$satisfies":{"$and":[{"$eq":["$bundle.id","$registered.id"]},{"$eq":["$bundle.expected","$registered.expected"]}]}}},{"$eq":["$.gate.bundles",{"$every":{"bundle":"$.bundles[*]"},"$satisfies":"$bundle.refusedAsRegistered"}]},{"$eq":[["$.disclosure[*].rowId"],["$.rows[*].id"]]},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.preregistrationIntegrity.passed",{"$sum":"$row.topics[*].preregistrationIntegrity.passed"}]},{"$eq":["$row.preregistrationIntegrity.total",{"$sum":"$row.topics[*].preregistrationIntegrity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.literatureRecall.passed",{"$sum":"$row.topics[*].literatureRecall.passed"}]},{"$eq":["$row.literatureRecall.total",{"$sum":"$row.topics[*].literatureRecall.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.literaturePrecision.passed",{"$sum":"$row.topics[*].literaturePrecision.passed"}]},{"$eq":["$row.literaturePrecision.total",{"$sum":"$row.topics[*].literaturePrecision.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.citationIdentity.passed",{"$sum":"$row.topics[*].citationIdentity.passed"}]},{"$eq":["$row.citationIdentity.total",{"$sum":"$row.topics[*].citationIdentity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.claimSupport.passed",{"$sum":"$row.topics[*].claimSupport.passed"}]},{"$eq":["$row.claimSupport.total",{"$sum":"$row.topics[*].claimSupport.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.registryAccuracy.passed",{"$sum":"$row.topics[*].registryAccuracy.passed"}]},{"$eq":["$row.registryAccuracy.total",{"$sum":"$row.topics[*].registryAccuracy.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.rerunRate.passed",{"$sum":"$row.topics[*].rerunRate.passed"}]},{"$eq":["$row.rerunRate.total",{"$sum":"$row.topics[*].rerunRate.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.confoundDetection.passed",{"$sum":"$row.topics[*].confoundDetection.passed"}]},{"$eq":["$row.confoundDetection.total",{"$sum":"$row.topics[*].confoundDetection.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.negativeResultHandling.passed",{"$sum":"$row.topics[*].negativeResultHandling.passed"}]},{"$eq":["$row.negativeResultHandling.total",{"$sum":"$row.topics[*].negativeResultHandling.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.branchSelectionCompliance.passed",{"$sum":"$row.topics[*].branchSelectionCompliance.passed"}]},{"$eq":["$row.branchSelectionCompliance.total",{"$sum":"$row.topics[*].branchSelectionCompliance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.gateBehaviour.passed",{"$sum":"$row.topics[*].gateBehaviour.passed"}]},{"$eq":["$row.gateBehaviour.total",{"$sum":"$row.topics[*].gateBehaviour.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.tracesCompleteness.passed",{"$sum":"$row.topics[*].tracesCompleteness.passed"}]},{"$eq":["$row.tracesCompleteness.total",{"$sum":"$row.topics[*].tracesCompleteness.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.completion.passed",{"$sum":"$row.topics[*].completion.passed"}]},{"$eq":["$row.completion.total",{"$sum":"$row.topics[*].completion.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.hypothesisValidity.passed",{"$sum":"$row.topics[*].hypothesisValidity.passed"}]},{"$eq":["$row.hypothesisValidity.total",{"$sum":"$row.topics[*].hypothesisValidity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.evidenceLinkage.passed",{"$sum":"$row.topics[*].evidenceLinkage.passed"}]},{"$eq":["$row.evidenceLinkage.total",{"$sum":"$row.topics[*].evidenceLinkage.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.designIntegrity.passed",{"$sum":"$row.topics[*].designIntegrity.passed"}]},{"$eq":["$row.designIntegrity.total",{"$sum":"$row.topics[*].designIntegrity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.hiddenIsolation.passed",{"$sum":"$row.topics[*].hiddenIsolation.passed"}]},{"$eq":["$row.hiddenIsolation.total",{"$sum":"$row.topics[*].hiddenIsolation.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.refusalConformance.passed",{"$sum":"$row.topics[*].refusalConformance.passed"}]},{"$eq":["$row.refusalConformance.total",{"$sum":"$row.topics[*].refusalConformance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.citationIdentity.passed",{"$sum":"$row.topics[*].citationIdentity.passed"}]},{"$eq":["$row.citationIdentity.total",{"$sum":"$row.topics[*].citationIdentity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.claimSupport.passed",{"$sum":"$row.topics[*].claimSupport.passed"}]},{"$eq":["$row.claimSupport.total",{"$sum":"$row.topics[*].claimSupport.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.numericMapping.passed",{"$sum":"$row.topics[*].numericMapping.passed"}]},{"$eq":["$row.numericMapping.total",{"$sum":"$row.topics[*].numericMapping.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.claimValidity.passed",{"$sum":"$row.topics[*].claimValidity.passed"}]},{"$eq":["$row.claimValidity.total",{"$sum":"$row.topics[*].claimValidity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.bundleRerun.passed",{"$sum":"$row.topics[*].bundleRerun.passed"}]},{"$eq":["$row.bundleRerun.total",{"$sum":"$row.topics[*].bundleRerun.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.refusalConformance.passed",{"$sum":"$row.topics[*].refusalConformance.passed"}]},{"$eq":["$row.refusalConformance.total",{"$sum":"$row.topics[*].refusalConformance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.roles",{"$sum":"$row.topics[*].usage.roles"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.completion",{"$sum":"$row.topics[*].usage.completion"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.normalization",{"$sum":"$row.topics[*].usage.normalization"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.repair",{"$sum":"$row.topics[*].usage.repair"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.physical",{"$sum":"$row.topics[*].usage.physical"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.promptTokens",{"$sum":"$row.topics[*].usage.promptTokens"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.completionTokens",{"$sum":"$row.topics[*].usage.completionTokens"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.unknownTokenRequests",{"$sum":"$row.topics[*].usage.unknownTokenRequests"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.traceBytes",{"$sum":"$row.topics[*].usage.traceBytes"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$every":{"topic":"$row.topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.state.status","DESIGN_GATE"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$eq":["$topic.plan.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.usage.physical",{"$add":[{"$add":["$topic.usage.completion","$topic.usage.normalization"]},"$topic.usage.repair"]}]},{"$eq":["$topic.usage.physical",{"$count":"$topic.requests[*]"}]},{"$eq":["$topic.cost.physical","$topic.usage.physical"]},{"$eq":["$topic.cost.calls","$topic.usage.physical"]},{"$eq":["$topic.cost.tokens",{"$add":["$topic.usage.promptTokens","$topic.usage.completionTokens"]}]},{"$le":["$topic.usage.traceBytes","$.registration.caps.traceBytes"]},{"$le":[{"$count":"$topic.visibleCardIds[*]"},"$topic.availableCards"]},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.calls",{"$sum":"$row.topics[*].cost.calls"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.tokens",{"$sum":"$row.topics[*].cost.tokens"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.ms",{"$sum":"$row.topics[*].cost.ms"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.physical",{"$sum":"$row.topics[*].cost.physical"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.total",{"$sum":"$row.topics[*].interventions.total"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.substantive",{"$sum":"$row.topics[*].interventions.substantive"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.approvals",{"$sum":"$row.topics[*].interventions.approvals"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.program",{"$sum":"$row.topics[*].failures.program"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.verification",{"$sum":"$row.topics[*].failures.verification"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.leakage",{"$sum":"$row.topics[*].failures.leakage"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.confound",{"$sum":"$row.topics[*].failures.confound"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.budget",{"$sum":"$row.topics[*].failures.budget"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.provider",{"$sum":"$row.topics[*].failures.provider"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.unsupported",{"$sum":"$row.topics[*].failures.unsupported"}]}},{"$eq":[["$.ceilings[*].topicId"],["$.registration.topics[*]"]]},{"$every":{"row":"$.disclosure[*]"},"$satisfies":{"$eq":[["$row.items[*].item"],["human-review","runnable-implementation","reconstructible-execution","novelty-audit","attempt-selection-registration","baseline-audit","independent-verification","frozen-hypotheses"]]}},{"$eq":["$.gate.analysis",{"$and":[{"$eq":[{"$count":"$.analysis.rows[*]"},2]},{"$eq":[{"$count":"$.analysis.probes[*]"},5]},{"$eq":[{"$count":"$.analysis.repair[*]"},2]},{"$every":{"probe":"$.analysis.probes[*]"},"$satisfies":"$probe.matched"},{"$every":{"row":"$.analysis.rows[*]"},"$satisfies":{"$and":[{"$eq":["$row.confoundDetection.value",1]},{"$eq":["$row.negativeResultHandling.value",1]},{"$eq":["$row.branchSelectionCompliance.value",1]}]}}]}]},{"$eq":["$.gate.writing",{"$and":[{"$eq":[{"$count":"$.rows[?(@.scope==\"writing\")]"},2]},{"$eq":["$.writing.control.state.status","COMPLETE"]},{"$gt":["$.writing.control.writerCalls",0]},{"$gt":["$.writing.control.reviewCalls",0]},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.citationIdentity.value",1]},{"$eq":["$row.claimValidity.value",1]},{"$eq":["$row.bundleRerun.value",1]},{"$eq":["$row.refusalConformance.value",1]},{"$or":[{"$and":[{"$eq":["$row.id","single-pass-retrieve-draft"]},{"$eq":["$row.claimSupport.value",0.5]},{"$eq":["$row.numericMapping.value",0]}]},{"$and":[{"$eq":["$row.id","gate-only-full"]},{"$eq":["$row.claimSupport.value",1]},{"$eq":["$row.numericMapping.value",1]}]}]}]}}]}]},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$every":{"topic":"$row.topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.scope","$topic.bundle.scope"]},{"$eq":["$topic.receipt.manifestId","$topic.bundle.id"]},{"$eq":["$topic.claimSupport.total",{"$count":"$topic.required[*]"}]},{"$eq":["$topic.claimSupport.passed",{"$count":"$topic.required[?(@.actualState==\"supported\")]"}]},{"$eq":["$topic.refusalConformance.total",{"$count":"$topic.probes[*]"}]},{"$eq":["$topic.refusalConformance.passed",{"$count":"$topic.probes[?(@.matched==true)]"}]},{"$every":{"probe":"$topic.probes[*]"},"$satisfies":{"$eq":["$probe.matched",{"$and":[{"$eq":["$probe.state","unresolved"]},{"$eq":["$probe.expectedCode","$probe.observedCode"]}]}]}},{"$eq":["$topic.cost.calls",{"$sum":"$topic.bundle.source.provenance.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.bundle.source.provenance.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.bundle.source.provenance.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.bundle.source.provenance.attempts[*].spend.physical"}]}]}}},{"$every":{"probe":"$.analysis.probes[*]"},"$satisfies":{"$eq":["$probe.matched",{"$eq":["$probe.expected","$probe.decision.kind"]}]}},{"$every":{"row":"$.analysis.rows[*]"},"$satisfies":{"$and":[{"$eq":[["$row.topics[*].topicId"],["$.registration.topics[*]"]]},{"$eq":["$row.cost.calls",{"$sum":"$row.topics[*].cost.calls"}]},{"$eq":["$row.cost.tokens",{"$sum":"$row.topics[*].cost.tokens"}]},{"$eq":["$row.cost.ms",{"$sum":"$row.topics[*].cost.ms"}]},{"$eq":["$row.cost.physical",{"$sum":"$row.topics[*].cost.physical"}]}]}},{"$every":{"topic":"$.analysis.rows[*].topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.nativeStatus","completed"]},{"$eq":["$topic.state.status","STOPPED"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$le":["$topic.traceBytes","$.registration.caps.traceBytes"]},{"$eq":["$topic.cost.physical",{"$add":["$topic.cost.calls",{"$count":"$topic.runs[*]"}]}]},{"$eq":["$topic.reviewCalls",{"$sum":"$topic.attempts[?(@.stage==\"DECIDE\")].spend.calls"}]},{"$some":{"decision":"$topic.decisions[*]"},"$satisfies":{"$and":[{"$eq":["$decision.id","$topic.finalDecisionId"]},{"$eq":["$decision.kind","Stop"]},{"$eq":["$decision.details.analysisId","$topic.finalAnalysisId"]}]}},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}},{"$every":{"topic":"$.analysis.repair[*]"},"$satisfies":{"$and":[{"$eq":["$topic.nativeStatus","completed"]},{"$eq":["$topic.state.status","STOPPED"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$le":["$topic.traceBytes","$.registration.caps.traceBytes"]},{"$eq":["$topic.cost.physical",{"$add":["$topic.cost.calls",{"$count":"$topic.runs[*]"}]}]},{"$eq":["$topic.reviewCalls",{"$sum":"$topic.attempts[?(@.stage==\"DECIDE\")].spend.calls"}]},{"$some":{"decision":"$topic.decisions[*]"},"$satisfies":{"$and":[{"$eq":["$decision.id","$topic.finalDecisionId"]},{"$eq":["$decision.kind","Stop"]},{"$eq":["$decision.details.analysisId","$topic.finalAnalysisId"]}]}},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}},{"$eq":[{"$eq":["$.decision","conformant"]},{"$and":["$.gate.registration","$.gate.oracle","$.gate.bundles","$.gate.analysis","$.gate.writing"]}]}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].id"],["artifact-oracle","no-model-runner","single-pass-retrieve-draft","fixed-single-agent","fixed-plus-debate","fixed-plus-branching","gate-only-full","full-auto-full"]]},{"$eq":[["$.identity.rows[*].rowId"],["$.rows[*].id"]]},{"$eq":[{"$count":"$.bundles[*]"},{"$count":"$.registration.bundles[*]"}]},{"$eq":[["$.bundles[*].id"],["$.registration.bundles[*].id"]]},{"$eq":[{"$count":"$.registration.topics[*]"},{"$count":{"$distinct":"$.registration.topics[*]"}}]},{"$eq":[{"$count":"$.registration.bundles[*].id"},{"$count":{"$distinct":"$.registration.bundles[*].id"}}]},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":[["$row.topics[*].topicId"],["$.registration.topics[*]"]]}},{"$every":{"bundle":"$.bundles[*]"},"$satisfies":{"$eq":["$bundle.refusedAsRegistered",{"$and":[{"$eq":["$bundle.expected.code","$bundle.observed.code"]},{"$eq":["$bundle.expected.path","$bundle.observed.path"]}]}]}},{"$every":{"bundle":"$.bundles[*]"},"$satisfies":{"$some":{"registered":"$.registration.bundles[*]"},"$satisfies":{"$and":[{"$eq":["$bundle.id","$registered.id"]},{"$eq":["$bundle.expected","$registered.expected"]}]}}},{"$eq":["$.gate.bundles",{"$every":{"bundle":"$.bundles[*]"},"$satisfies":"$bundle.refusedAsRegistered"}]},{"$eq":[["$.disclosure[*].rowId"],["$.rows[*].id"]]},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.preregistrationIntegrity.passed",{"$sum":"$row.topics[*].preregistrationIntegrity.passed"}]},{"$eq":["$row.preregistrationIntegrity.total",{"$sum":"$row.topics[*].preregistrationIntegrity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.literatureRecall.passed",{"$sum":"$row.topics[*].literatureRecall.passed"}]},{"$eq":["$row.literatureRecall.total",{"$sum":"$row.topics[*].literatureRecall.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.literaturePrecision.passed",{"$sum":"$row.topics[*].literaturePrecision.passed"}]},{"$eq":["$row.literaturePrecision.total",{"$sum":"$row.topics[*].literaturePrecision.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.citationIdentity.passed",{"$sum":"$row.topics[*].citationIdentity.passed"}]},{"$eq":["$row.citationIdentity.total",{"$sum":"$row.topics[*].citationIdentity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.claimSupport.passed",{"$sum":"$row.topics[*].claimSupport.passed"}]},{"$eq":["$row.claimSupport.total",{"$sum":"$row.topics[*].claimSupport.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.registryAccuracy.passed",{"$sum":"$row.topics[*].registryAccuracy.passed"}]},{"$eq":["$row.registryAccuracy.total",{"$sum":"$row.topics[*].registryAccuracy.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.rerunRate.passed",{"$sum":"$row.topics[*].rerunRate.passed"}]},{"$eq":["$row.rerunRate.total",{"$sum":"$row.topics[*].rerunRate.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.confoundDetection.passed",{"$sum":"$row.topics[*].confoundDetection.passed"}]},{"$eq":["$row.confoundDetection.total",{"$sum":"$row.topics[*].confoundDetection.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.negativeResultHandling.passed",{"$sum":"$row.topics[*].negativeResultHandling.passed"}]},{"$eq":["$row.negativeResultHandling.total",{"$sum":"$row.topics[*].negativeResultHandling.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.branchSelectionCompliance.passed",{"$sum":"$row.topics[*].branchSelectionCompliance.passed"}]},{"$eq":["$row.branchSelectionCompliance.total",{"$sum":"$row.topics[*].branchSelectionCompliance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.gateBehaviour.passed",{"$sum":"$row.topics[*].gateBehaviour.passed"}]},{"$eq":["$row.gateBehaviour.total",{"$sum":"$row.topics[*].gateBehaviour.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.tracesCompleteness.passed",{"$sum":"$row.topics[*].tracesCompleteness.passed"}]},{"$eq":["$row.tracesCompleteness.total",{"$sum":"$row.topics[*].tracesCompleteness.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"full-lifecycle\")]"},"$satisfies":{"$and":[{"$eq":["$row.completion.passed",{"$sum":"$row.topics[*].completion.passed"}]},{"$eq":["$row.completion.total",{"$sum":"$row.topics[*].completion.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.hypothesisValidity.passed",{"$sum":"$row.topics[*].hypothesisValidity.passed"}]},{"$eq":["$row.hypothesisValidity.total",{"$sum":"$row.topics[*].hypothesisValidity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.evidenceLinkage.passed",{"$sum":"$row.topics[*].evidenceLinkage.passed"}]},{"$eq":["$row.evidenceLinkage.total",{"$sum":"$row.topics[*].evidenceLinkage.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.designIntegrity.passed",{"$sum":"$row.topics[*].designIntegrity.passed"}]},{"$eq":["$row.designIntegrity.total",{"$sum":"$row.topics[*].designIntegrity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.hiddenIsolation.passed",{"$sum":"$row.topics[*].hiddenIsolation.passed"}]},{"$eq":["$row.hiddenIsolation.total",{"$sum":"$row.topics[*].hiddenIsolation.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$and":[{"$eq":["$row.refusalConformance.passed",{"$sum":"$row.topics[*].refusalConformance.passed"}]},{"$eq":["$row.refusalConformance.total",{"$sum":"$row.topics[*].refusalConformance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.citationIdentity.passed",{"$sum":"$row.topics[*].citationIdentity.passed"}]},{"$eq":["$row.citationIdentity.total",{"$sum":"$row.topics[*].citationIdentity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.claimSupport.passed",{"$sum":"$row.topics[*].claimSupport.passed"}]},{"$eq":["$row.claimSupport.total",{"$sum":"$row.topics[*].claimSupport.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.numericMapping.passed",{"$sum":"$row.topics[*].numericMapping.passed"}]},{"$eq":["$row.numericMapping.total",{"$sum":"$row.topics[*].numericMapping.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.claimValidity.passed",{"$sum":"$row.topics[*].claimValidity.passed"}]},{"$eq":["$row.claimValidity.total",{"$sum":"$row.topics[*].claimValidity.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.bundleRerun.passed",{"$sum":"$row.topics[*].bundleRerun.passed"}]},{"$eq":["$row.bundleRerun.total",{"$sum":"$row.topics[*].bundleRerun.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.refusalConformance.passed",{"$sum":"$row.topics[*].refusalConformance.passed"}]},{"$eq":["$row.refusalConformance.total",{"$sum":"$row.topics[*].refusalConformance.total"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.roles",{"$sum":"$row.topics[*].usage.roles"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.completion",{"$sum":"$row.topics[*].usage.completion"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.normalization",{"$sum":"$row.topics[*].usage.normalization"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.repair",{"$sum":"$row.topics[*].usage.repair"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.physical",{"$sum":"$row.topics[*].usage.physical"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.promptTokens",{"$sum":"$row.topics[*].usage.promptTokens"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.completionTokens",{"$sum":"$row.topics[*].usage.completionTokens"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.unknownTokenRequests",{"$sum":"$row.topics[*].usage.unknownTokenRequests"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$eq":["$row.usage.traceBytes",{"$sum":"$row.topics[*].usage.traceBytes"}]}},{"$every":{"row":"$.rows[?(@.scope==\"pre-execution\")]"},"$satisfies":{"$every":{"topic":"$row.topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.state.status","DESIGN_GATE"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$eq":["$topic.plan.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.usage.physical",{"$add":[{"$add":["$topic.usage.completion","$topic.usage.normalization"]},"$topic.usage.repair"]}]},{"$eq":["$topic.usage.physical",{"$count":"$topic.requests[*]"}]},{"$eq":["$topic.cost.physical","$topic.usage.physical"]},{"$eq":["$topic.cost.calls","$topic.usage.physical"]},{"$eq":["$topic.cost.tokens",{"$add":["$topic.usage.promptTokens","$topic.usage.completionTokens"]}]},{"$le":["$topic.usage.traceBytes","$.registration.caps.traceBytes"]},{"$le":[{"$count":"$topic.visibleCardIds[*]"},"$topic.availableCards"]},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.calls",{"$sum":"$row.topics[*].cost.calls"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.tokens",{"$sum":"$row.topics[*].cost.tokens"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.ms",{"$sum":"$row.topics[*].cost.ms"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.cost.physical",{"$sum":"$row.topics[*].cost.physical"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.total",{"$sum":"$row.topics[*].interventions.total"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.substantive",{"$sum":"$row.topics[*].interventions.substantive"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.interventions.approvals",{"$sum":"$row.topics[*].interventions.approvals"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.program",{"$sum":"$row.topics[*].failures.program"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.verification",{"$sum":"$row.topics[*].failures.verification"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.leakage",{"$sum":"$row.topics[*].failures.leakage"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.confound",{"$sum":"$row.topics[*].failures.confound"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.budget",{"$sum":"$row.topics[*].failures.budget"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.provider",{"$sum":"$row.topics[*].failures.provider"}]}},{"$every":{"row":"$.rows[?(@.state==\"measured\")]"},"$satisfies":{"$eq":["$row.failures.unsupported",{"$sum":"$row.topics[*].failures.unsupported"}]}},{"$eq":[["$.ceilings[*].topicId"],["$.registration.topics[*]"]]},{"$every":{"row":"$.disclosure[*]"},"$satisfies":{"$eq":[["$row.items[*].item"],["human-review","runnable-implementation","reconstructible-execution","novelty-audit","attempt-selection-registration","baseline-audit","independent-verification","frozen-hypotheses"]]}},{"$eq":["$.gate.analysis",{"$and":[{"$eq":[{"$count":"$.analysis.rows[*]"},2]},{"$eq":[{"$count":"$.analysis.probes[*]"},5]},{"$eq":[{"$count":"$.analysis.repair[*]"},2]},{"$every":{"probe":"$.analysis.probes[*]"},"$satisfies":"$probe.matched"},{"$every":{"row":"$.analysis.rows[*]"},"$satisfies":{"$and":[{"$eq":["$row.confoundDetection.value",1]},{"$eq":["$row.negativeResultHandling.value",1]},{"$eq":["$row.branchSelectionCompliance.value",1]}]}}]}]},{"$eq":["$.gate.writing",{"$and":[{"$eq":[{"$count":"$.rows[?(@.scope==\"writing\")]"},3]},{"$eq":["$.writing.control.state.status","COMPLETE"]},{"$gt":["$.writing.control.writerCalls",0]},{"$gt":["$.writing.control.reviewCalls",0]},{"$eq":["$.writing.autoControl.state.status","COMPLETE"]},{"$eq":["$.writing.autoControl.bundle.experimental",true]},{"$eq":["$.writing.autoControl.bundle.interventionReport.automatic",3]},{"$eq":[{"$count":"$.writing.autoControl.interactions[*]"},0]},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.citationIdentity.value",1]},{"$eq":["$row.claimValidity.value",1]},{"$eq":["$row.bundleRerun.value",1]},{"$eq":["$row.refusalConformance.value",1]},{"$or":[{"$and":[{"$eq":["$row.id","single-pass-retrieve-draft"]},{"$eq":["$row.claimSupport.value",0.5]},{"$eq":["$row.numericMapping.value",0]}]},{"$and":[{"$or":[{"$eq":["$row.id","gate-only-full"]},{"$eq":["$row.id","full-auto-full"]}]},{"$eq":["$row.claimSupport.value",1]},{"$eq":["$row.numericMapping.value",1]}]}]}]}}]}]},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$and":[{"$eq":["$row.experimental",{"$eq":["$row.id","full-auto-full"]}]},{"$eq":["$row.interventionReport.total",{"$sum":"$row.topics[*].interventionReport.total"}]},{"$eq":["$row.interventionReport.approvals",{"$sum":"$row.topics[*].interventionReport.approvals"}]},{"$eq":["$row.interventionReport.substantive",{"$sum":"$row.topics[*].interventionReport.substantive"}]},{"$eq":["$row.interventionReport.stops",{"$sum":"$row.topics[*].interventionReport.stops"}]},{"$eq":["$row.interventionReport.human",{"$sum":"$row.topics[*].interventionReport.human"}]},{"$eq":["$row.interventionReport.scripted",{"$sum":"$row.topics[*].interventionReport.scripted"}]},{"$eq":["$row.interventionReport.automatic",{"$sum":"$row.topics[*].interventionReport.automatic"}]}]}},{"$every":{"row":"$.rows[?(@.scope==\"writing\")]"},"$satisfies":{"$every":{"topic":"$row.topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.scope","$topic.bundle.scope"]},{"$eq":["$topic.interventionReport","$topic.bundle.interventionReport"]},{"$eq":["$row.experimental","$topic.bundle.experimental"]},{"$eq":["$topic.receipt.manifestId","$topic.bundle.id"]},{"$eq":["$topic.claimSupport.total",{"$count":"$topic.required[*]"}]},{"$eq":["$topic.claimSupport.passed",{"$count":"$topic.required[?(@.actualState==\"supported\")]"}]},{"$eq":["$topic.refusalConformance.total",{"$count":"$topic.probes[*]"}]},{"$eq":["$topic.refusalConformance.passed",{"$count":"$topic.probes[?(@.matched==true)]"}]},{"$every":{"probe":"$topic.probes[*]"},"$satisfies":{"$eq":["$probe.matched",{"$and":[{"$eq":["$probe.state","unresolved"]},{"$eq":["$probe.expectedCode","$probe.observedCode"]}]}]}},{"$eq":["$topic.cost.calls",{"$sum":"$topic.bundle.source.provenance.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.bundle.source.provenance.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.bundle.source.provenance.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.bundle.source.provenance.attempts[*].spend.physical"}]}]}}},{"$every":{"probe":"$.analysis.probes[*]"},"$satisfies":{"$eq":["$probe.matched",{"$eq":["$probe.expected","$probe.decision.kind"]}]}},{"$every":{"row":"$.analysis.rows[*]"},"$satisfies":{"$and":[{"$eq":[["$row.topics[*].topicId"],["$.registration.topics[*]"]]},{"$eq":["$row.cost.calls",{"$sum":"$row.topics[*].cost.calls"}]},{"$eq":["$row.cost.tokens",{"$sum":"$row.topics[*].cost.tokens"}]},{"$eq":["$row.cost.ms",{"$sum":"$row.topics[*].cost.ms"}]},{"$eq":["$row.cost.physical",{"$sum":"$row.topics[*].cost.physical"}]}]}},{"$every":{"topic":"$.analysis.rows[*].topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.nativeStatus","completed"]},{"$eq":["$topic.state.status","STOPPED"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$le":["$topic.traceBytes","$.registration.caps.traceBytes"]},{"$eq":["$topic.cost.physical",{"$add":["$topic.cost.calls",{"$count":"$topic.runs[*]"}]}]},{"$eq":["$topic.reviewCalls",{"$sum":"$topic.attempts[?(@.stage==\"DECIDE\")].spend.calls"}]},{"$some":{"decision":"$topic.decisions[*]"},"$satisfies":{"$and":[{"$eq":["$decision.id","$topic.finalDecisionId"]},{"$eq":["$decision.kind","Stop"]},{"$eq":["$decision.details.analysisId","$topic.finalAnalysisId"]}]}},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}},{"$every":{"topic":"$.analysis.repair[*]"},"$satisfies":{"$and":[{"$eq":["$topic.nativeStatus","completed"]},{"$eq":["$topic.state.status","STOPPED"]},{"$eq":["$topic.state.contractHash","$topic.contract.contractHash"]},{"$eq":["$topic.state.planHash","$topic.plan.planHash"]},{"$le":["$topic.traceBytes","$.registration.caps.traceBytes"]},{"$eq":["$topic.cost.physical",{"$add":["$topic.cost.calls",{"$count":"$topic.runs[*]"}]}]},{"$eq":["$topic.reviewCalls",{"$sum":"$topic.attempts[?(@.stage==\"DECIDE\")].spend.calls"}]},{"$some":{"decision":"$topic.decisions[*]"},"$satisfies":{"$and":[{"$eq":["$decision.id","$topic.finalDecisionId"]},{"$eq":["$decision.kind","Stop"]},{"$eq":["$decision.details.analysisId","$topic.finalAnalysisId"]}]}},{"$eq":["$topic.cost.calls",{"$sum":"$topic.attempts[*].spend.calls"}]},{"$eq":["$topic.cost.tokens",{"$sum":"$topic.attempts[*].spend.tokens"}]},{"$eq":["$topic.cost.ms",{"$sum":"$topic.attempts[*].spend.ms"}]},{"$eq":["$topic.cost.physical",{"$sum":"$topic.attempts[*].spend.physical"}]}]}},{"$eq":[{"$eq":["$.decision","conformant"]},{"$and":["$.gate.registration","$.gate.oracle","$.gate.bundles","$.gate.analysis","$.gate.writing"]}]}]}
  */
 export interface ResearchReport {
   benchmark: "research";
   schemaVersion: 1;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  recordNames: Array<ResearchReportRecordNamesItem>;
   source: ResearchReportSource;
   suite: ResearchReportSuite;
   registration: ResearchReportRegistration;
@@ -6100,7 +6500,7 @@ export interface ResearchReport {
   rows: Array<ResearchMeasuredRow | ResearchReasoningRow | ResearchExecutionRow | ResearchWritingRow | ResearchMissingRow>;
   execution: ResearchReportExecution;
   analysis: ResearchReportAnalysis;
-  writing: { registrationHash: Sha256; control: ResearchWritingControl | null; };
+  writing: { registrationHash: Sha256; control: ResearchWritingControl | null; autoControl: ResearchWritingControl | null; };
   /**
    * Schema constraints this type cannot express: maxItems=3
    */

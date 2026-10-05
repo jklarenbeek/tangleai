@@ -15,7 +15,8 @@
  * uncertain attempt rather than repeating external work.
  */
 
-import { equalsJson } from '@jarenjs/core/object';
+import { equalsJson, cloneJson } from '@jarenjs/core/object';
+import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { JarenValidator } from '@jarenjs/validate';
 import {
   masIssue,
@@ -180,14 +181,14 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
 
   /** Resolution and run failure share one transaction; no resume job is reserved. */
   async function terminateInteraction(txn: TransactionStore, current: MasInteraction,
-    status: 'cancelled' | 'expired'): Promise<StoreOutcome<MasInteraction>> {
+    status: 'cancelled' | 'expired', resolution?: Parameters<MasStore['resolveInteraction']>[3]): Promise<StoreOutcome<MasInteraction>> {
     const run = await readRun(txn, current.runId);
     if (run === undefined) return refuse('TMAS2002', '/runId', `run '${current.runId}' does not exist`);
     const failure: NonNullable<MasRun['failure']> = { node: current.node,
       error: { code: 'TMAS2007', detail: `interaction '${current.node}' is ${status}; the run cannot resume`, cause: null } };
     const transition = planRunTransition(run.status, { kind: 'fail', failure });
     if (!transition.ok) return { ok: false, issue: transition.issue };
-    const next: MasInteraction = { ...current, status, revision: current.revision + 1, resolvedAt: now() };
+    const next: MasInteraction = { ...current, status, revision: current.revision + 1, resolvedAt: now(), ...(resolution ?? {}) };
     const checked = validateRuntimeRecord('masInteraction', next);
     if (!checked.valid) return refuse('TMAS2004', '/interaction', checked.issues[0]?.detail ?? 'the terminal interaction does not validate');
     probe('interaction');
@@ -196,6 +197,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
     const written = await writeRun(txn, { ...run, status: transition.status, failure });
     if (!written.ok) throw new MasRollback(written);
     probe('interaction-commit');
+    if (resolution) await enforceTraceLimit(txn, current.runId);
     return { ok: true, value: structuredClone(next) };
   }
 
@@ -612,17 +614,34 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
       });
     },
 
-    async resolveInteraction(id, status, expectedRevision) {
+    async resolveInteraction(id, status, expectedRevision, resolutionInput) {
+      if (status !== 'cancelled' && status !== 'expired')
+        return refuse<MasInteraction>('TMAS2007', '/status', 'terminal resolution requires cancelled or expired status');
+      let resolution: typeof resolutionInput;
+      if (resolutionInput !== undefined) {
+        try { canonicalizeJson(resolutionInput); resolution = cloneJson(resolutionInput); }
+        catch { return refuse<MasInteraction>('TMAS2007', '/resolution', 'terminal attribution must be finite JSON'); }
+        if (!resolution || !equalsJson(Object.keys(resolution).sort(), ['response', 'responseKey'])
+          || typeof resolution.responseKey !== 'string' || !resolution.responseKey.length)
+          return refuse<MasInteraction>('TMAS2007', '/resolution', 'terminal attribution requires exactly response and a nonempty response key');
+      }
       return atomically(async (txn) => {
         const handle = txn.collection<MasInteraction>('mas_interactions');
         const current = await handle.get(id);
         if (current === undefined) return refuse<MasInteraction>('TMAS2007', '/id', `interaction '${id}' does not exist`);
+        if (resolution && current.status === status && current.responseKey === resolution.responseKey) {
+          if (!equalsJson(current.response, resolution.response))
+            return refuse<MasInteraction>('TMAS2007', '/resolution/response', 'the resolution key already identifies different response bytes');
+          return { ok: true as const, value: structuredClone(current) };
+        }
         const transition = planInteractionTransition(current.status as 'waiting', status);
         if (!transition.ok) return { ok: false as const, issue: transition.issue };
         if (current.revision !== expectedRevision) {
           return refuse<MasInteraction>('TMAS2007', '/revision', 'the interaction moved under this resolution');
         }
-        return terminateInteraction(txn, current, status);
+        if (resolution && !responseValidator(current.responseSchema, id)(resolution.response).valid)
+          return refuse<MasInteraction>('TMAS2007', '/resolution/response', 'terminal attribution does not validate against the stored response schema');
+        return terminateInteraction(txn, current, status, resolution);
       });
     },
 

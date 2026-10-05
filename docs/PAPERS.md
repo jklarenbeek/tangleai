@@ -11,6 +11,13 @@ salvaged under [`docs/attic/memflow-modules/`](attic/memflow-modules/) (full man
 
 ## Ported — running in this repo
 
+- **AutoResearchClaw** (aiming-lab, 2026) — the core lifecycle ships in
+  `@tangleai/research`: evidence-backed discovery, frozen experiments, bounded
+  decisions, independently verified drafts and durable human commands over MAS.
+  [Measurement](RESEARCH_BENCHMARK.md) covers scripted tiers only, including
+  explicitly experimental full-auto. No cross-run learning, second domain,
+  live quality claim or paper-parity result is established.
+  📄 [`refs/AutoResearchClaw.pdf`](refs/AutoResearchClaw.pdf)
 - **LightRAG** (arXiv:2410.05779v3) — document-bound entity/relation claims,
   structured extraction and affected profiling, name/theme retrieval, bounded
   one-hop expansion, three evidence sections, atomic incremental admission and
@@ -167,8 +174,6 @@ implementing any single one.
   weight-based consolidation; the honest caveat under everything this repo does, and the
   roadmap's experiential-memory entry operationalizes its builder requirements. 📄 [`refs/2604.27707v1.pdf`](refs/2604.27707v1.pdf)
 - **OMNI-SIMPLEMEM** (arXiv:2604.01007v2) — autonomous experiment loops over memory configs. 📄 [`refs/2604.01007v2.pdf`](refs/2604.01007v2.pdf)
-- **AutoResearchClaw** (aiming-lab, 2026) — self-evolving research pipelines; the roadmap's
-  verifiable-autonomous-research entry. 📄 [`refs/AutoResearchClaw.pdf`](refs/AutoResearchClaw.pdf)
 - **Enhancing Efficiency in Text Splitting: Exploring Semantic Clustering Methods**
   (Traets, 2024) — a supervised boundary classifier over embedding-window differences,
   PCA, and SVM/forest/boosting models. Tangle's deterministic k-means utility is unrelated;

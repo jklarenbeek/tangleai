@@ -82,24 +82,27 @@ describe('research instrument', () => {
   it('every registered mechanism has an explicit measurement scope and provider identity state', () => {
     assert.deepEqual(report.rows.map(row => row.id), RESEARCH_ROW_IDS);
     for (const row of report.rows.filter(row => row.id === 'full-auto-full')) {
-      assert.equal(row.state, 'implementation-missing'); assert.equal(Object.hasOwn(row, 'claimSupport'), false);
-      assert.ok('reason' in row && row.reason.length > 0);
+      assert.equal(row.state, 'measured'); assert.ok('experimental' in row && row.experimental);
     }
     assert.equal(report.identity.identities.length, 3);
     assert.equal(report.identity.rows.find(row => row.rowId === 'no-model-runner')?.identityStatus, 'run');
-    assert.ok(report.identity.rows.filter(row => !['artifact-oracle', 'full-auto-full'].includes(row.rowId)).every(row => row.identityStatus === 'run'));
-    assert.ok(report.identity.rows.filter(row => ['artifact-oracle', 'full-auto-full'].includes(row.rowId)).every(row => row.identityStatus === 'not-run'));
+    assert.ok(report.identity.rows.filter(row => row.rowId !== 'artifact-oracle').every(row => row.identityStatus === 'run'));
+    assert.equal(report.identity.rows.find(row => row.rowId === 'artifact-oracle')?.identityStatus, 'not-run');
   });
   it('writing retains missing result claims, the stopped scientific outcomes and a separately registered complete native control', () => {
     const rows = report.rows.filter(row => row.state === 'measured' && row.scope === 'writing');
-    assert.equal(rows.length, 2);
-    const [retrieval, full] = rows;
+    assert.equal(rows.length, 3);
+    const [retrieval, full, automatic] = rows;
     assert.deepEqual(retrieval.claimSupport, { passed: 6, total: 12, value: 0.5 });
     assert.deepEqual(retrieval.numericMapping, { passed: 0, total: 6, value: 0 });
     assert.deepEqual(full.claimSupport, { passed: 12, total: 12, value: 1 });
     assert.deepEqual(full.numericMapping, { passed: 6, total: 6, value: 1 });
     assert.equal(retrieval.cost.calls, 0); assert.equal(retrieval.interventions.total, 0);
     assert.deepEqual(full.cost, report.analysis.rows[0].cost);
+    assert.deepEqual(automatic.cost, full.cost); assert.equal(automatic.experimental, true);
+    assert.deepEqual(automatic.claimSupport, full.claimSupport); assert.deepEqual(automatic.numericMapping, full.numericMapping);
+    assert.equal(automatic.interventionReport.automatic, full.interventionReport.scripted);
+    assert.equal(automatic.interventionReport.human, 0); assert.equal(full.interventionReport.human, 0);
     for (const row of rows) for (const topic of row.topics) {
       assert.equal(topic.citationIdentity.value, 1); assert.equal(topic.claimValidity.value, 1); assert.equal(topic.bundleRerun.value, 1);
       assert.equal(topic.refusalConformance.value, 1); assert.equal(topic.receipt.files.length, 7);
@@ -121,6 +124,10 @@ describe('research instrument', () => {
     assert.equal(control.requests.every(row => row.hiddenPaths === 0), true);
     assert.equal(control.bundle.source.reviews.every(row => row.independence?.roleId !== control.bundle.source.draft.writer.roleId), true);
     assert.equal(report.identity.identities.some(row => row.identityId === control.runIdentityId), true);
+    const autoControl = report.writing.autoControl!;
+    assert.equal(autoControl.state.status, 'COMPLETE'); assert.deepEqual(autoControl.cost, control.cost);
+    assert.equal(autoControl.interactions.length, 0); assert.equal(autoControl.bundle.experimental, true);
+    assert.equal(autoControl.bundle.interventionReport!.automatic, 3); assert.equal(autoControl.bundle.source.provenance.interventions.length, 3);
     assert.doesNotThrow(() => requireResearchGate(report, 'writing'));
   });
   it('paired reasoning rows publish their equal conformance and unequal native cost without claiming experiment completion', () => {

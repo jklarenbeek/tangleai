@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "de8a41292f1798e60b5f95cf132a90e90b8e0c42",
+    "head": "8d988df343c10c6507dd660dfb8d2393741d16a5",
     "clean": false,
     "files": [
       {
@@ -675,7 +675,7 @@
       },
       {
         "path": "benchmark/lib/research-decisions.ts",
-        "sha256": "b1bcbb61d89896296cb1a1e539678530356434f08d603c3dafb2f9bec2dd31c2"
+        "sha256": "6b4429b7726fad1883c750e20c4a5b9c5c5c51ccb33c283f6e2cc0f14d361bf5"
       },
       {
         "path": "benchmark/lib/research-discovery-fixture.ts",
@@ -702,6 +702,10 @@
         "sha256": "a58a5c75906bbd9b25ead10f13ae07ff22a3d85bc146392c672f9fb65f54f924"
       },
       {
+        "path": "benchmark/lib/research-handoff.ts",
+        "sha256": "4ea053a8de284f373e8d0148b34afeb6986088cf5f6feb8f41f31fe1d4a53d79"
+      },
+      {
         "path": "benchmark/lib/research-latex.ts",
         "sha256": "04bbcb0f5608791055ba8d22ae563e5f72072e110cc5a401c9fa33bbee8b56dc"
       },
@@ -723,7 +727,7 @@
       },
       {
         "path": "benchmark/lib/research-reasoning.ts",
-        "sha256": "5c3574f841cecca301e122e84071b3fd222b03cbf6b5b86ff5b95bf2235bcd64"
+        "sha256": "b9cb15a633afcc4567e087ae78709f34258fb1b925f296a3165e53bf40e09d1f"
       },
       {
         "path": "benchmark/lib/research-runner.ts",
@@ -731,7 +735,7 @@
       },
       {
         "path": "benchmark/lib/research-schema.ts",
-        "sha256": "6c6d767b6bfc3ed5868cdb0e54b1b2930702b1367907552b520c7fa39d50bb71"
+        "sha256": "690d97c3e9eb1373d1e7f74c57b44c0b0242e2faf2d11eafb90df52243585579"
       },
       {
         "path": "benchmark/lib/research-statistics.ts",
@@ -751,15 +755,15 @@
       },
       {
         "path": "benchmark/lib/research-writing.ts",
-        "sha256": "d6c53e77600ef2f71da7f3d91195b2267c17b2de4f2fc3ed6d2fce8b2264021f"
+        "sha256": "6f51b7bf276bb952c7e3813fd87911f6b5aef35d727ad90a6a02e7c980520890"
       },
       {
         "path": "benchmark/lib/research.ts",
-        "sha256": "c27ea84134645dc3d096f46a7004a179d664c168a5cae07f03d6deb470667d9b"
+        "sha256": "b44f462f17f594ea416f5f9906f756db81a938dfdad684ba67fa911f3f825c24"
       },
       {
         "path": "benchmark/lib/research.types.ts",
-        "sha256": "db3a60efdcd1781146008f0f8dab5aef9b04bcde695d7a81d312879e5e3df581"
+        "sha256": "dfee443500dfb6d64c1b8d6c8715e5a27daed28bc093333de4b192daab46e542"
       },
       {
         "path": "benchmark/lib/retention.ts",
@@ -995,7 +999,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "aefe5950786e8a6a2dfe5ae4d7e0512c1b529bbb236e49b3e32be27e673c994e"
+        "sha256": "48b0d05297ede35cf0ee51bb66ef4193cec58846e7940ddc7b2df126deb2212a"
       },
       {
         "path": "packages/agents/package.json",
@@ -1435,7 +1439,7 @@
       },
       {
         "path": "packages/mas/src/store.ts",
-        "sha256": "f6e82cbb543a2abf436aa4018eb4e0577089fdb54e97f39d558b5e24fb3e4319"
+        "sha256": "6a6eb1df96a48b3bf4ad509cee5744ffbc6808ad388796fb2a87b88e25c80304"
       },
       {
         "path": "packages/mas/src/template-bindings.ts",
@@ -1627,7 +1631,7 @@
       },
       {
         "path": "packages/store/src/mas-store.ts",
-        "sha256": "0b49811531691f1daecf9c8654a4bb89366600e8caca7734adeea3111f3a51d0"
+        "sha256": "dc2d8844ab8351f7d10b193433b4db32666f96c1406678c0a995af9532137f29"
       },
       {
         "path": "packages/store/src/memory-store.ts",
@@ -1698,7 +1702,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "07ecec6eebad860e8b50c5aa981555d1ed95e9d1cdb51e795b6148411ea36eee"
+    "sha256": "a63707591e4c54a5efaf9182606f4b633d478c790941250a54476df662ef8509"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45163,5 +45167,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "e1f5d203d81fea3a15e5cd2d3f1bd6be250f19eb6fb91edc104738cdb37d170e"
+  "reportId": "bb016fa876fc5332827ec64006b671e3fac39f0855b27a4d0c7fcd3ae7f2773b"
 }

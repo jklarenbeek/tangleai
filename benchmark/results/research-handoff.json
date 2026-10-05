@@ -1,0 +1,245 @@
+{
+  "benchmark": "research-handoff",
+  "query": "queries/research/core-baseline.json",
+  "queryRevision": "4c96b66306c930c70d44500fd32aa6b7e3398a833e6ebea6a9f3350bfc9738bf",
+  "reportId": "6b762cb00b9df495fc5fd45263c17e439236b0d18a8132e972743fe3313d3f04",
+  "handoff": {
+    "decision": "conformant",
+    "fixture": {
+      "id": "research-computational-v1",
+      "revision": "2f7614dd8c909f3bdaf36f88a1c57c73dbcba8882fc4cd35e19abba3194f6e2e",
+      "topics": [
+        "kmeans-seeding",
+        "lexical-ranking",
+        "embedder-width"
+      ]
+    },
+    "limitations": [
+      "All data, literature and provider transcripts are authored synthetic MIT fixtures. Identifiers do not describe real publications.",
+      "Scripted conformance is not live research quality. The oracle can read hidden labels; the no-model program inputs contain features and queries only.",
+      "Oracle review disclosures are scripted whole-bundle structural probes. Native lifecycle approvals are scripted interactions over the artifact set available at each gate; none establishes actual human participation.",
+      "The scientific no-model paths retain both Stop decisions, hence seven of nine possible approvals. Separate complete-path controls reach all three gates for each topic and make no scientific decision claim.",
+      "The pure-program bundle retains its original null provider identity and no approvals. The enclosing native workflow binds a recomputable synthetic CONFIG identity; no provider endpoint is called.",
+      "Claim support uses fixed authored propositions and numeric bindings, not a general entailment or novelty detector. Omitted required claims remain in the denominator.",
+      "Confound detection and branch compliance measure the shared verifier against registered corrupted bundles, not an autonomous scientific judgement.",
+      "Model requests use the in-process scripted-v1 client. Its authored 7 prompt / 3 completion token receipts test accounting, not tokenizer efficiency. External provider requests remain zero; local CPU latency and monetary cost are unmeasured.",
+      "Clustering uses five fixed seed pairs. Retrieval has one deterministic pair on eight queries; its degenerate interval is not population-level statistical evidence.",
+      "Every comparison retains ties and losses. A confidence interval touching zero does not establish improvement; saturated results stop without threshold changes.",
+      "Completion in full-lifecycle rows records reaching the registered decision, not overall research quality. Reasoning rows stop at the real design gate and make no execution, result, writing or completion claim.",
+      "The paired reasoning rows see the same eight of sixteen committed cards per topic, selected deterministically by first element per source. Seven compiled packs execute in debate; three execute in single-agent.",
+      "Reasoning refusal counts are direct independent-verifier probes over four frozen bad proposals, with zero model calls. They measure validator sensitivity, not a model identifying or repairing a bad plan. Separate native integration tests exercise model-path refusals and repair accounting.",
+      "Execution comparisons use a separate preregistered control with three allowed clustering attempts. Both arms run the same single-agent model stages in one native workflow; only the branch arm follows Refine twice. Those choices are scripted controls, not a learned or statistically justified selector.",
+      "Execution retains all attempts and every seed, including unchanged repetitions. It claims neither additional independent evidence from repeats nor a scientific advantage from branching. The original one-attempt topic registrations and pre-execution model rows are preserved.",
+      "Fixture execution maps registered ids to trusted pure functions and reports isolation.verified=false. Its image identity identifies the fixture program manifest, not a locally installed container. Wall and CPU cost are unmeasured in deterministic rows; physical experiment dispatch and separate verification reruns are counted.",
+      "Decision sensitivity cases measure the deterministic planner with authored component evidence. Native decision rows separately execute independent peer review; scripted reviewers do not establish live model quality or actual human participation.",
+      "Replicating missing seeds preserves the original comparison and adds review cost. Persistent-fault repair retains every failed candidate and demonstrates no repair benefit.",
+      "Program failure and cancellation probes include their own complete native model, experiment and verification costs. Container smoke timing and platform qualification are separate operational receipts and never enter the deterministic report.",
+      "Writing uses the same four required propositions per original topic. Retrieval-only omits both result claims and retains those misses in the denominator. Additional exact card quotations are reported separately as claim validity.",
+      "All three native decision topics stop. Their full writing comparison exports explicitly labelled stopped-run audits without approving quality or changing a result. A separately preregistered coordinate control exercises the native agent writer, both independent review patterns and the quality gate.",
+      "Full-auto is explicitly experimental. It replaces the same three gate positions with native task approvals and records every full-auto intervention. Both modes retain the same frozen topics, models, budgets, seeds and thresholds; scripted gate-only approvals are not actual human participation or a measured human-quality advantage.",
+      "LaTeX text is reproduced deterministically. Its report receipt states skipped host compilation; the separate local qualification compiles when TeX is installed, records missing tools explicitly, and is never a research quality gate."
+    ],
+    "modes": [
+      {
+        "experimental": false,
+        "id": "gate-only-full",
+        "interventions": {
+          "approvals": 6,
+          "automatic": 0,
+          "human": 0,
+          "scripted": 6,
+          "stops": 0,
+          "substantive": 0,
+          "total": 6
+        }
+      },
+      {
+        "experimental": true,
+        "id": "full-auto-full",
+        "interventions": {
+          "approvals": 6,
+          "automatic": 6,
+          "human": 0,
+          "scripted": 0,
+          "stops": 0,
+          "substantive": 0,
+          "total": 6
+        }
+      }
+    ],
+    "recordNames": [
+      "Amendment",
+      "Analysis",
+      "ArtifactAdmission",
+      "DisclosureChecklist",
+      "DiscoveryCandidate",
+      "DiscoveryReceipt",
+      "Draft",
+      "EvidenceCard",
+      "ExecutionManifest",
+      "ExperimentBranch",
+      "ExperimentPlan",
+      "ExperimentRun",
+      "ExportReceipt",
+      "HypothesisSet",
+      "InclusionCriteria",
+      "InputManifest",
+      "Intervention",
+      "LiteratureRecord",
+      "MetricObservation",
+      "NoveltyReport",
+      "QueryPlan",
+      "ResearchArtifact",
+      "ResearchBranchSelection",
+      "ResearchClaim",
+      "ResearchClaimLedger",
+      "ResearchCodeWrite",
+      "ResearchContract",
+      "ResearchDecision",
+      "ResearchDraftVerification",
+      "ResearchExportManifest",
+      "ResearchHypothesis",
+      "ResearchLesson",
+      "ResearchManifest",
+      "ResearchProject",
+      "Review",
+      "ScreeningDecision",
+      "SourceAcquisition",
+      "StageAttempt",
+      "Synthesis",
+      "WorkspaceManifest"
+    ],
+    "reportId": "6b762cb00b9df495fc5fd45263c17e439236b0d18a8132e972743fe3313d3f04",
+    "rows": [
+      {
+        "cost": {
+          "calls": 0,
+          "ms": 0,
+          "physical": 0,
+          "tokens": 0
+        },
+        "id": "artifact-oracle",
+        "interventions": {
+          "approvals": 9,
+          "substantive": 0,
+          "total": 9
+        },
+        "scope": "full-lifecycle",
+        "state": "measured"
+      },
+      {
+        "cost": {
+          "calls": 0,
+          "ms": 0,
+          "physical": 0,
+          "tokens": 0
+        },
+        "id": "no-model-runner",
+        "interventions": {
+          "approvals": 7,
+          "substantive": 0,
+          "total": 7
+        },
+        "scope": "full-lifecycle",
+        "state": "measured"
+      },
+      {
+        "cost": {
+          "calls": 0,
+          "ms": 0,
+          "physical": 0,
+          "tokens": 0
+        },
+        "id": "single-pass-retrieve-draft",
+        "interventions": {
+          "approvals": 0,
+          "substantive": 0,
+          "total": 0
+        },
+        "scope": "writing",
+        "state": "measured"
+      },
+      {
+        "cost": {
+          "calls": 18,
+          "ms": 0,
+          "physical": 18,
+          "tokens": 180
+        },
+        "id": "fixed-single-agent",
+        "interventions": {
+          "approvals": 3,
+          "substantive": 0,
+          "total": 3
+        },
+        "scope": "pre-execution",
+        "state": "measured"
+      },
+      {
+        "cost": {
+          "calls": 78,
+          "ms": 0,
+          "physical": 78,
+          "tokens": 780
+        },
+        "id": "fixed-plus-debate",
+        "interventions": {
+          "approvals": 3,
+          "substantive": 0,
+          "total": 3
+        },
+        "scope": "pre-execution",
+        "state": "measured"
+      },
+      {
+        "cost": {
+          "calls": 18,
+          "ms": 0,
+          "physical": 52,
+          "tokens": 180
+        },
+        "id": "fixed-plus-branching",
+        "interventions": {
+          "approvals": 6,
+          "substantive": 0,
+          "total": 6
+        },
+        "scope": "execution",
+        "state": "measured"
+      },
+      {
+        "cost": {
+          "calls": 36,
+          "ms": 0,
+          "physical": 50,
+          "tokens": 360
+        },
+        "id": "gate-only-full",
+        "interventions": {
+          "approvals": 6,
+          "substantive": 0,
+          "total": 6
+        },
+        "scope": "writing",
+        "state": "measured"
+      },
+      {
+        "cost": {
+          "calls": 36,
+          "ms": 0,
+          "physical": 50,
+          "tokens": 360
+        },
+        "id": "full-auto-full",
+        "interventions": {
+          "approvals": 6,
+          "substantive": 0,
+          "total": 6
+        },
+        "scope": "writing",
+        "state": "measured"
+      }
+    ]
+  },
+  "artifactId": "3a9d4d4e8f5653ab181374a3fec184df5c45772a20071724d67316ff7f9188d7"
+}

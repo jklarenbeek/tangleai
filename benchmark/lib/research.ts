@@ -19,6 +19,7 @@ import { RESEARCH_ROW_IDS, RESEARCH_DIMENSIONS, RESEARCH_DISCLOSURES, RESEARCH_R
 import { validateResearchReportShape } from './research-validation.ts';
 import { describeErrors } from './validate.ts';
 import { table as markdownTable } from './table.ts';
+import { interventionReport, RESEARCH_RECORD_KINDS } from '@tangleai/research';
 import type { ResearchReport, ResearchBundle, ResearchFixtureTopic, ResearchTopicResult, ResearchMeasuredRow, ResearchScore,
   ResearchReasoningRow, ResearchReasoningTopic, ResearchModelUsage, ResearchExecutionTopic, ResearchExecutionRow, ResearchExecutionRefusalFixture,
   ResearchDecisionRegistration, ResearchAnalysisTopic, ResearchWritingTopic, ResearchWritingRow } from './research.types.ts';
@@ -38,6 +39,7 @@ export const SOURCE_MANIFEST = [
   'benchmark/lib/research-execution.ts', 'benchmark/lib/research-execution-fixture.ts',
   'benchmark/lib/research-decisions.ts', 'benchmark/lib/research-decision-fixture.ts', 'benchmark/lib/research-statistics.ts',
   'benchmark/lib/research-writing.ts', 'benchmark/lib/research-writing-fixture.ts', 'benchmark/lib/research-latex.ts',
+  'benchmark/research-query.ts', 'benchmark/lib/research-handoff.ts', 'queries/research/core-baseline.json',
   'benchmark/lib/args.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts',
   'benchmark/lib/suite-packages.ts', 'benchmark/lib/report-envelope.ts', 'benchmark/lib/table.ts',
   'packages/research/schemas/research.schema.json', 'benchmark/schemas/research.schema.json',
@@ -184,6 +186,7 @@ export const RESEARCH_LIMITATIONS = [
   'Program failure and cancellation probes include their own complete native model, experiment and verification costs. Container smoke timing and platform qualification are separate operational receipts and never enter the deterministic report.',
   'Writing uses the same four required propositions per original topic. Retrieval-only omits both result claims and retains those misses in the denominator. Additional exact card quotations are reported separately as claim validity.',
   'All three native decision topics stop. Their full writing comparison exports explicitly labelled stopped-run audits without approving quality or changing a result. A separately preregistered coordinate control exercises the native agent writer, both independent review patterns and the quality gate.',
+  'Full-auto is explicitly experimental. It replaces the same three gate positions with native task approvals and records every full-auto intervention. Both modes retain the same frozen topics, models, budgets, seeds and thresholds; scripted gate-only approvals are not actual human participation or a measured human-quality advantage.',
   'LaTeX text is reproduced deterministically. Its report receipt states skipped host compilation; the separate local qualification compiles when TeX is installed, records missing tools explicitly, and is never a research quality gate.',
 ] as const;
 export async function buildReport(options: { context?: ResearchContext; rows?: readonly string[] } = {}): Promise<ResearchReport> {
@@ -211,12 +214,12 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
     JSON.parse(new TextDecoder().decode(loaded.files.get(loaded.manifest.analysis.registration)!)));
   const analysis: ResearchReport['analysis'] = { registrationHash: await canonicalSha256(decisionRegistration), rows: [], probes: [], repair: [] };
   const writingRegistration = readResearchWritingRegistration(loaded);
-  const writing: ResearchReport['writing'] = { registrationHash: await canonicalSha256(writingRegistration), control: null };
+  const writing: ResearchReport['writing'] = { registrationHash: await canonicalSha256(writingRegistration), control: null, autoControl: null };
   const stopped = new Map<string, Awaited<ReturnType<typeof runResearchDecisionFixture>>>();
   const identity = analyticEnvelope(RESEARCH_ROW_IDS), sourceRevision = await canonicalSha256(context.source.files);
   for (const id of RESEARCH_ROW_IDS) {
     if (!selected.includes(id)) { rows.push({ id, state: 'not-run', reason: 'Excluded by the explicit row selection.' }); continue; }
-    if (id === 'single-pass-retrieve-draft' || id === 'gate-only-full') {
+    if (id === 'single-pass-retrieve-draft' || id === 'gate-only-full' || id === 'full-auto-full') {
       const topics: ResearchWritingTopic[] = [];
       for (const topic of loaded.topics) {
         let bundle: Awaited<ReturnType<typeof researchStoppedWriting>>;
@@ -225,7 +228,8 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
           if (!identity.identities.some(row => row.identityId === result.identity.identityId)) identity.identities.push(result.identity);
           identity.rows = identity.rows.map(row => row.rowId === id ? { rowId: id, identityStatus: 'run', identityId: result.identity.identityId } : row);
         } else {
-          const result = stopped.get(topic.id) ?? await runResearchDecisionFixture(loaded, topic, decisionRegistration, 'control');
+          const result = id === 'full-auto-full' ? await runResearchDecisionFixture(loaded, topic, decisionRegistration, 'control', false, true)
+            : stopped.get(topic.id) ?? await runResearchDecisionFixture(loaded, topic, decisionRegistration, 'control');
           bundle = await researchStoppedWriting(result);
           if (!identity.identities.some(row => row.identityId === result.identity.identityId)) identity.identities.push(result.identity);
           identity.rows = identity.rows.map(row => row.rowId === id ? { rowId: id, identityStatus: 'run', identityId: result.identity.identityId } : row);
@@ -235,6 +239,10 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
       rows.push(aggregateResearchWriting(id, topics));
       if (id === 'gate-only-full') {
         const result = await runResearchWritingControl(loaded, writingRegistration); writing.control = result.execution!;
+        if (!identity.identities.some(row => row.identityId === result.identity.identityId)) identity.identities.push(result.identity);
+      }
+      if (id === 'full-auto-full') {
+        const result = await runResearchWritingControl(loaded, writingRegistration, true); writing.autoControl = result.execution!;
         if (!identity.identities.some(row => row.identityId === result.identity.identityId)) identity.identities.push(result.identity);
       }
       continue;
@@ -287,10 +295,10 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
         discovery.push(science.discovery);
         const control = await runNativeResearchFixture(loaded, topic, sourceRevision, 'complete-path-control');
         const scored = await scoreResearchBundle(loaded, topic, science.bundle!, bundles);
-        const actions = science.measurement.interactions.map(i => i.response as { decision: string; note: string });
+        const actions = interventionReport({ interactions: science.measurement.interactions, attempts: [] });
         topics.push({ ...scored, workflow: science.measurement, completePathControl: control.measurement,
-          gateBehaviour: science.measurement.gateBehaviour, interventions: { total: actions.length,
-            substantive: actions.filter(a => a.note.trim().length > 0).length, approvals: actions.filter(a => a.decision === 'approve').length } });
+          gateBehaviour: science.measurement.gateBehaviour, interventions: { total: actions.total,
+            substantive: actions.substantive, approvals: actions.approvals } });
         if (!identity.identities.some(row => row.identityId === science.identity.identityId)) identity.identities.push(science.identity);
         identity.rows = identity.rows.map(row => row.rowId === id ? { rowId: id, identityStatus: 'run', identityId: science.identity.identityId } : row);
       }
@@ -303,13 +311,16 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
     analysis: analysis.rows.length === 2 && analysis.probes.length === 5 && analysis.repair.length === 2
       && analysis.probes.every(probe => probe.matched) && analysis.rows.every(row =>
         [row.confoundDetection, row.negativeResultHandling, row.branchSelectionCompliance].every(score => score.value === 1)),
-    writing: rows.filter(row => row.state === 'measured' && row.scope === 'writing').length === 2 && writing.control?.state.status === 'COMPLETE'
+    writing: rows.filter(row => row.state === 'measured' && row.scope === 'writing').length === 3 && writing.control?.state.status === 'COMPLETE'
       && writing.control.writerCalls > 0 && writing.control.reviewCalls > 0
+      && writing.autoControl?.state.status === 'COMPLETE' && writing.autoControl.bundle.experimental === true
+      && writing.autoControl.bundle.interventionReport?.automatic === 3 && writing.autoControl.interactions.length === 0
       && rows.filter((row): row is ResearchWritingRow => row.state === 'measured' && row.scope === 'writing')
         .every(row => [row.citationIdentity, row.claimValidity, row.bundleRerun, row.refusalConformance].every(score => score.value === 1)
           && row.claimSupport.value === (row.id === 'single-pass-retrieve-draft' ? 0.5 : 1)
           && row.numericMapping.value === (row.id === 'single-pass-retrieve-draft' ? 0 : 1)), networkCalls: 0 as const };
   const payload: Omit<ResearchReport, 'reportId'> = { benchmark: 'research', schemaVersion: 1, source: context.source, suite: context.suite,
+    recordNames: [...RESEARCH_RECORD_KINDS],
     registration: { id: loaded.manifest.id, revision: loaded.manifest.revision, topics: loaded.topics.map(topic => topic.id),
       caps: loaded.manifest.caps, replicatePolicy: loaded.manifest.replicatePolicy,
       bundles: [...loaded.manifest.bundles, ...loaded.manifest.execution.refusals].map(bundle => ({ id: bundle.id, expected: structuredClone(bundle.expected) })) },
@@ -374,22 +385,32 @@ export function renderDocument(report: ResearchReport): string {
     ...measured.flatMap(row => ['### ' + row.id, '', table(['Dimension', ...row.topics.map(topic => topic.topicId), 'Pooled counts'],
       RESEARCH_DIMENSIONS.map(dimension => [dimension, ...row.topics.map(topic => score(topic[dimension])), score(row[dimension])])), '']),
     '## Claim ledger, independent review and export', '',
-    'Both writing rows keep the same four required propositions per topic: two literature statements and two registered means. Retrieval-only has no observations and loses both result claims. Its native run waits at the literature gate. The full comparison reuses the actual decision-control admissions and exports stopped-run audits: none of the three original topics becomes a supported research draft or receives a quality approval.', '',
+    'All three writing rows keep the same four required propositions per topic: two literature statements and two registered means. Retrieval-only has no observations and loses both result claims. Its native run waits at the literature gate. Gate-only and experimental full-auto both export stopped-run audits: none of the three original topics becomes a supported research draft or receives a quality approval.', '',
     table(['Row', 'Topic', 'Scope / terminal', 'Citation identity', 'Required claim support', 'Numeric mapping', 'All admitted claims valid', 'Rerun identity', 'Calls / tokens'],
       writing.flatMap(row => row.topics.map(topic => [row.id, topic.topicId, topic.scope + ' / ' + topic.terminal, score(topic.citationIdentity),
         score(topic.claimSupport), score(topic.numericMapping), score(topic.claimValidity), score(topic.bundleRerun), topic.cost.calls + ' / ' + topic.cost.tokens]))), '',
     table(['Row', 'Topic', 'Refusal', 'Expected / observed', 'Unresolved', 'Matched'], writing.flatMap(row => row.topics.flatMap(topic => topic.probes.map(probe =>
       [row.id, topic.topicId, probe.id, probe.expectedCode + ' / ' + (probe.observedCode ?? 'none'), probe.state, String(probe.matched)])))), '',
     'Refusal probes mutate proposed claims after execution. They test identity, exact support and numeric verification with zero extra model calls; they do not score a reviewer identifying a defect. The retrieval row has no numeric claim to mutate, so its three citation/support probes and zero-of-two numeric coverage are shown separately.', '',
-    table(['Control', 'Native terminal', 'Writer calls', 'Review calls', 'Total calls / tokens / physical', 'Reviews', 'Trace bytes'], report.writing.control ? [[
-      report.writing.control.id, report.writing.control.state.status, report.writing.control.writerCalls, report.writing.control.reviewCalls,
-      report.writing.control.cost.calls + ' / ' + report.writing.control.cost.tokens + ' / ' + report.writing.control.cost.physical,
-      report.writing.control.bundle.source.reviews.length, report.writing.control.traceBytes]] : []), '',
+    table(['Control mode', 'Native terminal', 'Writer calls', 'Review calls', 'Total calls / tokens / physical', 'Reviews', 'Trace bytes'],
+      [report.writing.control, report.writing.autoControl].flatMap(control => control ? [[control.bundle.experimental ? 'full-auto (experimental)' : 'gate-only',
+        control.state.status, control.writerCalls, control.reviewCalls, control.cost.calls + ' / ' + control.cost.tokens + ' / ' + control.cost.physical,
+        control.bundle.source.reviews.length, control.traceBytes]] : [])), '',
+    '### Gate-only and experimental full-auto', '',
+    'Both modes execute the same registered comparisons. Gate-only pauses at native interactions; full-auto uses explicitly attributed native task approvals. Every approval and substantive action is counted. An approval note is not an edit, rejection or guidance action.', '',
+    table(['Mode', 'Topic', 'Terminal / support', 'Claim validity', 'Calls / tokens / physical', 'Human / scripted / automatic', 'Approvals / substantive'],
+      writing.filter(row => row.id !== 'single-pass-retrieve-draft').flatMap(row => row.topics.map(topic => [row.id, topic.topicId,
+        topic.terminal + ' / ' + topic.bundle.source.inputs.analysis!.support, score(topic.claimValidity),
+        topic.cost.calls + ' / ' + topic.cost.tokens + ' / ' + topic.cost.physical,
+        topic.interventionReport.human + ' / ' + topic.interventionReport.scripted + ' / ' + topic.interventionReport.automatic,
+        topic.interventionReport.approvals + ' / ' + topic.interventionReport.substantive]))), '',
+    'The three original topics keep their negative or inconclusive outcomes in both modes. No live model or human-review quality benefit is established. The separate positive control reaches all three gate positions in each mode and retains its complete intervention records in the bundle manifest.', '',
     'The separate positive coordinate control has its own frozen contract, program outputs, evaluator, script and resource caps. It reaches Proceed through native analysis, then the read-only agent writer, independent GMPL peer review and red team, and a scripted quality approval. It establishes mechanism conformance, not scientific improvement or human review. Review never changes deterministic support.', '',
     table(['Row / control', 'Topic', 'Bundle files', 'LaTeX state', 'Reason'], [
       ...writing.flatMap(row => row.topics.map(topic => [row.id, topic.topicId, topic.receipt.files.length, topic.receipt.latex.state, topic.receipt.latex.reason ?? ''])),
-      ...(report.writing.control ? [[report.writing.control.id, 'coordinate mechanism', report.writing.control.receipt.files.length,
-        report.writing.control.receipt.latex.state, report.writing.control.receipt.latex.reason ?? '']] : []),
+      ...[report.writing.control, report.writing.autoControl].flatMap(control => control ? [[
+        control.id + ' / ' + (control.bundle.experimental ? 'full-auto' : 'gate-only'), 'coordinate mechanism', control.receipt.files.length,
+        control.receipt.latex.state, control.receipt.latex.reason ?? '']] : []),
     ]), '',
     'Each Markdown export retains seven file checksums, all admitted claims, observations, citations, attempt costs, selection and eight evidence-backed disclosures. Rebuilding from its manifest alone reproduces every file byte. TeX and BibTeX use the same verified ledger. The deterministic report skips host compilation explicitly; `node --test test/research/latex.test.ts` separately compiles when the tools are present and records an explicit missing-tool skip otherwise. LaTeX is never a research gate.', '',
     '## Synthesis, hypotheses and preregistration', '',

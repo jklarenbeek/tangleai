@@ -1,6 +1,6 @@
 import { cloneJson } from '@jarenjs/core/object';
 import { createScheduler } from '@jarenjs/core/schedule';
-import type { ArtifactAdmission, ResearchIssue, ResearchProject, ResearchState, StageArtifactDescriptor, StageAttemptKey, StageCommitReceipt } from './contracts.gen.ts';
+import type { ArtifactAdmission, Intervention, ResearchIssue, ResearchProject, ResearchState, StageArtifactDescriptor, StageAttemptKey, StageCommitReceipt } from './contracts.gen.ts';
 import type { ResearchRecordEntry, ResearchRecordKind, ResearchRecordMap, ResearchRecordWrite } from './records.ts';
 import type { AmendmentPlan, ContractFreezePlan, ProjectCreatePlan, ResearchProjection, StageCommitPlan, StateTransitionPlan } from './transitions.ts';
 import { createResearchStoreAdapter } from './store-policy.ts';
@@ -26,6 +26,8 @@ export interface ResearchStore {
   readArtifact(projectId: string, admissionId: string): Promise<ResearchStoreOutcome<{ admission: ArtifactAdmission; bytes: Uint8Array }>>;
   commitStage(plan: StageCommitPlan): Promise<ResearchStoreOutcome<StageCommitReceipt>>;
   transition(plan: StateTransitionPlan): Promise<ResearchStoreOutcome<ResearchState>>;
+  /** Reconcile an attributed native cancellation into one atomic domain receipt. */
+  stopWithIntervention(plan: { expectedState: ResearchState; intervention: Intervention }): Promise<ResearchStoreOutcome<ResearchState>>;
   freezeContract(plan: ContractFreezePlan): Promise<ResearchStoreOutcome<ResearchState>>;
   amendContract(plan: AmendmentPlan): Promise<ResearchStoreOutcome<ResearchState>>;
   getAttempt(projectId: string, attemptId: string): Promise<ResearchStoreOutcome<StageCommitReceipt | null>>;

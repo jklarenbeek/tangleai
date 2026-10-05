@@ -146,7 +146,9 @@ export interface MasStore {
   }): Promise<StoreOutcome<MasInteraction>>;
   getInteraction(id: string): Promise<MasInteraction | undefined>;
   respondInteraction(id: string, response: unknown, expectedRevision: number, responseKey: string): Promise<StoreOutcome<MasInteraction>>;
-  resolveInteraction(id: string, status: 'cancelled' | 'expired', expectedRevision: number): Promise<StoreOutcome<MasInteraction>>;
+  /** Optional validated attribution persists atomically and replays by its response key. */
+  resolveInteraction(id: string, status: 'cancelled' | 'expired', expectedRevision: number,
+    resolution?: { responseKey: string; response: unknown }): Promise<StoreOutcome<MasInteraction>>;
 
   /** The latest committed state revision of one namespace, or undefined before any push. */
   latestState(runId: string, namespace: string): Promise<{ id: string, value: unknown } | undefined>;

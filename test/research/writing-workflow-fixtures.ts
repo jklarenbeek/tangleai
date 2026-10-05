@@ -1,14 +1,20 @@
 import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { createResearchBinding, initialResearchFrame, prepareResearchWorkflow, researchWritingRevisionOf, createResearchWritingTools,
-  researchDraftProposal, type ResearchWritingPolicy, type ResearchTaskTools, type ResearchClaimLedger } from '@tangleai/research';
+  researchDraftProposal, researchRevisionOf, type ResearchWritingPolicy, type ResearchTaskTools, type ResearchClaimLedger, type ResearchDraftProposal } from '@tangleai/research';
 import type { MasHostBindings } from '@tangleai/mas';
 import type { ResearchStore } from '../../packages/research/src/store.ts';
 import { researchExampleIdentity, researchExampleLimits } from '../../examples/research.ts';
 import { analysisWorkflowFixture, analysisWorkflowTools, analysisReviewClient } from './analysis-workflow-fixtures.ts';
 import { reasoningFixture } from './reasoning-fixtures.ts';
 
-export async function writingWorkflowFixture(mode: ResearchWritingPolicy['mode'] = 'agent') {
+export async function writingWorkflowFixture(mode: ResearchWritingPolicy['mode'] = 'agent', reviewCap?: number) {
   const f = await analysisWorkflowFixture(), literature = await reasoningFixture(), identity = await researchExampleIdentity();
+  if (reviewCap !== undefined) {
+    const { contractHash: _contractHash, ...body } = f.contract;
+    f.contract = { ...body, reviewCap, contractHash: await researchRevisionOf({ ...body, reviewCap }) };
+    const { planHash: _planHash, ...plan } = f.plan;
+    f.plan = { ...plan, contractHash: f.contract.contractHash, planHash: await researchRevisionOf({ ...plan, contractHash: f.contract.contractHash }) };
+  }
   const writingPolicy: ResearchWritingPolicy = { mode, modelIdentity: identity.identityId, maxCards: 64, maxClaims: 128, maxViewChars: 50000 };
   const project = { ...f.project, budget: { calls: 500, tokens: 100000, ms: 600000, physical: 600 } };
   const limits = { ...researchExampleLimits, calls: 500, tokens: 100000, contextChars: 200000, traceBytes: 8000000 };
@@ -44,8 +50,8 @@ export function writingReviewClient(options: { critical?: boolean; invalidWriter
       let output: unknown;
       if (node.role === 'research-writer') {
         const context = messages.find(row => row.content.includes('[research:ledger/'))!.content;
-        const view = JSON.parse(context.slice(context.indexOf('\n', context.indexOf('[research:ledger/')) + 1)) as { ledger: ResearchClaimLedger };
-        const proposal = researchDraftProposal(view.ledger);
+        const view = JSON.parse(context.slice(context.indexOf('\n', context.indexOf('[research:ledger/')) + 1)) as { ledger: ResearchClaimLedger; humanReview?: { proposal: ResearchDraftProposal | null } };
+        const proposal = view.humanReview?.proposal ?? researchDraftProposal(view.ledger);
         if (options.invalidWriter) proposal.sections[0].text = 'The candidate has 99% improvement.';
         output = proposal;
       } else {

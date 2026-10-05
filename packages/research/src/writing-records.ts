@@ -42,7 +42,8 @@ export async function readResearchWritingInputs(operation: ResearchStageOperatio
   const contract = one(of('ResearchContract').filter(row => row.contractHash === operation.expectedState.contractHash), '/contract');
   const plan = one(of('ExperimentPlan').filter(row => row.planHash === operation.expectedState.planHash), '/plan');
   const decision = one(of('ResearchDecision').filter(row => row.contractHash === contract.contractHash
-    && row.details?.attemptOrdinal === operation.frame.attempt && row.details.pivotOrdinal === operation.frame.pivot), '/decision');
+    && row.details?.attemptOrdinal === operation.frame.attempt && row.details.pivotOrdinal === operation.frame.pivot
+    && (!operation.frame.decisionId || row.id === operation.frame.decisionId)), '/decision');
   const analysis = one(of('Analysis').filter(row => row.id === decision.details?.analysisId && row.planHash === plan.planHash), '/analysis');
   const cards = of('EvidenceCard').sort((a, b) => a.id.localeCompare(b.id));
   if (!cards.length || cards.length > policy.maxCards) researchFail('TRSH1006', '/cards', 'The complete admitted card set exceeds the writer policy or is empty.');

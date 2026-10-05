@@ -1,0 +1,54 @@
+{
+  "$comment": "The measured core handoff retains all eight rows, the immutable fixture identity, actual public record names and the limits that learning and coverage extensions must preserve. Native compileJsonQuery executes this document verbatim.",
+  "reportId": "$.reportId",
+  "decision": "$.decision",
+  "fixture": {
+    "id": "$.registration.id",
+    "revision": "$.registration.revision",
+    "topics": "$.registration.topics"
+  },
+  "rows": [
+    {
+      "$for": {
+        "row": "$.rows[*]"
+      },
+      "$return": {
+        "id": "$row.id",
+        "state": "$row.state",
+        "scope": "$row.scope",
+        "cost": "$row.cost",
+        "interventions": "$row.interventions"
+      }
+    }
+  ],
+  "recordNames": "$.recordNames",
+  "modes": [
+    {
+      "$for": {
+        "row": "$.rows[*]"
+      },
+      "$where": {
+        "$or": [
+          {
+            "$eq": [
+              "$row.id",
+              "gate-only-full"
+            ]
+          },
+          {
+            "$eq": [
+              "$row.id",
+              "full-auto-full"
+            ]
+          }
+        ]
+      },
+      "$return": {
+        "id": "$row.id",
+        "experimental": "$row.experimental",
+        "interventions": "$row.interventionReport"
+      }
+    }
+  ],
+  "limitations": "$.limitations"
+}

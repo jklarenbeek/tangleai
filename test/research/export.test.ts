@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { it } from 'node:test';
-import { renderMarkdownBundle, rerunBundle, verifyResearchBundleFiles, researchArtifactIdOf, researchRevisionOf } from '@tangleai/research';
+import { renderMarkdownBundle, rerunBundle, verifyResearchBundleFiles, researchArtifactIdOf, researchRevisionOf,
+  researchInterventionReport, researchDisclosure } from '@tangleai/research';
 import { writingExportFixture } from './writing-fixtures.ts';
 import { checked } from './fixtures.ts';
 
@@ -17,6 +18,43 @@ it('reconstructs all seven files byte-for-byte and binds the nonrecursive manife
   assert.ok(f.source.disclosure.every(item => item.evidence.length && item.reason));
   assert.equal(f.source.disclosure.find(item => item.item === 'human-review')!.satisfied, false);
   assert.equal(f.source.disclosure.find(item => item.item === 'novelty-audit')!.satisfied, false);
+});
+it('manifest intervention totals and experimental disclosure cannot be altered by rehashing', async () => {
+  const f = await writingExportFixture(), source = structuredClone(f.source);
+  source.provenance.interventions = (['literature', 'design', 'quality'] as const).map(gate => ({ id: 'automatic-' + gate,
+    gate, actor: 'full-auto', action: 'approve', reviewedManifestHash: 'a'.repeat(64), approvedManifestHash: 'a'.repeat(64),
+    substantive: false, experimental: true }));
+  const { manifestHash: _old, ...original } = f.scientific;
+  const body = { ...original, experimental: true, interventionReport: researchInterventionReport(source.provenance.interventions) };
+  const scientific = { ...body, manifestHash: await researchRevisionOf(body) };
+  source.disclosure = researchDisclosure(source, scientific);
+  const bundle = checked(await renderMarkdownBundle(source, scientific));
+  assert.equal(bundle.manifest.experimental, true); assert.equal(bundle.manifest.interventionReport!.automatic, 3);
+  assert.deepEqual(bundle.manifest.interventionReport, scientific.interventionReport);
+  for (const change of [{ experimental: false }, { interventionReport: { ...bundle.manifest.interventionReport!, automatic: 0 } }]) {
+    const changed = { ...bundle.manifest, ...change }, { id: _id, ...content } = changed;
+    changed.id = 'export-' + await researchRevisionOf(content); assert.equal((await rerunBundle(changed)).valid, false);
+  }
+  const duplicated = structuredClone(source); duplicated.provenance.interventions.push(duplicated.provenance.interventions[0]);
+  assert.equal((await renderMarkdownBundle(duplicated, scientific)).valid, false);
+});
+it('full-auto remains experimental even when a bundle contains no accepted gate actions', async () => {
+  const f = await writingExportFixture();
+  const source = { ...f.source, provenance: { ...f.source.provenance, mode: 'full-auto' as const } };
+  const { manifestHash: _old, ...original } = f.scientific;
+  const body = { ...original, experimental: true, interventionReport: researchInterventionReport([]) };
+  const scientific = { ...body, manifestHash: await researchRevisionOf(body) };
+  const bundle = checked(await renderMarkdownBundle(source, scientific));
+  assert.equal(bundle.manifest.experimental, true); assert.equal(bundle.manifest.interventionReport!.total, 0);
+  assert.deepEqual(checked(await rerunBundle(bundle.manifest)).files, bundle.files);
+});
+it('intervention summaries refuse clock actors and contradictory experimental attribution', () => {
+  const base = { id: 'attribution-probe', gate: 'design' as const, action: 'approve' as const,
+    reviewedManifestHash: 'a'.repeat(64), approvedManifestHash: 'a'.repeat(64), substantive: false };
+  assert.throws(() => researchInterventionReport([{ ...base, actor: 'timeout' }]));
+  assert.throws(() => researchInterventionReport([{ ...base, actor: 'human', experimental: true }]));
+  assert.throws(() => researchInterventionReport([{ ...base, actor: 'full-auto', experimental: false }]));
+  assert.throws(() => researchInterventionReport([{ ...base, action: 'edit', substantive: true, actor: 'full-auto', experimental: true }]));
 });
 it('refuses modified, missing and unlisted bundle files and rehashed false numeric content', async () => {
   const f = await writingExportFixture(), bundle = checked(await renderMarkdownBundle(f.source, f.scientific));

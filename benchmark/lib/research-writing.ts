@@ -15,6 +15,7 @@ import { createResearchDiscoveryFixture, researchDiscoveryConfiguration } from '
 import { researchExecutionFixture } from './research-execution-fixture.ts';
 import { researchDecisionResponse, type runResearchDecisionFixture } from './research-decisions.ts';
 import { runResearchReasoningFixture } from './research-reasoning.ts';
+import { researchInterventionReport } from '@tangleai/research';
 import { researchWritingResponse } from './research-writing-fixture.ts';
 import { researchPairedStatistic } from './research-statistics.ts';
 import { researchScore } from './research-oracle.ts';
@@ -55,7 +56,9 @@ export async function researchWritingBundle(input: ResearchWritingInputs, proven
       observationIds: input.observations.map(row => row.id), selectionRule: input.contract.selectionRule,
       baselineSources: input.contract.requiredBaselines.map(row => row.source),
       metricOrigin: { evaluatorId: input.plan.evaluator.id, evaluatorVersion: input.plan.evaluator.version },
-      searchedLiterature: input.literature.map(row => row.id), frozenBeforeResults: true };
+      searchedLiterature: input.literature.map(row => row.id), frozenBeforeResults: true,
+      experimental: provenance.mode === undefined ? provenance.interventions.some(row => row.actor === 'full-auto') : provenance.mode === 'full-auto',
+      interventionReport: researchInterventionReport(provenance.interventions) };
     scientific = { ...manifest, manifestHash: await canonicalSha256(manifest) };
   }
   const source = { ...body, disclosure: researchDisclosure(body, scientific) };
@@ -106,7 +109,7 @@ export async function runResearchRetrievalWriting(loaded: LoadedResearchFixture,
       literature: snapshot.records.filter(row => row.kind === 'LiteratureRecord').map(row => row.value), observations: [] };
     const attempts = snapshot.attempts.map(row => row.attempt), cost = total(attempts.map(row => row.spend));
     if (cost.calls !== 0 || trace.run.budget.spent.turns !== 0 || trace.attempts.some(row => row.kind === 'agent')) throw Error('Retrieval baseline unexpectedly called a model.');
-    const bundle = await researchWritingBundle(input, { runGraph: canonicalizeJson(prepared.mermaid), attempts, selection: null,
+    const bundle = await researchWritingBundle(input, { mode: snapshot.project.mode, runGraph: canonicalizeJson(prepared.mermaid), attempts, selection: null,
       prompts: [await templateWriter()], tools: binding.toolVersions, code: ['benchmark/lib/research-writing.ts'], data: [], seeds: [],
       environments: ['native-discovery-replay'], interventions: [], cost }, identity.identityId);
     return { bundle, identity };
@@ -119,7 +122,7 @@ export async function researchStoppedWriting(result: Awaited<ReturnType<typeof r
   const input: ResearchWritingInputs = { projectId: scientific.contract.projectId, scope: 'stopped-run-audit', contract: scientific.contract,
     plan: scientific.plan, decision, analysis, cards: evidence.cards, literature: evidence.literature,
     observations: scientific.observations.filter(row => analysis.observationIds.includes(row.id)) };
-  return researchWritingBundle(input, { runGraph: evidence.runGraph, attempts: scientific.attempts,
+  return researchWritingBundle(input, { mode: evidence.mode, runGraph: evidence.runGraph, attempts: scientific.attempts,
     selection: scientific.selections.find(row => row.id === decision.details!.selectionId)!, prompts: [await templateWriter()],
     tools: [{ name: 'research-catalog', version: researchArtifacts.revision }, { name: 'program-source', version: evidence.programSourceHash }],
     code: scientific.plan.conditions.map(row => row.programId),
@@ -173,7 +176,8 @@ export async function scoreResearchWriting(loaded: LoadedResearchFixture, topic:
     claimSupport: scores(() => true), numericMapping: scores(row => row.observationCondition !== null),
     claimValidity: researchScore(source.verification.claims.filter(row => row.status === 'supported').length, source.ledger.claims.length),
     bundleRerun: researchScore(1, 1), refusalConformance: researchScore(probes.filter(row => row.matched).length, probes.length),
-    cost: source.provenance.cost, interventions: { total: actions.length, approvals: actions.filter(row => row.action === 'approve').length,
+    cost: source.provenance.cost, interventionReport: researchInterventionReport(actions),
+    interventions: { total: actions.length, approvals: actions.filter(row => row.action === 'approve').length,
       substantive: actions.filter(row => row.substantive).length },
     failures: { program: source.provenance.attempts.filter(row => row.stage === 'EXECUTE' && row.stopReason !== 'completed').length,
       verification: probes.filter(row => !row.matched).length, leakage: 0, confound: 0, budget: 0, provider: 0,
@@ -183,13 +187,14 @@ export async function scoreResearchWriting(loaded: LoadedResearchFixture, topic:
 export function aggregateResearchWriting(id: ResearchWritingRow['id'], topics: ResearchWritingTopic[]): ResearchWritingRow {
   const scores = Object.fromEntries(RESEARCH_WRITING_DIMENSIONS.map(name => [name, researchScore(topics.reduce((sum, row) => sum + row[name].passed, 0),
     topics.reduce((sum, row) => sum + row[name].total, 0))]));
-  const sum = <K extends 'interventions' | 'failures'>(key: K) => Object.fromEntries(Object.keys(topics[0][key]).map(field => [field,
+  const sum = <K extends 'interventions' | 'interventionReport' | 'failures'>(key: K) => Object.fromEntries(Object.keys(topics[0][key]).map(field => [field,
     topics.reduce((n, row) => n + Object.entries(row[key]).find(([name]) => name === field)![1], 0)]));
   return requireResearchShape<ResearchWritingRow>('ResearchWritingRow', { id, state: 'measured', scope: 'writing', topics, ...scores,
+    experimental: id === 'full-auto-full', interventionReport: sum('interventionReport'),
     cost: total(topics.map(row => row.cost)), interventions: sum('interventions'), failures: sum('failures') });
 }
 
-export async function runResearchWritingControl(loaded: LoadedResearchFixture, registration: ResearchWritingRegistration) {
+export async function runResearchWritingControl(loaded: LoadedResearchFixture, registration: ResearchWritingRegistration, automatic = false) {
   const control = registration.control, topic = read<ResearchFixtureTopic>(loaded, control.topicPath, 'ResearchFixtureTopic');
   const script = read<ResearchReasoningScript>(loaded, control.scriptPath, 'ResearchReasoningScript');
   const execution = await researchExecutionFixture(loaded, topic);
@@ -241,7 +246,7 @@ export async function runResearchWritingControl(loaded: LoadedResearchFixture, r
       if (cost.calls !== native.requests.length || cost.calls !== trace.run.budget.spent.turns || cost.tokens !== trace.run.budget.spent.tokens
         || cost.physical !== cost.calls + runs.length || traceBytes > control.limits.traceBytes) throw Error('Writing control cost or trace bound does not reconcile.');
       const writingPolicy = { ...control.policy, modelIdentity: reasoning.runIdentityId };
-      const bundle = await researchWritingBundle(input, { runGraph: native.runGraph, attempts,
+      const bundle = await researchWritingBundle(input, { mode: snapshot.project.mode, runGraph: native.runGraph, attempts,
         selection: snapshot.records.filter(row => row.kind === 'ResearchBranchSelection').map(row => row.value).find(row => row.id === decision.details!.selectionId)!,
         prompts: [draft.writer, researchWritingRole('critic-peer-review-review', writingPolicy), researchWritingRole('judge-red-team-resilience', writingPolicy)],
         tools: [{ name: 'research-catalog', version: researchArtifacts.revision }, { name: 'program-source', version: programSourceHash }],
@@ -253,5 +258,5 @@ export async function runResearchWritingControl(loaded: LoadedResearchFixture, r
         requests: native.requests, interactions: trace.interactions, writerCalls: attempts.filter(row => row.stage === 'WRITE').reduce((n, row) => n + row.spend.calls, 0),
         reviewCalls: attempts.filter(row => row.stage === 'VERIFY').reduce((n, row) => n + row.spend.calls, 0), cost });
     },
-  });
+  }, automatic);
 }

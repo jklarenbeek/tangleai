@@ -395,6 +395,35 @@ export function createResearchStoreAdapter(persistence: ResearchPersistence): Re
       await tx.put('state', current.projectId, 'control', valid.nextState);
       await finish(tx, valid.nextState); return result(valid.nextState);
     }),
+    stopWithIntervention: input => apply(input, async (tx, plan) => {
+      const expected = shape<ResearchState>('ResearchState', plan.expectedState);
+      await project(tx, expected.projectId);
+      const row = await entry(expected.projectId, { kind: 'Intervention', value: plan.intervention });
+      const action = plan.intervention;
+      if (action.action !== 'stop' || action.approvedManifestHash !== null || action.substantive
+        || !action.stage || !action.actorId || !action.at || !action.viewedArtifactIds
+        || action.effect?.kind !== 'stop' || action.effect.target !== 'STOPPED')
+        refuse('TRSH1004', '/intervention', 'A stop projection requires complete attributable cancellation metadata.');
+      const current = await state(tx, expected.projectId), prior = await readEntry(tx, expected.projectId, 'Intervention', row.id);
+      if (prior) {
+        if (!equalsJson(prior, row) || current.status !== 'STOPPED')
+          refuse('TRSH1004', '/intervention/id', 'Cancellation identity conflicts with the retained terminal projection.');
+        return result(current, true);
+      }
+      await expect(tx, expected);
+      if (current.status === 'COMPLETE' || current.status !== 'STOPPED' && current.status !== action.stage)
+        refuse('TRSH1004', '/expectedState', 'Cancellation must name the current reviewed stage.');
+      const ids = committed(await receipts(tx, expected.projectId)), artifacts = new Set<string>();
+      for (const id of ids) artifacts.add((await admission(tx, expected.projectId, id)).artifact.id);
+      if (action.viewedArtifactIds.some(id => !artifacts.has(id)))
+        refuse('TRSH1005', '/intervention/viewedArtifactIds', 'A cancellation cannot claim to have viewed uncommitted artifacts.');
+      await references(tx, row); await put(tx, row);
+      if (current.status === 'STOPPED') return result(current);
+      const next = checked(planStateTransition(current, 'STOPPED')).nextState;
+      await tx.put('state', current.projectId, 'control', next);
+      await tx.appendProjection(current.projectId, { stage: action.stage, status: 'cancelled', ms: 0 });
+      await finish(tx, next, 'cancelled'); return result(next);
+    }),
     freezeContract: input => apply(input, async (tx, plan) => {
       const current = await expect(tx, plan.expectedState);
       const observations = (await entries(tx, current.projectId)).filter(row => row.kind === 'MetricObservation').map(row => row.id);

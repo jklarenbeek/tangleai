@@ -12,10 +12,10 @@ export const RESEARCH_EDGES: Readonly<Record<ResearchLifecycle, readonly Researc
   CREATED: ['DISCOVERY', 'STOPPED'], DISCOVERY: ['LITERATURE_GATE', 'STOPPED'],
   LITERATURE_GATE: ['SYNTHESIS', 'STOPPED'], SYNTHESIS: ['HYPOTHESIS_GATE', 'STOPPED'],
   HYPOTHESIS_GATE: ['DESIGN', 'STOPPED'], DESIGN: ['DESIGN_GATE', 'STOPPED'],
-  DESIGN_GATE: ['EXECUTE', 'STOPPED'], EXECUTE: ['ANALYZE', 'STOPPED'],
+  DESIGN_GATE: ['EXECUTE', 'DESIGN', 'STOPPED'], EXECUTE: ['ANALYZE', 'STOPPED'],
   ANALYZE: ['DECIDE', 'STOPPED'], DECIDE: ['WRITE', 'EXECUTE', 'SYNTHESIS', 'STOPPED'],
   WRITE: ['VERIFY', 'STOPPED'], VERIFY: ['QUALITY_GATE', 'STOPPED'],
-  QUALITY_GATE: ['COMPLETE', 'WRITE', 'STOPPED'], COMPLETE: [], STOPPED: [],
+  QUALITY_GATE: ['COMPLETE', 'WRITE', 'ANALYZE', 'DESIGN', 'STOPPED'], COMPLETE: [], STOPPED: [],
 });
 export interface ProjectCreatePlan { project: ResearchProject; state: ResearchState }
 export interface StateTransitionPlan { expectedState: ResearchState; nextState: ResearchState }
@@ -37,6 +37,9 @@ export function planProjectCreate(input: unknown): ResearchOutcome<ProjectCreate
   const checked = validateResearchShape<ResearchProject>('ResearchProject', input);
   if (!checked.valid) return checked;
   if (checked.value.status !== 'CREATED') return researchRefuse('TRSH1004', '/status', 'A new project starts at CREATED.');
+  if (checked.value.mode === 'full-auto' && checked.value.experimental !== true
+    || checked.value.mode === 'gate-only' && checked.value.experimental === true)
+    return researchRefuse('TRSH1001', '/experimental', 'Full-auto requires explicit experimental disclosure.');
   return { valid: true, value: immutableResearchJson({ project: checked.value,
     state: { projectId: checked.value.id, status: 'CREATED', revision: 0, contractHash: null, planHash: null, exploratoryObservationIds: [] } }) };
 }
@@ -99,6 +102,9 @@ export async function planAmendment(current: ResearchState, amendmentInput: Amen
   if (amendment.value.before !== state.contractHash || amendment.value.after !== records.value.contract.contractHash
     || amendment.value.before === amendment.value.after || records.value.plan.planHash === state.planHash)
     return researchRefuse('TRSH1009', '/amendment', 'An amendment must name this lineage and a distinct frozen replacement.');
+  if (amendment.value.beforeResults && (observations.length > 0 || state.exploratoryObservationIds.length > 0
+    || !['DESIGN', 'DESIGN_GATE'].includes(state.status)))
+    return researchRefuse('TRSH1009', '/amendment/beforeResults', 'A pre-result amendment requires a design stage with no retained observations.');
   if (observations.some(id => !amendment.value.marksExploratory.includes(id)))
     return researchRefuse('TRSH1009', '/amendment/marksExploratory', 'Every affected observation must remain visibly exploratory.');
   if (!Number.isSafeInteger(state.revision + 1)) return researchRefuse('TRSH1004', '/revision', 'State revision exhausted.');

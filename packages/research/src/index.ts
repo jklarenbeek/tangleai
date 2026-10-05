@@ -7,6 +7,7 @@ export { researchArtifactIdOf, researchRevisionOf, inputManifestHashOf, stageAtt
 export { researchSchema, researchSchemaOf, validateResearchShape } from './schema.ts';
 export type { ResearchSchemaName } from './schema.ts';
 export type { ResearchRecordMap, ResearchRecordKind, ResearchRecordWrite, ResearchRecordEntry } from './records.ts';
+export { RESEARCH_RECORD_KINDS } from './records.ts';
 export { RESEARCH_EDGES, planProjectCreate, planStateTransition, planContractFreeze, planAmendment, planStageCommit } from './transitions.ts';
 export type { ProjectCreatePlan, StateTransitionPlan, ContractFreezePlan, AmendmentPlan,
   StageCommitPlan, ResearchProjection, ResearchPreregistration } from './transitions.ts';
@@ -24,6 +25,12 @@ export type { ResearchOverduePolicy, ResearchOverdueGate } from './gates.ts';
 export { createResearchTaskHandlers, RESEARCH_FRAME_MEDIA_TYPE } from './handlers.ts';
 export type { ResearchTaskTools, ResearchTaskHandlers, ResearchStageOperation, ResearchStageResult, ResearchStageAccess } from './handlers.ts';
 export { createResearchHostBindings } from './host.ts';
+export { createResearchCommands, planHumanCommand, researchCommandResponse, interventionReport, researchInterventionReport, researchStatus } from './commands.ts';
+export type { ResearchHumanCommandPlan } from './commands.ts';
+export { createStagedArtifactRefiner } from './refiner.ts';
+export type { ResearchStagedArtifactRefiner, ResearchStagedEditPreview } from './refiner.ts';
+export { researchMode } from './modes.ts';
+export type { ResearchMode } from './modes.ts';
 export * from './adapters/index.ts';
 export { createQueryPlan, discoveryRevisionOf, executeScholarlyDiscovery, createDiscoveryStageTools } from './stages/discovery.ts';
 export type { ResearchDiscoveryOptions } from './stages/discovery.ts';

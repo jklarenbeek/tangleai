@@ -16,6 +16,7 @@ import type { ResearchAnalysisRuntimePolicy } from './analysis-contract.ts';
 import { createResearchAnalysisWorkflow, type PreparedResearchAnalysis } from './analysis-workflow.ts';
 import { RESEARCH_WRITING_CALLS, type ResearchWritingPolicy } from './writing-contract.ts';
 import { createResearchWritingWorkflow, type PreparedResearchWriting } from './writing-workflow.ts';
+import { researchMode, type ResearchMode } from './modes.ts';
 type QueryDocument = LoopNode['termination'];
 
 export const RESEARCH_STAGES = ['create', 'discovery', 'literature', 'synthesis', 'hypothesis', 'design', 'design-approval',
@@ -28,8 +29,8 @@ const envelope = object({ frame: RESEARCH_FRAME_SCHEMA });
 const status = (value: string): QueryDocument => ({ $eq: ['$.frame.status', value] });
 const decision = (value: string): QueryDocument => ({ $eq: ['$.frame.decision', value] });
 const either = (...values: string[]): QueryDocument => ({ $or: values.map(status) });
-interface TopologyOptions { profile: string; binding: ResearchWorkflowBinding; limits: WorkflowLimits; reasoning?: ResearchReasoningPolicy; execution?: ResearchExecutionPolicy; analysis?: ResearchAnalysisRuntimePolicy; writing?: ResearchWritingPolicy }
-interface ResearchRegistry extends TopologyOptions { contract: ResearchContract; snapshot: MasRegistrySnapshot; model?: PreparedResearchReasoning; executionGraph?: PreparedResearchExecution; analysisGraph?: PreparedResearchAnalysis; writingGraph?: PreparedResearchWriting }
+type TopologyOptions = { profile: string; binding: ResearchWorkflowBinding; limits: WorkflowLimits; reasoning?: ResearchReasoningPolicy; execution?: ResearchExecutionPolicy; analysis?: ResearchAnalysisRuntimePolicy; writing?: ResearchWritingPolicy } & ResearchMode;
+type ResearchRegistry = TopologyOptions & { contract: ResearchContract; snapshot: MasRegistrySnapshot; model?: PreparedResearchReasoning; executionGraph?: PreparedResearchExecution; analysisGraph?: PreparedResearchAnalysis; writingGraph?: PreparedResearchWriting };
 
 function graph(options: TopologyOptions) {
   const nodes: Invocation[] = [], messages: MessageEdge[] = [];
@@ -65,8 +66,10 @@ function graph(options: TopologyOptions) {
     task(invalid, 'refuse'); edge(id, invalid);
   };
   const gate = (id: string, before: string, apply: ResearchStageName) => {
-    nodes.push(interactionInvocation({ id, input: { frame: RESEARCH_FRAME_SCHEMA }, output: { response: RESEARCH_RESPONSE_SCHEMA },
-      prompt: RESEARCH_FRAME_SCHEMA, response: RESEARCH_RESPONSE_SCHEMA, expiry: null }));
+    nodes.push(options.mode === 'full-auto'
+      ? taskInvocation({ id, handler: 'research-auto-gate', effect: 'pure', input: { frame: RESEARCH_FRAME_SCHEMA }, output: { response: RESEARCH_RESPONSE_SCHEMA } })
+      : interactionInvocation({ id, input: { frame: RESEARCH_FRAME_SCHEMA }, output: { response: RESEARCH_RESPONSE_SCHEMA },
+        prompt: RESEARCH_FRAME_SCHEMA, response: RESEARCH_RESPONSE_SCHEMA, expiry: null }));
     task(id + '-apply', apply, true); edge(before, id); edge(before, id + '-apply'); edge(id, id + '-apply', 'response', 'response');
     return id + '-apply';
   };
@@ -99,7 +102,13 @@ async function childWorkflows(contract: ResearchContract, options: TopologyOptio
   children.push(await refineLoop.finish('research-refine', 'refine', 'refine'));
 
   const design = graph(options); design.task('design'); const approved = design.gate('design-gate', 'design', 'design-approval');
-  children.push(await design.finish('research-design', 'design', approved));
+  if (contract.reviewCap === 1) children.push(await design.finish('research-design', 'design', approved));
+  else {
+    children.push(await design.finish('research-design-body', 'design', approved));
+    const designLoop = graph(options);
+    designLoop.loop('design-review', 'research-design-body', contract.reviewCap, { $ne: ['$.output.frame.status', 'DESIGN'] });
+    children.push(await designLoop.finish('research-design', 'design-review', 'design-review'));
+  }
 
   const pivot = graph(options);
   pivot.route('entry', [
@@ -149,6 +158,7 @@ async function childWorkflows(contract: ResearchContract, options: TopologyOptio
 
 export async function createResearchRegistry(contract: ResearchContract, input: TopologyOptions): Promise<ResearchRegistry> {
   const options = immutableResearchJson(input), c = researchValue(validateResearchShape<ResearchContract>('ResearchContract', contract));
+  researchMode({ ...(options.mode ? { mode: options.mode } : {}), ...(options.experimental !== undefined ? { experimental: options.experimental } : {}) } as ResearchMode);
   const { contractHash, ...contractBody } = c;
   if (contractHash !== await researchRevisionOf(contractBody)) researchFail('TRSH1002', '/contractHash', 'Workflow contract does not recompute.');
   const { id, ...binding } = options.binding;
@@ -186,6 +196,7 @@ export async function createResearchRegistry(contract: ResearchContract, input: 
     roles: unique([...(model?.roles ?? []), ...(executionGraph?.roles ?? []), ...(analysisGraph?.roles ?? []), ...(writingGraph?.roles ?? [])]),
     handlers: unique([...[...RESEARCH_STAGES, 'relay', 'refuse'].map(stage => ({ id: 'research-' + stage, title: 'Research ' + stage,
       effect: stage === 'relay' || stage === 'refuse' ? 'pure' as const : 'effectful' as const, idempotency: stage === 'relay' || stage === 'refuse' ? 'not-required' as const : 'honored' as const })),
+      ...(options.mode === 'full-auto' ? [{ id: 'research-auto-gate', title: 'Experimental automatic research approval', effect: 'pure' as const, idempotency: 'not-required' as const }] : []),
       ...(model?.handlers ?? []), ...(executionGraph?.handlers ?? []), ...(analysisGraph?.handlers ?? []), ...(writingGraph?.handlers ?? [])]),
     tools: [...(model?.tools ?? []), ...(executionGraph?.tools ?? [])], contextAdapters: writingGraph?.contextAdapters ?? [], messageAdapters: unique([{ id: 'json-schema', version: '0.1' },
       ...(model?.messageAdapters ?? []), ...(executionGraph?.messageAdapters ?? []), ...(analysisGraph?.messageAdapters ?? []), ...(writingGraph?.messageAdapters ?? [])]), templates: [],
@@ -215,6 +226,7 @@ export async function prepareResearchWorkflow(contract: ResearchContract, option
   const validated = researchMasValue(await validateMasWorkflow(workflow, registry.snapshot, catalog));
   const plan = researchMasValue(await planMasWorkflow(validated));
   return Object.freeze({ workflow, snapshot: registry.snapshot, catalog, validated, plan, binding: registry.binding, contract: registry.contract,
+    mode: registry.mode ?? 'gate-only', experimental: registry.mode === 'full-auto',
     ...(registry.model ? { model: registry.model } : {}), ...(registry.executionGraph ? { executionGraph: registry.executionGraph } : {}),
     ...(registry.analysisGraph ? { analysisGraph: registry.analysisGraph } : {}), ...(registry.writingGraph ? { writingGraph: registry.writingGraph } : {}), mermaid: projectMasPlan(plan) });
 }

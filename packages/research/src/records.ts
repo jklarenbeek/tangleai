@@ -60,6 +60,7 @@ const kinds: Record<ResearchRecordKind, true> = {
   ResearchManifest: true, DisclosureChecklist: true,
   ResearchClaimLedger: true, Draft: true, ResearchDraftVerification: true, ResearchExportManifest: true, ExportReceipt: true,
 };
+export const RESEARCH_RECORD_KINDS: readonly ResearchRecordKind[] = Object.freeze(Object.keys(kinds).sort() as ResearchRecordKind[]);
 
 export function validateResearchRecord<K extends ResearchRecordKind>(kind: K, input: unknown): ResearchOutcome<ResearchRecordMap[K]> {
   if (!Object.hasOwn(kinds, kind)) return researchRefuse('TRSH1001', '/kind', 'Unknown research record kind.');

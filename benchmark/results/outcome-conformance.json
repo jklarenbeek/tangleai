@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "de8a41292f1798e60b5f95cf132a90e90b8e0c42",
+    "head": "8d988df343c10c6507dd660dfb8d2393741d16a5",
     "clean": false,
     "files": [
       {
@@ -111,7 +111,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "aefe5950786e8a6a2dfe5ae4d7e0512c1b529bbb236e49b3e32be27e673c994e"
+        "sha256": "48b0d05297ede35cf0ee51bb66ef4193cec58846e7940ddc7b2df126deb2212a"
       },
       {
         "path": "packages/agents/package.json",
@@ -1483,7 +1483,7 @@
       },
       {
         "path": "packages/mas/src/store.ts",
-        "sha256": "f6e82cbb543a2abf436aa4018eb4e0577089fdb54e97f39d558b5e24fb3e4319"
+        "sha256": "6a6eb1df96a48b3bf4ad509cee5744ffbc6808ad388796fb2a87b88e25c80304"
       },
       {
         "path": "packages/mas/src/template-bindings.ts",
@@ -1935,7 +1935,7 @@
       },
       {
         "path": "packages/research/artifacts/catalog.json",
-        "sha256": "8750c1bf3f0499b61875ea0ffa7ce600ef50a1c52ee454e3f33626f03b4073b4"
+        "sha256": "6a4ccd27e65fe36413fce15f9c5d426dd50783d57df805cf0ff44e61391bb6ff"
       },
       {
         "path": "packages/research/package.json",
@@ -1943,7 +1943,7 @@
       },
       {
         "path": "packages/research/schemas/research.schema.json",
-        "sha256": "8eadb19f9512fdae22cc097c18221db669202b34322483fc30d6a15c9f54759a"
+        "sha256": "d6ddc43db83048edd466a30f71366e91094b587da98efaf1ab997da93e940aee"
       },
       {
         "path": "packages/research/src/adapters/arxiv.ts",
@@ -2002,8 +2002,16 @@
         "sha256": "f2cf2ac4eadaa46801339f570b4f02c61f90c8e7b371179892459946144a8438"
       },
       {
+        "path": "packages/research/src/commands.ts",
+        "sha256": "a993478767eb5f6b6cc9b476708d7412b8df0befae51b227c81494238689aff2"
+      },
+      {
         "path": "packages/research/src/contracts.gen.ts",
-        "sha256": "6e498a2434924ee3e618fc2d64ff858945b5f3dde47dfb0dc383dcc574b0d002"
+        "sha256": "e21a6261882e492488fdd86220adf2f27dcd261cf4b294f8dda35b2d7a15fb4a"
+      },
+      {
+        "path": "packages/research/src/directives.ts",
+        "sha256": "70a59636467fd9fa0d86ea4c95ac30d32f64c7cd84460a665741fbf970aca846"
       },
       {
         "path": "packages/research/src/domain.ts",
@@ -2051,7 +2059,7 @@
       },
       {
         "path": "packages/research/src/export/manifest.ts",
-        "sha256": "20473cbba3de13042883acaecadedaafb1c39380defa37455b2727e8f114039a"
+        "sha256": "495341f89099f5503e3fccac2cf30286023be9b735c593710984982a54889464"
       },
       {
         "path": "packages/research/src/export/markdown.ts",
@@ -2063,15 +2071,15 @@
       },
       {
         "path": "packages/research/src/gates.ts",
-        "sha256": "2dbe4855c62c1baeb2f113e966cefeeab6d96584a2beb3d734385dee1490f8db"
+        "sha256": "df764e8ca43113b5878fab32a97d66e3f90829eae781f3c1e2c88df8481de500"
       },
       {
         "path": "packages/research/src/handlers.ts",
-        "sha256": "0a0976fdaeb6d9129691bda79c80d39e3c8b9e1d4ce7ab94fb71b92bc6373353"
+        "sha256": "a0bcc38b2e1bd1e6fdffab782dd3deafb1e2e5eab1c7d3a4bed18dc87e3d3003"
       },
       {
         "path": "packages/research/src/host.ts",
-        "sha256": "e62baa10037885fb96d4c18863c0d69fade47a836583aa7eb442bddf590a8272"
+        "sha256": "718982b7bccf99891f9cf4e4e1e65e5d9b7e9a44b200e3b10b16c10a96d548ce"
       },
       {
         "path": "packages/research/src/identity.ts",
@@ -2079,15 +2087,19 @@
       },
       {
         "path": "packages/research/src/index.ts",
-        "sha256": "ecbf9464ffe8752cf322b85779b2b9f2ecf54a9834ca8dc4ec98e015fcf98182"
+        "sha256": "b36d9c7017cdb0fbc8b27a83afdd79b36ed9d05680c454329202e2afac660a21"
       },
       {
         "path": "packages/research/src/manifest.ts",
-        "sha256": "219f259465ae37e8570aaacb17f862d110bfbaa42308390222cf1f727edca053"
+        "sha256": "8924c99efd3a9df5d00a7e8bbef5465e2f6c4b3f2f0db4bcaa51b7b486c52f35"
+      },
+      {
+        "path": "packages/research/src/modes.ts",
+        "sha256": "b81c4c8d9673a6d07863efc61accc26941d10453e52a697f2e08a4cd33b9de5f"
       },
       {
         "path": "packages/research/src/prompt-contracts.ts",
-        "sha256": "6502f877bf39cf0e70c3b61a5a0ef47911c473d4c724082f8711bbe02428a288"
+        "sha256": "207e39d0300ff40ed4d7cf500b5437a4f5b5229ccd28ad2a40e203d37ee3234a"
       },
       {
         "path": "packages/research/src/reasoning-contract.ts",
@@ -2103,11 +2115,15 @@
       },
       {
         "path": "packages/research/src/reasoning.ts",
-        "sha256": "c3345a9b1165e3a24178690c7f5a4cc4d6bdc9ff5bf720adfded02ff0a50607e"
+        "sha256": "5c0fa4075013e6d6ec635eab2b84c800e372ee9b8c22edadbb4090a6607b5b5b"
       },
       {
         "path": "packages/research/src/records.ts",
-        "sha256": "7bc9102eb3db20d9134e1a0367024944ec0b3d74e9d1b76b08a3066173824bea"
+        "sha256": "74be881ca8d123ee77653d9706fc2305df058377d2eb808e8bb2f3a0c9cd1c17"
+      },
+      {
+        "path": "packages/research/src/refiner.ts",
+        "sha256": "1854f0d0ea0ba2cb0c8e3a04cf8da65c6612cd1bb174d4b652d4074e4065a366"
       },
       {
         "path": "packages/research/src/render.ts",
@@ -2195,11 +2211,11 @@
       },
       {
         "path": "packages/research/src/store-policy.ts",
-        "sha256": "b5f947d969d5b2a458e6650baf6aa0bcc72ea5828083393bacfe7e1ce60e770b"
+        "sha256": "b71a0c6dfb49aa69d5c9fc5aa844aadf4d0d7e580b5dd2a6358c02b8bc90f6bd"
       },
       {
         "path": "packages/research/src/store.ts",
-        "sha256": "b4468a73fdceb3c9091c18d1fa08f96f7447f819e445c088f5602539dfc80e3d"
+        "sha256": "944182364917bc2e725c8671961a0c0514011df837b63f7a1473e06b00f526dc"
       },
       {
         "path": "packages/research/src/tools.ts",
@@ -2207,7 +2223,7 @@
       },
       {
         "path": "packages/research/src/transitions.ts",
-        "sha256": "5bd86adfdc24cdffda27a875fe601b028ee26b95759e24e71888be6083ef3bce"
+        "sha256": "baace8514396ea9ba39923e5a468fda0cba69a3d0f9fb28d21332f7fda7daa7b"
       },
       {
         "path": "packages/research/src/workflow-contract.ts",
@@ -2215,7 +2231,7 @@
       },
       {
         "path": "packages/research/src/workflow.ts",
-        "sha256": "c4db4306610718aedea3f298d874ccb111a461e21c18687737afe8d4ffeb4059"
+        "sha256": "527ac40d548831fc58a25ece398e4d219f37e166eb8137e869906076c0b0b0e5"
       },
       {
         "path": "packages/research/src/writing-contract.ts",
@@ -2223,7 +2239,7 @@
       },
       {
         "path": "packages/research/src/writing-records.ts",
-        "sha256": "9910c313c2c250ad97acfa541eb0723ccd9f6d416f6a79eb6be37ef33b2d0ebf"
+        "sha256": "a1f7c2f092c780b44eaed832a1770b653c5c5cbc9727de846e639519331abe7b"
       },
       {
         "path": "packages/research/src/writing-view.ts",
@@ -2235,7 +2251,7 @@
       },
       {
         "path": "packages/research/src/writing.ts",
-        "sha256": "4551f96a9895fe0d30e6a46dd8e34bb81e4490b9a1b5dc13c89dd68ca952b586"
+        "sha256": "07e463f6820ef6f5cbdb750f5e53a74b67b44b20914368dfa1811323b7e73d84"
       },
       {
         "path": "packages/search/package.json",
@@ -2355,7 +2371,7 @@
       },
       {
         "path": "packages/store/src/mas-store.ts",
-        "sha256": "0b49811531691f1daecf9c8654a4bb89366600e8caca7734adeea3111f3a51d0"
+        "sha256": "dc2d8844ab8351f7d10b193433b4db32666f96c1406678c0a995af9532137f29"
       },
       {
         "path": "packages/store/src/memory-store.ts",
@@ -2690,7 +2706,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "7d79a53e316281407b9f3fe73cf08952d704554661e3b01fcb11c024477f5729"
+    "sha256": "0d4ecdfd2e123123f4ee4ed39a7e6c035ce96db589c8ba7a83c2f542ff2c766a"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85876,5 +85892,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "035c22d1ba153861a310ac51aa701c20d037e0a8b354fe7461560360728ea8ed"
+  "reportId": "1e74cf90308964f8aecbc2a97fadb099f3faaf21b7758d67800d3668def61872"
 }

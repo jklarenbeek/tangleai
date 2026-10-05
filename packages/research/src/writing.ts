@@ -14,6 +14,7 @@ import { verifyResearchDraft } from './stages/verify.ts';
 import { createResearchReviews } from './stages/review.ts';
 import { researchWritingView, researchWritingLedgerView } from './writing-view.ts';
 import { readResearchWritingInputs, RESEARCH_WRITING_RECORDS_MEDIA } from './writing-records.ts';
+import { readResearchDirective } from './directives.ts';
 import { researchWritingRole, researchWritingRevisionOf, RESEARCH_WRITING_CALLS, type ResearchWritingPolicy, type ResearchWritingRuntime } from './writing-contract.ts';
 
 const bytes = (value: unknown) => new TextEncoder().encode(canonicalizeJson(value));
@@ -29,10 +30,13 @@ export async function createResearchWritingTools(base: ResearchTaskTools, option
     const current = await readResearchWritingInputs(operation, access, policy);
     const ledger = current.ledger ?? researchValue(await buildClaimLedger(current.input));
     if (ledger.claims.length > policy.maxClaims) researchFail('TRSH1006', '/claims', 'The complete ledger exceeds the admitted claim limit.');
-    const view = canonicalizeJson(researchWritingView(current.input, ledger));
+    const directive = await readResearchDirective(operation, access);
+    const humanReview = directive ? { interventionId: directive.interventionId, text: directive.text,
+      proposal: directive.edit?.kind === 'write' ? directive.edit.candidate.proposal : null } : null;
+    const view = canonicalizeJson({ ...researchWritingView(current.input, ledger), ...(humanReview ? { humanReview } : {}) });
     if (view.length > policy.maxViewChars) researchFail('TRSH1006', '/view',
       `The complete admitted writer view needs ${view.length} characters; its declared bound is ${policy.maxViewChars}.`);
-    return { ...current, ledger, view };
+    return { ...current, ledger, view, humanReview };
   }
   async function reviewInput(operation: ResearchStageOperation, access: ResearchStageAccess) {
     const current = await scoped(operation, access);
@@ -59,7 +63,9 @@ export async function createResearchWritingTools(base: ResearchTaskTools, option
       const proposal = immutableResearchJson(proposed), artifacts = [{ bytes: bytes({ kind: 'research-writing-proposal', phase: operation.stage, proposal }), mediaType: proposalMedia }];
       if (operation.stage === 'write') {
         const current = await scoped(operation, access), records: ResearchRecordWrite[] = [{ kind: 'ResearchClaimLedger', value: current.ledger }];
-        const draft = policy.mode === 'template' && !equalsJson(proposal, researchDraftProposal(current.ledger))
+        const draft = current.humanReview?.proposal && !equalsJson(current.humanReview.proposal, proposal)
+          ? researchRefuse('TRSH1005', '/proposal', 'The writer must preserve the exact reviewed edit before independent claim verification.')
+          : policy.mode === 'template' && !equalsJson(proposal, researchDraftProposal(current.ledger))
           ? researchRefuse('TRSH1002', '/proposal', 'The native template proposal differs from its exact admitted ledger.')
           : await writeResearchDraft(current.ledger, researchWritingRole('writer', policy), { mode: policy.mode, proposal: proposal as ResearchDraftProposal });
         if (!draft.valid) return { artifacts: [...artifacts, envelope(operation, records)], records, spend, error: draft.issues[0] };

@@ -53,6 +53,14 @@ it('research input is closed and refuses undeclared hidden context before any mo
   assert.equal(driven.status, 'failed'); assert.equal(driven.usage.physical, 0);
   assert.equal(driven.trace.run.failure!.error.cause?.code, 'TGMPL1001');
 });
+it('human guidance cannot smuggle a design proposal into a debate participant', async () => {
+  const { prepared, input, result } = await fixture(), f = await reasoningFixture();
+  (input.payload!.constraints as Record<string, unknown>).humanReview = {
+    interventionId: 'design-authority-probe', text: 'Untrusted design payload.', proposal: f.designProposal };
+  const driven = await driveGmplWorkflow(prepared, { input: { input }, bindings: prepared.bindings, response: node => reply(node, result) });
+  assert.equal(driven.status, 'failed'); assert.equal(driven.usage.physical, 0);
+  assert.equal(driven.trace.run.failure!.error.cause?.code, 'TGMPL1001');
+});
 it('participant context excludes design authority and its unused definitions before reference expansion', async () => {
   const { prepared, input, result } = await fixture(), f = await reasoningFixture();
   const payload = prepared.materialized.domain.payloadSchema as Record<string, unknown>;

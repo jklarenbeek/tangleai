@@ -17,6 +17,7 @@ import { createResearchHypotheses } from './stages/hypothesis.ts';
 import { createResearchDesign, checkResearchDesignPaths } from './stages/design.ts';
 import { executeResearchNovelty, createResearchNoveltyPlan } from './stages/novelty.ts';
 import { validateResearchShape } from './schema.ts';
+import { readResearchDirective } from './directives.ts';
 
 export async function createResearchReasoningTools(base: ResearchTaskTools, options: { project: ResearchProject;
   policy: ResearchReasoningPolicy; provider: ResearchProviderHost; searxngBaseUrl?: string;
@@ -38,9 +39,30 @@ export async function createResearchReasoningTools(base: ResearchTaskTools, opti
   }
   async function design(op: ResearchStageOperation, access: ResearchStageAccess, proposal: unknown,
     hypotheses: Parameters<typeof createResearchDesign>[2]): Promise<import('./transitions.ts').ResearchPreregistration> {
+    const directive = await readResearchDirective(op, access);
+    if (directive?.edit?.kind === 'design' && !equalsJson(proposal, directive.edit.candidate.proposal))
+      researchFail('TRSH1005', '/proposal', 'A design edit must independently verify the exact reviewed candidate.');
     const generated = researchValue(await createResearchDesign(op.frame.projectId, proposal, hypotheses, bounds));
     if (op.expectedState.contractHash === null) return generated;
     const admitted = await readResearchAnalysisInputs(op, access);
+    if (directive) {
+      // A reviewed human redesign is a separate frozen lineage. Existing metrics
+      // remain retained and exploratory; the command cannot erase observations.
+      if (generated.contract.contractHash === op.expectedState.contractHash && generated.plan.planHash === op.expectedState.planHash)
+        return generated;
+      const { contractHash: _hash, id: _id, ...content } = generated.contract;
+      const body = { ...content, id: 'contract-' + await researchRevisionOf({ content, parent: op.expectedState.contractHash,
+        interventionId: directive.interventionId }) };
+      const contract = { ...body, contractHash: await researchRevisionOf(body) };
+      const { planHash: _planHash, id: _planId, ...planContent } = generated.plan;
+      const next = { ...planContent, contractHash: contract.contractHash }, planBody = { ...next, id: 'plan-' + await researchRevisionOf(next) };
+      const plan = { ...planBody, planHash: await researchRevisionOf(planBody) };
+      const observations = admitted.of('MetricObservation').map(row => row.id).sort();
+      const amendmentBody = { before: op.expectedState.contractHash, after: contract.contractHash,
+        reason: 'Human intervention ' + directive.interventionId + ': ' + directive.text,
+        marksExploratory: observations, ...(observations.length === 0 ? { beforeResults: true as const } : {}) };
+      return { contract, plan, amendment: { id: 'amendment-' + await researchRevisionOf(amendmentBody), ...amendmentBody } };
+    }
     const decision = admitted.of('ResearchDecision').find(row => row.contractHash === op.expectedState.contractHash && row.kind === 'Pivot');
     const previous = admitted.of('ExperimentPlan').find(row => row.planHash === op.expectedState.planHash);
     if (!decision || !previous || previous.hypothesisHash === generated.plan.hypothesisHash)
@@ -79,6 +101,9 @@ export async function createResearchReasoningTools(base: ResearchTaskTools, opti
       const constraints: ResearchReasoningConstraints = { baselineIds: bounds.contract.requiredBaselines.map(row => row.condition),
         metrics: bounds.contract.metrics, budget: bounds.budget, inputPaths: bounds.plan.inputPaths,
         ...(stage === 'design' ? { design: { contract: bounds.contract, plan: bounds.plan } } : {}) };
+      const directive = await readResearchDirective(op, access);
+      if (directive) constraints.humanReview = { interventionId: directive.interventionId, text: directive.text,
+        proposal: directive.edit?.kind === 'design' ? directive.edit.candidate.proposal : null };
       const evidence = inputs.cards.map(card => ({ id: card.id, digest: card.contentHash, text: card.excerpt }));
       const context: ResearchReasoningContext = { stage, synthesis: stage === 'synthesis' ? null : inputs.synthesis,
         hypotheses: stage === 'design' ? inputs.hypotheses : [], constraints };

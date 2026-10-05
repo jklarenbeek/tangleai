@@ -157,6 +157,13 @@ spends an afternoon looking:
   research owns the finite bundle inventory, scientific provenance and disclosure
   policy. The package emits TeX text only; bounded process execution belongs to
   the benchmark host. Sentence-level gold and measurement stay in `benchmark/`.
+- **Research evaluation and human authority.** Research owns evaluator registration,
+  frozen comparisons, observation signatures, finite review policy and the typed
+  command surface. Native MAS owns interaction CAS, cancellation, task execution
+  and restart; `createGuardedRefiner`, JSON Patch and JSON Pointer own edit mechanics.
+  Human proposals pass the existing deterministic verifiers and never mint measured
+  observations. Native `pairedBootstrap` supplies the registered paired interval;
+  `compileJsonQuery` executes the downstream research handoff verbatim.
 - **A filesystem watcher.** The suite ships none, and it must not: watching a
   folder is host policy — a debounce, an overflow ceiling, a restart scan and
   a bounded admission are decisions about one application's corpus, not a
