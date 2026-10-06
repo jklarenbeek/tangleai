@@ -30,6 +30,7 @@
     "packages/lightrag",
     "packages/trading",
     "packages/research",
+    "packages/experiential",
     "packages/store"
   ],
   "privateWorkspaces": [

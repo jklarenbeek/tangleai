@@ -2,7 +2,7 @@
   "benchmark": "research-handoff",
   "query": "queries/research/core-baseline.json",
   "queryRevision": "4c96b66306c930c70d44500fd32aa6b7e3398a833e6ebea6a9f3350bfc9738bf",
-  "reportId": "2d57fd783d076cb5746f806524b59815f2b9f3e604ae130d8e26e2950a5af207",
+  "reportId": "cb88b0c998f55ee7912733fcbad25a53e694a74361f8267686d32e36c8de9a38",
   "handoff": {
     "decision": "conformant",
     "fixture": {
@@ -109,7 +109,7 @@
       "Synthesis",
       "WorkspaceManifest"
     ],
-    "reportId": "2d57fd783d076cb5746f806524b59815f2b9f3e604ae130d8e26e2950a5af207",
+    "reportId": "cb88b0c998f55ee7912733fcbad25a53e694a74361f8267686d32e36c8de9a38",
     "rows": [
       {
         "cost": {
@@ -241,5 +241,5 @@
       }
     ]
   },
-  "artifactId": "7d4d436f0f361d20bb2995ffa64c8b96484c3a596f7d33356aaf151d5cd89f7f"
+  "artifactId": "d09d55b4561b23ee746224473dd7f788b3fa6b017d82d22120024bdd665f134c"
 }

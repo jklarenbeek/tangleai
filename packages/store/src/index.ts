@@ -70,6 +70,9 @@ export { TRADING_COLLECTIONS } from './trading-model.ts';
 export { createResearchStore, createResearchDbPersistence, researchRunLogId } from './research-store.ts';
 export type { ResearchDbOptions } from './research-store.ts';
 export { RESEARCH_COLLECTIONS } from './research-model.ts';
+export { createExperientialDbStore, createExperientialDbPersistence } from './experiential-store.ts';
+export type { ExperientialDbOptions } from './experiential-store.ts';
+export { EXPERIENTIAL_COLLECTIONS } from './experiential-model.ts';
 
 export { activateDocumentWithin } from './document-store.ts';
 export * from './corpus-promotion.ts';

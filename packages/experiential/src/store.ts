@@ -1,0 +1,290 @@
+/** Domain checks and accounting surround the one injected atomic persistence seam. */
+import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { equalsJson } from '@jarenjs/core/object';
+import { checkExperientialRecord, experientialHeadKey, sealExperientialRecord } from './identity.ts';
+import { experientialIssue, type ExperientialIssueCode, type ExperientialResult } from './errors.ts';
+import { planExperienceTransition, planTrainingTransition, planArtifactTransition, planExperientialActivation, planExperientialRollback } from './lifecycle.ts';
+import { EXPERIENTIAL_TABLE_KINDS, EXPERIENTIAL_TABLES, type ExperientialPersistence, type ExperientialTransaction,
+  type ExperientialTables, type ExperientialTable, type ExperientialStoreResult, type ExperientialStore, type ExperientialWrite, type ExperientialStoreStats } from './store-types.ts';
+import { createExperientialMemoryPersistence, type ExperientialMemoryOptions } from './persistence-memory.ts';
+import type { ExperientialIssue, ExperientialHead, ExperientialArtifact, ExperientialDataset, ExperientialTrainingRun, ExperientialApproval, ExperientialEvaluation } from './contracts.gen.ts';
+import type { ExperientialActivationPlan, ExperientialTransitionPlan } from './lifecycle.ts';
+
+class Refusal extends Error {
+  readonly issues: ExperientialIssue[];
+  constructor(issues: ExperientialIssue[]) { super(issues[0]?.detail ?? 'Experiential operation refused.'); this.issues = issues; }
+}
+function refuse(code: ExperientialIssueCode, path: string, detail: string): never { throw new Refusal([experientialIssue(code, path, detail)]); }
+function checked<T>(result: ExperientialResult<T>): T { if (!result.ok) throw new Refusal(result.issues); return result.value; }
+const snapshot = <T>(value: T): T => JSON.parse(canonicalizeJson(value)) as T;
+const order = (values: readonly string[]) => [...values].sort();
+const stateTable = { experience: 'experiences', trainingRun: 'training_runs', artifact: 'artifacts' } as const;
+export interface ExperientialStoreOptions { now: () => string }
+interface Context { tx: ExperientialTransaction; writes: number; activations: number; at(): string }
+
+export function createExperientialStoreAdapter(persistence: ExperientialPersistence, options: ExperientialStoreOptions): ExperientialStore {
+  if (typeof persistence?.transaction !== 'function' || typeof options?.now !== 'function') throw new TypeError('Atomic persistence and an injected clock are required.');
+  const stats: ExperientialStoreStats = { transactions: 0, writes: 0, activations: 0 };
+  function known(table: ExperientialTable) { if (!EXPERIENTIAL_TABLES.includes(table)) throw new TypeError('Unknown experiential table.'); }
+  async function record<K extends ExperientialTable>(table: K, value: unknown): Promise<ExperientialTables[K]> {
+    known(table);
+    return checked(await checkExperientialRecord(EXPERIENTIAL_TABLE_KINDS[table], value)) as unknown as ExperientialTables[K];
+  }
+  async function get<K extends ExperientialTable>(tx: ExperientialTransaction, table: K, id: string): Promise<ExperientialTables[K] | null> {
+    known(table);
+    if (!/^[a-f0-9]{64}$/.test(id)) refuse('TEXP1001', '/id', 'Expected a content address.');
+    const raw = await tx.get(table, id);
+    if (raw === undefined) return null;
+    const row = await record(table, raw);
+    if (row.id !== id) refuse('TEXP1002', '/id', 'The retained record differs from its storage address.');
+    return row;
+  }
+  async function list<K extends ExperientialTable>(tx: ExperientialTransaction, table: K, scope: string): Promise<ExperientialTables[K][]> {
+    known(table);
+    if (typeof scope !== 'string' || !scope.trim() || scope.length > 256) refuse('TEXP1001', '/scope', 'Expected a bounded nonempty scope.');
+    const rows: ExperientialTables[K][] = [], seen = new Set<string>();
+    for (const raw of await tx.list(table, scope)) {
+      const row = await record(table, raw);
+      if (row.scope !== scope || seen.has(row.id)) refuse('TEXP1002', '/scope', 'A retained scope contains a foreign or duplicate record.');
+      seen.add(row.id); rows.push(row);
+    }
+    return rows.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+  }
+  async function requireRow<K extends ExperientialTable>(tx: ExperientialTransaction, table: K, id: string, scope: string): Promise<ExperientialTables[K]> {
+    const row = await get(tx, table, id);
+    if (!row) refuse('TEXP1004', '/' + table + '/' + id, 'The lineage reference is missing.');
+    if (row.scope !== scope) refuse('TEXP1005', '/' + table + '/' + id, 'The reference belongs to another scope.');
+    return row;
+  }
+  async function write<K extends ExperientialTable>(ctx: Context, table: K, value: ExperientialTables[K]) { await ctx.tx.put(table, value); ctx.writes++; }
+  async function event(ctx: Context, scope: string, kind: string, recordId: string, detail: string): Promise<ExperientialTables['events']> {
+    const prior = await list(ctx.tx, 'events', scope), seq = prior.reduce((n, row) => Math.max(n, row.seq), 0) + 1;
+    if (!Number.isSafeInteger(seq)) refuse('TEXP1009', '/events/seq', 'The event sequence capacity is exhausted.');
+    const row = checked(await sealExperientialRecord('event', { document: 'experiential-event', schemaVersion: 1,
+      scope, recordedAt: ctx.at(), seq, kind, recordId, runId: null, detail }));
+    await write(ctx, 'events', row); return row;
+  }
+  async function operation<T>(task: (ctx: Context) => Promise<T>): Promise<ExperientialStoreResult<T>> {
+    let context: Context | undefined;
+    stats.transactions++;
+    try {
+      const value = await persistence.transaction(async tx => {
+        let at: string | undefined;
+        context = { tx, writes: 0, activations: 0, at: () => at ??= options.now() };
+        return task(context);
+      });
+      stats.writes += context!.writes; stats.activations += context!.activations;
+      return { ok: true, value, writes: context!.writes, replayed: context!.writes === 0 };
+    } catch (error) {
+      return { ok: false, issues: error instanceof Refusal ? error.issues : [experientialIssue('TEXP1009', '', 'The storage operation failed before publication.')] };
+    }
+  }
+  function copied<I, T>(input: I, task: (ctx: Context, value: I) => Promise<T>): Promise<ExperientialStoreResult<T>> {
+    let value: I;
+    try { value = snapshot(input); }
+    catch { return Promise.resolve({ ok: false, issues: [experientialIssue('TEXP1001', '', 'Only finite JSON data is accepted.')] }); }
+    return operation(ctx => task(ctx, value));
+  }
+  async function dataset(tx: ExperientialTransaction, row: ExperientialDataset) {
+    const ids = row.selectedIds, splitIds = Object.values(row.splits).flat();
+    if (!equalsJson(order(ids), order(splitIds)) || new Set(splitIds).size !== splitIds.length
+      || !equalsJson(order(ids), order(row.groupKeys.map(group => group.experienceId))) || new Set(row.groupKeys.map(group => group.experienceId)).size !== ids.length)
+      refuse('TEXP1011', '/splits', 'Every selected experience must occur in exactly one split and grouping row.');
+    if (row.assessmentIds.length !== ids.length) refuse('TEXP1004', '/assessmentIds', 'Each selected experience requires its exact assessment.');
+    const reviewed = new Set<string>();
+    for (const id of row.assessmentIds) {
+      const a = await requireRow(tx, 'assessments', id, row.scope);
+      if (!ids.includes(a.experienceId) || reviewed.has(a.experienceId)) refuse('TEXP1004', '/assessmentIds', 'Assessment bindings do not cover the selected experiences exactly.');
+      if (!a.generalizable || a.inclusion !== 'include' || a.duplicateOf || a.contradiction === 'unresolved')
+        refuse('TEXP1005', '/assessmentIds', 'The pinned assessment does not admit this experience.');
+      reviewed.add(a.experienceId);
+    }
+    for (const id of ids) {
+      const e = await requireRow(tx, 'experiences', id, row.scope);
+      if (e.state !== 'selected') refuse('TEXP1006', '/selectedIds', 'A dataset can retain only selected experiences.');
+    }
+    if (Object.values(row.exclusions.byReason).reduce((a, b) => a + b, 0) !== row.exclusions.total)
+      refuse('TEXP1001', '/exclusions', 'Exclusion counts do not reconcile.');
+  }
+  async function artifact(tx: ExperientialTransaction, row: ExperientialArtifact) {
+    if (row.kind === 'base') {
+      if (row.baseArtifactId !== null || row.trainingRunId !== null || row.method !== null) refuse('TEXP1004', '/baseArtifactId', 'A registered base has no training ancestry.');
+    } else {
+      if (!row.baseArtifactId || !row.trainingRunId || !row.method) refuse('TEXP1004', '/trainingRunId', 'A learned artifact requires its base and completed training run.');
+      await requireRow(tx, 'artifacts', row.baseArtifactId, row.scope);
+      const run = await requireRow(tx, 'training_runs', row.trainingRunId, row.scope);
+      if (run.state !== 'complete' || run.baseArtifactId !== row.baseArtifactId || run.method !== row.method)
+        refuse('TEXP1006', '/trainingRunId', 'Only completed matching training may register an artifact.');
+    }
+  }
+  async function evaluation(tx: ExperientialTransaction, row: ExperientialEvaluation) {
+    const target = await requireRow(tx, 'artifacts', row.artifactId, row.scope), base = await requireRow(tx, 'artifacts', row.baselineArtifactId, row.scope);
+    await requireRow(tx, 'gate_policies', row.gatePolicyId, row.scope);
+    if (target.id !== base.id && target.baseArtifactId !== base.id && target.baseArtifactId !== base.baseArtifactId)
+      refuse('TEXP1005', '/baselineArtifactId', 'The evaluation compares different base identities without a migration experiment.');
+    if (row.passed && row.failures.length) refuse('TEXP1006', '/passed', 'A passing evaluation cannot retain failed gates.');
+  }
+  async function bindings<K extends ExperientialTable>(ctx: Context, table: K, row: ExperientialTables[K]) {
+    if (table === 'heads' || table === 'events') refuse('TEXP1006', '/table', 'Heads and events belong to checked commands.');
+    if (table === 'experiences' && (row as ExperientialTables['experiences']).state !== 'observed') refuse('TEXP1006', '/state', 'A new experience starts observed.');
+    if (table === 'assessments') {
+      const a = row as ExperientialTables['assessments']; await requireRow(ctx.tx, 'experiences', a.experienceId, a.scope);
+      if (a.duplicateOf) { if (a.duplicateOf === a.experienceId) refuse('TEXP1005', '/duplicateOf', 'An experience cannot duplicate itself.'); await requireRow(ctx.tx, 'experiences', a.duplicateOf, a.scope); }
+    }
+    if (table === 'datasets') await dataset(ctx.tx, row as ExperientialDataset);
+    if (table === 'training_runs') {
+      const run = row as ExperientialTrainingRun;
+      await requireRow(ctx.tx, 'datasets', run.datasetId, run.scope); await requireRow(ctx.tx, 'artifacts', run.baseArtifactId, run.scope);
+      if (run.state !== 'queued' || run.startedAt || run.finishedAt || run.submissions || run.logRefs.length || run.metricsRef || run.stopReason)
+        refuse('TEXP1006', '/state', 'A new training run starts queued without operational results.');
+      for (const prior of await list(ctx.tx, 'training_runs', run.scope)) if (prior.idempotencyKey === run.idempotencyKey && prior.id !== run.id)
+        refuse('TEXP1002', '/idempotencyKey', 'An idempotency key already names different training inputs.');
+    }
+    if (table === 'artifacts') { const a = row as ExperientialArtifact; if (a.state !== 'staged') refuse('TEXP1006', '/state', 'A new artifact starts staged.'); await artifact(ctx.tx, a); }
+    if (table === 'evaluations') await evaluation(ctx.tx, row as ExperientialEvaluation);
+    if (table === 'approvals') {
+      const approval = row as ExperientialApproval, a = await requireRow(ctx.tx, 'artifacts', approval.artifactId, approval.scope), e = await requireRow(ctx.tx, 'evaluations', approval.evaluationId, approval.scope);
+      if (e.artifactId !== a.id || !e.passed || e.failures.length || !approval.reason.trim()) refuse('TEXP1006', '/evaluationId', 'Approval requires a passing evaluation of the exact target.');
+    }
+    if (table === 'deployments') {
+      const d = row as ExperientialTables['deployments'];
+      if (d.activeArtifactId !== null || d.canaryArtifactId !== null || d.rolloutFraction !== 0 || d.expectedParentArtifactId !== null || d.approvalId !== null || d.revision !== 0)
+        refuse('TEXP1006', '/deployment', 'Ordinary persistence may register only an inactive base deployment.');
+      if ((await list(ctx.tx, 'deployments', d.scope)).some(prior => prior.profile === d.profile)) refuse('TEXP1006', '/profile', 'A profile already has a registered deployment.');
+      if ((await currentHead(ctx, d.profile, d.scope)).head.versionId !== null) refuse('TEXP1006', '/profile', 'A base deployment cannot replace an active head.');
+      if (!(await list(ctx.tx, 'artifacts', d.scope)).some(a => a.kind === 'base' && a.checksum === d.base.digest
+        && a.runtime.provider === d.base.provider && a.runtime.base === d.base.base && a.runtime.servedModel === d.base.model))
+        refuse('TEXP1004', '/base', 'The deployment must bind a registered base artifact and its exact runtime.');
+    }
+    if (table === 'pins') {
+      const pin = row as ExperientialTables['pins'], deployment = await requireRow(ctx.tx, 'deployments', pin.deploymentId, pin.scope);
+      if (pin.deploymentRevision !== deployment.revision || pin.artifactId !== deployment.activeArtifactId || pin.canary
+        || pin.servedModel !== deployment.base.model) refuse('TEXP1006', '/deploymentId', 'The pin does not bind the retained base deployment.');
+      if ((await currentHead(ctx, deployment.profile, pin.scope)).head.versionId !== null) refuse('TEXP1006', '/deploymentId', 'Base-only pinning cannot bypass an active deployment head.');
+      if ((await list(ctx.tx, 'pins', pin.scope)).some(prior => prior.runId === pin.runId)) refuse('TEXP1002', '/runId', 'A run already has an immutable inference pin.');
+    }
+    if (table === 'retention_decisions') {
+      const r = row as ExperientialTables['retention_decisions'];
+      if (r.dependentArtifactId) await requireRow(ctx.tx, 'artifacts', r.dependentArtifactId, r.scope);
+    }
+  }
+  async function put<K extends ExperientialTable>(ctx: Context, table: K, raw: ExperientialTables[K]): Promise<ExperientialTables[K]> {
+    const row = await record(table, raw), prior = await get(ctx.tx, table, row.id);
+    if (prior) {
+      if (!equalsJson(prior, row)) refuse('TEXP1002', '/id', 'An immutable re-put cannot change retained bytes, state or observation metadata.');
+      return prior;
+    }
+    await bindings(ctx, table, row);
+    await write(ctx, table, row);
+    await event(ctx, row.scope, 'record-admitted', row.id, table);
+    return row;
+  }
+  async function currentHead(ctx: Context, profile: string, scope: string): Promise<ExperientialHead> {
+    const id = await experientialHeadKey(profile, scope), row = await get(ctx.tx, 'heads', id);
+    if (row) {
+      if (row.profile !== profile || row.scope !== scope) refuse('TEXP1002', '/head', 'The head address differs from its partition.');
+      if (!row.eventId || !row.head.versionId || row.head.revision < 1) refuse('TEXP1002', '/head', 'A retained head requires its activation event.');
+      const audit = await requireRow(ctx.tx, 'events', row.eventId, scope), target = await requireRow(ctx.tx, 'artifacts', row.head.versionId, scope);
+      let detail: { profile?: string; after?: unknown };
+      try { detail = JSON.parse(audit.detail); }
+      catch { refuse('TEXP1002', '/head/eventId', 'The activation event has invalid transition details.'); }
+      if (!['artifact-activated', 'artifact-rolled-back'].includes(audit.kind) || audit.recordId !== target.id || target.state !== 'active'
+        || detail?.profile !== profile || !equalsJson(detail?.after, row.head)) refuse('TEXP1002', '/head/eventId', 'The head does not reproduce its retained activation event.');
+      return row;
+    }
+    return checked(await sealExperientialRecord('head', { document: 'experiential-head', schemaVersion: 1, scope,
+      recordedAt: ctx.at(), profile, head: { versionId: null, revision: 0 }, eventId: null }));
+  }
+  async function applyActivation(ctx: Context, requested: ExperientialActivationPlan, action: 'activate' | 'rollback') {
+    if (!requested || typeof requested !== 'object') refuse('TEXP1001', '/plan', 'An activation plan is required.');
+    const original = checked((action === 'activate' ? planExperientialActivation : planExperientialRollback)({
+      head: await record('heads', requested.head), artifact: await record('artifacts', requested.artifact),
+      evaluation: await record('evaluations', requested.evaluation), approval: await record('approvals', requested.approval),
+    }));
+    if (!equalsJson(original, requested)) refuse('TEXP1006', '/plan', 'The activation plan does not reproduce from its inputs.');
+    const h = await currentHead(ctx, requested.head.profile, requested.head.scope), approval = await requireRow(ctx.tx, 'approvals', requested.approval.id, h.scope);
+    const a = await requireRow(ctx.tx, 'artifacts', approval.artifactId, h.scope), e = await requireRow(ctx.tx, 'evaluations', approval.evaluationId, h.scope);
+    const history = await list(ctx.tx, 'events', h.scope);
+    const eventKind = action === 'activate' ? 'artifact-activated' : 'artifact-rolled-back';
+    const detail = canonicalizeJson({ profile: h.profile, approvalId: approval.id, evaluationId: e.id, before: requested.head.head, after: requested.nextHead });
+    const applied = history.find(row => row.kind === eventKind && row.recordId === a.id && row.detail === detail);
+    if (applied) {
+      if (!equalsJson(requested.artifact, { ...a, state: requested.artifact.state }) || !equalsJson(requested.evaluation, e) || !equalsJson(requested.approval, approval))
+        refuse('TEXP1006', '/plan', 'The replay differs from the retained activation records.');
+      return checked(await sealExperientialRecord('head', { document: 'experiential-head', schemaVersion: 1, scope: h.scope,
+        recordedAt: applied.recordedAt, profile: h.profile, head: requested.nextHead, eventId: applied.id }));
+    }
+    const plan = checked((action === 'activate' ? planExperientialActivation : planExperientialRollback)({ head: h, artifact: a, evaluation: e, approval }));
+    if (requested.action !== action || !equalsJson(requested.artifact, a) || !equalsJson(requested.evaluation, e) || !equalsJson(requested.approval, approval)
+      || !equalsJson(requested.head.head, h.head) || !equalsJson(requested.nextHead, plan.nextHead))
+      refuse('TEXP1006', '/plan', 'Activation must reproduce from the retained records.');
+    if (action === 'rollback' && !history.some(row => ['artifact-activated', 'artifact-rolled-back'].includes(row.kind)
+      && row.recordId === a.id && JSON.parse(row.detail).profile === h.profile))
+      refuse('TEXP1006', '/artifactId', 'The rollback target has no activation history in this profile.');
+    for (const other of await list(ctx.tx, 'heads', h.scope)) if (other.profile !== h.profile && other.head.versionId === a.id)
+      refuse('TEXP1005', '/profile', 'This artifact is already active in another deployment profile.');
+    if (h.head.versionId) {
+      const previous = await requireRow(ctx.tx, 'artifacts', h.head.versionId, h.scope);
+      if (previous.state !== 'active') refuse('TEXP1006', '/head', 'The retained head does not name an active artifact.');
+      await write(ctx, 'artifacts', await record('artifacts', { ...previous, state: 'archived' }));
+    }
+    await write(ctx, 'artifacts', await record('artifacts', { ...a, state: 'active' }));
+    const audit = await event(ctx, h.scope, eventKind, a.id, detail);
+    const next = checked(await sealExperientialRecord('head', { document: 'experiential-head', schemaVersion: 1, scope: h.scope,
+      recordedAt: ctx.at(), profile: h.profile, head: plan.nextHead, eventId: audit.id }));
+    await write(ctx, 'heads', next); ctx.activations++; return next;
+  }
+  const store: ExperientialStore = {
+    stats: () => ({ ...stats }),
+    get: (table, id) => operation(ctx => get(ctx.tx, table, id)),
+    list: (table, scope) => operation(ctx => list(ctx.tx, table, scope)),
+    put: (table, value) => copied(value, (ctx, row) => put(ctx, table, row)),
+    putBatch: writes => copied(writes, async (ctx, input) => {
+      if (!Array.isArray(input) || input.length > 4096) refuse('TEXP1001', '/writes', 'A bounded array of record writes is required.');
+      const result: ExperientialWrite[] = [];
+      for (const item of input) {
+        if (!item || typeof item !== 'object' || !equalsJson(Object.keys(item).sort(), ['table', 'value'])) refuse('TEXP1001', '/writes', 'A write contains only table and value.');
+        result.push({ table: item.table, value: await put(ctx, item.table, item.value) } as ExperientialWrite);
+      }
+      return result;
+    }),
+    transition: (plan, options = {}) => copied({ plan, options }, async (ctx, request) => {
+      if (!request.plan || typeof request.plan !== 'object' || !request.plan.after || typeof request.plan.after !== 'object'
+        || !request.options || typeof request.options !== 'object') refuse('TEXP1001', '/plan', 'A transition plan and options are required.');
+      const table = stateTable[request.plan.kind];
+      if (!table) refuse('TEXP1006', '/kind', 'Only a declared lifecycle may transition.');
+      const proposedBefore = await record(table, request.plan.before);
+      let validated: ExperientialTransitionPlan;
+      if (request.plan.kind === 'experience') validated = checked(planExperienceTransition(proposedBefore as ExperientialTables['experiences'], (request.plan.after as ExperientialTables['experiences']).state));
+      else if (request.plan.kind === 'trainingRun') validated = checked(planTrainingTransition(proposedBefore as ExperientialTrainingRun, (request.plan.after as ExperientialTrainingRun).state));
+      else validated = checked(planArtifactTransition(proposedBefore as ExperientialArtifact, (request.plan.after as ExperientialArtifact).state));
+      if (!equalsJson(validated, request.plan)) refuse('TEXP1006', '/plan', 'The transition changed fields outside its declared state edge.');
+      const before = await requireRow(ctx.tx, table, proposedBefore.id, proposedBefore.scope);
+      const replayed = equalsJson(before, request.plan.after);
+      if (!replayed && !equalsJson(before, proposedBefore)) refuse('TEXP1006', '/before', 'The retained state changed; prepare another transition.');
+      if (table === 'artifacts') {
+        const after = validated.after as ExperientialArtifact;
+        if (['canary', 'active', 'archived'].includes(after.state)) refuse('TEXP1006', '/state', 'Deployment states belong to approved deployment commands.');
+        if (after.state === 'approved' || after.state === 'rejected') {
+          if (!request.options.evaluationId) refuse('TEXP1006', '/evaluationId', 'A completed evaluation is required.');
+          const e = await requireRow(ctx.tx, 'evaluations', request.options.evaluationId, after.scope);
+          if (e.artifactId !== after.id || e.passed !== (after.state === 'approved') || e.passed && e.failures.length)
+            refuse('TEXP1006', '/evaluationId', 'The evaluation does not justify this artifact state.');
+        }
+      }
+      if (replayed) return validated;
+      await write(ctx, table, await record(table, validated.after));
+      await event(ctx, before.scope, 'state-transition', before.id, canonicalizeJson({ table, from: before.state, to: validated.after.state }));
+      return validated;
+    }),
+    head: (profile, scope) => operation(ctx => currentHead(ctx, profile, scope)),
+    activate: plan => copied(plan, (ctx, input) => applyActivation(ctx, input, 'activate')),
+    rollback: plan => copied(plan, (ctx, input) => applyActivation(ctx, input, 'rollback')),
+  };
+  return Object.freeze(store);
+}
+
+export function createExperientialMemoryStore(options: ExperientialMemoryOptions & ExperientialStoreOptions): ExperientialStore & { close(): Promise<void> } {
+  const persistence = createExperientialMemoryPersistence(options);
+  return Object.freeze({ ...createExperientialStoreAdapter(persistence, options), close: () => persistence.close() });
+}

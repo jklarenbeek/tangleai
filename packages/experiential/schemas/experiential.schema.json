@@ -1,0 +1,2041 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/experiential",
+  "$ref": "#/$defs/ExperientialRecord",
+  "$defs": {
+    "ExperientialId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "ExperientialTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "ExperientialScope": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "\\S"
+    },
+    "ExperientialMethod": {
+      "type": "string",
+      "enum": [
+        "lora",
+        "full",
+        "knowledge-edit"
+      ]
+    },
+    "ExperientialTrust": {
+      "type": "string",
+      "enum": [
+        "untrusted",
+        "verified",
+        "operator"
+      ]
+    },
+    "ExperientialUri": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^(?:https?://[^/?#@\\s]+(?:/[^?#\\s]*)?|urn:[^?#\\s]+|memory:[^?#\\s]+)$"
+    },
+    "ExperientialRef": {
+      "type": "object",
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "digest": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "sourceId",
+        "digest",
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialPrincipal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "operator",
+            "policy"
+          ]
+        },
+        "authorityId": {
+          "$ref": "#/$defs/ExperientialId"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "authorityId"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialExpectedHead": {
+      "type": "object",
+      "properties": {
+        "versionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "versionId",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialCause": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "\\S"
+        },
+        "path": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialIssue": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "TEXP1001",
+            "TEXP1002",
+            "TEXP1003",
+            "TEXP1004",
+            "TEXP1005",
+            "TEXP1006",
+            "TEXP1007",
+            "TEXP1008",
+            "TEXP1009",
+            "TEXP1010",
+            "TEXP1011",
+            "TEXP1012"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        },
+        "cause": {
+          "$ref": "#/$defs/ExperientialCause"
+        }
+      },
+      "required": [
+        "code",
+        "path",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialTrainingBudget": {
+      "type": "object",
+      "properties": {
+        "maxRecords": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxWallMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxPolls": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxSpend": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "maxRecords",
+        "maxBytes",
+        "maxWallMs",
+        "maxPolls",
+        "maxSpend"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialHyperparameters": {
+      "type": "object",
+      "properties": {
+        "learningRate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "epochs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0
+        },
+        "dropout": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "maxSteps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "targetModules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "\\S"
+          },
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "learningRate",
+        "epochs"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialRuntime": {
+      "type": "object",
+      "properties": {
+        "servedModel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "base": {
+          "$ref": "#/$defs/ExperientialUri"
+        }
+      },
+      "required": [
+        "servedModel",
+        "provider",
+        "base"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialCost": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "promptTokens": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "completionTokens": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "calls",
+        "promptTokens",
+        "completionTokens",
+        "ms",
+        "amount"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialInterval": {
+      "type": "object",
+      "properties": {
+        "control": {
+          "type": "string",
+          "enum": [
+            "frozen-retrieval",
+            "frozen-distilled-rule"
+          ]
+        },
+        "low": {
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "high": {
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "resamples": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "pairs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "control",
+        "low",
+        "high",
+        "resamples",
+        "seed",
+        "pairs"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialEvaluationRow": {
+      "type": "object",
+      "properties": {
+        "rowId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "run",
+            "not-run"
+          ]
+        },
+        "cgc": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retention": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "failures": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialCost"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "identityId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "rowId",
+        "status",
+        "cgc",
+        "retention",
+        "failures",
+        "cost",
+        "identityId"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialGateFailure": {
+      "type": "object",
+      "properties": {
+        "gate": {
+          "type": "string",
+          "enum": [
+            "learning",
+            "retention",
+            "security",
+            "operations",
+            "binding"
+          ]
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        },
+        "observed": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tolerance": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "gate",
+        "detail",
+        "observed",
+        "tolerance"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialExperience": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-experience"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "taskRef": {
+          "$ref": "#/$defs/ExperientialRef"
+        },
+        "inputRef": {
+          "$ref": "#/$defs/ExperientialRef"
+        },
+        "outputRef": {
+          "$ref": "#/$defs/ExperientialRef"
+        },
+        "observedOutcome": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "outcome",
+                    "reward"
+                  ]
+                },
+                "sourceId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256,
+                  "pattern": "\\S"
+                },
+                "digest": {
+                  "$ref": "#/$defs/ExperientialId"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "kind",
+                "sourceId",
+                "digest",
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialRef"
+          },
+          "minItems": 1,
+          "maxItems": 256,
+          "uniqueItems": true
+        },
+        "producingIdentityId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "trust": {
+          "$ref": "#/$defs/ExperientialTrust"
+        },
+        "privacy": {
+          "type": "string",
+          "enum": [
+            "public",
+            "internal",
+            "private"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "observed",
+            "quarantined",
+            "eligible",
+            "selected",
+            "excluded"
+          ]
+        },
+        "contentDigest": {
+          "$ref": "#/$defs/ExperientialId"
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "taskRef",
+        "inputRef",
+        "outputRef",
+        "observedOutcome",
+        "sourceRefs",
+        "producingIdentityId",
+        "trust",
+        "privacy",
+        "state",
+        "contentDigest"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialAssessment": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-assessment"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "experienceId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "author": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "model",
+                "policy",
+                "operator"
+              ]
+            },
+            "identityId": {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            "principalId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        "policyRevision": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "generalizable": {
+          "type": "boolean"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        },
+        "duplicateOf": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contradiction": {
+          "type": "string",
+          "enum": [
+            "none",
+            "unresolved",
+            "resolved"
+          ]
+        },
+        "trustDecision": {
+          "$ref": "#/$defs/ExperientialTrust"
+        },
+        "inclusion": {
+          "type": "string",
+          "enum": [
+            "include",
+            "exclude",
+            "quarantine"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "supportingIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialId"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "experienceId",
+        "author",
+        "policyRevision",
+        "generalizable",
+        "rationale",
+        "duplicateOf",
+        "contradiction",
+        "trustDecision",
+        "inclusion",
+        "reason",
+        "supportingIds"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialDataset": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-dataset"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "selectedIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialId"
+          },
+          "minItems": 1,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "splits": {
+          "type": "object",
+          "properties": {
+            "train": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ExperientialId"
+              },
+              "minItems": 0,
+              "maxItems": 4096,
+              "uniqueItems": true
+            },
+            "validation": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ExperientialId"
+              },
+              "minItems": 0,
+              "maxItems": 4096,
+              "uniqueItems": true
+            },
+            "compositionalHoldout": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ExperientialId"
+              },
+              "minItems": 0,
+              "maxItems": 4096,
+              "uniqueItems": true
+            },
+            "replay": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ExperientialId"
+              },
+              "minItems": 0,
+              "maxItems": 4096,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "train",
+            "validation",
+            "compositionalHoldout",
+            "replay"
+          ],
+          "additionalProperties": false
+        },
+        "groupKeys": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "experienceId": {
+                "$ref": "#/$defs/ExperientialId"
+              },
+              "sourceEpisodeId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256,
+                "pattern": "\\S"
+              },
+              "duplicateFamilyId": {
+                "$ref": "#/$defs/ExperientialId"
+              }
+            },
+            "required": [
+              "experienceId",
+              "sourceEpisodeId",
+              "duplicateFamilyId"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "templateRevision": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "tokenizerIdentity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "chatTemplateIdentity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "manifestDigest": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "exclusions": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "byReason": {
+              "type": "object",
+              "patternProperties": {
+                "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "additionalProperties": false,
+              "maxProperties": 128
+            }
+          },
+          "required": [
+            "total",
+            "byReason"
+          ],
+          "additionalProperties": false
+        },
+        "assessmentIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialId"
+          },
+          "minItems": 1,
+          "maxItems": 4096,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "selectedIds",
+        "splits",
+        "groupKeys",
+        "seed",
+        "templateRevision",
+        "tokenizerIdentity",
+        "chatTemplateIdentity",
+        "manifestDigest",
+        "exclusions",
+        "assessmentIds"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialTrainingRun": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-training-run"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "idempotencyKey": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "datasetId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "baseArtifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "method": {
+          "$ref": "#/$defs/ExperientialMethod"
+        },
+        "hyperparameters": {
+          "$ref": "#/$defs/ExperientialHyperparameters"
+        },
+        "backendIdentity": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "\\S"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "\\S"
+            },
+            "kind": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "id",
+            "version",
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        "budget": {
+          "$ref": "#/$defs/ExperientialTrainingBudget"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "preparing",
+            "training",
+            "materializing",
+            "complete",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "startedAt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "finishedAt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "logRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialRef"
+          },
+          "minItems": 0,
+          "maxItems": 256,
+          "uniqueItems": true
+        },
+        "metricsRef": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stopReason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "submissions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "idempotencyKey",
+        "datasetId",
+        "baseArtifactId",
+        "method",
+        "hyperparameters",
+        "backendIdentity",
+        "budget",
+        "state",
+        "startedAt",
+        "finishedAt",
+        "logRefs",
+        "metricsRef",
+        "stopReason",
+        "submissions"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialArtifact": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-artifact"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "checksum": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "baseArtifactId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "base",
+            "adapter",
+            "weights"
+          ]
+        },
+        "method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialMethod"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "storageUri": {
+          "$ref": "#/$defs/ExperientialUri"
+        },
+        "runtime": {
+          "$ref": "#/$defs/ExperientialRuntime"
+        },
+        "trainingRunId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "staged",
+            "evaluating",
+            "rejected",
+            "approved",
+            "canary",
+            "active",
+            "archived"
+          ]
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "checksum",
+        "baseArtifactId",
+        "kind",
+        "method",
+        "storageUri",
+        "runtime",
+        "trainingRunId",
+        "state",
+        "sizeBytes"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialEvaluation": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-evaluation"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "artifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "baselineArtifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "gatePolicyId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "reportId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialGateFailure"
+          },
+          "minItems": 0,
+          "maxItems": 128,
+          "uniqueItems": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialEvaluationRow"
+          },
+          "minItems": 0,
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "interval": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialInterval"
+          },
+          "minItems": 0,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialCost"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "artifactId",
+        "baselineArtifactId",
+        "gatePolicyId",
+        "reportId",
+        "passed",
+        "failures",
+        "rows",
+        "interval",
+        "cost"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialGatePolicy": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-gate-policy"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "primaryMetric": {
+          "const": "cgc"
+        },
+        "controls": {
+          "const": [
+            "frozen-retrieval",
+            "frozen-distilled-rule"
+          ]
+        },
+        "interval": {
+          "type": "object",
+          "properties": {
+            "statistic": {
+              "const": "paired-bootstrap"
+            },
+            "level": {
+              "const": 0.95
+            },
+            "resamples": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "statistic",
+            "level",
+            "resamples",
+            "seed"
+          ],
+          "additionalProperties": false
+        },
+        "learning": {
+          "type": "object",
+          "properties": {
+            "minLowerBound": {
+              "const": 0
+            }
+          },
+          "required": [
+            "minLowerBound"
+          ],
+          "additionalProperties": false
+        },
+        "retention": {
+          "type": "object",
+          "properties": {
+            "cgtReplayMaxDrop": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "baseReplayMaxDrop": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "locomoRecallMaxDrop": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "locomoQaMaxDrop": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "cgtReplayMaxDrop",
+            "baseReplayMaxDrop",
+            "locomoRecallMaxDrop",
+            "locomoQaMaxDrop"
+          ],
+          "additionalProperties": false
+        },
+        "security": {
+          "type": "object",
+          "properties": {
+            "fixtures": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "\\S"
+              },
+              "minItems": 1,
+              "maxItems": 64,
+              "uniqueItems": true
+            },
+            "requiredOutcome": {
+              "const": "refused-or-unchanged"
+            }
+          },
+          "required": [
+            "fixtures",
+            "requiredOutcome"
+          ],
+          "additionalProperties": false
+        },
+        "operations": {
+          "type": "object",
+          "properties": {
+            "maxArtifactBytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "maxTrainingMs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "maxInferenceP95Ms": {
+              "type": "number",
+              "minimum": 0
+            },
+            "maxFailureRate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "maxCost": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "runtimeProviders": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "\\S"
+              },
+              "minItems": 1,
+              "maxItems": 64,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "maxArtifactBytes",
+            "maxTrainingMs",
+            "maxInferenceP95Ms",
+            "maxFailureRate",
+            "maxCost",
+            "runtimeProviders"
+          ],
+          "additionalProperties": false
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "\\S"
+          },
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "requiredRows": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "\\S"
+          },
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "primaryMetric",
+        "controls",
+        "interval",
+        "learning",
+        "retention",
+        "security",
+        "operations",
+        "rows",
+        "requiredRows"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialApproval": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-approval"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "activate",
+            "canary",
+            "rollback"
+          ]
+        },
+        "artifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "evaluationId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "expectedHead": {
+          "$ref": "#/$defs/ExperientialExpectedHead"
+        },
+        "principal": {
+          "$ref": "#/$defs/ExperientialPrincipal"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "profile",
+        "action",
+        "artifactId",
+        "evaluationId",
+        "expectedHead",
+        "principal",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialDeployment": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-deployment"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "base": {
+          "type": "object",
+          "properties": {
+            "candidateId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "\\S"
+            },
+            "provider": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "\\S"
+            },
+            "base": {
+              "$ref": "#/$defs/ExperientialUri"
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "\\S"
+            },
+            "digest": {
+              "$ref": "#/$defs/ExperientialId"
+            }
+          },
+          "required": [
+            "candidateId",
+            "provider",
+            "base",
+            "model",
+            "digest"
+          ],
+          "additionalProperties": false
+        },
+        "activeArtifactId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canaryArtifactId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rolloutFraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "expectedParentArtifactId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approvalId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "profile",
+        "base",
+        "activeArtifactId",
+        "canaryArtifactId",
+        "rolloutFraction",
+        "expectedParentArtifactId",
+        "approvalId",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialInferencePin": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-inference-pin"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "runId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "identityId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "deploymentId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "deploymentRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "artifactId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "servedModel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "canary": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "runId",
+        "identityId",
+        "deploymentId",
+        "deploymentRevision",
+        "artifactId",
+        "servedModel",
+        "canary"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialRetentionDecision": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-retention-decision"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "episodeIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          },
+          "minItems": 1,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "dependentArtifactId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rollbackUntil": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "keep",
+            "archive"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        },
+        "principal": {
+          "$ref": "#/$defs/ExperientialPrincipal"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialRef"
+          },
+          "minItems": 1,
+          "maxItems": 256,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "episodeIds",
+        "dependentArtifactId",
+        "rollbackUntil",
+        "decision",
+        "reason",
+        "principal",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialEvent": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-event"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "recordId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "runId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "seq",
+        "kind",
+        "recordId",
+        "runId",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialHead": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "experiential-head"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "head": {
+          "$ref": "#/$defs/ExperientialExpectedHead"
+        },
+        "eventId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "id",
+        "scope",
+        "recordedAt",
+        "profile",
+        "head",
+        "eventId"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialRecord": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ExperientialExperience"
+        },
+        {
+          "$ref": "#/$defs/ExperientialAssessment"
+        },
+        {
+          "$ref": "#/$defs/ExperientialDataset"
+        },
+        {
+          "$ref": "#/$defs/ExperientialTrainingRun"
+        },
+        {
+          "$ref": "#/$defs/ExperientialArtifact"
+        },
+        {
+          "$ref": "#/$defs/ExperientialEvaluation"
+        },
+        {
+          "$ref": "#/$defs/ExperientialGatePolicy"
+        },
+        {
+          "$ref": "#/$defs/ExperientialApproval"
+        },
+        {
+          "$ref": "#/$defs/ExperientialDeployment"
+        },
+        {
+          "$ref": "#/$defs/ExperientialInferencePin"
+        },
+        {
+          "$ref": "#/$defs/ExperientialRetentionDecision"
+        },
+        {
+          "$ref": "#/$defs/ExperientialEvent"
+        },
+        {
+          "$ref": "#/$defs/ExperientialHead"
+        }
+      ]
+    }
+  }
+}

@@ -10706,7 +10706,7 @@
           },
           {
             "path": "packages/store/package.json",
-            "sha256": "2ffc09936d9a3d06841613310480bb5ad09892f5af1c03776c885879250e5603"
+            "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
           },
           {
             "path": "packages/store/src/consolidation-model.ts",
@@ -10743,6 +10743,14 @@
           {
             "path": "packages/store/src/evolve-store.ts",
             "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+          },
+          {
+            "path": "packages/store/src/experiential-model.ts",
+            "sha256": "214711939f576a7452f1d242ce7bfb9cc39229506983efb06137013676b94a14"
+          },
+          {
+            "path": "packages/store/src/experiential-store.ts",
+            "sha256": "16f06487f3848c92bea2bd2021b2903aff53a1b14fbdcf453b348b2c5d5f25ba"
           },
           {
             "path": "packages/store/src/forecast-model.ts",
@@ -10786,7 +10794,7 @@
           },
           {
             "path": "packages/store/src/index.ts",
-            "sha256": "4768cfb8e45acc0bbf8a646bfde63986341e69b68c1a9989f38c8f71ef920b2e"
+            "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
           },
           {
             "path": "packages/store/src/ledger-storage.ts",
@@ -10818,7 +10826,7 @@
           },
           {
             "path": "packages/store/src/model.ts",
-            "sha256": "e7bd807532cabfbffe1c7951979805509f04a97210834a060d7d16a55b4be920"
+            "sha256": "49683b5633514c5fd0551c10f7ff74d8bb68dc146906ffc4736e276e651093eb"
           },
           {
             "path": "packages/store/src/outcome-store.ts",
@@ -10877,7 +10885,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "f6c8f70a9cbaa579638220aff5098d5952a750c59322a2f2a243b9108c5e4ea8"
+        "sha256": "fdcd7eb7d6c2695730ea424e0f7d3a97614dd88a4191b73648299f4ecba56f31"
       },
       "questionIds": [
         "q-relay-port",
@@ -10988,7 +10996,7 @@
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)",
         "The conservative 56953-request bound exceeds TANGLE_AI_MAX_CALLS=200; model-dependent profiling and review allowances cannot be silently discarded."
       ],
-      "planId": "fb70756885cd8c64d1a6aaf8c3617ed094ecd26b2a9fd94ac515aa8b1a2c3575"
+      "planId": "e74bb033546204a9f191ba98cffbc619bfbc6095d2eb0bd9d391815a461bdf46"
     },
     "rows": [],
     "indexing": {
@@ -11020,7 +11028,7 @@
       "defaultChanged": false,
       "clauses": []
     },
-    "reportId": "adec90f2a8d1b0e5badcafa39cbe042e125c7c874988b61f91ef84b6b3b0f5be"
+    "reportId": "b98677965c15bc4a3a3edb6c8d37b89ca2a8fe27f84338deb772f9dc7ec0898b"
   },
   "judge": {
     "document": "lightrag-judge",
@@ -11362,7 +11370,7 @@
           },
           {
             "path": "packages/store/package.json",
-            "sha256": "2ffc09936d9a3d06841613310480bb5ad09892f5af1c03776c885879250e5603"
+            "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
           },
           {
             "path": "packages/store/src/consolidation-model.ts",
@@ -11399,6 +11407,14 @@
           {
             "path": "packages/store/src/evolve-store.ts",
             "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+          },
+          {
+            "path": "packages/store/src/experiential-model.ts",
+            "sha256": "214711939f576a7452f1d242ce7bfb9cc39229506983efb06137013676b94a14"
+          },
+          {
+            "path": "packages/store/src/experiential-store.ts",
+            "sha256": "16f06487f3848c92bea2bd2021b2903aff53a1b14fbdcf453b348b2c5d5f25ba"
           },
           {
             "path": "packages/store/src/forecast-model.ts",
@@ -11442,7 +11458,7 @@
           },
           {
             "path": "packages/store/src/index.ts",
-            "sha256": "4768cfb8e45acc0bbf8a646bfde63986341e69b68c1a9989f38c8f71ef920b2e"
+            "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
           },
           {
             "path": "packages/store/src/ledger-storage.ts",
@@ -11474,7 +11490,7 @@
           },
           {
             "path": "packages/store/src/model.ts",
-            "sha256": "e7bd807532cabfbffe1c7951979805509f04a97210834a060d7d16a55b4be920"
+            "sha256": "49683b5633514c5fd0551c10f7ff74d8bb68dc146906ffc4736e276e651093eb"
           },
           {
             "path": "packages/store/src/outcome-store.ts",
@@ -11533,7 +11549,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "f6c8f70a9cbaa579638220aff5098d5952a750c59322a2f2a243b9108c5e4ea8"
+        "sha256": "fdcd7eb7d6c2695730ea424e0f7d3a97614dd88a4191b73648299f4ecba56f31"
       },
       "reportId": null,
       "promptRevision": "1d390f8d00465dc21cc63a21d762343b5d869519b1030daa53a0461bb5c9ae82",
@@ -11584,7 +11600,7 @@
         "A completed graph live report with retained per-question attempts is required.",
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)"
       ],
-      "planId": "7ba2996dddb6a939fd105b42f349ab3845844f0e0388e91936a320e6dee71b05"
+      "planId": "5c116abdfce3fe76afa9f2e52760ec9987f0848e41eaed47e7ec8c57cb3172c7"
     },
     "status": "not-run",
     "tier": "not-run",
@@ -11599,7 +11615,7 @@
     },
     "physicalRequests": 0,
     "defaultInput": false,
-    "reportId": "e7d7a7ae3fc2352c6fe3a1068edabdc75d2f8fc4c145484fe87522cd12a14d2b"
+    "reportId": "2f1e611f9607c6585e7f8f45966c0a458c70994ffd9b6c1ba318089e2dfee62c"
   },
   "parity": {
     "document": "lightrag-parity",
@@ -12833,5 +12849,5 @@
     "defaultChanged": false,
     "clauses": []
   },
-  "reportId": "23730499e08d3aed1cb6d94f75a9e136748bfef59a6c75a276db9ff1352f0b78"
+  "reportId": "fa851148f59bc4250a2282ce9641978c8b77cf94ac54eab29e54ca0b6740951e"
 }

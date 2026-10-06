@@ -203,11 +203,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "fb335e63ec4cfe09469f4607be5bac3af6eaf7cbdf672320987666a69228516b"
+        "sha256": "ace0e22b62f2bd2ed9b661b9b4973f2a43ee0d897e6abf403cf53ac4e69e0fe3"
       },
       {
         "path": "package.json",
-        "sha256": "508bca6e0866ffc634ff0423c92f723ac81fdb787999fceefc5525ec50eb5d66"
+        "sha256": "b968c112d320236434f881f1d100efd7875a14390bedbd9e5fdd45f295371e30"
       },
       {
         "path": "packages/agents/package.json",
@@ -416,6 +416,10 @@
       {
         "path": "packages/evolve/package.json",
         "sha256": "f365e3f4d480ef047c10bc46d6f95b8694a05fe6edac96562d89a6cba244a93e"
+      },
+      {
+        "path": "packages/experiential/package.json",
+        "sha256": "5a9d2cb5a30fa71c0ad9c9ae37e52e2e23507ff834544f7fc20fc37f61f13c09"
       },
       {
         "path": "packages/forecast/package.json",
@@ -771,7 +775,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "2ffc09936d9a3d06841613310480bb5ad09892f5af1c03776c885879250e5603"
+        "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -808,6 +812,14 @@
       {
         "path": "packages/store/src/evolve-store.ts",
         "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+      },
+      {
+        "path": "packages/store/src/experiential-model.ts",
+        "sha256": "214711939f576a7452f1d242ce7bfb9cc39229506983efb06137013676b94a14"
+      },
+      {
+        "path": "packages/store/src/experiential-store.ts",
+        "sha256": "16f06487f3848c92bea2bd2021b2903aff53a1b14fbdcf453b348b2c5d5f25ba"
       },
       {
         "path": "packages/store/src/forecast-model.ts",
@@ -851,7 +863,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "4768cfb8e45acc0bbf8a646bfde63986341e69b68c1a9989f38c8f71ef920b2e"
+        "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -883,7 +895,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "e7bd807532cabfbffe1c7951979805509f04a97210834a060d7d16a55b4be920"
+        "sha256": "49683b5633514c5fd0551c10f7ff74d8bb68dc146906ffc4736e276e651093eb"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -1003,7 +1015,7 @@
       },
       {
         "path": "release.config.json",
-        "sha256": "687c496cce33489e1a62b76f014af774e5b01d99197022ef35d3c890ecffbdb2"
+        "sha256": "221c7f1b7d3b5e086e780fc116a6148f8cf4cd20d4a22f94e9b01bce51089b7f"
       },
       {
         "path": "scripts/gmpl-artifacts.ts",
@@ -1130,7 +1142,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "28cff6da2be0e1ecd5f6033236c9dcf53691e25ddbdc757aa30cfa8ea0078bc4"
+    "sha256": "e18f2d7f2e4000574be2a36e23df28bc0650f18cc09c2b3d23e4a0099da2cf1b"
   },
   "ablations": [
     {
@@ -76684,5 +76696,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "c6b36c507148de60a31d849b20ad85c8ca46b4da5d88339fef972479b27f419b"
+  "reportId": "a05fddaa6b4b0d69ec2e764a462a6fa43dcbfbcd95a2824cb3b76b9b5befbdc4"
 }
