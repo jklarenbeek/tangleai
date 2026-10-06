@@ -342,6 +342,26 @@
         "sha256": "e31459abcb6361842149aebb40425f668a675a9f2f2c52bf32b4d7dc892b1fcd"
       },
       {
+        "path": "benchmark/lib/cgt-fixture.ts",
+        "sha256": "70949f1cb0c3a3a7b27aef55e7acecb2a89d9c2ebde1b802105a678a809a525b"
+      },
+      {
+        "path": "benchmark/lib/cgt-rows.ts",
+        "sha256": "430eb193977de0b4ce47c6a0155614847717fa33efd05de8608d5275ba4da727"
+      },
+      {
+        "path": "benchmark/lib/cgt-scorer.ts",
+        "sha256": "55982fa5382af46a2ef41f21a324c709aea42ade3c9400e72257416d1fee9296"
+      },
+      {
+        "path": "benchmark/lib/cgt.ts",
+        "sha256": "844f38a206a267c4eedd0992d2e274baa3ea2ebaf55732d31dcd813dd2d61b18"
+      },
+      {
+        "path": "benchmark/lib/cgt.types.ts",
+        "sha256": "b3cc4580413446ca6f3e1c5ba1ee42698447ad23e8b244b2d13c1b94f26cf266"
+      },
+      {
         "path": "benchmark/lib/config-conformance.ts",
         "sha256": "9a27ce957cec7933c5ef5c27e37676893469ae803f2f52a1c45c2c960902ece5"
       },
@@ -1363,7 +1383,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "f07965907428176ec346889881463ce9c09177df0cff6076d8f31784634e2d14"
+        "sha256": "508bca6e0866ffc634ff0423c92f723ac81fdb787999fceefc5525ec50eb5d66"
       },
       {
         "path": "packages/agents/package.json",
@@ -4086,7 +4106,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "389d8c669726c534c71ea72b3854ef16526414309b1bfa270e63ecf1eb08f469"
+    "sha256": "0b4127e7fc2dfd878276bdd3e72618b4e65bf07bfbe6706a7a32621c4b4aaa8c"
   },
   "fixtureSource": {
     "files": [
@@ -69276,7 +69296,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "389d8c669726c534c71ea72b3854ef16526414309b1bfa270e63ecf1eb08f469",
+      "sourceSha256": "0b4127e7fc2dfd878276bdd3e72618b4e65bf07bfbe6706a7a32621c4b4aaa8c",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69360,7 +69380,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "7800899cf57ae2612139c154642aaf6671f0b8c9f33def117b9de58df63dc185"
+      "planId": "efcef115dc8e8fce129b2562a6978c000562fb00fdd24cd17e563cab8fa25605"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69607,5 +69627,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "e1adb613156832afb02799201014b87323f918cc57f1e7b92ea6cf33dab6329d"
+  "reportId": "9ad0fb47ae43d6bd2129a3c09e83db35f4453bafc679283a6c4c42e6fec4f640"
 }

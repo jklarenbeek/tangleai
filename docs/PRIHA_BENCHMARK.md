@@ -77,7 +77,7 @@ Safety measurement: 52 scripted requests, including 9 calls that seed a separate
 
 Decision tier: **scripted-tier**; product default changed: **false**. The schema recomputes the decision clauses from the measured rows, paired outcomes, budgets, citations and safety counts.
 
-Live: **not-run**. A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured. No configured live wire in the shared AI environment. Plan `7800899cf57ae2612139c154642aaf6671f0b8c9f33def117b9de58df63dc185` pins the current source, fixture, wire, replay transport and profile. Maximum 1920 provider calls, 288 searches and 576 fetches; 1024 output tokens per call, one concurrent call, one wire attempt and no model cache. No provider or live-web purchase is part of this receipt.
+Live: **not-run**. A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured. No configured live wire in the shared AI environment. Plan `efcef115dc8e8fce129b2562a6978c000562fb00fdd24cd17e563cab8fa25605` pins the current source, fixture, wire, replay transport and profile. Maximum 1920 provider calls, 288 searches and 576 fetches; 1024 output tokens per call, one concurrent call, one wire attempt and no model cache. No provider or live-web purchase is part of this receipt.
 
 Inspect a newly configured plan with `npm run benchmark:priha -- --live`. A separately approved execution uses `--live --authorize <plan-id> --live-json <dated-path>`; optional `--web-live --searx <base>` changes the exact plan identity and uses bounded HTTP capture. Missing credentials, rejected spend guards, a stale source or a mismatched plan cannot dispatch a request. Live clarification is retained as unfinished unless a real host responds; the runner invents no personal facts. SQLite traces and captured bodies remain under `benchmark/cache`, and dated JSON contains the exact plan, scored rows, configuration identity and capture manifest.
 
@@ -264,6 +264,6 @@ Provider costs are zero for this keyless instrument. The local corpus records ac
 Handoff wrapper: `586c44d3b91a2d51dc3388a621c4ec59f6dcda5e7efa02bb5a40483c4499cb3e`; file SHA-256 `e35f9fb5070c595e59db7232392bae943fcb86356ef17caa3ab82ea28087d172`. The nested baseline identities above are read verbatim; the flat grounding report, fixture and chat path are unchanged.
 
 Registered questions: 32; fixture `7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea`; registration `d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d`.
-Source `389d8c669726c534c71ea72b3854ef16526414309b1bfa270e63ecf1eb08f469`; report `e1adb613156832afb02799201014b87323f918cc57f1e7b92ea6cf33dab6329d`.
+Source `0b4127e7fc2dfd878276bdd3e72618b4e65bf07bfbe6706a7a32621c4b4aaa8c`; report `9ad0fb47ae43d6bd2129a3c09e83db35f4453bafc679283a6c4c42e6fec4f640`.
 
 Decision: **keep-experimental** — Failed clauses: independent-claim-delta. Scripted evidence changes no product default; live quality and healthcare deployment remain unmeasured.

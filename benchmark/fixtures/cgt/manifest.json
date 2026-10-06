@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "seed": 17753,
+  "concepts": 8,
+  "sessions": 6,
+  "coveredPairFraction": 0.5,
+  "inputsPerPair": 16,
+  "paraphrasesPerPair": 8,
+  "retentionInputsPerConcept": 16,
+  "answerVocabulary": 32,
+  "alphabetSize": 8,
+  "poisonTraces": 8,
+  "crossScopeTraces": 8,
+  "discriminationCeiling": 0.95,
+  "retrievalK": 8,
+  "embeddingDimensions": 128,
+  "scope": "cgt-authored",
+  "licence": "MIT",
+  "provenance": "Tangle-authored synthetic",
+  "protocol": "Covered pairs receive inputsPerPair distinct demonstrations distributed across sessions; every session also demonstrates every single concept. Novel pairs never appear in experience. Primary CGC is conditional on novel unordered pairs."
+}

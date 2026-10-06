@@ -1,0 +1,1685 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/cgt",
+  "$ref": "#/$defs/CgtReport",
+  "$defs": {
+    "CgtManifest": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "answerVocabulary": {
+          "const": 32
+        },
+        "alphabetSize": {
+          "const": 8
+        },
+        "licence": {
+          "const": "MIT"
+        },
+        "provenance": {
+          "const": "Tangle-authored synthetic"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967294
+        },
+        "concepts": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 12
+        },
+        "sessions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "coveredPairFraction": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "inputsPerPair": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "paraphrasesPerPair": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "retentionInputsPerConcept": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "poisonTraces": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "crossScopeTraces": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "discriminationCeiling": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "retrievalK": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "embeddingDimensions": {
+          "const": 128
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "protocol": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "answerVocabulary",
+        "alphabetSize",
+        "licence",
+        "provenance",
+        "seed",
+        "concepts",
+        "sessions",
+        "coveredPairFraction",
+        "inputsPerPair",
+        "paraphrasesPerPair",
+        "retentionInputsPerConcept",
+        "poisonTraces",
+        "crossScopeTraces",
+        "discriminationCeiling",
+        "retrievalK",
+        "embeddingDimensions",
+        "scope",
+        "protocol"
+      ],
+      "additionalProperties": false
+    },
+    "CgtConcept": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "minItems": 3,
+          "maxItems": 3,
+          "uniqueItems": true
+        },
+        "substitution": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 7
+          },
+          "minItems": 8,
+          "maxItems": 8,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "positions",
+        "substitution"
+      ],
+      "additionalProperties": false
+    },
+    "CgtRule": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "const": "cgt-rule-v1"
+        },
+        "alphabet": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 8,
+          "maxItems": 8,
+          "uniqueItems": true
+        },
+        "vocabulary": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 32,
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "concepts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtConcept"
+          },
+          "minItems": 4,
+          "maxItems": 12
+        },
+        "mergeWeights": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "answerSubstitution": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 31
+          },
+          "minItems": 32,
+          "maxItems": 32,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "format",
+        "alphabet",
+        "vocabulary",
+        "concepts",
+        "mergeWeights",
+        "answerSubstitution"
+      ],
+      "additionalProperties": false
+    },
+    "CgtItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "partition": {
+          "enum": [
+            "experience",
+            "exact-pair",
+            "paraphrase",
+            "novel",
+            "retention",
+            "poison",
+            "cross-scope"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conceptIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "input": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "truth": {
+          "type": "string",
+          "minLength": 1
+        },
+        "experienceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "trust": {
+          "enum": [
+            "authored",
+            "untrusted"
+          ]
+        },
+        "poison": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "partition",
+        "scope",
+        "conceptIds",
+        "input",
+        "question",
+        "truth",
+        "experienceIds",
+        "trust",
+        "poison"
+      ],
+      "additionalProperties": false
+    },
+    "CgtSession": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "experiences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtItem"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "ordinal",
+        "experiences"
+      ],
+      "additionalProperties": false
+    },
+    "CgtFixture": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "$ref": "#/$defs/CgtManifest"
+        },
+        "rule": {
+          "$ref": "#/$defs/CgtRule"
+        },
+        "coveredPairs": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "uniqueItems": true
+          },
+          "minItems": 1
+        },
+        "sessions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtSession"
+          },
+          "minItems": 1
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtItem"
+          },
+          "minItems": 1
+        },
+        "poison": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtItem"
+          }
+        },
+        "crossScope": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtItem"
+          }
+        },
+        "retrievalExperienceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "fixtureId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "manifest",
+        "rule",
+        "coveredPairs",
+        "sessions",
+        "questions",
+        "poison",
+        "crossScope",
+        "retrievalExperienceIds",
+        "fixtureId"
+      ],
+      "additionalProperties": false
+    },
+    "CgtSource": {
+      "type": "object",
+      "properties": {
+        "head": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clean": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "head",
+        "clean",
+        "files",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "CgtObservation": {
+      "type": "object",
+      "properties": {
+        "queryId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "partition": {
+          "enum": [
+            "exact-pair",
+            "paraphrase",
+            "novel",
+            "retention"
+          ]
+        },
+        "prediction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "truth": {
+          "type": "string",
+          "minLength": 1
+        },
+        "score": {
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "enum": [
+                "unanswered",
+                "malformed",
+                "rateLimited",
+                "refused"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retrievedIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "queryId",
+        "partition",
+        "prediction",
+        "truth",
+        "score",
+        "failure",
+        "retrievedIds"
+      ],
+      "additionalProperties": false
+    },
+    "CgtSampleCount": {
+      "type": "object",
+      "properties": {
+        "exactPair": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "paraphrase": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "novel": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retention": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "exactPair",
+        "paraphrase",
+        "novel",
+        "retention"
+      ],
+      "additionalProperties": false
+    },
+    "CgtRow": {
+      "type": "object",
+      "properties": {
+        "rowId": {
+          "enum": [
+            "oracle",
+            "seeded-random",
+            "scripted-memorizer",
+            "scripted-retrieval",
+            "scripted-rule-follower",
+            "frozen-none",
+            "frozen-retrieval",
+            "frozen-distilled-rule",
+            "active-artifact-no-retrieval",
+            "candidate-no-retrieval",
+            "candidate-retrieval"
+          ]
+        },
+        "tier": {
+          "enum": [
+            "oracle",
+            "analytic",
+            "scripted",
+            "live"
+          ]
+        },
+        "status": {
+          "enum": [
+            "run",
+            "not-run"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "experienceBudget": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "retrievalK": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "seeds": {
+          "type": "object",
+          "properties": {
+            "fixture": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "random": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "fixture",
+            "random"
+          ],
+          "additionalProperties": false
+        },
+        "sampleCount": {
+          "$ref": "#/$defs/CgtSampleCount"
+        },
+        "cgc": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "seenPair": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paraphrase": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retention": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bySession": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "session": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "experienceBudget": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "cgc": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "observations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/CgtObservation"
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "session",
+              "experienceBudget",
+              "cgc",
+              "observations"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "failures": {
+          "type": "object",
+          "properties": {
+            "unanswered": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "malformed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rateLimited": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refused": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "unanswered",
+            "malformed",
+            "rateLimited",
+            "refused"
+          ],
+          "additionalProperties": false
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "calls": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "promptTokens": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "completionTokens": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "ms": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "calls",
+                "promptTokens",
+                "completionTokens",
+                "ms"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "training": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "compute": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ms": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "artifactBytes": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "excluded": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "compute",
+                "ms",
+                "artifactBytes",
+                "excluded"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtObservation"
+          }
+        },
+        "retrieval": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "queries": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "returned": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "skipped": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "queries",
+                "returned",
+                "skipped"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "rowId",
+        "tier",
+        "status",
+        "reason",
+        "experienceBudget",
+        "retrievalK",
+        "seeds",
+        "sampleCount",
+        "cgc",
+        "seenPair",
+        "paraphrase",
+        "retention",
+        "bySession",
+        "failures",
+        "cost",
+        "training",
+        "observations",
+        "retrieval"
+      ],
+      "additionalProperties": false
+    },
+    "CgtReport": {
+      "type": "object",
+      "properties": {
+        "benchmark": {
+          "const": "cgt"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "source": {
+          "$ref": "#/$defs/CgtSource"
+        },
+        "registration": {
+          "type": "object",
+          "properties": {
+            "manifest": {
+              "$ref": "#/$defs/CgtManifest"
+            },
+            "manifestDigest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "fixtureId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "ruleDigest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "concepts": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "pairs": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "covered": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "sessions": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "experienceBudget": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "experiencePrefixes": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "minItems": 1
+            },
+            "partitions": {
+              "$ref": "#/$defs/CgtSampleCount"
+            },
+            "poisonTraces": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "crossScopeTraces": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "chanceBand": {
+              "type": "object",
+              "properties": {
+                "n": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "p": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "low": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "high": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "rule": {
+                  "const": "binomial normal band: p +/- 4*sqrt(p*(1-p)/n)"
+                }
+              },
+              "required": [
+                "n",
+                "p",
+                "low",
+                "high",
+                "rule"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "manifest",
+            "manifestDigest",
+            "fixtureId",
+            "ruleDigest",
+            "concepts",
+            "pairs",
+            "covered",
+            "sessions",
+            "experienceBudget",
+            "experiencePrefixes",
+            "partitions",
+            "poisonTraces",
+            "crossScopeTraces",
+            "chanceBand"
+          ],
+          "additionalProperties": false
+        },
+        "runtime": {
+          "type": "object",
+          "properties": {
+            "node": {
+              "type": "string",
+              "minLength": 1
+            },
+            "bun": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tangle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "jaren": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "node",
+            "bun",
+            "tangle",
+            "jaren"
+          ],
+          "additionalProperties": false
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtRow"
+          },
+          "minItems": 11,
+          "maxItems": 11
+        },
+        "alpha": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "enum": [
+                  "frozen-none",
+                  "frozen-retrieval",
+                  "frozen-distilled-rule"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "run",
+                  "not-run"
+                ]
+              },
+              "K": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "accuracy": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "nonDiscriminating": {
+                "type": "boolean"
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "rowId",
+              "status",
+              "K",
+              "accuracy",
+              "nonDiscriminating",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "nonDiscriminatingFixtures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "guards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "enum": [
+                  "holdout-shares-experience",
+                  "validation-retrievable",
+                  "poison-in-partition",
+                  "cross-scope-in-partition"
+                ]
+              },
+              "checked": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "violations": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "code",
+              "checked",
+              "violations"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "envelope": {
+          "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+        },
+        "capabilities": {
+          "type": "object",
+          "properties": {
+            "oracle": {
+              "type": "boolean"
+            },
+            "scripted": {
+              "type": "boolean"
+            },
+            "live": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "oracle",
+            "scripted",
+            "live"
+          ],
+          "additionalProperties": false
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "reportId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "benchmark",
+        "schemaVersion",
+        "source",
+        "registration",
+        "runtime",
+        "rows",
+        "alpha",
+        "nonDiscriminatingFixtures",
+        "guards",
+        "envelope",
+        "capabilities",
+        "limitations",
+        "reportId"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              [
+                "$.rows[*].rowId"
+              ],
+              [
+                "oracle",
+                "seeded-random",
+                "scripted-memorizer",
+                "scripted-retrieval",
+                "scripted-rule-follower",
+                "frozen-none",
+                "frozen-retrieval",
+                "frozen-distilled-rule",
+                "active-artifact-no-retrieval",
+                "candidate-no-retrieval",
+                "candidate-retrieval"
+              ]
+            ]
+          },
+          {
+            "$eq": [
+              [
+                "$.envelope.rows[*].rowId"
+              ],
+              [
+                "$.rows[*].rowId"
+              ]
+            ]
+          },
+          {
+            "$eq": [
+              [
+                "$.guards[*].code"
+              ],
+              [
+                "holdout-shares-experience",
+                "validation-retrievable",
+                "poison-in-partition",
+                "cross-scope-in-partition"
+              ]
+            ]
+          },
+          {
+            "$eq": [
+              "$.capabilities.live",
+              {
+                "$some": {
+                  "row": "$.rows[*]"
+                },
+                "$satisfies": {
+                  "$and": [
+                    {
+                      "$eq": [
+                        "$row.tier",
+                        "live"
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$row.status",
+                        "run"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.nonDiscriminatingFixtures",
+              {
+                "$count": "$.alpha[?(@.nonDiscriminating==true)]"
+              }
+            ]
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$eq": [
+                    "$row.sampleCount.exactPair",
+                    "$.registration.partitions.exactPair"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.sampleCount.exactPair",
+                    {
+                      "$count": "$row.observations[?(@.partition==\"exact-pair\")]"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$row.seenPair",
+                {
+                  "$div": [
+                    {
+                      "$sum": "$row.observations[?(@.partition==\"exact-pair\")].score"
+                    },
+                    "$row.sampleCount.exactPair"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$eq": [
+                    "$row.sampleCount.paraphrase",
+                    "$.registration.partitions.paraphrase"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.sampleCount.paraphrase",
+                    {
+                      "$count": "$row.observations[?(@.partition==\"paraphrase\")]"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$row.paraphrase",
+                {
+                  "$div": [
+                    {
+                      "$sum": "$row.observations[?(@.partition==\"paraphrase\")].score"
+                    },
+                    "$row.sampleCount.paraphrase"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$eq": [
+                    "$row.sampleCount.novel",
+                    "$.registration.partitions.novel"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.sampleCount.novel",
+                    {
+                      "$count": "$row.observations[?(@.partition==\"novel\")]"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$row.cgc",
+                {
+                  "$div": [
+                    {
+                      "$sum": "$row.observations[?(@.partition==\"novel\")].score"
+                    },
+                    "$row.sampleCount.novel"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$eq": [
+                    "$row.sampleCount.retention",
+                    "$.registration.partitions.retention"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.sampleCount.retention",
+                    {
+                      "$count": "$row.observations[?(@.partition==\"retention\")]"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$row.retention",
+                {
+                  "$div": [
+                    {
+                      "$sum": "$row.observations[?(@.partition==\"retention\")].score"
+                    },
+                    "$row.sampleCount.retention"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$eq": [
+                {
+                  "$count": "$row.bySession[*]"
+                },
+                "$.registration.sessions"
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"not-run\")]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$eq": [
+                    {
+                      "$count": "$row.observations[*]"
+                    },
+                    0
+                  ]
+                },
+                {
+                  "$eq": [
+                    {
+                      "$count": "$row.bySession[*]"
+                    },
+                    0
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.cgc",
+                    null
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.seenPair",
+                    null
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.paraphrase",
+                    null
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.retention",
+                    null
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.cost",
+                    null
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.training",
+                    null
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.retrieval",
+                    null
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.sampleCount.exactPair",
+                    0
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.sampleCount.paraphrase",
+                    0
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.sampleCount.novel",
+                    0
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.sampleCount.retention",
+                    0
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.tier==\"live\")]"
+            },
+            "$satisfies": {
+              "$or": [
+                {
+                  "$eq": [
+                    "$row.status",
+                    "not-run"
+                  ]
+                },
+                {
+                  "$some": {
+                    "identity": "$.envelope.rows[*]"
+                  },
+                  "$satisfies": {
+                    "$and": [
+                      {
+                        "$eq": [
+                          "$identity.rowId",
+                          "$row.rowId"
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$identity.identityStatus",
+                          "run"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[*]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$eq": [
+                    "$row.experienceBudget",
+                    "$.registration.experienceBudget"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$row.retrievalK",
+                    "$.registration.manifest.retrievalK"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "row": "$.rows[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$every": {
+                "session": "$row.bySession[*]"
+              },
+              "$satisfies": {
+                "$and": [
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$session.observations[*]"
+                      },
+                      "$.registration.partitions.novel"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$session.cgc",
+                      {
+                        "$div": [
+                          {
+                            "$sum": "$session.observations[*].score"
+                          },
+                          "$.registration.partitions.novel"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "$eq": [
+              [
+                "$.alpha[*].rowId"
+              ],
+              [
+                "frozen-none",
+                "frozen-retrieval",
+                "frozen-distilled-rule"
+              ]
+            ]
+          },
+          {
+            "$every": {
+              "alpha": "$.alpha[?(@.status==\"run\")]"
+            },
+            "$satisfies": {
+              "$some": {
+                "row": "$.rows[*]"
+              },
+              "$satisfies": {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$row.rowId",
+                      "$alpha.rowId"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$row.status",
+                      "run"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$row.tier",
+                      "live"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "$eq": [
+              [
+                "$.rows[*].tier"
+              ],
+              [
+                "oracle",
+                "analytic",
+                "scripted",
+                "scripted",
+                "scripted",
+                "live",
+                "live",
+                "live",
+                "live",
+                "live",
+                "live"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

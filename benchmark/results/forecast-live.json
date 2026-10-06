@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "6e5c582391c641797abd2f351a5d5b8c334e75ff",
-      "sha256": "7e002ddd14b64e7522b6d2a22ba930a50753e90e16d35d03241b899d8f0219d9",
+      "head": "60b92ad0831438676d8ef2c5f52eb83b0b054c26",
+      "sha256": "9971c710e0676a4377d7b15888349f44a5c92176b5092579a609e1ea7c768c98",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -75,6 +75,26 @@
         {
           "path": "benchmark/lib/authoring.ts",
           "sha256": "e31459abcb6361842149aebb40425f668a675a9f2f2c52bf32b4d7dc892b1fcd"
+        },
+        {
+          "path": "benchmark/lib/cgt-fixture.ts",
+          "sha256": "70949f1cb0c3a3a7b27aef55e7acecb2a89d9c2ebde1b802105a678a809a525b"
+        },
+        {
+          "path": "benchmark/lib/cgt-rows.ts",
+          "sha256": "430eb193977de0b4ce47c6a0155614847717fa33efd05de8608d5275ba4da727"
+        },
+        {
+          "path": "benchmark/lib/cgt-scorer.ts",
+          "sha256": "55982fa5382af46a2ef41f21a324c709aea42ade3c9400e72257416d1fee9296"
+        },
+        {
+          "path": "benchmark/lib/cgt.ts",
+          "sha256": "844f38a206a267c4eedd0992d2e274baa3ea2ebaf55732d31dcd813dd2d61b18"
+        },
+        {
+          "path": "benchmark/lib/cgt.types.ts",
+          "sha256": "b3cc4580413446ca6f3e1c5ba1ee42698447ad23e8b244b2d13c1b94f26cf266"
         },
         {
           "path": "benchmark/lib/config-conformance.ts",
@@ -1098,7 +1118,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "f07965907428176ec346889881463ce9c09177df0cff6076d8f31784634e2d14"
+          "sha256": "508bca6e0866ffc634ff0423c92f723ac81fdb787999fceefc5525ec50eb5d66"
         },
         {
           "path": "packages/agents/package.json",
@@ -2037,7 +2057,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "b2d35825916c6318f2ecac1b6197ed692221fcb426bffb11dc459f3bdfded9fd",
+    "planId": "fa18c8cc71f40bba0faa52b8cd95f6d9664c7db73156f9c75e2f023e1a76e2cb",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,
