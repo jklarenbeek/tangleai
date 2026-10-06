@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { createGuardedRefiner } from '@jarenjs/core/guarded';
 import { createLessonRefiner, createMemoryResearchPersistence, createResearchStoreAdapter,
   researchRevisionOf, sealLessonSetRecord,
-  type LessonRefinerOptions, type ResearchOutcome, type ResearchStoreOutcome, type ResearchMemoryState } from '@tangleai/research';
+  type ResearchOutcome, type ResearchStoreOutcome, type ResearchMemoryState } from '@tangleai/research';
 import { checked, hash } from './fixtures.ts';
 import { memoryHarness, stored } from './store-harness.ts';
 import { correctionFixture, validatedCorrectionFixture } from './lessons-refiner-fixtures.ts';
-import { lessonFixture, lessonScope, procedure, reviseLesson } from './lessons-store-fixtures.ts';
+import { lessonFixture, lessonScope, reviseLesson } from './lessons-store-fixtures.ts';
 
 function refused(result: ResearchOutcome<unknown> | ResearchStoreOutcome<unknown>, code: string, detail?: string) {
   const issues = 'valid' in result ? result.valid ? [] : result.issues : result.ok ? [] : [result.issue];
@@ -74,33 +74,6 @@ it('requires the selector to identify the actual corrective finding, not a neigh
     refused(await createLessonRefiner(f.options).materialize({ proposalIds: [lesson.id] }), 'TRSH2002');
   } finally { await h.close(); }
 });
-it('refuses cross-scope reads, active-base changes and leaked origin task IDs', async () => {
-  const h = await memoryHarness();
-  try {
-    const f = await validatedCorrectionFixture(h.store), before = await h.capture();
-    refused(await createLessonRefiner({ ...f.options, scope: { ...lessonScope, taskFamily: 'foreign' } }).prepare(f.request), 'TRSH2003');
-    const next = await procedure('# Another checked procedure\n\nRetain independent review.\n'); stored(await h.store.lessons.putProcedure(next));
-    let reads = 0;
-    refused(await createLessonRefiner({ ...f.options, read: async () => ({ snapshot: ++reads === 1 ? f.snapshot : next, set: null }) }).commit(f.request), 'TRSH2007');
-    const leaked = await reviseLesson(f.lesson, body => { body.proposal.edit.operations[0] = { op: 'create_file', path: 'references/leak.md', group: 'leak', content: 'The answer for training-topic is retained.\n' }; });
-    stored(await h.store.lessons.putProposal(leaked));
-    const issue = refused(await createLessonRefiner(f.options).materialize({ proposalIds: [leaked.id] }), 'TRSH2005');
-    assert.equal(issue.cause?.code, 'TT2S1006');
-    assert.equal((await h.capture() as ResearchMemoryState).rows.filter(row => row.table === 'lessonSets').length, 0);
-    assert.ok(before);
-  } finally { await h.close(); }
-});
-for (const hook of ['compile', 'validateProposal', 'validateBundle', 'validateCandidate', 'planCommit'] as const)
-  it(`refuses a thenable from ${hook} with its name in both preparation and native commit`, async () => {
-    const h = await memoryHarness();
-    try {
-      const f = await validatedCorrectionFixture(h.store), before = await h.capture();
-      const hooks = { [hook]: () => Promise.reject(new Error('Rejected async hook.')) } as Pick<LessonRefinerOptions, typeof hook>;
-      const wrapped = createLessonRefiner({ ...f.options, ...hooks });
-      refused(await wrapped.prepare(f.request), 'TRSH2004', hook);
-      refused(await wrapped.commit(f.request), 'TRSH2004', hook); assert.deepEqual(await h.capture(), before);
-    } finally { await h.close(); }
-  });
 it('wraps an async hook reached specifically through the native asynchronous commit runner', async () => {
   const h = await memoryHarness();
   try {

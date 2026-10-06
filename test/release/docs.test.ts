@@ -1,4 +1,9 @@
 import { it } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { renderDocument, REPORT_PATH, DOCUMENT_PATH } from '../../benchmark/lib/research.ts';
+import { RESEARCH_ERRORS } from '@tangleai/research';
+import type { ResearchReport } from '../../benchmark/lib/research.types.ts';
 import { cpSync, existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, resolve } from 'node:path';
@@ -20,3 +25,17 @@ for (const path of config().packages) {
     } finally { rmSync(directory, { recursive: true, force: true, maxRetries: 8, retryDelay: 50 }); }
   });
 }
+
+it('research documentation is rendered from the report and linked by its public entry points', async () => {
+  const report: ResearchReport = JSON.parse(await readFile(resolve(ROOT, REPORT_PATH), 'utf8'));
+  assert.equal(await readFile(resolve(ROOT, DOCUMENT_PATH), 'utf8'), renderDocument(report));
+  const root = await readFile(resolve(ROOT, 'README.md'), 'utf8');
+  const research = await readFile(resolve(ROOT, 'packages/research/README.md'), 'utf8');
+  assert.ok(root.includes('(docs/RESEARCH_BENCHMARK.md)'));
+  assert.ok(research.includes('(../../docs/RESEARCH_BENCHMARK.md)'));
+  assert.ok(research.includes(report.lessons.defaultWriteback));
+  assert.ok(research.includes('`' + report.lessons.defaultDecay + '`'));
+  for (const [code, meaning] of Object.entries(RESEARCH_ERRORS).filter(([code]) => code.startsWith('TRSH2')))
+    assert.ok(research.includes('| `' + code + '` | ' + meaning + ' |'), code);
+  assert.match(research, /ARC-Bench is not adopted/);
+});

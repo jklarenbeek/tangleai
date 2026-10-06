@@ -1,5 +1,6 @@
 /** Resolve exact host capabilities before creating any model request or execution. */
 import { equalsJson } from '@jarenjs/core/object';
+import { isThenable } from '@jarenjs/core/function';
 import { validateGmplPromptArtifact, type GmplPromptArtifact } from '@tangleai/gmpl';
 import type { ExperimentPlan, ResearchContract, ResearchDomainProfile, ResearchDomainBindingManifest, ResearchIssue } from '../contracts.gen.ts';
 import type { ResearchEvaluator } from '../execution/registry.ts';
@@ -91,9 +92,15 @@ export async function bindDomainProfile<Labels>(input: unknown, supplied: Resear
         return refusal('/plan', 'The preregistered evaluator, metric unit or direction differs from the bound profile.');
       for (const [i, validate] of validators.entries()) {
         let result: unknown;
-        try { result = validate(contract.value, plan.value); }
-        catch (cause) { return refusal('/planValidators/' + profile.planValidatorIds[i], 'The independent plan validator failed.', cause); }
-        if (result && typeof (result as { then?: unknown }).then === 'function' || !Array.isArray(result))
+        try {
+          result = validate(contract.value, plan.value);
+          if (isThenable(result)) {
+            // Refuse synchronously, while observing a rejected host promise.
+            void Promise.resolve(result).then(() => undefined, () => undefined);
+            return refusal('/planValidators/' + profile.planValidatorIds[i], 'A plan validator must return synchronous issue values.');
+          }
+        } catch (cause) { return refusal('/planValidators/' + profile.planValidatorIds[i], 'The independent plan validator failed.', cause); }
+        if (!Array.isArray(result))
           return refusal('/planValidators/' + profile.planValidatorIds[i], 'A plan validator must return synchronous issue values.');
         const issues: ResearchIssue[] = [];
         for (const raw of result) {

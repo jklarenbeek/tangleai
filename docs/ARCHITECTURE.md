@@ -277,7 +277,8 @@ creates an approval. The [research instrument](RESEARCH_BENCHMARK.md) retains
 stage-specific scripted approvals, honest scientific Stop decisions, and separate
 complete-path controls. Its eight rows measure scripted reasoning, execution,
 independent result review, claim-bound writing and both operating modes.
-Cross-run learning and a second domain remain open; no live quality claim follows.
+Guarded cross-run lesson mechanisms and a tabular domain extend these rows;
+measured learning gains and live research quality remain unestablished.
 
 Typed approve, reject, edit, guide and stop commands settle through the native
 interaction revision fence. Every accepted action retains its actor, reviewed
@@ -618,6 +619,28 @@ context ledger; the outcome package uses the generic engine directly. Hosts own
 domain schemas, evidence origin, configuration, authority, scheduling and UI.
 The [adapter kit](../packages/outcomes/docs/ADAPTERS.md) and
 [scripted measurement](OUTCOME_BENCHMARK.md) document the supported boundary.
+
+### Research lessons and coverage
+
+Research proposes source-backed lessons, runs disjoint validation, passes the
+native guarded refiner and T2SKILL directory compiler, then submits the immutable
+candidate to outcome evaluation, host approval, activation and run-bound
+injection. `@tangleai/outcomes` owns the only research lesson head transition.
+Research retains activation audit descendants; its storage and skill snapshots
+cannot activate a procedure themselves.
+
+The outcome adapter resolves retained evidence asynchronously before supplying
+synchronous `interpret` and scoring hooks. A thenable from a guarded lesson
+validator is a counted refusal before staging. Outcome lookup incurs no model
+spend; proposer, validation reruns and final execution retain separate costs and
+physical-request accounting. Unknown costs remain unknown.
+
+Computational and tabular-statistics profiles bind data and host capabilities
+before the common workflow runs. The control plane contains no profile-specific
+branch. The [research benchmark](RESEARCH_BENCHMARK.md) renders intervals, losses,
+incomparable fields and independent artifact audits. Its measured gate keeps
+writeback `experimental-off`, decay `none` and full-auto ineligible. The external
+adapter is available, but ARC-Bench is not adopted and its row stays `not-run`.
 
 ## Isolated repository experiments (added 2026-09-16)
 

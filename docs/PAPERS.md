@@ -14,9 +14,12 @@ salvaged under [`docs/attic/memflow-modules/`](attic/memflow-modules/) (full man
 - **AutoResearchClaw** (aiming-lab, 2026) — the core lifecycle ships in
   `@tangleai/research`: evidence-backed discovery, frozen experiments, bounded
   decisions, independently verified drafts and durable human commands over MAS.
-  [Measurement](RESEARCH_BENCHMARK.md) covers scripted tiers only, including
-  explicitly experimental full-auto. No cross-run learning, second domain,
-  live quality claim or paper-parity result is established.
+  Guarded source-backed lessons, computational/tabular domain profiles, an
+  ablation matrix and attributable HITL records extend that lifecycle.
+  [Measurement](RESEARCH_BENCHMARK.md) covers scripted mechanisms, independent
+  artifact audits, tied lesson outcomes and refused comparisons. ARC-Bench
+  headline parity, SmartPause, wet-lab domains and live learning quality are not
+  established. Full-auto is experimental and its default remains off.
   📄 [`refs/AutoResearchClaw.pdf`](refs/AutoResearchClaw.pdf)
 - **LightRAG** (arXiv:2410.05779v3) — document-bound entity/relation claims,
   structured extraction and affected profiling, name/theme retrieval, bounded

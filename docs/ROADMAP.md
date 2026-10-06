@@ -48,6 +48,14 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Memory policies
 
+- [ ] **Count missing ranked memories.** *Wanted:* a ledger recall whose
+  `skipped` count includes a record deleted between the rank adapter's selection
+  and the ledger read. *Constraint:* `recall({ near })` currently drops that
+  missing record without counting it. The isolated deletion probe reproduces
+  this accounting gap; it is outside research lesson activation. *Closes on:* a
+  counted `missing` value and a reproduction test that uses the same ranked
+  corpus and deletes the selected record before the ledger reads it.
+
 - [ ] **Embedding width against a variable-dimension semantic embedder.**
   *Wanted:* test whether the offline width decision transfers to semantic
   retrieval and answers. *Constraint:* the [registered policy result](LOCOMO_POLICY.md)
@@ -378,12 +386,15 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   *Closes on:* crash tests at both sides of removal converge through a fenced
   cleanup receipt, while stale settlement and recreated-workspace tests still
   refuse. Until then, terminal status alone is not evidence of cleanup.
-- [ ] **Research learning, coverage and operations.** *Wanted:* source-backed,
-  reversible cross-run lessons, a second measured domain and a read-only workspace
-  for the durable research records. Lessons remain off by default until measured.
-  *Constraint:* reuse the skill loop's guarded records and measured outcome
-  activation; preserve source identity, train/test isolation, immutable negative
-  results and the executor boundary. The operations page must use the existing
-  run-addressed subscription. *Closes on:* fixed-pipeline, debate, self-healing,
-  human-in-the-loop and lesson ablations publishing gains, losses, leakage and
-  complete costs under identical inputs and budgets across both domains.
+- [ ] **Research learning under live, comparable evidence.** *Wanted:* a
+  reproducible held-out lesson gain and measured human-review efficacy across
+  the shipped domains. *Constraint:* the [scripted matrix](RESEARCH_BENCHMARK.md)
+  retains tied lesson intervals, native approval refusals and incomparable
+  debate, repair, full-auto and cross-domain pairs. Writeback stays
+  `experimental-off`, decay stays `none`, and full-auto remains experimental.
+  *Closes on:* a newly authorized live paired run with identical inputs,
+  identities, prompts and budgets, disjoint validation, complete costs and
+  published losses that passes every registered gate. A positive gate alone
+  does not authorize a default change. ARC-Bench remains unadopted until a
+  licensed, checksummed slice and its independent evaluator are admitted;
+  adapter availability establishes no external parity.

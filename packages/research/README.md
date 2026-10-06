@@ -7,6 +7,8 @@ failed attempts, negative results and every incurred call.
 The public root performs no host I/O and works in browsers, Node and Bun. MAS
 owns workflow execution; this package plans and stores its research projection.
 
+## Domain profiles and the external slice
+
 Domain profiles are closed, versioned data. `sealDomainProfile` binds every
 field to its canonical revision; `bindDomainProfile` resolves exact prompt,
 plan-validator, evaluator, rubric and exporter capabilities before execution.
@@ -443,6 +445,8 @@ retrieval-only controls. A Stop is never relabelled as successful research.
 separate bounded compiler records compilation, missing-tool skips or refusals;
 compilation is not a research quality gate.
 
+## Guarded lessons
+
 `ResearchStore.lessons` retains immutable, content-addressed proposals and
 held-out validation records on memory and SQLite. Origins bind the project's
 explicit `lessonContext`, committed artifact admissions and exact quotations.
@@ -505,13 +509,62 @@ and export manifests. Only native `OUTC1004` means no active lessons; other
 checked-head failures remain refusals. The profile policy registry defaults to
 `writeback: 'experimental-off'` and decay `none`.
 
-The [instrument](../../docs/RESEARCH_BENCHMARK.md) measures eight registered rows
-on three authored computational topics, with matched scripted gate-only and
-experimental full-auto operation. Both modes retain the original inconclusive
-and negative decisions. A separate positive control reaches writer, independent
-review and all three gates. These tiers qualify implementation and accounting;
-they do not establish live research quality, actual human-review efficacy or
-paper parity. Guarded lesson staging and the second domain do not establish a
-measured improvement; the research operations UI is not included here. The
-[query handoff](../../queries/research/core-baseline.json) retains fixture/report
-identities, all eight rows, public record names, costs and those limits.
+The [research benchmark](../../docs/RESEARCH_BENCHMARK.md) is the source for
+measured intervals, per-topic losses, safety refusals and validation costs. Its
+lesson and domain pairs tie; native outcome approval refuses those candidates.
+The `age-linear` and `severity-weighted-age` hypotheses show no strictly positive
+interval against the no-decay control, so `none` remains the registered default.
+Neither writeback nor full-auto is eligible. A future positive gate would still
+require explicit operator ratification before changing either default.
+
+## Operations and measurement tiers
+
+The desktop Research page reads retained projects, addressed runs, manuscript
+artifacts, lessons, ablation pairs and the embedded report through its native
+contract. `research.runs.live` subscribes to an addressed project through the
+existing run feed. Lessons use the `research.lessons.list` and
+`research.lessons.get` reads. The page refreshes on navigation and explicit
+refresh, and run details also refresh on subscription snapshots and patches;
+it does not invent progress or silently poll. Commands and human
+gates retain the actor and exact reviewed manifest through the existing host.
+
+`npm run benchmark:research -- --rows matrix --audit` regenerates the scripted
+matrix and independent artifact audit. `--check` compares current native
+measurements to the committed JSON and rendered Markdown. The `--rows lessons`
+and `--rows domains` selectors retain the oracle and floor plus their measured
+extensions; a comma-separated core-row selection remains available. Unknown
+metrics, unequal prompts, budgets, identities or inputs refuse a comparison
+with `TRSH2012`; they never become zero deltas. The generated report retains
+every incomparable field and every counted `not-run` reason.
+
+The artifact oracle qualifies its authored ceiling; scripted workflows qualify
+execution, isolation, accounting, controls and refusals. The audit resolves
+retained source passages, manuscript numbers and provenance independently.
+These tiers do not establish live quality, actual human-review efficacy,
+ARC-Bench parity, SmartPause or wet-lab support. Full-auto remains explicitly
+experimental; normal workflow mode is `gate-only`.
+
+There is no live-spending research CLI or live-row authorization flag. A live
+measurement requires a host-bound provider identity, pinned data and evaluator,
+matched budget and inputs, and an explicitly authorized execution plan before
+any request. The keyless command refuses unknown flags and traps network calls;
+its report is not authorization to spend. The
+[core query handoff](../../queries/research/core-baseline.json) remains scoped
+to the original lifecycle rows and their operating-mode disclosures.
+
+## Lesson, domain and comparison refusals
+
+| Code | Meaning |
+|---|---|
+| `TRSH2001` | Lesson, set, profile or manifest shape violation |
+| `TRSH2002` | Lesson origin chain is incomplete |
+| `TRSH2003` | Lesson domain or task scope mismatch |
+| `TRSH2004` | Lesson validation must be synchronous and bound |
+| `TRSH2005` | Lesson origin or hidden result leakage |
+| `TRSH2006` | Web lesson lacks independent corroboration |
+| `TRSH2007` | Lesson promotion or active-procedure edit refused |
+| `TRSH2008` | Domain profile is unsupported or incomplete |
+| `TRSH2009` | External research slice is unpinned or unaudited |
+| `TRSH2010` | Research live operation is unavailable |
+| `TRSH2011` | Lesson decay hypothesis is unregistered |
+| `TRSH2012` | Research ablation pair is incomparable |

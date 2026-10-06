@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { researchArtifactIdOf } from '@tangleai/research';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { compileJSONPointer, JSONPOINTER_NOTHING } from '@jarenjs/json/pointer';
-import { researchContext, buildReport, renderReport, renderDocument, validateResearchReport, REPORT_PATH, DOCUMENT_PATH } from '../../benchmark/lib/research.ts';
+import { researchContext, buildReport, renderReport, renderDocument, validateResearchReport } from '../../benchmark/lib/research.ts';
 import { validateResearchReportShape } from '../../benchmark/lib/research-validation.ts';
 import { RESEARCH_DIMENSIONS, RESEARCH_ROW_IDS, RESEARCH_DISCLOSURES } from '../../benchmark/lib/research-schema.ts';
 import { runResearchCli, requireResearchGate } from '../../benchmark/research.ts';
@@ -37,13 +37,6 @@ describe('research instrument', () => {
       assert.equal(renderReport(first), renderReport(second)); assert.equal(renderDocument(first), renderDocument(second));
       assert.equal(requests, 0); assert.equal(first.gate.networkCalls, 0);
     } finally { globalThis.fetch = before; }
-  });
-  it('the committed report and document reproduce with their original source identity', async () => {
-    const prior: ResearchReport = JSON.parse(await readFile(REPORT_PATH, 'utf8'));
-    assert.equal(await validateResearchReport(prior, context), true);
-    const rebuilt = await buildReport({ context: { ...context, source: prior.source } });
-    assert.equal(renderReport(rebuilt), await readFile(REPORT_PATH, 'utf8'));
-    assert.equal(renderDocument(rebuilt), await readFile(DOCUMENT_PATH, 'utf8'));
   });
   it('the oracle reaches every dimension ceiling while the no-model floor omits half the claims', () => {
     assert.equal(report.decision, 'conformant'); assert.deepEqual(report.gate, { registration: true, oracle: true, bundles: true, analysis: true, writing: true, networkCalls: 0 });

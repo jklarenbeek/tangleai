@@ -120,5 +120,8 @@ it('the research surface adds seven addressed operations without narrowing the r
   assert.equal(additions.length, 7);
   for (const name of additions) assert.equal((DESKTOP_CONTRACT.operations as any)[name].kind, name.endsWith('.live') ? 'subscribe' : 'read');
   assert.equal((DESKTOP_CONTRACT.operations as any)['research.runs.live'].policy.stream.resume, 'replay');
+  // Normalize only the suite version so the recorded operation shape survives release preparation.
+  const pinned = compileContract({ ...DESKTOP_CONTRACT, version: '0.38.0' });
+  assert.equal(await pinned.revision(), '0722a8764a938f57c7da527b52bbcd92fec94de82a569a72e196f1d83790d8b7');
   console.log(JSON.stringify({ before: await compileContract(before).revision(), after: await contract.revision() }));
 });

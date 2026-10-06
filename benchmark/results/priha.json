@@ -3307,7 +3307,7 @@
       },
       {
         "path": "packages/research/src/domains/bindings.ts",
-        "sha256": "1653f334d2dc043cddf520fa8dd989a2c24302dc76507cf9f3935f536a30bb89"
+        "sha256": "4176644933e704c3af194794762102debc0b06205bec587e7e9cf04dc2a700bd"
       },
       {
         "path": "packages/research/src/domains/computational.ts",
@@ -4086,7 +4086,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "6c1f10a0ad0fdacd7d9569af9167e387e99e224d019ac35685dccf73482222c2"
+    "sha256": "0ca4e3c20cc8361fd635b2b55d3989ff9b263702da72c28506ca89bc00208c37"
   },
   "fixtureSource": {
     "files": [
@@ -69276,7 +69276,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "6c1f10a0ad0fdacd7d9569af9167e387e99e224d019ac35685dccf73482222c2",
+      "sourceSha256": "0ca4e3c20cc8361fd635b2b55d3989ff9b263702da72c28506ca89bc00208c37",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69360,7 +69360,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "0407185dba62b03596f5727dcd8d742c2fb553505a6dc71b1caab0f0ad01131c"
+      "planId": "ae26d5ef951214fd64ddc97e3089eeccae8cdedf125a2de3b3a45545a0bce865"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69607,5 +69607,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "58a5ec1e9bfea431c62ef126b78d48f74feadd3b70f05d04a86b6868c4d8b7c3"
+  "reportId": "f729938f9a2d97d4c45c62889a1bf4f9a20f3e8c2f8e15fa2ab8b1a9b8293106"
 }
