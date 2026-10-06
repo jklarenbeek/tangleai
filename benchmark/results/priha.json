@@ -215,7 +215,7 @@
       },
       {
         "path": "apps/desktop/src/contract.ts",
-        "sha256": "ca1422621116cc16e05fd246d09b035b2656b297bf7236a836198f519b12cd66"
+        "sha256": "4f9e4f8ffc6da7009f85fb70ee6621099f19ca600dfb744393ea4597758fec8b"
       },
       {
         "path": "apps/desktop/src/feedback.ts",
@@ -239,7 +239,7 @@
       },
       {
         "path": "apps/desktop/src/handlers.ts",
-        "sha256": "8571cdb4ca89847ccd1098006872f85a1263efb17d4b6df08924509e87befa5c"
+        "sha256": "5945d56d0ef28ef731d03ca846f354f9de738542fa3c7eb8c4c35d2af1ab755a"
       },
       {
         "path": "apps/desktop/src/ingest.ts",
@@ -270,12 +270,28 @@
         "sha256": "65d6a1f00c5dd384efe21eb5d03fca6db8fb75eb16b23effb567c6f483e72a28"
       },
       {
+        "path": "apps/desktop/src/research-contract.ts",
+        "sha256": "1fe71107315d355dd273f00d3f9b0ec46acda8e334f5ca3a6efd416eb3b7341e"
+      },
+      {
+        "path": "apps/desktop/src/research-handlers.ts",
+        "sha256": "275becfe74ee67b21a341ea586295d0599432fd12f6726df2b4d0cdcdcea1057"
+      },
+      {
+        "path": "apps/desktop/src/research-page.ts",
+        "sha256": "371e8bf43e410986b781167dd01f83c5ad67f3dcb21e42c50d7b61ddb42325be"
+      },
+      {
+        "path": "apps/desktop/src/research-report.ts",
+        "sha256": "2dc232a7a64867ac41053afbb5b2e73e649b053c6f6881441aec2198044c78f8"
+      },
+      {
         "path": "apps/desktop/src/schema-resources.ts",
         "sha256": "7bb46d6f1f94be1d89c8f4eca935500ad22bf1ff9a7b2c25132d9fc65b313919"
       },
       {
         "path": "apps/desktop/src/server.ts",
-        "sha256": "65e75d4a17fb72502f8b1067f6f3eed02e79cc865ecbddc28360c6b0705a9e6c"
+        "sha256": "78bd3e4a88def2be58e507ff1044514c39b95879480f792389583f829922c0c5"
       },
       {
         "path": "apps/desktop/src/settings.ts",
@@ -283,11 +299,11 @@
       },
       {
         "path": "apps/desktop/src/ui/actions.ts",
-        "sha256": "a222ac467e4406552214472bb8265d1061111049d2535386b562b2b8ddf11faa"
+        "sha256": "c7ba9c57b24833d56454dacb89699bb421a1a4fce83e37f50a76929a1f3235d7"
       },
       {
         "path": "apps/desktop/src/ui/app.ts",
-        "sha256": "a2ebc40df2591da06fe0f09232242dd16d779210d91129d298cda1ebee272949"
+        "sha256": "8132ef3a4e2d2e773255879fdee0374aebbf795cc58603ec2c524406707b20e7"
       },
       {
         "path": "apps/desktop/src/ui/main.ts",
@@ -299,7 +315,7 @@
       },
       {
         "path": "apps/desktop/src/ui/views.ts",
-        "sha256": "1ca8ee88e6083485d8121800d4475abba0d419e9c0a701bf200405d71707c0e6"
+        "sha256": "695ec2b5a72a631dcfb848f0dcd49cddcb8ef8910039ab716ba874aa2352853c"
       },
       {
         "path": "apps/desktop/src/watch.ts",
@@ -922,12 +938,40 @@
         "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
       },
       {
+        "path": "benchmark/lib/research-ablation-rows.ts",
+        "sha256": "f4a59abea48e754815b9a7c89e348b10867257c778521d95090d625df5148f41"
+      },
+      {
+        "path": "benchmark/lib/research-ablation-schema.ts",
+        "sha256": "406156b733ada9b99ccd92c7ba02b3d4fdbd5df01b8217ba6d99fb885bbe4da2"
+      },
+      {
+        "path": "benchmark/lib/research-ablation.ts",
+        "sha256": "a0e2cbd51d17c08b4ff6c7040e0f3803bd4ae5556412ba820f77210f7c638c14"
+      },
+      {
+        "path": "benchmark/lib/research-ablation.types.ts",
+        "sha256": "c13b173f389e186793863b3b1112ef19dba785ea7d1010d0751e392acc005596"
+      },
+      {
         "path": "benchmark/lib/research-arc-schema.ts",
         "sha256": "49761da20409561d864fdd202b85935aa44c633b49b52f691b74d498244f880d"
       },
       {
         "path": "benchmark/lib/research-arc.ts",
         "sha256": "a40b1a39786d7861890843891f84e3b6e61959984eb1e337987e57457feaabb6"
+      },
+      {
+        "path": "benchmark/lib/research-audit-schema.ts",
+        "sha256": "659a9f2b3b8a53d3c09b1295e445da18edbfa12cc88dcfac643927ccae81dc49"
+      },
+      {
+        "path": "benchmark/lib/research-audit.ts",
+        "sha256": "794dad4aed008c947752e15fb5668f69594833e314f868923317277908497b1b"
+      },
+      {
+        "path": "benchmark/lib/research-audit.types.ts",
+        "sha256": "4a44fdf3adb3e8c5a59e7ce1e85568c1541490e5ec97579c6047f5b6f02c1235"
       },
       {
         "path": "benchmark/lib/research-decision-fixture.ts",
@@ -1047,7 +1091,11 @@
       },
       {
         "path": "benchmark/lib/research-schema.ts",
-        "sha256": "cc8b2473e666a482d62d2a28483ddae2eb333d52f6603f6731ae0324a8223a57"
+        "sha256": "012d26baba3f1628a5f51b990dd54cd11d6240b79b2d7fcb716ca64dde9727b5"
+      },
+      {
+        "path": "benchmark/lib/research-source.ts",
+        "sha256": "ba7ad26713eab8217571cec730e9f60d33f5011eb2ca087ec8b0baa9b20de88f"
       },
       {
         "path": "benchmark/lib/research-statistics.ts",
@@ -1059,7 +1107,7 @@
       },
       {
         "path": "benchmark/lib/research-validation.ts",
-        "sha256": "ca1b440035da860576e4f1d5bb92db6ea76e550072d3aaef67b341bd7b6253c3"
+        "sha256": "be9a4e4643bc6da7602dc5d03dcf9eed3580d6768aefc199cd772ce03f638ed7"
       },
       {
         "path": "benchmark/lib/research-workflow.ts",
@@ -1075,11 +1123,11 @@
       },
       {
         "path": "benchmark/lib/research.ts",
-        "sha256": "5b35dcdcb3a931a598a6cbe93af436f85d36cb086814aecafe9dbe53397290a6"
+        "sha256": "c833ee686534e2c41c60dfda6da2729591db1d3a27aa3829fc3477fb6d75be1f"
       },
       {
         "path": "benchmark/lib/research.types.ts",
-        "sha256": "e6a133a861bd12c870273deeeff65e1be2f557d1af50bb33a8fb4e98ff9897f5"
+        "sha256": "3b4184771095725020d532e5a39d2e768aec8ef66173871b8dd72e49c1af798f"
       },
       {
         "path": "benchmark/lib/retention.ts",
@@ -1311,11 +1359,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "97bcd296a21874dc7780da4792b986c8b565e3b30cb627e483cb06fc9202d435"
+        "sha256": "d17c21af6214331acf3e3e171f7b76f3b2ba0839425902fd51e4ea09e30f3e0b"
       },
       {
         "path": "package.json",
-        "sha256": "f6df9c541d439cd30b67a549d6ba5d3b1a5665ea2ce4494952bd01f1ffdc48a7"
+        "sha256": "d320d450b1dbebfb227d687616857ac933a2f55a7903958941d9846988dfa393"
       },
       {
         "path": "packages/agents/package.json",
@@ -4038,7 +4086,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "fefeb0a65bf24c4ea7e0c8567d72ccbf532f64cc7dff5cc8ccd170f264f959cc"
+    "sha256": "6c1f10a0ad0fdacd7d9569af9167e387e99e224d019ac35685dccf73482222c2"
   },
   "fixtureSource": {
     "files": [
@@ -69228,7 +69276,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "fefeb0a65bf24c4ea7e0c8567d72ccbf532f64cc7dff5cc8ccd170f264f959cc",
+      "sourceSha256": "6c1f10a0ad0fdacd7d9569af9167e387e99e224d019ac35685dccf73482222c2",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69312,7 +69360,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "37aa25b6dddc9041979cd41d779e3a5d3b3b87684055ad6ce013f4efc7ce7d11"
+      "planId": "0407185dba62b03596f5727dcd8d742c2fb553505a6dc71b1caab0f0ad01131c"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69559,5 +69607,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "397ac829b2a98da4618e24a5733c27d29f9d9f5326316a20156fa4345ced85be"
+  "reportId": "58a5ec1e9bfea431c62ef126b78d48f74feadd3b70f05d04a86b6868c4d8b7c3"
 }

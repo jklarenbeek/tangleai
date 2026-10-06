@@ -79,7 +79,7 @@ it('plain chat output and the three baseline operation declarations stay byte-id
     const result = await groundingCall(d, 'POST', '/api/chat', { text: chatBaseline.text });
     assert.equal(result.status, chatBaseline.status); assert.equal(JSON.stringify(result.value), JSON.stringify(chatBaseline.output));
     for (const [name, operation] of Object.entries(chatBaseline.operations)) assert.equal(JSON.stringify(DESKTOP_CONTRACT.operations[name as keyof typeof DESKTOP_CONTRACT.operations]), JSON.stringify(operation), name);
-    assert.deepEqual(Object.entries(DESKTOP_CONTRACT.operations).filter(([, op]) => op.kind === 'subscribe').map(([name]) => name), ['runs.live', 'run.live']);
+    assert.deepEqual(Object.entries(DESKTOP_CONTRACT.operations).filter(([, op]) => op.kind === 'subscribe').map(([name]) => name), ['research.runs.live', 'runs.live', 'run.live']);
   } finally { await d.close(); }
 });
 it('retained histories survive settings changes without binding clients or changing identities', async () => {

@@ -10,6 +10,7 @@
  * scripts/embed-assets.ts).
  */
 
+import type { ResearchReportReader } from './research-report.ts';
 import { readFile } from 'node:fs/promises';
 import manifest from '../package.json' with { type: 'json' };
 import { createRuntime } from '@jarenjs/core/runtime';
@@ -68,6 +69,8 @@ export interface DesktopWatchOptions extends Partial<Omit<FolderWatchSeams, 'now
 }
 
 export interface DesktopOptions {
+  /** Committed report bytes plus the current source inventory; no experiment runner. */
+  researchReport?: ResearchReportReader;
   dbPath?: string;
   driver?: any;
   fetch?: typeof globalThis.fetch;
@@ -176,7 +179,12 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
   const grounding = await createDesktopGrounding({ db, corpus: documentStore, settings, identities, now, clock: runtime.now, fetch: options.fetch, grounding: options.grounding });
   await grounding.recover();
   const contract = compileContract(DESKTOP_CONTRACT);
+  // Research snapshots share one SQLite connection. Admission queues before a
+  // transaction starts, keeping concurrent reads within the native wait bound.
+  const researchScheduler = createScheduler({ concurrency: 1, maxQueue: 16, now: runtime.now });
   const handlers = createHandlers({
+    researchReport: options.researchReport,
+    researchScheduler,
     db, memoryStore, runLog, settings, identities, stackFor: settingsStack, inflight, chat, folderSync, watcher, feedback, reports, documentStore, documentFetcher, grounding,
     lightragStore: createLightRagStore(db), lightragPlannerFor: options.lightrag?.plannerFor, clock: runtime.now,
     version: DESKTOP_VERSION,
@@ -207,6 +215,7 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
       await folderScheduler.close();
       await chatScheduler.close();
       await reportScheduler.close();
+      await researchScheduler.close();
       await dispatcher.close();
       await documentFetcher.close();
       await db.close();

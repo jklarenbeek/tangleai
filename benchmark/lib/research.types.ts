@@ -5888,6 +5888,463 @@ export interface Domains_TabularResearchTopic {
 
 
 /**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type Ablation_ResearchAblationTopicSeedsItem = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type Ablation_ResearchAblationTopicClaimSupportAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type Ablation_ResearchAblationTopicRegistryAccuracyAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type Ablation_ResearchAblationTopicPreregistrationIntegrityAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type Ablation_ResearchAblationTopicPrimaryAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: $query={"$or":[{"$and":[{"$eq":["$.primary",null]},{"$or":[{"$eq":["$.claimSupport",null]},{"$eq":["$.registryAccuracy",null]},{"$eq":["$.preregistrationIntegrity",null]}]}]},{"$and":[{"$ne":["$.claimSupport",null]},{"$ne":["$.registryAccuracy",null]},{"$ne":["$.preregistrationIntegrity",null]},{"$eq":["$.primary",{"$mul":["$.claimSupport",{"$mul":["$.registryAccuracy","$.preregistrationIntegrity"]}]}]}]}]}
+ */
+export interface Ablation_ResearchAblationTopic {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  hash: Sha256;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  seeds: Array<Ablation_ResearchAblationTopicSeedsItem>;
+  claimSupport: Ablation_ResearchAblationTopicClaimSupportAnyOf1 | null;
+  registryAccuracy: Ablation_ResearchAblationTopicRegistryAccuracyAnyOf1 | null;
+  preregistrationIntegrity: Ablation_ResearchAblationTopicPreregistrationIntegrityAnyOf1 | null;
+  primary: Ablation_ResearchAblationTopicPrimaryAnyOf1 | null;
+  completion: boolean | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  source: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type Ablation_ResearchAblationBudgetCallsAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type Ablation_ResearchAblationBudgetTokensAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type Ablation_ResearchAblationBudgetMsAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type Ablation_ResearchAblationBudgetPhysicalAnyOf1 = number;
+
+export interface Ablation_ResearchAblationBudget {
+  calls: Ablation_ResearchAblationBudgetCallsAnyOf1 | null;
+  tokens: Ablation_ResearchAblationBudgetTokensAnyOf1 | null;
+  ms: Ablation_ResearchAblationBudgetMsAnyOf1 | null;
+  physical: Ablation_ResearchAblationBudgetPhysicalAnyOf1 | null;
+}
+
+
+export interface Ablation_ResearchAblationRowSpend {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physical: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Ablation_ResearchAblationRowRefusalsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Ablation_ResearchAblationRowProvenanceItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Ablation_ResearchAblationRowLimitationsItem = string;
+
+export interface Ablation_ResearchAblationRow {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  family: "core" | "lessons" | "domain" | "probe" | "external";
+  state: "measured" | "not-run" | "refused" | "implementation-missing";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  topics: Array<Ablation_ResearchAblationTopic>;
+  identityStatus: "run" | "not-run" | "legacy-unrecorded";
+  identityId: Sha256 | null;
+  comparisonIdentity: Sha256 | null;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  promptRevisions: Array<Sha256>;
+  budget: Ablation_ResearchAblationBudget;
+  spend: Ablation_ResearchAblationRowSpend;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  safetyRefusals: number;
+  outcomeEligible: boolean;
+  refusals: Array<Ablation_ResearchAblationRowRefusalsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  provenance: Array<Ablation_ResearchAblationRowProvenanceItem>;
+  limitations: Array<Ablation_ResearchAblationRowLimitationsItem>;
+}
+
+
+export interface Ablation_ResearchAblationPairTopicsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  topicId: string;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  baseline: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  treatment: number;
+  delta: number;
+}
+
+
+export interface Ablation_ResearchAblationPairLossesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  topicId: string;
+  /**
+   * Schema constraints this type cannot express: exclusiveMaximum=0
+   */
+  delta: number;
+}
+
+
+export interface Ablation_ResearchAblationPairCostBaseline {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physical: number;
+}
+
+
+export interface Ablation_ResearchAblationPairCostTreatment {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physical: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.comparable",{"$eq":[{"$count":"$.refusals[*]"},0]}]},{"$eq":["$.eligible",{"$and":[{"$eq":["$.purpose","superiority"]},"$.comparable",{"$ne":["$.interval",null]},{"$gt":["$.interval.low",0]},{"$eq":["$.safetyRefusals",0]},"$.cost.withinBound","$.outcomeEligible"]}]},{"$eq":[["$.losses[*].topicId"],["$.topics[?(@.delta<0)].topicId"]]},{"$eq":[["$.losses[*].delta"],["$.topics[?(@.delta<0)].delta"]]},{"$every":{"topic":"$.topics[*]"},"$satisfies":{"$eq":["$topic.delta",{"$sub":["$topic.treatment","$topic.baseline"]}]}},{"$eq":["$.cost.delta.calls",{"$sub":["$.cost.treatment.calls","$.cost.baseline.calls"]}]},{"$eq":["$.cost.delta.tokens",{"$sub":["$.cost.treatment.tokens","$.cost.baseline.tokens"]}]},{"$eq":["$.cost.delta.ms",{"$sub":["$.cost.treatment.ms","$.cost.baseline.ms"]}]},{"$eq":["$.cost.delta.physical",{"$sub":["$.cost.treatment.physical","$.cost.baseline.physical"]}]},{"$eq":["$.cost.withinBound",{"$and":[{"$ne":["$.cost.registered.calls",null]},{"$le":["$.cost.treatment.calls","$.cost.registered.calls"]},{"$le":["$.cost.baseline.calls","$.cost.registered.calls"]},{"$ne":["$.cost.registered.tokens",null]},{"$le":["$.cost.treatment.tokens","$.cost.registered.tokens"]},{"$le":["$.cost.baseline.tokens","$.cost.registered.tokens"]},{"$ne":["$.cost.registered.ms",null]},{"$le":["$.cost.treatment.ms","$.cost.registered.ms"]},{"$le":["$.cost.baseline.ms","$.cost.registered.ms"]},{"$ne":["$.cost.registered.physical",null]},{"$le":["$.cost.treatment.physical","$.cost.registered.physical"]},{"$le":["$.cost.baseline.physical","$.cost.registered.physical"]}]}]},{"$or":[{"$and":[{"$eq":["$.comparable",false]},{"$eq":["$.delta",null]},{"$eq":["$.interval",null]},{"$eq":[{"$count":"$.topics[*]"},0]}]},{"$and":[{"$eq":["$.comparable",true]},{"$gt":[{"$count":"$.topics[*]"},0]},{"$eq":["$.delta",{"$div":[{"$sum":"$.topics[*].delta"},{"$count":"$.topics[*]"}]}]},{"$le":["$.interval.low","$.interval.high"]}]}]}]}
+ */
+export interface Ablation_ResearchAblationPair {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  purpose: "superiority" | "parity";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  baseline: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  treatment: string;
+  comparable: boolean;
+  refusals: Array<ResearchIssue>;
+  topics: Array<Ablation_ResearchAblationPairTopicsItem>;
+  delta: number | null;
+  interval: { low: number; high: number; } | null;
+  losses: Array<Ablation_ResearchAblationPairLossesItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  safetyRefusals: number;
+  outcomeEligible: boolean;
+  cost: { baseline: Ablation_ResearchAblationPairCostBaseline; treatment: Ablation_ResearchAblationPairCostTreatment; delta: { calls: number; tokens: number; ms: number; physical: number; }; registered: Ablation_ResearchAblationBudget; withinBound: boolean; };
+  eligible: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Ablation_RootLimitationsItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.rows[*]"},{"$count":{"$distinct":"$.rows[*].id"}}]},{"$eq":[{"$count":"$.pairs[*]"},{"$count":{"$distinct":"$.pairs[*].id"}}]},{"$eq":["$.gate.writebackEligible",{"$some":{"pair":"$.pairs[*]"},"$satisfies":{"$and":[{"$eq":["$pair.id","lessons-on-vs-off"]},"$pair.eligible"]}}]},{"$eq":["$.gate.fullAutoEligible",{"$some":{"pair":"$.pairs[*]"},"$satisfies":{"$and":[{"$eq":["$pair.id","gate-only-vs-full-auto"]},"$pair.eligible"]}}]},{"$every":{"pair":"$.pairs[*]"},"$satisfies":{"$some":{"baseline":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$baseline.id","$pair.baseline"]},{"$some":{"treatment":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$treatment.id","$pair.treatment"]},{"$eq":["$pair.safetyRefusals",{"$add":["$baseline.safetyRefusals","$treatment.safetyRefusals"]}]}]}}]}}},{"$every":{"pair":"$.pairs[*]"},"$satisfies":{"$and":[{"$some":{"row":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$row.id","$pair.baseline"]},{"$eq":["$row.spend","$pair.cost.baseline"]},{"$eq":["$row.budget","$pair.cost.registered"]},{"$or":[{"$eq":["$pair.comparable",false]},{"$and":[{"$eq":[["$row.topics[*].id"],["$pair.topics[*].topicId"]]},{"$every":{"pairedTopic":"$pair.topics[*]"},"$satisfies":{"$some":{"topic":"$row.topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.id","$pairedTopic.topicId"]},{"$eq":["$topic.primary","$pairedTopic.baseline"]}]}}}]}]}]}},{"$some":{"row":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$row.id","$pair.treatment"]},{"$eq":["$row.spend","$pair.cost.treatment"]},{"$eq":["$row.outcomeEligible","$pair.outcomeEligible"]},{"$or":[{"$eq":["$pair.comparable",false]},{"$and":[{"$eq":[["$row.topics[*].id"],["$pair.topics[*].topicId"]]},{"$every":{"pairedTopic":"$pair.topics[*]"},"$satisfies":{"$some":{"topic":"$row.topics[*]"},"$satisfies":{"$and":[{"$eq":["$topic.id","$pairedTopic.topicId"]},{"$eq":["$topic.primary","$pairedTopic.treatment"]}]}}}]}]}]}}]}}]}
+ */
+export interface Ablation_Root {
+  registration: { id: "research-ablation-v1"; primary: "claimSupport*registryAccuracy*preregistrationIntegrity"; seed: 17753; resamples: 2000; level: 0.95; direction: "treatment-minus-baseline"; };
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  rows: Array<Ablation_ResearchAblationRow>;
+  /**
+   * Schema constraints this type cannot express: minItems=8
+   */
+  pairs: Array<Ablation_ResearchAblationPair>;
+  gate: { writebackEligible: boolean; fullAutoEligible: boolean; };
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  limitations: Array<Ablation_RootLimitationsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Audit_ResearchArtifactAuditProjectIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Audit_ResearchAuditCheckRecordIdsItem = string;
+
+export interface Audit_ResearchAuditCheck {
+  kind: "artifact" | "metric" | "citation" | "claim" | "intervention" | "seed" | "trace" | "prompt";
+  state: "resolved" | "unresolved" | "fabricated" | "missing";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  recordIds: Array<Audit_ResearchAuditCheckRecordIdsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  detail: string;
+}
+
+
+export interface Audit_ResearchAuditDisagreement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reported: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  observed: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Audit_ResearchArtifactAuditLimitationsItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.checked",{"$count":"$.checks[*]"}]},{"$eq":["$.resolved",{"$count":"$.checks[?(@.state==\"resolved\")]"}]},{"$eq":["$.unresolved",{"$count":"$.checks[?(@.state==\"unresolved\")]"}]},{"$eq":["$.fabricated",{"$count":"$.checks[?(@.state==\"fabricated\")]"}]},{"$eq":["$.missing",{"$count":"$.checks[?(@.state==\"missing\")]"}]},{"$eq":["$.auditDisagreements",{"$count":"$.disagreements[*]"}]}]}
+ */
+export interface Audit_ResearchArtifactAudit {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  projectId: Audit_ResearchArtifactAuditProjectIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  source: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  checked: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  resolved: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unresolved: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fabricated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  missing: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  auditDisagreements: number;
+  checks: Array<Audit_ResearchAuditCheck>;
+  disagreements: Array<Audit_ResearchAuditDisagreement>;
+  interventions: ResearchInterventionReport | null;
+  limitations: Array<Audit_ResearchArtifactAuditLimitationsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Audit_ResearchAuditProbeReasonAnyOf1 = string;
+
+export interface Audit_ResearchAuditProbeMutationAnyOf1 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  before: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  after: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$or":[{"$and":[{"$eq":["$.state","not-run"]},{"$eq":["$.matched",false]},{"$eq":["$.input",null]},{"$eq":["$.inputSha256",null]},{"$eq":["$.mutation",null]},{"$eq":["$.audit",null]},{"$ne":["$.reason",null]}]},{"$and":[{"$eq":["$.state","measured"]},{"$eq":["$.reason",null]},{"$ne":["$.input",null]},{"$ne":["$.inputSha256",null]},{"$ne":["$.mutation",null]},{"$ne":["$.audit",null]},{"$eq":["$.matched",{"$and":[{"$gt":["$.audit.auditDisagreements",0]},{"$or":[{"$and":[{"$eq":["$.id","fabricated-number"]},{"$gt":["$.audit.fabricated",0]}]},{"$and":[{"$eq":["$.id","dangling-citation"]},{"$gt":["$.audit.unresolved",0]}]}]}]}]}]}]}
+ */
+export interface Audit_ResearchAuditProbe {
+  id: "fabricated-number" | "dangling-citation";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  source: string;
+  state: "measured" | "not-run";
+  reason: Audit_ResearchAuditProbeReasonAnyOf1 | null;
+  inputSha256: Sha256 | null;
+  input: ResearchExportManifest | null;
+  mutation: Audit_ResearchAuditProbeMutationAnyOf1 | null;
+  audit: Audit_ResearchArtifactAudit | null;
+  matched: boolean;
+}
+
+
+export interface Audit_RootTotals {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  checked: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  resolved: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unresolved: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fabricated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  missing: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  auditDisagreements: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type Audit_RootLimitationsItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.probes[*].id"],["fabricated-number","dangling-citation"]]},{"$eq":["$.totals.checked",{"$sum":"$.runs[*].checked"}]},{"$eq":["$.totals.resolved",{"$sum":"$.runs[*].resolved"}]},{"$eq":["$.totals.unresolved",{"$sum":"$.runs[*].unresolved"}]},{"$eq":["$.totals.fabricated",{"$sum":"$.runs[*].fabricated"}]},{"$eq":["$.totals.missing",{"$sum":"$.runs[*].missing"}]},{"$eq":["$.totals.auditDisagreements",{"$sum":"$.runs[*].auditDisagreements"}]}]}
+ */
+export interface Audit_Root {
+  runs: Array<Audit_ResearchArtifactAudit>;
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=2
+   */
+  probes: Array<Audit_ResearchAuditProbe>;
+  totals: Audit_RootTotals;
+  limitations: Array<Audit_RootLimitationsItem>;
+}
+
+
+/**
  * Schema constraints this type cannot express: minLength=1
  */
 export type ResearchHandoffHandoffFixtureTopicsItem = string;
@@ -7797,6 +8254,8 @@ export interface ResearchReport {
   schemaVersion: 1;
   lessons: Lessons_Root;
   domains: Domains_Root;
+  ablation: Ablation_Root;
+  audit: Audit_Root;
   /**
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */

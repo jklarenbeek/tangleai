@@ -1,10 +1,13 @@
 /** Registered research measurements over retained executions and independently checked evidence. */
 import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
-import { sourceManifest } from './source-manifest.ts';
+import { researchSource } from './research-source.ts';
+export { SOURCE_MANIFEST } from './research-source.ts';
 import { installedSuitePackages } from './suite-packages.ts';
 import { analyticEnvelope } from './report-envelope.ts';
 import { buildResearchLessonsReport, renderResearchLessons } from './research-lessons.ts';
 import { buildResearchDomainsReport, renderResearchDomains } from './research-domains.ts';
+import { buildResearchAblation, renderResearchAblation } from './research-ablation.ts';
+import { buildResearchAudit, renderResearchAudit } from './research-audit.ts';
 import { loadResearchFixture, RESEARCH_FIXTURE_PATH, MANIFEST_PATH, type LoadedResearchFixture } from './research-fixture.ts';
 import { researchCeilings, researchScore, verifyResearchBundle } from './research-oracle.ts';
 import { runNativeResearchFixture } from './research-workflow.ts';
@@ -29,34 +32,6 @@ import type { ResearchReport, ResearchBundle, ResearchFixtureTopic, ResearchTopi
 export { MANIFEST_PATH };
 export const REPORT_PATH = 'benchmark/results/research.json';
 export const DOCUMENT_PATH = 'docs/RESEARCH_BENCHMARK.md';
-export const SOURCE_MANIFEST = [
-  'package.json', 'package-lock.json', 'benchmark/research.ts', MANIFEST_PATH,
-  'benchmark/scripts/research-fixtures.ts', 'scripts/research-schema.ts',
-  'benchmark/lib/research.ts', 'benchmark/lib/research-schema.ts', 'benchmark/lib/research.types.ts',
-  'benchmark/lib/research-fixture.ts', 'benchmark/lib/research-programs.ts', 'benchmark/lib/research-evaluator.ts',
-  'benchmark/lib/research-oracle.ts', 'benchmark/lib/research-runner.ts', 'benchmark/lib/research-validation.ts',
-  'benchmark/lib/research-workflow.ts', 'benchmark/lib/research-lifecycle-fixture.ts', 'examples/research.ts',
-  'benchmark/lib/research-discovery.ts', 'benchmark/lib/research-discovery-fixture.ts', 'benchmark/scripts/research-transcripts.ts',
-  'benchmark/lib/research-reasoning.ts', 'benchmark/lib/research-reasoning-fixture.ts', 'scripts/research-artifacts.ts', 'scripts/research-sources.ts',
-  'benchmark/lib/research-execution.ts', 'benchmark/lib/research-execution-fixture.ts',
-  'apps/research-runner/src/domains.ts',
-  'benchmark/lib/research-domains.ts', 'benchmark/lib/research-domains-schema.ts', 'benchmark/lib/research-domains.types.ts',
-  'benchmark/lib/research-domain-inputs.ts', 'benchmark/lib/research-domain-runtime.ts', 'benchmark/lib/research-domain-probes.ts',
-  'benchmark/lib/research-tabular-fixture.ts', 'benchmark/scripts/tabular-statistics-fixture.ts',
-  'benchmark/lib/research-arc.ts', 'benchmark/lib/research-arc-schema.ts', 'benchmark/schemas/arc-bench-topic.schema.json',
-  'benchmark/schemas/research-domains.schema.json', 'scripts/research-domains-schema.ts', 'scripts/research-domain-artifacts.ts',
-  'prompts/research/domains/tabular-context.toml',
-  'benchmark/lib/research-decisions.ts', 'benchmark/lib/research-decision-fixture.ts', 'benchmark/lib/research-statistics.ts',
-  'benchmark/lib/research-writing.ts', 'benchmark/lib/research-writing-fixture.ts', 'benchmark/lib/research-latex.ts',
-  'benchmark/lib/research-lessons.ts', 'benchmark/lib/research-lessons-oracle.ts', 'benchmark/lib/research-lessons-fixture.ts',
-  'benchmark/lib/research-lessons-schema.ts', 'benchmark/lib/research-lessons.types.ts', 'benchmark/schemas/research-lessons.schema.json',
-  'scripts/research-schema-dependencies.ts', 'scripts/research-contracts.ts', 'scripts/research-lessons-schema.ts', 'scripts/research-schema.ts',
-  'benchmark/lib/locomo-policy.ts',
-  'benchmark/research-query.ts', 'benchmark/lib/research-handoff.ts', 'queries/research/core-baseline.json',
-  'benchmark/lib/args.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts',
-  'benchmark/lib/suite-packages.ts', 'benchmark/lib/report-envelope.ts', 'benchmark/lib/table.ts',
-  'packages/research/schemas/research.schema.json', 'benchmark/schemas/research.schema.json',
-] as const;
 export interface ResearchContext {
   loaded: LoadedResearchFixture;
   source: ResearchReport['source'];
@@ -64,10 +39,7 @@ export interface ResearchContext {
 }
 export async function researchContext(root = process.cwd()): Promise<ResearchContext> {
   const loaded = await loadResearchFixture(root);
-  return { loaded, source: await sourceManifest(root, [...SOURCE_MANIFEST,
-    ...loaded.manifest.members.map(member => RESEARCH_FIXTURE_PATH + '/' + member.path)],
-  [RESEARCH_FIXTURE_PATH, 'packages/core', 'packages/models', 'packages/documents', 'packages/search', 'packages/context', 'packages/config',
-    'packages/jaren', 'packages/research', 'packages/gmpl', 'packages/mas', 'packages/store', 'packages/agents', 'packages/evolve', 'packages/trace2skill', 'packages/outcomes']),
+  return { loaded, source: await researchSource(root, loaded),
   suite: await installedSuitePackages(root, ['core', 'models', 'documents', 'search', 'context', 'config', 'research', 'gmpl', 'mas', 'store', 'agents', 'evolve', 'trace2skill', 'outcomes']) };
 }
 const same = (left: unknown, right: unknown): boolean => canonicalizeJson(left) === canonicalizeJson(right);
@@ -332,7 +304,7 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
         .every(row => [row.citationIdentity, row.claimValidity, row.bundleRerun, row.refusalConformance].every(score => score.value === 1)
           && row.claimSupport.value === (row.id === 'single-pass-retrieve-draft' ? 0.5 : 1)
           && row.numericMapping.value === (row.id === 'single-pass-retrieve-draft' ? 0 : 1)), networkCalls: 0 as const };
-  const payload: Omit<ResearchReport, 'reportId'> = { benchmark: 'research', schemaVersion: 1, source: context.source, suite: context.suite,
+  const measured: Omit<ResearchReport, 'reportId' | 'ablation' | 'audit'> = { benchmark: 'research', schemaVersion: 1, source: context.source, suite: context.suite,
     recordNames: [...RESEARCH_RECORD_KINDS],
     registration: { id: loaded.manifest.id, revision: loaded.manifest.revision, topics: loaded.topics.map(topic => topic.id),
       caps: loaded.manifest.caps, replicatePolicy: loaded.manifest.replicatePolicy,
@@ -340,6 +312,7 @@ export async function buildReport(options: { context?: ResearchContext; rows?: r
     identity, ceilings, rows, discovery, execution, analysis, writing, lessons: await buildResearchLessonsReport(loaded),
     domains: await buildResearchDomainsReport(loaded), bundles, disclosure: disclosures(rows), gate,
     decision: gate.registration && gate.oracle && gate.bundles && gate.analysis && gate.writing ? 'conformant' : 'drift', limitations: [...RESEARCH_LIMITATIONS] };
+  const payload = { ...measured, ablation: await buildResearchAblation(measured, loaded), audit: await buildResearchAudit(measured, loaded) };
   const report = { ...payload, reportId: await canonicalSha256(payload) };
   const validated = validateResearchReportShape(report);
   if (!validated.valid) throw new Error('Research report shape refused: ' + describeErrors(validated, 12).join('; '));
@@ -491,7 +464,9 @@ export function renderDocument(report: ResearchReport): string {
     'Evidence pointers in the JSON resolve to retained bundle artifacts. Human review, runnable implementation, reconstructible execution, novelty audit and baseline audit follow the five measured categories in [the research survey](https://arxiv.org/html/2608.05179#S14Table10). Independent verification, attempt/selection registration and frozen hypotheses are additional operational requirements. No external study rates are reproduced.', '',
     ...renderResearchLessons(report.lessons),
     ...renderResearchDomains(report.domains),
-    '## Reproduce', '', 'Run `npm run benchmark:research` and `npm run benchmark:research -- --check`. `--rows artifact-oracle` retains seven explicit not-run rows. `--rows lessons` includes the complete lesson family, the artifact oracle and the no-model core floor; six other core rows remain explicitly not-run. `--rows domains` selects the same keyless core floor and retains both complete domain families, the parity and unsupported-profile probes, and the stated external deferral. `--require registration`, `--require oracle`, `--require bundles`, `--require analysis` or `--require writing` refuses a failed gate before writing. `--out PATH` writes JSON and a sibling `PATH.md`; `--check --out PATH` checks those files without writing.', '',
+    ...renderResearchAblation(report.ablation),
+    ...renderResearchAudit(report.audit),
+    '## Reproduce', '', 'Run `npm run benchmark:research` and `npm run benchmark:research -- --check`. `--rows artifact-oracle` retains seven explicit not-run rows. `--rows lessons` includes the complete lesson family, the artifact oracle and the no-model core floor; six other core rows remain explicitly not-run. The independent artifact audit is included in every report; `--rows matrix --audit` explicitly requests the complete measured matrix and audit. `--rows matrix` executes every registered core row and includes all lesson, domain and explicit external rows with the paired matrix. `--rows domains` selects the same keyless core floor and retains both complete domain families, the parity and unsupported-profile probes, and the stated external deferral. `--require registration`, `--require oracle`, `--require bundles`, `--require analysis` or `--require writing` refuses a failed gate before writing. `--out PATH` writes JSON and a sibling `PATH.md`; `--check --out PATH` checks those files without writing.', '',
     '## Limits', '', ...report.limitations.map(text => '- ' + text), '',
     'Installed identities: ' + report.suite.packages.map(pkg => '`' + pkg.name + '@' + pkg.version + '`').join(', ') + '.', '',
   ].join('\n');

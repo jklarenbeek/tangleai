@@ -8,6 +8,8 @@
 
 export const INITIAL_STATE = {
   page: 'chat',
+  research: { runs: [] as any[], detail: null as any, projectId: null as string | null, frames: [] as any[],
+    lessons: [] as any[], lesson: null as any, pair: null as any, report: null as any, error: null as string | null, reportError: null as string | null },
   grounding: { input: '', answers: {} as Record<string, string>, reason: '', busy: false, error: null as string | null, reply: null as any, evidence: { candidates: [] as any[], unused: [] as string[] }, conflicts: [] as any[], rows: [] as any[] },
   status: null as any,
   chat: {
@@ -145,7 +147,26 @@ export const ACTIONS: Record<string, any> = {
 
   nav: {
     patch: [{ op: 'replace', path: '/page', value: '$payload' }],
+    effects: [{ run: 'researchNavigation', with: { page: '$payload', projectId: '$.research.projectId' } }],
   },
+
+  'research/refresh': { effects: [{ run: 'researchRefresh', with: { projectId: '$.research.projectId' } }] },
+  'research/runs': { patch: [{ op: 'replace', path: '/research/runs', value: '$payload' }] },
+  'research/lessons': { patch: [{ op: 'replace', path: '/research/lessons', value: '$payload' }] },
+  'research/report': { patch: [{ op: 'replace', path: '/research/report', value: '$payload' }, { op: 'replace', path: '/research/reportError', value: null }] },
+  'research/fail': { patch: [{ op: 'replace', path: '/research/error', value: '$payload' }] },
+  'research/reportFail': { patch: [{ op: 'replace', path: '/research/report', value: null }, { op: 'replace', path: '/research/reportError', value: '$payload' }] },
+  'research/select': { patch: [{ op: 'replace', path: '/research/projectId', value: '$payload' }, { op: 'replace', path: '/research/detail', value: null },
+    { op: 'replace', path: '/research/frames', value: [] }, { op: 'replace', path: '/research/error', value: null }],
+    effects: [{ run: 'researchDetail', with: { projectId: '$payload' } }] },
+  'research/detail': { patch: [{ op: 'replace', path: '/research/detail', value: '$payload' }, { op: 'replace', path: '/research/error', value: null }] },
+  'research/frames': { patch: [{ op: 'replace', path: '/research/frames', value: '$payload' }] },
+  'research/close': { patch: [{ op: 'replace', path: '/research/projectId', value: null }, { op: 'replace', path: '/research/detail', value: null },
+    { op: 'replace', path: '/research/frames', value: [] }], effects: [{ run: 'researchDetail', with: { projectId: null } }] },
+  'research/lessonSelect': { effects: [{ run: 'researchAddress', with: { kind: 'lesson', id: '$payload' } }] },
+  'research/lesson': { patch: [{ op: 'replace', path: '/research/lesson', value: '$payload' }] },
+  'research/pairSelect': { effects: [{ run: 'researchAddress', with: { kind: 'pair', id: '$payload' } }] },
+  'research/pair': { patch: [{ op: 'replace', path: '/research/pair', value: '$payload' }] },
 
   'status/done': { patch: [{ op: 'replace', path: '/status', value: '$payload' }] },
   'dag/done': {

@@ -13,12 +13,12 @@ export function requireResearchGate(report: ResearchReport, gate: string | undef
   if (!report.gate[gate]) throw new Error('Required research gate failed: ' + gate);
 }
 export async function runResearchCli(argv: string[]): Promise<ResearchReport> {
-  for (const arg of argv) if (arg.startsWith('--check=')) throw new Error('--check takes no value');
-  const args = parseArgs(argv, { flags: ['check'], values: ['out', 'rows', 'require'] });
+  for (const arg of argv) if (arg.startsWith('--check=') || arg.startsWith('--audit=')) throw new Error('--check and --audit take no value');
+  const args = parseArgs(argv, { flags: ['check', 'audit'], values: ['out', 'rows', 'require'] });
   if (args.rest.length || [...args.values.values()].some(value => !value.trim() || value.startsWith('--')))
     throw new Error('Unexpected research argument or missing option value.');
   const selection = args.values.get('rows');
-  const rows = selection === 'lessons' || selection === 'domains' ? ['artifact-oracle', 'no-model-runner'] : selection?.split(',');
+  const rows = selection === 'matrix' ? undefined : selection === 'lessons' || selection === 'domains' ? ['artifact-oracle', 'no-model-runner'] : selection?.split(',');
   if (rows && (!rows.length || new Set(rows).size !== rows.length || rows.some(id => !RESEARCH_ROW_IDS.some(row => row === id))))
     throw new Error('Research rows must be a nonempty unique subset of registered ids.');
   const gate = args.values.get('require');

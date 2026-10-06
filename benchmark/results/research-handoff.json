@@ -2,7 +2,7 @@
   "benchmark": "research-handoff",
   "query": "queries/research/core-baseline.json",
   "queryRevision": "4c96b66306c930c70d44500fd32aa6b7e3398a833e6ebea6a9f3350bfc9738bf",
-  "reportId": "869a6a8f45adfc5c0cc4ac9893ee559082ee846f99091729c8ab15aa29e50c5b",
+  "reportId": "e3c4f8907d5cab70eb684d734c5f8c610a02627029b41d2f682d4e8ce00d7b18",
   "handoff": {
     "decision": "conformant",
     "fixture": {
@@ -109,7 +109,7 @@
       "Synthesis",
       "WorkspaceManifest"
     ],
-    "reportId": "869a6a8f45adfc5c0cc4ac9893ee559082ee846f99091729c8ab15aa29e50c5b",
+    "reportId": "e3c4f8907d5cab70eb684d734c5f8c610a02627029b41d2f682d4e8ce00d7b18",
     "rows": [
       {
         "cost": {
@@ -241,5 +241,5 @@
       }
     ]
   },
-  "artifactId": "8112dfdcc9052b15a0766d82aa5f67c61c2e1c5a91875857e65d903894db919d"
+  "artifactId": "a9ee0fc6b1a1f1a21b29c408430daf0ae1a3f1fdf36467a5de771d2574774c34"
 }

@@ -211,11 +211,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "97bcd296a21874dc7780da4792b986c8b565e3b30cb627e483cb06fc9202d435"
+        "sha256": "d17c21af6214331acf3e3e171f7b76f3b2ba0839425902fd51e4ea09e30f3e0b"
       },
       {
         "path": "package.json",
-        "sha256": "f6df9c541d439cd30b67a549d6ba5d3b1a5665ea2ce4494952bd01f1ffdc48a7"
+        "sha256": "d320d450b1dbebfb227d687616857ac933a2f55a7903958941d9846988dfa393"
       },
       {
         "path": "packages/agents/package.json",
@@ -1242,7 +1242,7 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "c8892d9de6e27ffcc24a7f66d2e053a4b8b7b41534a3107cb5489e5cd513e86d"
+    "sha256": "d985b8216c39c8d0152ad986480d401b8637cf272f2c00842bfae37e1bd55650"
   },
   "suite": {
     "tangle": "0.38.0",
@@ -26043,5 +26043,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "eeb1a311b839f959e80dcd9142dcaea15e2e1f274f1e9f066bd7eb674352f649"
+  "reportId": "c80826f9a7ec453681c2d6779deaf6273028c5a2e021b4d240bd01b01e2abef1"
 }

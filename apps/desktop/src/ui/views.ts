@@ -11,6 +11,7 @@
  */
 
 import { renderMermaid } from '@jarenjs/mermaid';
+import { researchPage } from '../research-page.ts';
 import { compileChart } from '@jarenjs/charts';
 import { createMdComponent } from '@jarenjs/md/component';
 
@@ -34,7 +35,7 @@ const on = (action: string, withValue?: any, event?: string[]): any => {
 
 const PAGES: Array<[string, string]> = [
   ['chat', 'Chat'], ['grounding', 'Grounded session'], ['loom', 'Loom'], ['memory', 'Memory'], ['skills', 'Skills'], ['documents', 'Documents'],
-  ['reports', 'Reports'], ['settings', 'Settings'],
+  ['research', 'Research'], ['reports', 'Reports'], ['settings', 'Settings'],
 ];
 
 function header(state: any): any {
@@ -253,6 +254,7 @@ function runRow(run: any, selected: boolean): any {
   return ['tr', {
     key: run.id,
     class: selected ? 'run selected' : 'run',
+    'data-run-id': run.id,
     on: { click: on('run/select', run.id) },
   },
     ['td', { class: `run-status ${run.status}` }, run.status],
@@ -954,6 +956,7 @@ export function rootView(state: any): any {
     : state.page === 'memory' ? memoryPage(state)
     : state.page === 'skills' ? skillsPage(state)
     : state.page === 'documents' ? documentPage(state)
+    : state.page === 'research' ? researchPage(state, mermaidSvg)
     : state.page === 'reports' ? reportsPage(state)
     : settingsPage(state);
   return ['div', { class: 'shell' }, header(state), page];

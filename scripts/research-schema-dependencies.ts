@@ -4,6 +4,8 @@ import { runIdentitySchema } from '@tangleai/config';
 import { masRuntimeSchema, masWorkflowSchema, masRegistrySchema } from '@tangleai/mas';
 import { RESEARCH_LESSONS_SCHEMA } from '../benchmark/lib/research-lessons-schema.ts';
 import { RESEARCH_DOMAINS_SCHEMA } from '../benchmark/lib/research-domains-schema.ts';
+import { RESEARCH_ABLATION_SCHEMA } from '../benchmark/lib/research-ablation-schema.ts';
+import { RESEARCH_AUDIT_SCHEMA } from '../benchmark/lib/research-audit-schema.ts';
 
 type Schema = Record<string, any>;
 function withOwners(input: Schema, owners: ReadonlyArray<readonly [string, Schema]>): Schema {
@@ -32,6 +34,6 @@ export function researchReportDeclarationSchema(input: Schema): Schema {
   const owners: Array<readonly [string, Schema]> = [['', researchSchema], ['Config_', runIdentitySchema],
     ['MasRuntime_', masRuntimeSchema], ['MasWorkflow_', masWorkflowSchema], ['MasRegistry_', masRegistrySchema]];
   if (input.$id !== RESEARCH_LESSONS_SCHEMA.$id) owners.push(['Lessons_', RESEARCH_LESSONS_SCHEMA]);
-  if (input.$id === 'https://tangleai.dev/schemas/research') owners.push(['Domains_', RESEARCH_DOMAINS_SCHEMA]);
+  if (input.$id === 'https://tangleai.dev/schemas/research') owners.push(['Domains_', RESEARCH_DOMAINS_SCHEMA], ['Ablation_', RESEARCH_ABLATION_SCHEMA], ['Audit_', RESEARCH_AUDIT_SCHEMA]);
   return researchDeclarationSchema(withOwners(input, owners));
 }

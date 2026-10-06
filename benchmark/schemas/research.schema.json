@@ -15,6 +15,12 @@
     "domains": {
       "$ref": "https://tangleai.dev/schemas/research-domains"
     },
+    "ablation": {
+      "$ref": "https://tangleai.dev/schemas/research-ablation"
+    },
+    "audit": {
+      "$ref": "https://tangleai.dev/schemas/research-audit"
+    },
     "recordNames": {
       "type": "array",
       "items": {
@@ -487,6 +493,8 @@
     "schemaVersion",
     "lessons",
     "domains",
+    "ablation",
+    "audit",
     "recordNames",
     "source",
     "suite",

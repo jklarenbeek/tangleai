@@ -17,11 +17,11 @@
       },
       {
         "path": "apps/desktop/src/contract.ts",
-        "sha256": "ca1422621116cc16e05fd246d09b035b2656b297bf7236a836198f519b12cd66"
+        "sha256": "4f9e4f8ffc6da7009f85fb70ee6621099f19ca600dfb744393ea4597758fec8b"
       },
       {
         "path": "apps/desktop/src/handlers.ts",
-        "sha256": "8571cdb4ca89847ccd1098006872f85a1263efb17d4b6df08924509e87befa5c"
+        "sha256": "5945d56d0ef28ef731d03ca846f354f9de738542fa3c7eb8c4c35d2af1ab755a"
       },
       {
         "path": "apps/desktop/src/settings.ts",
@@ -120,7 +120,7 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "ab59883fe5450af473a3af936d28b356745d944c3848a6d9f49f35d9f5f4756a"
+    "sha256": "cdd3b3a7b835272d73f3279213febf14843078ddb06e35bc46a2241f2acf657c"
   },
   "suite": {
     "packages": [
@@ -343,8 +343,8 @@
       }
     ],
     "desktopContract": {
-      "operations": 46,
-      "revision": "10e51d12285d8fa7fecbb6e25a1d36c466cb29ea519e296d3805ba1f330f702a"
+      "operations": 53,
+      "revision": "0722a8764a938f57c7da527b52bbcd92fec94de82a569a72e196f1d83790d8b7"
     },
     "summary": {
       "hostInputs": 2,
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "059b21daeb333b85924bab8f40977ddb65beb0b8ce3e359bd540d57dd118afd3"
+  "reportId": "acf66ed441b1a7d95253774d954f9d7f196612a6fe771504a5228895d47cdbcb"
 }

@@ -50,6 +50,17 @@ body {
 
 /* pages */
 .page { flex: 1; overflow-y: auto; padding: 1.2rem; max-width: 1080px; width: 100%; margin: 0 auto; }
+.research section { margin: 1.2rem 0; }
+.research table { width: 100%; border-collapse: collapse; font-size: .85rem; table-layout: fixed; }
+.research th, .research td { padding: .5rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; border-bottom: 1px solid var(--border); }
+.research code, .research button { overflow-wrap: anywhere; max-width: 100%; }
+.research button { padding: .45rem .65rem; cursor: pointer; font: inherit; color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; }
+.research button:hover { border-color: var(--accent); }
+.research button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.research pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 24rem; overflow: auto; }
+.research .section-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.research .research-provenance { margin: 1rem 0; }
+.research .note { font-size: .9rem; opacity: .8; }
 .hint { color: var(--dim); font-size: .88rem; }
 .error {
   background: color-mix(in srgb, var(--err) 14%, transparent);

@@ -670,12 +670,40 @@
         "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
       },
       {
+        "path": "benchmark/lib/research-ablation-rows.ts",
+        "sha256": "f4a59abea48e754815b9a7c89e348b10867257c778521d95090d625df5148f41"
+      },
+      {
+        "path": "benchmark/lib/research-ablation-schema.ts",
+        "sha256": "406156b733ada9b99ccd92c7ba02b3d4fdbd5df01b8217ba6d99fb885bbe4da2"
+      },
+      {
+        "path": "benchmark/lib/research-ablation.ts",
+        "sha256": "a0e2cbd51d17c08b4ff6c7040e0f3803bd4ae5556412ba820f77210f7c638c14"
+      },
+      {
+        "path": "benchmark/lib/research-ablation.types.ts",
+        "sha256": "c13b173f389e186793863b3b1112ef19dba785ea7d1010d0751e392acc005596"
+      },
+      {
         "path": "benchmark/lib/research-arc-schema.ts",
         "sha256": "49761da20409561d864fdd202b85935aa44c633b49b52f691b74d498244f880d"
       },
       {
         "path": "benchmark/lib/research-arc.ts",
         "sha256": "a40b1a39786d7861890843891f84e3b6e61959984eb1e337987e57457feaabb6"
+      },
+      {
+        "path": "benchmark/lib/research-audit-schema.ts",
+        "sha256": "659a9f2b3b8a53d3c09b1295e445da18edbfa12cc88dcfac643927ccae81dc49"
+      },
+      {
+        "path": "benchmark/lib/research-audit.ts",
+        "sha256": "794dad4aed008c947752e15fb5668f69594833e314f868923317277908497b1b"
+      },
+      {
+        "path": "benchmark/lib/research-audit.types.ts",
+        "sha256": "4a44fdf3adb3e8c5a59e7ce1e85568c1541490e5ec97579c6047f5b6f02c1235"
       },
       {
         "path": "benchmark/lib/research-decision-fixture.ts",
@@ -795,7 +823,11 @@
       },
       {
         "path": "benchmark/lib/research-schema.ts",
-        "sha256": "cc8b2473e666a482d62d2a28483ddae2eb333d52f6603f6731ae0324a8223a57"
+        "sha256": "012d26baba3f1628a5f51b990dd54cd11d6240b79b2d7fcb716ca64dde9727b5"
+      },
+      {
+        "path": "benchmark/lib/research-source.ts",
+        "sha256": "ba7ad26713eab8217571cec730e9f60d33f5011eb2ca087ec8b0baa9b20de88f"
       },
       {
         "path": "benchmark/lib/research-statistics.ts",
@@ -807,7 +839,7 @@
       },
       {
         "path": "benchmark/lib/research-validation.ts",
-        "sha256": "ca1b440035da860576e4f1d5bb92db6ea76e550072d3aaef67b341bd7b6253c3"
+        "sha256": "be9a4e4643bc6da7602dc5d03dcf9eed3580d6768aefc199cd772ce03f638ed7"
       },
       {
         "path": "benchmark/lib/research-workflow.ts",
@@ -823,11 +855,11 @@
       },
       {
         "path": "benchmark/lib/research.ts",
-        "sha256": "5b35dcdcb3a931a598a6cbe93af436f85d36cb086814aecafe9dbe53397290a6"
+        "sha256": "c833ee686534e2c41c60dfda6da2729591db1d3a27aa3829fc3477fb6d75be1f"
       },
       {
         "path": "benchmark/lib/research.types.ts",
-        "sha256": "e6a133a861bd12c870273deeeff65e1be2f557d1af50bb33a8fb4e98ff9897f5"
+        "sha256": "3b4184771095725020d532e5a39d2e768aec8ef66173871b8dd72e49c1af798f"
       },
       {
         "path": "benchmark/lib/retention.ts",
@@ -1059,11 +1091,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "97bcd296a21874dc7780da4792b986c8b565e3b30cb627e483cb06fc9202d435"
+        "sha256": "d17c21af6214331acf3e3e171f7b76f3b2ba0839425902fd51e4ea09e30f3e0b"
       },
       {
         "path": "package.json",
-        "sha256": "f6df9c541d439cd30b67a549d6ba5d3b1a5665ea2ce4494952bd01f1ffdc48a7"
+        "sha256": "d320d450b1dbebfb227d687616857ac933a2f55a7903958941d9846988dfa393"
       },
       {
         "path": "packages/agents/package.json",
@@ -1766,7 +1798,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "739058eaad55a09544a880d319c0ae6c65c6be37f3f3c6426fd18962974de4b1"
+    "sha256": "659a2d480aab73474589b44b779bc2624bd63c819e07498b85c4b6a662484faf"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45231,5 +45263,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "f6f6d0c969958d7b22f9c3aa031f64093f33c96bbeaac2133adba59b78579841"
+  "reportId": "bb2b1ace550fbde543a5343e537811fad00a0ed37a5cb53823ace8bc2298165b"
 }

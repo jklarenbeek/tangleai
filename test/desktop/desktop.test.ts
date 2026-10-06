@@ -559,8 +559,10 @@ describe('run-addressed streams', () => {
     assert.deepEqual(after.filter((entry) => entry.event === 'patch').map((entry) => entry.data.seq), [4]);
   });
 
-  it('ends a chat run as cancelled when the wire never answers, and says so in the transcript', async () => {
+  it('ends a chat run as cancelled when the wire never answers, and says so in the transcript', { timeout: 15000 }, async () => {
     let stopped = false;
+    let entered: () => void = () => {};
+    const wireEntered = new Promise<void>(resolve => { entered = resolve; });
     const waiting: Array<() => void> = [];
     const releaseAll = (): void => {
       stopped = true;
@@ -568,8 +570,10 @@ describe('run-addressed streams', () => {
     };
     const hung = async (_url: any, init?: any): Promise<Response> => new Promise((_resolve, reject) => {
       if (stopped) { reject(new Error('released')); return; }
+      if (init?.signal?.aborted) { reject(new Error('aborted')); return; }
       waiting.push(() => reject(new Error('released')));
-      init?.signal?.addEventListener('abort', () => reject(new Error('aborted')));
+      init?.signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+      entered();
     });
     const stubbed = await createDesktop({
       driver: nodeDriver(),
@@ -581,7 +585,7 @@ describe('run-addressed streams', () => {
       const started = await call(stubbed, 'POST', '/api/chat/start', { text: 'what is the rate limit?' });
       assert.equal(started.status, 200);
       assert.ok(started.json.runId);
-      await new Promise((resolve) => setTimeout(resolve, 80));
+      await wireEntered;
 
       const cancelled = await call(stubbed, 'POST', '/api/runs/cancel', { runId: started.json.runId });
       assert.equal(cancelled.status, 200);

@@ -19,6 +19,7 @@
  * single-user surface.
  */
 
+import { RESEARCH_DEFINITIONS, researchReadOperations } from './research-contract.ts';
 import { FRAME_KINDS } from '@tangleai/store';
 import {LIGHTRAG_DEFINITIONS,lightRagReadOperations} from './lightrag-contract.ts';
 import { GROUNDING_DEFINITIONS, GROUNDING_OPERATIONS } from './grounding-contract.ts';
@@ -393,10 +394,11 @@ export const DESKTOP_CONTRACT = {
   // The releases whose clients this surface still accepts. Nothing was
   // removed or narrowed since the freeze, so a client built at that
   // release can still speak here and the gate refuses silence about it.
-  compat: ['0.28.0'],
-  $defs: {...GROUNDING_DEFINITIONS,...LIGHTRAG_DEFINITIONS},
+  compat: ['0.28.0', '0.38.0'],
+  $defs: {...GROUNDING_DEFINITIONS,...LIGHTRAG_DEFINITIONS,...RESEARCH_DEFINITIONS},
   operations: {
     ...GROUNDING_OPERATIONS,
+    ...researchReadOperations(FRAME),
     'status.get': {
       kind: 'read',
       input: { type: 'object', properties: {} },

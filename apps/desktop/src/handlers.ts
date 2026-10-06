@@ -4,6 +4,9 @@
  * owns status codes, validation and the wire shape.
  */
 
+import { createResearchHandlers } from './research-handlers.ts';
+import type { ResearchReportReader } from './research-report.ts';
+import type { createScheduler } from '@jarenjs/core/schedule';
 import { stat } from 'node:fs/promises';
 import {createDesktopLightRag,type LightRagPlannerFactory} from './lightrag.ts';
 import type {LightRagStore,LightRagClock} from '@tangleai/lightrag';
@@ -46,6 +49,8 @@ import type { FolderWatcher } from './watch.ts';
 import { isAdmissionRefusal } from './issues.ts';
 
 export interface HandlerSeams {
+  researchReport?: ResearchReportReader;
+  researchScheduler: ReturnType<typeof createScheduler>;
   db: TangleDb;
   memoryStore: MemoryStore;
   runLog: RunLog;
@@ -311,6 +316,7 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
   const stackForRun = createStackResolver(seams);
 
   return {
+    ...createResearchHandlers({ db, runLog, report: seams.researchReport, scheduler: seams.researchScheduler }),
     'status.get': async () => {
       const current = await settings.read();
       const all = await memoryStore.list();

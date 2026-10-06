@@ -73,7 +73,7 @@ describe('the skill-evolution surface is read-only and reproduces the stored run
     ]);
     for (const name of skills) assert.equal(operations[name].kind, 'read', name);
     assert.deepEqual(Object.entries(operations).filter(([, op]) => op.kind === 'subscribe').map(([name]) => name),
-      ['runs.live', 'run.live'], 'the live things are the run table and one named run, and neither is a skill');
+      ['research.runs.live', 'runs.live', 'run.live'], 'live operations address the run table or a named run; no skill stream exists');
     assert.ok(!Object.keys(operations).some((name) => name.startsWith('skills.') && operations[name].kind === 'command'));
   });
 

@@ -40,5 +40,5 @@ it('the graph surface adds exactly two non-streaming reads',()=>{
     const operations=Object.entries(DESKTOP_CONTRACT.operations).filter(([name])=>name.startsWith('lightrag.'));
     assert.deepEqual(operations.map(([name])=>name),['lightrag.status','lightrag.retrieve']);
     for(const [,operation]of operations){assert.equal(operation.kind,'read');assert.ok('policy'in operation);assert.equal(operation.policy?.idempotency,'none');assert.equal(operation.http?.method,'GET');assert.equal('stream'in operation,false);}
-    assert.deepEqual(Object.entries(DESKTOP_CONTRACT.operations).filter(([,operation])=>operation.kind==='subscribe').map(([name])=>name),['runs.live','run.live']);
+    assert.deepEqual(Object.entries(DESKTOP_CONTRACT.operations).filter(([,operation])=>operation.kind==='subscribe').map(([name])=>name),['research.runs.live','runs.live','run.live']);
 });

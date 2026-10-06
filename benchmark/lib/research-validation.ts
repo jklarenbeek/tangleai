@@ -6,12 +6,14 @@ import { researchSchema as records, researchSchemaReferences, validateResearchSh
 import report from '../schemas/research.schema.json' with { type: 'json' };
 import { RESEARCH_LESSONS_SCHEMA } from './research-lessons-schema.ts';
 import { RESEARCH_DOMAINS_SCHEMA } from './research-domains-schema.ts';
+import { RESEARCH_ABLATION_SCHEMA } from './research-ablation-schema.ts';
+import { RESEARCH_AUDIT_SCHEMA } from './research-audit-schema.ts';
 import { createReportValidator, type ReportValidator } from './validate.ts';
 import type { ResearchIssue } from './research.types.ts';
 
 export { records as researchRecordSchema, report as researchReportSchema };
 const cache = new Map<string, ReportValidator>();
-const dependencies = [RESEARCH_LESSONS_SCHEMA, RESEARCH_DOMAINS_SCHEMA, ...researchSchemaReferences, records, runIdentitySchema, masRuntimeSchema, masWorkflowSchema, masRegistrySchema];
+const dependencies = [RESEARCH_LESSONS_SCHEMA, RESEARCH_DOMAINS_SCHEMA, RESEARCH_ABLATION_SCHEMA, RESEARCH_AUDIT_SCHEMA, ...researchSchemaReferences, records, runIdentitySchema, masRuntimeSchema, masWorkflowSchema, masRegistrySchema];
 export function researchShape(name: string, value: unknown): ResearchIssue[] {
   if (Object.hasOwn(records.$defs, name)) {
     const result = validateResearchShape(name as ResearchSchemaName, value);

@@ -1,0 +1,607 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/research-audit",
+  "type": "object",
+  "properties": {
+    "runs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ResearchArtifactAudit"
+      }
+    },
+    "probes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ResearchAuditProbe"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "totals": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fabricated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "auditDisagreements": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "checked",
+        "resolved",
+        "unresolved",
+        "fabricated",
+        "missing",
+        "auditDisagreements"
+      ],
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "runs",
+    "probes",
+    "totals",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "ResearchAuditProbe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "fabricated-number",
+            "dangling-citation"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "enum": [
+            "measured",
+            "not-run"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inputSha256": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "input": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchExportManifest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mutation": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "before": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "after": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "path",
+                "before",
+                "after"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchArtifactAudit"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "matched": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "state",
+        "reason",
+        "inputSha256",
+        "input",
+        "mutation",
+        "audit",
+        "matched"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$or": [
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.state",
+                  "not-run"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.matched",
+                  false
+                ]
+              },
+              {
+                "$eq": [
+                  "$.input",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.inputSha256",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.mutation",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.audit",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$.reason",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.state",
+                  "measured"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.reason",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$.input",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$.inputSha256",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$.mutation",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$.audit",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.matched",
+                  {
+                    "$and": [
+                      {
+                        "$gt": [
+                          "$.audit.auditDisagreements",
+                          0
+                        ]
+                      },
+                      {
+                        "$or": [
+                          {
+                            "$and": [
+                              {
+                                "$eq": [
+                                  "$.id",
+                                  "fabricated-number"
+                                ]
+                              },
+                              {
+                                "$gt": [
+                                  "$.audit.fabricated",
+                                  0
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "$and": [
+                              {
+                                "$eq": [
+                                  "$.id",
+                                  "dangling-citation"
+                                ]
+                              },
+                              {
+                                "$gt": [
+                                  "$.audit.unresolved",
+                                  0
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "ResearchAuditCheck": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "artifact",
+            "metric",
+            "citation",
+            "claim",
+            "intervention",
+            "seed",
+            "trace",
+            "prompt"
+          ]
+        },
+        "state": {
+          "enum": [
+            "resolved",
+            "unresolved",
+            "fabricated",
+            "missing"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recordIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "state",
+        "path",
+        "recordIds",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchAuditDisagreement": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reported": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "path",
+        "reported",
+        "observed"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchArtifactAudit": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fabricated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "auditDisagreements": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchAuditCheck"
+          }
+        },
+        "disagreements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchAuditDisagreement"
+          }
+        },
+        "interventions": {
+          "anyOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/research-records#/$defs/ResearchInterventionReport"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "source",
+        "scope",
+        "checked",
+        "resolved",
+        "unresolved",
+        "fabricated",
+        "missing",
+        "auditDisagreements",
+        "checks",
+        "disagreements",
+        "interventions",
+        "limitations"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.checked",
+              {
+                "$count": "$.checks[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.resolved",
+              {
+                "$count": "$.checks[?(@.state==\"resolved\")]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.unresolved",
+              {
+                "$count": "$.checks[?(@.state==\"unresolved\")]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.fabricated",
+              {
+                "$count": "$.checks[?(@.state==\"fabricated\")]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.missing",
+              {
+                "$count": "$.checks[?(@.state==\"missing\")]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.auditDisagreements",
+              {
+                "$count": "$.disagreements[*]"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          [
+            "$.probes[*].id"
+          ],
+          [
+            "fabricated-number",
+            "dangling-citation"
+          ]
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.checked",
+          {
+            "$sum": "$.runs[*].checked"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.resolved",
+          {
+            "$sum": "$.runs[*].resolved"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.unresolved",
+          {
+            "$sum": "$.runs[*].unresolved"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.fabricated",
+          {
+            "$sum": "$.runs[*].fabricated"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.missing",
+          {
+            "$sum": "$.runs[*].missing"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.auditDisagreements",
+          {
+            "$sum": "$.runs[*].auditDisagreements"
+          }
+        ]
+      }
+    ]
+  }
+}

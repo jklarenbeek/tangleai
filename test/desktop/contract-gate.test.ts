@@ -84,7 +84,7 @@ describe('the desktop contract gate', () => {
       'the released surface streams a collection and one named run, never a global slot');
     const live = Object.entries(DESKTOP_CONTRACT.operations as unknown as Record<string, { kind: string, input: { required?: readonly string[] } }>)
       .filter(([, operation]) => operation.kind === 'subscribe');
-    assert.deepEqual(live.map(([id]) => id), ['runs.live', 'run.live'], 'today every live thing is a collection or a run');
+    assert.deepEqual(live.map(([id]) => id), ['research.runs.live', 'runs.live', 'run.live'], 'today every live thing is a collection or an explicitly addressed run');
     assert.deepEqual(live.find(([id]) => id === 'run.live')?.[1].input.required, ['runId'],
       'a subscriber must name the run it watches');
     assert.equal(frozen.version, FROZEN_VERSION,

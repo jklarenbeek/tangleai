@@ -105,21 +105,22 @@ const watchState = await page.evaluate(async () => (await fetch('/api/folder/wat
 if (watchState.mode !== 'recursive') await fail(`watch mode ${JSON.stringify(watchState.mode)}`);
 if (!(watchState.scans.start >= 1)) await fail(`no start scan: ${JSON.stringify(watchState.scans)}`);
 if (watchState.overflows !== 0) await fail(`unexpected overflow: ${JSON.stringify(watchState)}`);
-await page.waitForFunction(async () => {
-  const window_ = await (await fetch('/api/runs/live?limit=5')).json();
-  return window_.rows?.[0]?.status !== 'running';
-}, null, { timeout: 15000 }).catch(() => fail('the newest run never reached a terminal state'));
-await page.click('tr.run');
+await page.waitForFunction(async (runId) => {
+  const window_ = await (await fetch('/api/runs/live?limit=50')).json();
+  const row = window_.rows?.find((value) => value.id === runId);
+  return row && row.status !== 'running';
+}, watchState.lastRunId, { timeout: 15000 }).catch(() => fail('the watched run never reached a terminal state'));
+await page.locator(`tr.run[data-run-id="${watchState.lastRunId}"]`).click();
 await page.waitForSelector('.run-detail table.events tr', { timeout: 8000 }).catch(() => fail('no run detail events'));
 // the detail states which configuration produced the run it shows
 const identityLine = await page.locator('.run-detail .run-identity').innerText().catch(() => '');
 if (!identityLine.includes('requested legacy')) await fail(`the run detail states no configuration: '${identityLine}'`);
 // the run window is a live subscription; read without the event-stream
 // accept header it answers its snapshot, and the sync is the run it names
-const runWindow = await page.evaluate(async () => (await fetch('/api/runs/live?limit=5')).json());
-if (runWindow.rows?.[0]?.kind !== 'sync') await fail(`the run window does not name the sync: ${JSON.stringify(runWindow).slice(0, 160)}`);
-const watched = await page.evaluate(async (id) => (await fetch(`/api/runs/live/frames?runId=${id}`)).json(), runWindow.rows[0].id);
-if (!watched.rows?.every((row) => row.runId === runWindow.rows[0].id)) await fail('a run stream carried another run\'s frame');
+const runWindow = await page.evaluate(async () => (await fetch('/api/runs/live?limit=50')).json());
+if (runWindow.rows?.find(row => row.id === watchState.lastRunId)?.kind !== 'sync') await fail(`the run window does not name the sync: ${JSON.stringify(runWindow).slice(0, 160)}`);
+const watched = await page.evaluate(async (id) => (await fetch(`/api/runs/live/frames?runId=${id}`)).json(), watchState.lastRunId);
+if (!watched.rows?.every((row) => row.runId === watchState.lastRunId)) await fail('a run stream carried another run\'s frame');
 if (watched.rows.at(-1)?.kind !== 'status') await fail('the run has no terminal frame');
 if (!watched.rows.some((row) => row.kind === 'sync')) await fail('the pass recorded no counted frame');
 await page.waitForSelector('.watch-line', { timeout: 4000 }).catch(() => fail('the loom shows no watcher line'));
@@ -248,5 +249,30 @@ if (process.env.TANGLE_GROUNDING === 'scripted') {
 const counts = await page.locator('.meta').innerText();
 console.log('PASS —', counts, '| reply:', reply.split('\n')[0].slice(0, 80), '| feedback:', recorded.replace(/\n/g, ' ').slice(0, 80),
   '| report:', reportLine.replace(/\n/g, ' ').slice(0, 80));
+// Research shows persisted projects and the committed instrument's own refusal rows.
+await page.click('.tabs button:has-text("Research")');
+await page.waitForSelector('.page.research');
+if (process.env.TANGLE_RESEARCH_FIXTURE === '1') {
+  await page.waitForSelector('.research-runs tbody button', { timeout: 15000 });
+  await page.locator('.research-runs tbody button').first().click();
+  await page.waitForSelector('.research-lineage svg', { timeout: 15000 });
+  await page.waitForSelector('.research-report .research-pairs', { timeout: 15000 });
+  const reportText = await page.locator('.research-report').innerText();
+  if (!reportText.includes('TRSH2012') || !reportText.includes('not-run')) await fail('Research omitted its refusal or not-run row');
+  const gates = await page.locator('.research-gates').innerText();
+  if (!gates.includes('Writeback eligible: false') || !gates.includes('Full auto eligible: false')) await fail('Research gate display differs from the registered fixture');
+  console.log('Research persisted project, lineage, refusal rows and inactive gates passed');
+}
+await page.screenshot({ path: `${shots}/research.png`, fullPage: true });
+if (process.env.TANGLE_RESEARCH_FIXTURE === '1') {
+  if (await page.locator('.page.research').evaluate(node => node.scrollWidth > node.clientWidth + 1)) await fail('Research overflows its page width');
+  await page.locator('.research-gates').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `${shots}/research-matrix.png`, fullPage: true });
+  await page.locator('.research-pairs thead').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `${shots}/research-pairs.png`, fullPage: true });
+  await page.getByRole('heading', { name: 'Independent artifact audit', exact: true }).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `${shots}/research-audit.png`, fullPage: true });
+}
+
 await browser.close();
 process.exit(0);

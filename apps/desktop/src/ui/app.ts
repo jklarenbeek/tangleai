@@ -82,7 +82,39 @@ export function createTangleUi(options: TangleUiOptions): any {
 
   let groundingRequest = 0;
   let graphRequest = 0;
+  let researchRequest = 0, researchDetailRequest = 0;
+  const researchAddressRequests = { lesson: 0, pair: 0 };
+  const researchRead = async (op: string, input: any) => {
+    const result = await client.invoke(op, input);
+    if (!result.ok) throw new Error(result.error?.details?.issues?.map((row: any) => `${row.code}: ${row.detail}`).join('; ') || failText(result));
+    return result.value;
+  };
+  const researchDetail = (projectId: string | null, dispatch: Dispatch): void => {
+    const request = ++researchDetailRequest;
+    if (projectId === null) return;
+    void researchRead('research.runs.get', { projectId }).then(value => {
+      if (request === researchDetailRequest) dispatch('research/detail', value);
+    }).catch(cause => { if (request === researchDetailRequest) dispatch('research/fail', String(cause.message)); });
+  };
+  const researchRefresh = (projectId: string | null, dispatch: Dispatch): void => {
+    const request = ++researchRequest;
+    for (const [op, done, fail] of [['research.runs.list', 'research/runs', 'research/fail'],
+      ['research.lessons.list', 'research/lessons', 'research/fail'], ['research.reports.get', 'research/report', 'research/reportFail']]) {
+      void researchRead(op!, {}).then(value => { if (request === researchRequest) dispatch(done!, value); })
+        .catch(cause => { if (request === researchRequest) dispatch(fail!, String(cause.message)); });
+    }
+    if (projectId !== null) researchDetail(projectId, dispatch);
+  };
   const effects = {
+    researchNavigation: (props: any, dispatch: Dispatch): void => { if (props.page === 'research') researchRefresh(props.projectId ?? null, dispatch); },
+    researchRefresh: (props: any, dispatch: Dispatch): void => researchRefresh(props.projectId ?? null, dispatch),
+    researchDetail: (props: any, dispatch: Dispatch): void => researchDetail(props.projectId ?? null, dispatch),
+    researchAddress: (props: { kind: 'lesson' | 'pair'; id: string }, dispatch: Dispatch): void => {
+      const kind = props.kind, request = ++researchAddressRequests[kind];
+      void researchRead(kind === 'lesson' ? 'research.lessons.get' : 'research.ablation.get', kind === 'lesson' ? { id: props.id } : { pairId: props.id })
+        .then(value => { if (request === researchAddressRequests[kind]) dispatch('research/' + kind, value); })
+        .catch(cause => { if (request === researchAddressRequests[kind]) dispatch('research/fail', String(cause.message)); });
+    },
     /** Retrieval is an explicit read; a late result cannot replace a newer request. */
     graphRetrieve: (props: any, dispatch: Dispatch): void => {
       const request = ++graphRequest;
@@ -337,6 +369,23 @@ export function createTangleUi(options: TangleUiOptions): any {
   };
 
   const subs = {
+    researchFrames: (props: any, dispatch: Dispatch): (() => void) => {
+      if (!client.subscribe || typeof props.projectId !== 'string') return () => {};
+      let active = true, document: any = { rows: [] };
+      const subscription = client.subscribe('research.runs.live', { projectId: props.projectId }, {
+        reconnect: { max: 3 },
+        onSnapshot: (value: any) => {
+          if (active) { document = value; dispatch('research/frames', document.rows); researchDetail(props.projectId, dispatch); }
+        },
+        onPatch: ({ patch }: any) => {
+          if (!active) return;
+          document = applyJSONPatch(document, patch); dispatch('research/frames', document.rows);
+          researchDetail(props.projectId, dispatch);
+        },
+        onError: () => { if (active) dispatch('research/fail', 'The research frame subscription ended; refresh to reconnect.'); },
+      });
+      return () => { active = false; subscription.stop(); };
+    },
     /**
      * The run window. Patches apply to the document the server
      * maintains, so what the surface holds is what the subscription
@@ -353,7 +402,10 @@ export function createTangleUi(options: TangleUiOptions): any {
         // a run in flight is what a watcher wants shown; with nothing
         // running the newest stored run is what the Loom last did, which
         // a watched folder makes the common case
-        const target = document.rows.find((row: any) => row.status === 'running') ?? document.rows[0];
+        // Research projects can wait at a gate indefinitely and have their own
+        // lineage view. They stay in history without taking over the Loom.
+        const loomRuns = document.rows.filter((row: any) => row.kind !== 'research');
+        const target = loomRuns.find((row: any) => row.status === 'running') ?? loomRuns[0];
         if (target !== undefined && target.id !== following) {
           following = target.id;
           dispatch('loom/follow', target.id);
@@ -411,6 +463,8 @@ export function createTangleUi(options: TangleUiOptions): any {
     actions: ACTIONS,
     subs: [
       { run: 'runs' },
+      { run: 'researchFrames', when: { $and: [{ $eq: ['$.page', 'research'] }, '$.research.projectId'] },
+        key: '$.research.projectId', withQuery: { projectId: '$.research.projectId' } },
       {
         run: 'frames',
         when: '$.loom.watch',

@@ -409,6 +409,23 @@ key for, clients are built from the resolved identity, and a selection
 the resolver refuses is rendered as fixable `TCFG` issues — never a
 silent fall back to the projection or to an offline answer.
 
+The Research page reads persisted projects, stage receipts, artifact ancestry,
+branches, interventions, claims, verification failures and lessons. Its live
+view follows the project's stored RunLog association and resumes by sequence.
+It reads on navigation or explicit refresh; it has no polling loop or write
+operation. Missing historical states or reproduction commands are stated as
+unrecorded, with the retained execution inputs shown separately.
+
+The committed research report supplies the displayed rows, paired deltas,
+intervals, refusals and activation gates. The surface computes no comparison.
+Development reads bind the report to Git's committed artifact identity and the
+current source inventory; corrupt, modified or stale artifacts return a counted
+failure. Compilation independently reproduces the report before embedding its
+bytes and source inventory, so the binary can display it from a foreign working
+directory without running an instrument. A stored lesson's promotion record
+and current stored outcome head are displayed with their own record identities;
+reading either grants no activation authority.
+
 A configured model answers under a measured claims-with-citations contract
 (`createStructuredOutput` plus a supplied-reference gate that repairs a
 fabricated id), so a citation is an id the answer actually used — retrieved
