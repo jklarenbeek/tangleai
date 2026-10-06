@@ -203,7 +203,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "ace0e22b62f2bd2ed9b661b9b4973f2a43ee0d897e6abf403cf53ac4e69e0fe3"
+        "sha256": "590da38ecb25e435322b112e44a84498501ff86f23650b3b9f4348e9c1c203d9"
       },
       {
         "path": "package.json",
@@ -419,7 +419,7 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "5a9d2cb5a30fa71c0ad9c9ae37e52e2e23507ff834544f7fc20fc37f61f13c09"
+        "sha256": "c6a459c240b06310224fcbbb797e82bfe1ed49006a072bf7bde82ae5414a48ca"
       },
       {
         "path": "packages/forecast/package.json",
@@ -1031,7 +1031,7 @@
       },
       {
         "path": "scripts/release/build.ts",
-        "sha256": "2c8aef57c7f62b8c4fb338f4a417e2c0a5b732286ced5568690b6787e03e9000"
+        "sha256": "da5eb2ed1bd97ba33a2970770eced7a379d2fc04196f83f064ef868062cfd247"
       },
       {
         "path": "scripts/release/consumers.ts",
@@ -1142,7 +1142,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "e18f2d7f2e4000574be2a36e23df28bc0650f18cc09c2b3d23e4a0099da2cf1b"
+    "sha256": "c19553e74b4a8b607ae359f71909d2f5d34000344bb32ad1cd0f261123aafa52"
   },
   "ablations": [
     {
@@ -76696,5 +76696,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "a05fddaa6b4b0d69ec2e764a462a6fa43dcbfbcd95a2824cb3b76b9b5befbdc4"
+  "reportId": "58be9e560415296b2b8eee21a61e55ffde3dda4e26d234458a757ddc28531171"
 }

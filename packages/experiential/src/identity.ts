@@ -8,7 +8,7 @@ const common = ['document', 'schemaVersion', 'scope'] as const;
 const fields = {
   experience: ['taskRef', 'inputRef', 'outputRef', 'observedOutcome', 'sourceRefs', 'producingIdentityId', 'trust', 'privacy', 'contentDigest'],
   assessment: ['experienceId', 'author', 'policyRevision', 'generalizable', 'rationale', 'duplicateOf', 'contradiction', 'trustDecision', 'inclusion', 'reason', 'supportingIds'],
-  dataset: ['selectedIds', 'assessmentIds', 'splits', 'groupKeys', 'seed', 'templateRevision', 'tokenizerIdentity', 'chatTemplateIdentity', 'manifestDigest', 'exclusions'],
+  dataset: ['selectedIds', 'assessmentIds', 'splits', 'groupKeys', 'seed', 'templateRevision', 'tokenizerIdentity', 'chatTemplateIdentity', 'manifestDigest', 'exclusions', 'selection', 'evaluationReferences', 'concepts', 'heldoutPairs', 'groupingExperienceIds', 'groupingAssessmentIds'],
   trainingRun: ['idempotencyKey', 'datasetId', 'baseArtifactId', 'method', 'hyperparameters', 'backendIdentity', 'budget'],
   artifact: ['checksum', 'baseArtifactId', 'kind', 'method', 'storageUri', 'runtime', 'trainingRunId', 'sizeBytes'],
   evaluation: ['artifactId', 'baselineArtifactId', 'gatePolicyId', 'reportId', 'passed', 'failures', 'interval'],
@@ -32,7 +32,7 @@ export function experientialHeadKey(profile: string, scope: string): Promise<str
 export function experientialRecordId<K extends ExperientialRecordKind>(kind: K, record: ExperientialRecordMap[K]): Promise<string> {
   if (!Object.hasOwn(fields, kind)) throw new TypeError('Unknown experiential record kind.');
   const value = record as unknown as Record<string, unknown>;
-  const payload = Object.fromEntries([...common, ...fields[kind]].map(key => [key, value[key]]));
+  const payload = Object.fromEntries([...common, ...fields[kind]].filter(key => Object.hasOwn(value, key)).map(key => [key, value[key]]));
   // Measurement cost is an observation, while configured budget ceilings above
   // are part of the experiment. Scientific row contents still bind the record.
   if (kind === 'evaluation') payload.rows = (record as ExperientialRecordMap['evaluation']).rows.map(({ cost: _, ...row }) => row);

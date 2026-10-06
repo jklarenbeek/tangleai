@@ -45,7 +45,7 @@ interface ValidationError {
   params?: { additionalProperty?: string };
 }
 type Validator = (value: unknown) => { valid: boolean; errors?: ValidationError[] };
-const validators = new Map<ExperientialRecordKind, Validator>();
+const validators = new Map<string, Validator>();
 const secretMember = /key|token|secret|password|credential|bearer/i;
 const timeMembers = new Set(['recordedAt', 'startedAt', 'finishedAt', 'rollbackUntil']);
 const uriMembers = new Set(['storageUri', 'base']);
@@ -87,19 +87,24 @@ function checkedScalars(value: unknown, path: string[] = [], issues: Experientia
 /** Snapshot before validation so later caller mutations cannot change accepted data. */
 export function validateExperientialRecord<K extends ExperientialRecordKind>(kind: K, value: unknown): ExperientialResult<ExperientialRecordMap[K]> {
   if (!Object.hasOwn(EXPERIENTIAL_RECORD_SCHEMAS, kind)) throw new TypeError('Unknown experiential record kind.');
+  return validateExperientialShape<ExperientialRecordMap[K]>(EXPERIENTIAL_RECORD_SCHEMAS[kind], value);
+}
+
+/** Closed auxiliary contracts use the same validator and scalar checks as records. */
+export function validateExperientialShape<T>(name: keyof typeof experientialSchema.$defs, value: unknown): ExperientialResult<T> {
   let document: unknown;
   try { document = JSON.parse(canonicalizeJson(value)); }
   catch { return refuseExperiential('TEXP1001', '', 'Only finite JSON data is accepted.'); }
-  let validate = validators.get(kind);
+  let validate = validators.get(name);
   if (!validate) {
     validate = new JarenValidator({ collectErrors: true, skipErrors: false }).compile({
-      $defs: experientialSchema.$defs, $ref: '#/$defs/' + EXPERIENTIAL_RECORD_SCHEMAS[kind],
+      $defs: experientialSchema.$defs, $ref: '#/$defs/' + name,
     }) as Validator;
-    validators.set(kind, validate);
+    validators.set(name, validate);
   }
   const result = validate(document);
   const issues = [...(result.valid ? [] : (result.errors ?? []).map(attribute)), ...checkedScalars(document)];
   if (!result.valid && issues.length === 0) issues.push(experientialIssue('TEXP1001', '', 'The closed record schema refused this value.'));
   if (issues.length) return { ok: false, issues: sortExperientialIssues(issues) };
-  return { ok: true, value: deepFreeze(document) as ExperientialRecordMap[K] };
+  return { ok: true, value: deepFreeze(document) as T };
 }

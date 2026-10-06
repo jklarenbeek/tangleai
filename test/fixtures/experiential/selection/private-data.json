@@ -1,0 +1,6 @@
+{
+  "id": "private-data",
+  "mutation": "private-scope",
+  "expected": "private-scope",
+  "sourceText": "Private fixture content."
+}

@@ -1,0 +1,6 @@
+{
+  "id": "paraphrase-leakage",
+  "sameEpisode": true,
+  "differentHostGroups": true,
+  "expectedCode": "TEXP1011"
+}

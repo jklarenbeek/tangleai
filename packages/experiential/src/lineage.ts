@@ -64,11 +64,22 @@ export async function resolveExperientialLineage(store: Pick<ExperientialStore, 
         covered.add(assessment.experienceId);
         const observed = await experience(assessment.experienceId);
         const ownSupport = new Set([observed.id, observed.contentDigest, ...observed.sourceRefs.map(ref => ref.digest),
-          observed.taskRef.digest, observed.inputRef.digest, observed.outputRef.digest, ...(observed.observedOutcome ? [observed.observedOutcome.digest] : [])]);
+          observed.taskRef.digest, observed.inputRef.digest, observed.outputRef.digest, ...(observed.observedOutcome ? [observed.observedOutcome.digest] : []),
+          ...(dataset.selection?.trustView.sources.filter(source => source.outcome?.contentDigest === observed.contentDigest).map(source => source.digest) ?? [])]);
         for (const support of assessment.supportingIds) if (!ownSupport.has(support)) await experience(support);
       }
       if (covered.size !== dataset.selectedIds.length) throw new MissingLink('/datasets/' + dataset.id + '/assessmentIds', 'A selected experience has no pinned assessment.');
       for (const selected of dataset.selectedIds) await experience(selected);
+      for (const id of dataset.groupingExperienceIds ?? []) await experience(id);
+      for (const id of dataset.groupingAssessmentIds ?? []) {
+        const assessment = await read('assessments', id); assessments.set(id, assessment);
+        await experience(assessment.experienceId);
+        if (assessment.duplicateOf) await experience(assessment.duplicateOf);
+      }
+      for (const source of dataset.selection?.trustView.sources ?? []) {
+        const ref = { sourceId: source.sourceId, digest: source.digest, kind: source.kind };
+        sources.set(canonicalizeJson(ref), ref);
+      }
       await artifact(row.baseArtifactId);
     }
     visiting.delete(id); return row;

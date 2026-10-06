@@ -342,6 +342,10 @@
         "sha256": "e31459abcb6361842149aebb40425f668a675a9f2f2c52bf32b4d7dc892b1fcd"
       },
       {
+        "path": "benchmark/lib/cgt-experiences.ts",
+        "sha256": "9c2f1f847cdcf2af5a583a1f0de047c76d1423da40c105c74768a1de56e5d231"
+      },
+      {
         "path": "benchmark/lib/cgt-fixture.ts",
         "sha256": "70949f1cb0c3a3a7b27aef55e7acecb2a89d9c2ebde1b802105a678a809a525b"
       },
@@ -1379,7 +1383,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "ace0e22b62f2bd2ed9b661b9b4973f2a43ee0d897e6abf403cf53ac4e69e0fe3"
+        "sha256": "590da38ecb25e435322b112e44a84498501ff86f23650b3b9f4348e9c1c203d9"
       },
       {
         "path": "package.json",
@@ -1839,27 +1843,35 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "5a9d2cb5a30fa71c0ad9c9ae37e52e2e23507ff834544f7fc20fc37f61f13c09"
+        "sha256": "c6a459c240b06310224fcbbb797e82bfe1ed49006a072bf7bde82ae5414a48ca"
       },
       {
         "path": "packages/experiential/schemas/experiential.schema.json",
-        "sha256": "8830a72c6362c8006beb1945b38580311f6b29598f3fb9d529f47f424fc17d20"
+        "sha256": "e63e4d898f03cc7b98f5f9bd08fbb7307eb17b60f15b807df49cd3488733f3dd"
       },
       {
         "path": "packages/experiential/src/contracts.gen.ts",
-        "sha256": "e8d97b2032b52b6da104b532eba7144c13cfdcdc5cf10f3e6872fda025d975fd"
+        "sha256": "8f58bb6850886109467773339d196a97da2d76837412492a7933bacd36b37a87"
+      },
+      {
+        "path": "packages/experiential/src/dataset.ts",
+        "sha256": "bb1aca6a0467a4d6b587d44df6e569109539a768a0d17261aa820124595a7fe9"
       },
       {
         "path": "packages/experiential/src/errors.ts",
         "sha256": "a33badc169ee6fe6bf2cad9ac3b0af78659f7af82305e00f8263a92573511580"
       },
       {
+        "path": "packages/experiential/src/grouping.ts",
+        "sha256": "5680bc88d704c4428f84af75c3ea6872821ab05ec2d654b2e8e0f0f956e3d5de"
+      },
+      {
         "path": "packages/experiential/src/identity.ts",
-        "sha256": "656492373e2cffe78b85a6dc64e5dcfd1aaaed8438d9af44c7a13cc375fe73fe"
+        "sha256": "518e2fe10ef1269678fad82a2da6b5b7ce5292559b7a16be9c60a87f9018dc07"
       },
       {
         "path": "packages/experiential/src/index.ts",
-        "sha256": "e25c958c9f5e3200736963befaab46814dcb2de3a77fa2ac343c0e0748801809"
+        "sha256": "8c158edfab7a7bbdbaea553c35914c04ee21396814d5bdd49220d55253fcefbf"
       },
       {
         "path": "packages/experiential/src/lifecycle.ts",
@@ -1867,7 +1879,7 @@
       },
       {
         "path": "packages/experiential/src/lineage.ts",
-        "sha256": "2262f4bb63944a99c5e71234c5fccb12073d9c7ae72aa1df21640cd187f7b639"
+        "sha256": "d0aa3573f1461ad436d3df7a3bc63f037209be7118e607d3314530c255bcd265"
       },
       {
         "path": "packages/experiential/src/persistence-memory.ts",
@@ -1875,7 +1887,11 @@
       },
       {
         "path": "packages/experiential/src/schema.ts",
-        "sha256": "a0a70c4bf6169163a9baf6220716a98edbbddc3902f35e83202f055f6976a1fd"
+        "sha256": "79456b9824570715e41bd7766117d036326304613f25a0058ad5b1a76d1d2a85"
+      },
+      {
+        "path": "packages/experiential/src/selection.ts",
+        "sha256": "c7b5350dfec917b9179136c7b5b5aa989854913dccf570e0d76f7df2026d4e5d"
       },
       {
         "path": "packages/experiential/src/store-types.ts",
@@ -1883,7 +1899,15 @@
       },
       {
         "path": "packages/experiential/src/store.ts",
-        "sha256": "87853b9f0244a91980532511066bf283c6d1ce9318b1802efe6b41183bb74407"
+        "sha256": "a437f072cbb1af07f7164068a8d84cb8441ec87d3c05fa4594cf4de6f709b37e"
+      },
+      {
+        "path": "packages/experiential/src/trust.ts",
+        "sha256": "8cd23b8e7d9d12975e9da5da33b4f16855fcabd09645839007662ca5a97bb759"
+      },
+      {
+        "path": "packages/experiential/templates/experience-example.jtlt.json",
+        "sha256": "828cfe34bb7825e516a22ba76734d065568cf8572b2247ebba04dc6b4b3ba49a"
       },
       {
         "path": "packages/forecast/package.json",
@@ -4162,7 +4186,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "03561f96a9a6759d32b710074a9f4e379c1e5dc3db949a55ba43dc936755c9aa"
+    "sha256": "12232a8bafe913e304f43bad12b9034d73b51bb1d79d731f61d346c8998637aa"
   },
   "fixtureSource": {
     "files": [
@@ -69352,7 +69376,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "03561f96a9a6759d32b710074a9f4e379c1e5dc3db949a55ba43dc936755c9aa",
+      "sourceSha256": "12232a8bafe913e304f43bad12b9034d73b51bb1d79d731f61d346c8998637aa",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69436,7 +69460,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "83beb79517669b391df12a1f88b19694458d81e277787074b6672e172aa7bf6b"
+      "planId": "1243ffce9282d40ca6b1f6c70f9c9af5c43c8eae1a4c3124bb759f07f43038e5"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69683,5 +69707,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "744897c90cb21151c1396b26d805ef78fe569453e3a5ff0e2ae263e7b406f7e9"
+  "reportId": "d6e6897a6e87af918dc8c9506e36169d914c316e484bf08ff1a8950c9ffa521c"
 }

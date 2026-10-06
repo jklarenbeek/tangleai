@@ -2,9 +2,12 @@
 import assert from 'node:assert/strict';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { planExperienceTransition, planTrainingTransition, planArtifactTransition, planExperientialActivation,
+  planExperientialSelection, planExperientialDataset,
   type ExperientialStore, type ExperientialStoreResult, type ExperientialWrite, type ExperientialArtifact, type ExperientialDataset,
   type ExperientialActivationPlan, type ExperientialMemoryState, type ExperientialPersistence } from '@tangleai/experiential';
 import { accepted, addressedFixture } from './identity-fixtures.ts';
+import { selectionFixture } from './selection-fixtures.ts';
+import { datasetOptions } from './dataset-fixtures.ts';
 
 export const EXPERIENTIAL_FIXTURE_TIME = '2026-09-13T00:00:00.000Z';
 export interface ExperientialProbeHost {
@@ -48,15 +51,15 @@ export async function experientialStoreFixture(store: ExperientialStore, step: E
     checksum: await canonicalSha256({ fixture: 'synthetic-base' }), storageUri: 'memory:fixture/base',
     runtime: { provider: 'fixture', base: 'memory:fixture/inference', servedModel: 'fixture-base' } });
   await step(() => store.put('artifacts', base));
-  const observed = await addressedFixture('experience'); await step(() => store.put('experiences', observed));
-  const assessment = await addressedFixture('assessment', { experienceId: observed.id });
+  const inputs = await selectionFixture(1, 'fixture');
+  const observed = inputs.experiences[0]; await step(() => store.put('experiences', observed));
+  const assessment = inputs.assessments[0];
   await step(() => store.put('assessments', assessment));
   const eligible = accepted(planExperienceTransition(observed, 'eligible')); await step(() => store.transition(eligible));
   const selected = accepted(planExperienceTransition(eligible.after, 'selected')); await step(() => store.transition(selected));
   const experience = selected.after;
-  const dataset = await addressedFixture('dataset', { selectedIds: [experience.id], assessmentIds: [assessment.id],
-    splits: { train: [experience.id], validation: [], compositionalHoldout: [], replay: [] },
-    groupKeys: [{ experienceId: experience.id, sourceEpisodeId: experience.sourceRefs[0].sourceId, duplicateFamilyId: experience.contentDigest }] });
+  const selection = accepted(await planExperientialSelection({ ...inputs, experiences: [experience] }));
+  const { dataset } = accepted(await planExperientialDataset(selection, datasetOptions()));
   await step(() => store.put('datasets', dataset));
   const candidate = await candidateFixture(store, dataset, base, 'first', step);
   const deployment = await addressedFixture('deployment', { profile: 'fixture-base-preview', base: {

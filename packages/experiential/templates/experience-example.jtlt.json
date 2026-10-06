@@ -1,0 +1,20 @@
+{
+  "$jtlt": "0.1",
+  "output": "text",
+  "rules": [
+    {
+      "match": "$",
+      "body": [
+        "{\"messages\":[{\"role\":\"user\",\"content\":",
+        {
+          "$json": "$.question"
+        },
+        "}],\"answer\":",
+        {
+          "$json": "$.answer"
+        },
+        "}"
+      ]
+    }
+  ]
+}

@@ -30,7 +30,8 @@
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
-    "docs/**/*.md"
+    "docs/**/*.md",
+    "templates/**/*.json"
   ],
   "publishConfig": {
     "access": "public",

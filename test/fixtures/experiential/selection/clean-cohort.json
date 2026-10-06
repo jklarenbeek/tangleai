@@ -1,0 +1,7 @@
+{
+  "id": "clean-cohort",
+  "size": 12,
+  "scope": "selection-fixture",
+  "episodes": 12,
+  "expectedSelected": 12
+}

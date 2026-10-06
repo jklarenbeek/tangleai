@@ -928,6 +928,72 @@
           "minItems": 1,
           "maxItems": 4096,
           "uniqueItems": true
+        },
+        "selection": {
+          "$ref": "#/$defs/ExperientialSelectionEvidence"
+        },
+        "evaluationReferences": {
+          "$ref": "#/$defs/ExperientialEvaluationReferences"
+        },
+        "concepts": {
+          "type": "array",
+          "maxItems": 4096,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "experienceId": {
+                "$ref": "#/$defs/ExperientialId"
+              },
+              "conceptIds": {
+                "type": "array",
+                "maxItems": 256,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                }
+              }
+            },
+            "required": [
+              "experienceId",
+              "conceptIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "heldoutPairs": {
+          "type": "array",
+          "maxItems": 4096,
+          "uniqueItems": true,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 256,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        },
+        "groupingExperienceIds": {
+          "type": "array",
+          "maxItems": 4096,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ExperientialId"
+          }
+        },
+        "groupingAssessmentIds": {
+          "type": "array",
+          "maxItems": 4096,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ExperientialId"
+          }
         }
       },
       "required": [
@@ -947,7 +1013,39 @@
         "exclusions",
         "assessmentIds"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "$query": {
+        "$or": [
+          {
+            "$not": {
+              "$exists": "$.selection"
+            }
+          },
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.selection.counts.selected",
+                  {
+                    "$count": "$.selectedIds[*]"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.exclusions.total",
+                  {
+                    "$add": [
+                      "$.selection.counts.excluded",
+                      "$.selection.counts.quarantined"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
     "ExperientialTrainingRun": {
       "type": "object",
@@ -2036,6 +2134,595 @@
           "$ref": "#/$defs/ExperientialHead"
         }
       ]
+    },
+    "ExperientialExclusionReason": {
+      "type": "string",
+      "enum": [
+        "untrusted-source",
+        "tainted-lineage",
+        "private-scope",
+        "cross-scope",
+        "self-judged",
+        "model-approved",
+        "no-independent-outcome",
+        "unresolved-contradiction",
+        "missing-source-id",
+        "legacy-evidence",
+        "duplicate",
+        "insufficient-support",
+        "not-generalizable",
+        "quarantined",
+        "no-assessment",
+        "no-approval"
+      ]
+    },
+    "ExperientialSelectionPolicy": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "minimumSupport": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "requireIndependentOutcome": {
+          "const": true
+        },
+        "allowedTrust": {
+          "const": [
+            "verified",
+            "operator"
+          ]
+        },
+        "allowedPrivacy": {
+          "const": [
+            "public",
+            "internal"
+          ]
+        },
+        "requireGeneralizable": {
+          "const": true
+        },
+        "requireApproval": {
+          "const": true
+        },
+        "principalKinds": {
+          "const": [
+            "operator",
+            "policy"
+          ]
+        }
+      },
+      "required": [
+        "revision",
+        "scope",
+        "minimumSupport",
+        "requireIndependentOutcome",
+        "allowedTrust",
+        "allowedPrivacy",
+        "requireGeneralizable",
+        "requireApproval",
+        "principalKinds"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialResolvedSource": {
+      "type": "object",
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "digest": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "producerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "trust": {
+          "$ref": "#/$defs/ExperientialTrust"
+        },
+        "privacy": {
+          "enum": [
+            "public",
+            "internal",
+            "private"
+          ]
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialRef"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "contentDigest": {
+                  "$ref": "#/$defs/ExperientialId"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "contentDigest",
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "sourceId",
+        "digest",
+        "kind",
+        "scope",
+        "producerId",
+        "trust",
+        "privacy",
+        "parents",
+        "outcome"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialProducer": {
+      "type": "object",
+      "properties": {
+        "identityId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "producerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "identityId",
+        "producerId"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialTrustView": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialResolvedSource"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "producers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialProducer"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "sources",
+        "producers"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialSelectionApproval": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "select"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "experienceId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "assessmentId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "policyRevision": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "principal": {
+          "$ref": "#/$defs/ExperientialPrincipal"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "action",
+        "scope",
+        "experienceId",
+        "assessmentId",
+        "policyRevision",
+        "principal",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialSelectionCounts": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "selected": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "excluded": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "quarantined": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "byReason": {
+          "type": "object",
+          "properties": {
+            "untrusted-source": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "tainted-lineage": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "private-scope": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "cross-scope": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "self-judged": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "model-approved": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "no-independent-outcome": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "unresolved-contradiction": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "missing-source-id": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "legacy-evidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "duplicate": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "insufficient-support": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "not-generalizable": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "quarantined": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "no-assessment": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "no-approval": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            }
+          },
+          "required": [
+            "untrusted-source",
+            "tainted-lineage",
+            "private-scope",
+            "cross-scope",
+            "self-judged",
+            "model-approved",
+            "no-independent-outcome",
+            "unresolved-contradiction",
+            "missing-source-id",
+            "legacy-evidence",
+            "duplicate",
+            "insufficient-support",
+            "not-generalizable",
+            "quarantined",
+            "no-assessment",
+            "no-approval"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "input",
+        "selected",
+        "excluded",
+        "quarantined",
+        "byReason"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.input",
+              {
+                "$add": [
+                  "$.selected",
+                  {
+                    "$add": [
+                      "$.excluded",
+                      "$.quarantined"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$sum": "$.byReason.*"
+              },
+              {
+                "$add": [
+                  "$.excluded",
+                  "$.quarantined"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "ExperientialSelectionEvidence": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "$ref": "#/$defs/ExperientialSelectionPolicy"
+        },
+        "approvals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialSelectionApproval"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "trustView": {
+          "$ref": "#/$defs/ExperientialTrustView"
+        },
+        "counts": {
+          "$ref": "#/$defs/ExperientialSelectionCounts"
+        }
+      },
+      "required": [
+        "policy",
+        "approvals",
+        "trustView",
+        "counts"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialEvaluationReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "digest": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "partition": {
+          "enum": [
+            "compositional-holdout",
+            "replay"
+          ]
+        },
+        "conceptIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          },
+          "minItems": 1,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "experienceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialId"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "digest",
+        "scope",
+        "partition",
+        "conceptIds",
+        "experienceIds"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialEvaluationReferences": {
+      "type": "object",
+      "properties": {
+        "compositionalHoldout": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialEvaluationReference"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "replay": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialEvaluationReference"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "compositionalHoldout",
+        "replay"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialExampleVariables": {
+      "type": "object",
+      "properties": {
+        "experienceId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536
+        },
+        "answer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536
+        }
+      },
+      "required": [
+        "experienceId",
+        "question",
+        "answer"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialRenderedExample": {
+      "type": "object",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "enum": [
+                  "system",
+                  "user",
+                  "assistant"
+                ]
+              },
+              "content": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 65536
+              }
+            },
+            "required": [
+              "role",
+              "content"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "answer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536
+        }
+      },
+      "required": [
+        "messages",
+        "answer"
+      ],
+      "additionalProperties": false
     }
   }
 }

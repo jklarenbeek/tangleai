@@ -372,6 +372,245 @@ export interface ExperientialDatasetExclusions {
 }
 
 
+export interface ExperientialSelectionPolicy {
+  revision: ExperientialId;
+  scope: ExperientialScope;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=256
+   */
+  minimumSupport: number;
+  requireIndependentOutcome: true;
+  allowedTrust: ["verified","operator"];
+  allowedPrivacy: ["public","internal"];
+  requireGeneralizable: true;
+  requireApproval: true;
+  principalKinds: ["operator","policy"];
+}
+
+
+export interface ExperientialSelectionApproval {
+  action: "select";
+  scope: ExperientialScope;
+  experienceId: ExperientialId;
+  assessmentId: ExperientialId;
+  policyRevision: ExperientialId;
+  principal: ExperientialPrincipal;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  reason: string;
+}
+
+
+export interface ExperientialResolvedSource {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  sourceId: string;
+  digest: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  kind: string;
+  scope: ExperientialScope;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  producerId: string;
+  trust: ExperientialTrust;
+  privacy: "public" | "internal" | "private";
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4096, uniqueItems=true
+   */
+  parents: Array<ExperientialRef>;
+  outcome: { contentDigest: ExperientialId; value: number; } | null;
+}
+
+
+export interface ExperientialProducer {
+  identityId: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  producerId: string;
+}
+
+
+export interface ExperientialTrustView {
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4096, uniqueItems=true
+   */
+  sources: Array<ExperientialResolvedSource>;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4096, uniqueItems=true
+   */
+  producers: Array<ExperientialProducer>;
+}
+
+
+export interface ExperientialSelectionCountsByReason {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "untrusted-source": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "tainted-lineage": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "private-scope": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "cross-scope": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "self-judged": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "model-approved": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "no-independent-outcome": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "unresolved-contradiction": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "missing-source-id": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "legacy-evidence": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  duplicate: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "insufficient-support": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "not-generalizable": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  quarantined: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "no-assessment": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  "no-approval": number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.input",{"$add":["$.selected",{"$add":["$.excluded","$.quarantined"]}]}]},{"$eq":[{"$sum":"$.byReason.*"},{"$add":["$.excluded","$.quarantined"]}]}]}
+ */
+export interface ExperientialSelectionCounts {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  input: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  selected: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  excluded: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  quarantined: number;
+  byReason: ExperientialSelectionCountsByReason;
+}
+
+
+export interface ExperientialSelectionEvidence {
+  policy: ExperientialSelectionPolicy;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4096, uniqueItems=true
+   */
+  approvals: Array<ExperientialSelectionApproval>;
+  trustView: ExperientialTrustView;
+  counts: ExperientialSelectionCounts;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+ */
+export type ExperientialEvaluationReferenceConceptIdsItem = string;
+
+export interface ExperientialEvaluationReference {
+  id: ExperientialId;
+  digest: ExperientialId;
+  scope: ExperientialScope;
+  partition: "compositional-holdout" | "replay";
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=4096, uniqueItems=true
+   */
+  conceptIds: Array<ExperientialEvaluationReferenceConceptIdsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4096, uniqueItems=true
+   */
+  experienceIds: Array<ExperientialId>;
+}
+
+
+export interface ExperientialEvaluationReferences {
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4096, uniqueItems=true
+   */
+  compositionalHoldout: Array<ExperientialEvaluationReference>;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4096, uniqueItems=true
+   */
+  replay: Array<ExperientialEvaluationReference>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=256
+ */
+export type ExperientialDatasetConceptsItemConceptIdsItem = string;
+
+export interface ExperientialDatasetConceptsItem {
+  experienceId: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: maxItems=256, uniqueItems=true
+   */
+  conceptIds: Array<ExperientialDatasetConceptsItemConceptIdsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=256
+ */
+export type ExperientialDatasetHeldoutPairsItemItem = string;
+
+/**
+ * Schema constraints this type cannot express: minItems=1, maxItems=256, uniqueItems=true
+ */
+export type ExperientialDatasetHeldoutPairsItem = Array<ExperientialDatasetHeldoutPairsItemItem>;
+
+/**
+ * Schema constraints this type cannot express: $query={"$or":[{"$not":{"$exists":"$.selection"}},{"$and":[{"$eq":["$.selection.counts.selected",{"$count":"$.selectedIds[*]"}]},{"$eq":["$.exclusions.total",{"$add":["$.selection.counts.excluded","$.selection.counts.quarantined"]}]}]}]}
+ */
 export interface ExperientialDataset {
   document: "experiential-dataset";
   schemaVersion: 1;
@@ -406,6 +645,24 @@ export interface ExperientialDataset {
    * Schema constraints this type cannot express: minItems=1, maxItems=4096, uniqueItems=true
    */
   assessmentIds: Array<ExperientialId>;
+  selection?: ExperientialSelectionEvidence;
+  evaluationReferences?: ExperientialEvaluationReferences;
+  /**
+   * Schema constraints this type cannot express: maxItems=4096, uniqueItems=true
+   */
+  concepts?: Array<ExperientialDatasetConceptsItem>;
+  /**
+   * Schema constraints this type cannot express: maxItems=4096, uniqueItems=true
+   */
+  heldoutPairs?: Array<ExperientialDatasetHeldoutPairsItem>;
+  /**
+   * Schema constraints this type cannot express: maxItems=4096, uniqueItems=true
+   */
+  groupingExperienceIds?: Array<ExperientialId>;
+  /**
+   * Schema constraints this type cannot express: maxItems=4096, uniqueItems=true
+   */
+  groupingAssessmentIds?: Array<ExperientialId>;
 }
 
 
@@ -789,5 +1046,41 @@ export interface ExperientialHead {
 
 
 export type ExperientialRecord = ExperientialExperience | ExperientialAssessment | ExperientialDataset | ExperientialTrainingRun | ExperientialArtifact | ExperientialEvaluation | ExperientialGatePolicy | ExperientialApproval | ExperientialDeployment | ExperientialInferencePin | ExperientialRetentionDecision | ExperientialEvent | ExperientialHead;
+
+export type ExperientialExclusionReason = "untrusted-source" | "tainted-lineage" | "private-scope" | "cross-scope" | "self-judged" | "model-approved" | "no-independent-outcome" | "unresolved-contradiction" | "missing-source-id" | "legacy-evidence" | "duplicate" | "insufficient-support" | "not-generalizable" | "quarantined" | "no-assessment" | "no-approval";
+
+export interface ExperientialExampleVariables {
+  experienceId: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=65536
+   */
+  question: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=65536
+   */
+  answer: string;
+}
+
+
+export interface ExperientialRenderedExampleMessagesItem {
+  role: "system" | "user" | "assistant";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=65536
+   */
+  content: string;
+}
+
+
+export interface ExperientialRenderedExample {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=128
+   */
+  messages: Array<ExperientialRenderedExampleMessagesItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=65536
+   */
+  answer: string;
+}
+
 
 export type Experiential = ExperientialRecord;

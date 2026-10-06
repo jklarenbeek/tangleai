@@ -7,6 +7,7 @@ import { planExperienceTransition, planTrainingTransition, planArtifactTransitio
 import { EXPERIENTIAL_TABLE_KINDS, EXPERIENTIAL_TABLES, type ExperientialPersistence, type ExperientialTransaction,
   type ExperientialTables, type ExperientialTable, type ExperientialStoreResult, type ExperientialStore, type ExperientialWrite, type ExperientialStoreStats } from './store-types.ts';
 import { createExperientialMemoryPersistence, type ExperientialMemoryOptions } from './persistence-memory.ts';
+import { checkExperientialDataset } from './dataset.ts';
 import type { ExperientialIssue, ExperientialHead, ExperientialArtifact, ExperientialDataset, ExperientialTrainingRun, ExperientialApproval, ExperientialEvaluation } from './contracts.gen.ts';
 import type { ExperientialActivationPlan, ExperientialTransitionPlan } from './lifecycle.ts';
 
@@ -95,7 +96,7 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
     for (const id of row.assessmentIds) {
       const a = await requireRow(tx, 'assessments', id, row.scope);
       if (!ids.includes(a.experienceId) || reviewed.has(a.experienceId)) refuse('TEXP1004', '/assessmentIds', 'Assessment bindings do not cover the selected experiences exactly.');
-      if (!a.generalizable || a.inclusion !== 'include' || a.duplicateOf || a.contradiction === 'unresolved')
+      if (!a.generalizable || (a.author.kind !== 'model' && a.inclusion !== 'include') || a.duplicateOf || a.contradiction === 'unresolved')
         refuse('TEXP1005', '/assessmentIds', 'The pinned assessment does not admit this experience.');
       reviewed.add(a.experienceId);
     }
@@ -105,6 +106,11 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
     }
     if (Object.values(row.exclusions.byReason).reduce((a, b) => a + b, 0) !== row.exclusions.total)
       refuse('TEXP1001', '/exclusions', 'Exclusion counts do not reconcile.');
+    checked(await checkExperientialDataset(row, await Promise.all(ids.map(id => requireRow(tx, 'experiences', id, row.scope))),
+      await Promise.all(row.assessmentIds.map(id => requireRow(tx, 'assessments', id, row.scope))), {
+        experiences: await Promise.all((row.groupingExperienceIds ?? []).map(id => requireRow(tx, 'experiences', id, row.scope))),
+        assessments: await Promise.all((row.groupingAssessmentIds ?? []).map(id => requireRow(tx, 'assessments', id, row.scope))),
+      }));
   }
   async function artifact(tx: ExperientialTransaction, row: ExperientialArtifact) {
     if (row.kind === 'base') {

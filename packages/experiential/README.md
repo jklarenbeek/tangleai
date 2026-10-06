@@ -39,3 +39,42 @@ their source references and producing identity IDs. A broken retained link is
 `TEXP1004` with its path. External reference bytes are explicitly
 `not-resolved`: a digest reference alone does not prove that its source bytes or
 configuration record were fetched and checked.
+
+`planExperientialSelection` consumes a hashed closed policy, content-addressed
+experiences and assessments, and explicit host-resolved sources, producers and
+selection approvals. It is a pure asynchronous plan; it performs no requests or
+storage writes. Each refused experience retains one stable exclusion reason.
+An operator or policy principal must approve the exact assessment, experience
+and policy. Deployment approvals and model-authored inclusion labels confer no
+selection authority. The host supplies these trusted views after authorization;
+they must never be copied from a model response as assertions of authority.
+
+Raw retrieved material and inherited taint remain visible. An independent
+verified outcome must support the same content and come from a distinct
+producer before it can qualify a lesson. Private or cross-scope evidence stays
+excluded. Changing prose, relabelling a source or removing its producer binding
+cannot grant trust. Negative outcomes remain observed outcomes; the selector
+does not silently impose a positive-reward threshold.
+
+`planExperientialDataset` deduplicates through the selection plan, preserves the
+original episode and duplicate relationships, assigns compositional holdout
+groups first, and draws validation and replay groups with the native seeded
+random owner. Removing a duplicate cannot sever its episode relationships.
+Datasets retain the exact grouping experience and assessment IDs, selection
+authority, concepts, external evaluation references and count census. Store
+admission rechecks the manifest, approval and family partitioning. Historical
+structural records can still be inspected; newly admitted datasets require the
+complete evidence and grouping bindings.
+
+External novel and retention questions are evaluation references, never
+invented observed experiences or training examples. The CGT adapter reads only
+the requested observed sessions and keeps withheld question identities and
+digests separately. It does not approve its own output for selection.
+
+`renderExperientialExamples` runs the pinned native JTLT stylesheet only after
+the dataset's splits are frozen. It checks the selected content digests and
+renders only the exact train and validation members to closed message/answer
+objects. Substituted text is literal data and is never compiled again. Template,
+tokenizer and chat-template revisions bind the manifest; changing a template
+changes the dataset identity without drawing new splits. These mechanisms make
+no training, transfer or model-quality claim.

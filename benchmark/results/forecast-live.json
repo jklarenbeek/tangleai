@@ -6,7 +6,7 @@
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
       "head": "60b92ad0831438676d8ef2c5f52eb83b0b054c26",
-      "sha256": "c13fc950c9b154760bcfa85aaadbfaa027e0b3444e6d9c668ee3a17b1b513329",
+      "sha256": "81b398310f72cd4ee2d30a2799af250ac1cbfd6420fb8bf79a6a417835c5fde3",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -75,6 +75,10 @@
         {
           "path": "benchmark/lib/authoring.ts",
           "sha256": "e31459abcb6361842149aebb40425f668a675a9f2f2c52bf32b4d7dc892b1fcd"
+        },
+        {
+          "path": "benchmark/lib/cgt-experiences.ts",
+          "sha256": "9c2f1f847cdcf2af5a583a1f0de047c76d1423da40c105c74768a1de56e5d231"
         },
         {
           "path": "benchmark/lib/cgt-fixture.ts",
@@ -1114,7 +1118,7 @@
         },
         {
           "path": "package-lock.json",
-          "sha256": "ace0e22b62f2bd2ed9b661b9b4973f2a43ee0d897e6abf403cf53ac4e69e0fe3"
+          "sha256": "590da38ecb25e435322b112e44a84498501ff86f23650b3b9f4348e9c1c203d9"
         },
         {
           "path": "package.json",
@@ -2065,7 +2069,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "65cb63dd6e703bf856e8c20939920e3e602ebccd235048856d482f7f2ca49acc",
+    "planId": "458065ea3e382c576dbb303e2a69acca2628d7b3b05ae72de5bbea9451a77691",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,
