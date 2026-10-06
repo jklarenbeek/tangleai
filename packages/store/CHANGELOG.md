@@ -1,5 +1,35 @@
 # @tangleai/store
 
+## 0.39.0
+
+### Patch Changes
+
+- aa45527: Retain origin-bound research lessons and stage held-out-validated procedure
+  candidates through the native guarded compiler and atomic research transaction.
+  Expose the native candidate diff calculation for shared compiler receipts.
+  Generate bounded source-class proposals, qualify immutable sets through native
+  outcome promotion and rollback, and freeze their procedures into workflow and
+  export provenance. Retain actual lesson measurements and refusals with writeback
+  disabled by default.
+- Updated dependencies [aa45527]
+- Updated dependencies [c804d7f]
+- Updated dependencies [cd819a1]
+- Updated dependencies [6e5c582]
+  - @tangleai/research@0.39.0
+  - @tangleai/trace2skill@0.39.0
+  - @tangleai/config@0.39.0
+  - @tangleai/core@0.39.0
+  - @tangleai/documents@0.39.0
+  - @tangleai/evolve@0.39.0
+  - @tangleai/forecast@0.39.0
+  - @tangleai/grounding@0.39.0
+  - @tangleai/hera@0.39.0
+  - @tangleai/lightrag@0.39.0
+  - @tangleai/mas@0.39.0
+  - @tangleai/memory@0.39.0
+  - @tangleai/outcomes@0.39.0
+  - @tangleai/trading@0.39.0
+
 ## 0.38.0
 
 ### Minor Changes

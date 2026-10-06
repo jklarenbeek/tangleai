@@ -1,5 +1,26 @@
 # Tangle releases
 
+## 0.39.0
+
+Retain origin-bound research lessons and stage held-out-validated procedure
+candidates through the native guarded compiler and atomic research transaction.
+Expose the native candidate diff calculation for shared compiler receipts.
+Generate bounded source-class proposals, qualify immutable sets through native
+outcome promotion and rollback, and freeze their procedures into workflow and
+export provenance. Retain actual lesson measurements and refusals with writeback
+disabled by default.
+
+Bind immutable domain profiles to exact host capabilities before research stages execute.
+
+Add the tabular statistics profile with independently reproduced CSV samples,
+signed metric directions, deterministic paired uncertainty and guarded lesson
+measurements. Retain unsupported-profile refusals before execution and explicit
+external benchmark deferral.
+
+Show persisted research runs, artifact lineage, lessons and independently qualified ablation reports through read-only operations and run-addressed sequence replay.
+
+Keep malformed asynchronous domain validators as counted refusals through process settlement, including rejected promises and throwing thenable accessors. Document guarded lessons, measured defaults, domain coverage and research operations with pinned report and contract checks.
+
 ## 0.38.0
 
 Bind research experiments to immutable workspaces and execution manifests, independently reproduce registered metrics, and preserve replicate receipts through native workflow recovery. Expose bounded native process settlement evidence to injected hosts without changing existing runner outcomes.

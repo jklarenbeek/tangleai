@@ -1,5 +1,15 @@
 # @tangleai/outcomes
 
+## 0.39.0
+
+### Patch Changes
+
+- @tangleai/agents@0.39.0
+  - @tangleai/config@0.39.0
+  - @tangleai/core@0.39.0
+  - @tangleai/memory@0.39.0
+  - @tangleai/models@0.39.0
+
 ## 0.38.0
 
 ### Patch Changes

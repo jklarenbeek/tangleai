@@ -1,5 +1,24 @@
 # @tangleai/trace2skill
 
+## 0.39.0
+
+### Minor Changes
+
+- aa45527: Retain origin-bound research lessons and stage held-out-validated procedure
+  candidates through the native guarded compiler and atomic research transaction.
+  Expose the native candidate diff calculation for shared compiler receipts.
+  Generate bounded source-class proposals, qualify immutable sets through native
+  outcome promotion and rollback, and freeze their procedures into workflow and
+  export provenance. Retain actual lesson measurements and refusals with writeback
+  disabled by default.
+
+### Patch Changes
+
+- @tangleai/agents@0.39.0
+  - @tangleai/mas@0.39.0
+  - @tangleai/models@0.39.0
+  - @tangleai/outcomes@0.39.0
+
 ## 0.38.0
 
 ### Patch Changes

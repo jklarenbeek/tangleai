@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "version": "0.39.0",
+  "baseVersion": "0.38.0",
+  "baseCommit": "b0473f998a4eefd4bf7a5d0c9ec61fbdd9ecc8ed",
+  "preparationCommit": "6e5c582391c641797abd2f351a5d5b8c334e75ff",
+  "initial": false,
+  "inputHash": "7526a3755133bad17de4986d0a95c5c7f13c1a1a62a939e36840303760e07447",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/research",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "minor"
+        }
+      ],
+      "summary": "Retain origin-bound research lessons and stage held-out-validated procedure\ncandidates through the native guarded compiler and atomic research transaction.\nExpose the native candidate diff calculation for shared compiler receipts.\nGenerate bounded source-class proposals, qualify immutable sets through native\noutcome promotion and rollback, and freeze their procedures into workflow and\nexport provenance. Retain actual lesson measurements and refusals with writeback\ndisabled by default.",
+      "id": "guarded-research-lessons"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/research",
+          "type": "minor"
+        }
+      ],
+      "summary": "Bind immutable domain profiles to exact host capabilities before research stages execute.\n\nAdd the tabular statistics profile with independently reproduced CSV samples,\nsigned metric directions, deterministic paired uncertainty and guarded lesson\nmeasurements. Retain unsupported-profile refusals before execution and explicit\nexternal benchmark deferral.",
+      "id": "research-domain-profiles"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        }
+      ],
+      "summary": "Show persisted research runs, artifact lineage, lessons and independently qualified ablation reports through read-only operations and run-addressed sequence replay.",
+      "id": "research-operations-surface"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        }
+      ],
+      "summary": "Keep malformed asynchronous domain validators as counted refusals through process settlement, including rejected promises and throwing thenable accessors. Document guarded lessons, measured defaults, domain coverage and research operations with pinned report and contract checks.",
+      "id": "settled-research-validators"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.39.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.39.0"
+    }
+  ]
+}
