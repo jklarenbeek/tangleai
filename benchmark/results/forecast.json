@@ -1647,7 +1647,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
+        "sha256": "384b8f367a9c8b382ed926dafb458ae7e7dc9f85dbd120a5d1697cc72cac4ad8"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1684,6 +1684,10 @@
       {
         "path": "packages/store/src/evolve-store.ts",
         "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+      },
+      {
+        "path": "packages/store/src/experiential-jobs.ts",
+        "sha256": "8ae4a1c71fa28002c02f2f3f44f2ba3135a70002c4f6f51226794e7374d00b94"
       },
       {
         "path": "packages/store/src/experiential-model.ts",
@@ -1735,7 +1739,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
+        "sha256": "94ccfad3eb97b7cdd956a8fa5aacdf07e2a6dc2bca0261249302265db616e5a2"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -1830,7 +1834,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "81b398310f72cd4ee2d30a2799af250ac1cbfd6420fb8bf79a6a417835c5fde3"
+    "sha256": "ea20927690323b1a8a084e84f02305fafc96c13b041af81dc0d448448c1686ed"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45295,5 +45299,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "4a3f7f5160e59c0f906afe37995f3d66796dfc0a31c4306d1f4d862ee2d3ed85"
+  "reportId": "55780118f00e038032dd6bbee724f4e26b9cf29ad2b93d08de368145d04c16ed"
 }

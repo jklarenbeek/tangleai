@@ -47,7 +47,7 @@ interface ValidationError {
 type Validator = (value: unknown) => { valid: boolean; errors?: ValidationError[] };
 const validators = new Map<string, Validator>();
 const secretMember = /key|token|secret|password|credential|bearer/i;
-const timeMembers = new Set(['recordedAt', 'startedAt', 'finishedAt', 'rollbackUntil']);
+const timeMembers = new Set(['recordedAt', 'startedAt', 'finishedAt', 'rollbackUntil', 'updatedAt']);
 const uriMembers = new Set(['storageUri', 'base']);
 
 function attribute(error: ValidationError): ExperientialIssue {

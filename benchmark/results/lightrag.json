@@ -10706,7 +10706,7 @@
           },
           {
             "path": "packages/store/package.json",
-            "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
+            "sha256": "384b8f367a9c8b382ed926dafb458ae7e7dc9f85dbd120a5d1697cc72cac4ad8"
           },
           {
             "path": "packages/store/src/consolidation-model.ts",
@@ -10743,6 +10743,10 @@
           {
             "path": "packages/store/src/evolve-store.ts",
             "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+          },
+          {
+            "path": "packages/store/src/experiential-jobs.ts",
+            "sha256": "8ae4a1c71fa28002c02f2f3f44f2ba3135a70002c4f6f51226794e7374d00b94"
           },
           {
             "path": "packages/store/src/experiential-model.ts",
@@ -10794,7 +10798,7 @@
           },
           {
             "path": "packages/store/src/index.ts",
-            "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
+            "sha256": "94ccfad3eb97b7cdd956a8fa5aacdf07e2a6dc2bca0261249302265db616e5a2"
           },
           {
             "path": "packages/store/src/ledger-storage.ts",
@@ -10885,7 +10889,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "fdcd7eb7d6c2695730ea424e0f7d3a97614dd88a4191b73648299f4ecba56f31"
+        "sha256": "60357adda044764db53998f5641e96c9b1c29f7355b5cfaee031f2e5d256c82d"
       },
       "questionIds": [
         "q-relay-port",
@@ -10996,7 +11000,7 @@
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)",
         "The conservative 56953-request bound exceeds TANGLE_AI_MAX_CALLS=200; model-dependent profiling and review allowances cannot be silently discarded."
       ],
-      "planId": "e74bb033546204a9f191ba98cffbc619bfbc6095d2eb0bd9d391815a461bdf46"
+      "planId": "00cb639e5a50d4d97773b363c2bc4f30efe7e6b457aba3d0b170ba6739461543"
     },
     "rows": [],
     "indexing": {
@@ -11028,7 +11032,7 @@
       "defaultChanged": false,
       "clauses": []
     },
-    "reportId": "b98677965c15bc4a3a3edb6c8d37b89ca2a8fe27f84338deb772f9dc7ec0898b"
+    "reportId": "47f674613e41d5c2d3fddc7f6dec5df2d669cf4bd1e2d67a61f545d9d408018d"
   },
   "judge": {
     "document": "lightrag-judge",
@@ -11370,7 +11374,7 @@
           },
           {
             "path": "packages/store/package.json",
-            "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
+            "sha256": "384b8f367a9c8b382ed926dafb458ae7e7dc9f85dbd120a5d1697cc72cac4ad8"
           },
           {
             "path": "packages/store/src/consolidation-model.ts",
@@ -11407,6 +11411,10 @@
           {
             "path": "packages/store/src/evolve-store.ts",
             "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+          },
+          {
+            "path": "packages/store/src/experiential-jobs.ts",
+            "sha256": "8ae4a1c71fa28002c02f2f3f44f2ba3135a70002c4f6f51226794e7374d00b94"
           },
           {
             "path": "packages/store/src/experiential-model.ts",
@@ -11458,7 +11466,7 @@
           },
           {
             "path": "packages/store/src/index.ts",
-            "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
+            "sha256": "94ccfad3eb97b7cdd956a8fa5aacdf07e2a6dc2bca0261249302265db616e5a2"
           },
           {
             "path": "packages/store/src/ledger-storage.ts",
@@ -11549,7 +11557,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "fdcd7eb7d6c2695730ea424e0f7d3a97614dd88a4191b73648299f4ecba56f31"
+        "sha256": "60357adda044764db53998f5641e96c9b1c29f7355b5cfaee031f2e5d256c82d"
       },
       "reportId": null,
       "promptRevision": "1d390f8d00465dc21cc63a21d762343b5d869519b1030daa53a0461bb5c9ae82",
@@ -11600,7 +11608,7 @@
         "A completed graph live report with retained per-question attempts is required.",
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)"
       ],
-      "planId": "5c116abdfce3fe76afa9f2e52760ec9987f0848e41eaed47e7ec8c57cb3172c7"
+      "planId": "7706ff36528dd1de87c24a5e26400c289025e7ac63327ece4e20c831c9ab2fd3"
     },
     "status": "not-run",
     "tier": "not-run",
@@ -11615,7 +11623,7 @@
     },
     "physicalRequests": 0,
     "defaultInput": false,
-    "reportId": "2f1e611f9607c6585e7f8f45966c0a458c70994ffd9b6c1ba318089e2dfee62c"
+    "reportId": "dcf468651fe77befcc9860c02ff3525a2d170f0e10e0aff0e78928b99608db43"
   },
   "parity": {
     "document": "lightrag-parity",
@@ -12849,5 +12857,5 @@
     "defaultChanged": false,
     "clauses": []
   },
-  "reportId": "fa851148f59bc4250a2282ce9641978c8b77cf94ac54eab29e54ca0b6740951e"
+  "reportId": "fc1454810fcbd713fabd5b23abd89105c7eb263875f081abf2db78c3d0fea99c"
 }

@@ -775,7 +775,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
+        "sha256": "384b8f367a9c8b382ed926dafb458ae7e7dc9f85dbd120a5d1697cc72cac4ad8"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -812,6 +812,10 @@
       {
         "path": "packages/store/src/evolve-store.ts",
         "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+      },
+      {
+        "path": "packages/store/src/experiential-jobs.ts",
+        "sha256": "8ae4a1c71fa28002c02f2f3f44f2ba3135a70002c4f6f51226794e7374d00b94"
       },
       {
         "path": "packages/store/src/experiential-model.ts",
@@ -863,7 +867,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
+        "sha256": "94ccfad3eb97b7cdd956a8fa5aacdf07e2a6dc2bca0261249302265db616e5a2"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -1142,7 +1146,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "c19553e74b4a8b607ae359f71909d2f5d34000344bb32ad1cd0f261123aafa52"
+    "sha256": "4c795ce3b16df097fcfd7333d3c8a40a67e30ea835c79a4bb9a75cf21a6b37c1"
   },
   "ablations": [
     {
@@ -76696,5 +76700,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "58be9e560415296b2b8eee21a61e55ffde3dda4e26d234458a757ddc28531171"
+  "reportId": "f20178daed33c9d04e4d5614ee14d0996589b8df24ae39b428af2b9c18e0ff40"
 }

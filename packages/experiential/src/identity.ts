@@ -9,7 +9,7 @@ const fields = {
   experience: ['taskRef', 'inputRef', 'outputRef', 'observedOutcome', 'sourceRefs', 'producingIdentityId', 'trust', 'privacy', 'contentDigest'],
   assessment: ['experienceId', 'author', 'policyRevision', 'generalizable', 'rationale', 'duplicateOf', 'contradiction', 'trustDecision', 'inclusion', 'reason', 'supportingIds'],
   dataset: ['selectedIds', 'assessmentIds', 'splits', 'groupKeys', 'seed', 'templateRevision', 'tokenizerIdentity', 'chatTemplateIdentity', 'manifestDigest', 'exclusions', 'selection', 'evaluationReferences', 'concepts', 'heldoutPairs', 'groupingExperienceIds', 'groupingAssessmentIds'],
-  trainingRun: ['idempotencyKey', 'datasetId', 'baseArtifactId', 'method', 'hyperparameters', 'backendIdentity', 'budget'],
+  trainingRun: ['idempotencyKey', 'datasetId', 'baseArtifactId', 'method', 'hyperparameters', 'backendIdentity', 'budget', 'spec', 'pipelineRevision', 'runtime'],
   artifact: ['checksum', 'baseArtifactId', 'kind', 'method', 'storageUri', 'runtime', 'trainingRunId', 'sizeBytes'],
   evaluation: ['artifactId', 'baselineArtifactId', 'gatePolicyId', 'reportId', 'passed', 'failures', 'interval'],
   gatePolicy: ['primaryMetric', 'controls', 'interval', 'learning', 'retention', 'security', 'operations', 'rows', 'requiredRows'],

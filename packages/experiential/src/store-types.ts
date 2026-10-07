@@ -1,6 +1,8 @@
 import type { ExperientialRecordMap, ExperientialRecordKind } from './schema.ts';
 import type { ExperientialIssue, ExperientialHead } from './contracts.gen.ts';
 import type { ExperientialActivationPlan, ExperientialTransitionPlan } from './lifecycle.ts';
+import type { ExperientialTrainingCommand } from './contracts.gen.ts';
+import type { ExperientialTrainingUpdate } from './training.ts';
 
 export const EXPERIENTIAL_TABLE_KINDS = Object.freeze({
   experiences: 'experience', assessments: 'assessment', datasets: 'dataset', training_runs: 'trainingRun',
@@ -30,6 +32,7 @@ export interface ExperientialStore {
   put<K extends ExperientialTable>(table: K, value: ExperientialTables[K]): Promise<ExperientialStoreResult<ExperientialTables[K]>>;
   putBatch(writes: readonly ExperientialWrite[]): Promise<ExperientialStoreResult<ExperientialWrite[]>>;
   transition(plan: ExperientialTransitionPlan, options?: { evaluationId?: string }): Promise<ExperientialStoreResult<ExperientialTransitionPlan>>;
+  training(runId: string, expectedRevision: number, command: ExperientialTrainingCommand): Promise<ExperientialStoreResult<ExperientialTrainingUpdate>>;
   head(profile: string, scope: string): Promise<ExperientialStoreResult<ExperientialHead>>;
   activate(plan: ExperientialActivationPlan): Promise<ExperientialStoreResult<ExperientialHead>>;
   rollback(plan: ExperientialActivationPlan): Promise<ExperientialStoreResult<ExperientialHead>>;

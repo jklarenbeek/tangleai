@@ -77,3 +77,5 @@ export { EXPERIENTIAL_COLLECTIONS } from './experiential-model.ts';
 export { activateDocumentWithin } from './document-store.ts';
 export * from './corpus-promotion.ts';
 export * from './gc.ts';
+
+export { enqueueExperientialTraining, createExperientialTrainingRunner, type ExperientialTrainingRunnerOptions } from './experiential-jobs.ts';

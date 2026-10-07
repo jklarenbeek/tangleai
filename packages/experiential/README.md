@@ -78,3 +78,71 @@ objects. Substituted text is literal data and is never compiled again. Template,
 tokenizer and chat-template revisions bind the manifest; changing a template
 changes the dataset identity without drawing new splits. These mechanisms make
 no training, transfer or model-quality claim.
+
+`TrainingBackend` is the injected asynchronous capability, submission, inspection,
+cancellation and materialization seam. Its closed `TrainingSpec` binds the exact
+dataset manifest, base artifact and checksum, method, hyperparameters, seed,
+precision, tokenizer, chat template and resource ceilings. `trainingSpecDigest`
+hashes a detached validated snapshot. `checkTrainingCapabilities` refuses an
+inference-only service or a method, base or artifact kind it did not advertise.
+Capability transport failures must remain failures, not inferred capability
+answers. A backend receives no store or activation authority.
+
+`verifyArtifactReceipt` checks the receipt against that exact spec and backend
+job, the host's configured inference provider and endpoint, and its byte bound.
+The host supplies a bounded byte reader and enforces its allowed artifact
+origins; this package never selects a network destination or supplies credentials.
+The verifier independently hashes the exact returned bytes and checks their
+size. A mismatch or unreadable artifact is `TEXP1008`; backend error text is not
+copied into a refusal. The returned verification describes retained artifact
+bytes and ancestry, and establishes no quality or activation claim.
+
+`createFakeTrainingBackend` supplies deterministic conformance jobs. Inspection
+advances through the configured state steps; failure, cancellation and checksum
+corruption remain explicit outcomes. Its artifact is canonical
+`tangle-fake-adapter/1` JSON, not trained weights. The injected clock is the only
+clock it reads. Identical concurrent submissions retain one provider job.
+
+`planExperientialTraining` binds a managed run to its complete specification,
+dataset, base, backend and inference runtime. The specification digest is its
+job idempotency key. Managed runs retain a closed progress record with dispatch
+reservations, consumed poll credits, observations, receipt verification and
+artifact identity. `store.training` rederives each declared command against a
+fresh progress revision inside its transaction. Generic lifecycle transitions
+cannot complete managed training, and ordinary artifact admission cannot
+substitute another receipt for the artifact registered by that run.
+
+`EXPERIENTIAL_TRAINING_DAG` declares seven versioned checkpoint nodes:
+select, render, submit, poll, materialize, verify and register.
+`createExperientialTrainingTasks` injects the store, backend, clock, randomness,
+sleep, host budgets, example resolver and bounded byte reader. Selection
+rechecks capabilities and ancestry. Rendering rechecks the retained dataset,
+example content and pinned JTLT stylesheet. Preparation time counts toward the
+wall budget; record, byte, poll and reported spend limits remain explicit.
+Unknown spend fails a configured monetary ceiling.
+
+`@tangleai/store/experiential-jobs` exports `enqueueExperientialTraining` and
+`createExperientialTrainingRunner`. The latter composes the native DAG job
+runner, with the current worker lease checked in each domain transaction.
+Hosts explicitly start and stop the returned worker. A nonterminal inspection
+uses the injected native backoff calculation and sleep, then yields to another
+native job attempt. Each inspection reserves one durable credit before
+dispatch. Restarting or increasing worker retries cannot replenish those
+credits. Native checkpoint identity refuses changed workflow, input or task
+versions before loading prior node values.
+
+Submission is reserved before calling the backend. An interrupted or ambiguous
+submission is retained as reserved or unknown; a later attempt cannot submit
+again. Without an injected `reconcileSubmission` lookup, the native worker
+pauses that job as cancelled while the training run retains its uncertainty.
+After the host supplies that lookup, an explicit native job requeue can resume
+the original submission. A lookup must never create a provider job.
+
+Receipt verification recomputes the bytes independently. Only a result produced
+by that verifier can authorize the durable verification command; copying or
+inventing a verification-shaped object confers no authority. Registration
+atomically stages the verified artifact and completes its run. Cancellation
+first records a local terminal state, then requests backend cancellation and
+reports a refused or unknown remote result separately. A late response from a
+cancelled or superseded attempt cannot stage an artifact. No pipeline command
+activates an artifact or establishes a model-quality improvement.

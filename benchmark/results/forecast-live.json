@@ -6,7 +6,7 @@
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
       "head": "60b92ad0831438676d8ef2c5f52eb83b0b054c26",
-      "sha256": "81b398310f72cd4ee2d30a2799af250ac1cbfd6420fb8bf79a6a417835c5fde3",
+      "sha256": "ea20927690323b1a8a084e84f02305fafc96c13b041af81dc0d448448c1686ed",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -1650,7 +1650,7 @@
         },
         {
           "path": "packages/store/package.json",
-          "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
+          "sha256": "384b8f367a9c8b382ed926dafb458ae7e7dc9f85dbd120a5d1697cc72cac4ad8"
         },
         {
           "path": "packages/store/src/consolidation-model.ts",
@@ -1687,6 +1687,10 @@
         {
           "path": "packages/store/src/evolve-store.ts",
           "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+        },
+        {
+          "path": "packages/store/src/experiential-jobs.ts",
+          "sha256": "8ae4a1c71fa28002c02f2f3f44f2ba3135a70002c4f6f51226794e7374d00b94"
         },
         {
           "path": "packages/store/src/experiential-model.ts",
@@ -1738,7 +1742,7 @@
         },
         {
           "path": "packages/store/src/index.ts",
-          "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
+          "sha256": "94ccfad3eb97b7cdd956a8fa5aacdf07e2a6dc2bca0261249302265db616e5a2"
         },
         {
           "path": "packages/store/src/ledger-storage.ts",
@@ -2069,7 +2073,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "458065ea3e382c576dbb303e2a69acca2628d7b3b05ae72de5bbea9451a77691",
+    "planId": "15e131ca060229d2e6dccd70b9690d30e699f374a62bf63f179d88b7b4bce2d9",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

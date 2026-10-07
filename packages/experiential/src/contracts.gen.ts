@@ -687,6 +687,134 @@ export interface ExperientialTrainingRunBackendIdentity {
  */
 export type ExperientialTrainingRunStopReasonAnyOf1 = string;
 
+export interface TrainingSpec {
+  datasetId: ExperientialId;
+  manifestDigest: ExperientialId;
+  baseArtifactId: ExperientialId;
+  baseChecksum: ExperientialId;
+  method: ExperientialMethod;
+  hyperparameters: ExperientialHyperparameters;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4294967295
+   */
+  seed: number;
+  precision: "fp32" | "fp16" | "bf16" | "int8" | "int4";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  tokenizerIdentity: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  chatTemplateIdentity: string;
+  budget: ExperientialTrainingBudget;
+}
+
+
+export interface BackendJob {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  id: string;
+  specDigest: ExperientialId;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
+ */
+export type BackendJobStateStopReasonAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type BackendJobStateSpendAnyOf1 = number;
+
+export interface BackendJobState {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  jobId: string;
+  state: "queued" | "preparing" | "training" | "materializing" | "complete" | "failed" | "cancelled" | "unknown";
+  stopReason: BackendJobStateStopReasonAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: maxItems=256, uniqueItems=true
+   */
+  logRefs: Array<ExperientialRef>;
+  metricsRef: ExperientialRef | null;
+  spend: BackendJobStateSpendAnyOf1 | null;
+}
+
+
+export interface ArtifactReceipt {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  jobId: string;
+  specDigest: ExperientialId;
+  datasetId: ExperientialId;
+  baseArtifactId: ExperientialId;
+  baseChecksum: ExperientialId;
+  method: ExperientialMethod;
+  kind: "adapter" | "weights";
+  storageUri: ExperientialUri;
+  sha256: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  sizeBytes: number;
+  runtime: ExperientialRuntime;
+  deterministic: boolean;
+  /**
+   * Schema constraints this type cannot express: maxItems=256, uniqueItems=true
+   */
+  logRefs: Array<ExperientialRef>;
+  metricsRef: ExperientialRef | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+ */
+export type ExperientialTrainingProgressVerifiedBytesAnyOf1 = number;
+
+export interface ExperientialTrainingProgress {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  revision: number;
+  stage: "queued" | "selecting" | "selected" | "rendered" | "submitting" | "submitted" | "polled" | "materialized" | "verified" | "registered" | "terminal";
+  dispatch: "none" | "reserved" | "accepted" | "unknown";
+  job: BackendJob | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  polls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  observations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  observedPoll: number;
+  backendState: BackendJobState | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  renderedBytes: number;
+  renderedDigest: ExperientialId | null;
+  receipt: ArtifactReceipt | null;
+  verifiedBytes: ExperientialTrainingProgressVerifiedBytesAnyOf1 | null;
+  artifactId: ExperientialId | null;
+  updatedAt: ExperientialTime;
+  /**
+   * Schema constraints this type cannot express: maxItems=8
+   */
+  issues: Array<ExperientialIssue>;
+}
+
+
 export interface ExperientialTrainingRun {
   document: "experiential-training-run";
   schemaVersion: 1;
@@ -713,6 +841,10 @@ export interface ExperientialTrainingRun {
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
    */
   submissions: number;
+  spec?: TrainingSpec;
+  pipelineRevision?: ExperientialId;
+  runtime?: ExperientialRuntime;
+  progress?: ExperientialTrainingProgress;
 }
 
 
@@ -1082,5 +1214,54 @@ export interface ExperientialRenderedExample {
   answer: string;
 }
 
+
+export interface TrainingCapabilities {
+  /**
+   * Schema constraints this type cannot express: maxItems=3, uniqueItems=true
+   */
+  methods: Array<ExperientialMethod>;
+  /**
+   * Schema constraints this type cannot express: maxItems=256, uniqueItems=true
+   */
+  baseModels: Array<ExperientialId>;
+  resumable: boolean;
+  /**
+   * Schema constraints this type cannot express: maxItems=2, uniqueItems=true
+   */
+  artifactKinds: Array<"adapter" | "weights">;
+  trainable: boolean;
+}
+
+
+export interface ExperientialTrainingCommandAnyOf3 {
+  kind: "rendered";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  bytes: number;
+  digest: ExperientialId;
+}
+
+
+export interface ExperientialTrainingCommandAnyOf8 {
+  kind: "observed";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  poll: number;
+  observation: BackendJobState;
+}
+
+
+export interface ExperientialTrainingCommandAnyOf10Verification {
+  receipt: ArtifactReceipt;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  verifiedBytes: number;
+}
+
+
+export type ExperientialTrainingCommand = { kind: "begin"; } | { kind: "selected"; } | ExperientialTrainingCommandAnyOf3 | { kind: "reserve"; } | { kind: "submitted"; job: BackendJob; } | { kind: "uncertain"; } | { kind: "poll-reserve"; } | ExperientialTrainingCommandAnyOf8 | { kind: "materialized"; receipt: ArtifactReceipt; } | { kind: "verified"; verification: ExperientialTrainingCommandAnyOf10Verification; } | { kind: "register"; } | { kind: "fail"; code: "TEXP1001" | "TEXP1002" | "TEXP1003" | "TEXP1004" | "TEXP1005" | "TEXP1006" | "TEXP1007" | "TEXP1008" | "TEXP1009" | "TEXP1010" | "TEXP1011" | "TEXP1012"; reason: "capability" | "dataset" | "record-budget" | "byte-budget" | "wall-budget" | "poll-budget" | "backend-failed" | "backend-receipt" | "backend-protocol" | "artifact-verification" | "spend-budget" | "clock-regression"; } | { kind: "cancel"; };
 
 export type Experiential = ExperientialRecord;

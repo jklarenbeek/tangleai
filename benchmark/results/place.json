@@ -20375,7 +20375,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
+        "sha256": "384b8f367a9c8b382ed926dafb458ae7e7dc9f85dbd120a5d1697cc72cac4ad8"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -20412,6 +20412,10 @@
       {
         "path": "packages/store/src/evolve-store.ts",
         "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+      },
+      {
+        "path": "packages/store/src/experiential-jobs.ts",
+        "sha256": "8ae4a1c71fa28002c02f2f3f44f2ba3135a70002c4f6f51226794e7374d00b94"
       },
       {
         "path": "packages/store/src/experiential-model.ts",
@@ -20463,7 +20467,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
+        "sha256": "94ccfad3eb97b7cdd956a8fa5aacdf07e2a6dc2bca0261249302265db616e5a2"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -20554,9 +20558,9 @@
         "sha256": "f391ac3537f46ab2f62fde45660b6458586e5f0e46f2fa283c8bac6e8f561edf"
       }
     ],
-    "sha256": "608d989cfbf939d41b138ff645193e27a6096565d35043f96abe3aa528114eaa"
+    "sha256": "94d09e9d995a26734a795371acbbf25e64da75cb6764087621a81f512afb5097"
   },
   "liveRequests": 0,
   "default": "off",
-  "sha256": "a8f338819ab71bd9957acbff128afd08d6db5ca7c8f41620feb22f766f03a473"
+  "sha256": "82915ffc26f06c9f02553a8f8ecede4083ae23b6aa62f6a889dfdd48b13c32bc"
 }

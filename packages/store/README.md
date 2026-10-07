@@ -309,3 +309,22 @@ every reference that retained a candidate; a second run deletes nothing. Host
 resolvers consume preloaded reference data and must not call a root database
 handle while this transaction is open. See `examples/lightrag.ts` for the public
 keyless lifecycle and explicit collection step.
+
+## Durable training jobs
+
+`@tangleai/store/experiential-jobs` composes experiential training tasks with
+the native database job runner and injected `compileDag`. A caller-supplied
+specification digest identifies one queue row; duplicate enqueue preserves the
+original run. The worker retains versioned checkpoints and checks its current
+renewed lease inside each experiential transaction. Domain progress and native
+checkpoints both refuse a stale attempt.
+
+Submit reserves its effect before contacting the backend. Polling consumes one
+durable credit per inspection and uses native job retries for later checks.
+An uncertain submission pauses until an explicit host lookup reconciles the
+original job; it is never automatically sent again. Verified artifact
+registration and training completion commit together. Hosts start and stop
+workers explicitly, and supply clocks, backoff sleep, budgets, example lookup
+and artifact byte access. See the [experiential package](../experiential/README.md)
+for the closed backend and lifecycle contracts. Training quality and activation
+remain separate from this operational conformance.

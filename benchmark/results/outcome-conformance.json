@@ -571,11 +571,19 @@
       },
       {
         "path": "packages/experiential/schemas/experiential.schema.json",
-        "sha256": "e63e4d898f03cc7b98f5f9bd08fbb7307eb17b60f15b807df49cd3488733f3dd"
+        "sha256": "74f2c8db2b9d0d389497de4576ace4d7ceb7ff5f88b218267f7ad5faba1de5f6"
+      },
+      {
+        "path": "packages/experiential/src/backend-fake.ts",
+        "sha256": "f557eaf138d4fadd622224ed2129631ae6a5fa484d9fd561629c205dc13aa576"
+      },
+      {
+        "path": "packages/experiential/src/backend.ts",
+        "sha256": "e7637b62cceba21ad3fef3ba1ba30709adcc34a509ba464ca1c7d3ed5a47cb92"
       },
       {
         "path": "packages/experiential/src/contracts.gen.ts",
-        "sha256": "8f58bb6850886109467773339d196a97da2d76837412492a7933bacd36b37a87"
+        "sha256": "468afc9dfc896ce9760c63d055c30511d579f666760d00d7cd94372a56953c1a"
       },
       {
         "path": "packages/experiential/src/dataset.ts",
@@ -591,11 +599,11 @@
       },
       {
         "path": "packages/experiential/src/identity.ts",
-        "sha256": "518e2fe10ef1269678fad82a2da6b5b7ce5292559b7a16be9c60a87f9018dc07"
+        "sha256": "2a69ad7efea7fbc7192334e16296133f35d727fec46aed6352f193e2ef9eb7ff"
       },
       {
         "path": "packages/experiential/src/index.ts",
-        "sha256": "8c158edfab7a7bbdbaea553c35914c04ee21396814d5bdd49220d55253fcefbf"
+        "sha256": "837772d1e73f238096a66a93c23bdac4aa8d92dac486a8b61d3c5070ce8950e7"
       },
       {
         "path": "packages/experiential/src/lifecycle.ts",
@@ -610,8 +618,12 @@
         "sha256": "ca947d4623dbc697e1b602077f181a05ad17a854d20e27b94181217861eaa6fd"
       },
       {
+        "path": "packages/experiential/src/pipeline.ts",
+        "sha256": "8e22dc35a96ff2e7df6a65b631921a3788a2f6f820359fee7977776751c5461a"
+      },
+      {
         "path": "packages/experiential/src/schema.ts",
-        "sha256": "79456b9824570715e41bd7766117d036326304613f25a0058ad5b1a76d1d2a85"
+        "sha256": "ec16d973ae5189d9338bc0906098fc899d0a7804df76896b18bead53befa0107"
       },
       {
         "path": "packages/experiential/src/selection.ts",
@@ -619,11 +631,15 @@
       },
       {
         "path": "packages/experiential/src/store-types.ts",
-        "sha256": "3740a92854a80aaef6b94e9c5c5efc7fa6f6bb11f2761f8ea9a63d3900b41ab0"
+        "sha256": "0e3626c6cef7b4f11015d560212eab42a74a21822d8bc0cd8c203ee59cf813c5"
       },
       {
         "path": "packages/experiential/src/store.ts",
-        "sha256": "a437f072cbb1af07f7164068a8d84cb8441ec87d3c05fa4594cf4de6f709b37e"
+        "sha256": "7362310da8ca3ed1c4571c96e794f3041801c8b7191b0ea2f0dc1c61409e0310"
+      },
+      {
+        "path": "packages/experiential/src/training.ts",
+        "sha256": "40d372a1ef139897a8d890792dbdac4c8e20bf3120dff621789a9c69aae62ccd"
       },
       {
         "path": "packages/experiential/src/trust.ts",
@@ -2467,7 +2483,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "30e241d3deda5bf102e4127a650577c86a8b6582185b2d7d02ede74b998bc713"
+        "sha256": "384b8f367a9c8b382ed926dafb458ae7e7dc9f85dbd120a5d1697cc72cac4ad8"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -2504,6 +2520,10 @@
       {
         "path": "packages/store/src/evolve-store.ts",
         "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+      },
+      {
+        "path": "packages/store/src/experiential-jobs.ts",
+        "sha256": "8ae4a1c71fa28002c02f2f3f44f2ba3135a70002c4f6f51226794e7374d00b94"
       },
       {
         "path": "packages/store/src/experiential-model.ts",
@@ -2555,7 +2575,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "8bd255cf61c91d981f24e2b383eefaad9f230a2edbb46aa210c5fd8a27af4b24"
+        "sha256": "94ccfad3eb97b7cdd956a8fa5aacdf07e2a6dc2bca0261249302265db616e5a2"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -2914,7 +2934,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "b3820c439652f88762a31a1a6b9de9e72fdec11800cf1eed608d7c8506fbb16d"
+    "sha256": "e8338ac6c60b5bc12753549f584ee65e7a2d9d4d72dc5fcf090bef20984c8893"
   },
   "registration": {
     "schemaVersion": 1,
@@ -86100,5 +86120,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "a3fde612f64165dd75b50a2a22b6fe9108d94e7e9ec059bf6094e1e3496de81b"
+  "reportId": "01d43e632f1239f492e8c5e3e64c652e97b7ed61db1ac870663c9b3a28f6dc7b"
 }

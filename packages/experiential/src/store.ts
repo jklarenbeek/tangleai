@@ -8,6 +8,8 @@ import { EXPERIENTIAL_TABLE_KINDS, EXPERIENTIAL_TABLES, type ExperientialPersist
   type ExperientialTables, type ExperientialTable, type ExperientialStoreResult, type ExperientialStore, type ExperientialWrite, type ExperientialStoreStats } from './store-types.ts';
 import { createExperientialMemoryPersistence, type ExperientialMemoryOptions } from './persistence-memory.ts';
 import { checkExperientialDataset } from './dataset.ts';
+import { checkTrainingBindings, initialTrainingProgress, planExperientialTrainingUpdate } from './training.ts';
+import { isVerifiedArtifactReceipt } from './backend.ts';
 import type { ExperientialIssue, ExperientialHead, ExperientialArtifact, ExperientialDataset, ExperientialTrainingRun, ExperientialApproval, ExperientialEvaluation } from './contracts.gen.ts';
 import type { ExperientialActivationPlan, ExperientialTransitionPlan } from './lifecycle.ts';
 
@@ -121,6 +123,10 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
       const run = await requireRow(tx, 'training_runs', row.trainingRunId, row.scope);
       if (run.state !== 'complete' || run.baseArtifactId !== row.baseArtifactId || run.method !== row.method)
         refuse('TEXP1006', '/trainingRunId', 'Only completed matching training may register an artifact.');
+      if (run.spec && (run.progress?.artifactId !== row.id || run.progress.stage !== 'registered'
+        || run.progress.receipt?.sha256 !== row.checksum || run.progress.verifiedBytes !== row.sizeBytes
+        || !equalsJson(run.progress.receipt.runtime, row.runtime) || run.progress.receipt.storageUri !== row.storageUri))
+        refuse('TEXP1008', '/trainingRunId', 'Managed training can register only its independently verified artifact.');
     }
   }
   async function evaluation(tx: ExperientialTransaction, row: ExperientialEvaluation) {
@@ -140,9 +146,14 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
     if (table === 'datasets') await dataset(ctx.tx, row as ExperientialDataset);
     if (table === 'training_runs') {
       const run = row as ExperientialTrainingRun;
-      await requireRow(ctx.tx, 'datasets', run.datasetId, run.scope); await requireRow(ctx.tx, 'artifacts', run.baseArtifactId, run.scope);
+      const selected = await requireRow(ctx.tx, 'datasets', run.datasetId, run.scope), base = await requireRow(ctx.tx, 'artifacts', run.baseArtifactId, run.scope);
       if (run.state !== 'queued' || run.startedAt || run.finishedAt || run.submissions || run.logRefs.length || run.metricsRef || run.stopReason)
         refuse('TEXP1006', '/state', 'A new training run starts queued without operational results.');
+      if (run.spec || run.progress || run.pipelineRevision || run.runtime) {
+        checked(await checkTrainingBindings(run, selected, base));
+        if (!equalsJson(run.progress, initialTrainingProgress(run.recordedAt)))
+          refuse('TEXP1006', '/progress', 'Managed training starts with empty dispatch, polling and verification facts.');
+      }
       for (const prior of await list(ctx.tx, 'training_runs', run.scope)) if (prior.idempotencyKey === run.idempotencyKey && prior.id !== run.id)
         refuse('TEXP1002', '/idempotencyKey', 'An idempotency key already names different training inputs.');
     }
@@ -260,6 +271,8 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
       const table = stateTable[request.plan.kind];
       if (!table) refuse('TEXP1006', '/kind', 'Only a declared lifecycle may transition.');
       const proposedBefore = await record(table, request.plan.before);
+      if (request.plan.kind === 'trainingRun' && (proposedBefore as ExperientialTrainingRun).spec)
+        refuse('TEXP1006', '/state', 'Managed training transitions require checked effect commands.');
       let validated: ExperientialTransitionPlan;
       if (request.plan.kind === 'experience') validated = checked(planExperienceTransition(proposedBefore as ExperientialTables['experiences'], (request.plan.after as ExperientialTables['experiences']).state));
       else if (request.plan.kind === 'trainingRun') validated = checked(planTrainingTransition(proposedBefore as ExperientialTrainingRun, (request.plan.after as ExperientialTrainingRun).state));
@@ -283,6 +296,26 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
       await event(ctx, before.scope, 'state-transition', before.id, canonicalizeJson({ table, from: before.state, to: validated.after.state }));
       return validated;
     }),
+    training: (runId, expectedRevision, command) => {
+      // Keep the verifier's process-local authority across the JSON snapshot.
+      const verified = command?.kind !== 'verified' || isVerifiedArtifactReceipt(command.verification);
+      return copied({ runId, expectedRevision, command }, async (ctx, request) => {
+        if (!verified) refuse('TEXP1008', '/verification', 'An independent byte verification result is required.');
+        const before = await get(ctx.tx, 'training_runs', request.runId);
+        if (!before) refuse('TEXP1004', '/runId', 'The managed training run is missing.');
+        if (!Number.isSafeInteger(request.expectedRevision) || before.progress?.revision !== request.expectedRevision)
+          refuse('TEXP1006', '/expectedRevision', 'Training progress changed; reread before reserving another effect.');
+        checked(await checkTrainingBindings(before,
+          await requireRow(ctx.tx, 'datasets', before.datasetId, before.scope),
+          await requireRow(ctx.tx, 'artifacts', before.baseArtifactId, before.scope)));
+        const plan = checked(await planExperientialTrainingUpdate(before, request.command, ctx.at()));
+        await write(ctx, 'training_runs', plan.after);
+        if (plan.artifact) await put(ctx, 'artifacts', plan.artifact);
+        await event(ctx, before.scope, 'training-' + request.command.kind, before.id,
+          canonicalizeJson({ revision: plan.after.progress!.revision, stage: plan.after.progress!.stage, state: plan.after.state }));
+        return plan;
+      });
+    },
     head: (profile, scope) => operation(ctx => currentHead(ctx, profile, scope)),
     activate: plan => copied(plan, (ctx, input) => applyActivation(ctx, input, 'activate')),
     rollback: plan => copied(plan, (ctx, input) => applyActivation(ctx, input, 'rollback')),

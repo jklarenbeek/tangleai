@@ -23,3 +23,10 @@ export { EXPERIENTIAL_EXCLUSION_REASONS, sealExperientialSelectionPolicy, planEx
 export type { ExperientialSelectionInput, ExperientialSelectionPlan } from './selection.ts';
 export { EXPERIENTIAL_EXAMPLE_TEMPLATE, experientialDatasetManifest, checkExperientialDataset, planExperientialDataset, renderExperientialExamples } from './dataset.ts';
 export type { ExperientialDatasetOptions, ExperientialDatasetPlan } from './dataset.ts';
+export { validateTrainingSpec, trainingSpecDigest, checkTrainingCapabilities, experientialArtifactChecksum, verifyArtifactReceipt } from './backend.ts';
+export type { TrainingBackend, BackendResult, VerifyArtifactReceiptOptions, VerifiedArtifactReceipt } from './backend.ts';
+export { createFakeTrainingBackend } from './backend-fake.ts';
+export type { FakeTrainingBackendOptions, FakeTrainingBackend } from './backend-fake.ts';
+
+export { initialTrainingProgress, planExperientialTrainingUpdate, checkTrainingBindings, trainingTerminal, type ExperientialTrainingUpdate } from './training.ts';
+export { EXPERIENTIAL_TRAINING_DAG, EXPERIENTIAL_TRAINING_NODES, experientialTrainingRevision, experientialTrainingJobKind, planExperientialTraining, createExperientialTrainingTasks, cancelExperientialTraining, ExperientialTrainingPending, ExperientialSubmissionUnknown, type ExperientialTrainingNode, type ExperientialTrainingInput, type ExperientialTrainingPlan, type ExperientialTrainingContext } from './pipeline.ts';
