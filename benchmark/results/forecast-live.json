@@ -6,7 +6,7 @@
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
       "head": "60b92ad0831438676d8ef2c5f52eb83b0b054c26",
-      "sha256": "7a4c19851f72757156d7522f356006194cb81136bebd064ae4d8543d2b91071f",
+      "sha256": "cf3314df3f2e58f9513645e7603eb510c7a7098941de7d5c79b151b15304eea6",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -106,7 +106,7 @@
         },
         {
           "path": "benchmark/lib/cgt.types.ts",
-          "sha256": "85f884a6059e2b6bf61751ffe5bdb04776e07450a6875028d31387b20035cd9b"
+          "sha256": "ae9c58e13d90384fa4c2ce28212c4d43bc38509fbe69227957e31dfaecc921dc"
         },
         {
           "path": "benchmark/lib/config-conformance.ts",
@@ -1126,7 +1126,7 @@
         },
         {
           "path": "package-lock.json",
-          "sha256": "cf1961f0d47607bee6c2f59db68dd4c40c7bfb0ebd6cd548ec68568859f69add"
+          "sha256": "ddbdcfb85ce18f07d9f92ea85afa9039c6077332fa322c1c5c526c585687d641"
         },
         {
           "path": "package.json",
@@ -1706,7 +1706,7 @@
         },
         {
           "path": "packages/store/src/experiential-store.ts",
-          "sha256": "16f06487f3848c92bea2bd2021b2903aff53a1b14fbdcf453b348b2c5d5f25ba"
+          "sha256": "0a19a76428bf52a35f2bb0119abf72d07bbabb7b1c6c93a3906be10ae446de6d"
         },
         {
           "path": "packages/store/src/forecast-model.ts",
@@ -2081,7 +2081,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "8550119c5880fad77192907b611d5c618c475c5a8f2ef52d987dd31e58c4d773",
+    "planId": "545c92656ca18cd0de72228f4eb1353cb600255e246dcb7c938347f29bce334d",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

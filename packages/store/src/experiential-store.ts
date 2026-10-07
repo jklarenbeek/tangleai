@@ -31,10 +31,10 @@ export function createExperientialDbPersistence(db: Pick<TangleDb, 'transaction'
         if (row && row.id !== id) throw new TypeError('An experiential row differs from its requested address.');
         return row ? payload(row, table) : undefined;
       }); },
-      list<K extends ExperientialTable>(table: K, scope: string) { return track(async () => {
+      list<K extends ExperientialTable>(table: K, scope: string | null) { return track(async () => {
         guard(table);
         const rows = asRows(await tx.collection<PhysicalRow>('experiential_' + table).execute<PhysicalRow>({
-          $for: { r: '$[*]' }, $where: { $eq: ['$r.scope', { $const: scope }] }, $orderby: ['$r.id'], $return: '$r',
+          $for: { r: '$[*]' }, ...(scope === null ? {} : { $where: { $eq: ['$r.scope', { $const: scope }] } }), $orderby: ['$r.id'], $return: '$r',
         }));
         guard(table); return rows.map(row => payload(row, table));
       }); },

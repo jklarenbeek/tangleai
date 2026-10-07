@@ -107,7 +107,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "cf1961f0d47607bee6c2f59db68dd4c40c7bfb0ebd6cd548ec68568859f69add"
+        "sha256": "ddbdcfb85ce18f07d9f92ea85afa9039c6077332fa322c1c5c526c585687d641"
       },
       {
         "path": "package.json",
@@ -567,11 +567,11 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "738732396eee1f5e5a7d0d5d026b7965a6c21cfe825e56f51938e460e830fb8d"
+        "sha256": "1c11962897cce5e0d31ba213fc12ff4e59d56f36714c32d18355c6b72517e0e3"
       },
       {
         "path": "packages/experiential/schemas/experiential.schema.json",
-        "sha256": "8d61f6721c8eedb6309bdd5e7d33a6ea582010bd925918dd9f85e73683034ccc"
+        "sha256": "aa95b66418d3cbd2d35b8821f98a375c760a069a2003f7c68c82ac1eef996896"
       },
       {
         "path": "packages/experiential/schemas/training-service.contract.json",
@@ -590,12 +590,20 @@
         "sha256": "e7637b62cceba21ad3fef3ba1ba30709adcc34a509ba464ca1c7d3ed5a47cb92"
       },
       {
+        "path": "packages/experiential/src/canary.ts",
+        "sha256": "7b95934e36e6aae77c5fd06c5522eedd44acecb222ce3025a4cba12819ab6084"
+      },
+      {
         "path": "packages/experiential/src/contracts.gen.ts",
-        "sha256": "2ada2c44cd6e0d3224088fd1de9eb083b6f2c62397d19491a5a1011c9bcafcae"
+        "sha256": "8135eb489b61f47e2432303818ae1ebcc2a3d7e285f813c64da5dc41990bb3de"
       },
       {
         "path": "packages/experiential/src/dataset.ts",
         "sha256": "bb1aca6a0467a4d6b587d44df6e569109539a768a0d17261aa820124595a7fe9"
+      },
+      {
+        "path": "packages/experiential/src/deployment.ts",
+        "sha256": "79673fe035fdb273a94b916a79a6873c7d94c4bf55bc2cec3ab1f676ce768635"
       },
       {
         "path": "packages/experiential/src/errors.ts",
@@ -615,15 +623,19 @@
       },
       {
         "path": "packages/experiential/src/identity.ts",
-        "sha256": "ca5b97b9bac313f88aa8a3a5ac30814df90662b160fe9c20b7db4299d9e2eef6"
+        "sha256": "5aeda899790ef6e7002b21866c5cb714ca5650d0fd18cda34bbbb88ae8081966"
       },
       {
         "path": "packages/experiential/src/index.ts",
-        "sha256": "7805f6dbae70c140068f8d5f0c9358e98274004076a80e792cadca55f0b359b5"
+        "sha256": "4bc5f0fec057b7d71987cd5c28bd868ee0d51cb985b5d694999c7a78accff5e4"
+      },
+      {
+        "path": "packages/experiential/src/inference.ts",
+        "sha256": "2f699936988f80a2fda30635a2f2c65d087c355ff2ada725021af8a12e8a14ea"
       },
       {
         "path": "packages/experiential/src/lifecycle.ts",
-        "sha256": "adaa686c9ea6cd8e6ce785de89ea249dee5a53eb16d3d093d18a931bfa4a6636"
+        "sha256": "6cc4ad996316dd1f6a8069cbf6974fe143e35da4c19b01d527702ef504d34672"
       },
       {
         "path": "packages/experiential/src/lineage.ts",
@@ -631,7 +643,7 @@
       },
       {
         "path": "packages/experiential/src/persistence-memory.ts",
-        "sha256": "ca947d4623dbc697e1b602077f181a05ad17a854d20e27b94181217861eaa6fd"
+        "sha256": "2a103163843419635c9aae0a6b25793eb97fbf4e6c58eb7c6ff5259de584a22d"
       },
       {
         "path": "packages/experiential/src/pipeline.ts",
@@ -647,11 +659,11 @@
       },
       {
         "path": "packages/experiential/src/store-types.ts",
-        "sha256": "fc47056892aac4d3f583870d9cdb1c06818e1cbed2192ce3aa628cf661d57336"
+        "sha256": "21b4da2ba6f6ae61eec7a834148acb2252bf75a5cde0dcd85e11c09494d98fa6"
       },
       {
         "path": "packages/experiential/src/store.ts",
-        "sha256": "3778c13a813794731953d4b0d54dd7c6359ccf1dac9f6c41c4f7ac05a4e272ac"
+        "sha256": "32630a047f614df4210a67917aa9306455d55a959b951d805973e11afac9757e"
       },
       {
         "path": "packages/experiential/src/training-env.ts",
@@ -1951,7 +1963,7 @@
       },
       {
         "path": "packages/outcomes/src/index.ts",
-        "sha256": "f6ae701989282559d2db33178b4dc521a5ce9d512aa61febea36ed08b3d55e20"
+        "sha256": "c2e7d618032f60d21597b05a2653cc4196d6c3a409120034c4a375e649feee84"
       },
       {
         "path": "packages/outcomes/src/operations.ts",
@@ -2551,7 +2563,7 @@
       },
       {
         "path": "packages/store/src/experiential-store.ts",
-        "sha256": "16f06487f3848c92bea2bd2021b2903aff53a1b14fbdcf453b348b2c5d5f25ba"
+        "sha256": "0a19a76428bf52a35f2bb0119abf72d07bbabb7b1c6c93a3906be10ae446de6d"
       },
       {
         "path": "packages/store/src/forecast-model.ts",
@@ -2954,7 +2966,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "ddb816a348e9d9a80c3f9ec1035984c8b56f5bfbefe14e30f3aba21b0922dc13"
+    "sha256": "fd34bfa1008e9bba675cd82a0d1da79786f2683da4105df27af45a40b6f121cb"
   },
   "registration": {
     "schemaVersion": 1,
@@ -86140,5 +86152,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "1628fe2d084d4ca7b51ca2f5714c1f428ec0cafc9e0b11898b9b86832e475e21"
+  "reportId": "43ce72481d52df5f3c9f7640987134c5f3e4a8bdb76e9aac14383a0d696bb1fc"
 }

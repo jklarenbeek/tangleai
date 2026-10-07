@@ -203,7 +203,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "cf1961f0d47607bee6c2f59db68dd4c40c7bfb0ebd6cd548ec68568859f69add"
+        "sha256": "ddbdcfb85ce18f07d9f92ea85afa9039c6077332fa322c1c5c526c585687d641"
       },
       {
         "path": "package.json",
@@ -419,7 +419,7 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "738732396eee1f5e5a7d0d5d026b7965a6c21cfe825e56f51938e460e830fb8d"
+        "sha256": "1c11962897cce5e0d31ba213fc12ff4e59d56f36714c32d18355c6b72517e0e3"
       },
       {
         "path": "packages/forecast/package.json",
@@ -823,7 +823,7 @@
       },
       {
         "path": "packages/store/src/experiential-store.ts",
-        "sha256": "16f06487f3848c92bea2bd2021b2903aff53a1b14fbdcf453b348b2c5d5f25ba"
+        "sha256": "0a19a76428bf52a35f2bb0119abf72d07bbabb7b1c6c93a3906be10ae446de6d"
       },
       {
         "path": "packages/store/src/forecast-model.ts",
@@ -1146,7 +1146,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "8fcfc0dcdd0f23f0a41d06417db6d845f962a793e641a48e3fa54b230bdfd4fa"
+    "sha256": "8741182e51983ea2ba0a308be1f3ca32945754f77a275e07c97b722dda9d4a3a"
   },
   "ablations": [
     {
@@ -76700,5 +76700,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "c097b99386213cfb9b77e556feb936c7bdfc4e6d42c8101f755b57a154e013e7"
+  "reportId": "b52a7cf9583d2c9be14cbd6b98a6228e483a41cc59020f4e64dc306ac5abf0a8"
 }

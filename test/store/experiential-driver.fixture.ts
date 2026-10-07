@@ -1,6 +1,7 @@
 /** The parent owns temporary files until the tested SQLite runtime has closed. */
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
+import { experientialSqliteProbeFactory } from './experiential-host.ts';
 import { openStore } from '@jarenjs/db';
 import { createMemoryUnit } from '@tangleai/memory';
 import { createExperientialStoreAdapter, EXPERIENTIAL_TABLES,
@@ -14,38 +15,7 @@ const directory = process.env.TANGLE_FIXTURE_DIRECTORY;
 if (!directory) throw new TypeError('A parent-owned fixture directory is required.');
 assert.deepEqual(Object.keys(TANGLE_DB_MODEL.collections).filter(name => name.startsWith('experiential_')).sort(),
   EXPERIENTIAL_TABLES.map(table => 'experiential_' + table).sort());
-let instance = 0;
-async function createSqliteProbe(): Promise<ExperientialProbeHost> {
-  const path = join(directory!, 'experiential-' + instance++ + '.sqlite');
-  let db = await openTangleDb({ path }), host: ExperientialProbeHost;
-  const applyProbe = (step: string) => { if (host?.failAt === step && --host.failOccurrence === 0) throw new Error('Injected transaction failure.'); };
-  const options = { now: () => EXPERIENTIAL_FIXTURE_TIME };
-  let persistence = createExperientialDbPersistence(db, { applyProbe });
-  host = {
-    persistence, store: createExperientialStoreAdapter(persistence, options), peer: createExperientialStoreAdapter(persistence, options),
-    failAt: null, failOccurrence: 1,
-    async state() {
-      // Read the native rows directly so fault injection applies only to the
-      // operation being measured, never to the observation of its rollback.
-      const state: Partial<ExperientialMemoryState> = {};
-      for (const table of EXPERIENTIAL_TABLES) {
-        const rows: ExperientialTables[ExperientialTable][] = [];
-        for await (const row of db.collection('experiential_' + table).query<ExperientialTables[ExperientialTable]>({
-          $for: { r: '$[*]' }, $orderby: '$r.id', $return: '$r.payload',
-        })) rows.push(row);
-        Object.assign(state, { [table]: rows });
-      }
-      return state as ExperientialMemoryState;
-    },
-    async reopen() {
-      assert.equal((await db.integrityCheck()).ok, true); await db.close(); db = await openTangleDb({ path });
-      persistence = createExperientialDbPersistence(db, { applyProbe }); host.persistence = persistence;
-      host.store = createExperientialStoreAdapter(persistence, options); host.peer = createExperientialStoreAdapter(persistence, options);
-    },
-    close: () => db.close(),
-  };
-  return host;
-}
+const createSqliteProbe = experientialSqliteProbeFactory(directory);
 
 const memory = await runExperientialStoreProbes(createExperientialMemoryProbe);
 const sqlite = await runExperientialStoreProbes(createSqliteProbe);

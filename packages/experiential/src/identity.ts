@@ -14,9 +14,9 @@ const fields = {
   artifact: ['checksum', 'baseArtifactId', 'kind', 'method', 'storageUri', 'runtime', 'trainingRunId', 'sizeBytes'],
   evaluation: ['artifactId', 'baselineArtifactId', 'registrationId', 'datasetId', 'gatePolicyId', 'evaluatorRevision', 'profile', 'expectedHead', 'migrationExperiment', 'reportId', 'passed', 'interval', 'retention', 'security'],
   gatePolicy: ['primaryMetric', 'controls', 'interval', 'learning', 'retention', 'security', 'operations', 'rows', 'requiredRows'],
-  approval: ['profile', 'action', 'artifactId', 'evaluationId', 'expectedHead', 'principal', 'reason'],
-  deployment: ['profile', 'base', 'activeArtifactId', 'canaryArtifactId', 'rolloutFraction', 'expectedParentArtifactId', 'approvalId', 'revision'],
-  inferencePin: ['runId', 'identityId', 'deploymentId', 'deploymentRevision', 'artifactId', 'servedModel', 'canary'],
+  approval: ['profile', 'action', 'artifactId', 'evaluationId', 'expectedHead', 'principal', 'reason', 'deploymentId', 'expectedDeploymentRevision', 'rolloutFraction'],
+  deployment: ['profile', 'base', 'baseArtifactId', 'operationalLimits'],
+  inferencePin: ['runId', 'identityId', 'deploymentId', 'deploymentRevision', 'artifactId', 'servedModel', 'canary', 'capability'],
   retentionDecision: ['episodeIds', 'dependentArtifactId', 'decision', 'reason', 'principal', 'evidence'],
   event: ['seq', 'kind', 'recordId', 'runId', 'detail'],
   head: ['profile'],
@@ -24,6 +24,11 @@ const fields = {
 
 /** Hash a caller's explicit credential-free identity payload using the canonical owner. */
 export const experientialRevisionOf = canonicalSha256;
+
+/** The immutable effective chat role, independent of a deployment's serving state. */
+export function experientialBaseDigest(role: { provider: string; base: string; model: string }): Promise<string> {
+  return canonicalSha256({ provider: role.provider, base: role.base, model: role.model });
+}
 
 /** Registration time is retained beside its immutable policy, corpus and head bindings. */
 export function experientialEvaluationRegistrationId(registration: ExperientialEvaluationRegistration): Promise<string> {
@@ -65,6 +70,11 @@ export async function checkExperientialRecord<K extends ExperientialRecordKind>(
     if (registration && (registration.id !== await experientialEvaluationRegistrationId(registration)
       || registration.artifactId !== artifact.id || registration.scope !== artifact.scope))
       return refuseExperiential('TEXP1002', '/evaluationRegistration', 'The retained evaluation registration does not reproduce its artifact binding.');
+  }
+  if (kind === 'deployment') {
+    const deployment = shape.value as ExperientialRecordMap['deployment'];
+    if (deployment.base.digest !== await experientialBaseDigest(deployment.base))
+      return refuseExperiential('TEXP1002', '/base/digest', 'The base role fields do not reproduce their registered digest.');
   }
   return shape;
 }

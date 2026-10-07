@@ -36,7 +36,7 @@ export function createExperientialMemoryPersistence(options: ExperientialMemoryO
           async get(table, id) { guard(table); return cloneJson(staged.get(keyOf(table, id))) as never; },
           async list(table, scope) {
             guard(table);
-            return [...staged.entries()].filter(([key, row]) => key.startsWith(table + ':') && row.scope === scope)
+            return [...staged.entries()].filter(([key, row]) => key.startsWith(table + ':') && (scope === null || row.scope === scope))
               .map(([, row]) => cloneJson(row)).sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0) as never;
           },
           async put(table, value) { guard(table); staged.set(keyOf(table, value.id), cloneJson(value)); options.applyProbe?.('put:experiential_' + table); },

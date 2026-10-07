@@ -2,7 +2,7 @@ import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { planExperienceTransition, planTrainingTransition, planArtifactTransition,
   planExperientialActivation, planExperientialRollback, planExperientialEvaluation, createExperientialEvaluation,
-  recordExperientialEvaluation, type ExperientialActivationInput } from '@tangleai/experiential';
+  recordExperientialEvaluation, createExperientialDeployment, type ExperientialActivationInput } from '@tangleai/experiential';
 import { accepted, addressedFixture } from './identity-fixtures.ts';
 import { passingGateMetrics } from './gate-fixtures.ts';
 
@@ -48,14 +48,19 @@ async function activationFixture(): Promise<ExperientialActivationInput> {
   const evaluation = accepted(await createExperientialEvaluation({ registration: planned.registration, policy,
     measurements: passingGateMetrics(policy), reportId: 'c'.repeat(64), recordedAt: head.recordedAt }));
   const artifact = accepted(await recordExperientialEvaluation({ artifact: planned.after, baseline, dataset, policy, evaluation })).after;
-  const approval = await addressedFixture('approval', { artifactId: artifact.id, evaluationId: evaluation.id, expectedHead: head.head });
-  return { head, artifact, evaluation, approval };
+  const deployment = accepted(await createExperientialDeployment({ profile: head.profile, scope: head.scope, candidateId: 'fixture-base',
+    baseArtifact: baseline, recordedAt: head.recordedAt, operationalLimits: { maxFailureRate: 0.1, maxP95Ms: 200, window: 20 } }));
+  const approval = await addressedFixture('approval', { artifactId: artifact.id, evaluationId: evaluation.id, expectedHead: head.head,
+    deploymentId: deployment.id, expectedDeploymentRevision: deployment.revision });
+  return { head, deployment, artifact, evaluation, approval };
 }
 
 it('activation binds scope, profile, action, artifact, evaluation and a passing result', async () => {
   const input = await activationFixture(), plan = accepted(planExperientialActivation(input));
   assert.deepEqual(plan.nextHead, { versionId: input.artifact.id, revision: 1 });
-  assert.deepEqual(accepted(planExperientialActivation({ ...input, artifact: { ...input.artifact, state: 'canary' } })).nextHead, plan.nextHead);
+  assert.deepEqual(accepted(planExperientialActivation({ ...input, artifact: { ...input.artifact, state: 'canary' },
+    deployment: { ...input.deployment, canaryArtifactId: input.artifact.id, rolloutFraction: 0.25, revision: 1 },
+    approval: { ...input.approval, expectedDeploymentRevision: 1 } })).nextHead, plan.nextHead);
   const mutations: Array<(row: ExperientialActivationInput) => void> = [
     row => { row.approval.scope = 'other'; }, row => { row.approval.profile = 'other'; },
     row => { row.approval.action = 'canary'; }, row => { row.approval.artifactId = 'f'.repeat(64); },
@@ -81,8 +86,9 @@ it('a stale head preserves the native OUTC1013 cause before a contender-changed 
 
 it('rollback requires an archived target, matching rollback approval and a reason', async () => {
   const input = await activationFixture(), current = { versionId: 'f'.repeat(64), revision: 2 };
-  const request: ExperientialActivationInput = { ...input, head: { ...input.head, head: current }, artifact: { ...input.artifact, state: 'archived' },
-    approval: { ...input.approval, action: 'rollback', expectedHead: current } };
+  const request = { ...input, reason: input.approval.reason, head: { ...input.head, head: current }, artifact: { ...input.artifact, state: 'archived' as const },
+    deployment: { ...input.deployment, activeArtifactId: current.versionId, expectedParentArtifactId: input.artifact.id, revision: 2, headRevision: 2 },
+    approval: { ...input.approval, action: 'rollback' as const, expectedHead: current, expectedDeploymentRevision: 2 } };
   assert.deepEqual(accepted(planExperientialRollback(request)).nextHead, { versionId: input.artifact.id, revision: 3 });
   assert.equal(planExperientialRollback({ ...request, artifact: { ...request.artifact, state: 'staged' } }).ok, false);
   assert.equal(planExperientialRollback({ ...request, approval: { ...request.approval, action: 'activate' } }).ok, false);

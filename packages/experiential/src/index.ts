@@ -40,3 +40,10 @@ export type { ExperientialGateResult, ExperientialGatePolicyRevisionOptions } fr
 export { planExperientialEvaluation, createExperientialEvaluation, recordExperientialEvaluation, evaluationMetricsOf } from './evaluation.ts';
 export type { ExperientialEvaluationInput, ExperientialEvaluationPlan, ExperientialEvaluationResultPlan } from './evaluation.ts';
 export { experientialEvaluationRegistrationId } from './identity.ts';
+
+export { createExperientialDeployment, experientialBaseDigest, planAutomaticRollback } from './deployment.ts';
+export type { ExperientialDeploymentInput } from './deployment.ts';
+export { canaryShareOf, routesToCanary } from './canary.ts';
+export { resolveExperientialInference, startExperientialInference } from './inference.ts';
+export type { ExperientialInferenceInput, ExperientialResolvedInference, ExperientialInferenceBinding, ExperientialInferenceHostInput } from './inference.ts';
+export type { ExperientialRollbackInput } from './lifecycle.ts';

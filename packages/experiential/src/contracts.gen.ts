@@ -1109,27 +1109,22 @@ export interface ExperientialGatePolicy {
 }
 
 
-export interface ExperientialApproval {
-  document: "experiential-approval";
-  schemaVersion: 1;
-  id: ExperientialId;
-  scope: ExperientialScope;
-  recordedAt: ExperientialTime;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
-   */
-  profile: string;
-  action: "activate" | "canary" | "rollback";
-  artifactId: ExperientialId;
-  evaluationId: ExperientialId;
-  expectedHead: ExperientialExpectedHead;
-  principal: ExperientialPrincipal;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
-   */
-  reason: string;
-}
+/**
+ * Schema constraints this type cannot express: if={"properties":{"action":{"const":"canary"}}}, then={"properties":{"rolloutFraction":{"type":"number"}}}, else={"properties":{"rolloutFraction":{"type":"null"}}}
+ */
+export type ExperientialApprovalPart1 = unknown;
 
+export type ExperientialApproval = ExperientialApprovalPart1 & { document: "experiential-approval"; schemaVersion: 1; id: ExperientialId; scope: ExperientialScope; recordedAt: ExperientialTime; profile: string; action: "activate" | "canary" | "rollback"; artifactId: ExperientialId; evaluationId: ExperientialId; expectedHead: ExperientialExpectedHead; principal: ExperientialPrincipal; reason: string; deploymentId: ExperientialId; expectedDeploymentRevision: number; rolloutFraction: number | null; };
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"canaryArtifactId":{"type":"null"}}}, then={"properties":{"rolloutFraction":{"const":0}}}
+ */
+export type ExperientialDeploymentPart1 = unknown;
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"canaryArtifactId":{"$ref":"#/$defs/ExperientialId"}}}, then={"properties":{"rolloutFraction":{"type":"number","exclusiveMinimum":0,"maximum":1}}}
+ */
+export type ExperientialDeploymentPart2 = unknown;
 
 export interface ExperientialDeploymentBase {
   /**
@@ -1149,56 +1144,48 @@ export interface ExperientialDeploymentBase {
 }
 
 
-export interface ExperientialDeployment {
-  document: "experiential-deployment";
-  schemaVersion: 1;
-  id: ExperientialId;
-  scope: ExperientialScope;
-  recordedAt: ExperientialTime;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
-   */
-  profile: string;
-  base: ExperientialDeploymentBase;
-  activeArtifactId: ExperientialId | null;
-  canaryArtifactId: ExperientialId | null;
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+ */
+export type ExperientialDeploymentRollbackReasonAnyOf1 = string;
+
+export interface ExperientialOperationalLimits {
   /**
    * Schema constraints this type cannot express: minimum=0, maximum=1
    */
-  rolloutFraction: number;
-  expectedParentArtifactId: ExperientialId | null;
-  approvalId: ExperientialId | null;
+  maxFailureRate: number;
   /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   * Schema constraints this type cannot express: minimum=0
    */
-  revision: number;
+  maxP95Ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  window: number;
 }
 
 
-export interface ExperientialInferencePin {
-  document: "experiential-inference-pin";
-  schemaVersion: 1;
-  id: ExperientialId;
-  scope: ExperientialScope;
-  recordedAt: ExperientialTime;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
-   */
-  runId: string;
-  identityId: ExperientialId;
-  deploymentId: ExperientialId;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  deploymentRevision: number;
-  artifactId: ExperientialId | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
-   */
-  servedModel: string;
-  canary: boolean;
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.headRevision","$.revision"]},{"$or":[{"$eq":["$.canaryArtifactId",null]},{"$ne":["$.canaryArtifactId","$.activeArtifactId"]}]}]}
+ */
+export type ExperientialDeployment = ExperientialDeploymentPart1 & ExperientialDeploymentPart2 & { document: "experiential-deployment"; schemaVersion: 1; id: ExperientialId; scope: ExperientialScope; recordedAt: ExperientialTime; profile: string; base: ExperientialDeploymentBase; activeArtifactId: ExperientialId | null; canaryArtifactId: ExperientialId | null; rolloutFraction: number; expectedParentArtifactId: ExperientialId | null; approvalId: ExperientialId | null; revision: number; baseArtifactId: ExperientialId; headRevision: number; rollbackReason: ExperientialDeploymentRollbackReasonAnyOf1 | null; operationalLimits: ExperientialOperationalLimits; };
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"capability":{"properties":{"trainable":{"const":false}}}}}, then={"properties":{"artifactId":{"type":"null"},"canary":{"const":false}}}
+ */
+export type ExperientialInferencePinPart1 = unknown;
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"canary":{"const":true}}}, then={"properties":{"artifactId":{"$ref":"#/$defs/ExperientialId"}}}
+ */
+export type ExperientialInferencePinPart2 = unknown;
+
+export interface ExperientialInferenceCapability {
+  trainable: boolean;
 }
 
+
+export type ExperientialInferencePin = ExperientialInferencePinPart1 & ExperientialInferencePinPart2 & { document: "experiential-inference-pin"; schemaVersion: 1; id: ExperientialId; scope: ExperientialScope; recordedAt: ExperientialTime; runId: string; identityId: ExperientialId; deploymentId: ExperientialId; deploymentRevision: number; artifactId: ExperientialId | null; servedModel: string; canary: boolean; capability: ExperientialInferenceCapability; };
 
 /**
  * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
@@ -1382,6 +1369,43 @@ export interface ExperientialEvaluationMetrics {
   security: Array<ExperientialSecurityResult>;
   operations: ExperientialOperationsResult;
   cost: ExperientialCost | null;
+}
+
+
+export interface ExperientialOperationalWindow {
+  deploymentId: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  deploymentRevision: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  count: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  failureRate: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  p95Ms: number;
+}
+
+
+export interface ExperientialRollbackIntent {
+  deploymentId: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  deploymentRevision: number;
+  expectedHead: ExperientialExpectedHead;
+  targetArtifactId: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  reason: string;
+  observed: ExperientialOperationalWindow;
 }
 
 

@@ -31,9 +31,71 @@ question-set identity, sample count and expected deployment head before a run.
 The synthetic persistence fixture supplies explicit recorded-value conformance
 observations; it does not train a model, establish a scientific learning result
 or authorize a production deployment.
-Ordinary deployment and inference-pin admission currently supports registered
-base models only. The raw persistence adapter is a trusted extension, not a
-public approval or evaluation authority.
+Ordinary deployment admission registers an inactive base. Serving changes and
+new inference pins use checked commands. The raw persistence adapter is a
+trusted extension, not a public approval or evaluation authority.
+
+`createExperientialDeployment` binds one named profile and scope to a registered
+base artifact, the effective chat role's `{ provider, base, model }` digest, and
+operational limits. Its stable address survives promotions. `revision` fences
+every deployment change; `headRevision` records the active artifact head's
+revision. A canary changes the deployment revision without moving that head.
+Both fences use the native outcomes head comparison and preserve `OUTC1013`
+as the cause of `TEXP1007`. Reads recheck the role digest, and stored serving
+state must reproduce its transition event.
+
+`planExperientialActivation` accepts `canary` and `activate` approvals bound to
+the exact evaluation, head, deployment revision and canary fraction. Canary
+admission requires an empty slot and an approved artifact. Full activation
+archives the prior active artifact, clears the canary, and atomically publishes
+the deployment, head and event. An old approval cannot survive an A→B→A
+restore because the revision has advanced. Replaying an applied plan returns
+its original result without changing newer state.
+
+`canaryShareOf(deploymentId, runId)` maps the first 13 hex digits of the native
+canonical hash to `[0, 1)`. `routesToCanary` uses a strict comparison with the
+registered fraction and reads no clock or randomness. The fixed 10,000-run
+conformance test routes exactly 2,469 at a 25% share and reproduces the complete
+assignment digest on its second pass.
+
+`resolveExperientialInference` consumes the native registry, profile request
+and host manifest, the deployment and artifact inventory, a host capability,
+run ID and observation time. Configuration refusals retain their `TCFG` causes.
+A moved base profile, missing artifact, wrong serving state or incompatible
+runtime refuses. The result keeps the base configuration identity beside an
+artifact pin containing the served model and deployment revision. An
+inference-only binding reports `capability.trainable: false` and serves a base
+deployment with a null artifact ID; it cannot silently serve a learned one.
+
+`store.pin` rechecks the current deployment and deterministic assignment in one
+transaction. It refuses a second pin for a run ID, including across scopes,
+and refuses a stale deployment revision. Promotion and rollback leave retained
+pins unchanged. `startExperientialInference` composes the host's native identity
+repository and run log: persist the identity, obtain the run ID, persist the
+pin, then construct `binding.clientFor(pin, identity)`. The binding uses
+`pin.servedModel`. A refused identity or pin never reaches client construction.
+The host owns call execution and final run settlement, including failures after
+a run has been created.
+
+`planExperientialRollback` requires the exact prior active or archived artifact,
+its retained passing evaluation, an approval bound to the current revisions,
+and the same nonempty reason carried by that approval. The transaction restores
+that artifact, archives the failed artifact, and retains every record. A
+deployment without a prior approved artifact has no such rollback target.
+`await planAutomaticRollback(deployment, observedWindow)` first verifies the
+registered deployment identity. An incomplete window returns no advice; an
+exact window returns a rollback intent only strictly above a registered
+failure-rate or p95 limit. The intent grants no authority: the host must retain
+an appropriate policy approval before applying the checked rollback plan.
+
+The [keyless walkthrough](../../examples/experiential.ts) runs with
+`node examples/experiential.ts` or `node examples/experiential.ts --sqlite`.
+It uses the native job runner, fake JSON artifacts and explicitly synthetic
+recorded-value conformance observations, then pins 1,000 synthetic run IDs,
+promotes a canary and restores its approved synthetic predecessor. These
+observations are separate from CGT's measured ties and failed gates; the example
+does not establish learning or scientific approval. No desktop setting or
+configuration schema is changed by these APIs.
 
 `resolveExperientialLineage(store, artifactId)` follows retained artifacts,
 training inputs, datasets, pinned assessments and selected experiences through

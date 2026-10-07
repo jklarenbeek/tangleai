@@ -73,9 +73,11 @@ export async function runExperientialStoreProbes(createHost: () => Promise<Exper
     accepted(await host.store.activate(second));
     const target = accepted(await host.store.get('artifacts', fixture.artifact.id)); assert.ok(target); assert.equal(target.state, 'archived');
     const head = accepted(await host.store.head('fixture-profile', 'fixture'));
-    const approval = await addressedFixture('approval', { action: 'rollback', artifactId: target.id, evaluationId: fixture.evaluation.id, expectedHead: head.head, reason: 'Synthetic rollback conformance.' });
+    const deployment = accepted(await host.store.get('deployments', fixture.servingDeployment.id))!;
+    const approval = await addressedFixture('approval', { action: 'rollback', artifactId: target.id, evaluationId: fixture.evaluation.id, expectedHead: head.head,
+      deploymentId: deployment.id, expectedDeploymentRevision: deployment.revision, reason: 'Synthetic rollback conformance.' });
     accepted(await host.store.put('approvals', approval));
-    const plan = accepted(planExperientialRollback({ head, artifact: target, evaluation: fixture.evaluation, approval }));
+    const plan = accepted(planExperientialRollback({ head, deployment, artifact: target, evaluation: fixture.evaluation, approval, reason: approval.reason }));
     const applied = accepted(await host.store.rollback(plan)); assert.equal(applied.head.versionId, target.id); assert.equal(applied.head.revision, 3);
     const replay = await host.store.rollback(plan); assert.ok(replay.ok); assert.equal(replay.writes, 0);
     assert.equal(accepted(await host.store.get('artifacts', second.artifact.id))?.state, 'archived');

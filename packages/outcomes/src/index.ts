@@ -6,7 +6,7 @@ export { adapterIdentity, domainValidator, checkedAdapter } from './domain.ts';
 export type { OutcomeStore, OutcomePersistence, OutcomeTransaction, Tables, Query, MemoryOutcomeStoreOptions } from './store.ts';
 export type { OutcomeAdapter, EvidenceResolver, EvaluationSlot, OutcomeHost, OutcomePrincipal, OutcomeProposer } from './adapters.ts';
 export type { OutcomeResult, OutcomeIssue } from './errors.ts';
-export { EMPTY_HEAD, planHeadTransition, assertCapacity, planPromotion, eligibilityIssues } from './transitions.ts';
+export { EMPTY_HEAD, assertHead, planHeadTransition, assertCapacity, planPromotion, eligibilityIssues } from './transitions.ts';
 export type * from './outcomes.contracts.gen.ts';
 export { createOutcomeService } from './service.ts';
 export type { OutcomeService, OutcomeServiceOptions } from './service.ts';

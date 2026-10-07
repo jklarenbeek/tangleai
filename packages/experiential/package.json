@@ -22,7 +22,9 @@
     "@jarenjs/validate": "0.91.4",
     "@tangleai/outcomes": "^0.39.0",
     "@jarenjs/contract": "0.91.4",
-    "@tangleai/documents": "^0.39.0"
+    "@tangleai/documents": "^0.39.0",
+    "@tangleai/config": "^0.39.0",
+    "@tangleai/models": "^0.39.0"
   },
   "private": false,
   "types": "./src/index.ts",

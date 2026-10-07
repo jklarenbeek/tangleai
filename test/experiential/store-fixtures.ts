@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { planExperienceTransition, planTrainingTransition, planArtifactTransition, planExperientialActivation,
-  planExperientialSelection, planExperientialDataset, planExperientialEvaluation, createExperientialEvaluation,
+  createExperientialDeployment, planExperientialSelection, planExperientialDataset, planExperientialEvaluation, createExperientialEvaluation,
   type ExperientialStore, type ExperientialStoreResult, type ExperientialWrite, type ExperientialArtifact, type ExperientialDataset,
   type ExperientialActivationPlan, type ExperientialMemoryState, type ExperientialPersistence } from '@tangleai/experiential';
 import { accepted, addressedFixture } from './identity-fixtures.ts';
@@ -34,6 +34,7 @@ export async function stagedCandidateFixture(store: ExperientialStore, dataset: 
     await step(() => store.transition(plan)); training = plan.after;
   }
   let artifact = await addressedFixture('artifact', { trainingRunId: training.id, baseArtifactId: base.id,
+    runtime: { ...base.runtime, servedModel: 'fixture-' + label },
     checksum: await canonicalSha256({ format: 'synthetic-state-conformance', label }), storageUri: 'memory:fixture/' + label });
   await step(() => store.put('artifacts', artifact));
   return { artifact, training };
@@ -59,7 +60,7 @@ export async function candidateFixture(store: ExperientialStore, dataset: Experi
 export async function experientialStoreFixture(store: ExperientialStore, step: ExperientialStep = direct) {
   const base = await addressedFixture('artifact', { kind: 'base', method: null, baseArtifactId: null, trainingRunId: null,
     checksum: await canonicalSha256({ fixture: 'synthetic-base' }), storageUri: 'memory:fixture/base',
-    runtime: { provider: 'fixture', base: 'memory:fixture/inference', servedModel: 'fixture-base' } });
+    runtime: { provider: 'fixture', base: 'https://inference.example.test/v1', servedModel: 'fixture-base' } });
   await step(() => store.put('artifacts', base));
   const inputs = await selectionFixture(1, 'fixture');
   const observed = inputs.experiences[0]; await step(() => store.put('experiences', observed));
@@ -72,29 +73,35 @@ export async function experientialStoreFixture(store: ExperientialStore, step: E
   const { dataset } = accepted(await planExperientialDataset(selection, datasetOptions()));
   await step(() => store.put('datasets', dataset));
   const candidate = await candidateFixture(store, dataset, base, 'first', step);
-  const deployment = await addressedFixture('deployment', { profile: 'fixture-base-preview', base: {
-    candidateId: 'fixture-base', provider: base.runtime.provider, base: base.runtime.base, model: base.runtime.servedModel, digest: base.checksum } });
+  const deploymentInput = { scope: base.scope, candidateId: 'fixture-base', baseArtifact: base, recordedAt: EXPERIENTIAL_FIXTURE_TIME,
+    operationalLimits: { maxFailureRate: 0.1, maxP95Ms: 200, window: 20 } };
+  const deployment = accepted(await createExperientialDeployment({ ...deploymentInput, profile: 'fixture-base-preview' }));
+  const servingDeployment = accepted(await createExperientialDeployment({ ...deploymentInput, profile: 'fixture-profile' }));
+  await step(() => store.put('deployments', servingDeployment));
   await step(() => store.put('deployments', deployment));
   const pin = await addressedFixture('inferencePin', { deploymentId: deployment.id, servedModel: base.runtime.servedModel });
-  await step(() => store.put('pins', pin));
+  await step(() => store.pin(pin));
   const retention = await addressedFixture('retentionDecision', { dependentArtifactId: candidate.artifact.id });
   await step(() => store.put('retention_decisions', retention));
   const head = await step(() => store.head('fixture-profile', 'fixture'));
-  const approval = await addressedFixture('approval', { artifactId: candidate.artifact.id, evaluationId: candidate.evaluation.id, expectedHead: head.head });
+  const approval = await addressedFixture('approval', { artifactId: candidate.artifact.id, evaluationId: candidate.evaluation.id, expectedHead: head.head,
+    deploymentId: servingDeployment.id, expectedDeploymentRevision: servingDeployment.revision });
   await step(() => store.put('approvals', approval));
-  const plan = accepted(planExperientialActivation({ head, artifact: candidate.artifact, evaluation: candidate.evaluation, approval }));
+  const plan = accepted(planExperientialActivation({ head, deployment: servingDeployment, artifact: candidate.artifact, evaluation: candidate.evaluation, approval }));
   const active = await step(() => store.activate(plan));
   assert.equal(active.head.versionId, candidate.artifact.id);
-  return { base, observed, experience, assessment, dataset, ...candidate, deployment, pin, retention, approval, plan, active };
+  return { base, observed, experience, assessment, dataset, ...candidate, deployment, servingDeployment: plan.nextDeployment, pin, retention, approval, plan, active };
 }
 
 export async function pendingActivation(store: ExperientialStore, fixture: Awaited<ReturnType<typeof experientialStoreFixture>>, label: string): Promise<ExperientialActivationPlan> {
   const candidate = await candidateFixture(store, fixture.dataset, fixture.base, label);
   const head = accepted(await store.head('fixture-profile', 'fixture'));
+  const deployment = accepted(await store.get('deployments', fixture.servingDeployment.id))!;
   const approval = await addressedFixture('approval', { artifactId: candidate.artifact.id, evaluationId: candidate.evaluation.id, expectedHead: head.head,
+    deploymentId: deployment.id, expectedDeploymentRevision: deployment.revision,
     principal: { ...fixture.approval.principal, id: 'fixture-operator-' + label } });
   accepted(await store.put('approvals', approval));
-  return accepted(planExperientialActivation({ head, artifact: candidate.artifact, evaluation: candidate.evaluation, approval }));
+  return accepted(planExperientialActivation({ head, deployment, artifact: candidate.artifact, evaluation: candidate.evaluation, approval }));
 }
 
 export async function replayImmutableState(store: ExperientialStore, state: ExperientialMemoryState) {

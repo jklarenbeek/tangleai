@@ -1776,6 +1776,22 @@
           "minLength": 1,
           "maxLength": 4096,
           "pattern": "\\S"
+        },
+        "deploymentId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "expectedDeploymentRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "rolloutFraction": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0,
+          "maximum": 1
         }
       },
       "required": [
@@ -1790,9 +1806,37 @@
         "evaluationId",
         "expectedHead",
         "principal",
-        "reason"
+        "reason",
+        "deploymentId",
+        "expectedDeploymentRevision",
+        "rolloutFraction"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "canary"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "rolloutFraction": {
+                "type": "number"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "rolloutFraction": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
     },
     "ExperientialDeployment": {
       "type": "object",
@@ -1904,6 +1948,30 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 9007199254740991
+        },
+        "baseArtifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "headRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "rollbackReason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operationalLimits": {
+          "$ref": "#/$defs/ExperientialOperationalLimits"
         }
       },
       "required": [
@@ -1919,9 +1987,75 @@
         "rolloutFraction",
         "expectedParentArtifactId",
         "approvalId",
-        "revision"
+        "revision",
+        "baseArtifactId",
+        "headRevision",
+        "rollbackReason",
+        "operationalLimits"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$le": [
+              "$.headRevision",
+              "$.revision"
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.canaryArtifactId",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$.canaryArtifactId",
+                  "$.activeArtifactId"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "canaryArtifactId": {
+                "type": "null"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "rolloutFraction": {
+                "const": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "canaryArtifactId": {
+                "$ref": "#/$defs/ExperientialId"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "rolloutFraction": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "ExperientialInferencePin": {
       "type": "object",
@@ -1976,6 +2110,9 @@
         },
         "canary": {
           "type": "boolean"
+        },
+        "capability": {
+          "$ref": "#/$defs/ExperientialInferenceCapability"
         }
       },
       "required": [
@@ -1990,9 +2127,51 @@
         "deploymentRevision",
         "artifactId",
         "servedModel",
-        "canary"
+        "canary",
+        "capability"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "capability": {
+                "properties": {
+                  "trainable": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "artifactId": {
+                "type": "null"
+              },
+              "canary": {
+                "const": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "canary": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "artifactId": {
+                "$ref": "#/$defs/ExperientialId"
+              }
+            }
+          }
+        }
+      ]
     },
     "ExperientialRetentionDecision": {
       "type": "object",
@@ -3806,6 +3985,115 @@
         "cost"
       ],
       "additionalProperties": false
+    },
+    "ExperientialOperationalLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxFailureRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "maxP95Ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "window": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "maxFailureRate",
+        "maxP95Ms",
+        "window"
+      ]
+    },
+    "ExperientialInferenceCapability": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trainable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "trainable"
+      ]
+    },
+    "ExperientialOperationalWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "deploymentId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "deploymentRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "failureRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "p95Ms": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "deploymentId",
+        "deploymentRevision",
+        "count",
+        "failureRate",
+        "p95Ms"
+      ]
+    },
+    "ExperientialRollbackIntent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "deploymentId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "deploymentRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expectedHead": {
+          "$ref": "#/$defs/ExperientialExpectedHead"
+        },
+        "targetArtifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        },
+        "observed": {
+          "$ref": "#/$defs/ExperientialOperationalWindow"
+        }
+      },
+      "required": [
+        "deploymentId",
+        "deploymentRevision",
+        "expectedHead",
+        "targetArtifactId",
+        "reason",
+        "observed"
+      ]
     }
   }
 }

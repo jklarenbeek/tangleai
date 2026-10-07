@@ -103,7 +103,7 @@
       },
       {
         "path": "benchmark/lib/cgt.types.ts",
-        "sha256": "85f884a6059e2b6bf61751ffe5bdb04776e07450a6875028d31387b20035cd9b"
+        "sha256": "ae9c58e13d90384fa4c2ce28212c4d43bc38509fbe69227957e31dfaecc921dc"
       },
       {
         "path": "benchmark/lib/config-conformance.ts",
@@ -1123,7 +1123,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "cf1961f0d47607bee6c2f59db68dd4c40c7bfb0ebd6cd548ec68568859f69add"
+        "sha256": "ddbdcfb85ce18f07d9f92ea85afa9039c6077332fa322c1c5c526c585687d641"
       },
       {
         "path": "package.json",
@@ -1703,7 +1703,7 @@
       },
       {
         "path": "packages/store/src/experiential-store.ts",
-        "sha256": "16f06487f3848c92bea2bd2021b2903aff53a1b14fbdcf453b348b2c5d5f25ba"
+        "sha256": "0a19a76428bf52a35f2bb0119abf72d07bbabb7b1c6c93a3906be10ae446de6d"
       },
       {
         "path": "packages/store/src/forecast-model.ts",
@@ -1842,7 +1842,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "7a4c19851f72757156d7522f356006194cb81136bebd064ae4d8543d2b91071f"
+    "sha256": "cf3314df3f2e58f9513645e7603eb510c7a7098941de7d5c79b151b15304eea6"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45307,5 +45307,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "deb2f077ebebc92236de8ecf9abea4c7127db4856ef472c6ccc6a6a8ada934b2"
+  "reportId": "d215c218c595cc39bd6d1766db06215127149ed1b3640d3d55cebaec51456b5b"
 }

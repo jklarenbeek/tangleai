@@ -1,5 +1,5 @@
 import type { ExperientialRecordMap, ExperientialRecordKind } from './schema.ts';
-import type { ExperientialIssue, ExperientialHead, ExperientialEvaluation } from './contracts.gen.ts';
+import type { ExperientialIssue, ExperientialHead, ExperientialEvaluation, ExperientialInferencePin } from './contracts.gen.ts';
 import type { ExperientialEvaluationPlan, ExperientialEvaluationResultPlan } from './evaluation.ts';
 import type { ExperientialActivationPlan, ExperientialTransitionPlan } from './lifecycle.ts';
 import type { ExperientialTrainingCommand } from './contracts.gen.ts';
@@ -17,7 +17,8 @@ export const EXPERIENTIAL_TABLES = Object.freeze(Object.keys(EXPERIENTIAL_TABLE_
 /** Trusted extension: all writes must roll back if task throws. */
 export interface ExperientialTransaction {
   get<K extends ExperientialTable>(table: K, id: string): Promise<ExperientialTables[K] | undefined>;
-  list<K extends ExperientialTable>(table: K, scope: string): Promise<ExperientialTables[K][]>;
+  /** A null scope is reserved for internal global uniqueness checks. */
+  list<K extends ExperientialTable>(table: K, scope: string | null): Promise<ExperientialTables[K][]>;
   put<K extends ExperientialTable>(table: K, value: ExperientialTables[K]): Promise<void>;
 }
 export interface ExperientialPersistence {
@@ -36,6 +37,7 @@ export interface ExperientialStore {
   training(runId: string, expectedRevision: number, command: ExperientialTrainingCommand): Promise<ExperientialStoreResult<ExperientialTrainingUpdate>>;
   startEvaluation(plan: ExperientialEvaluationPlan): Promise<ExperientialStoreResult<ExperientialEvaluationPlan>>;
   recordEvaluation(evaluation: ExperientialEvaluation): Promise<ExperientialStoreResult<ExperientialEvaluationResultPlan>>;
+  pin(pin: ExperientialInferencePin): Promise<ExperientialStoreResult<ExperientialInferencePin>>;
   head(profile: string, scope: string): Promise<ExperientialStoreResult<ExperientialHead>>;
   activate(plan: ExperientialActivationPlan): Promise<ExperientialStoreResult<ExperientialHead>>;
   rollback(plan: ExperientialActivationPlan): Promise<ExperientialStoreResult<ExperientialHead>>;

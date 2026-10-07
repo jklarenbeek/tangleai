@@ -2483,27 +2483,22 @@ export interface Experiential_ExperientialTrainingRun {
 }
 
 
-export interface Experiential_ExperientialApproval {
-  document: "experiential-approval";
-  schemaVersion: 1;
-  id: Experiential_ExperientialId;
-  scope: Experiential_ExperientialScope;
-  recordedAt: Experiential_ExperientialTime;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
-   */
-  profile: string;
-  action: "activate" | "canary" | "rollback";
-  artifactId: Experiential_ExperientialId;
-  evaluationId: Experiential_ExperientialId;
-  expectedHead: Experiential_ExperientialExpectedHead;
-  principal: Experiential_ExperientialPrincipal;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
-   */
-  reason: string;
-}
+/**
+ * Schema constraints this type cannot express: if={"properties":{"action":{"const":"canary"}}}, then={"properties":{"rolloutFraction":{"type":"number"}}}, else={"properties":{"rolloutFraction":{"type":"null"}}}
+ */
+export type Experiential_ExperientialApprovalPart1 = unknown;
 
+export type Experiential_ExperientialApproval = Experiential_ExperientialApprovalPart1 & { document: "experiential-approval"; schemaVersion: 1; id: Experiential_ExperientialId; scope: Experiential_ExperientialScope; recordedAt: Experiential_ExperientialTime; profile: string; action: "activate" | "canary" | "rollback"; artifactId: Experiential_ExperientialId; evaluationId: Experiential_ExperientialId; expectedHead: Experiential_ExperientialExpectedHead; principal: Experiential_ExperientialPrincipal; reason: string; deploymentId: Experiential_ExperientialId; expectedDeploymentRevision: number; rolloutFraction: number | null; };
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"canaryArtifactId":{"type":"null"}}}, then={"properties":{"rolloutFraction":{"const":0}}}
+ */
+export type Experiential_ExperientialDeploymentPart1 = unknown;
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"canaryArtifactId":{"$ref":"#/$defs/Experiential_ExperientialId"}}}, then={"properties":{"rolloutFraction":{"type":"number","exclusiveMinimum":0,"maximum":1}}}
+ */
+export type Experiential_ExperientialDeploymentPart2 = unknown;
 
 export interface Experiential_ExperientialDeploymentBase {
   /**
@@ -2523,56 +2518,48 @@ export interface Experiential_ExperientialDeploymentBase {
 }
 
 
-export interface Experiential_ExperientialDeployment {
-  document: "experiential-deployment";
-  schemaVersion: 1;
-  id: Experiential_ExperientialId;
-  scope: Experiential_ExperientialScope;
-  recordedAt: Experiential_ExperientialTime;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
-   */
-  profile: string;
-  base: Experiential_ExperientialDeploymentBase;
-  activeArtifactId: Experiential_ExperientialId | null;
-  canaryArtifactId: Experiential_ExperientialId | null;
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+ */
+export type Experiential_ExperientialDeploymentRollbackReasonAnyOf1 = string;
+
+export interface Experiential_ExperientialOperationalLimits {
   /**
    * Schema constraints this type cannot express: minimum=0, maximum=1
    */
-  rolloutFraction: number;
-  expectedParentArtifactId: Experiential_ExperientialId | null;
-  approvalId: Experiential_ExperientialId | null;
+  maxFailureRate: number;
   /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   * Schema constraints this type cannot express: minimum=0
    */
-  revision: number;
+  maxP95Ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  window: number;
 }
 
 
-export interface Experiential_ExperientialInferencePin {
-  document: "experiential-inference-pin";
-  schemaVersion: 1;
-  id: Experiential_ExperientialId;
-  scope: Experiential_ExperientialScope;
-  recordedAt: Experiential_ExperientialTime;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
-   */
-  runId: string;
-  identityId: Experiential_ExperientialId;
-  deploymentId: Experiential_ExperientialId;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  deploymentRevision: number;
-  artifactId: Experiential_ExperientialId | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
-   */
-  servedModel: string;
-  canary: boolean;
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.headRevision","$.revision"]},{"$or":[{"$eq":["$.canaryArtifactId",null]},{"$ne":["$.canaryArtifactId","$.activeArtifactId"]}]}]}
+ */
+export type Experiential_ExperientialDeployment = Experiential_ExperientialDeploymentPart1 & Experiential_ExperientialDeploymentPart2 & { document: "experiential-deployment"; schemaVersion: 1; id: Experiential_ExperientialId; scope: Experiential_ExperientialScope; recordedAt: Experiential_ExperientialTime; profile: string; base: Experiential_ExperientialDeploymentBase; activeArtifactId: Experiential_ExperientialId | null; canaryArtifactId: Experiential_ExperientialId | null; rolloutFraction: number; expectedParentArtifactId: Experiential_ExperientialId | null; approvalId: Experiential_ExperientialId | null; revision: number; baseArtifactId: Experiential_ExperientialId; headRevision: number; rollbackReason: Experiential_ExperientialDeploymentRollbackReasonAnyOf1 | null; operationalLimits: Experiential_ExperientialOperationalLimits; };
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"capability":{"properties":{"trainable":{"const":false}}}}}, then={"properties":{"artifactId":{"type":"null"},"canary":{"const":false}}}
+ */
+export type Experiential_ExperientialInferencePinPart1 = unknown;
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"canary":{"const":true}}}, then={"properties":{"artifactId":{"$ref":"#/$defs/Experiential_ExperientialId"}}}
+ */
+export type Experiential_ExperientialInferencePinPart2 = unknown;
+
+export interface Experiential_ExperientialInferenceCapability {
+  trainable: boolean;
 }
 
+
+export type Experiential_ExperientialInferencePin = Experiential_ExperientialInferencePinPart1 & Experiential_ExperientialInferencePinPart2 & { document: "experiential-inference-pin"; schemaVersion: 1; id: Experiential_ExperientialId; scope: Experiential_ExperientialScope; recordedAt: Experiential_ExperientialTime; runId: string; identityId: Experiential_ExperientialId; deploymentId: Experiential_ExperientialId; deploymentRevision: number; artifactId: Experiential_ExperientialId | null; servedModel: string; canary: boolean; capability: Experiential_ExperientialInferenceCapability; };
 
 /**
  * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
@@ -2733,5 +2720,42 @@ export interface Experiential_ExperientialTrainingCommandAnyOf10Verification {
 
 
 export type Experiential_ExperientialTrainingCommand = { kind: "begin"; } | { kind: "selected"; } | Experiential_ExperientialTrainingCommandAnyOf3 | { kind: "reserve"; } | { kind: "submitted"; job: Experiential_BackendJob; } | { kind: "uncertain"; } | { kind: "poll-reserve"; } | Experiential_ExperientialTrainingCommandAnyOf8 | { kind: "materialized"; receipt: Experiential_ArtifactReceipt; } | { kind: "verified"; verification: Experiential_ExperientialTrainingCommandAnyOf10Verification; } | { kind: "register"; } | { kind: "fail"; code: "TEXP1001" | "TEXP1002" | "TEXP1003" | "TEXP1004" | "TEXP1005" | "TEXP1006" | "TEXP1007" | "TEXP1008" | "TEXP1009" | "TEXP1010" | "TEXP1011" | "TEXP1012"; reason: "capability" | "dataset" | "record-budget" | "byte-budget" | "wall-budget" | "poll-budget" | "backend-failed" | "backend-receipt" | "backend-protocol" | "artifact-verification" | "spend-budget" | "clock-regression"; } | { kind: "cancel"; };
+
+export interface Experiential_ExperientialOperationalWindow {
+  deploymentId: Experiential_ExperientialId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  deploymentRevision: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  count: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  failureRate: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  p95Ms: number;
+}
+
+
+export interface Experiential_ExperientialRollbackIntent {
+  deploymentId: Experiential_ExperientialId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  deploymentRevision: number;
+  expectedHead: Experiential_ExperientialExpectedHead;
+  targetArtifactId: Experiential_ExperientialId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  reason: string;
+  observed: Experiential_ExperientialOperationalWindow;
+}
+
 
 export type CgtDocuments = CgtReport;
