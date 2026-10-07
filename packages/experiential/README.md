@@ -18,17 +18,19 @@ review cannot rewrite the provenance of an existing dataset.
 
 `createExperientialMemoryStore({ now })` and the store package's
 `createExperientialDbStore(db, { now })` execute the same checks through one
-atomic transaction seam. Explicit transition plans enforce the experience,
-training and artifact state edges. Activation and rollback require a matching
+atomic transaction seam. Explicit commands enforce the experience, training,
+evaluation and artifact state edges. Activation and rollback require a matching
 approval, evaluation and native outcome compare-and-swap head; the head and its
 event publish with the artifact transitions. A replay returns the original
 result without writes. An artifact can be active in one profile at a time;
 rollback requires that profile's retained activation history. Published write
 and activation counters exclude rolled-back transactions.
 
-The evaluation records are contract shells at this boundary. The synthetic
-persistence fixture uses those shells to test transactions; it does not train a
-model, establish a scientific gate result or authorize a production deployment.
+Evaluation registrations freeze the policy, dataset, baseline, evaluator,
+question-set identity, sample count and expected deployment head before a run.
+The synthetic persistence fixture supplies explicit recorded-value conformance
+observations; it does not train a model, establish a scientific learning result
+or authorize a production deployment.
 Ordinary deployment and inference-pin admission currently supports registered
 base models only. The raw persistence adapter is a trusted extension, not a
 public approval or evaluation authority.
@@ -156,3 +158,34 @@ and the shared document response reader own the transport primitives. The host
 owns its trainer, durable service ledger, network policy and inference endpoint.
 The CGT `--live --train` command renders a frozen, credential-free plan with zero
 requests; live training and learned quality remain unmeasured.
+
+`planExperientialEvaluation` creates a detached registration and moves a staged
+learned artifact to `evaluating`. The policy and dataset must already exist when
+`store.startEvaluation(plan)` commits the registration and event atomically.
+`reviseGatePolicy` uses the native guarded refiner to validate and publish a new
+immutable policy; an existing registration keeps its original policy identity.
+
+`evaluateExperientialGates` compares recorded observations only. Both registered
+paired-bootstrap lower bounds must strictly exceed zero. All five rows, four
+retention lanes, registered security fixtures and bounded operational values
+are required. A missing, failed or unmeasured required value cannot pass. The
+instrument owns statistical computation; the package never recalculates a
+mean or bootstrap interval while deciding eligibility.
+
+`createExperientialEvaluation` binds those observations to the registration,
+fills missing required rows with explicit `not-run` results and seals the
+decision. `recordExperientialEvaluation` checks the retained bindings, receipt
+and decision and returns a pure result plan. `store.recordEvaluation(record)`
+rechecks and atomically writes the evaluation, artifact state and event. Failed
+gates remain retained as `rejected`, with `TEXP1010` issues. Passing records
+yield `approved`; **approved is not active**. Generic record writes or artifact
+transition plans cannot bypass these commands. A migration experiment may
+compare different base identities but can never approve a candidate.
+
+The [CGT report](../../docs/CGT_BENCHMARK.md) publishes five scripted candidate
+evaluations. Its rule follower ties the perfect frozen rule control, and both
+required LoCoMo chat regression lanes remain `not-run`. Every scripted candidate
+therefore remains rejected. `benchmark:cgt -- --require gates --check` verifies
+registered mechanism measurements and report reproduction; it makes no claim
+of learned quality, trained weights or deployment approval. Fixture cost and
+injected-clock observations are labelled separately from model performance.

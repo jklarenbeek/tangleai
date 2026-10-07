@@ -1,5 +1,6 @@
 import type { ExperientialRecordMap, ExperientialRecordKind } from './schema.ts';
-import type { ExperientialIssue, ExperientialHead } from './contracts.gen.ts';
+import type { ExperientialIssue, ExperientialHead, ExperientialEvaluation } from './contracts.gen.ts';
+import type { ExperientialEvaluationPlan, ExperientialEvaluationResultPlan } from './evaluation.ts';
 import type { ExperientialActivationPlan, ExperientialTransitionPlan } from './lifecycle.ts';
 import type { ExperientialTrainingCommand } from './contracts.gen.ts';
 import type { ExperientialTrainingUpdate } from './training.ts';
@@ -33,6 +34,8 @@ export interface ExperientialStore {
   putBatch(writes: readonly ExperientialWrite[]): Promise<ExperientialStoreResult<ExperientialWrite[]>>;
   transition(plan: ExperientialTransitionPlan, options?: { evaluationId?: string }): Promise<ExperientialStoreResult<ExperientialTransitionPlan>>;
   training(runId: string, expectedRevision: number, command: ExperientialTrainingCommand): Promise<ExperientialStoreResult<ExperientialTrainingUpdate>>;
+  startEvaluation(plan: ExperientialEvaluationPlan): Promise<ExperientialStoreResult<ExperientialEvaluationPlan>>;
+  recordEvaluation(evaluation: ExperientialEvaluation): Promise<ExperientialStoreResult<ExperientialEvaluationResultPlan>>;
   head(profile: string, scope: string): Promise<ExperientialStoreResult<ExperientialHead>>;
   activate(plan: ExperientialActivationPlan): Promise<ExperientialStoreResult<ExperientialHead>>;
   rollback(plan: ExperientialActivationPlan): Promise<ExperientialStoreResult<ExperientialHead>>;

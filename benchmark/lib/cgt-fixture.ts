@@ -2,11 +2,12 @@
 import { mulberry32, drawDistinct, shuffle } from '@jarenjs/core/random';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { runIdentitySchema } from '@tangleai/config';
+import { experientialSchema } from '@tangleai/experiential';
 import schema from '../schemas/cgt.schema.json' with { type: 'json' };
 import { createReportValidator } from './validate.ts';
 import type { CgtFixture, CgtItem, CgtManifest, CgtRule, CgtReport } from './cgt.types.ts';
 
-const validator = (name: string) => createReportValidator({ ...schema, $ref: '#/$defs/' + name }, [runIdentitySchema]);
+const validator = (name: string) => createReportValidator({ ...schema, $ref: '#/$defs/' + name }, [runIdentitySchema, experientialSchema]);
 const manifestValid = validator('CgtManifest'), ruleValid = validator('CgtRule'), fixtureValid = validator('CgtFixture');
 export const CGT_GUARD_CODES = ['holdout-shares-experience', 'validation-retrievable', 'poison-in-partition', 'cross-scope-in-partition'] as const;
 export const CGT_PARTITIONS = ['exact-pair', 'paraphrase', 'novel', 'retention'] as const;

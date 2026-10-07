@@ -35,7 +35,8 @@ it('lifecycle and measured cost do not change ancestry, but scientific inputs an
   assert.equal(await experientialRecordId('artifact', { ...artifact, state: 'active' }), artifact.id);
   assert.notEqual(await experientialRecordId('artifact', { ...artifact, checksum: 'f'.repeat(64) }), artifact.id);
   const cost = { calls: 1, promptTokens: 3, completionTokens: 4, ms: 5, amount: 0.2 };
-  const evaluation = await addressedFixture('evaluation', { rows: [{ rowId: 'candidate-no-retrieval', status: 'run', cgc: 0.5, retention: 1, failures: 0, cost, identityId: experience.producingIdentityId }] });
+  const evaluation = await addressedFixture('evaluation', { rows: experientialSchemaFixtures().evaluation.rows.map(row => ({ ...row,
+    status: 'run', cgc: 0.5, retention: 1, samples: 32, cost, identityId: experience.producingIdentityId })) });
   assert.equal(await experientialRecordId('evaluation', { ...evaluation, cost,
     rows: evaluation.rows.map(row => ({ ...row, cost: { ...cost, ms: 999, calls: 5 } })) }), evaluation.id);
   assert.notEqual(await experientialRecordId('evaluation', { ...evaluation, rows: evaluation.rows.map(row => ({ ...row, cgc: 1 })) }), evaluation.id);

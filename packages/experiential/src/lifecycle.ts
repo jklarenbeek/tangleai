@@ -82,6 +82,9 @@ function activation(input: ExperientialActivationInput, action: 'activate' | 'ro
   if (p.action !== action || p.artifactId !== a.id || p.evaluationId !== e.id || e.artifactId !== a.id
     || !e.passed || e.failures.length || !p.reason.trim())
     return refuseExperiential('TEXP1006', '/approval', 'The approval must bind a passing evaluation of this artifact and action.');
+  if (!a.evaluationRegistration || a.evaluationRegistration.id !== e.registrationId || e.profile !== h.profile
+    || action !== 'rollback' && (e.expectedHead.versionId !== p.expectedHead.versionId || e.expectedHead.revision !== p.expectedHead.revision))
+    return refuseExperiential('TEXP1002', '/evaluation', 'Activation must bind the registered evaluation, profile and expected head.');
   if (action === 'activate' ? !['approved', 'canary'].includes(a.state) : a.state !== 'archived')
     return refuseExperiential('TEXP1006', '/artifact/state', 'The target is not in a state eligible for this action.');
   if (h.head.versionId === a.id) return refuseExperiential('TEXP1006', '/artifactId', 'The target is already active.');

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "licence": "MIT",
+  "provenance": "Tangle-authored scripted base-capability conformance; not model quality",
+  "queries": [
+    { "id": "upper-alpha", "operation": "upper", "input": "alpha", "truth": "ALPHA" },
+    { "id": "upper-beta", "operation": "upper", "input": "beta", "truth": "BETA" },
+    { "id": "upper-gamma", "operation": "upper", "input": "gamma", "truth": "GAMMA" },
+    { "id": "lower-delta", "operation": "lower", "input": "DELTA", "truth": "delta" },
+    { "id": "lower-epsilon", "operation": "lower", "input": "EPSILON", "truth": "epsilon" },
+    { "id": "lower-zeta", "operation": "lower", "input": "ZETA", "truth": "zeta" },
+    { "id": "reverse-abc", "operation": "reverse", "input": "abc", "truth": "cba" },
+    { "id": "reverse-tangle", "operation": "reverse", "input": "tangle", "truth": "elgnat" },
+    { "id": "reverse-memory", "operation": "reverse", "input": "memory", "truth": "yromem" },
+    { "id": "length-orbit", "operation": "length", "input": "orbit", "truth": "5" },
+    { "id": "length-source", "operation": "length", "input": "source", "truth": "6" },
+    { "id": "length-evidence", "operation": "length", "input": "evidence", "truth": "8" }
+  ]
+}

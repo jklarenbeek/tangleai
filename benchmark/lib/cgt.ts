@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { deepFreeze, equalsJson } from '@jarenjs/core/object';
 import { runIdentitySchema } from '@tangleai/config';
-import { readTrainingEnv } from '@tangleai/experiential';
+import { readTrainingEnv, experientialSchema } from '@tangleai/experiential';
 import schema from '../schemas/cgt.schema.json' with { type: 'json' };
 import { generateCgtFixture, validateCgtFixture, renderCgtRule } from './cgt-fixture.ts';
 import { CGT_LIVE_ROWS, CGT_ROW_IDS, measureCgtRows } from './cgt-rows.ts';
@@ -14,6 +14,8 @@ import { analyticEnvelope } from './report-envelope.ts';
 import { sourceManifest } from './source-manifest.ts';
 import { createReportValidator } from './validate.ts';
 import { table, score } from './table.ts';
+import { measureCgtCandidates, validateCgtCandidates } from './cgt-evaluation.ts';
+import { CGT_EVALUATION_FIXTURE_FILES, cgtGateMechanismsMeasured } from './cgt-evaluation-fixtures.ts';
 import type { CgtFixture, CgtManifest, CgtReport, CgtSource } from './cgt.types.ts';
 
 export const REPORT_PATH = 'benchmark/results/cgt.json';
@@ -24,9 +26,10 @@ export const SOURCE_FILES = ['package.json', 'package-lock.json', MANIFEST_PATH,
   'benchmark/lib/cgt.types.ts', 'benchmark/schemas/cgt.schema.json', 'scripts/cgt-schema.ts',
   'benchmark/lib/source-manifest.ts', 'benchmark/lib/report-envelope.ts', 'benchmark/lib/validate.ts',
   'benchmark/lib/args.ts', 'benchmark/lib/table.ts', 'benchmark/lib/locomo-parity.ts', 'benchmark/lib/porter.ts',
-  'benchmark/lib/ai-env.ts', 'apps/desktop/src/ai-host.ts'];
+  'benchmark/lib/ai-env.ts', 'apps/desktop/src/ai-host.ts', 'benchmark/lib/cgt-evaluation.ts',
+  'benchmark/lib/cgt-evaluation-fixtures.ts', 'benchmark/lib/cgt-experiences.ts', 'benchmark/lib/locomo-policy.ts', ...CGT_EVALUATION_FIXTURE_FILES];
 export const SOURCE_ROOTS = ['packages/core', 'packages/config', 'packages/context', 'packages/models', 'packages/memory', 'packages/experiential'];
-export const validateCgtReportShape = createReportValidator(schema, [runIdentitySchema]);
+export const validateCgtReportShape = createReportValidator(schema, [runIdentitySchema, experientialSchema]);
 
 export async function loadCgtFixture(root: string, options: { seed?: number; sessions?: number } = {}): Promise<CgtFixture> {
   const manifest = JSON.parse(await readFile(join(root, MANIFEST_PATH), 'utf8')) as CgtManifest;
@@ -34,7 +37,7 @@ export async function loadCgtFixture(root: string, options: { seed?: number; ses
   if (options.sessions !== undefined) manifest.sessions = options.sessions;
   return generateCgtFixture(manifest);
 }
-function capabilitiesOf(rows: CgtReport['rows'], band: CgtReport['registration']['chanceBand']): CgtReport['capabilities'] {
+function capabilitiesOf(rows: CgtReport['rows'], band: CgtReport['registration']['chanceBand'], evaluations: CgtReport['evaluations']): CgtReport['capabilities'] {
   const row = (id: string) => rows.find(value => value.rowId === id)!;
   const inBand = (n: number | null) => n !== null && n >= band.low && n <= band.high;
   const oracle = ['cgc', 'seenPair', 'paraphrase', 'retention'].every(key => row('oracle')[key as 'cgc'] === 1)
@@ -42,7 +45,7 @@ function capabilitiesOf(rows: CgtReport['rows'], band: CgtReport['registration']
   return { oracle, scripted: oracle && inBand(row('seeded-random').cgc) && inBand(row('scripted-memorizer').cgc)
     && row('scripted-memorizer').seenPair === 1 && row('scripted-retrieval').seenPair === 1 && row('scripted-rule-follower').cgc === 1
     && row('scripted-rule-follower').bySession.every(session => session.cgc === 1),
-  live: rows.some(value => value.tier === 'live' && value.status === 'run') };
+  live: rows.some(value => value.tier === 'live' && value.status === 'run'), gates: cgtGateMechanismsMeasured(evaluations) };
 }
 async function measuredSource(root: string, supplied?: CgtSource): Promise<CgtSource> {
   const current = await sourceManifest(root, SOURCE_FILES, SOURCE_ROOTS);
@@ -59,7 +62,7 @@ async function measuredSource(root: string, supplied?: CgtSource): Promise<CgtSo
   return current;
 }
 
-export async function validateCgtReport(value: unknown): Promise<CgtReport> {
+export async function validateCgtReport(value: unknown, root = process.cwd()): Promise<CgtReport> {
   const validation = validateCgtReportShape(value);
   if (!validation.valid) throw Error('cgt report schema: ' + JSON.stringify(validation.errors));
   const report = value as CgtReport, { reportId, ...body } = report;
@@ -83,7 +86,7 @@ export async function validateCgtReport(value: unknown): Promise<CgtReport> {
     || !equalsJson(report.registration.experiencePrefixes, prefixes) || report.registration.poisonTraces !== fixture.poison.length
     || report.registration.crossScopeTraces !== fixture.crossScope.length) throw Error('cgt report: census mismatch');
   const band = cgtChanceBand(expectedPartitions.novel, fixture.manifest.answerVocabulary);
-  if (!equalsJson(report.registration.chanceBand, band) || !equalsJson(report.capabilities, capabilitiesOf(report.rows, band))) throw Error('cgt report: unsupported capability or chance band');
+  if (!equalsJson(report.registration.chanceBand, band) || !equalsJson(report.capabilities, capabilitiesOf(report.rows, band, report.evaluations))) throw Error('cgt report: unsupported capability or chance band');
   for (const row of report.rows) {
     if (row.seeds.fixture !== fixture.manifest.seed || row.seeds.random !== fixture.manifest.seed + 1) throw Error('cgt report: seed mismatch');
     if (row.status === 'not-run') continue;
@@ -117,6 +120,7 @@ export async function validateCgtReport(value: unknown): Promise<CgtReport> {
       || (alpha.status === 'run' && (alpha.accuracy === null || alpha.nonDiscriminating !== (alpha.accuracy >= fixture.manifest.discriminationCeiling))))
       throw Error('cgt report: invalid discrimination evidence');
   }
+  await validateCgtCandidates(report, fixture, root);
   return report;
 }
 
@@ -126,9 +130,11 @@ export async function buildCgtReport(options: { root?: string; seed?: number; se
   const fixture = options.fixture ? structuredClone(options.fixture) : await loadCgtFixture(root, options);
   const guards = await validateCgtFixture(fixture);
   const rows = await measureCgtRows(fixture, options.rows), measured = rows[0];
+  const source = await measuredSource(root, options.source);
+  const candidates = await measureCgtCandidates(root, fixture, await canonicalSha256(source.files));
   const [tangle, jaren] = await Promise.all(['package.json', 'node_modules/@jarenjs/core/package.json'].map(async path => JSON.parse(await readFile(join(root, path), 'utf8')) as { version: string }));
   const body: Omit<CgtReport, 'reportId'> = {
-    benchmark: 'cgt', schemaVersion: 1, source: await measuredSource(root, options.source),
+    benchmark: 'cgt', schemaVersion: 1, source, ...candidates,
     registration: { manifest: fixture.manifest, manifestDigest: await canonicalSha256(fixture.manifest), fixtureId: fixture.fixtureId,
       ruleDigest: await canonicalSha256(renderCgtRule(fixture.rule)), concepts: fixture.rule.concepts.length,
       pairs: fixture.manifest.concepts * (fixture.manifest.concepts - 1) / 2, covered: fixture.coveredPairs.length,
@@ -141,21 +147,26 @@ export async function buildCgtReport(options: { root?: string; seed?: number; se
       rowId: rowId as CgtReport['alpha'][number]['rowId'], status: 'not-run', K: fixture.manifest.retrievalK,
       accuracy: null, nonDiscriminating: false, reason: 'Frozen model not measured; discrimination is unestablished.' })),
     nonDiscriminatingFixtures: 0, guards, envelope: analyticEnvelope(CGT_ROW_IDS),
-    capabilities: capabilitiesOf(rows, cgtChanceBand(measured.sampleCount.novel, fixture.manifest.answerVocabulary)),
+    capabilities: capabilitiesOf(rows, cgtChanceBand(measured.sampleCount.novel, fixture.manifest.answerVocabulary), candidates.evaluations),
     limitations: [
       'Primary CGC is accuracy conditional on novel unordered pairs, not the paper’s uniform-all-pairs CGC.',
       'Sessions demonstrate single concepts and covered compositions; this is not isolation-only exposure.',
       'The authored oracle and supplied rule reach the ceiling; neither establishes learned parameter quality.',
       'All answers are one of exactly 32 registered tokens; random answers remain fixed across session prefixes.',
       'Hash-trigram retrieval embeds the canonical pair/input key, uses native cosine ranking and stable experience-id ties, then performs exact lookup among at most K records.',
-      'No provider or trainer ran. Every identity status is not-run; cost, training, live quality and alpha(K) remain unmeasured.',
+      'No provider or trainer ran. Every provider-envelope identity status is not-run; provider cost, training, live quality and alpha(K) remain unmeasured.',
       'Live planning has no executor. Matching authorization cannot train, infer, activate, or establish a learning claim.',
+      'Candidate evaluations are scripted conformance. Resolved scripted identities identify their configuration; the provider envelope remains not-run.',
+      'The rule follower ties the perfect frozen rule control. A strict learning gate rejects that tie, and both required LoCoMo chat regression lanes remain not-run and fail retention.',
+      'Candidate fixture bytes and training ancestry placeholders are authored inputs, not trained weights or completed training jobs. Artifact states in this report are pure planned decisions, without persistence or activation.',
+      'Scripted operations use an injected fixed clock and zero training submissions: their zero milliseconds and zero external spend are fixture accounting, not measured trainer or model performance.',
+      'Each evaluation reportId addresses its retained candidate evidence block, avoiding a circular identity with this enclosing report. All paired bootstrap intervals use the shared instrument implementation.',
     ],
   };
-  return validateCgtReport({ ...body, reportId: await canonicalSha256(body) });
+  return validateCgtReport({ ...body, reportId: await canonicalSha256(body) }, root);
 }
 export async function verifyCgtReport(value: unknown, root = process.cwd()): Promise<CgtReport> {
-  const report = await validateCgtReport(value);
+  const report = await validateCgtReport(value, root);
   const fresh = await buildCgtReport({ root, source: report.source, seed: report.registration.manifest.seed, sessions: report.registration.sessions });
   if (!equalsJson(report, fresh)) throw Error('cgt report: independent row execution differs');
   return report;
@@ -179,6 +190,26 @@ export function renderDocument(report: CgtReport): string {
       rows: report.rows.filter(row => row.status === 'run').map(row => [row.rowId, ...row.bySession.map(session => score(session.cgc))]) })
     + '\n\n' + table({ head: ['Guard', 'Checked', 'Violations'], rows: report.guards.map(guard => [guard.code, guard.checked, guard.violations]) })
     + `\n\nThe ${r.poisonTraces} poison and ${r.crossScopeTraces} foreign-scope traces are isolated controls; neither is admitted as experience or evaluation truth. All frozen alpha(K) rows are not-run; the ${r.manifest.discriminationCeiling} discrimination ceiling has not been tested on a model.\n\n`
+    + `## Registered candidate gates\n\nPolicy \`${report.evaluationContext.policy.id}\`; dataset \`${report.evaluationContext.dataset.id}\`; evaluator \`${report.evaluationContext.evaluatorRevision}\`. These scripted results keep training and activation experimental and off.\n\n`
+    + table({ head: ['Candidate', 'Novel CGC', 'Interval vs retrieval', 'Interval vs rule', 'CGT replay drop', 'Base replay drop', 'LoCoMo recall / QA', 'Failing gates', 'Planned state', 'Bytes'],
+      rows: report.evaluations.map(value => { const e = value.evaluation; return [value.candidateId, score(e.rows[4].cgc),
+        `[${e.interval[0].low}, ${e.interval[0].high}]`, `[${e.interval[1].low}, ${e.interval[1].high}]`,
+        score(e.retention[0].drop), score(e.retention[1].drop), e.retention.slice(2).map(lane => lane.status).join(' / '),
+        [...new Set(e.failures.map(failure => failure.gate))].join(', ') || 'none', value.plannedState, e.operations.artifactBytes]; }) })
+    + '\n\n' + table({ head: ['Candidate', 'Control', 'Resamples', 'Seed', 'Pairs', 'Lower', 'Upper'],
+      rows: report.evaluations.flatMap(value => value.evaluation.interval.map(interval => [value.candidateId, interval.control,
+        interval.resamples, interval.seed, interval.pairs, interval.low, interval.high])) })
+    + '\n\n' + table({ head: ['Candidate', 'Gate', 'Refusal', 'Observed', 'Tolerance'], rows: report.evaluations.flatMap(value =>
+      value.evaluation.failures.map(failure => [value.candidateId, failure.gate, failure.detail, failure.observed, failure.tolerance])) })
+    + '\n\n' + table({ head: ['Candidate', 'Security fixture', 'Outcome'], rows: report.evaluations.flatMap(value =>
+      value.evaluation.security.map(result => [value.candidateId, result.fixtureId, result.outcome])) })
+    + '\n\nScripted accounting (authored fixture bytes, zero trainer work, injected clock; these are not model-performance measurements):\n\n'
+    + table({ head: ['Candidate', 'Artifact bytes', 'Training ms', 'Inference p95 ms', 'Failure rate', 'Cost'],
+      rows: report.evaluations.map(value => { const o = value.evaluation.operations;
+        return [value.candidateId, o.artifactBytes, o.trainingMs, o.inferenceP95Ms, o.failureRate, o.cost]; }) })
+    + `\n\nLive evaluation: **${report.evaluationContext.live.status}**. ${report.evaluationContext.live.reason} `
+    + 'Zero forbidden training/validation/holdout items remain in each candidate retrieval store, and candidate rows retrieve zero items. '
+    + 'Cost and latency are scripted accounting with an injected clock; no model or trainer performance is claimed. Every evidence block retains the observations and its own report identity.\n\n'
     + report.limitations.map(value => '- ' + value).join('\n') + '\n';
 }
 

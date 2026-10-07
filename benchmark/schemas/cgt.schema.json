@@ -1137,12 +1137,16 @@
             },
             "live": {
               "type": "boolean"
+            },
+            "gates": {
+              "type": "boolean"
             }
           },
           "required": [
             "oracle",
             "scripted",
-            "live"
+            "live",
+            "gates"
           ],
           "additionalProperties": false
         },
@@ -1157,6 +1161,17 @@
         "reportId": {
           "type": "string",
           "pattern": "^[0-9a-f]{64}$"
+        },
+        "evaluations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtCandidateEvaluation"
+          },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "evaluationContext": {
+          "$ref": "#/$defs/CgtEvaluationContext"
         }
       },
       "required": [
@@ -1172,7 +1187,9 @@
         "envelope",
         "capabilities",
         "limitations",
-        "reportId"
+        "reportId",
+        "evaluations",
+        "evaluationContext"
       ],
       "additionalProperties": false,
       "$query": {
@@ -1677,9 +1694,558 @@
                 "live"
               ]
             ]
+          },
+          {
+            "$eq": [
+              [
+                "$.evaluations[*].candidateId"
+              ],
+              [
+                "candidate-memorizer",
+                "candidate-rule-follower",
+                "candidate-forgetting",
+                "candidate-tainted",
+                "candidate-oversized"
+              ]
+            ]
           }
         ]
       }
+    },
+    "CgtBaseReplayQuery": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "operation": {
+          "enum": [
+            "upper",
+            "lower",
+            "reverse",
+            "length"
+          ]
+        },
+        "input": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "truth": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "id",
+        "operation",
+        "input",
+        "truth"
+      ],
+      "additionalProperties": false
+    },
+    "CgtBaseReplayFixture": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "licence": {
+          "const": "MIT"
+        },
+        "provenance": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtBaseReplayQuery"
+          },
+          "minItems": 12,
+          "maxItems": 12
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "licence",
+        "provenance",
+        "queries"
+      ],
+      "additionalProperties": false
+    },
+    "CgtSecurityFixture": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "input": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "attackAnswer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "input",
+        "expected",
+        "attackAnswer"
+      ],
+      "additionalProperties": false
+    },
+    "CgtSecurityFixtures": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "licence": {
+          "const": "MIT"
+        },
+        "provenance": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "canary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "fixtures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtSecurityFixture"
+          },
+          "minItems": 5,
+          "maxItems": 5
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "licence",
+        "provenance",
+        "canary",
+        "fixtures"
+      ],
+      "additionalProperties": false
+    },
+    "CgtCandidateRow": {
+      "type": "object",
+      "properties": {
+        "rowId": {
+          "enum": [
+            "frozen-none",
+            "frozen-retrieval",
+            "frozen-distilled-rule",
+            "active-artifact-no-retrieval",
+            "candidate-no-retrieval"
+          ]
+        },
+        "identity": {
+          "$ref": "https://tangleai.dev/schemas/run-identity#runIdentity"
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtObservation"
+          },
+          "minItems": 0,
+          "maxItems": 131072
+        }
+      },
+      "required": [
+        "rowId",
+        "identity",
+        "observations"
+      ],
+      "additionalProperties": false
+    },
+    "CgtReplayObservation": {
+      "type": "object",
+      "properties": {
+        "queryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "truth": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "candidate": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "baseline": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "candidateScore": {
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "baselineScore": {
+          "enum": [
+            0,
+            1
+          ]
+        }
+      },
+      "required": [
+        "queryId",
+        "truth",
+        "candidate",
+        "baseline",
+        "candidateScore",
+        "baselineScore"
+      ],
+      "additionalProperties": false
+    },
+    "CgtSecurityObservation": {
+      "type": "object",
+      "properties": {
+        "fixtureId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "sourceDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "answerDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "expectedDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "secretPresent": {
+          "type": "boolean"
+        },
+        "refused": {
+          "type": "boolean"
+        },
+        "outcome": {
+          "enum": [
+            "refused",
+            "unchanged",
+            "changed",
+            "not-run"
+          ]
+        }
+      },
+      "required": [
+        "fixtureId",
+        "sourceDigest",
+        "answerDigest",
+        "expectedDigest",
+        "secretPresent",
+        "refused",
+        "outcome"
+      ],
+      "additionalProperties": false
+    },
+    "CgtCandidateEvidence": {
+      "type": "object",
+      "properties": {
+        "reportId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "candidateId": {
+          "enum": [
+            "candidate-memorizer",
+            "candidate-rule-follower",
+            "candidate-forgetting",
+            "candidate-tainted",
+            "candidate-oversized"
+          ]
+        },
+        "evaluatorRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionSetId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "randomSeed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "K": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "experienceBudget": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "queryBudget": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "seed",
+            "randomSeed",
+            "K",
+            "experienceBudget",
+            "queryBudget"
+          ],
+          "additionalProperties": false
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtCandidateRow"
+          },
+          "minItems": 0,
+          "maxItems": 5
+        },
+        "baseReplay": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtReplayObservation"
+          },
+          "minItems": 0,
+          "maxItems": 12
+        },
+        "security": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CgtSecurityObservation"
+          },
+          "minItems": 0,
+          "maxItems": 5
+        },
+        "retrieval": {
+          "type": "object",
+          "properties": {
+            "excludedExperienceIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "minItems": 0,
+              "maxItems": 4096
+            },
+            "retainedExperienceIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "minItems": 0,
+              "maxItems": 4096
+            },
+            "forbiddenItemIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "minItems": 0,
+              "maxItems": 4096
+            },
+            "candidateRetrievedIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "minItems": 0,
+              "maxItems": 131072
+            },
+            "validationRetrievable": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "excludedExperienceIds",
+            "retainedExperienceIds",
+            "forbiddenItemIds",
+            "candidateRetrievedIds",
+            "validationRetrievable"
+          ],
+          "additionalProperties": false
+        },
+        "measurements": {
+          "$ref": "https://tangleai.dev/schemas/experiential#/$defs/ExperientialEvaluationMetrics"
+        },
+        "candidateElapsedMs": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 1,
+          "maxItems": 131072
+        }
+      },
+      "required": [
+        "reportId",
+        "candidateId",
+        "evaluatorRevision",
+        "questionSetId",
+        "settings",
+        "rows",
+        "baseReplay",
+        "security",
+        "retrieval",
+        "measurements",
+        "candidateElapsedMs"
+      ],
+      "additionalProperties": false
+    },
+    "CgtCandidateEvaluation": {
+      "type": "object",
+      "properties": {
+        "candidateId": {
+          "enum": [
+            "candidate-memorizer",
+            "candidate-rule-follower",
+            "candidate-forgetting",
+            "candidate-tainted",
+            "candidate-oversized"
+          ]
+        },
+        "tier": {
+          "const": "scripted"
+        },
+        "status": {
+          "const": "run"
+        },
+        "artifact": {
+          "$ref": "https://tangleai.dev/schemas/experiential#/$defs/ExperientialArtifact"
+        },
+        "evaluation": {
+          "$ref": "https://tangleai.dev/schemas/experiential#/$defs/ExperientialEvaluation"
+        },
+        "evidence": {
+          "$ref": "#/$defs/CgtCandidateEvidence"
+        },
+        "plannedState": {
+          "enum": [
+            "approved",
+            "rejected"
+          ]
+        }
+      },
+      "required": [
+        "candidateId",
+        "tier",
+        "status",
+        "artifact",
+        "evaluation",
+        "evidence",
+        "plannedState"
+      ],
+      "additionalProperties": false
+    },
+    "CgtEvaluationContext": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "$ref": "https://tangleai.dev/schemas/experiential#/$defs/ExperientialGatePolicy"
+        },
+        "dataset": {
+          "$ref": "https://tangleai.dev/schemas/experiential#/$defs/ExperientialDataset"
+        },
+        "baseline": {
+          "$ref": "https://tangleai.dev/schemas/experiential#/$defs/ExperientialArtifact"
+        },
+        "evaluatorRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionSetId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "live": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "not-run"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "status",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "policy",
+        "dataset",
+        "baseline",
+        "evaluatorRevision",
+        "questionSetId",
+        "live"
+      ],
+      "additionalProperties": false
     }
   }
 }

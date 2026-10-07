@@ -571,7 +571,7 @@
       },
       {
         "path": "packages/experiential/schemas/experiential.schema.json",
-        "sha256": "74f2c8db2b9d0d389497de4576ace4d7ceb7ff5f88b218267f7ad5faba1de5f6"
+        "sha256": "8d61f6721c8eedb6309bdd5e7d33a6ea582010bd925918dd9f85e73683034ccc"
       },
       {
         "path": "packages/experiential/schemas/training-service.contract.json",
@@ -591,7 +591,7 @@
       },
       {
         "path": "packages/experiential/src/contracts.gen.ts",
-        "sha256": "859791d4864fb77ac73adf241d3c5e784af1106c39f162745ed4d843f6d597e6"
+        "sha256": "2ada2c44cd6e0d3224088fd1de9eb083b6f2c62397d19491a5a1011c9bcafcae"
       },
       {
         "path": "packages/experiential/src/dataset.ts",
@@ -602,20 +602,28 @@
         "sha256": "a33badc169ee6fe6bf2cad9ac3b0af78659f7af82305e00f8263a92573511580"
       },
       {
+        "path": "packages/experiential/src/evaluation.ts",
+        "sha256": "ce841a5902d3b3481a4c182994d475e1df64b8a8440ec2431302f1f1093af046"
+      },
+      {
+        "path": "packages/experiential/src/gates.ts",
+        "sha256": "ffff90723c1b4f52499533080f684d96499f97b6f1b2ef5f53c956df48ac3896"
+      },
+      {
         "path": "packages/experiential/src/grouping.ts",
         "sha256": "5680bc88d704c4428f84af75c3ea6872821ab05ec2d654b2e8e0f0f956e3d5de"
       },
       {
         "path": "packages/experiential/src/identity.ts",
-        "sha256": "2a69ad7efea7fbc7192334e16296133f35d727fec46aed6352f193e2ef9eb7ff"
+        "sha256": "ca5b97b9bac313f88aa8a3a5ac30814df90662b160fe9c20b7db4299d9e2eef6"
       },
       {
         "path": "packages/experiential/src/index.ts",
-        "sha256": "db6184625e5e94e851471348b70d1ac3b3b39cceb681e482c5017ee007853a57"
+        "sha256": "7805f6dbae70c140068f8d5f0c9358e98274004076a80e792cadca55f0b359b5"
       },
       {
         "path": "packages/experiential/src/lifecycle.ts",
-        "sha256": "3fa501d12c0f55defae15f9f6296fd2715ab80040c134e308fa234007cbf048d"
+        "sha256": "adaa686c9ea6cd8e6ce785de89ea249dee5a53eb16d3d093d18a931bfa4a6636"
       },
       {
         "path": "packages/experiential/src/lineage.ts",
@@ -639,11 +647,11 @@
       },
       {
         "path": "packages/experiential/src/store-types.ts",
-        "sha256": "0e3626c6cef7b4f11015d560212eab42a74a21822d8bc0cd8c203ee59cf813c5"
+        "sha256": "fc47056892aac4d3f583870d9cdb1c06818e1cbed2192ce3aa628cf661d57336"
       },
       {
         "path": "packages/experiential/src/store.ts",
-        "sha256": "7362310da8ca3ed1c4571c96e794f3041801c8b7191b0ea2f0dc1c61409e0310"
+        "sha256": "3778c13a813794731953d4b0d54dd7c6359ccf1dac9f6c41c4f7ac05a4e272ac"
       },
       {
         "path": "packages/experiential/src/training-env.ts",
@@ -2946,7 +2954,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "fcb13c2e6615a157572a263310d5b453151a8676aa65085fe878ae3e2c2e0be8"
+    "sha256": "ddb816a348e9d9a80c3f9ec1035984c8b56f5bfbefe14e30f3aba21b0922dc13"
   },
   "registration": {
     "schemaVersion": 1,
@@ -86132,5 +86140,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "9220ffa2ade1c3b8c22d6bcc21b67d644afab0b0227a357a73f6c9db397d0155"
+  "reportId": "1628fe2d084d4ca7b51ca2f5714c1f428ec0cafc9e0b11898b9b86832e475e21"
 }

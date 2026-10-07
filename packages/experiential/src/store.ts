@@ -3,13 +3,14 @@ import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { equalsJson } from '@jarenjs/core/object';
 import { checkExperientialRecord, experientialHeadKey, sealExperientialRecord } from './identity.ts';
 import { experientialIssue, type ExperientialIssueCode, type ExperientialResult } from './errors.ts';
-import { planExperienceTransition, planTrainingTransition, planArtifactTransition, planExperientialActivation, planExperientialRollback } from './lifecycle.ts';
+import { planExperienceTransition, planTrainingTransition, planArtifactTransition, planExperientialActivation, planExperientialRollback, planExperientialHead } from './lifecycle.ts';
 import { EXPERIENTIAL_TABLE_KINDS, EXPERIENTIAL_TABLES, type ExperientialPersistence, type ExperientialTransaction,
   type ExperientialTables, type ExperientialTable, type ExperientialStoreResult, type ExperientialStore, type ExperientialWrite, type ExperientialStoreStats } from './store-types.ts';
 import { createExperientialMemoryPersistence, type ExperientialMemoryOptions } from './persistence-memory.ts';
 import { checkExperientialDataset } from './dataset.ts';
 import { checkTrainingBindings, initialTrainingProgress, planExperientialTrainingUpdate } from './training.ts';
 import { isVerifiedArtifactReceipt } from './backend.ts';
+import { planExperientialEvaluation, recordExperientialEvaluation } from './evaluation.ts';
 import type { ExperientialIssue, ExperientialHead, ExperientialArtifact, ExperientialDataset, ExperientialTrainingRun, ExperientialApproval, ExperientialEvaluation } from './contracts.gen.ts';
 import type { ExperientialActivationPlan, ExperientialTransitionPlan } from './lifecycle.ts';
 
@@ -129,13 +130,6 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
         refuse('TEXP1008', '/trainingRunId', 'Managed training can register only its independently verified artifact.');
     }
   }
-  async function evaluation(tx: ExperientialTransaction, row: ExperientialEvaluation) {
-    const target = await requireRow(tx, 'artifacts', row.artifactId, row.scope), base = await requireRow(tx, 'artifacts', row.baselineArtifactId, row.scope);
-    await requireRow(tx, 'gate_policies', row.gatePolicyId, row.scope);
-    if (target.id !== base.id && target.baseArtifactId !== base.id && target.baseArtifactId !== base.baseArtifactId)
-      refuse('TEXP1005', '/baselineArtifactId', 'The evaluation compares different base identities without a migration experiment.');
-    if (row.passed && row.failures.length) refuse('TEXP1006', '/passed', 'A passing evaluation cannot retain failed gates.');
-  }
   async function bindings<K extends ExperientialTable>(ctx: Context, table: K, row: ExperientialTables[K]) {
     if (table === 'heads' || table === 'events') refuse('TEXP1006', '/table', 'Heads and events belong to checked commands.');
     if (table === 'experiences' && (row as ExperientialTables['experiences']).state !== 'observed') refuse('TEXP1006', '/state', 'A new experience starts observed.');
@@ -157,11 +151,14 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
       for (const prior of await list(ctx.tx, 'training_runs', run.scope)) if (prior.idempotencyKey === run.idempotencyKey && prior.id !== run.id)
         refuse('TEXP1002', '/idempotencyKey', 'An idempotency key already names different training inputs.');
     }
-    if (table === 'artifacts') { const a = row as ExperientialArtifact; if (a.state !== 'staged') refuse('TEXP1006', '/state', 'A new artifact starts staged.'); await artifact(ctx.tx, a); }
-    if (table === 'evaluations') await evaluation(ctx.tx, row as ExperientialEvaluation);
+    if (table === 'artifacts') { const a = row as ExperientialArtifact; if (a.state !== 'staged' || a.evaluationRegistration) refuse('TEXP1006', '/state', 'A new artifact starts staged without an evaluation registration.'); await artifact(ctx.tx, a); }
+    if (table === 'evaluations') refuse('TEXP1006', '/evaluation', 'Evaluation results and artifact states must be recorded together.');
     if (table === 'approvals') {
       const approval = row as ExperientialApproval, a = await requireRow(ctx.tx, 'artifacts', approval.artifactId, approval.scope), e = await requireRow(ctx.tx, 'evaluations', approval.evaluationId, approval.scope);
       if (e.artifactId !== a.id || !e.passed || e.failures.length || !approval.reason.trim()) refuse('TEXP1006', '/evaluationId', 'Approval requires a passing evaluation of the exact target.');
+      if (a.evaluationRegistration?.id !== e.registrationId || approval.profile !== e.profile
+        || approval.action !== 'rollback' && !equalsJson(approval.expectedHead, e.expectedHead))
+        refuse('TEXP1002', '/evaluationId', 'Approval must bind the frozen evaluation registration, profile and expected head.');
     }
     if (table === 'deployments') {
       const d = row as ExperientialTables['deployments'];
@@ -282,14 +279,7 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
       const replayed = equalsJson(before, request.plan.after);
       if (!replayed && !equalsJson(before, proposedBefore)) refuse('TEXP1006', '/before', 'The retained state changed; prepare another transition.');
       if (table === 'artifacts') {
-        const after = validated.after as ExperientialArtifact;
-        if (['canary', 'active', 'archived'].includes(after.state)) refuse('TEXP1006', '/state', 'Deployment states belong to approved deployment commands.');
-        if (after.state === 'approved' || after.state === 'rejected') {
-          if (!request.options.evaluationId) refuse('TEXP1006', '/evaluationId', 'A completed evaluation is required.');
-          const e = await requireRow(ctx.tx, 'evaluations', request.options.evaluationId, after.scope);
-          if (e.artifactId !== after.id || e.passed !== (after.state === 'approved') || e.passed && e.failures.length)
-            refuse('TEXP1006', '/evaluationId', 'The evaluation does not justify this artifact state.');
-        }
+        refuse('TEXP1006', '/state', 'Artifact states belong to registered evaluation and approved deployment commands.');
       }
       if (replayed) return validated;
       await write(ctx, table, await record(table, validated.after));
@@ -316,6 +306,49 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
         return plan;
       });
     },
+    startEvaluation: plan => copied(plan, async (ctx, request) => {
+      if (!request?.registration) refuse('TEXP1001', '/plan', 'A frozen evaluation plan is required.');
+      const { evaluatorRevision, questionSetId, sampleCount, recordedAt, migrationExperiment } = request.registration;
+      const reproduced = checked(await planExperientialEvaluation({ artifact: request.before, baseline: request.baseline,
+        dataset: request.dataset, policy: request.policy, head: request.head, evaluatorRevision, questionSetId, sampleCount, recordedAt, migrationExperiment }));
+      if (!equalsJson(reproduced, request)) refuse('TEXP1002', '/plan', 'The evaluation plan does not reproduce from its captured inputs.');
+      const current = await requireRow(ctx.tx, 'artifacts', request.before.id, request.before.scope);
+      const policy = await requireRow(ctx.tx, 'gate_policies', request.policy.id, current.scope);
+      const dataset = await requireRow(ctx.tx, 'datasets', request.dataset.id, current.scope);
+      if (!equalsJson(policy, request.policy) || !equalsJson(dataset, request.dataset))
+        refuse('TEXP1002', '/registration', 'The retained policy or dataset differs from the captured registration.');
+      if (equalsJson(current, request.after)) return reproduced;
+      const head = await currentHead(ctx, request.head.profile, current.scope);
+      checked(planExperientialHead(head.head, request.head.head, current.id));
+      const baseline = await requireRow(ctx.tx, 'artifacts', request.baseline.id, current.scope);
+      if (!equalsJson(current, request.before) || !equalsJson(baseline, request.baseline))
+        refuse('TEXP1006', '/artifact', 'The retained candidate or baseline changed before evaluation started.');
+      if (!current.trainingRunId) refuse('TEXP1004', '/trainingRunId', 'A candidate requires completed training ancestry.');
+      const training = await requireRow(ctx.tx, 'training_runs', current.trainingRunId, current.scope);
+      if (training.datasetId !== dataset.id || training.state !== 'complete')
+        refuse('TEXP1002', '/datasetId', 'The evaluation must name the dataset that produced the candidate.');
+      await write(ctx, 'artifacts', await record('artifacts', reproduced.after));
+      await event(ctx, current.scope, 'evaluation-registered', current.id, canonicalizeJson(reproduced.registration));
+      return reproduced;
+    }),
+    recordEvaluation: evaluation => copied(evaluation, async (ctx, raw) => {
+      const row = await record('evaluations', raw);
+      const current = await requireRow(ctx.tx, 'artifacts', row.artifactId, row.scope);
+      const prior = await get(ctx.tx, 'evaluations', row.id);
+      if (prior && !equalsJson(prior, row)) refuse('TEXP1002', '/id', 'An evaluation re-put cannot change observations under one identity.');
+      const plan = checked(await recordExperientialEvaluation({ artifact: prior ? { ...current, state: 'evaluating' } : current,
+        baseline: await requireRow(ctx.tx, 'artifacts', row.baselineArtifactId, row.scope),
+        dataset: await requireRow(ctx.tx, 'datasets', row.datasetId, row.scope),
+        policy: await requireRow(ctx.tx, 'gate_policies', row.gatePolicyId, row.scope), evaluation: row }));
+      if (prior) return plan;
+      if ((await list(ctx.tx, 'evaluations', row.scope)).some(retained => retained.registrationId === row.registrationId))
+        refuse('TEXP1006', '/registrationId', 'A frozen evaluation registration has already been consumed.');
+      await write(ctx, 'evaluations', row);
+      await write(ctx, 'artifacts', await record('artifacts', plan.after));
+      await event(ctx, row.scope, 'evaluation-recorded', current.id, canonicalizeJson({ evaluationId: row.id,
+        registrationId: row.registrationId, state: plan.after.state, failures: row.failures }));
+      return plan;
+    }),
     head: (profile, scope) => operation(ctx => currentHead(ctx, profile, scope)),
     activate: plan => copied(plan, (ctx, input) => applyActivation(ctx, input, 'activate')),
     rollback: plan => copied(plan, (ctx, input) => applyActivation(ctx, input, 'rollback')),

@@ -1,8 +1,10 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { planExperienceTransition, planTrainingTransition, planArtifactTransition,
-  planExperientialActivation, planExperientialRollback, type ExperientialActivationInput } from '@tangleai/experiential';
+  planExperientialActivation, planExperientialRollback, planExperientialEvaluation, createExperientialEvaluation,
+  recordExperientialEvaluation, type ExperientialActivationInput } from '@tangleai/experiential';
 import { accepted, addressedFixture } from './identity-fixtures.ts';
+import { passingGateMetrics } from './gate-fixtures.ts';
 
 it('experience transitions admit only the reviewed selection edges', async () => {
   const row = await addressedFixture('experience'), states = ['observed', 'quarantined', 'eligible', 'selected', 'excluded'] as const;
@@ -37,9 +39,15 @@ it('artifact state plans cannot skip evaluation or replace activation approval w
 });
 
 async function activationFixture(): Promise<ExperientialActivationInput> {
-  const artifact = await addressedFixture('artifact', { state: 'approved' });
-  const evaluation = await addressedFixture('evaluation', { artifactId: artifact.id, passed: true, failures: [] });
+  const baseline = await addressedFixture('artifact', { kind: 'base', baseArtifactId: null, method: null, trainingRunId: null });
+  const candidate = await addressedFixture('artifact', { baseArtifactId: baseline.id });
+  const dataset = await addressedFixture('dataset'), policy = await addressedFixture('gatePolicy');
   const head = await addressedFixture('head');
+  const planned = accepted(await planExperientialEvaluation({ artifact: candidate, baseline, dataset, policy, head,
+    evaluatorRevision: 'a'.repeat(64), questionSetId: 'b'.repeat(64), sampleCount: 32, recordedAt: head.recordedAt }));
+  const evaluation = accepted(await createExperientialEvaluation({ registration: planned.registration, policy,
+    measurements: passingGateMetrics(policy), reportId: 'c'.repeat(64), recordedAt: head.recordedAt }));
+  const artifact = accepted(await recordExperientialEvaluation({ artifact: planned.after, baseline, dataset, policy, evaluation })).after;
   const approval = await addressedFixture('approval', { artifactId: artifact.id, evaluationId: evaluation.id, expectedHead: head.head });
   return { head, artifact, evaluation, approval };
 }

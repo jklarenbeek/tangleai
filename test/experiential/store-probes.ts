@@ -5,6 +5,7 @@ import { EXPERIENTIAL_TABLES, planExperientialActivation, planExperientialRollba
   planExperienceTransition, type ExperientialTransaction, type ExperientialStoreResult } from '@tangleai/experiential';
 import { accepted, addressedFixture } from './identity-fixtures.ts';
 import { experientialStoreFixture, pendingActivation, replayImmutableState, type ExperientialProbeHost, type ExperientialStep } from './store-fixtures.ts';
+import { runEvaluationStoreProbes } from './evaluation-probes.ts';
 
 function refused(result: ExperientialStoreResult<unknown>, code: string) {
   assert.equal(result.ok, false, JSON.stringify(result));
@@ -18,7 +19,7 @@ export async function runExperientialStoreProbes(createHost: () => Promise<Exper
     const host = await createHost();
     try { await work(host); cases.push(name); } finally { await host.close(); }
   }
-  await probe('synthetic-shell-lifecycle-lineage-reopen-replay', async host => {
+  await probe('synthetic-conformance-lifecycle-lineage-reopen-replay', async host => {
     const fixture = await experientialStoreFixture(host.store), before = await host.state();
     const lineage = accepted(await resolveExperientialLineage(host.store, fixture.artifact.id));
     assert.equal(lineage.artifacts.length, 2); assert.equal(lineage.trainingRuns.length, 1); assert.equal(lineage.datasets.length, 1);
@@ -176,5 +177,6 @@ export async function runExperientialStoreProbes(createHost: () => Promise<Exper
     const changed = accepted(planExperientialActivation({ ...plan, approval: { ...plan.approval, recordedAt: '2026-10-05T00:00:00.000Z' } }));
     refused(await host.store.activate(changed), 'TEXP1006'); assert.deepEqual(await host.state(), before);
   });
+  await runEvaluationStoreProbes(probe);
   return { fixture: 'synthetic-state-conformance', passed: cases.length, failed: 0, physicalRequests: 0, cases, stateDigest, lineageDigest, replayRecords };
 }

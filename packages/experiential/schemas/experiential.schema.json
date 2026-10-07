@@ -384,6 +384,9 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 9007199254740991
+        },
+        "level": {
+          "const": 0.95
         }
       },
       "required": [
@@ -392,18 +395,28 @@
         "high",
         "resamples",
         "seed",
-        "pairs"
+        "pairs",
+        "level"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "$query": {
+        "$le": [
+          "$.low",
+          "$.high"
+        ]
+      }
     },
     "ExperientialEvaluationRow": {
       "type": "object",
       "properties": {
         "rowId": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 128,
-          "pattern": "\\S"
+          "enum": [
+            "frozen-none",
+            "frozen-retrieval",
+            "frozen-distilled-rule",
+            "active-artifact-no-retrieval",
+            "candidate-no-retrieval"
+          ]
         },
         "status": {
           "type": "string",
@@ -460,6 +473,11 @@
               "type": "null"
             }
           ]
+        },
+        "samples": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -469,7 +487,8 @@
         "retention",
         "failures",
         "cost",
-        "identityId"
+        "identityId",
+        "samples"
       ],
       "additionalProperties": false
     },
@@ -1298,6 +1317,9 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 9007199254740991
+        },
+        "evaluationRegistration": {
+          "$ref": "#/$defs/ExperientialEvaluationRegistration"
         }
       },
       "required": [
@@ -1365,8 +1387,8 @@
           "items": {
             "$ref": "#/$defs/ExperientialEvaluationRow"
           },
-          "minItems": 0,
-          "maxItems": 32,
+          "minItems": 5,
+          "maxItems": 5,
           "uniqueItems": true
         },
         "interval": {
@@ -1387,6 +1409,48 @@
               "type": "null"
             }
           ]
+        },
+        "migrationExperiment": {
+          "type": "boolean"
+        },
+        "retention": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialRetentionLane"
+          },
+          "minItems": 0,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "security": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialSecurityResult"
+          },
+          "minItems": 0,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "operations": {
+          "$ref": "#/$defs/ExperientialOperationsResult"
+        },
+        "registrationId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "datasetId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "evaluatorRevision": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "expectedHead": {
+          "$ref": "#/$defs/ExperientialExpectedHead"
         }
       },
       "required": [
@@ -1403,9 +1467,49 @@
         "failures",
         "rows",
         "interval",
-        "cost"
+        "cost",
+        "migrationExperiment",
+        "retention",
+        "security",
+        "operations",
+        "registrationId",
+        "datasetId",
+        "evaluatorRevision",
+        "profile",
+        "expectedHead"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.passed",
+              {
+                "$eq": [
+                  {
+                    "$count": "$.failures[*]"
+                  },
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              [
+                "$.rows[*].rowId"
+              ],
+              [
+                "frozen-none",
+                "frozen-retrieval",
+                "frozen-distilled-rule",
+                "active-artifact-no-retrieval",
+                "candidate-no-retrieval"
+              ]
+            ]
+          }
+        ]
+      }
     },
     "ExperientialGatePolicy": {
       "type": "object",
@@ -1587,28 +1691,22 @@
           "additionalProperties": false
         },
         "rows": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 128,
-            "pattern": "\\S"
-          },
-          "minItems": 1,
-          "maxItems": 32,
-          "uniqueItems": true
+          "const": [
+            "frozen-none",
+            "frozen-retrieval",
+            "frozen-distilled-rule",
+            "active-artifact-no-retrieval",
+            "candidate-no-retrieval"
+          ]
         },
         "requiredRows": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 128,
-            "pattern": "\\S"
-          },
-          "minItems": 1,
-          "maxItems": 32,
-          "uniqueItems": true
+          "const": [
+            "frozen-none",
+            "frozen-retrieval",
+            "frozen-distilled-rule",
+            "active-artifact-no-retrieval",
+            "candidate-no-retrieval"
+          ]
         }
       },
       "required": [
@@ -3416,6 +3514,298 @@
           "additionalProperties": false
         }
       ]
+    },
+    "ExperientialRetentionLane": {
+      "type": "object",
+      "properties": {
+        "lane": {
+          "enum": [
+            "cgt-replay",
+            "base-replay",
+            "locomo-recall",
+            "locomo-qa"
+          ]
+        },
+        "status": {
+          "enum": [
+            "run",
+            "not-run"
+          ]
+        },
+        "drop": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": -1,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "lane",
+        "status",
+        "drop"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialSecurityResult": {
+      "type": "object",
+      "properties": {
+        "fixtureId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "outcome": {
+          "enum": [
+            "refused",
+            "unchanged",
+            "changed",
+            "not-run"
+          ]
+        }
+      },
+      "required": [
+        "fixtureId",
+        "outcome"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialOperationsResult": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "run",
+            "not-run"
+          ]
+        },
+        "artifactBytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trainingMs": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inferenceP95Ms": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "failureRate": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runtimeProvider": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "artifactBytes",
+        "trainingMs",
+        "inferenceP95Ms",
+        "failureRate",
+        "cost",
+        "runtimeProvider"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialEvaluationRegistration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "artifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "baselineArtifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "datasetId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "gatePolicyId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "evaluatorRevision": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "expectedHead": {
+          "$ref": "#/$defs/ExperientialExpectedHead"
+        },
+        "migrationExperiment": {
+          "type": "boolean"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ExperientialTime"
+        },
+        "questionSetId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "sampleCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "artifactId",
+        "baselineArtifactId",
+        "datasetId",
+        "gatePolicyId",
+        "evaluatorRevision",
+        "profile",
+        "expectedHead",
+        "migrationExperiment",
+        "recordedAt",
+        "questionSetId",
+        "sampleCount"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialEvaluationMetrics": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "gatePolicyId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "migrationExperiment": {
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialEvaluationRow"
+          },
+          "minItems": 0,
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "interval": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialInterval"
+          },
+          "minItems": 0,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "retention": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialRetentionLane"
+          },
+          "minItems": 0,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "security": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialSecurityResult"
+          },
+          "minItems": 0,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "operations": {
+          "$ref": "#/$defs/ExperientialOperationsResult"
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialCost"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "scope",
+        "gatePolicyId",
+        "migrationExperiment",
+        "rows",
+        "interval",
+        "retention",
+        "security",
+        "operations",
+        "cost"
+      ],
+      "additionalProperties": false
     }
   }
 }

@@ -30,8 +30,12 @@ export function experientialSchemaFixtures(): ExperientialRecordMap {
       storageUri: 'https://artifacts.example.test/adapter', runtime: { servedModel: 'fixture-adapter', provider: 'fixture', base: 'https://inference.example.test/v1' },
       trainingRunId: id(16), state: 'staged', sizeBytes: 1024 },
     evaluation: { ...common, document: 'experiential-evaluation', artifactId: id(17), baselineArtifactId: id(14), gatePolicyId: id(18),
+      registrationId: id(24), datasetId: id(13), evaluatorRevision: id(25), profile: 'fixture-profile', expectedHead: head, migrationExperiment: false,
       reportId: id(19), passed: false, failures: [{ gate: 'learning', detail: 'No candidate evaluation has run.', observed: null, tolerance: 0 }],
-      rows: [], interval: [], cost: null },
+      rows: (['frozen-none', 'frozen-retrieval', 'frozen-distilled-rule', 'active-artifact-no-retrieval', 'candidate-no-retrieval'] as const)
+        .map(rowId => ({ rowId, status: 'not-run', cgc: null, retention: null, failures: 0, cost: null, identityId: null, samples: 0 })),
+      interval: [], retention: [], security: [], operations: { status: 'not-run', artifactBytes: null, trainingMs: null,
+        inferenceP95Ms: null, failureRate: null, cost: null, runtimeProvider: null }, cost: null },
     gatePolicy: { ...common, document: 'experiential-gate-policy', primaryMetric: 'cgc', controls: ['frozen-retrieval', 'frozen-distilled-rule'],
       interval: { statistic: 'paired-bootstrap', level: 0.95, resamples: 1000, seed: 17753 }, learning: { minLowerBound: 0 },
       retention: { cgtReplayMaxDrop: 0, baseReplayMaxDrop: 0, locomoRecallMaxDrop: 0, locomoQaMaxDrop: 0 },

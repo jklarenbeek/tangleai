@@ -35,3 +35,8 @@ export { createHttpTrainingBackend } from './backend-http.ts';
 export type { HttpTrainingBackend, HttpTrainingBackendOptions, HttpTrainingBudget, HttpTrainingStats } from './backend-http.ts';
 export { readTrainingEnv, trainingServiceBase } from './training-env.ts';
 export type { TrainingEnvironment, TrainingEnvironmentPlan } from './training-env.ts';
+export { evaluateExperientialGates, reviseGatePolicy, EXPERIENTIAL_EVALUATION_ROWS, EXPERIENTIAL_RETENTION_LANES } from './gates.ts';
+export type { ExperientialGateResult, ExperientialGatePolicyRevisionOptions } from './gates.ts';
+export { planExperientialEvaluation, createExperientialEvaluation, recordExperientialEvaluation, evaluationMetricsOf } from './evaluation.ts';
+export type { ExperientialEvaluationInput, ExperientialEvaluationPlan, ExperientialEvaluationResultPlan } from './evaluation.ts';
+export { experientialEvaluationRegistrationId } from './identity.ts';

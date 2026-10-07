@@ -34,11 +34,12 @@ export function createCgtRuleFollower(document: string): CgtAnswerer {
   };
 }
 
-export async function createCgtRetrieval(fixture: CgtFixture, fallback: ReadonlyMap<string, string>) {
+export async function createCgtRetrieval(fixture: CgtFixture, fallback: ReadonlyMap<string, string>, options: { excludedIds?: readonly string[] } = {}) {
   await validateCgtFixture(fixture);
   const store = createMemoryUnitStore(), embedder = createHashEmbedder({ dims: fixture.manifest.embeddingDimensions });
   const embeddedBy = { model: embedder.model, dims: embedder.dims };
-  const experiences = fixture.sessions.flatMap(session => session.experiences);
+  const excluded = new Set(options.excludedIds ?? []);
+  const experiences = fixture.sessions.flatMap(session => session.experiences).filter(item => !excluded.has(item.id));
   const vectors = await embedder.embed(experiences.map(lookupKey));
   for (const [i, experience] of experiences.entries()) await store.put({ id: experience.id, kind: 'fact',
     text: JSON.stringify({ key: lookupKey(experience), answer: experience.truth }), evidence: 'cgt:' + experience.id,

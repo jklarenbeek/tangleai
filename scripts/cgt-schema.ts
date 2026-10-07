@@ -2,6 +2,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { emitTypeScript } from '@jarenjs/emit';
 import { runIdentitySchema } from '@tangleai/config';
+import { experientialSchema } from '@tangleai/experiential';
 import schema from '../benchmark/schemas/cgt.schema.json' with { type: 'json' };
 
 const args = process.argv.slice(2);
@@ -11,9 +12,13 @@ const config = JSON.parse(JSON.stringify(runIdentitySchema)
   .replaceAll('"#/$defs/', '"#/$defs/Config_'));
 const { $defs, $id: _id, $anchor: _anchor, ...configRoot } = config;
 const emission = JSON.parse(JSON.stringify(schema)
-  .replaceAll('"https://tangleai.dev/schemas/run-identity#/$defs/', '"#/$defs/Config_'));
+  .replaceAll('"https://tangleai.dev/schemas/run-identity#/$defs/', '"#/$defs/Config_')
+  .replaceAll('"https://tangleai.dev/schemas/run-identity#runIdentity"', '"#/$defs/Config_ConfigRunIdentity"')
+  .replaceAll('"https://tangleai.dev/schemas/experiential#/$defs/', '"#/$defs/Experiential_'));
 Object.assign(emission.$defs, Object.fromEntries(Object.entries($defs).map(([key, value]) => ['Config_' + key, value])),
   { Config_ConfigRunIdentity: configRoot });
+const experiential = JSON.parse(JSON.stringify(experientialSchema.$defs).replaceAll('"#/$defs/', '"#/$defs/Experiential_'));
+Object.assign(emission.$defs, Object.fromEntries(Object.entries(experiential).map(([key, value]) => ['Experiential_' + key, value])));
 const path = 'benchmark/lib/cgt.types.ts';
 const bytes = emitTypeScript(emission, { name: 'CgtDocuments', source: 'benchmark/schemas/cgt.schema.json' }).trimEnd() + '\n';
 if (args.includes('--check')) {

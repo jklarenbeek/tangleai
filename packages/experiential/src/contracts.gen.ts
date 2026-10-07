@@ -190,6 +190,9 @@ export interface ExperientialCost {
 }
 
 
+/**
+ * Schema constraints this type cannot express: $query={"$le":["$.low","$.high"]}
+ */
 export interface ExperientialInterval {
   control: "frozen-retrieval" | "frozen-distilled-rule";
   /**
@@ -212,6 +215,7 @@ export interface ExperientialInterval {
    * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
    */
   pairs: number;
+  level: 0.95;
 }
 
 
@@ -226,10 +230,7 @@ export type ExperientialEvaluationRowCgcAnyOf1 = number;
 export type ExperientialEvaluationRowRetentionAnyOf1 = number;
 
 export interface ExperientialEvaluationRow {
-  /**
-   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
-   */
-  rowId: string;
+  rowId: "frozen-none" | "frozen-retrieval" | "frozen-distilled-rule" | "active-artifact-no-retrieval" | "candidate-no-retrieval";
   status: "run" | "not-run";
   cgc: ExperientialEvaluationRowCgcAnyOf1 | null;
   retention: ExperientialEvaluationRowRetentionAnyOf1 | null;
@@ -239,6 +240,10 @@ export interface ExperientialEvaluationRow {
   failures: number;
   cost: ExperientialCost | null;
   identityId: ExperientialId | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  samples: number;
 }
 
 
@@ -848,6 +853,29 @@ export interface ExperientialTrainingRun {
 }
 
 
+export interface ExperientialEvaluationRegistration {
+  id: ExperientialId;
+  scope: ExperientialScope;
+  artifactId: ExperientialId;
+  baselineArtifactId: ExperientialId;
+  datasetId: ExperientialId;
+  gatePolicyId: ExperientialId;
+  evaluatorRevision: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
+   */
+  profile: string;
+  expectedHead: ExperientialExpectedHead;
+  migrationExperiment: boolean;
+  recordedAt: ExperientialTime;
+  questionSetId: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  sampleCount: number;
+}
+
+
 export interface ExperientialArtifact {
   document: "experiential-artifact";
   schemaVersion: 1;
@@ -866,9 +894,75 @@ export interface ExperientialArtifact {
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
    */
   sizeBytes: number;
+  evaluationRegistration?: ExperientialEvaluationRegistration;
 }
 
 
+/**
+ * Schema constraints this type cannot express: minimum=-1, maximum=1
+ */
+export type ExperientialRetentionLaneDropAnyOf1 = number;
+
+export interface ExperientialRetentionLane {
+  lane: "cgt-replay" | "base-replay" | "locomo-recall" | "locomo-qa";
+  status: "run" | "not-run";
+  drop: ExperientialRetentionLaneDropAnyOf1 | null;
+}
+
+
+export interface ExperientialSecurityResult {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
+   */
+  fixtureId: string;
+  outcome: "refused" | "unchanged" | "changed" | "not-run";
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+ */
+export type ExperientialOperationsResultArtifactBytesAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type ExperientialOperationsResultTrainingMsAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type ExperientialOperationsResultInferenceP95MsAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type ExperientialOperationsResultFailureRateAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type ExperientialOperationsResultCostAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
+ */
+export type ExperientialOperationsResultRuntimeProviderAnyOf1 = string;
+
+export interface ExperientialOperationsResult {
+  status: "run" | "not-run";
+  artifactBytes: ExperientialOperationsResultArtifactBytesAnyOf1 | null;
+  trainingMs: ExperientialOperationsResultTrainingMsAnyOf1 | null;
+  inferenceP95Ms: ExperientialOperationsResultInferenceP95MsAnyOf1 | null;
+  failureRate: ExperientialOperationsResultFailureRateAnyOf1 | null;
+  cost: ExperientialOperationsResultCostAnyOf1 | null;
+  runtimeProvider: ExperientialOperationsResultRuntimeProviderAnyOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.passed",{"$eq":[{"$count":"$.failures[*]"},0]}]},{"$eq":[["$.rows[*].rowId"],["frozen-none","frozen-retrieval","frozen-distilled-rule","active-artifact-no-retrieval","candidate-no-retrieval"]]}]}
+ */
 export interface ExperientialEvaluation {
   document: "experiential-evaluation";
   schemaVersion: 1;
@@ -885,7 +979,7 @@ export interface ExperientialEvaluation {
    */
   failures: Array<ExperientialGateFailure>;
   /**
-   * Schema constraints this type cannot express: minItems=0, maxItems=32, uniqueItems=true
+   * Schema constraints this type cannot express: minItems=5, maxItems=5, uniqueItems=true
    */
   rows: Array<ExperientialEvaluationRow>;
   /**
@@ -893,6 +987,24 @@ export interface ExperientialEvaluation {
    */
   interval: Array<ExperientialInterval>;
   cost: ExperientialCost | null;
+  migrationExperiment: boolean;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4, uniqueItems=true
+   */
+  retention: Array<ExperientialRetentionLane>;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=64, uniqueItems=true
+   */
+  security: Array<ExperientialSecurityResult>;
+  operations: ExperientialOperationsResult;
+  registrationId: ExperientialId;
+  datasetId: ExperientialId;
+  evaluatorRevision: ExperientialId;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
+   */
+  profile: string;
+  expectedHead: ExperientialExpectedHead;
 }
 
 
@@ -979,16 +1091,6 @@ export interface ExperientialGatePolicyOperations {
 }
 
 
-/**
- * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
- */
-export type ExperientialGatePolicyRowsItem = string;
-
-/**
- * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
- */
-export type ExperientialGatePolicyRequiredRowsItem = string;
-
 export interface ExperientialGatePolicy {
   document: "experiential-gate-policy";
   schemaVersion: 1;
@@ -1002,14 +1104,8 @@ export interface ExperientialGatePolicy {
   retention: ExperientialGatePolicyRetention;
   security: ExperientialGatePolicySecurity;
   operations: ExperientialGatePolicyOperations;
-  /**
-   * Schema constraints this type cannot express: minItems=1, maxItems=32, uniqueItems=true
-   */
-  rows: Array<ExperientialGatePolicyRowsItem>;
-  /**
-   * Schema constraints this type cannot express: minItems=1, maxItems=32, uniqueItems=true
-   */
-  requiredRows: Array<ExperientialGatePolicyRequiredRowsItem>;
+  rows: ["frozen-none","frozen-retrieval","frozen-distilled-rule","active-artifact-no-retrieval","candidate-no-retrieval"];
+  requiredRows: ["frozen-none","frozen-retrieval","frozen-distilled-rule","active-artifact-no-retrieval","candidate-no-retrieval"];
 }
 
 
@@ -1263,5 +1359,30 @@ export interface ExperientialTrainingCommandAnyOf10Verification {
 
 
 export type ExperientialTrainingCommand = { kind: "begin"; } | { kind: "selected"; } | ExperientialTrainingCommandAnyOf3 | { kind: "reserve"; } | { kind: "submitted"; job: BackendJob; } | { kind: "uncertain"; } | { kind: "poll-reserve"; } | ExperientialTrainingCommandAnyOf8 | { kind: "materialized"; receipt: ArtifactReceipt; } | { kind: "verified"; verification: ExperientialTrainingCommandAnyOf10Verification; } | { kind: "register"; } | { kind: "fail"; code: "TEXP1001" | "TEXP1002" | "TEXP1003" | "TEXP1004" | "TEXP1005" | "TEXP1006" | "TEXP1007" | "TEXP1008" | "TEXP1009" | "TEXP1010" | "TEXP1011" | "TEXP1012"; reason: "capability" | "dataset" | "record-budget" | "byte-budget" | "wall-budget" | "poll-budget" | "backend-failed" | "backend-receipt" | "backend-protocol" | "artifact-verification" | "spend-budget" | "clock-regression"; } | { kind: "cancel"; };
+
+export interface ExperientialEvaluationMetrics {
+  scope: ExperientialScope;
+  gatePolicyId: ExperientialId;
+  migrationExperiment: boolean;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=32, uniqueItems=true
+   */
+  rows: Array<ExperientialEvaluationRow>;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=2, uniqueItems=true
+   */
+  interval: Array<ExperientialInterval>;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4, uniqueItems=true
+   */
+  retention: Array<ExperientialRetentionLane>;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=64, uniqueItems=true
+   */
+  security: Array<ExperientialSecurityResult>;
+  operations: ExperientialOperationsResult;
+  cost: ExperientialCost | null;
+}
+
 
 export type Experiential = ExperientialRecord;

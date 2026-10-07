@@ -1,13 +1,14 @@
-/** Synthetic persistence conformance. Evaluation shells are not learning evidence. */
+/** Synthetic persistence conformance. Recorded gate inputs are not learning evidence. */
 import assert from 'node:assert/strict';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { planExperienceTransition, planTrainingTransition, planArtifactTransition, planExperientialActivation,
-  planExperientialSelection, planExperientialDataset,
+  planExperientialSelection, planExperientialDataset, planExperientialEvaluation, createExperientialEvaluation,
   type ExperientialStore, type ExperientialStoreResult, type ExperientialWrite, type ExperientialArtifact, type ExperientialDataset,
   type ExperientialActivationPlan, type ExperientialMemoryState, type ExperientialPersistence } from '@tangleai/experiential';
 import { accepted, addressedFixture } from './identity-fixtures.ts';
 import { selectionFixture } from './selection-fixtures.ts';
 import { datasetOptions } from './dataset-fixtures.ts';
+import { passingGateMetrics } from './gate-fixtures.ts';
 
 export const EXPERIENTIAL_FIXTURE_TIME = '2026-09-13T00:00:00.000Z';
 export interface ExperientialProbeHost {
@@ -23,7 +24,7 @@ export interface ExperientialProbeHost {
 export type ExperientialStep = <T>(run: () => Promise<ExperientialStoreResult<T>>) => Promise<T>;
 const direct: ExperientialStep = async run => accepted(await run());
 
-export async function candidateFixture(store: ExperientialStore, dataset: ExperientialDataset, base: ExperientialArtifact,
+export async function stagedCandidateFixture(store: ExperientialStore, dataset: ExperientialDataset, base: ExperientialArtifact,
   label: string, step: ExperientialStep = direct) {
   let training = await addressedFixture('trainingRun', { datasetId: dataset.id, baseArtifactId: base.id,
     idempotencyKey: await canonicalSha256({ fixture: 'synthetic-state-conformance', label }) });
@@ -35,15 +36,24 @@ export async function candidateFixture(store: ExperientialStore, dataset: Experi
   let artifact = await addressedFixture('artifact', { trainingRunId: training.id, baseArtifactId: base.id,
     checksum: await canonicalSha256({ format: 'synthetic-state-conformance', label }), storageUri: 'memory:fixture/' + label });
   await step(() => store.put('artifacts', artifact));
-  const evaluating = accepted(planArtifactTransition(artifact, 'evaluating'));
-  await step(() => store.transition(evaluating)); artifact = evaluating.after;
+  return { artifact, training };
+}
+
+export async function candidateFixture(store: ExperientialStore, dataset: ExperientialDataset, base: ExperientialArtifact,
+  label: string, step: ExperientialStep = direct) {
+  const staged = await stagedCandidateFixture(store, dataset, base, label, step);
+  let artifact = staged.artifact; const training = staged.training;
   const policy = await addressedFixture('gatePolicy'); await step(() => store.put('gate_policies', policy));
-  const evaluation = await addressedFixture('evaluation', { artifactId: artifact.id, baselineArtifactId: base.id, gatePolicyId: policy.id,
-    reportId: await canonicalSha256({ fixture: 'synthetic-evaluation-shell', label }), passed: true, failures: [], rows: [], interval: [] });
-  await step(() => store.put('evaluations', evaluation));
-  const approved = accepted(planArtifactTransition(artifact, 'approved'));
-  await step(() => store.transition(approved, { evaluationId: evaluation.id })); artifact = approved.after;
-  return { artifact, evaluation, training, policy };
+  const head = await step(() => store.head('fixture-profile', artifact.scope));
+  const baseline = head.head.versionId ? accepted(await store.get('artifacts', head.head.versionId))! : base;
+  const evaluating = accepted(await planExperientialEvaluation({ artifact, baseline, dataset, policy, head,
+    evaluatorRevision: await canonicalSha256({ fixture: 'recorded-gate-conformance/v1' }),
+    questionSetId: await canonicalSha256({ fixture: 'recorded-gate-conformance-questions/v1' }), sampleCount: 32, recordedAt: EXPERIENTIAL_FIXTURE_TIME }));
+  await step(() => store.startEvaluation(evaluating));
+  const evaluation = accepted(await createExperientialEvaluation({ registration: evaluating.registration, policy,
+    measurements: passingGateMetrics(policy, artifact.sizeBytes), reportId: await canonicalSha256({ fixture: 'recorded-gate-conformance', label }), recordedAt: EXPERIENTIAL_FIXTURE_TIME }));
+  const approved = await step(() => store.recordEvaluation(evaluation)); artifact = approved.after;
+  return { artifact, evaluation, training, policy, evaluating };
 }
 
 export async function experientialStoreFixture(store: ExperientialStore, step: ExperientialStep = direct) {

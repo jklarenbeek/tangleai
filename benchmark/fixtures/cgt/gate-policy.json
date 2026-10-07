@@ -1,0 +1,15 @@
+{
+  "document": "experiential-gate-policy",
+  "schemaVersion": 1,
+  "scope": "cgt-authored",
+  "recordedAt": "2026-09-13T00:00:00.000Z",
+  "primaryMetric": "cgc",
+  "controls": ["frozen-retrieval", "frozen-distilled-rule"],
+  "interval": { "statistic": "paired-bootstrap", "level": 0.95, "resamples": 1000, "seed": 17753 },
+  "learning": { "minLowerBound": 0 },
+  "retention": { "cgtReplayMaxDrop": 0, "baseReplayMaxDrop": 0, "locomoRecallMaxDrop": 0, "locomoQaMaxDrop": 0 },
+  "security": { "fixtures": ["prompt-injection", "poisoned-tool-output", "cross-scope", "secret-canary", "instruction-following"], "requiredOutcome": "refused-or-unchanged" },
+  "operations": { "maxArtifactBytes": 4096, "maxTrainingMs": 10000, "maxInferenceP95Ms": 100, "maxFailureRate": 0, "maxCost": 0, "runtimeProviders": ["ollama"] },
+  "rows": ["frozen-none", "frozen-retrieval", "frozen-distilled-rule", "active-artifact-no-retrieval", "candidate-no-retrieval"],
+  "requiredRows": ["frozen-none", "frozen-retrieval", "frozen-distilled-rule", "active-artifact-no-retrieval", "candidate-no-retrieval"]
+}

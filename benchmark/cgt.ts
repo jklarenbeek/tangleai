@@ -58,7 +58,7 @@ export async function cgtMain(argv: readonly string[], options: { root?: string;
     if (json === md) throw Error('cgt: output paths overlap');
     await assertOutputPaths(root, [json, md]);
     const required = args.values.get('require') ?? 'scripted';
-    if (!['oracle', 'scripted', 'live'].includes(required)) throw Error('unknown cgt capability: ' + required);
+    if (!['oracle', 'scripted', 'gates', 'live'].includes(required)) throw Error('unknown cgt capability: ' + required);
     const report = await buildCgtReport(selected);
     requireCapability(report, required);
     const outputs = [[json, renderReport(report)], [md, renderDocument(report)]];

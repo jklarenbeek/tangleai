@@ -342,16 +342,24 @@
         "sha256": "e31459abcb6361842149aebb40425f668a675a9f2f2c52bf32b4d7dc892b1fcd"
       },
       {
+        "path": "benchmark/lib/cgt-evaluation-fixtures.ts",
+        "sha256": "f441bc62c47b440e2413f344b0b86bc2f55a0b1ad9a32e7d472baccc692de1eb"
+      },
+      {
+        "path": "benchmark/lib/cgt-evaluation.ts",
+        "sha256": "a6f05e871d860b3c2c92875251eb5033b09aa7e9c76b8ee9c814e8ebafb74840"
+      },
+      {
         "path": "benchmark/lib/cgt-experiences.ts",
         "sha256": "9c2f1f847cdcf2af5a583a1f0de047c76d1423da40c105c74768a1de56e5d231"
       },
       {
         "path": "benchmark/lib/cgt-fixture.ts",
-        "sha256": "70949f1cb0c3a3a7b27aef55e7acecb2a89d9c2ebde1b802105a678a809a525b"
+        "sha256": "a31262a2d747720312adea36093bc0436fbb2a05d7cd2a494060f8cb656296cd"
       },
       {
         "path": "benchmark/lib/cgt-rows.ts",
-        "sha256": "430eb193977de0b4ce47c6a0155614847717fa33efd05de8608d5275ba4da727"
+        "sha256": "dbcdfbe773674486963b815c3af3a1a60cd5f3d89482fe90655a9a9f6089c327"
       },
       {
         "path": "benchmark/lib/cgt-scorer.ts",
@@ -359,11 +367,11 @@
       },
       {
         "path": "benchmark/lib/cgt.ts",
-        "sha256": "51901cbe536e3fea747f2d7f6a942fb9cce20a93008f81e9779805f9afe78771"
+        "sha256": "1f61d941bac6cd3750d10974daaa474a1e20f4a4f62fcdc0522ead03c8fca3ff"
       },
       {
         "path": "benchmark/lib/cgt.types.ts",
-        "sha256": "b3cc4580413446ca6f3e1c5ba1ee42698447ad23e8b244b2d13c1b94f26cf266"
+        "sha256": "85f884a6059e2b6bf61751ffe5bdb04776e07450a6875028d31387b20035cd9b"
       },
       {
         "path": "benchmark/lib/config-conformance.ts",
@@ -1847,7 +1855,7 @@
       },
       {
         "path": "packages/experiential/schemas/experiential.schema.json",
-        "sha256": "74f2c8db2b9d0d389497de4576ace4d7ceb7ff5f88b218267f7ad5faba1de5f6"
+        "sha256": "8d61f6721c8eedb6309bdd5e7d33a6ea582010bd925918dd9f85e73683034ccc"
       },
       {
         "path": "packages/experiential/schemas/training-service.contract.json",
@@ -1867,7 +1875,7 @@
       },
       {
         "path": "packages/experiential/src/contracts.gen.ts",
-        "sha256": "859791d4864fb77ac73adf241d3c5e784af1106c39f162745ed4d843f6d597e6"
+        "sha256": "2ada2c44cd6e0d3224088fd1de9eb083b6f2c62397d19491a5a1011c9bcafcae"
       },
       {
         "path": "packages/experiential/src/dataset.ts",
@@ -1878,20 +1886,28 @@
         "sha256": "a33badc169ee6fe6bf2cad9ac3b0af78659f7af82305e00f8263a92573511580"
       },
       {
+        "path": "packages/experiential/src/evaluation.ts",
+        "sha256": "ce841a5902d3b3481a4c182994d475e1df64b8a8440ec2431302f1f1093af046"
+      },
+      {
+        "path": "packages/experiential/src/gates.ts",
+        "sha256": "ffff90723c1b4f52499533080f684d96499f97b6f1b2ef5f53c956df48ac3896"
+      },
+      {
         "path": "packages/experiential/src/grouping.ts",
         "sha256": "5680bc88d704c4428f84af75c3ea6872821ab05ec2d654b2e8e0f0f956e3d5de"
       },
       {
         "path": "packages/experiential/src/identity.ts",
-        "sha256": "2a69ad7efea7fbc7192334e16296133f35d727fec46aed6352f193e2ef9eb7ff"
+        "sha256": "ca5b97b9bac313f88aa8a3a5ac30814df90662b160fe9c20b7db4299d9e2eef6"
       },
       {
         "path": "packages/experiential/src/index.ts",
-        "sha256": "db6184625e5e94e851471348b70d1ac3b3b39cceb681e482c5017ee007853a57"
+        "sha256": "7805f6dbae70c140068f8d5f0c9358e98274004076a80e792cadca55f0b359b5"
       },
       {
         "path": "packages/experiential/src/lifecycle.ts",
-        "sha256": "3fa501d12c0f55defae15f9f6296fd2715ab80040c134e308fa234007cbf048d"
+        "sha256": "adaa686c9ea6cd8e6ce785de89ea249dee5a53eb16d3d093d18a931bfa4a6636"
       },
       {
         "path": "packages/experiential/src/lineage.ts",
@@ -1915,11 +1931,11 @@
       },
       {
         "path": "packages/experiential/src/store-types.ts",
-        "sha256": "0e3626c6cef7b4f11015d560212eab42a74a21822d8bc0cd8c203ee59cf813c5"
+        "sha256": "fc47056892aac4d3f583870d9cdb1c06818e1cbed2192ce3aa628cf661d57336"
       },
       {
         "path": "packages/experiential/src/store.ts",
-        "sha256": "7362310da8ca3ed1c4571c96e794f3041801c8b7191b0ea2f0dc1c61409e0310"
+        "sha256": "3778c13a813794731953d4b0d54dd7c6359ccf1dac9f6c41c4f7ac05a4e272ac"
       },
       {
         "path": "packages/experiential/src/training-env.ts",
@@ -4218,7 +4234,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "6bd8b082fa5ac3266e0f1cd4835db860e62f5133aaee2721c254fe82069ea417"
+    "sha256": "0039c1cddf54342a6a8fa9a468bb58cc03f0493f98e316c4d3b6874c4185da6e"
   },
   "fixtureSource": {
     "files": [
@@ -69408,7 +69424,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "6bd8b082fa5ac3266e0f1cd4835db860e62f5133aaee2721c254fe82069ea417",
+      "sourceSha256": "0039c1cddf54342a6a8fa9a468bb58cc03f0493f98e316c4d3b6874c4185da6e",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69492,7 +69508,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "cdd0ae90a8d4cf5c4af592fcae6dc3d96bc2fccd506b1c71c7bd51a57372782e"
+      "planId": "aa0faacc8c7760c87d8347c60b144d789acceec51186b9096162b1b81d203a3e"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69739,5 +69755,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "1489b478de59eccefabba7fda5520f33da8c309ae9d1faeff175584bbbb4a54f"
+  "reportId": "28bf57a8885b29a3a28bbbbde2f128afa287f15a793fd4db62be8ed384a55369"
 }

@@ -2,6 +2,7 @@
 import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
 import { validateExperientialRecord, type ExperientialRecordKind, type ExperientialRecordMap } from './schema.ts';
 import { refuseExperiential, type ExperientialResult } from './errors.ts';
+import type { ExperientialEvaluationRegistration } from './contracts.gen.ts';
 
 const common = ['document', 'schemaVersion', 'scope'] as const;
 /** Explicit projections prevent a future operational field silently changing ancestry. */
@@ -11,7 +12,7 @@ const fields = {
   dataset: ['selectedIds', 'assessmentIds', 'splits', 'groupKeys', 'seed', 'templateRevision', 'tokenizerIdentity', 'chatTemplateIdentity', 'manifestDigest', 'exclusions', 'selection', 'evaluationReferences', 'concepts', 'heldoutPairs', 'groupingExperienceIds', 'groupingAssessmentIds'],
   trainingRun: ['idempotencyKey', 'datasetId', 'baseArtifactId', 'method', 'hyperparameters', 'backendIdentity', 'budget', 'spec', 'pipelineRevision', 'runtime'],
   artifact: ['checksum', 'baseArtifactId', 'kind', 'method', 'storageUri', 'runtime', 'trainingRunId', 'sizeBytes'],
-  evaluation: ['artifactId', 'baselineArtifactId', 'gatePolicyId', 'reportId', 'passed', 'failures', 'interval'],
+  evaluation: ['artifactId', 'baselineArtifactId', 'registrationId', 'datasetId', 'gatePolicyId', 'evaluatorRevision', 'profile', 'expectedHead', 'migrationExperiment', 'reportId', 'passed', 'interval', 'retention', 'security'],
   gatePolicy: ['primaryMetric', 'controls', 'interval', 'learning', 'retention', 'security', 'operations', 'rows', 'requiredRows'],
   approval: ['profile', 'action', 'artifactId', 'evaluationId', 'expectedHead', 'principal', 'reason'],
   deployment: ['profile', 'base', 'activeArtifactId', 'canaryArtifactId', 'rolloutFraction', 'expectedParentArtifactId', 'approvalId', 'revision'],
@@ -24,6 +25,12 @@ const fields = {
 /** Hash a caller's explicit credential-free identity payload using the canonical owner. */
 export const experientialRevisionOf = canonicalSha256;
 
+/** Registration time is retained beside its immutable policy, corpus and head bindings. */
+export function experientialEvaluationRegistrationId(registration: ExperientialEvaluationRegistration): Promise<string> {
+  const { id: _id, recordedAt: _at, ...payload } = registration;
+  return experientialRevisionOf({ document: 'experiential-evaluation-registration', schemaVersion: 1, ...payload });
+}
+
 /** The stable head address is partitioned by both deployment profile and logical scope. */
 export function experientialHeadKey(profile: string, scope: string): Promise<string> {
   return experientialRevisionOf({ document: 'experiential-head', schemaVersion: 1, scope, profile });
@@ -35,7 +42,16 @@ export function experientialRecordId<K extends ExperientialRecordKind>(kind: K, 
   const payload = Object.fromEntries([...common, ...fields[kind]].filter(key => Object.hasOwn(value, key)).map(key => [key, value[key]]));
   // Measurement cost is an observation, while configured budget ceilings above
   // are part of the experiment. Scientific row contents still bind the record.
-  if (kind === 'evaluation') payload.rows = (record as ExperientialRecordMap['evaluation']).rows.map(({ cost: _, ...row }) => row);
+  if (kind === 'evaluation') {
+    const evaluation = record as ExperientialRecordMap['evaluation'];
+    payload.rows = evaluation.rows.map(({ cost: _, ...row }) => row);
+    // Operational observations stay in the immutable retained row, beside its
+    // address. The gate decision and configured tolerances remain identity inputs.
+    payload.failures = evaluation.failures.map(failure => failure.gate === 'operations'
+      ? { gate: failure.gate, detail: failure.detail, tolerance: failure.tolerance } : failure);
+    payload.operations = { status: evaluation.operations.status, artifactBytes: evaluation.operations.artifactBytes,
+      failureRate: evaluation.operations.failureRate, runtimeProvider: evaluation.operations.runtimeProvider };
+  }
   return experientialRevisionOf(payload);
 }
 
@@ -44,6 +60,12 @@ export async function checkExperientialRecord<K extends ExperientialRecordKind>(
   if (!shape.ok) return shape;
   if (await experientialRecordId(kind, shape.value) !== shape.value.id)
     return refuseExperiential('TEXP1002', '/id', 'The content identity does not reproduce from its immutable inputs.');
+  if (kind === 'artifact') {
+    const artifact = shape.value as ExperientialRecordMap['artifact'], registration = artifact.evaluationRegistration;
+    if (registration && (registration.id !== await experientialEvaluationRegistrationId(registration)
+      || registration.artifactId !== artifact.id || registration.scope !== artifact.scope))
+      return refuseExperiential('TEXP1002', '/evaluationRegistration', 'The retained evaluation registration does not reproduce its artifact binding.');
+  }
   return shape;
 }
 
