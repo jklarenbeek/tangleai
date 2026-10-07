@@ -9,6 +9,11 @@ does not establish identity, provenance, eligibility or permission to activate.
 The root import performs no I/O. Training and activation are experimental and
 off; these contracts make no model-quality or learning claim.
 
+Context consolidation in `@tangleai/memory/consolidation` produces external
+evidence and context artifacts. Experiential consolidation prepares and evaluates
+versioned parameter artifacts through an injected trainer. Neither compacted
+text nor the fake backend's JSON bytes count as learned model parameters.
+
 `sealExperientialRecord` snapshots and validates finite JSON, then derives its
 address with the native canonical SHA-256 owner. `checkExperientialRecord`
 rechecks that address on reads. Local observation timestamps and lifecycle state
@@ -301,3 +306,64 @@ lineage, an open rollback window, a hold on any alias of the episode, or sole
 provenance for a checked rule. Archived experiences keep their identities and
 source references, remain resolvable through artifact lineage, and are excluded
 from future selection. Generic writes cannot bypass the retention command.
+
+## Read-only inspection
+
+`createExperientialOperations(store)` returns a frozen native local contract
+client with `invoke`, `describe`, `contract` and asynchronous `close`. Every
+operation reads one atomic `store.snapshot(scope)` over the retained tables;
+lineage and history therefore come from the same transaction. The host must
+authorize the requested scope before dispatch. Scope selection is not caller
+authentication. Closing the client leaves the host's store and database open.
+
+| Operation | Required input beyond `scope` | Result |
+|---|---|---|
+| `experiential.lineage` | `artifactId` | Artifact ancestry, runs, datasets, assessments, experiences and source references |
+| `experiential.experiences` | `state` (a state or `null`) | Matching experiences and their assessments |
+| `experiential.datasets` | — | Dataset manifests, split members and exclusion counts |
+| `experiential.trainingruns` | — | Run state, budgets, accounting and separately retained log digests |
+| `experiential.artifacts` | — | Checksums, ancestry, runtime and lifecycle state |
+| `experiential.evaluations` | — | Registered controls, candidate metrics, intervals and gate failures |
+| `experiential.deployments` | — | Deployments, active heads and canary/activation/rollback event history |
+| `experiential.retention` | `preview` (`null` or `{ episodeIds, deploymentId, now, policy }`) | Recorded decisions and events, plus an optional pure plan or coded refusal |
+
+The contract has no mutation or subscription operation. It checks closed inputs
+before touching storage and bounds inspection to 4,096 rows per table. A refused
+retention preview identifies the dependency and never archives an experience.
+Host-applied lifecycle plans remain the only activation and rollback path.
+
+```ts
+const operations = createExperientialOperations(store);
+try {
+  const result = await operations.invoke('experiential.artifacts', { scope });
+  if (result.ok && result.value.ok) console.log(result.value.value);
+} finally {
+  await operations.close();
+}
+```
+
+Outputs are detached, frozen inspection views. The shared redactor omits
+secret-shaped members, storage locations, free-form log and metrics references,
+log bodies and event detail; runtime endpoint views remove user information,
+query and fragment. Training log digests remain available without their raw
+references. Native coded persistence failures retain their machine code in
+`cause` through inspection, lineage, inference startup, artifact byte reads,
+policy revision and job scheduling; raw diagnostic messages and locations
+remain private. Wrapping a refusal retains its original
+cause within the closed issue schema. These projections preserve retained
+record IDs but are not complete
+records and must not be submitted as write plans. Their shapes are derived from
+the same closed record schema and published as
+`@tangleai/experiential/schemas/contract`. `createExperientialContract` and
+`createExperientialHandlers` support host-owned native dispatch.
+
+## What the measurement establishes
+
+The [CGT instrument](../../docs/CGT_BENCHMARK.md) publishes each registered
+learning, retention, security, operations and rollback condition. Its scientific
+claim is `not-run`: scripted candidates cannot satisfy an authorized live claim,
+the perfect rule control leaves no positive improvement interval for a tie, and
+required unrun retention lanes fail closed. The separate scripted rollback
+receipt executes the native example with 32 pins; the installed Node and Bun
+consumer walkthroughs retain the full 1,000-pin test. Fake artifacts and recorded
+synthetic evaluation values establish lifecycle conformance, not learning.

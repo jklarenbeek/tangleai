@@ -1924,6 +1924,82 @@ export interface CgtEvaluationContext {
 }
 
 
+export interface CgtRollbackDrill {
+  tier: "scripted";
+  status: "passed";
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  datasetId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  deploymentId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  previousArtifactId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  candidateArtifactId: string;
+  pins: 32;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=32
+   */
+  routed: number;
+  rolloutFraction: 0.25;
+  tolerance: 15;
+  restoredHead: Experiential_ExperientialExpectedHead;
+  inFlightUnchanged: true;
+  failedArtifactRetained: true;
+  fakeSubmissions: 2;
+  scientificApproval: false;
+  physicalRequests: 0;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  receiptId: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type CgtClaimAuthorizedLiveRunIdAnyOf1 = string;
+
+export interface CgtClaimConditionsItem {
+  id: "learning" | "retention" | "security" | "operations" | "rollback";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  required: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  observed: string;
+  status: "not-run" | "met" | "not-met";
+}
+
+
+export interface CgtClaim {
+  status: "not-run" | "met" | "not-met";
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  gatePolicyId: string;
+  authorizedLiveRunId: CgtClaimAuthorizedLiveRunIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  rollbackDrillId: string;
+  /**
+   * Schema constraints this type cannot express: minItems=5, maxItems=5
+   */
+  conditions: Array<CgtClaimConditionsItem>;
+}
+
+
 /**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].rowId"],["oracle","seeded-random","scripted-memorizer","scripted-retrieval","scripted-rule-follower","frozen-none","frozen-retrieval","frozen-distilled-rule","active-artifact-no-retrieval","candidate-no-retrieval","candidate-retrieval"]]},{"$eq":[["$.envelope.rows[*].rowId"],["$.rows[*].rowId"]]},{"$eq":[["$.guards[*].code"],["holdout-shares-experience","validation-retrievable","poison-in-partition","cross-scope-in-partition"]]},{"$eq":["$.capabilities.live",{"$some":{"row":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$row.tier","live"]},{"$eq":["$row.status","run"]}]}}]},{"$eq":["$.nonDiscriminatingFixtures",{"$count":"$.alpha[?(@.nonDiscriminating==true)]"}]},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$and":[{"$eq":["$row.sampleCount.exactPair","$.registration.partitions.exactPair"]},{"$eq":["$row.sampleCount.exactPair",{"$count":"$row.observations[?(@.partition==\"exact-pair\")]"}]}]}},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$eq":["$row.seenPair",{"$div":[{"$sum":"$row.observations[?(@.partition==\"exact-pair\")].score"},"$row.sampleCount.exactPair"]}]}},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$and":[{"$eq":["$row.sampleCount.paraphrase","$.registration.partitions.paraphrase"]},{"$eq":["$row.sampleCount.paraphrase",{"$count":"$row.observations[?(@.partition==\"paraphrase\")]"}]}]}},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$eq":["$row.paraphrase",{"$div":[{"$sum":"$row.observations[?(@.partition==\"paraphrase\")].score"},"$row.sampleCount.paraphrase"]}]}},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$and":[{"$eq":["$row.sampleCount.novel","$.registration.partitions.novel"]},{"$eq":["$row.sampleCount.novel",{"$count":"$row.observations[?(@.partition==\"novel\")]"}]}]}},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$eq":["$row.cgc",{"$div":[{"$sum":"$row.observations[?(@.partition==\"novel\")].score"},"$row.sampleCount.novel"]}]}},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$and":[{"$eq":["$row.sampleCount.retention","$.registration.partitions.retention"]},{"$eq":["$row.sampleCount.retention",{"$count":"$row.observations[?(@.partition==\"retention\")]"}]}]}},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$eq":["$row.retention",{"$div":[{"$sum":"$row.observations[?(@.partition==\"retention\")].score"},"$row.sampleCount.retention"]}]}},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$eq":[{"$count":"$row.bySession[*]"},"$.registration.sessions"]}},{"$every":{"row":"$.rows[?(@.status==\"not-run\")]"},"$satisfies":{"$and":[{"$eq":[{"$count":"$row.observations[*]"},0]},{"$eq":[{"$count":"$row.bySession[*]"},0]},{"$eq":["$row.cgc",null]},{"$eq":["$row.seenPair",null]},{"$eq":["$row.paraphrase",null]},{"$eq":["$row.retention",null]},{"$eq":["$row.cost",null]},{"$eq":["$row.training",null]},{"$eq":["$row.retrieval",null]},{"$eq":["$row.sampleCount.exactPair",0]},{"$eq":["$row.sampleCount.paraphrase",0]},{"$eq":["$row.sampleCount.novel",0]},{"$eq":["$row.sampleCount.retention",0]}]}},{"$every":{"row":"$.rows[?(@.tier==\"live\")]"},"$satisfies":{"$or":[{"$eq":["$row.status","not-run"]},{"$some":{"identity":"$.envelope.rows[*]"},"$satisfies":{"$and":[{"$eq":["$identity.rowId","$row.rowId"]},{"$eq":["$identity.identityStatus","run"]}]}}]}},{"$every":{"row":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$row.experienceBudget","$.registration.experienceBudget"]},{"$eq":["$row.retrievalK","$.registration.manifest.retrievalK"]}]}},{"$every":{"row":"$.rows[?(@.status==\"run\")]"},"$satisfies":{"$every":{"session":"$row.bySession[*]"},"$satisfies":{"$and":[{"$eq":[{"$count":"$session.observations[*]"},"$.registration.partitions.novel"]},{"$eq":["$session.cgc",{"$div":[{"$sum":"$session.observations[*].score"},"$.registration.partitions.novel"]}]}]}}},{"$eq":[["$.alpha[*].rowId"],["frozen-none","frozen-retrieval","frozen-distilled-rule"]]},{"$every":{"alpha":"$.alpha[?(@.status==\"run\")]"},"$satisfies":{"$some":{"row":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$row.rowId","$alpha.rowId"]},{"$eq":["$row.status","run"]},{"$eq":["$row.tier","live"]}]}}},{"$eq":[["$.rows[*].tier"],["oracle","analytic","scripted","scripted","scripted","live","live","live","live","live","live"]]},{"$eq":[["$.evaluations[*].candidateId"],["candidate-memorizer","candidate-rule-follower","candidate-forgetting","candidate-tainted","candidate-oversized"]]}]}
  */
@@ -1964,6 +2040,8 @@ export interface CgtReport {
    */
   evaluations: Array<CgtCandidateEvaluation>;
   evaluationContext: CgtEvaluationContext;
+  rollbackDrill: CgtRollbackDrill;
+  claim: CgtClaim;
 }
 
 

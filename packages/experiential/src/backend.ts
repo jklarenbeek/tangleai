@@ -2,7 +2,7 @@
 import { deepFreeze } from '@jarenjs/core/object';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { validateExperientialShape } from './schema.ts';
-import { refuseExperiential, type ExperientialResult } from './errors.ts';
+import { experientialNativeCause, refuseExperiential, type ExperientialResult } from './errors.ts';
 import type { ArtifactReceipt, BackendJob, BackendJobState, ExperientialRuntime,
   ExperientialTrainingRunBackendIdentity, TrainingCapabilities, TrainingSpec } from './contracts.gen.ts';
 
@@ -89,7 +89,7 @@ export async function verifyArtifactReceipt(value: unknown, options: VerifyArtif
       || supplied.byteLength !== r.sizeBytes || supplied.byteLength > maxBytes)
       return refuseExperiential('TEXP1008', '/receipt/sizeBytes', 'The fetched artifact size differs from its receipt or exceeds the host bound.');
     bytes = new Uint8Array(supplied);
-  } catch { return refuseExperiential('TEXP1008', '/receipt/storageUri', 'The configured host could not read the bounded artifact bytes.'); }
+  } catch (error) { return refuseExperiential('TEXP1008', '/receipt/storageUri', 'The configured host could not read the bounded artifact bytes.', experientialNativeCause(error)); }
   if (await experientialArtifactChecksum(bytes) !== r.sha256)
     return refuseExperiential('TEXP1008', '/receipt/sha256', 'The fetched artifact checksum does not reproduce.');
   const verified = deepFreeze({ receipt: r, verifiedBytes: bytes.byteLength });

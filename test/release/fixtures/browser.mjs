@@ -2,6 +2,7 @@ import { qualifyLightRagBrowser, qualifyLightRagPreparation, qualifyLightRagRetr
 import { qualifyGroundingBrowser } from './grounding-browser.mjs';
 import { qualifyConsolidation } from './consolidation-browser.mjs';
 import { qualifyGmplBrowser } from './gmpl-browser.mjs';
+import { qualifyExperientialBrowser } from './experiential-browser.mjs';
 import { qualifyHeraBrowser } from './hera-browser.mjs';
 import { qualifyForecastBrowser } from './forecast-browser.mjs';
 import { qualifyTradingBrowser } from './trading-browser.mjs';
@@ -23,6 +24,7 @@ globalThis.tangleConsumer = {
   lightragRetrieval: qualifyLightRagRetrieval(),
   evolve: { createModelProposer, selectExperiment, selectionDefault: EVOLVE_SELECTION_DEFAULT },
   gmpl: qualifyGmplBrowser(),
+  experiential: qualifyExperientialBrowser(),
   grounding: qualifyGroundingBrowser(),
   hera: qualifyHeraBrowser(),
   forecast: qualifyForecastBrowser(),

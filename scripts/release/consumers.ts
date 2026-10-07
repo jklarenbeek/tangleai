@@ -33,8 +33,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
   const bun = execFileSync('bun', ['--version'], { encoding: 'utf8' }).trim();
   assert.equal(bun, cfg.bun, 'Use the pinned Bun release for consumer verification');
   const directory = mkdtempSync(resolve(tmpdir(), 'tangle-npm-consumer-'));
-  async function sqliteFixture(runtime: string, args: string[]) {
-    const { stdout, stderr } = await runRuntimeFixture(runtime, args, { cwd: directory, timeout: 120_000 });
+  async function sqliteFixture(runtime: string, args: string[], timeout = 120_000) {
+    const { stdout, stderr } = await runRuntimeFixture(runtime, args, { cwd: directory, timeout });
     process.stdout.write(stdout); process.stderr.write(stderr);
   }
   try {
@@ -74,6 +74,10 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     for (const file of ['research-consumer.mjs', 'research-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'research-consumer.mjs']);
     await sqliteFixture('bun', ['research-consumer.mjs']);
+    writeFileSync(resolve(directory, 'experiential-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/experiential.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
+    for (const file of ['experiential-consumer.mjs', 'experiential-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
+    await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'experiential-consumer.mjs'], 300_000);
+    await sqliteFixture('bun', ['experiential-consumer.mjs'], 300_000);
     writeFileSync(resolve(directory, 'grounding-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/grounding.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     for (const file of ['grounding-consumer.mjs', 'grounding-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'grounding-consumer.mjs']);
@@ -158,6 +162,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       imports.push("import './trading-types.js';");
       cpSync(resolve(root, 'test/release/fixtures/research-types.ts'), resolve(directory, 'research-types.ts'));
       imports.push("import './research-types.js';");
+      cpSync(resolve(root, 'test/release/fixtures/experiential-types.ts'), resolve(directory, 'experiential-types.ts'));
+      imports.push("import './experiential-types.js';");
       cpSync(resolve(root, 'test/release/fixtures/grounding-types.ts'), resolve(directory, 'grounding-types.ts'));
       imports.push("import './grounding-types.js';");
       cpSync(resolve(root, 'test/release/fixtures/lightrag-types.ts'), resolve(directory, 'lightrag-types.ts'));
@@ -210,6 +216,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       Object.assign(browser, { window: browser, self: browser });
       vm.runInNewContext(readFileSync(resolve(directory, 'browser.js'), 'utf8'), browser, { timeout: 30_000 });
       const gmplBrowser = await browser.tangleConsumer.gmpl;
+      assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.experiential)),
+        { operations: 8, schemaClosed: true, stableShare: true, writes: 0 });
       assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.place)), { entries: 71, grounded: 1, cells: 9, claim: true,
         refusal: 'TPLC1007', cause: 'AI0230', movementMetres: 13393632, citedSources: 2, nearby: ['shibuya-q595153'] });
       assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.trading)), { writes: 9, replayWrites: 0, quantity: 10, refused: 1, missing: 1 });

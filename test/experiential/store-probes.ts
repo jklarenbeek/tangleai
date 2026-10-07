@@ -48,6 +48,29 @@ export async function runExperientialStoreProbes(createHost: () => Promise<Exper
     assert.deepEqual(await host.state(), before);
     accepted(await host.store.transition(plan)); const replay = await host.store.transition(plan); assert.ok(replay.ok); assert.equal(replay.writes, 0);
   });
+  await probe('atomic-inspection-under-concurrent-activation', async host => {
+    const fixture = await experientialStoreFixture(host.store), pending = await pendingActivation(host.store, fixture, 'inspection');
+    const before = host.store.stats();
+    const first = host.store.snapshot('fixture'), promotion = host.peer.activate(pending);
+    const reads = Array.from({ length: 12 }, () => host.store.snapshot('fixture'));
+    const snapshots = [accepted(await first), ...await Promise.all(reads.map(async read => accepted(await read)))];
+    accepted(await promotion);
+    for (const snapshot of snapshots) {
+      const head = snapshot.heads[0], deployment = snapshot.deployments.find(row => row.profile === head.profile)!;
+      assert.ok([fixture.artifact.id, pending.artifact.id].includes(head.head.versionId!));
+      assert.equal(deployment.activeArtifactId, head.head.versionId); assert.equal(deployment.headRevision, head.head.revision);
+      assert.deepEqual(snapshot.artifacts.filter(row => row.state === 'active').map(row => row.id), [head.head.versionId]);
+      assert.ok(snapshot.events.some(row => row.id === head.eventId && row.recordId === head.head.versionId));
+    }
+    assert.equal(host.store.stats().transactions - before.transactions, 13);
+    assert.equal(host.store.stats().writes, before.writes);
+    await host.reopen();
+    const reopened = accepted(await host.store.snapshot('fixture'));
+    assert.equal(reopened.heads[0].head.versionId, pending.artifact.id);
+    assert.equal(reopened.deployments.find(row => row.profile === reopened.heads[0].profile)!.activeArtifactId, pending.artifact.id);
+    assert.equal(accepted(await host.store.snapshot('unrelated')).artifacts.length, 0);
+    refused(await host.store.snapshot(' '), 'TEXP1001');
+  });
   await probe('batch-refusal-rolls-back-earlier-record-and-event', async host => {
     const row = await addressedFixture('experience'), assessment = await addressedFixture('assessment', { experienceId: 'f'.repeat(64) });
     const before = await host.state();

@@ -215,7 +215,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "490af752ef299632ba1deadcf030133937af693a0fc7866f0f6b1beb721cfc33"
+        "sha256": "66957edc054e7231cb2a084204c5be53e0049648f648f09bab53dec58333372e"
       },
       {
         "path": "packages/agents/package.json",
@@ -1254,7 +1254,7 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "8b9a71e0d766991609cdfe1ef9e22aec64135003b172488fd767ed85d08d64b5"
+    "sha256": "fec3900aaa4381b1e803475ee3181bea0c7d9a7610ecb4f4b77e0042cd29416f"
   },
   "suite": {
     "tangle": "0.39.0",
@@ -26055,5 +26055,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "7672e8a56865bed730056cbc6fb9cc122fa088558bc97d42d4ec852fb5f6cf32"
+  "reportId": "f3defe06198507c0ffddc49c7399ec1164a04e5d23755d04f28aa0265984ecc2"
 }

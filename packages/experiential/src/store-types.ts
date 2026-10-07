@@ -14,6 +14,7 @@ export const EXPERIENTIAL_TABLE_KINDS = Object.freeze({
 } as const satisfies Record<string, ExperientialRecordKind>);
 export type ExperientialTable = keyof typeof EXPERIENTIAL_TABLE_KINDS;
 export type ExperientialTables = { [K in ExperientialTable]: ExperientialRecordMap[typeof EXPERIENTIAL_TABLE_KINDS[K]] };
+export type ExperientialSnapshot = { [K in ExperientialTable]: ExperientialTables[K][] };
 export const EXPERIENTIAL_TABLES = Object.freeze(Object.keys(EXPERIENTIAL_TABLE_KINDS) as ExperientialTable[]);
 
 /** Trusted extension: all writes must roll back if task throws. */
@@ -31,6 +32,7 @@ export type ExperientialWrite = { [K in ExperientialTable]: { table: K; value: E
 export interface ExperientialStoreStats { transactions: number; writes: number; activations: number }
 export interface ExperientialStore {
   stats(): ExperientialStoreStats;
+  snapshot(scope: string): Promise<ExperientialStoreResult<ExperientialSnapshot>>;
   get<K extends ExperientialTable>(table: K, id: string): Promise<ExperientialStoreResult<ExperientialTables[K] | null>>;
   list<K extends ExperientialTable>(table: K, scope: string): Promise<ExperientialStoreResult<ExperientialTables[K][]>>;
   put<K extends ExperientialTable>(table: K, value: ExperientialTables[K]): Promise<ExperientialStoreResult<ExperientialTables[K]>>;

@@ -7,7 +7,7 @@ import { checkExperientialRecord, sealExperientialRecord } from './identity.ts';
 import { experientialBaseDigest } from './deployment.ts';
 import { routesToCanary } from './canary.ts';
 import { validateExperientialShape } from './schema.ts';
-import { experientialIssue, refuseExperiential, type ExperientialResult } from './errors.ts';
+import { experientialIssue, refuseExperiential, experientialNativeCause, type ExperientialResult } from './errors.ts';
 import type { ExperientialArtifact, ExperientialDeployment, ExperientialInferenceCapability, ExperientialInferencePin } from './contracts.gen.ts';
 import type { ExperientialStore } from './store-types.ts';
 
@@ -108,7 +108,7 @@ export async function startExperientialInference(input: ExperientialInferenceHos
     if (!retained.ok) return retained;
     const client = await input.binding.clientFor(retained.value, resolved.identity);
     return { ok: true, value: { identity: resolved.identity, pin: retained.value, client } };
-  } catch {
-    return refuseExperiential('TEXP1009', '/host', 'The inference host failed before publishing a ready client.');
+  } catch (error) {
+    return refuseExperiential('TEXP1009', '/host', 'The inference host failed before publishing a ready client.', experientialNativeCause(error));
   }
 }

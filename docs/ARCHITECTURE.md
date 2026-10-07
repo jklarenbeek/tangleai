@@ -425,6 +425,38 @@ See the [API guide](../packages/memory/docs/CONSOLIDATION.md),
 combined retrieval gains coexist with artifact-only losses. Live synthesis QA,
 provider cost and default enablement remain unqualified.
 
+## Experiential memory
+
+`@tangleai/experiential` keeps parameter artifacts separate from context
+consolidation. Tangle owns independent experience selection, immutable dataset
+lineage, backend receipt verification, registered evaluation gates, deployment
+policy, per-run inference pins and retention decisions. The store package adapts
+the shared atomic protocol to native SQLite; memory, Node and Bun use the same
+checks. Read-only operations project one scope snapshot and redact secret-shaped
+fields, storage locations and raw logs.
+
+Jaren owns canonical identity, validation and emission, JTLT rendering, DAG job
+execution and checkpoints, scheduling, attempt budgets, guarded refinement and
+contract dispatch. Tangle consumes outcomes head CAS and configuration identity;
+it does not create another queue, scheduler, hash or approval primitive. The
+injected `TrainingBackend` seam remains Tangle-owned: the pinned foundation has
+no parameter-training service. The host owns credentials, network policy, trainer
+and inference endpoint. Inference-only providers are reported as such.
+
+Training runs asynchronously under durable submission and worker fences. A
+verified receipt stages an artifact; it cannot approve or activate it. Evaluation
+registration freezes controls and limits before observations arrive. Activation
+and exact-prior-artifact rollback publish head, deployment and audit event
+atomically. In-flight pins retain their original artifact across either change.
+Cadence is disabled by default and driven explicitly by the host. Retention
+preserves serving lineage, rollback windows, holds and source evidence.
+
+The [public example](../examples/experiential.ts) and
+[API guide](../packages/experiential/README.md) cover these mechanisms. The
+[CGT report](CGT_BENCHMARK.md) separates scripted lifecycle conformance from
+the scientific claim, which remains `not-run`. Real model training, a measured
+live learning gain and a configuration adapter component remain absent.
+
 ## What is deliberately absent (see ROADMAP.md)
 
 The fitness signal (LoCoMo — `LOCOMO_RECALL.md`, `LOCOMO_BENCHMARK.md`)

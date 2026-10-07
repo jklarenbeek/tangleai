@@ -35,7 +35,10 @@ const host: HostManifest = { sourceClass: 'synthetic', credentialSlots: [], prov
   budget: { maxCalls: 1, maxTokens: null, maxMs: null, maxConcurrency: 1 }, observation: null };
 const request = { kind: 'profile' as const, profile, overrides: null };
 
-export async function runExperientialExample(options: { storage?: 'memory' | 'sqlite'; database?: string; tick?: boolean } = {}) {
+export async function runExperientialExample(options: { storage?: 'memory' | 'sqlite'; database?: string; tick?: boolean; pinCount?: number } = {}) {
+  const pinCount = options.pinCount ?? 1000;
+  if (!Number.isSafeInteger(pinCount) || pinCount < 32 || pinCount > 10000) throw new TypeError('The synthetic pin census must be between 32 and 10000.');
+  const tolerance = pinCount === 1000 ? 60 : Math.ceil(6 * Math.sqrt(pinCount * 0.25 * 0.75));
   const clock = { value: Date.parse(epoch) }, now = () => new Date(clock.value).toISOString();
   const db = await openTangleDb({ path: options.database ?? ':memory:', jobs: { now: () => clock.value, random: () => 0.5, backoffBase: 0, backoffCap: 0 } });
   const memory = options.storage === 'sqlite' || options.tick ? null : createExperientialMemoryStore({ now });
@@ -234,12 +237,12 @@ export async function runExperientialExample(options: { storage?: 'memory' | 'sq
     const candidate = await evaluate(await train('candidate', 17754)); await approve(candidate, 'canary', 'Canary the recorded-value conformance candidate.');
     let routed = 0, inFlight: ExperientialInferencePin | undefined;
     const artifacts = must(await store.list('artifacts', scope));
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < pinCount; i++) {
       const choice = must(await resolveExperientialInference({ registry, request, host, deployment, artifacts, capability: { trainable: true },
         runId: 'synthetic-run-' + i, recordedAt: now() }));
       must(await store.pin(choice.pin)); if (choice.pin.canary) { routed++; inFlight ??= choice.pin; }
     }
-    assert.ok(Math.abs(routed - 250) <= 60); assert.ok(inFlight);
+    assert.ok(Math.abs(routed - pinCount * 0.25) <= tolerance); assert.ok(inFlight);
     await approve(candidate, 'activate', 'Activate the recorded-value conformance candidate.');
     assert.deepEqual(must(await store.get('pins', inFlight.id)), inFlight);
     assert.equal((await store.pin(inFlight)).ok, false);
@@ -251,7 +254,7 @@ export async function runExperientialExample(options: { storage?: 'memory' | 'sq
     return { tier: 'synthetic-deployment-conformance', storage: memory ? 'memory' : 'sqlite', selected: selection.counts.selected,
       datasetId: dataset.id, deploymentId: deployment.id, previousArtifactId: previous.artifact.id, candidateArtifactId: candidate.artifact.id,
       fakeSubmissions: submissions, trainingExamples: dataset.splits.train.length, validationExamples: dataset.splits.validation.length,
-      retainedReplayExamples: dataset.splits.replay.length, pins: 1000, rolloutFraction: 0.25, routed, tolerance: 60, inFlightUnchanged: true,
+      retainedReplayExamples: dataset.splits.replay.length, pins: pinCount, rolloutFraction: 0.25, routed, tolerance, inFlightUnchanged: true,
       restoredHead: restored.head, failedArtifactRetained: true, scientificApproval: false, physicalRequests };
   } finally { globalThis.fetch = originalFetch; await memory?.close(); await db.close(); }
 }

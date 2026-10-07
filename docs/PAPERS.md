@@ -21,6 +21,15 @@ salvaged under [`docs/attic/memflow-modules/`](attic/memflow-modules/) (full man
   headline parity, SmartPause, wet-lab domains and live learning quality are not
   established. Full-auto is experimental and its default remains off.
   📄 [`refs/AutoResearchClaw.pdf`](refs/AutoResearchClaw.pdf)
+
+- **Memo, Not True Memory** (arXiv:2604.27707v1) — the builder requirements
+  are `@tangleai/experiential` (reviewed lineage, evaluation gates, canary,
+  inference pinning and exact rollback) and the [CGT instrument](CGT_BENCHMARK.md).
+  Context artifacts remain distinct from parameter artifacts. No learning claim
+  follows until an authorized training run satisfies the registered claim gate;
+  the position paper's theorem and full proposal are not reproduced.
+  - 📄 [`refs/2604.27707v1.pdf`](refs/2604.27707v1.pdf)
+
 - **LightRAG** (arXiv:2410.05779v3) — document-bound entity/relation claims,
   structured extraction and affected profiling, name/theme retrieval, bounded
   one-hop expansion, three evidence sections, atomic incremental admission and
@@ -173,9 +182,6 @@ implementing any single one.
 
 - **5 Proven Query Translation Techniques** (TDS, 2024) — HyDE, multi-query, step-back. 📄 [`refs/5 Proven Query Translation Techniques.pdf`](refs/5%20Proven%20Query%20Translation%20Techniques.pdf)
 - **AutoSkill** (arXiv:2604.17614v1) — activation-space skill characterization. 📄 [`refs/2604.17614v1.pdf`](refs/2604.17614v1.pdf)
-- **Memo, Not True Memory** (arXiv:2604.27707v1) — the generalization-ceiling argument for
-  weight-based consolidation; the honest caveat under everything this repo does, and the
-  roadmap's experiential-memory entry operationalizes its builder requirements. 📄 [`refs/2604.27707v1.pdf`](refs/2604.27707v1.pdf)
 - **OMNI-SIMPLEMEM** (arXiv:2604.01007v2) — autonomous experiment loops over memory configs. 📄 [`refs/2604.01007v2.pdf`](refs/2604.01007v2.pdf)
 - **Enhancing Efficiency in Text Splitting: Exploring Semantic Clustering Methods**
   (Traets, 2024) — a supervised boundary classifier over embedding-window differences,

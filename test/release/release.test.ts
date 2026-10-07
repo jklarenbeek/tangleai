@@ -423,6 +423,16 @@ it('distribution manifests retain compiled content artifacts and reject traversa
   assert.throws(()=>distributionManifest({...source,exports:{'./artifacts':'./artifacts/../secret.json'}}),/traverse|match/);
 });
 
+it('the experiential package publishes native contracts, schemas and template documentation', () => {
+  const source = readJson(resolve(ROOT, 'packages/experiential/package.json'));
+  const distributed = distributionManifest(source).exports!;
+  assert.deepEqual(distributed['./contract'], { types: './src/contract.d.ts', import: './src/contract.js', default: './src/contract.js' });
+  assert.equal(distributed['./schemas/experiential'], './schemas/experiential.schema.json');
+  assert.equal(distributed['./schemas/contract'], './schemas/experiential.contract.json');
+  assert.equal(distributed['./schemas/training-service'], './schemas/training-service.contract.json');
+  for (const pattern of ['schemas/**/*.json', 'templates/**/*.json', 'docs/**/*.md', 'README.md']) assert.ok(source.files?.includes(pattern));
+});
+
 it('the orchestration package publishes its composed schema and immutable catalog',()=>{
   const source=readJson(resolve(ROOT,'packages/hera/package.json'));
   const manifest=distributionManifest(source);

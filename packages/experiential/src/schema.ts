@@ -6,6 +6,7 @@ import { JarenValidator } from '@jarenjs/validate';
 import schema from '../schemas/experiential.schema.json' with { type: 'json' };
 import { experientialIssue, refuseExperiential, sortExperientialIssues } from './errors.ts';
 import type { ExperientialResult } from './errors.ts';
+import { EXPERIENTIAL_SECRET_MEMBER } from './privacy.ts';
 import type {
   ExperientialExperience, ExperientialAssessment, ExperientialDataset, ExperientialTrainingRun,
   ExperientialArtifact, ExperientialEvaluation, ExperientialGatePolicy, ExperientialApproval,
@@ -46,7 +47,6 @@ interface ValidationError {
 }
 type Validator = (value: unknown) => { valid: boolean; errors?: ValidationError[] };
 const validators = new Map<string, Validator>();
-const secretMember = /key|token|secret|password|credential|bearer/i;
 const timeMembers = new Set(['recordedAt', 'startedAt', 'finishedAt', 'rollbackUntil', 'updatedAt']);
 const uriMembers = new Set(['storageUri', 'base']);
 
@@ -54,7 +54,7 @@ function attribute(error: ValidationError): ExperientialIssue {
   const path = error.instancePath ?? '';
   if (error.keyword === 'additionalProperties') {
     const member = error.params?.additionalProperty ?? '';
-    return experientialIssue('TEXP1001', path, secretMember.test(member)
+    return experientialIssue('TEXP1001', path, EXPERIENTIAL_SECRET_MEMBER.test(member)
       ? `Undeclared member '${member}' is secret-shaped.` : `Undeclared member '${member}'.`);
   }
   return experientialIssue('TEXP1001', path, error.message ?? 'The closed record schema refused this value.');

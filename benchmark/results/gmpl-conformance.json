@@ -207,7 +207,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "490af752ef299632ba1deadcf030133937af693a0fc7866f0f6b1beb721cfc33"
+        "sha256": "66957edc054e7231cb2a084204c5be53e0049648f648f09bab53dec58333372e"
       },
       {
         "path": "packages/agents/package.json",
@@ -419,7 +419,7 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "1c11962897cce5e0d31ba213fc12ff4e59d56f36714c32d18355c6b72517e0e3"
+        "sha256": "7b41f4577b4765d38ce1dba493067b7616dcf9824f90af5252edb2743cb62c97"
       },
       {
         "path": "packages/forecast/package.json",
@@ -1039,7 +1039,7 @@
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "877b41c8ecc19d7b4c46db629bf9057e98f6c34de6f8cd1544b787cb53440c64"
+        "sha256": "ee7c243132a8ebdbd6926fe34929acf976592d54ff0d60f2113e96004200de9a"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -1131,7 +1131,7 @@
       },
       {
         "path": "test/release/fixtures/browser.mjs",
-        "sha256": "b7ea996961796ba7336c136e370d795dc2f5c4f3891a3759c15cb13f7c7f8dd0"
+        "sha256": "11d54e2fb3e73599f4ef1f86afd4b4d1adf4995fff728e9cc5a1b1a41d29146b"
       },
       {
         "path": "test/release/fixtures/gmpl-browser.mjs",
@@ -1146,7 +1146,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "8741182e51983ea2ba0a308be1f3ca32945754f77a275e07c97b722dda9d4a3a"
+    "sha256": "d03b13cd9c828de2999ccc688eba29d3a86ecb8e81f2d542cf6a88521f7fdadc"
   },
   "ablations": [
     {
@@ -76700,5 +76700,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "b52a7cf9583d2c9be14cbd6b98a6228e483a41cc59020f4e64dc306ac5abf0a8"
+  "reportId": "4a29c495383f1ca79d80c596b0e9b4ae49e8a20e0d8fc6bc7b315366d1e14cc3"
 }

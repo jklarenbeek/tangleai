@@ -2,12 +2,13 @@
 import { canonicalizeJson, canonicalSha256 } from '@jarenjs/json/canonical';
 import { equalsJson } from '@jarenjs/core/object';
 import { checkExperientialRecord, experientialHeadKey, sealExperientialRecord } from './identity.ts';
-import { experientialIssue, type ExperientialIssueCode, type ExperientialResult } from './errors.ts';
+import { experientialIssue, experientialNativeCause, type ExperientialIssueCode, type ExperientialResult } from './errors.ts';
 import { planExperienceTransition, planTrainingTransition, planArtifactTransition, planExperientialActivation, planExperientialRollback, planExperientialHead, checkExperientialHead } from './lifecycle.ts';
 import { experientialBaseDigest } from './deployment.ts';
 import { routesToCanary } from './canary.ts';
 import { EXPERIENTIAL_TABLE_KINDS, EXPERIENTIAL_TABLES, type ExperientialPersistence, type ExperientialTransaction,
-  type ExperientialTables, type ExperientialTable, type ExperientialStoreResult, type ExperientialStore, type ExperientialWrite, type ExperientialStoreStats } from './store-types.ts';
+  type ExperientialTables, type ExperientialTable, type ExperientialStoreResult, type ExperientialStore, type ExperientialWrite, type ExperientialStoreStats,
+  type ExperientialSnapshot } from './store-types.ts';
 import { createExperientialMemoryPersistence, type ExperientialMemoryOptions } from './persistence-memory.ts';
 import { checkExperientialDataset } from './dataset.ts';
 import { checkTrainingBindings, initialTrainingProgress, planExperientialTrainingUpdate } from './training.ts';
@@ -84,7 +85,7 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
       stats.writes += context!.writes; stats.activations += context!.activations;
       return { ok: true, value, writes: context!.writes, replayed: context!.writes === 0 };
     } catch (error) {
-      return { ok: false, issues: error instanceof Refusal ? error.issues : [experientialIssue('TEXP1009', '', 'The storage operation failed before publication.')] };
+      return { ok: false, issues: error instanceof Refusal ? error.issues : [experientialIssue('TEXP1009', '', 'The storage operation failed before publication.', experientialNativeCause(error))] };
     }
   }
   function copied<I, T>(input: I, task: (ctx: Context, value: I) => Promise<T>): Promise<ExperientialStoreResult<T>> {
@@ -282,6 +283,8 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
   }
   const store: ExperientialStore = {
     stats: () => ({ ...stats }),
+    snapshot: scope => operation(async ctx => Object.fromEntries(await Promise.all(EXPERIENTIAL_TABLES.map(async table =>
+      [table, await list(ctx.tx, table, scope)]))) as ExperientialSnapshot),
     retain: plan => copied(plan, async (ctx, request) => {
       if (!request?.input) refuse('TEXP1001', '/plan', 'A captured retention plan is required.');
       const original = checked(await planExperientialRetention(request.input));

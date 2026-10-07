@@ -1172,6 +1172,12 @@
         },
         "evaluationContext": {
           "$ref": "#/$defs/CgtEvaluationContext"
+        },
+        "rollbackDrill": {
+          "$ref": "#/$defs/CgtRollbackDrill"
+        },
+        "claim": {
+          "$ref": "#/$defs/CgtClaim"
         }
       },
       "required": [
@@ -1189,7 +1195,9 @@
         "limitations",
         "reportId",
         "evaluations",
-        "evaluationContext"
+        "evaluationContext",
+        "rollbackDrill",
+        "claim"
       ],
       "additionalProperties": false,
       "$query": {
@@ -2244,6 +2252,169 @@
         "evaluatorRevision",
         "questionSetId",
         "live"
+      ],
+      "additionalProperties": false
+    },
+    "CgtRollbackDrill": {
+      "type": "object",
+      "properties": {
+        "tier": {
+          "const": "scripted"
+        },
+        "status": {
+          "const": "passed"
+        },
+        "datasetId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "deploymentId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "previousArtifactId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "candidateArtifactId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "pins": {
+          "const": 32
+        },
+        "routed": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "rolloutFraction": {
+          "const": 0.25
+        },
+        "tolerance": {
+          "const": 15
+        },
+        "restoredHead": {
+          "$ref": "https://tangleai.dev/schemas/experiential#/$defs/ExperientialExpectedHead"
+        },
+        "inFlightUnchanged": {
+          "const": true
+        },
+        "failedArtifactRetained": {
+          "const": true
+        },
+        "fakeSubmissions": {
+          "const": 2
+        },
+        "scientificApproval": {
+          "const": false
+        },
+        "physicalRequests": {
+          "const": 0
+        },
+        "receiptId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "tier",
+        "status",
+        "datasetId",
+        "deploymentId",
+        "previousArtifactId",
+        "candidateArtifactId",
+        "pins",
+        "routed",
+        "rolloutFraction",
+        "tolerance",
+        "restoredHead",
+        "inFlightUnchanged",
+        "failedArtifactRetained",
+        "fakeSubmissions",
+        "scientificApproval",
+        "physicalRequests",
+        "receiptId"
+      ],
+      "additionalProperties": false
+    },
+    "CgtClaim": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "not-run",
+            "met",
+            "not-met"
+          ]
+        },
+        "gatePolicyId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "authorizedLiveRunId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rollbackDrillId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "conditions": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "learning",
+                  "retention",
+                  "security",
+                  "operations",
+                  "rollback"
+                ]
+              },
+              "required": {
+                "type": "string",
+                "minLength": 1
+              },
+              "observed": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "enum": [
+                  "not-run",
+                  "met",
+                  "not-met"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "required",
+              "observed",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "status",
+        "gatePolicyId",
+        "authorizedLiveRunId",
+        "rollbackDrillId",
+        "conditions"
       ],
       "additionalProperties": false
     }

@@ -86,23 +86,20 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   that operation partially applied. Qualify a shared atomic mutation contract
   with rollback, concurrent winner and replay tests before exposing transactional
   guarantees; consolidation uses its own immutable batch activation.
-- [ ] **Experiential memory beyond the memo.** *Wanted:* the co-existence
-  architecture the "memo, not true memory" argument asks for — keep the fast
-  episodic half Tangle already has (evidenced records, supersession,
-  crystallization, outcome-moved confidence) and add an asynchronous parametric
-  consolidation channel: a reviewed, versioned dataset of post-deployment
-  experiences with full lineage; an injected training backend that produces a
-  checksummed persistent parameter artifact while the base stays immutable;
-  held-out compositional evaluation that never retrieves its own training
-  examples; canary, atomic activation, per-run pinning and exact rollback.
-  *Constraint:* nothing in Tangle changes model parameters today — every
-  operation changes records or the context presented to a model — and an
-  inference-only provider must be reported as such, never as a learned
-  transition. This is a position paper with a theorem, not a specification, so
-  the entry operationalizes the builder requirements, not the paper line by line.
-  *Closes on:* a held-out compositional metric the artifact beats against frozen
-  retrieval and distilled rule text in context, with regressions, exclusions and
-  compute cost published — including a negative result.
+- [ ] **Experiential learning, live.** *Wanted:* an authorized training and
+  evaluation run over a registered domain, a configuration adapter component
+  that includes the learned artifact reference in the run identity, and a local
+  process training backend composed over the shipped guarded experiment runner.
+  *Constraint:* the HTTP seam and keyless lifecycle do not establish parameter
+  learning; inference-only providers remain labelled as such. The current
+  [CGT claim](CGT_BENCHMARK.md) is `not-run`, scripted ties do not pass a strict
+  improvement gate, and missing retention evidence cannot be treated as a win.
+  New live domains and controls must be registered before observations arrive.
+  *Closes on:* the authorized artifact's held-out interval beating both frozen
+  retrieval and rule-text controls, all registered retention/security/resource
+  gates and a live rollback drill, with losses, exclusions and cost published
+  even when the claim fails; the adapter component and local backend each pass
+  the same identity, receipt, resume and bounded-execution contracts.
 
 ## Time and place
 

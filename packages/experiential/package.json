@@ -10,7 +10,9 @@
     "./contracts": "./src/contracts.gen.ts",
     "./schemas/experiential": "./schemas/experiential.schema.json",
     "./package.json": "./package.json",
-    "./schemas/training-service": "./schemas/training-service.contract.json"
+    "./schemas/training-service": "./schemas/training-service.contract.json",
+    "./contract": "./src/contract.ts",
+    "./schemas/contract": "./schemas/experiential.contract.json"
   },
   "engines": {
     "node": ">=24"

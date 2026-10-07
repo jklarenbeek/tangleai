@@ -1,5 +1,6 @@
 /** Stable refusal values shared by experiential content boundaries. */
 import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { CodedError } from '@jarenjs/core/errors';
 import type { ExperientialCause, ExperientialIssue } from './contracts.gen.ts';
 
 export const EXPERIENTIAL_ISSUE_CODES = {
@@ -20,8 +21,15 @@ export const EXPERIENTIAL_ISSUE_CODES = {
 export type ExperientialIssueCode = keyof typeof EXPERIENTIAL_ISSUE_CODES;
 export type ExperientialResult<T> = { ok: true; value: T } | { ok: false; issues: ExperientialIssue[] };
 
-export function experientialIssue(code: ExperientialIssueCode, path: string, detail: string, cause?: ExperientialCause): ExperientialIssue {
-  return { code, path, detail, ...(cause === undefined ? {} : { cause }) };
+/** Preserve native machine codes without exposing diagnostic text or locations. */
+export function experientialNativeCause(error: unknown): ExperientialCause | undefined {
+  return error instanceof CodedError && /^[A-Z][A-Z0-9_]{0,63}$/.test(error.code) ? { code: error.code } : undefined;
+}
+
+export function experientialIssue(code: ExperientialIssueCode, path: string, detail: string, cause?: ExperientialCause | ExperientialIssue): ExperientialIssue {
+  // A domain wrapper keeps the original cause within the closed cause shape.
+  const origin = cause && 'cause' in cause ? cause.cause ?? cause : cause;
+  return { code, path, detail, ...(origin === undefined ? {} : { cause: origin }) };
 }
 
 export function sortExperientialIssues(issues: readonly ExperientialIssue[]): ExperientialIssue[] {

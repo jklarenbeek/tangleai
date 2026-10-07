@@ -342,6 +342,10 @@
         "sha256": "e31459abcb6361842149aebb40425f668a675a9f2f2c52bf32b4d7dc892b1fcd"
       },
       {
+        "path": "benchmark/lib/cgt-claim.ts",
+        "sha256": "b466e76e8215c224bb0c1532e2dd80cb055a9a7b8704ded93368ec223f3b925b"
+      },
+      {
         "path": "benchmark/lib/cgt-evaluation-fixtures.ts",
         "sha256": "f441bc62c47b440e2413f344b0b86bc2f55a0b1ad9a32e7d472baccc692de1eb"
       },
@@ -367,11 +371,11 @@
       },
       {
         "path": "benchmark/lib/cgt.ts",
-        "sha256": "1f61d941bac6cd3750d10974daaa474a1e20f4a4f62fcdc0522ead03c8fca3ff"
+        "sha256": "4e63c370dafdc75d12d7c85ccaef796154039d9d6e7b5247939a777c1197d570"
       },
       {
         "path": "benchmark/lib/cgt.types.ts",
-        "sha256": "1782a6d293c55b2d5c6d62db06eda55f3b1f2aed00cfdef21fe6aaf5706ba2b3"
+        "sha256": "3b6281a335d01574b8a191e30d50ae1fb6e193014ca84363754415f068affdb5"
       },
       {
         "path": "benchmark/lib/config-conformance.ts",
@@ -1395,7 +1399,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "490af752ef299632ba1deadcf030133937af693a0fc7866f0f6b1beb721cfc33"
+        "sha256": "66957edc054e7231cb2a084204c5be53e0049648f648f09bab53dec58333372e"
       },
       {
         "path": "packages/agents/package.json",
@@ -1851,7 +1855,11 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "1c11962897cce5e0d31ba213fc12ff4e59d56f36714c32d18355c6b72517e0e3"
+        "sha256": "7b41f4577b4765d38ce1dba493067b7616dcf9824f90af5252edb2743cb62c97"
+      },
+      {
+        "path": "packages/experiential/schemas/experiential.contract.json",
+        "sha256": "5b92ace0902d00c19c3ddd31716830873b5e3b454a0582678918d0e1f55d872e"
       },
       {
         "path": "packages/experiential/schemas/experiential.schema.json",
@@ -1871,11 +1879,15 @@
       },
       {
         "path": "packages/experiential/src/backend.ts",
-        "sha256": "e7637b62cceba21ad3fef3ba1ba30709adcc34a509ba464ca1c7d3ed5a47cb92"
+        "sha256": "cf8ea0a37c0433e6c56f8679273fdd0f4383ca4e15b42418b69eef3237f88ed0"
       },
       {
         "path": "packages/experiential/src/canary.ts",
         "sha256": "7b95934e36e6aae77c5fd06c5522eedd44acecb222ce3025a4cba12819ab6084"
+      },
+      {
+        "path": "packages/experiential/src/contract.ts",
+        "sha256": "227d3cff95a20f23933fbd5a8bc9fa4e774bba6763ff9dee48c2973322a0f922"
       },
       {
         "path": "packages/experiential/src/contracts.gen.ts",
@@ -1891,7 +1903,7 @@
       },
       {
         "path": "packages/experiential/src/errors.ts",
-        "sha256": "a33badc169ee6fe6bf2cad9ac3b0af78659f7af82305e00f8263a92573511580"
+        "sha256": "ae8294d375293ec202379731d79f44c14f3d437f42494c39645db8ab658e5dc6"
       },
       {
         "path": "packages/experiential/src/evaluation.ts",
@@ -1899,7 +1911,7 @@
       },
       {
         "path": "packages/experiential/src/gates.ts",
-        "sha256": "ffff90723c1b4f52499533080f684d96499f97b6f1b2ef5f53c956df48ac3896"
+        "sha256": "ad470c5c65cfb068b9b5abc4a8da5a6fdc7292c1e789f51a4a28eb06c9b34ecb"
       },
       {
         "path": "packages/experiential/src/grouping.ts",
@@ -1911,11 +1923,11 @@
       },
       {
         "path": "packages/experiential/src/index.ts",
-        "sha256": "04fc761769309fe7ae3371ce7abf1d06102d195f357bf13595b2126c2e4e9376"
+        "sha256": "947bb6bca188c0bdb5a37a36aacbd1ef3bc23b6d7f0463845e7b14dbc47a1205"
       },
       {
         "path": "packages/experiential/src/inference.ts",
-        "sha256": "2f699936988f80a2fda30635a2f2c65d087c355ff2ada725021af8a12e8a14ea"
+        "sha256": "6cff97c715272fe61d218228dd0e3c233243fe0a4dc8ba8997de6ea80b61682b"
       },
       {
         "path": "packages/experiential/src/lifecycle.ts",
@@ -1923,7 +1935,7 @@
       },
       {
         "path": "packages/experiential/src/lineage.ts",
-        "sha256": "d0aa3573f1461ad436d3df7a3bc63f037209be7118e607d3314530c255bcd265"
+        "sha256": "be406a0131d1670e2129c5dc249a21a2fa8eb0710d9b8f16fe43414df43e6e30"
       },
       {
         "path": "packages/experiential/src/persistence-memory.ts",
@@ -1935,7 +1947,15 @@
       },
       {
         "path": "packages/experiential/src/policy.ts",
-        "sha256": "5a9566741beb5ec57223e9b78ceb739164e485131217c8c04df1a7d42ad6ebe9"
+        "sha256": "a7f5bcdb6fb9416ea53303acfb6030722656ffba8ce7200d3ef3e8e88bd80a23"
+      },
+      {
+        "path": "packages/experiential/src/privacy.ts",
+        "sha256": "a2e5ae7b1ed9612d16908dea6992bc553432c713982f66f7f36f7b687b581e30"
+      },
+      {
+        "path": "packages/experiential/src/redact.ts",
+        "sha256": "7d067b7e1d57bc630f6e6ad52a983bc254eff79e0aa68518ffefef31b3f49e52"
       },
       {
         "path": "packages/experiential/src/retention.ts",
@@ -1943,7 +1963,7 @@
       },
       {
         "path": "packages/experiential/src/schema.ts",
-        "sha256": "ec16d973ae5189d9338bc0906098fc899d0a7804df76896b18bead53befa0107"
+        "sha256": "2a4be36e80021ee7ae46e540d3803cb57da51571943d652e0c89e0b3af430c88"
       },
       {
         "path": "packages/experiential/src/selection.ts",
@@ -1951,11 +1971,11 @@
       },
       {
         "path": "packages/experiential/src/store-types.ts",
-        "sha256": "a2756f1453fefe3c17d6387719dd160d6ddcf70a673a6ebde09d4bb2ba4e6bda"
+        "sha256": "603bca1a0ddb37f193257860267fd3fb51502d7cc88f14aad2d47bce97930cbb"
       },
       {
         "path": "packages/experiential/src/store.ts",
-        "sha256": "a9a29ef1a05752e70041fd4777ddac70add3e35b9ec10dee03d21bf490a0598d"
+        "sha256": "d117255f04bae257abf0f67045db10e2ed3a4a059ba0fc86a82ec0cf159137bf"
       },
       {
         "path": "packages/experiential/src/training-env.ts",
@@ -4258,7 +4278,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "087bb3505d48854af3b650ffd100cf760611b06b8580f525b22a30e4e6a31640"
+    "sha256": "b0a30983c6bcf422280c276f08d4dc78f4d5adeec3bce518b6124e06edf1a793"
   },
   "fixtureSource": {
     "files": [
@@ -69448,7 +69468,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "087bb3505d48854af3b650ffd100cf760611b06b8580f525b22a30e4e6a31640",
+      "sourceSha256": "b0a30983c6bcf422280c276f08d4dc78f4d5adeec3bce518b6124e06edf1a793",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69532,7 +69552,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "74ee53f97eec9400d66040252ba53060e7e167e2f2c0a82fec2da518dea2dddf"
+      "planId": "00d57676784555557192204c202a7ce37c338db2e7881c8e9db5fb902202f6b0"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69779,5 +69799,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "b94d8c7b7b083b2be6f4df283159cce353171901f264900de5e0ae42d418515c"
+  "reportId": "8bafad266d231cbdb47a48ce471f150fc932635660ef6c6568576261abe40344"
 }

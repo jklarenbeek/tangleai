@@ -3,7 +3,7 @@ import { createGuardedRefiner } from '@jarenjs/core/guarded';
 import { deepFreeze, equalsJson } from '@jarenjs/core/object';
 import { checkExperientialRecord } from './identity.ts';
 import { validateExperientialRecord, validateExperientialShape } from './schema.ts';
-import { refuseExperiential, type ExperientialResult } from './errors.ts';
+import { experientialNativeCause, refuseExperiential, type ExperientialResult } from './errors.ts';
 import type { ExperientialEvaluationMetrics, ExperientialGatePolicy, ExperientialGateFailure } from './contracts.gen.ts';
 
 export const EXPERIENTIAL_EVALUATION_ROWS = Object.freeze([
@@ -117,11 +117,14 @@ export async function reviseGatePolicy(options: ExperientialGatePolicyRevisionOp
   try {
     const result = await guarded.commit(captured.value);
     if (result.ok) return result.value as ExperientialResult<ExperientialGatePolicy>;
+    if (result.stage === 'commit') return refuseExperiential('TEXP1002', '/policy', 'The guarded policy revision was refused.',
+      experientialNativeCause(result.cause) ?? { code: 'GUARDED', path: '', detail: 'Guarded publication failed.' });
     const cause = result.errors[0] as { code?: string; path?: string; docPath?: string; detail?: string; message?: string } | undefined;
     return refuseExperiential('TEXP1002', '/policy', 'The guarded policy revision was refused.', {
       code: cause?.code ?? 'GUARDED', path: cause?.path ?? cause?.docPath ?? '', detail: 'Guarded validation or publication failed.',
     });
-  } catch {
-    return refuseExperiential('TEXP1009', '/policy', 'The policy reader failed before publication.', { code: 'GUARDED', path: '', detail: 'The injected read failed.' });
+  } catch (error) {
+    return refuseExperiential('TEXP1009', '/policy', 'The policy reader failed before publication.',
+      experientialNativeCause(error) ?? { code: 'GUARDED', path: '', detail: 'The injected read failed.' });
   }
 }

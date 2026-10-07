@@ -10,7 +10,7 @@ export { EXPERIENCE_TRANSITIONS, TRAINING_TRANSITIONS, ARTIFACT_TRANSITIONS, pla
 export type { ExperientialStateKind, ExperientialTransitionPlan, ExperientialActivationInput, ExperientialActivationPlan } from './lifecycle.ts';
 export { EXPERIENTIAL_TABLE_KINDS, EXPERIENTIAL_TABLES } from './store-types.ts';
 export type { ExperientialTable, ExperientialTables, ExperientialTransaction, ExperientialPersistence,
-  ExperientialStoreResult, ExperientialWrite, ExperientialStoreStats, ExperientialStore } from './store-types.ts';
+  ExperientialStoreResult, ExperientialWrite, ExperientialStoreStats, ExperientialStore, ExperientialSnapshot } from './store-types.ts';
 export { createExperientialStoreAdapter, createExperientialMemoryStore } from './store.ts';
 export type { ExperientialStoreOptions } from './store.ts';
 export { createExperientialMemoryPersistence } from './persistence-memory.ts';
@@ -54,3 +54,6 @@ export type { ExperientialTriggerAdmission, ExperientialTriggerOutcome, Experien
   ExperientialTriggerCounts, ExperientialTrainingJobs } from './policy.ts';
 export { planExperientialRetention, sealExperientialRetentionPolicy } from './retention.ts';
 export type { ExperientialRetentionInput, ExperientialRetentionLineage, ExperientialRetentionPlan } from './retention.ts';
+export { experientialContractDocument, createExperientialContract, createExperientialHandlers, createExperientialOperations } from './contract.ts';
+export type { ExperientialOperations } from './contract.ts';
+export { redactExperientialView } from './redact.ts';

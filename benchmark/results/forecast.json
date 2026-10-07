@@ -74,6 +74,10 @@
         "sha256": "e31459abcb6361842149aebb40425f668a675a9f2f2c52bf32b4d7dc892b1fcd"
       },
       {
+        "path": "benchmark/lib/cgt-claim.ts",
+        "sha256": "b466e76e8215c224bb0c1532e2dd80cb055a9a7b8704ded93368ec223f3b925b"
+      },
+      {
         "path": "benchmark/lib/cgt-evaluation-fixtures.ts",
         "sha256": "f441bc62c47b440e2413f344b0b86bc2f55a0b1ad9a32e7d472baccc692de1eb"
       },
@@ -99,11 +103,11 @@
       },
       {
         "path": "benchmark/lib/cgt.ts",
-        "sha256": "1f61d941bac6cd3750d10974daaa474a1e20f4a4f62fcdc0522ead03c8fca3ff"
+        "sha256": "4e63c370dafdc75d12d7c85ccaef796154039d9d6e7b5247939a777c1197d570"
       },
       {
         "path": "benchmark/lib/cgt.types.ts",
-        "sha256": "1782a6d293c55b2d5c6d62db06eda55f3b1f2aed00cfdef21fe6aaf5706ba2b3"
+        "sha256": "3b6281a335d01574b8a191e30d50ae1fb6e193014ca84363754415f068affdb5"
       },
       {
         "path": "benchmark/lib/config-conformance.ts",
@@ -1127,7 +1131,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "490af752ef299632ba1deadcf030133937af693a0fc7866f0f6b1beb721cfc33"
+        "sha256": "66957edc054e7231cb2a084204c5be53e0049648f648f09bab53dec58333372e"
       },
       {
         "path": "packages/agents/package.json",
@@ -1842,7 +1846,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "879555318419eefc3ec3eaa63e3a3d5e7d6d564ee7350a0b80f30b31eac2063a"
+    "sha256": "a181727c3c2855f995a8b384a5c1dd39cea83cb725196fd6e5f43e96598c9b93"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45307,5 +45311,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "a29d227be4b6b487c60894d537974ae297b7318fb4b54b6e219e8f0585db38d1"
+  "reportId": "c0aa1ce626b495a35c83233f6718554ade07596a3bf092e1de6d15ad29206ac4"
 }

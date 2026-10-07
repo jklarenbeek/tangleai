@@ -3,7 +3,7 @@ import { createScheduler } from '@jarenjs/core/schedule';
 import { deepFreeze } from '@jarenjs/core/object';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { experientialSchema, validateExperientialShape } from './schema.ts';
-import { experientialIssue, refuseExperiential, type ExperientialResult } from './errors.ts';
+import { experientialIssue, experientialNativeCause, refuseExperiential, type ExperientialResult } from './errors.ts';
 import type { TrainingBackend } from './backend.ts';
 import type { ExperientialStore } from './store-types.ts';
 import type { ExperientialTrainingPlan } from './pipeline.ts';
@@ -102,9 +102,9 @@ export async function createExperientialRunner(options: { store: ExperientialSto
           // recovered by the same tick after restart, without another budget debit.
           let id: string;
           try { id = await jobs.enqueue(value.plan); }
-          catch {
+          catch (error) {
             counts.cancelled += value.counts.cancelled; counts.rebased += value.counts.rebased;
-            return refuseExperiential('TEXP1009', '/jobs', 'The reserved training job could not be enqueued; replay the same trigger to resume.');
+            return refuseExperiential('TEXP1009', '/jobs', 'The reserved training job could not be enqueued; replay the same trigger to resume.', experientialNativeCause(error));
           }
           if (id !== value.jobId) {
             counts.cancelled += value.counts.cancelled; counts.rebased += value.counts.rebased;
@@ -114,10 +114,11 @@ export async function createExperientialRunner(options: { store: ExperientialSto
         return finish(value);
       }, { scope: valid.value.scope, ...context });
     } catch (error) {
+      const cause = experientialNativeCause(error);
       const reason = error instanceof Error ? error.message : '';
-      if (reason === 'queue-full' || reason === 'scope-limit') return noop('queue-full');
-      if (reason === 'closed' || reason === 'cancelled' || reason === 'deadline') return noop(reason);
-      return refuseExperiential('TEXP1009', '/runner', 'The admitted trigger could not complete.');
+      if (!cause && (reason === 'queue-full' || reason === 'scope-limit')) return noop('queue-full');
+      if (!cause && (reason === 'closed' || reason === 'cancelled' || reason === 'deadline')) return noop(reason);
+      return refuseExperiential('TEXP1009', '/runner', 'The admitted trigger could not complete.', cause);
     }
   }
   return Object.freeze({ run, policy, close: () => scheduler.close(), stats: () => ({ ...scheduler.stats(), ...counts, byReason: { ...byReason } }) });

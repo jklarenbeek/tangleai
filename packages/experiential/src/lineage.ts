@@ -1,6 +1,6 @@
 /** Resolve retained ancestry; external references remain explicitly unverified bytes. */
 import { canonicalizeJson } from '@jarenjs/json/canonical';
-import { experientialIssue, type ExperientialResult } from './errors.ts';
+import { experientialIssue, experientialNativeCause, type ExperientialResult } from './errors.ts';
 import type { ExperientialStore, ExperientialTable, ExperientialTables } from './store-types.ts';
 import type { ExperientialArtifact, ExperientialTrainingRun, ExperientialDataset, ExperientialAssessment, ExperientialExperience, ExperientialRef, ExperientialIssue } from './contracts.gen.ts';
 
@@ -90,6 +90,6 @@ export async function resolveExperientialLineage(store: Pick<ExperientialStore, 
       assessments: rows(assessments), experiences: rows(experiences), sourceRefs: [...sources.entries()].sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0).map(([, ref]) => ref),
       producingIdentityIds: [...identities].sort(), externalBytes: 'not-resolved' } };
   } catch (error) {
-    return { ok: false, issues: [error instanceof MissingLink ? error.issue : experientialIssue('TEXP1004', '/artifacts/' + artifactId, 'The lineage could not be read from persistence.')] };
+    return { ok: false, issues: [error instanceof MissingLink ? error.issue : experientialIssue('TEXP1004', '/artifacts/' + artifactId, 'The lineage could not be read from persistence.', experientialNativeCause(error))] };
   }
 }
