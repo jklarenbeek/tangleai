@@ -447,7 +447,10 @@ Training runs asynchronously under durable submission and worker fences. A
 verified receipt stages an artifact; it cannot approve or activate it. Evaluation
 registration freezes controls and limits before observations arrive. Activation
 and exact-prior-artifact rollback publish head, deployment and audit event
-atomically. In-flight pins retain their original artifact across either change.
+atomically. An explicit restore of the registered base binds its exact artifact
+and role digest without inventing a learned evaluation. It clears learned
+routing and retains an incremented null-head revision across reopen and replay.
+In-flight pins retain their original artifact across these changes.
 Cadence is disabled by default and driven explicitly by the host. Retention
 preserves serving lineage, rollback windows, holds and source evidence.
 

@@ -6,7 +6,7 @@ import type { Head, ArtifactVersion, Evaluation, EvaluationRegistration, Approva
 export const EMPTY_HEAD: Readonly<Head> = Object.freeze({ versionId: null, revision: 0 });
 export function assertHead(actual: Head, expected: Head): void { if (!equalsJson(actual, expected))
     reject('OUTC1013', 'The expected head version or revision is stale.', '/expectedHead'); }
-export function planHeadTransition(actual: Head, expected: Head, target: string): Head { assertHead(actual, expected); return { versionId: target, revision: actual.revision + 1 }; }
+export function planHeadTransition(actual: Head, expected: Head, target: string | null): Head { assertHead(actual, expected); return { versionId: target, revision: actual.revision + 1 }; }
 export function assertCapacity(retained: number, reserved: number, maximum: number): void { if (retained + reserved >= maximum)
     reject('OUTC1014', 'Artifact version capacity is exhausted.'); }
 export function eligibilityIssues(e: Evaluation, r: EvaluationRegistration, v: ArtifactVersion): Issue[] {

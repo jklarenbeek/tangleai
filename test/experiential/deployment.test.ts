@@ -41,7 +41,8 @@ it('automatic rollback uses an exact registered window, strict thresholds and no
   }
   for (const changed of [{ count: 21 }, { count: 0 }, { deploymentRevision: 3 }, { deploymentId: 'c'.repeat(64) }, { p95Ms: NaN }])
     assert.equal((await planAutomaticRollback(d, { ...observed, ...changed })).ok, false);
-  assert.equal((await planAutomaticRollback({ ...d, expectedParentArtifactId: null }, { ...observed, failureRate: 1 })).ok, false);
+  assert.equal(accepted(await planAutomaticRollback({ ...d, expectedParentArtifactId: null }, { ...observed, failureRate: 1 }))?.targetArtifactId, d.baseArtifactId);
+  assert.equal((await planAutomaticRollback({ ...d, activeArtifactId: null, expectedParentArtifactId: null }, { ...observed, failureRate: 1 })).ok, false);
 });
 
 it('automatic rollback refuses limits changed under the registered deployment identity', async () => {

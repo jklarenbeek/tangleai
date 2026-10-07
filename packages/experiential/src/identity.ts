@@ -14,7 +14,7 @@ const fields = {
   artifact: ['checksum', 'baseArtifactId', 'kind', 'method', 'storageUri', 'runtime', 'trainingRunId', 'sizeBytes'],
   evaluation: ['artifactId', 'baselineArtifactId', 'registrationId', 'datasetId', 'gatePolicyId', 'evaluatorRevision', 'profile', 'expectedHead', 'migrationExperiment', 'reportId', 'passed', 'interval', 'retention', 'security'],
   gatePolicy: ['primaryMetric', 'controls', 'interval', 'learning', 'retention', 'security', 'operations', 'rows', 'requiredRows'],
-  approval: ['profile', 'action', 'artifactId', 'evaluationId', 'expectedHead', 'principal', 'reason', 'deploymentId', 'expectedDeploymentRevision', 'rolloutFraction'],
+  approval: ['profile', 'action', 'artifactId', 'evaluationId', 'expectedHead', 'principal', 'reason', 'deploymentId', 'expectedDeploymentRevision', 'rolloutFraction', 'baseDigest'],
   deployment: ['profile', 'base', 'baseArtifactId', 'operationalLimits'],
   inferencePin: ['runId', 'identityId', 'deploymentId', 'deploymentRevision', 'artifactId', 'servedModel', 'canary', 'capability'],
   retentionDecision: ['episodeIds', 'dependentArtifactId', 'decision', 'reason', 'principal', 'evidence'],

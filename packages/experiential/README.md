@@ -24,11 +24,13 @@ review cannot rewrite the provenance of an existing dataset.
 `createExperientialMemoryStore({ now })` and the store package's
 `createExperientialDbStore(db, { now })` execute the same checks through one
 atomic transaction seam. Explicit commands enforce the experience, training,
-evaluation and artifact state edges. Activation and rollback require a matching
+evaluation and artifact state edges. Learned activation and rollback require a matching
 approval, evaluation and native outcome compare-and-swap head; the head and its
 event publish with the artifact transitions. A replay returns the original
 result without writes. An artifact can be active in one profile at a time;
-rollback requires that profile's retained activation history. Published write
+learned rollback requires that profile's retained activation history. Explicit
+base restore binds the registered base and its role digest instead of a learned
+evaluation. Published write
 and activation counters exclude rolled-back transactions.
 
 Evaluation registrations freeze the policy, dataset, baseline, evaluator,
@@ -85,12 +87,25 @@ a run has been created.
 `planExperientialRollback` requires the exact prior active or archived artifact,
 its retained passing evaluation, an approval bound to the current revisions,
 and the same nonempty reason carried by that approval. The transaction restores
-that artifact, archives the failed artifact, and retains every record. A
-deployment without a prior approved artifact has no such rollback target.
+that artifact, archives the failed artifact, and retains every record.
+
+To withdraw the first canary or return any learned deployment to its registered
+base, supply that exact base artifact and `evaluation: null`. The retained
+`rollback` approval must carry `evaluationId: null`, `baseDigest` equal to the
+deployment's registered role digest, both current revision fences and the same
+nonempty reason. This explicit exception creates no base evaluation and leaves
+every learned-target gate intact. The transaction archives active and canary
+artifacts, clears learned routing, and publishes a null learned head at its next
+revision with the deployment and audit event. Reopen preserves that revision;
+replay cannot rewind later activation. Base registration bytes, failed artifacts,
+evaluations and existing pins remain retained. A new run resolves the registered
+base model with a null artifact pin. A deployment already serving only its base
+has nothing to withdraw.
 `await planAutomaticRollback(deployment, observedWindow)` first verifies the
 registered deployment identity. An incomplete window returns no advice; an
 exact window returns a rollback intent only strictly above a registered
-failure-rate or p95 limit. The intent grants no authority: the host must retain
+failure-rate or p95 limit. It targets the prior learned artifact when available,
+otherwise the registered base. The intent grants no authority: the host must retain
 an appropriate policy approval before applying the checked rollback plan.
 
 The [keyless walkthrough](../../examples/experiential.ts) runs with

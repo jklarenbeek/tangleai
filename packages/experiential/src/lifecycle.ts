@@ -42,7 +42,7 @@ export const planTrainingTransition = (record: ExperientialRecordMap['trainingRu
 export const planArtifactTransition = (record: ExperientialRecordMap['artifact'], next: ExperientialRecordMap['artifact']['state']) => transition('artifact', record, next);
 
 /** Native comparison is the sole CAS owner; capacity is checked separately. */
-function headOperation(actual: Head, expected: Head, target?: string): ExperientialResult<Head> {
+function headOperation(actual: Head, expected: Head, target?: string | null): ExperientialResult<Head> {
   let head: Head;
   try { if (target === undefined) { assertHead(actual, expected); head = actual; } else head = planHeadTransition(actual, expected, target); }
   catch (error) {
@@ -54,14 +54,14 @@ function headOperation(actual: Head, expected: Head, target?: string): Experient
   return { ok: true, value: deepFreeze(head) };
 }
 
-export const planExperientialHead = (actual: Head, expected: Head, target: string) => headOperation(actual, expected, target);
+export const planExperientialHead = (actual: Head, expected: Head, target: string | null) => headOperation(actual, expected, target);
 export const checkExperientialHead = (actual: Head, expected: Head) => headOperation(actual, expected);
 
 export interface ExperientialActivationInput {
   head: ExperientialHead;
   deployment: ExperientialDeployment;
   artifact: ExperientialArtifact;
-  evaluation: ExperientialEvaluation;
+  evaluation: ExperientialEvaluation | null;
   approval: ExperientialApproval;
 }
 export interface ExperientialRollbackInput extends ExperientialActivationInput { reason: string }
@@ -76,34 +76,45 @@ function activation(input: ExperientialActivationInput, action: 'canary' | 'acti
   const head = validateExperientialRecord('head', input?.head);
   const deployment = validateExperientialRecord('deployment', input?.deployment);
   const artifact = validateExperientialRecord('artifact', input?.artifact);
-  const evaluation = validateExperientialRecord('evaluation', input?.evaluation);
+  const evaluation = input?.evaluation === null ? { ok: true as const, value: null } : validateExperientialRecord('evaluation', input?.evaluation);
   const approval = validateExperientialRecord('approval', input?.approval);
   for (const result of [head, deployment, artifact, evaluation, approval]) if (!result.ok) return result;
   if (!head.ok || !deployment.ok || !artifact.ok || !evaluation.ok || !approval.ok) throw new TypeError('Unreachable validation state.');
   const h = head.value, d = deployment.value, a = artifact.value, e = evaluation.value, p = approval.value;
+  const restoreBase = action === 'rollback' && a.kind === 'base';
   if (action === 'rollback' && (typeof reason !== 'string' || !reason.trim() || reason.length > 4096))
     return refuseExperiential('TEXP1001', '/reason', 'Rollback requires a bounded nonempty reason.');
-  if (new Set([h.scope, d.scope, a.scope, e.scope, p.scope]).size !== 1 || h.profile !== p.profile || h.profile !== d.profile)
+  if (new Set([h.scope, d.scope, a.scope, e?.scope ?? a.scope, p.scope]).size !== 1 || h.profile !== p.profile || h.profile !== d.profile)
     return refuseExperiential('TEXP1005', '/scope', 'Deployment, head, artifact, evaluation and approval must share one profile and scope.');
   // Native CAS runs before state checks so a competing activation retains its
   // stale-head cause even when it has already changed the artifact state.
-  const next = planExperientialHead(h.head, p.expectedHead, a.id);
+  const next = planExperientialHead(h.head, p.expectedHead, restoreBase ? null : a.id);
   if (!next.ok) return next;
   const revision = planExperientialHead({ versionId: d.id, revision: d.revision },
     { versionId: p.deploymentId, revision: p.expectedDeploymentRevision }, d.id);
   if (!revision.ok) return revision;
   if (d.activeArtifactId !== h.head.versionId || d.headRevision !== h.head.revision)
     return refuseExperiential('TEXP1002', '/deployment', 'The deployment does not reproduce the retained head.');
-  if (p.action !== action || p.artifactId !== a.id || p.evaluationId !== e.id || e.artifactId !== a.id
-    || !e.passed || e.failures.length || !p.reason.trim())
-    return refuseExperiential('TEXP1006', '/approval', 'The approval must bind a passing evaluation of this artifact and action.');
-  if (!a.evaluationRegistration || a.evaluationRegistration.id !== e.registrationId || e.profile !== h.profile
-    || action !== 'rollback' && (e.expectedHead.versionId !== p.expectedHead.versionId || e.expectedHead.revision !== p.expectedHead.revision))
-    return refuseExperiential('TEXP1002', '/evaluation', 'Activation must bind the registered evaluation, profile and expected head.');
-  if (a.kind === 'base' || action !== 'rollback' && a.baseArtifactId !== d.baseArtifactId && a.baseArtifactId !== h.head.versionId)
-    return refuseExperiential('TEXP1002', '/artifact/baseArtifactId', 'The candidate must extend the registered base or the captured active artifact.');
-  if (a.runtime.provider !== d.base.provider || a.runtime.base !== d.base.base)
-    return refuseExperiential('TEXP1008', '/artifact/runtime', 'The artifact must use the registered deployment endpoint.');
+  if (p.action !== action || p.artifactId !== a.id || !p.reason.trim())
+    return refuseExperiential('TEXP1006', '/approval', 'The approval must bind this artifact and action.');
+  if (restoreBase) {
+    if (e !== null || p.evaluationId !== null || p.baseDigest !== d.base.digest || a.id !== d.baseArtifactId
+      || a.baseArtifactId !== null || a.trainingRunId !== null || a.runtime.provider !== d.base.provider
+      || a.runtime.base !== d.base.base || a.runtime.servedModel !== d.base.model)
+      return refuseExperiential('TEXP1002', '/approval/baseDigest', 'Base restore requires the exact registered base and role digest without a learned evaluation.');
+    if (p.reason !== reason || d.activeArtifactId === null && d.canaryArtifactId === null)
+      return refuseExperiential('TEXP1006', '/artifactId', 'Base restore requires the approved reason and learned routing to withdraw.');
+  } else {
+    if (!e || p.baseDigest !== undefined || p.evaluationId !== e.id || e.artifactId !== a.id || !e.passed || e.failures.length)
+      return refuseExperiential('TEXP1006', '/approval', 'The approval must bind a passing evaluation of this learned artifact.');
+    if (!a.evaluationRegistration || a.evaluationRegistration.id !== e.registrationId || e.profile !== h.profile
+      || action !== 'rollback' && (e.expectedHead.versionId !== p.expectedHead.versionId || e.expectedHead.revision !== p.expectedHead.revision))
+      return refuseExperiential('TEXP1002', '/evaluation', 'Activation must bind the registered evaluation, profile and expected head.');
+    if (a.kind === 'base' || action !== 'rollback' && a.baseArtifactId !== d.baseArtifactId && a.baseArtifactId !== h.head.versionId)
+      return refuseExperiential('TEXP1002', '/artifact/baseArtifactId', 'The candidate must extend the registered base or the captured active artifact.');
+    if (a.runtime.provider !== d.base.provider || a.runtime.base !== d.base.base)
+      return refuseExperiential('TEXP1008', '/artifact/runtime', 'The artifact must use the registered deployment endpoint.');
+  }
   if (action === 'canary') {
     if (a.state !== 'approved' || d.canaryArtifactId !== null)
       return refuseExperiential('TEXP1006', '/canaryArtifactId', 'Canary admission requires an approved artifact and an empty canary slot.');
@@ -112,7 +123,7 @@ function activation(input: ExperientialActivationInput, action: 'canary' | 'acti
       || d.canaryArtifactId !== null && d.canaryArtifactId !== a.id)
       return refuseExperiential('TEXP1006', '/artifact/state', "Activation requires an approved artifact or this deployment's canary.");
     if (h.head.versionId === a.id) return refuseExperiential('TEXP1006', '/artifactId', 'The target is already active.');
-  } else {
+  } else if (!restoreBase) {
     if (a.id !== d.expectedParentArtifactId || !['active', 'archived'].includes(a.state) || p.reason !== reason)
       return refuseExperiential('TEXP1006', '/expectedParentArtifactId', 'Rollback must restore the exact prior artifact for the approved reason.');
     if (a.id === h.head.versionId && d.canaryArtifactId === null)
@@ -122,7 +133,7 @@ function activation(input: ExperientialActivationInput, action: 'canary' | 'acti
   const nextDeployment = validateExperientialRecord('deployment', { ...d,
     activeArtifactId: nextHead.versionId, headRevision: nextHead.revision,
     canaryArtifactId: action === 'canary' ? a.id : null, rolloutFraction: action === 'canary' ? p.rolloutFraction : 0,
-    expectedParentArtifactId: action === 'rollback' && a.id === h.head.versionId ? null : h.head.versionId,
+    expectedParentArtifactId: restoreBase || action === 'rollback' && a.id === h.head.versionId ? null : h.head.versionId,
     approvalId: p.id, revision: revision.value.revision, rollbackReason: action === 'rollback' ? reason : null });
   if (!nextDeployment.ok) return nextDeployment;
   return { ok: true, value: deepFreeze({ action, reason: action === 'rollback' ? reason as string : null,

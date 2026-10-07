@@ -159,13 +159,20 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
     if (table === 'artifacts') { const a = row as ExperientialArtifact; if (a.state !== 'staged' || a.evaluationRegistration) refuse('TEXP1006', '/state', 'A new artifact starts staged without an evaluation registration.'); await artifact(ctx.tx, a); }
     if (table === 'evaluations') refuse('TEXP1006', '/evaluation', 'Evaluation results and artifact states must be recorded together.');
     if (table === 'approvals') {
-      const approval = row as ExperientialApproval, a = await requireRow(ctx.tx, 'artifacts', approval.artifactId, approval.scope), e = await requireRow(ctx.tx, 'evaluations', approval.evaluationId, approval.scope);
-      if (e.artifactId !== a.id || !e.passed || e.failures.length || !approval.reason.trim()) refuse('TEXP1006', '/evaluationId', 'Approval requires a passing evaluation of the exact target.');
-      if (a.evaluationRegistration?.id !== e.registrationId || approval.profile !== e.profile
-        || approval.action !== 'rollback' && !equalsJson(approval.expectedHead, e.expectedHead))
-        refuse('TEXP1002', '/evaluationId', 'Approval must bind the frozen evaluation registration, profile and expected head.');
+      const approval = row as ExperientialApproval, a = await requireRow(ctx.tx, 'artifacts', approval.artifactId, approval.scope);
       const deployment = await currentDeployment(ctx, approval.deploymentId, approval.scope);
       if (approval.profile !== deployment.profile) refuse('TEXP1005', '/profile', 'The approval names another deployment profile.');
+      if (approval.evaluationId === null) {
+        const head = await currentHead(ctx, approval.profile, approval.scope);
+        checked(planExperientialRollback({ head, deployment, artifact: a, evaluation: null, approval, reason: approval.reason }));
+      } else {
+        const e = await requireRow(ctx.tx, 'evaluations', approval.evaluationId, approval.scope);
+        if (a.kind === 'base' || approval.baseDigest !== undefined || e.artifactId !== a.id || !e.passed || e.failures.length || !approval.reason.trim())
+          refuse('TEXP1006', '/evaluationId', 'Approval requires a passing evaluation of the exact learned target.');
+        if (a.evaluationRegistration?.id !== e.registrationId || approval.profile !== e.profile
+          || approval.action !== 'rollback' && !equalsJson(approval.expectedHead, e.expectedHead))
+          refuse('TEXP1002', '/evaluationId', 'Approval must bind the frozen evaluation registration, profile and expected head.');
+      }
     }
     if (table === 'deployments') {
       const d = row as ExperientialTables['deployments'];
@@ -200,13 +207,34 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
     const id = await experientialHeadKey(profile, scope), row = await get(ctx.tx, 'heads', id);
     if (row) {
       if (row.profile !== profile || row.scope !== scope) refuse('TEXP1002', '/head', 'The head address differs from its partition.');
-      if (!row.eventId || !row.head.versionId || row.head.revision < 1) refuse('TEXP1002', '/head', 'A retained head requires its activation event.');
-      const audit = await requireRow(ctx.tx, 'events', row.eventId, scope), target = await requireRow(ctx.tx, 'artifacts', row.head.versionId, scope);
-      let detail: { profile?: string; after?: unknown };
+      if (!row.eventId || row.head.revision < 1) refuse('TEXP1002', '/head', 'A retained head requires its transition event.');
+      const audit = await requireRow(ctx.tx, 'events', row.eventId, scope);
+      let detail: { profile?: string; after?: unknown; approvalId?: string; evaluationId?: string | null;
+        deploymentAfter?: ExperientialTables['deployments']; reason?: string };
       try { detail = JSON.parse(audit.detail); }
       catch { refuse('TEXP1002', '/head/eventId', 'The activation event has invalid transition details.'); }
-      if (!['artifact-activated', 'artifact-rolled-back'].includes(audit.kind) || audit.recordId !== target.id || target.state !== 'active'
-        || detail?.profile !== profile || !equalsJson(detail?.after, row.head)) refuse('TEXP1002', '/head/eventId', 'The head does not reproduce its retained activation event.');
+      if (!['artifact-activated', 'artifact-rolled-back'].includes(audit.kind)
+        || detail?.profile !== profile || !equalsJson(detail?.after, row.head)) refuse('TEXP1002', '/head/eventId', 'The head does not reproduce its retained transition event.');
+      if (row.head.versionId === null) {
+        const d = await record('deployments', detail.deploymentAfter);
+        const base = await requireRow(ctx.tx, 'artifacts', d.baseArtifactId, scope);
+        if (!d.approvalId) refuse('TEXP1002', '/head/eventId', 'A base restore requires its retained approval.');
+        const approval = await requireRow(ctx.tx, 'approvals', d.approvalId, scope);
+        if (audit.kind !== 'artifact-rolled-back' || audit.recordId !== base.id || base.kind !== 'base'
+          || d.profile !== profile || d.scope !== scope || d.activeArtifactId !== null || d.canaryArtifactId !== null
+          || d.headRevision !== row.head.revision || d.rolloutFraction !== 0 || d.expectedParentArtifactId !== null
+          || approval.action !== 'rollback' || approval.artifactId !== base.id || approval.evaluationId !== null
+          || approval.baseDigest !== d.base.digest || approval.profile !== profile || approval.deploymentId !== d.id
+          || approval.expectedHead.revision + 1 !== row.head.revision || approval.expectedDeploymentRevision + 1 !== d.revision
+          || detail.approvalId !== approval.id || detail.evaluationId !== null || detail.reason !== approval.reason
+          || d.rollbackReason !== approval.reason || base.runtime.provider !== d.base.provider
+          || base.runtime.base !== d.base.base || base.runtime.servedModel !== d.base.model)
+          refuse('TEXP1002', '/head/eventId', 'A null learned head must reproduce its authorized registered-base restore.');
+      } else {
+        const target = await requireRow(ctx.tx, 'artifacts', row.head.versionId, scope);
+        if (audit.recordId !== target.id || target.kind === 'base' || target.state !== 'active')
+          refuse('TEXP1002', '/head/eventId', 'The head must name the retained active learned artifact.');
+      }
       return row;
     }
     return checked(await sealExperientialRecord('head', { document: 'experiential-head', schemaVersion: 1, scope,
@@ -235,14 +263,15 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
     const reproduce = (input: Parameters<typeof planExperientialActivation>[0], reason: string | null) => operation === 'activate'
       ? planExperientialActivation(input) : planExperientialRollback({ ...input, reason: reason as string });
     const original = checked(reproduce({ head: await record('heads', requested.head), deployment: await record('deployments', requested.deployment),
-      artifact: await record('artifacts', requested.artifact), evaluation: await record('evaluations', requested.evaluation),
+      artifact: await record('artifacts', requested.artifact), evaluation: requested.evaluation === null ? null : await record('evaluations', requested.evaluation),
       approval: await record('approvals', requested.approval) }, requested.reason));
     if (!equalsJson(original, requested)) refuse('TEXP1006', '/plan', 'The activation plan does not reproduce from its inputs.');
     const h = await currentHead(ctx, requested.head.profile, requested.head.scope), approval = await requireRow(ctx.tx, 'approvals', requested.approval.id, h.scope);
-    const a = await requireRow(ctx.tx, 'artifacts', approval.artifactId, h.scope), e = await requireRow(ctx.tx, 'evaluations', approval.evaluationId, h.scope);
+    const a = await requireRow(ctx.tx, 'artifacts', approval.artifactId, h.scope);
+    const e = approval.evaluationId === null ? null : await requireRow(ctx.tx, 'evaluations', approval.evaluationId, h.scope);
     const history = await list(ctx.tx, 'events', h.scope), action = requested.action;
     const eventKind = action === 'canary' ? 'artifact-canaried' : action === 'activate' ? 'artifact-activated' : 'artifact-rolled-back';
-    const detail = canonicalizeJson({ profile: h.profile, approvalId: approval.id, evaluationId: e.id,
+    const detail = canonicalizeJson({ profile: h.profile, approvalId: approval.id, evaluationId: e?.id ?? null,
       before: requested.head.head, after: requested.nextHead, deploymentBefore: requested.deployment,
       deploymentAfter: requested.nextDeployment, reason: requested.reason });
     const applied = history.find(row => row.kind === eventKind && row.recordId === a.id && row.detail === detail);
@@ -257,7 +286,7 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
     const retainedHead = h.eventId === null ? { ...h, recordedAt: requested.head.recordedAt } : h;
     const plan = checked(reproduce({ head: retainedHead, deployment, artifact: a, evaluation: e, approval }, requested.reason));
     if (!equalsJson(plan, requested)) refuse('TEXP1006', '/plan', 'Activation must reproduce from the retained records.');
-    if (action === 'rollback' && !history.some(row => ['artifact-activated', 'artifact-rolled-back'].includes(row.kind)
+    if (action === 'rollback' && a.kind !== 'base' && !history.some(row => ['artifact-activated', 'artifact-rolled-back'].includes(row.kind)
       && row.recordId === a.id && JSON.parse(row.detail).profile === h.profile))
       refuse('TEXP1006', '/artifactId', 'The rollback target has no activation history in this profile.');
     for (const other of await list(ctx.tx, 'deployments', h.scope)) if (other.id !== deployment.id
@@ -273,7 +302,9 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
       if (failed.state !== 'canary') refuse('TEXP1006', '/canaryArtifactId', 'The failed canary is not retained in its serving state.');
       await write(ctx, 'artifacts', await record('artifacts', { ...failed, state: 'archived' }));
     }
-    await write(ctx, 'artifacts', await record('artifacts', { ...a, state: action === 'canary' ? 'canary' : 'active' }));
+    // Base is a registered fallback, never a learned active artifact. Its bytes
+    // and lack of evaluation remain unchanged when learned routing is cleared.
+    if (a.kind !== 'base') await write(ctx, 'artifacts', await record('artifacts', { ...a, state: action === 'canary' ? 'canary' : 'active' }));
     await write(ctx, 'deployments', await record('deployments', plan.nextDeployment));
     const audit = await event(ctx, h.scope, eventKind, a.id, detail);
     if (action === 'canary') return plan.head;

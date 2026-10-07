@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { openTangleDb, createExperientialDbStore } from '@tangleai/store';
-import { createExperientialOperations } from '@tangleai/experiential';
+import { createExperientialOperations, sealExperientialRecord, planExperientialRollback } from '@tangleai/experiential';
 import { runExperientialExample } from './experiential-example.mjs';
 import { qualifyExperientialBrowser } from './experiential-browser.mjs';
 
@@ -34,9 +34,28 @@ try {
   assert.deepEqual(must(await store.snapshot(scope)), before); assert.equal(store.stats().writes, 0);
   await operations.close();
   assert.equal(must(await store.list('artifacts', scope)).length, before.artifacts.length, 'closing an inspection client preserves its host store');
+  const deployment = before.deployments[0], base = before.artifacts.find(a => a.id === deployment.baseArtifactId);
+  const head = must(await store.head(scope, scope));
+  const approval = must(await sealExperientialRecord('approval', {
+    document: 'experiential-approval', schemaVersion: 1, scope, profile: scope, recordedAt: '2026-09-13T00:00:00.000Z',
+    action: 'rollback', artifactId: base.id, evaluationId: null, baseDigest: deployment.base.digest,
+    expectedHead: head.head, deploymentId: deployment.id, expectedDeploymentRevision: deployment.revision,
+    rolloutFraction: null, principal: before.approvals[0].principal, reason: 'Installed package registered-base restore.' }));
+  must(await store.put('approvals', approval));
+  const plan = must(planExperientialRollback({ head, deployment, artifact: base, evaluation: null, approval, reason: approval.reason }));
+  assert.deepEqual(must(await store.rollback(plan)).head, { versionId: null, revision: 4 });
+  assert.deepEqual(must(await store.list('pins', scope)), before.pins);
+  assert.deepEqual(must(await store.list('evaluations', scope)), before.evaluations);
+  assert.deepEqual(must(await store.get('artifacts', base.id)), base);
+  assert.equal((await store.rollback(plan)).writes, 0);
 } finally { await operations.close(); await db.close(); }
+const reopened = await openTangleDb({ path: database });
+try {
+  const retained = createExperientialDbStore(reopened, { now: () => '2026-09-13T00:00:00.000Z' });
+  assert.deepEqual(must(await retained.head('experiential-example', 'experiential-example')).head, { versionId: null, revision: 4 });
+} finally { await reopened.close(); }
 const ticks = await runExperientialExample({ tick: true, database: join(directory, 'ticks.sqlite') });
 assert.equal(ticks.fakeSubmissions, 1); assert.equal(ticks.newJobsOnReplay, 0);
 assert.equal(ticks.scientificApproval, false); assert.equal(ticks.physicalRequests, 0);
 assert.equal(ticks.counts.enqueued, 1); assert.equal(ticks.counts.replayed, 5);
-console.log('Installed experiential: 1000 pins, exact rollback, atomic read-only lineage and replayed cadence passed');
+console.log('Installed experiential: 1000 pins, learned and registered-base rollback, atomic read-only lineage and replayed cadence passed');

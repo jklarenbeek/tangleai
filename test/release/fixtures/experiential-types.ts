@@ -1,5 +1,5 @@
 import { createExperientialMemoryStore, createExperientialOperations, canaryShareOf, validateExperientialRecord,
-  planExperienceTransition, resolveExperientialLineage, createFakeTrainingBackend, planExperientialTraining,
+  planExperienceTransition, resolveExperientialLineage, createFakeTrainingBackend, planExperientialTraining, planExperientialRollback,
   planExperientialRetention, type ExperientialExperience, type ExperientialSnapshot, type ExperientialStore,
   type ExperientialOperations, type TrainingBackend, type ExperientialRetentionInput } from '@tangleai/experiential';
 import { createExperientialContract } from '@tangleai/experiential/contract';
@@ -7,6 +7,7 @@ import { createExperientialDbStore, type TangleDb } from '@tangleai/store';
 import schema from '@tangleai/experiential/schemas/contract' with { type: 'json' };
 
 declare const db: TangleDb, experience: ExperientialExperience, training: Parameters<typeof planExperientialTraining>[0], retention: ExperientialRetentionInput;
+declare const rollback: Parameters<typeof planExperientialRollback>[0];
 const clock = { now: () => '2026-09-13T00:00:00.000Z' };
 const memory = createExperientialMemoryStore(clock), sqlite: ExperientialStore = createExperientialDbStore(db, clock);
 const operations: ExperientialOperations = createExperientialOperations(sqlite), backend: TrainingBackend = createFakeTrainingBackend({ seed: 1, clock: () => 0 });
@@ -17,6 +18,8 @@ await operations.invoke('experiential.artifacts', { scope: 'typed' });
 await resolveExperientialLineage(memory, 'a'.repeat(64));
 validateExperientialRecord('experience', experience);
 await planExperientialTraining(training); await planExperientialRetention(retention);
+planExperientialRollback({ ...rollback, evaluation: null,
+  approval: { ...rollback.approval, evaluationId: null, baseDigest: 'a'.repeat(64) } });
 void backend; void share; void schema; void createExperientialContract();
 // @ts-expect-error experience states are a closed public union
 planExperienceTransition(experience, 'invented');

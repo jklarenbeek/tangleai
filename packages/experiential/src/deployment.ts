@@ -52,9 +52,9 @@ export async function planAutomaticRollback(deployment: ExperientialDeployment, 
   if (w.failureRate > limit.maxFailureRate) reasons.push(`failure rate ${w.failureRate} exceeds ${limit.maxFailureRate}`);
   if (w.p95Ms > limit.maxP95Ms) reasons.push(`p95 ${w.p95Ms} ms exceeds ${limit.maxP95Ms} ms`);
   if (!reasons.length) return { ok: true, value: null };
-  if (!d.expectedParentArtifactId)
-    return refuseExperiential('TEXP1006', '/expectedParentArtifactId', 'This deployment has no prior approved artifact to restore.');
+  if (d.activeArtifactId === null && d.canaryArtifactId === null)
+    return refuseExperiential('TEXP1006', '/activeArtifactId', 'This deployment has no learned routing to withdraw.');
   return { ok: true, value: deepFreeze({ deploymentId: d.id, deploymentRevision: d.revision,
-    expectedHead: { versionId: d.activeArtifactId, revision: d.headRevision }, targetArtifactId: d.expectedParentArtifactId,
+    expectedHead: { versionId: d.activeArtifactId, revision: d.headRevision }, targetArtifactId: d.expectedParentArtifactId ?? d.baseArtifactId,
     reason: 'Registered operational rollback: ' + reasons.join('; '), observed: w }) };
 }

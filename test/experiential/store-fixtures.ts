@@ -57,7 +57,8 @@ export async function candidateFixture(store: ExperientialStore, dataset: Experi
   return { artifact, evaluation, training, policy, evaluating };
 }
 
-export async function experientialStoreFixture(store: ExperientialStore, step: ExperientialStep = direct) {
+export async function experientialStoreFixture(store: ExperientialStore, step: ExperientialStep = direct,
+  options: { firstAction: 'activate' | 'canary' } = { firstAction: 'activate' }) {
   const base = await addressedFixture('artifact', { kind: 'base', method: null, baseArtifactId: null, trainingRunId: null,
     checksum: await canonicalSha256({ fixture: 'synthetic-base' }), storageUri: 'memory:fixture/base',
     runtime: { provider: 'fixture', base: 'https://inference.example.test/v1', servedModel: 'fixture-base' } });
@@ -85,11 +86,12 @@ export async function experientialStoreFixture(store: ExperientialStore, step: E
   await step(() => store.put('retention_decisions', retention));
   const head = await step(() => store.head('fixture-profile', 'fixture'));
   const approval = await addressedFixture('approval', { artifactId: candidate.artifact.id, evaluationId: candidate.evaluation.id, expectedHead: head.head,
-    deploymentId: servingDeployment.id, expectedDeploymentRevision: servingDeployment.revision });
+    deploymentId: servingDeployment.id, expectedDeploymentRevision: servingDeployment.revision,
+    action: options.firstAction, rolloutFraction: options.firstAction === 'canary' ? 1 : null });
   await step(() => store.put('approvals', approval));
   const plan = accepted(planExperientialActivation({ head, deployment: servingDeployment, artifact: candidate.artifact, evaluation: candidate.evaluation, approval }));
   const active = await step(() => store.activate(plan));
-  assert.equal(active.head.versionId, candidate.artifact.id);
+  assert.equal(active.head.versionId, options.firstAction === 'canary' ? null : candidate.artifact.id);
   return { base, observed, experience, assessment, dataset, ...candidate, deployment, servingDeployment: plan.nextDeployment, pin, retention, approval, plan, active };
 }
 

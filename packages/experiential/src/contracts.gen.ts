@@ -1118,7 +1118,12 @@ export interface ExperientialGatePolicy {
  */
 export type ExperientialApprovalPart1 = unknown;
 
-export type ExperientialApproval = ExperientialApprovalPart1 & { document: "experiential-approval"; schemaVersion: 1; id: ExperientialId; scope: ExperientialScope; recordedAt: ExperientialTime; profile: string; action: "activate" | "canary" | "rollback"; artifactId: ExperientialId; evaluationId: ExperientialId; expectedHead: ExperientialExpectedHead; principal: ExperientialPrincipal; reason: string; deploymentId: ExperientialId; expectedDeploymentRevision: number; rolloutFraction: number | null; };
+/**
+ * Schema constraints this type cannot express: if={"properties":{"evaluationId":{"type":"null"}}}, then={"properties":{"action":{"const":"rollback"}},"required":["baseDigest"]}, else={"not":{"required":["baseDigest"]}}
+ */
+export type ExperientialApprovalPart2 = unknown;
+
+export type ExperientialApproval = ExperientialApprovalPart1 & ExperientialApprovalPart2 & { document: "experiential-approval"; schemaVersion: 1; id: ExperientialId; scope: ExperientialScope; recordedAt: ExperientialTime; profile: string; action: "activate" | "canary" | "rollback"; artifactId: ExperientialId; evaluationId: ExperientialId | null; expectedHead: ExperientialExpectedHead; principal: ExperientialPrincipal; reason: string; deploymentId: ExperientialId; expectedDeploymentRevision: number; rolloutFraction: number | null; baseDigest?: ExperientialId; };
 
 /**
  * Schema constraints this type cannot express: if={"properties":{"canaryArtifactId":{"type":"null"}}}, then={"properties":{"rolloutFraction":{"const":0}}}

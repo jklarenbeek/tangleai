@@ -64,8 +64,9 @@ it('activation binds scope, profile, action, artifact, evaluation and a passing 
   const mutations: Array<(row: ExperientialActivationInput) => void> = [
     row => { row.approval.scope = 'other'; }, row => { row.approval.profile = 'other'; },
     row => { row.approval.action = 'canary'; }, row => { row.approval.artifactId = 'f'.repeat(64); },
-    row => { row.approval.evaluationId = 'f'.repeat(64); }, row => { row.evaluation.artifactId = 'f'.repeat(64); },
-    row => { row.evaluation.passed = false; }, row => { row.evaluation.failures = [{ gate: 'learning', detail: 'failed', observed: 0, tolerance: 0 }]; },
+    row => { row.approval.evaluationId = 'f'.repeat(64); }, row => { row.evaluation!.artifactId = 'f'.repeat(64); },
+    row => { row.evaluation!.passed = false; }, row => { row.evaluation!.failures = [{ gate: 'learning', detail: 'failed', observed: 0, tolerance: 0 }]; },
+    row => { row.evaluation = null; },
     row => { row.artifact.state = 'staged'; }, row => { row.approval.reason = ' '; },
   ];
   for (const change of mutations) { const copy = structuredClone(input); change(copy); assert.equal(planExperientialActivation(copy).ok, false); }
