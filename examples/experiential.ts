@@ -11,7 +11,8 @@ import { createExperientialMemoryStore, createExperientialDeployment, sealExperi
   createFakeTrainingBackend, planExperientialTraining, createExperientialTrainingTasks, experientialTrainingJobKind,
   EXPERIENTIAL_TRAINING_DAG, planExperientialEvaluation, createExperientialEvaluation, EXPERIENTIAL_EVALUATION_ROWS,
   EXPERIENTIAL_RETENTION_LANES, planExperientialActivation, planExperientialRollback, resolveExperientialInference,
-  resolveExperientialLineage, type ExperientialResult, type ExperientialSelectionInput, type ExperientialStore,
+  resolveExperientialLineage, createExperientialRunner, EXPERIENTIAL_TABLES,
+  type ExperientialTrainingRecipe, type ExperientialResult, type ExperientialSelectionInput, type ExperientialStore,
   type ExperientialArtifact, type ExperientialEvaluationMetrics, type ExperientialInferencePin, type TrainingSpec } from '@tangleai/experiential';
 import { openTangleDb, createExperientialDbStore, createIdentityRepository, enqueueExperientialTraining,
   createExperientialTrainingRunner } from '@tangleai/store';
@@ -34,10 +35,10 @@ const host: HostManifest = { sourceClass: 'synthetic', credentialSlots: [], prov
   budget: { maxCalls: 1, maxTokens: null, maxMs: null, maxConcurrency: 1 }, observation: null };
 const request = { kind: 'profile' as const, profile, overrides: null };
 
-export async function runExperientialExample(options: { storage?: 'memory' | 'sqlite'; database?: string } = {}) {
+export async function runExperientialExample(options: { storage?: 'memory' | 'sqlite'; database?: string; tick?: boolean } = {}) {
   const clock = { value: Date.parse(epoch) }, now = () => new Date(clock.value).toISOString();
   const db = await openTangleDb({ path: options.database ?? ':memory:', jobs: { now: () => clock.value, random: () => 0.5, backoffBase: 0, backoffCap: 0 } });
-  const memory = options.storage === 'sqlite' ? null : createExperientialMemoryStore({ now });
+  const memory = options.storage === 'sqlite' || options.tick ? null : createExperientialMemoryStore({ now });
   const store: ExperientialStore = memory ?? createExperientialDbStore(db, { now });
   const originalFetch = globalThis.fetch; let physicalRequests = 0, submissions = 0;
   globalThis.fetch = (() => { physicalRequests++; throw new Error('This example must not make network requests.'); }) as typeof fetch;
@@ -90,6 +91,63 @@ export async function runExperientialExample(options: { storage?: 'memory' | 'sq
       conceptsOf: experience => [experience.sourceRefs[0].sourceId], holdoutPairsOf: () => [], template: EXPERIENTIAL_EXAMPLE_TEMPLATE,
       tokenizerIdentity: 'synthetic-example-tokenizer/v1', chatTemplateIdentity: 'synthetic-example-chat/v1', recordedAt: epoch }));
     must(await store.put('datasets', dataset));
+    if (options.tick) {
+      const backend = createFakeTrainingBackend({ seed: 17753, clock: () => clock.value, baseModels: [base.id], runtime });
+      const recipe: ExperientialTrainingRecipe = { profile, runtime, method: 'lora',
+        hyperparameters: { rank: 8, epochs: 1, learningRate: 0.001 }, seed: 17753, precision: 'fp32',
+        budget: { maxRecords: 12, maxBytes: 100000, maxWallMs: 60000, maxPolls: 8, maxSpend: null } };
+      const sleep = async (ms: number, signal?: AbortSignal) => { signal?.throwIfAborted(); clock.value += ms; };
+      const beforeHead = must(await store.head(profile, scope)), beforeApprovals = must(await store.list('approvals', scope));
+      const runner = await createExperientialRunner({ store, backend, recipe, now: () => clock.value, sleep,
+        jobs: { enqueue: plan => enqueueExperientialTraining(db, plan) },
+        policy: { enabled: true, minimumEligible: 12, maxCadenceMs: 1000, scopeCooldownMs: 0,
+          computeBudget: { maxRunsPerDay: 2, maxSpend: null }, maxQueued: 1, concurrency: 1, maxQueue: 4 } });
+      let worker;
+      try {
+        const triggers = [
+          { scope, kind: 'count' as const, key: 'example-count' },
+          { scope, kind: 'time' as const, key: 'example-time' },
+          { scope, kind: 'manual' as const, key: 'example-manual' },
+        ];
+        assert.equal(must(await runner.run(triggers[1])).reason, 'cadence');
+        clock.value += 1000;
+        const first = must(await runner.run(triggers[0])); assert.equal(first.action, 'enqueued');
+        assert.equal(must(await runner.run(triggers[2])).reason, 'queue-full');
+        let finish!: () => void, fail!: (error: Error) => void;
+        const completed = new Promise<void>((yes, no) => { finish = yes; fail = no; });
+        worker = await createExperientialTrainingRunner(db, { backend, clock: () => clock.value, random: () => 0.5,
+          sleep, budgets: recipe.budget, readBytes: backend.readBytes, compileDag, pollInterval: 5, leaseMs: 300000,
+          resolveExamples: async () => ({ template: EXPERIENTIAL_EXAMPLE_TEMPLATE,
+            variables: variables.filter(value => [...dataset.splits.train, ...dataset.splits.validation].includes(value.experienceId)) }),
+          onOutcome: event => {
+            if (event.outcome === 'completed') finish();
+            else if (event.outcome !== 'failed' || event.attempt >= recipe.budget.maxPolls + 16) fail(Error('Native tick job did not complete.'));
+          } });
+        worker.start(); await completed;
+        assert.equal((await worker.stop({ graceMs: 1000 })).drained, true); worker = undefined;
+        clock.value += 1000;
+        const firstCycle = [first];
+        for (const trigger of triggers.slice(1)) firstCycle.push(must(await runner.run(trigger)));
+        assert.deepEqual(firstCycle.map(row => row.action), ['enqueued', 'replayed', 'replayed']);
+        const snapshot = async () => Object.fromEntries(await Promise.all(EXPERIENTIAL_TABLES.map(async table => [table, must(await store.list(table, scope))])));
+        const before = await snapshot(), jobs = await db.jobs!.counts(), secondCycle = [];
+        for (const trigger of triggers) secondCycle.push(must(await runner.run(trigger)));
+        assert.ok(secondCycle.every(row => row.action === 'replayed' && row.jobId === first.jobId));
+        assert.deepEqual(await snapshot(), before); assert.deepEqual(await db.jobs!.counts(), jobs);
+        const afterHead = must(await store.head(profile, scope));
+        assert.deepEqual(afterHead.head, beforeHead.head); assert.equal(afterHead.eventId, beforeHead.eventId);
+        assert.deepEqual(must(await store.list('approvals', scope)), beforeApprovals);
+        const [run] = must(await store.list('training_runs', scope)); assert.equal(run.state, 'complete');
+        const artifact = must(await store.get('artifacts', run.progress!.artifactId!)); assert.ok(artifact);
+        assert.equal(artifact.state, 'staged'); assert.equal(backend.stats().submissions, 1); assert.equal(physicalRequests, 0);
+        return { tier: 'synthetic-cadence-conformance', storage: 'sqlite', datasetId: dataset.id, deploymentId: deployment.id,
+          selected: selection.counts.selected, jobId: first.jobId, artifactId: artifact.id,
+          firstCycle: firstCycle.map(row => ({ action: row.action, reason: row.reason, jobId: row.jobId })),
+          secondCycle: secondCycle.map(row => ({ action: row.action, reason: row.reason, jobId: row.jobId })),
+          counts: runner.stats(), newJobsOnReplay: 0, approvals: beforeApprovals.length, head: beforeHead.head,
+          fakeSubmissions: backend.stats().submissions, scientificApproval: false, physicalRequests };
+      } finally { await worker?.stop({ graceMs: 1000 }); await runner.close(); }
+    }
     const gates = must(await sealExperientialRecord('gatePolicy', { ...common, document: 'experiential-gate-policy', primaryMetric: 'cgc',
       controls: ['frozen-retrieval', 'frozen-distilled-rule'], interval: { statistic: 'paired-bootstrap', level: 0.95, resamples: 1000, seed: 17753 },
       learning: { minLowerBound: 0 }, retention: { cgtReplayMaxDrop: 0, baseReplayMaxDrop: 0, locomoRecallMaxDrop: 0, locomoQaMaxDrop: 0 },
@@ -199,6 +257,6 @@ export async function runExperientialExample(options: { storage?: 'memory' | 'sq
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const { values } = parseArgs({ options: { sqlite: { type: 'boolean' }, database: { type: 'string' } } });
-  console.log(JSON.stringify(await runExperientialExample({ storage: values.sqlite ? 'sqlite' : 'memory', database: values.database }), null, 2));
+  const { values } = parseArgs({ options: { sqlite: { type: 'boolean' }, database: { type: 'string' }, tick: { type: 'boolean' } } });
+  console.log(JSON.stringify(await runExperientialExample({ storage: values.sqlite ? 'sqlite' : 'memory', database: values.database, tick: values.tick }), null, 2));
 }

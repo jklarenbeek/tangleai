@@ -23,7 +23,8 @@ export async function checkTrainingBindings(run: ExperientialTrainingRun, datase
   const spec = r.value.spec;
   if (!spec || !r.value.pipelineRevision || !r.value.runtime || !r.value.progress)
     return refuseExperiential('TEXP1002', '/spec', 'A managed run requires its complete specification, runtime, pipeline and progress.');
-  if (d.value.scope !== r.value.scope || b.value.scope !== r.value.scope || b.value.kind !== 'base'
+  if (d.value.scope !== r.value.scope || b.value.scope !== r.value.scope
+    || b.value.kind !== 'base' && (!b.value.evaluationRegistration || !['active', 'archived'].includes(b.value.state))
     || spec.datasetId !== d.value.id || spec.baseArtifactId !== b.value.id || spec.baseChecksum !== b.value.checksum
     || spec.manifestDigest !== d.value.manifestDigest || spec.tokenizerIdentity !== d.value.tokenizerIdentity
     || spec.chatTemplateIdentity !== d.value.chatTemplateIdentity || r.value.datasetId !== spec.datasetId

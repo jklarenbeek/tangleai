@@ -635,7 +635,8 @@
             "quarantined",
             "eligible",
             "selected",
-            "excluded"
+            "excluded",
+            "archived"
           ]
         },
         "contentDigest": {
@@ -1100,33 +1101,7 @@
           "$ref": "#/$defs/ExperientialHyperparameters"
         },
         "backendIdentity": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 256,
-              "pattern": "\\S"
-            },
-            "version": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 128,
-              "pattern": "\\S"
-            },
-            "kind": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 64,
-              "pattern": "\\S"
-            }
-          },
-          "required": [
-            "id",
-            "version",
-            "kind"
-          ],
-          "additionalProperties": false
+          "$ref": "#/$defs/ExperientialTrainingRunBackendIdentity"
         },
         "budget": {
           "$ref": "#/$defs/ExperientialTrainingBudget"
@@ -2442,7 +2417,8 @@
         "not-generalizable",
         "quarantined",
         "no-assessment",
-        "no-approval"
+        "no-approval",
+        "archived"
       ]
     },
     "ExperientialSelectionPolicy": {
@@ -2771,6 +2747,11 @@
               "maximum": 4096
             },
             "no-approval": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            },
+            "archived": {
               "type": "integer",
               "minimum": 0,
               "maximum": 4096
@@ -4094,6 +4075,286 @@
         "reason",
         "observed"
       ]
+    },
+    "ExperientialTriggerKind": {
+      "enum": [
+        "manual",
+        "count",
+        "time",
+        "outcome"
+      ]
+    },
+    "ExperientialTrigger": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/$defs/ExperientialScope"
+        },
+        "kind": {
+          "$ref": "#/$defs/ExperientialTriggerKind"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "scope",
+        "kind",
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialTriggerNoopReason": {
+      "enum": [
+        "disabled",
+        "below-minimum",
+        "cadence",
+        "cooldown",
+        "budget-exhausted",
+        "queue-full",
+        "no-approved-dataset",
+        "clock-skew",
+        "closed",
+        "cancelled",
+        "deadline",
+        "trigger-disabled"
+      ]
+    },
+    "ExperientialTriggerPolicy": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "triggers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialTriggerKind"
+          },
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "minimumEligible": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxCadenceMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "scopeCooldownMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "computeBudget": {
+          "type": "object",
+          "properties": {
+            "maxRunsPerDay": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "maxSpend": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "maxRunsPerDay",
+            "maxSpend"
+          ],
+          "additionalProperties": false
+        },
+        "maxQueued": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxQueue": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "onStaleParent": {
+          "enum": [
+            "rebase",
+            "cancel"
+          ]
+        }
+      },
+      "required": [
+        "revision",
+        "enabled",
+        "triggers",
+        "minimumEligible",
+        "maxCadenceMs",
+        "scopeCooldownMs",
+        "computeBudget",
+        "maxQueued",
+        "concurrency",
+        "maxQueue",
+        "onStaleParent"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialTrainingRunBackendIdentity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialTrainingRecipe": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "method": {
+          "$ref": "#/$defs/ExperientialMethod"
+        },
+        "hyperparameters": {
+          "$ref": "#/$defs/ExperientialHyperparameters"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "precision": {
+          "type": "string",
+          "enum": [
+            "fp32",
+            "fp16",
+            "bf16",
+            "int8",
+            "int4"
+          ]
+        },
+        "budget": {
+          "$ref": "#/$defs/ExperientialTrainingBudget"
+        },
+        "runtime": {
+          "$ref": "#/$defs/ExperientialRuntime"
+        }
+      },
+      "required": [
+        "profile",
+        "method",
+        "hyperparameters",
+        "seed",
+        "precision",
+        "budget",
+        "runtime"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialRetentionPolicy": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "decision": {
+          "enum": [
+            "keep",
+            "archive",
+            "delete"
+          ]
+        },
+        "rollbackWindowMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "holds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "maxItems": 4096,
+          "uniqueItems": true
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        },
+        "principal": {
+          "$ref": "#/$defs/ExperientialPrincipal"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialRef"
+          },
+          "minItems": 1,
+          "maxItems": 256,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "revision",
+        "decision",
+        "rollbackWindowMs",
+        "holds",
+        "reason",
+        "principal",
+        "evidence"
+      ],
+      "additionalProperties": false
     }
   }
 }

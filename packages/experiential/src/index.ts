@@ -47,3 +47,10 @@ export { canaryShareOf, routesToCanary } from './canary.ts';
 export { resolveExperientialInference, startExperientialInference } from './inference.ts';
 export type { ExperientialInferenceInput, ExperientialResolvedInference, ExperientialInferenceBinding, ExperientialInferenceHostInput } from './inference.ts';
 export type { ExperientialRollbackInput } from './lifecycle.ts';
+
+export { createExperientialRunner, sealExperientialTriggerPolicy, DEFAULT_EXPERIENTIAL_TRIGGER_POLICY,
+  EXPERIENTIAL_TRIGGER_NOOP_REASONS } from './policy.ts';
+export type { ExperientialTriggerAdmission, ExperientialTriggerOutcome, ExperientialTriggerReservation,
+  ExperientialTriggerCounts, ExperientialTrainingJobs } from './policy.ts';
+export { planExperientialRetention, sealExperientialRetentionPolicy } from './retention.ts';
+export type { ExperientialRetentionInput, ExperientialRetentionLineage, ExperientialRetentionPlan } from './retention.ts';

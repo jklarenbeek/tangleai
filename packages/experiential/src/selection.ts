@@ -60,7 +60,7 @@ export async function planExperientialSelection(rawInput: ExperientialSelectionI
     if (!a.ok) return a; assessments.push(a.value);
   }
   const counts: ExperientialSelectionCounts = { input: input.experiences.length, selected: 0, excluded: 0, quarantined: 0,
-    byReason: Object.fromEntries(EXPERIENTIAL_EXCLUSION_REASONS.map(reason => [reason, 0])) as unknown as ExperientialSelectionCounts['byReason'] };
+    byReason: Object.fromEntries(EXPERIENTIAL_EXCLUSION_REASONS.filter(reason => reason !== 'archived').map(reason => [reason, 0])) as unknown as ExperientialSelectionCounts['byReason'] };
   const plan: ExperientialSelectionPlan = { selected: [], assessments: [], cohort: [], reviews: assessments, excluded: [], quarantined: [], counts,
     evidence: { policy: checked.value, approvals: [], trustView: view.value, counts } };
   const seen = new Set<string>(), digests = new Set<string>();
@@ -81,7 +81,8 @@ export async function planExperientialSelection(rawInput: ExperientialSelectionI
     const assessment = reviews.find(a => !!permission(a)) ?? reviews[0];
     const approval = assessment ? permission(assessment) : undefined;
     if (!reason) {
-      if (e.state === 'quarantined' || e.state === 'excluded') reason = 'quarantined';
+      if (e.state === 'archived') reason = 'archived';
+      else if (e.state === 'quarantined' || e.state === 'excluded') reason = 'quarantined';
       else if (e.scope !== checked.value.scope || taint!.reasons.includes('cross-scope')) reason = 'cross-scope';
       else if (!checked.value.allowedPrivacy.some(allowed => allowed === e.privacy) || taint!.reasons.includes('private-scope')) reason = 'private-scope';
       else if (taint!.reasons.includes('missing-source-id')) reason = 'missing-source-id';
@@ -101,7 +102,7 @@ export async function planExperientialSelection(rawInput: ExperientialSelectionI
     }
     if (reason) {
       const bucket = reason === 'quarantined' ? 'quarantined' : 'excluded';
-      plan[bucket].push({ id: e.id, reason }); counts[bucket]++; counts.byReason[reason]++;
+      plan[bucket].push({ id: e.id, reason }); counts[bucket]++; counts.byReason[reason] = (counts.byReason[reason] ?? 0) + 1;
     } else {
       plan.selected.push(e); plan.assessments.push(assessment); plan.evidence.approvals.push(approval!);
       digests.add(e.contentDigest); counts.selected++;

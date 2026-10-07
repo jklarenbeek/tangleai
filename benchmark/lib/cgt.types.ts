@@ -1742,6 +1742,10 @@ export interface Experiential_ExperientialSelectionCountsByReason {
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
    */
   "no-approval": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4096
+   */
+  archived?: number;
 }
 
 
@@ -2257,7 +2261,7 @@ export interface Experiential_ExperientialExperience {
   producingIdentityId: Experiential_ExperientialId;
   trust: Experiential_ExperientialTrust;
   privacy: "public" | "internal" | "private";
-  state: "observed" | "quarantined" | "eligible" | "selected" | "excluded";
+  state: "observed" | "quarantined" | "eligible" | "selected" | "excluded" | "archived";
   contentDigest: Experiential_ExperientialId;
 }
 
@@ -2636,7 +2640,7 @@ export interface Experiential_ExperientialHead {
 
 export type Experiential_ExperientialRecord = Experiential_ExperientialExperience | Experiential_ExperientialAssessment | Experiential_ExperientialDataset | Experiential_ExperientialTrainingRun | Experiential_ExperientialArtifact | Experiential_ExperientialEvaluation | Experiential_ExperientialGatePolicy | Experiential_ExperientialApproval | Experiential_ExperientialDeployment | Experiential_ExperientialInferencePin | Experiential_ExperientialRetentionDecision | Experiential_ExperientialEvent | Experiential_ExperientialHead;
 
-export type Experiential_ExperientialExclusionReason = "untrusted-source" | "tainted-lineage" | "private-scope" | "cross-scope" | "self-judged" | "model-approved" | "no-independent-outcome" | "unresolved-contradiction" | "missing-source-id" | "legacy-evidence" | "duplicate" | "insufficient-support" | "not-generalizable" | "quarantined" | "no-assessment" | "no-approval";
+export type Experiential_ExperientialExclusionReason = "untrusted-source" | "tainted-lineage" | "private-scope" | "cross-scope" | "self-judged" | "model-approved" | "no-independent-outcome" | "unresolved-contradiction" | "missing-source-id" | "legacy-evidence" | "duplicate" | "insufficient-support" | "not-generalizable" | "quarantined" | "no-assessment" | "no-approval" | "archived";
 
 export interface Experiential_ExperientialExampleVariables {
   experienceId: Experiential_ExperientialId;
@@ -2755,6 +2759,115 @@ export interface Experiential_ExperientialRollbackIntent {
    */
   reason: string;
   observed: Experiential_ExperientialOperationalWindow;
+}
+
+
+export type Experiential_ExperientialTriggerKind = "manual" | "count" | "time" | "outcome";
+
+export interface Experiential_ExperientialTrigger {
+  scope: Experiential_ExperientialScope;
+  kind: Experiential_ExperientialTriggerKind;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+   */
+  key: string;
+}
+
+
+export type Experiential_ExperientialTriggerNoopReason = "disabled" | "below-minimum" | "cadence" | "cooldown" | "budget-exhausted" | "queue-full" | "no-approved-dataset" | "clock-skew" | "closed" | "cancelled" | "deadline" | "trigger-disabled";
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type Experiential_ExperientialTriggerPolicyComputeBudgetMaxSpendAnyOf1 = number;
+
+export interface Experiential_ExperientialTriggerPolicyComputeBudget {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  maxRunsPerDay: number;
+  maxSpend: Experiential_ExperientialTriggerPolicyComputeBudgetMaxSpendAnyOf1 | null;
+}
+
+
+export interface Experiential_ExperientialTriggerPolicy {
+  revision: Experiential_ExperientialId;
+  enabled: boolean;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=4, uniqueItems=true
+   */
+  triggers: Array<Experiential_ExperientialTriggerKind>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  minimumEligible: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxCadenceMs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  scopeCooldownMs: number;
+  computeBudget: Experiential_ExperientialTriggerPolicyComputeBudget;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxQueued: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  concurrency: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxQueue: number;
+  onStaleParent: "rebase" | "cancel";
+}
+
+
+export interface Experiential_ExperientialTrainingRecipe {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=128, pattern="\\S"
+   */
+  profile: string;
+  method: Experiential_ExperientialMethod;
+  hyperparameters: Experiential_ExperientialHyperparameters;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=4294967295
+   */
+  seed: number;
+  precision: "fp32" | "fp16" | "bf16" | "int8" | "int4";
+  budget: Experiential_ExperientialTrainingBudget;
+  runtime: Experiential_ExperientialRuntime;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=256, pattern="\\S"
+ */
+export type Experiential_ExperientialRetentionPolicyHoldsItem = string;
+
+export interface Experiential_ExperientialRetentionPolicy {
+  revision: Experiential_ExperientialId;
+  decision: "keep" | "archive" | "delete";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  rollbackWindowMs: number;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=4096, uniqueItems=true
+   */
+  holds: Array<Experiential_ExperientialRetentionPolicyHoldsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4096, pattern="\\S"
+   */
+  reason: string;
+  principal: Experiential_ExperientialPrincipal;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=256, uniqueItems=true
+   */
+  evidence: Array<Experiential_ExperientialRef>;
 }
 
 

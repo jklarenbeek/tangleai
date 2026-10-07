@@ -251,3 +251,53 @@ therefore remains rejected. `benchmark:cgt -- --require gates --check` verifies
 registered mechanism measurements and report reproduction; it makes no claim
 of learned quality, trained weights or deployment approval. Fixture cost and
 injected-clock observations are labelled separately from model performance.
+
+`createExperientialRunner({ store, jobs, backend, recipe, policy, now, sleep })`
+admits explicit `manual`, `count`, `time` and `outcome` ticks through the native
+scheduler. The default policy is disabled and performs no persistence or queue
+operation. Hosts bind `jobs.enqueue` to `enqueueExperientialTraining(db, plan)`
+and explicitly run the native training worker. There is no import-time worker
+or polling timer. `close()` drains active admission and rejects queued ticks.
+
+The closed, hashed trigger policy bounds cadence, completion cooldown, daily
+run and spend reservations, pending jobs and scheduler concurrency. Count ticks
+require enough independently approved experiences; time ticks use retained
+completion timing; outcome ticks name the exact approved independent source.
+Manual ticks bypass count and time thresholds while retaining approval, cadence,
+cooldown, budget and queue checks. Invalid or regressed clocks yield a counted
+`clock-skew` with `TEXP1009`. `stats().byReason` separates every no-op reason.
+
+Admission and cancellation are atomic domain transactions. A failed native
+enqueue leaves a durable reservation: replaying its trigger resumes the same
+job without another budget purchase. Cancelled or rebased reservations remain
+counted if that enqueue fails; `enqueued` counts only successful queue bindings.
+Daily run limits count retained reservations. Spend limits conservatively use
+the larger reserved or reported cost; unknown spend cannot satisfy a finite
+ceiling. Completed timing survives a runner restart. Replaying an admitted
+trigger returns its original job and does not write another domain record.
+
+A moved deployment head, including a changed revision after returning to the
+same artifact, fences queued and preparing runs before submission. The policy
+either cancels the stale run or reserves a new run against the actual active
+parent. Durable events retain both actions. A trigger never approves a dataset,
+writes an activation approval or moves a deployment head. Foreground memory
+operations and document ingestion remain independent of a blocked trainer.
+
+Run `node examples/experiential.ts --tick` or
+`bun examples/experiential.ts --tick` for a keyless SQLite walkthrough; use
+`--database <path>` to retain its database. The fake worker completes one job.
+The manual/count/time demonstration and its repeated cycle report one enqueue,
+five replays and two no-ops, zero new jobs on replay, zero approvals and an
+unchanged deployment head. The artifact remains staged. These are conformance
+counts, not learning or latency measurements.
+
+`sealExperientialRetentionPolicy` registers a reason, principal, evidence,
+rollback window and holds. `planExperientialRetention` checks the complete
+retained census and returns `keep` or `archive` decisions.
+`store.retain(plan)` rechecks the current census and atomically publishes the
+decision, archival state and audit event. A replay changes nothing. Deletion
+is refused with `TEXP1012`; so is archival that touches serving or evaluation
+lineage, an open rollback window, a hold on any alias of the episode, or sole
+provenance for a checked rule. Archived experiences keep their identities and
+source references, remain resolvable through artifact lineage, and are excluded
+from future selection. Generic writes cannot bypass the retention command.

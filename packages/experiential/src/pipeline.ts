@@ -124,6 +124,7 @@ export function createExperientialTrainingTasks(context: ExperientialTrainingCon
     if (stages.indexOf(p.stage) < stages.indexOf(required[node])) throw new TrainingRefusal();
     if (node === 'select' && ['queued', 'selecting'].includes(p.stage)) {
       if (p.stage === 'queued') run = await update(run, { kind: 'begin' });
+      if (trainingTerminal(run)) return input;
       const dataset = await read('datasets', run.datasetId), base = await read('artifacts', run.baseArtifactId);
       if (!(await checkTrainingBindings(run, dataset, base)).ok) await fail(run, 'TEXP1002', 'dataset');
       else if (dataset.selectedIds.length > Math.min(run.budget.maxRecords, budgets.maxRecords)) await fail(run, 'TEXP1009', 'record-budget');
@@ -149,6 +150,7 @@ export function createExperientialTrainingTasks(context: ExperientialTrainingCon
     } else if (node === 'submit' && ['rendered', 'submitting'].includes(p.stage)) {
       const fresh = p.stage === 'rendered';
       if (fresh) run = await update(run, { kind: 'reserve' });
+      if (trainingTerminal(run)) return input;
       signal?.throwIfAborted();
       let submission: BackendResult<BackendJob> | undefined;
       try {

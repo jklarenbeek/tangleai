@@ -4,6 +4,8 @@ import type { ExperientialEvaluationPlan, ExperientialEvaluationResultPlan } fro
 import type { ExperientialActivationPlan, ExperientialTransitionPlan } from './lifecycle.ts';
 import type { ExperientialTrainingCommand } from './contracts.gen.ts';
 import type { ExperientialTrainingUpdate } from './training.ts';
+import type { ExperientialTriggerAdmission, ExperientialTriggerReservation } from './policy.ts';
+import type { ExperientialRetentionPlan } from './retention.ts';
 
 export const EXPERIENTIAL_TABLE_KINDS = Object.freeze({
   experiences: 'experience', assessments: 'assessment', datasets: 'dataset', training_runs: 'trainingRun',
@@ -35,6 +37,8 @@ export interface ExperientialStore {
   putBatch(writes: readonly ExperientialWrite[]): Promise<ExperientialStoreResult<ExperientialWrite[]>>;
   transition(plan: ExperientialTransitionPlan, options?: { evaluationId?: string }): Promise<ExperientialStoreResult<ExperientialTransitionPlan>>;
   training(runId: string, expectedRevision: number, command: ExperientialTrainingCommand): Promise<ExperientialStoreResult<ExperientialTrainingUpdate>>;
+  schedule(request: ExperientialTriggerAdmission): Promise<ExperientialStoreResult<ExperientialTriggerReservation>>;
+  retain(plan: ExperientialRetentionPlan): Promise<ExperientialStoreResult<ExperientialRetentionPlan>>;
   startEvaluation(plan: ExperientialEvaluationPlan): Promise<ExperientialStoreResult<ExperientialEvaluationPlan>>;
   recordEvaluation(evaluation: ExperientialEvaluation): Promise<ExperientialStoreResult<ExperientialEvaluationResultPlan>>;
   pin(pin: ExperientialInferencePin): Promise<ExperientialStoreResult<ExperientialInferencePin>>;

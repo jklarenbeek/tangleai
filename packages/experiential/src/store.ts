@@ -1,5 +1,5 @@
 /** Domain checks and accounting surround the one injected atomic persistence seam. */
-import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { canonicalizeJson, canonicalSha256 } from '@jarenjs/json/canonical';
 import { equalsJson } from '@jarenjs/core/object';
 import { checkExperientialRecord, experientialHeadKey, sealExperientialRecord } from './identity.ts';
 import { experientialIssue, type ExperientialIssueCode, type ExperientialResult } from './errors.ts';
@@ -13,6 +13,8 @@ import { checkExperientialDataset } from './dataset.ts';
 import { checkTrainingBindings, initialTrainingProgress, planExperientialTrainingUpdate } from './training.ts';
 import { isVerifiedArtifactReceipt } from './backend.ts';
 import { planExperientialEvaluation, recordExperientialEvaluation } from './evaluation.ts';
+import { admitExperientialTrigger, experientialTriggerBinding } from './trigger-admission.ts';
+import { planExperientialRetention } from './retention.ts';
 import type { ExperientialIssue, ExperientialHead, ExperientialArtifact, ExperientialDataset, ExperientialTrainingRun, ExperientialApproval, ExperientialEvaluation } from './contracts.gen.ts';
 import type { ExperientialActivationPlan, ExperientialTransitionPlan } from './lifecycle.ts';
 
@@ -178,6 +180,7 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
     if (table === 'pins') refuse('TEXP1006', '/pin', 'Inference pins belong to the checked pin command.');
     if (table === 'retention_decisions') {
       const r = row as ExperientialTables['retention_decisions'];
+      if (r.decision === 'archive') refuse('TEXP1012', '/decision', 'Archival decisions belong to the checked retention command.');
       if (r.dependentArtifactId) await requireRow(ctx.tx, 'artifacts', r.dependentArtifactId, r.scope);
     }
   }
@@ -279,6 +282,45 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
   }
   const store: ExperientialStore = {
     stats: () => ({ ...stats }),
+    retain: plan => copied(plan, async (ctx, request) => {
+      if (!request?.input) refuse('TEXP1001', '/plan', 'A captured retention plan is required.');
+      const original = checked(await planExperientialRetention(request.input));
+      if (!equalsJson(original, request)) refuse('TEXP1012', '/plan', 'The retention plan does not reproduce from its captured dependency census.');
+      const scope = original.input.deployment.scope;
+      const retained = await Promise.all(original.decisions.map(decision => get(ctx.tx, 'retention_decisions', decision.id)));
+      if (retained.some(Boolean)) {
+        if (!retained.every((row, index) => row && equalsJson(row, original.decisions[index])))
+          refuse('TEXP1012', '/decisions', 'The retained decision set differs from the atomic plan.');
+        for (const change of original.changes) if (!equalsJson(await requireRow(ctx.tx, 'experiences', change.after.id, scope), change.after))
+          refuse('TEXP1012', '/experiences', 'The retained archived source no longer matches its decision.');
+        return original;
+      }
+      const at = Date.parse(ctx.at());
+      if (!Number.isSafeInteger(at) || at < original.input.now) refuse('TEXP1012', '/now', 'The store clock is invalid or earlier than the retention observation.');
+      const fresh = checked(await planExperientialRetention({ ...original.input,
+        deployment: await currentDeployment(ctx, original.input.deployment.id, scope), artifacts: await list(ctx.tx, 'artifacts', scope),
+        lineage: { experiences: await list(ctx.tx, 'experiences', scope), assessments: await list(ctx.tx, 'assessments', scope),
+          datasets: await list(ctx.tx, 'datasets', scope), trainingRuns: await list(ctx.tx, 'training_runs', scope), events: await list(ctx.tx, 'events', scope) } }));
+      if (!equalsJson(fresh, original)) refuse('TEXP1012', '/lineage', 'The retained dependencies changed; prepare another retention plan.');
+      for (const decision of fresh.decisions) await write(ctx, 'retention_decisions', await record('retention_decisions', decision));
+      for (const change of fresh.changes) await write(ctx, 'experiences', await record('experiences', change.after));
+      const changesDigest = await canonicalSha256(fresh.changes.map(change => ({ id: change.after.id, before: change.before.state, after: change.after.state })));
+      for (const decision of fresh.decisions) await event(ctx, scope, 'retention-applied', decision.id,
+        canonicalizeJson({ policyRevision: fresh.input.policy.revision, decision: decision.decision, changesDigest }));
+      return fresh;
+    }),
+    schedule: request => copied(request, async (ctx, input) => checked(await admitExperientialTrigger({
+      list: (table, scope) => list(ctx.tx, table, scope),
+      get: (table, id, scope) => requireRow(ctx.tx, table, id, scope),
+      deployment: (id, scope) => currentDeployment(ctx, id, scope), at: ctx.at,
+      putRun: async run => { await put(ctx, 'training_runs', run); },
+      cancel: async run => {
+        const plan = checked(await planExperientialTrainingUpdate(run, { kind: 'cancel' }, ctx.at()));
+        await write(ctx, 'training_runs', await record('training_runs', plan.after));
+        await event(ctx, run.scope, 'training-cancel', run.id, canonicalizeJson({ revision: plan.after.progress!.revision, state: 'cancelled' }));
+      },
+      event: async (scope, kind, id, detail) => { await event(ctx, scope, kind, id, detail); },
+    }, input))),
     get: (table, id) => operation(ctx => get(ctx.tx, table, id)),
     list: (table, scope) => operation(ctx => list(ctx.tx, table, scope)),
     put: (table, value) => copied(value, (ctx, row) => put(ctx, table, row)),
@@ -324,6 +366,22 @@ export function createExperientialStoreAdapter(persistence: ExperientialPersiste
         if (!before) refuse('TEXP1004', '/runId', 'The managed training run is missing.');
         if (!Number.isSafeInteger(request.expectedRevision) || before.progress?.revision !== request.expectedRevision)
           refuse('TEXP1006', '/expectedRevision', 'Training progress changed; reread before reserving another effect.');
+        if (['begin', 'selected', 'rendered', 'reserve'].includes(request.command.kind) && before.progress?.dispatch === 'none') {
+          const admission = (await list(ctx.tx, 'events', before.scope)).filter(row => row.recordId === before.id
+            && ['training-trigger-admitted', 'training-trigger-rebased'].includes(row.kind)).sort((a, b) => b.seq - a.seq)[0];
+          if (admission) {
+            const binding = checked(await experientialTriggerBinding(admission));
+            const deployment = await currentDeployment(ctx, binding.deploymentId, before.scope);
+            const head = { versionId: deployment.activeArtifactId, revision: deployment.headRevision };
+            if (!checkExperientialHead(head, binding.head).ok) {
+              const cancelled = checked(await planExperientialTrainingUpdate(before, { kind: 'cancel' }, ctx.at()));
+              await write(ctx, 'training_runs', await record('training_runs', cancelled.after));
+              await event(ctx, before.scope, 'training-trigger-cancelled', before.id, canonicalizeJson({
+                trigger: binding.trigger, expectedHead: binding.head, actualHead: head, reason: 'stale-parent', policyRevision: binding.policy.revision }));
+              return cancelled;
+            }
+          }
+        }
         checked(await checkTrainingBindings(before,
           await requireRow(ctx.tx, 'datasets', before.datasetId, before.scope),
           await requireRow(ctx.tx, 'artifacts', before.baseArtifactId, before.scope)));

@@ -103,7 +103,7 @@
       },
       {
         "path": "benchmark/lib/cgt.types.ts",
-        "sha256": "ae9c58e13d90384fa4c2ce28212c4d43bc38509fbe69227957e31dfaecc921dc"
+        "sha256": "1782a6d293c55b2d5c6d62db06eda55f3b1f2aed00cfdef21fe6aaf5706ba2b3"
       },
       {
         "path": "benchmark/lib/config-conformance.ts",
@@ -1842,7 +1842,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "cf3314df3f2e58f9513645e7603eb510c7a7098941de7d5c79b151b15304eea6"
+    "sha256": "879555318419eefc3ec3eaa63e3a3d5e7d6d564ee7350a0b80f30b31eac2063a"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45307,5 +45307,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "d215c218c595cc39bd6d1766db06215127149ed1b3640d3d55cebaec51456b5b"
+  "reportId": "a29d227be4b6b487c60894d537974ae297b7318fb4b54b6e219e8f0585db38d1"
 }

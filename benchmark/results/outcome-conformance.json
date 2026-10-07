@@ -571,7 +571,7 @@
       },
       {
         "path": "packages/experiential/schemas/experiential.schema.json",
-        "sha256": "aa95b66418d3cbd2d35b8821f98a375c760a069a2003f7c68c82ac1eef996896"
+        "sha256": "bb4f13b5cf9b1a46979694dcfdc1d5b81017de348603a69ae8f37e693e2cd5f7"
       },
       {
         "path": "packages/experiential/schemas/training-service.contract.json",
@@ -595,7 +595,7 @@
       },
       {
         "path": "packages/experiential/src/contracts.gen.ts",
-        "sha256": "8135eb489b61f47e2432303818ae1ebcc2a3d7e285f813c64da5dc41990bb3de"
+        "sha256": "00ec1ddc0d22575efac43c47d08c77ec570d70459b0fe38ddd1a606c1315b438"
       },
       {
         "path": "packages/experiential/src/dataset.ts",
@@ -627,7 +627,7 @@
       },
       {
         "path": "packages/experiential/src/index.ts",
-        "sha256": "4bc5f0fec057b7d71987cd5c28bd868ee0d51cb985b5d694999c7a78accff5e4"
+        "sha256": "04fc761769309fe7ae3371ce7abf1d06102d195f357bf13595b2126c2e4e9376"
       },
       {
         "path": "packages/experiential/src/inference.ts",
@@ -635,7 +635,7 @@
       },
       {
         "path": "packages/experiential/src/lifecycle.ts",
-        "sha256": "6cc4ad996316dd1f6a8069cbf6974fe143e35da4c19b01d527702ef504d34672"
+        "sha256": "40ef5de8a1d5cf47ebd89c027eb5c3b348b349b3bc7317188db89955ef333eb7"
       },
       {
         "path": "packages/experiential/src/lineage.ts",
@@ -647,7 +647,15 @@
       },
       {
         "path": "packages/experiential/src/pipeline.ts",
-        "sha256": "8e22dc35a96ff2e7df6a65b631921a3788a2f6f820359fee7977776751c5461a"
+        "sha256": "554d0dc56c7f10c122938d0f8b1934733c366672be1ee524693b2431ceef3853"
+      },
+      {
+        "path": "packages/experiential/src/policy.ts",
+        "sha256": "5a9566741beb5ec57223e9b78ceb739164e485131217c8c04df1a7d42ad6ebe9"
+      },
+      {
+        "path": "packages/experiential/src/retention.ts",
+        "sha256": "229f8dd44e03833d6c3f8a84514eaacc7e339745c8d090b197c262f3e03015dc"
       },
       {
         "path": "packages/experiential/src/schema.ts",
@@ -655,15 +663,15 @@
       },
       {
         "path": "packages/experiential/src/selection.ts",
-        "sha256": "c7b5350dfec917b9179136c7b5b5aa989854913dccf570e0d76f7df2026d4e5d"
+        "sha256": "c8f7b0f9a074cccfe0053742630e6f04a655b0ab965e9c1254ff8c0b2f74a711"
       },
       {
         "path": "packages/experiential/src/store-types.ts",
-        "sha256": "21b4da2ba6f6ae61eec7a834148acb2252bf75a5cde0dcd85e11c09494d98fa6"
+        "sha256": "a2756f1453fefe3c17d6387719dd160d6ddcf70a673a6ebde09d4bb2ba4e6bda"
       },
       {
         "path": "packages/experiential/src/store.ts",
-        "sha256": "32630a047f614df4210a67917aa9306455d55a959b951d805973e11afac9757e"
+        "sha256": "a9a29ef1a05752e70041fd4777ddac70add3e35b9ec10dee03d21bf490a0598d"
       },
       {
         "path": "packages/experiential/src/training-env.ts",
@@ -671,7 +679,11 @@
       },
       {
         "path": "packages/experiential/src/training.ts",
-        "sha256": "40d372a1ef139897a8d890792dbdac4c8e20bf3120dff621789a9c69aae62ccd"
+        "sha256": "3b8742997565aa6c83682f0bb9971105b9806b16288bdedc848c4a2dfb6b379f"
+      },
+      {
+        "path": "packages/experiential/src/trigger-admission.ts",
+        "sha256": "9a2f036992a9bbb41dcbdac064856d4d13d4f3d1ce6249c0a54c1c80c3e58165"
       },
       {
         "path": "packages/experiential/src/trust.ts",
@@ -2966,7 +2978,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "fd34bfa1008e9bba675cd82a0d1da79786f2683da4105df27af45a40b6f121cb"
+    "sha256": "90b48c43c9de14af8225526c6ff6e2f58659b467c02d7636fffcafca57712e43"
   },
   "registration": {
     "schemaVersion": 1,
@@ -86152,5 +86164,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "43ce72481d52df5f3c9f7640987134c5f3e4a8bdb76e9aac14383a0d696bb1fc"
+  "reportId": "6737a6a7198e6666894f272d84c360a0ef561d447d7362ff5de0ac71d23b50f5"
 }

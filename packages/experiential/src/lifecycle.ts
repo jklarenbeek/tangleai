@@ -6,7 +6,7 @@ import { refuseExperiential, type ExperientialResult } from './errors.ts';
 import type { ExperientialApproval, ExperientialArtifact, ExperientialEvaluation, ExperientialHead, ExperientialDeployment } from './contracts.gen.ts';
 
 export const EXPERIENCE_TRANSITIONS = deepFreeze({
-  observed: ['quarantined', 'eligible'], quarantined: [], eligible: ['selected', 'excluded'], selected: [], excluded: [],
+  observed: ['quarantined', 'eligible'], quarantined: [], eligible: ['selected', 'excluded'], selected: [], excluded: [], archived: [],
 } as const);
 export const TRAINING_TRANSITIONS = deepFreeze({
   queued: ['preparing', 'failed', 'cancelled'], preparing: ['training', 'failed', 'cancelled'],

@@ -1,15 +1,15 @@
 {
   "document": "priha-local-latency",
-  "reportId": "83d5a2bb19ce96a8f2d4b4927288f167e03f4dd6f278d5287897b9c26d9aa119",
+  "reportId": "b94d8c7b7b083b2be6f4df283159cce353171901f264900de5e0ae42d418515c",
   "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-  "sourceSha256": "a28bbea3ee32b5281ab070d987060ff4bda5ff2d9bfa890812764d4b88c94fc8",
+  "sourceSha256": "087bb3505d48854af3b650ffd100cf760611b06b8580f525b22a30e4e6a31640",
   "clock": "performance.now",
   "rows": [
     {
       "row": "flat-semantic/flat-450/semantic",
       "count": 56,
-      "medianMs": 0.9579289999999219,
-      "p95Ms": 1.2850610000000415,
+      "medianMs": 1.0007410000000618,
+      "p95Ms": 1.4328440000001592,
       "rebuildMs": 0,
       "budgetMs": 60000,
       "passed": true
@@ -17,8 +17,8 @@
     {
       "row": "local-hybrid/parent-2000/semantic",
       "count": 56,
-      "medianMs": 4.077764999999999,
-      "p95Ms": 6.582028000000037,
+      "medianMs": 4.210671000000048,
+      "p95Ms": 6.388290999999981,
       "rebuildMs": 0,
       "budgetMs": 60000,
       "passed": true
@@ -26,26 +26,26 @@
     {
       "row": "local-hybrid/parent-2000/lexical",
       "count": 56,
-      "medianMs": 3.9172009999999773,
-      "p95Ms": 4.772186000000147,
-      "rebuildMs": 5.515774999999849,
+      "medianMs": 3.946674999999914,
+      "p95Ms": 4.550583999999844,
+      "rebuildMs": 5.530791999999792,
       "budgetMs": 60000,
       "passed": true
     },
     {
       "row": "local-hybrid/parent-2000/fused",
       "count": 56,
-      "medianMs": 4.030273999999963,
-      "p95Ms": 5.676617999999962,
-      "rebuildMs": 3.415958000000046,
+      "medianMs": 4.2835150000000795,
+      "p95Ms": 6.856499999999869,
+      "rebuildMs": 3.6583740000000944,
       "budgetMs": 60000,
       "passed": true
     },
     {
       "row": "local-hybrid/parent-1200/semantic",
       "count": 56,
-      "medianMs": 4.346928999999818,
-      "p95Ms": 5.810781000000134,
+      "medianMs": 4.442260999999689,
+      "p95Ms": 5.804845999999998,
       "rebuildMs": 0,
       "budgetMs": 60000,
       "passed": true
@@ -53,18 +53,18 @@
     {
       "row": "local-hybrid/parent-1200/lexical",
       "count": 56,
-      "medianMs": 4.269825999999739,
-      "p95Ms": 5.263582000000042,
-      "rebuildMs": 2.4758379999998397,
+      "medianMs": 4.406572999999753,
+      "p95Ms": 5.747785000000022,
+      "rebuildMs": 2.734316999999919,
       "budgetMs": 60000,
       "passed": true
     },
     {
       "row": "local-hybrid/parent-1200/fused",
       "count": 56,
-      "medianMs": 4.375143999999636,
-      "p95Ms": 6.291212999999971,
-      "rebuildMs": 2.6339570000000094,
+      "medianMs": 4.568463000000065,
+      "p95Ms": 6.754253999999946,
+      "rebuildMs": 2.2163110000001325,
       "budgetMs": 60000,
       "passed": true
     }
@@ -73,2355 +73,2355 @@
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q01:registered",
-      "ms": 4.1696750000000975,
+      "ms": 4.351328999999851,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q02:registered",
-      "ms": 1.2850610000000415,
+      "ms": 1.4328440000001592,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q03:registered",
-      "ms": 1.0950259999999616,
+      "ms": 1.1063400000000456,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q04:registered",
-      "ms": 1.0283979999999247,
+      "ms": 1.0682070000000294,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q05:registered",
-      "ms": 1.0191789999998946,
+      "ms": 1.0216239999999743,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q06:registered",
-      "ms": 1.0307729999999538,
+      "ms": 1.0526319999999032,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q07:registered",
-      "ms": 1.0200869999998758,
+      "ms": 1.011707000000115,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q08:registered",
-      "ms": 1.0255349999999908,
+      "ms": 1.0266520000000128,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q09:registered",
-      "ms": 0.9781829999999445,
+      "ms": 1.0006020000000717,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q10:registered",
-      "ms": 1.0670890000001236,
+      "ms": 1.0608039999999619,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q11:registered",
-      "ms": 1.0536110000000463,
+      "ms": 1.0263720000000376,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q12:registered",
-      "ms": 1.0020680000000084,
+      "ms": 1.0121960000001309,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q13:registered",
-      "ms": 1.0741430000000491,
+      "ms": 1.173665999999912,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q14:registered",
-      "ms": 1.1489429999999174,
+      "ms": 1.3537840000001324,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q15:registered",
-      "ms": 1.2021609999999328,
+      "ms": 1.1871459999999843,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q16:registered",
-      "ms": 1.1812779999997929,
+      "ms": 1.085458000000017,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q17:registered",
-      "ms": 1.0550070000001597,
+      "ms": 1.0699529999999413,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q18:registered",
-      "ms": 1.2405029999999897,
+      "ms": 1.3349279999999908,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q19:registered",
-      "ms": 1.1799519999999575,
+      "ms": 1.1431460000001152,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q20:registered",
-      "ms": 1.0201569999999265,
+      "ms": 1.4071420000000217,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q21:registered",
-      "ms": 1.009471000000076,
+      "ms": 1.097050999999965,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q22:registered",
-      "ms": 0.9708490000000438,
+      "ms": 1.0007410000000618,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q23:registered",
-      "ms": 0.9100180000000364,
+      "ms": 1.0235790000001543,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q24:registered",
-      "ms": 0.9579289999999219,
+      "ms": 0.9878910000002179,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "abstain-1:registered",
-      "ms": 0.9195870000000923,
+      "ms": 1.0039540000000216,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "abstain-2:registered",
-      "ms": 0.9430540000000747,
+      "ms": 1.0850390000000516,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "abstain-3:registered",
-      "ms": 0.9471740000001319,
+      "ms": 0.9167229999998199,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "abstain-4:registered",
-      "ms": 0.935510000000022,
+      "ms": 0.9060380000000805,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "refuse-1:registered",
-      "ms": 0.9955729999999221,
+      "ms": 1.0063290000000507,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "refuse-2:registered",
-      "ms": 0.9082029999999577,
+      "ms": 0.9261520000000019,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "refuse-3:registered",
-      "ms": 0.8783820000001015,
+      "ms": 0.899263000000019,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "refuse-4:registered",
-      "ms": 0.9529009999998834,
+      "ms": 0.8960509999999431,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q01:paraphrase",
-      "ms": 0.948221999999987,
+      "ms": 1.022600999999895,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q02:paraphrase",
-      "ms": 0.9166529999999966,
+      "ms": 0.8901840000000902,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q03:paraphrase",
-      "ms": 5.387408999999934,
+      "ms": 5.185989999999947,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q04:paraphrase",
-      "ms": 1.1441229999998086,
+      "ms": 1.1476159999999709,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q05:paraphrase",
-      "ms": 1.0467659999999341,
+      "ms": 1.090345999999954,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q06:paraphrase",
-      "ms": 0.9636560000001282,
+      "ms": 0.9774149999998372,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q07:paraphrase",
-      "ms": 0.9496179999998731,
+      "ms": 0.9657510000001821,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q08:paraphrase",
-      "ms": 0.8889269999999669,
+      "ms": 0.8697909999998501,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q09:paraphrase",
-      "ms": 0.8713970000001154,
+      "ms": 0.8452770000001237,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q10:paraphrase",
-      "ms": 0.8502349999998842,
+      "ms": 0.8348000000000866,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q11:paraphrase",
-      "ms": 0.9717579999999089,
+      "ms": 0.9519230000000789,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q12:paraphrase",
-      "ms": 0.9161639999999807,
+      "ms": 0.8468839999998181,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q13:paraphrase",
-      "ms": 0.9091109999999389,
+      "ms": 0.8370360000001256,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q14:paraphrase",
-      "ms": 0.8363370000001851,
+      "ms": 0.8321470000000772,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q15:paraphrase",
-      "ms": 0.8535879999999452,
+      "ms": 0.8518420000000333,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q16:paraphrase",
-      "ms": 0.8947229999998854,
+      "ms": 0.8923489999999674,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q17:paraphrase",
-      "ms": 0.8661600000000362,
+      "ms": 0.8122419999999693,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q18:paraphrase",
-      "ms": 0.8455559999999878,
+      "ms": 0.8468829999999343,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q19:paraphrase",
-      "ms": 0.8253730000001269,
+      "ms": 0.834103000000141,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q20:paraphrase",
-      "ms": 0.8322170000001279,
+      "ms": 0.845696000000089,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q21:paraphrase",
-      "ms": 0.8477219999999761,
+      "ms": 0.8616899999999532,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q22:paraphrase",
-      "ms": 0.8401779999999235,
+      "ms": 0.838083000000097,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q23:paraphrase",
-      "ms": 0.8278859999998076,
+      "ms": 0.8091699999999946,
       "rebuildMs": 0
     },
     {
       "row": "flat-semantic/flat-450/semantic",
       "query": "q24:paraphrase",
-      "ms": 0.8228590000001077,
+      "ms": 0.8179000000000087,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q01:registered",
-      "ms": 6.516726999999946,
+      "ms": 6.388290999999981,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q02:registered",
-      "ms": 5.49664000000007,
+      "ms": 4.540176999999858,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q03:registered",
-      "ms": 4.724275999999918,
+      "ms": 4.289800000000014,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q04:registered",
-      "ms": 4.569858999999951,
+      "ms": 4.276810000000069,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q05:registered",
-      "ms": 4.7591959999999744,
+      "ms": 4.263889000000063,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q06:registered",
-      "ms": 5.088632999999845,
+      "ms": 4.318712999999889,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q07:registered",
-      "ms": 4.447080000000142,
+      "ms": 4.1491419999999835,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q08:registered",
-      "ms": 6.916911999999911,
+      "ms": 6.307205999999951,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q09:registered",
-      "ms": 4.341132000000016,
+      "ms": 4.161642999999913,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q10:registered",
-      "ms": 4.296084999999948,
+      "ms": 4.133775999999898,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q11:registered",
-      "ms": 4.3059330000000955,
+      "ms": 4.160526000000118,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q12:registered",
+      "ms": 4.153960000000097,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q13:registered",
+      "ms": 4.076088999999911,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q14:registered",
+      "ms": 4.189648999999918,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q15:registered",
+      "ms": 4.147116000000096,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q16:registered",
+      "ms": 4.315989999999829,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q17:registered",
+      "ms": 4.1882530000000315,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q18:registered",
+      "ms": 4.102837000000136,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q19:registered",
+      "ms": 4.0864950000000135,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q20:registered",
+      "ms": 4.357545000000073,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q21:registered",
+      "ms": 4.37891599999989,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q22:registered",
+      "ms": 4.171839000000091,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q23:registered",
+      "ms": 4.210671000000048,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "q24:registered",
+      "ms": 5.626681999999846,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "abstain-1:registered",
+      "ms": 4.199635999999828,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "abstain-2:registered",
+      "ms": 4.181407999999919,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "abstain-3:registered",
+      "ms": 4.121414999999843,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "abstain-4:registered",
+      "ms": 4.126443999999992,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "refuse-1:registered",
+      "ms": 5.501528999999891,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "refuse-2:registered",
+      "ms": 4.2885429999998905,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/semantic",
+      "query": "refuse-3:registered",
       "ms": 4.391697000000022,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
-      "query": "q13:registered",
-      "ms": 4.077764999999999,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q14:registered",
-      "ms": 4.073224999999866,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q15:registered",
-      "ms": 4.036976999999979,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q16:registered",
-      "ms": 4.013441999999941,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q17:registered",
-      "ms": 3.9644129999999222,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q18:registered",
-      "ms": 3.9632269999999608,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q19:registered",
-      "ms": 3.9634360000000015,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q20:registered",
-      "ms": 4.2636099999999715,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q21:registered",
-      "ms": 4.116665999999896,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q22:registered",
-      "ms": 3.99737899999991,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q23:registered",
-      "ms": 4.13657000000012,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "q24:registered",
-      "ms": 5.685836999999992,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "abstain-1:registered",
-      "ms": 4.190695999999889,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "abstain-2:registered",
-      "ms": 3.9290739999999005,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "abstain-3:registered",
-      "ms": 3.863843999999972,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "abstain-4:registered",
-      "ms": 3.9447889999999006,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "refuse-1:registered",
-      "ms": 5.435459000000037,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "refuse-2:registered",
-      "ms": 4.118551000000025,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
-      "query": "refuse-3:registered",
-      "ms": 4.126652000000149,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/semantic",
       "query": "refuse-4:registered",
-      "ms": 3.911474999999882,
+      "ms": 4.053809000000001,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q01:paraphrase",
-      "ms": 3.9710489999999936,
+      "ms": 4.498342999999977,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q02:paraphrase",
-      "ms": 3.8502249999999094,
+      "ms": 4.095505000000003,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q03:paraphrase",
-      "ms": 3.9224400000000514,
+      "ms": 4.319970999999896,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q04:paraphrase",
-      "ms": 4.05618400000003,
+      "ms": 4.343157000000019,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q05:paraphrase",
-      "ms": 4.105840000000171,
+      "ms": 4.328211999999894,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q06:paraphrase",
-      "ms": 4.009180999999899,
+      "ms": 4.342390000000023,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q07:paraphrase",
-      "ms": 6.582028000000037,
+      "ms": 6.73365200000012,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q08:paraphrase",
-      "ms": 4.28721500000006,
+      "ms": 4.265844999999899,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q09:paraphrase",
-      "ms": 5.579400999999962,
+      "ms": 5.716776999999865,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q10:paraphrase",
-      "ms": 3.8947129999999106,
+      "ms": 4.190487000000076,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q11:paraphrase",
-      "ms": 5.404589999999871,
+      "ms": 5.555585000000065,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q12:paraphrase",
-      "ms": 5.476945000000114,
+      "ms": 5.658948999999893,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q13:paraphrase",
-      "ms": 3.9084020000000237,
+      "ms": 4.069454000000178,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q14:paraphrase",
-      "ms": 3.945417000000134,
+      "ms": 4.115757999999914,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q15:paraphrase",
-      "ms": 3.9833410000001095,
+      "ms": 4.161921999999777,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q16:paraphrase",
-      "ms": 3.8746689999998125,
+      "ms": 4.170372999999927,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q17:paraphrase",
-      "ms": 3.8952710000000934,
+      "ms": 4.193629999999985,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q18:paraphrase",
-      "ms": 4.032508000000007,
+      "ms": 4.557847000000038,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q19:paraphrase",
-      "ms": 3.932217000000037,
+      "ms": 4.198169999999891,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q20:paraphrase",
-      "ms": 5.557819000000109,
+      "ms": 5.852405999999974,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q21:paraphrase",
-      "ms": 6.603607999999895,
+      "ms": 6.827725999999984,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q22:paraphrase",
-      "ms": 3.9572209999998904,
+      "ms": 4.2205189999999675,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q23:paraphrase",
-      "ms": 3.9491890000001604,
+      "ms": 4.103884999999991,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/semantic",
       "query": "q24:paraphrase",
-      "ms": 4.048571000000038,
+      "ms": 4.086913999999979,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q01:registered",
-      "ms": 10.641564000000017,
-      "rebuildMs": 5.515774999999849
+      "ms": 10.944741000000022,
+      "rebuildMs": 5.530791999999792
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q02:registered",
-      "ms": 3.9644140000000334,
+      "ms": 4.2610950000000685,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q03:registered",
-      "ms": 4.323742000000038,
+      "ms": 4.44680100000005,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q04:registered",
-      "ms": 4.11554799999999,
+      "ms": 4.218213999999989,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q05:registered",
-      "ms": 4.0057590000001255,
+      "ms": 4.194817000000057,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q06:registered",
-      "ms": 4.014907999999878,
+      "ms": 4.212066999999934,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q07:registered",
-      "ms": 3.9523309999999583,
+      "ms": 4.162480999999843,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q08:registered",
-      "ms": 4.0420060000001286,
+      "ms": 4.506515000000036,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q09:registered",
-      "ms": 4.102906999999959,
+      "ms": 4.460070999999971,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q10:registered",
-      "ms": 4.063726999999972,
+      "ms": 4.416210999999976,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q11:registered",
-      "ms": 3.9463250000001153,
+      "ms": 4.4220070000001215,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q12:registered",
-      "ms": 4.351118999999926,
+      "ms": 4.550583999999844,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q13:registered",
-      "ms": 5.3072329999999965,
+      "ms": 5.346692999999959,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q14:registered",
-      "ms": 3.9143380000000434,
+      "ms": 4.208575999999994,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q15:registered",
-      "ms": 4.008902000000035,
+      "ms": 4.1309130000001915,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q16:registered",
-      "ms": 3.9500269999998636,
+      "ms": 4.316479000000072,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q17:registered",
-      "ms": 3.980965999999853,
+      "ms": 4.087962000000061,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q18:registered",
-      "ms": 3.9706300000000283,
+      "ms": 3.9554749999999785,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q19:registered",
-      "ms": 4.0167240000000675,
+      "ms": 3.97300499999983,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q20:registered",
-      "ms": 4.135034000000132,
+      "ms": 4.1760300000000825,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q21:registered",
-      "ms": 4.217724999999973,
+      "ms": 3.9887180000000626,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q22:registered",
-      "ms": 4.772186000000147,
+      "ms": 3.867825000000039,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q23:registered",
-      "ms": 4.412648999999874,
+      "ms": 4.14907200000016,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q24:registered",
-      "ms": 4.228201000000126,
+      "ms": 4.339107000000013,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "abstain-1:registered",
-      "ms": 3.500395000000026,
+      "ms": 3.4508079999998245,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "abstain-2:registered",
-      "ms": 3.7900929999998425,
+      "ms": 3.3051909999999225,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "abstain-3:registered",
-      "ms": 3.5327300000001287,
+      "ms": 3.1213020000000142,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "abstain-4:registered",
-      "ms": 3.549073000000135,
+      "ms": 3.215167000000065,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "refuse-1:registered",
-      "ms": 4.174772999999959,
+      "ms": 4.4394680000000335,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "refuse-2:registered",
-      "ms": 3.342975000000024,
+      "ms": 3.4353040000000874,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "refuse-3:registered",
-      "ms": 4.44938500000012,
+      "ms": 4.340085000000045,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "refuse-4:registered",
-      "ms": 3.4328590000000077,
+      "ms": 3.3538700000001427,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q01:paraphrase",
-      "ms": 3.505143999999973,
+      "ms": 3.2958330000001297,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q02:paraphrase",
-      "ms": 3.103072999999995,
+      "ms": 3.1980559999999514,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q03:paraphrase",
-      "ms": 4.187135000000126,
+      "ms": 4.238746999999876,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q04:paraphrase",
-      "ms": 4.0413079999998445,
+      "ms": 3.912802000000056,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q05:paraphrase",
-      "ms": 3.1222099999999955,
+      "ms": 3.1503549999999905,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q06:paraphrase",
-      "ms": 1.2276520000000346,
+      "ms": 1.2702560000000176,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q07:paraphrase",
-      "ms": 1.5056859999999688,
+      "ms": 1.5549940000000788,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q08:paraphrase",
-      "ms": 3.0508330000000115,
+      "ms": 3.131358999999975,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q09:paraphrase",
-      "ms": 0.9057590000002165,
+      "ms": 0.9355110000001332,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q10:paraphrase",
-      "ms": 3.0411249999999654,
+      "ms": 3.0131900000001224,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q11:paraphrase",
-      "ms": 3.041545000000042,
+      "ms": 3.1774540000001252,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q12:paraphrase",
-      "ms": 3.006693999999925,
+      "ms": 3.1788510000001224,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q13:paraphrase",
-      "ms": 1.2039769999998953,
+      "ms": 1.4632939999999053,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q14:paraphrase",
-      "ms": 3.1549650000001748,
+      "ms": 3.4056920000000446,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q15:paraphrase",
-      "ms": 3.646641000000045,
+      "ms": 3.740435999999818,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q16:paraphrase",
-      "ms": 3.6499919999998838,
+      "ms": 3.694342000000006,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q17:paraphrase",
-      "ms": 0.8654610000000957,
+      "ms": 0.9254530000000614,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q18:paraphrase",
-      "ms": 1.1956660000000738,
+      "ms": 1.2435759999998481,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q19:paraphrase",
-      "ms": 3.5094739999999547,
+      "ms": 3.58434299999999,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q20:paraphrase",
-      "ms": 0.9170719999999619,
+      "ms": 0.9576500000000578,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
       "query": "q21:paraphrase",
-      "ms": 3.2204750000000786,
+      "ms": 3.383481999999958,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-2000/lexical",
-      "query": "q22:paraphrase",
-      "ms": 4.073294000000033,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/lexical",
-      "query": "q23:paraphrase",
-      "ms": 3.9172009999999773,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/lexical",
-      "query": "q24:paraphrase",
-      "ms": 3.7610380000000987,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q01:registered",
-      "ms": 7.9703830000000835,
-      "rebuildMs": 3.415958000000046
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q02:registered",
-      "ms": 4.078603000000157,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q03:registered",
-      "ms": 4.127140999999938,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q04:registered",
-      "ms": 4.030273999999963,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q05:registered",
-      "ms": 3.995353000000023,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q06:registered",
-      "ms": 3.9684650000003785,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q07:registered",
-      "ms": 4.149421000000075,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q08:registered",
-      "ms": 4.147535000000062,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q09:registered",
-      "ms": 4.00890199999958,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q10:registered",
-      "ms": 3.9838300000001254,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q11:registered",
-      "ms": 4.0211239999998725,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q12:registered",
-      "ms": 4.251177000000098,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q13:registered",
-      "ms": 4.8143700000000536,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q14:registered",
-      "ms": 5.003427999999985,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q15:registered",
-      "ms": 4.031950000000052,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q16:registered",
-      "ms": 4.095573999999942,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q17:registered",
-      "ms": 4.450642000000244,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q18:registered",
-      "ms": 4.609947000000375,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q19:registered",
-      "ms": 4.009669999999915,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q20:registered",
-      "ms": 4.0634469999999965,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q21:registered",
-      "ms": 4.024686000000202,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q22:registered",
-      "ms": 4.0864950000000135,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q23:registered",
-      "ms": 3.931797999999617,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q24:registered",
-      "ms": 3.8590949999997974,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "abstain-1:registered",
-      "ms": 3.9196459999998297,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "abstain-2:registered",
-      "ms": 3.924185999999736,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "abstain-3:registered",
-      "ms": 3.8985539999998764,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "abstain-4:registered",
-      "ms": 4.001150000000052,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "refuse-1:registered",
-      "ms": 4.328491000000213,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "refuse-2:registered",
-      "ms": 6.453731000000062,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "refuse-3:registered",
-      "ms": 5.676617999999962,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "refuse-4:registered",
-      "ms": 3.9556840000000193,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q01:paraphrase",
-      "ms": 3.950166000000081,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q02:paraphrase",
-      "ms": 4.0115560000003825,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q03:paraphrase",
-      "ms": 3.840936000000056,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q04:paraphrase",
-      "ms": 4.173096999999871,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q05:paraphrase",
-      "ms": 3.9985649999998714,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q06:paraphrase",
-      "ms": 4.036348999999973,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q07:paraphrase",
-      "ms": 5.37386000000015,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q08:paraphrase",
-      "ms": 4.080767000000378,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q09:paraphrase",
-      "ms": 5.503692999999657,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q10:paraphrase",
-      "ms": 4.018818999999894,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q11:paraphrase",
-      "ms": 5.02375099999972,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q12:paraphrase",
-      "ms": 4.293221999999787,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q13:paraphrase",
-      "ms": 3.931937999999718,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q14:paraphrase",
-      "ms": 3.875507000000198,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q15:paraphrase",
-      "ms": 5.378190000000359,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q16:paraphrase",
-      "ms": 5.47485000000006,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q17:paraphrase",
-      "ms": 3.7979850000001534,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q18:paraphrase",
-      "ms": 3.8776020000000244,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q19:paraphrase",
-      "ms": 5.394602999999734,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q20:paraphrase",
-      "ms": 5.307790999999725,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q21:paraphrase",
-      "ms": 3.9567309999997633,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q22:paraphrase",
-      "ms": 3.8352789999999004,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q23:paraphrase",
-      "ms": 3.923417999999856,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-2000/fused",
-      "query": "q24:paraphrase",
-      "ms": 3.8834689999998773,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q01:registered",
-      "ms": 4.4737590000004275,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q02:registered",
-      "ms": 4.297900999999911,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q03:registered",
-      "ms": 4.226803999999902,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q04:registered",
-      "ms": 4.266403000000082,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q05:registered",
-      "ms": 4.684258000000227,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q06:registered",
-      "ms": 4.2787640000001375,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q07:registered",
-      "ms": 4.266472999999678,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q08:registered",
-      "ms": 4.314104000000043,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q09:registered",
-      "ms": 4.194816999999603,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q10:registered",
-      "ms": 4.228689000000031,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q11:registered",
-      "ms": 6.174649000000045,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q12:registered",
-      "ms": 4.558545000000322,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q13:registered",
-      "ms": 4.5608500000003005,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q14:registered",
-      "ms": 5.3047880000003715,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q15:registered",
-      "ms": 5.478481999999985,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q16:registered",
-      "ms": 5.041280999999799,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q17:registered",
-      "ms": 4.575096999999914,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q18:registered",
-      "ms": 4.703813000000082,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q19:registered",
-      "ms": 4.524742999999944,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q20:registered",
-      "ms": 4.724205999999867,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q21:registered",
-      "ms": 4.371302999999898,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q22:registered",
-      "ms": 4.5130089999997836,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q23:registered",
-      "ms": 4.421448000000055,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q24:registered",
-      "ms": 4.187133999999787,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "abstain-1:registered",
-      "ms": 4.271082000000206,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "abstain-2:registered",
-      "ms": 5.810781000000134,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "abstain-3:registered",
-      "ms": 4.699203000000125,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "abstain-4:registered",
-      "ms": 4.3277930000003835,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "refuse-1:registered",
-      "ms": 4.890844999999899,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "refuse-2:registered",
-      "ms": 4.296854000000167,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "refuse-3:registered",
-      "ms": 4.345741999999973,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "refuse-4:registered",
-      "ms": 4.222961999999825,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q01:paraphrase",
-      "ms": 4.346928999999818,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q02:paraphrase",
-      "ms": 4.253971999999976,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q03:paraphrase",
-      "ms": 4.213604000000032,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q04:paraphrase",
-      "ms": 4.24147000000039,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q05:paraphrase",
-      "ms": 4.516431999999895,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q06:paraphrase",
-      "ms": 4.277368000000024,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q07:paraphrase",
-      "ms": 5.681507000000238,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q08:paraphrase",
-      "ms": 5.259672000000137,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q09:paraphrase",
-      "ms": 5.838647999999921,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q10:paraphrase",
-      "ms": 4.222961999999825,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q11:paraphrase",
-      "ms": 4.415582000000086,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q12:paraphrase",
-      "ms": 4.256835000000137,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q13:paraphrase",
-      "ms": 4.222055000000182,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q14:paraphrase",
-      "ms": 4.237279000000399,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q15:paraphrase",
-      "ms": 4.279532999999901,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q16:paraphrase",
-      "ms": 4.24545100000023,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q17:paraphrase",
-      "ms": 4.1699539999999615,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q18:paraphrase",
-      "ms": 4.220658000000185,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q19:paraphrase",
-      "ms": 4.290218999999979,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q20:paraphrase",
-      "ms": 4.94043099999999,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q21:paraphrase",
-      "ms": 5.231526000000031,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q22:paraphrase",
-      "ms": 5.433363999999983,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q23:paraphrase",
-      "ms": 4.54122499999994,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/semantic",
-      "query": "q24:paraphrase",
-      "ms": 4.689216000000215,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q01:registered",
-      "ms": 7.491627999999764,
-      "rebuildMs": 2.4758379999998397
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q02:registered",
-      "ms": 4.591649000000416,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q03:registered",
-      "ms": 4.28581800000029,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q04:registered",
-      "ms": 4.28826300000037,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q05:registered",
-      "ms": 4.271291999999903,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q06:registered",
-      "ms": 4.362991999999849,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q07:registered",
-      "ms": 4.337500000000091,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q08:registered",
-      "ms": 4.269825999999739,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q09:registered",
-      "ms": 4.408946999999898,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q10:registered",
-      "ms": 4.4032210000000305,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q11:registered",
-      "ms": 4.268428000000313,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q12:registered",
-      "ms": 5.263582000000042,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q13:registered",
-      "ms": 4.52069100000017,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q14:registered",
-      "ms": 4.296435000000201,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q15:registered",
-      "ms": 4.5054660000000695,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q16:registered",
-      "ms": 4.342039999999997,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q17:registered",
-      "ms": 4.39435100000037,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q18:registered",
-      "ms": 4.4762040000000525,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q19:registered",
-      "ms": 4.54192299999977,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q20:registered",
-      "ms": 4.380802000000131,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q21:registered",
-      "ms": 4.227712000000338,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q22:registered",
-      "ms": 4.2135339999999815,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q23:registered",
-      "ms": 4.1821060000002035,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q24:registered",
-      "ms": 4.579497000000174,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "abstain-1:registered",
-      "ms": 3.2067160000001422,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "abstain-2:registered",
-      "ms": 3.179827999999816,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "abstain-3:registered",
-      "ms": 4.026362000000063,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "abstain-4:registered",
-      "ms": 3.2138400000003458,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "refuse-1:registered",
-      "ms": 4.3336590000003525,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "refuse-2:registered",
-      "ms": 4.610855000000356,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "refuse-3:registered",
-      "ms": 4.531167000000096,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "refuse-4:registered",
-      "ms": 3.1921199999997043,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q01:paraphrase",
-      "ms": 3.432299999999941,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q02:paraphrase",
-      "ms": 3.147422000000006,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q03:paraphrase",
-      "ms": 4.505955999999969,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q04:paraphrase",
-      "ms": 4.071129999999812,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q05:paraphrase",
-      "ms": 3.096787999999833,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q06:paraphrase",
-      "ms": 1.3479879999999866,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q07:paraphrase",
-      "ms": 1.6582170000001497,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q08:paraphrase",
-      "ms": 3.115436000000045,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q09:paraphrase",
-      "ms": 1.0045129999998608,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q10:paraphrase",
-      "ms": 3.0891750000000684,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q11:paraphrase",
-      "ms": 3.1127120000001014,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q12:paraphrase",
-      "ms": 3.085403999999926,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q13:paraphrase",
-      "ms": 1.3251500000001215,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q14:paraphrase",
-      "ms": 3.3115469999997913,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q15:paraphrase",
-      "ms": 4.9143810000000485,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q16:paraphrase",
-      "ms": 5.541896000000179,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q17:paraphrase",
-      "ms": 1.0681370000002062,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q18:paraphrase",
-      "ms": 1.3911480000001575,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q19:paraphrase",
-      "ms": 4.913403000000017,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q20:paraphrase",
-      "ms": 1.0024170000001504,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q21:paraphrase",
-      "ms": 3.2763480000003256,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q22:paraphrase",
-      "ms": 3.536642000000029,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q23:paraphrase",
-      "ms": 4.5840369999996256,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/lexical",
-      "query": "q24:paraphrase",
-      "ms": 4.442470999999841,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q01:registered",
-      "ms": 7.272886999999628,
-      "rebuildMs": 2.6339570000000094
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q02:registered",
-      "ms": 4.478647999999794,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q03:registered",
-      "ms": 4.3578239999997095,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q04:registered",
-      "ms": 4.432202999999845,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q05:registered",
-      "ms": 4.365158000000065,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q06:registered",
-      "ms": 4.463561999999911,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q07:registered",
-      "ms": 4.390997999999854,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q08:registered",
-      "ms": 5.46353500000032,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q09:registered",
-      "ms": 4.57398000000012,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q10:registered",
-      "ms": 4.375143999999636,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q11:registered",
-      "ms": 4.353772999999819,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q12:registered",
-      "ms": 4.313684000000194,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q13:registered",
-      "ms": 4.4259179999999105,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q14:registered",
-      "ms": 4.407829999999649,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q15:registered",
-      "ms": 4.374096000000009,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q16:registered",
-      "ms": 4.290707999999995,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q17:registered",
-      "ms": 4.392813999999817,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q18:registered",
-      "ms": 4.287424999999985,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q19:registered",
-      "ms": 4.316059999999652,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q20:registered",
-      "ms": 4.350351000000046,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q21:registered",
-      "ms": 4.335125999999946,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q22:registered",
-      "ms": 5.358216000000084,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q23:registered",
-      "ms": 4.518946000000142,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q24:registered",
-      "ms": 4.591091000000233,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "abstain-1:registered",
-      "ms": 4.3426690000001145,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "abstain-2:registered",
-      "ms": 4.371861999999965,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "abstain-3:registered",
-      "ms": 4.350840000000062,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "abstain-4:registered",
-      "ms": 4.428851000000122,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "refuse-1:registered",
-      "ms": 4.4854230000000825,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "refuse-2:registered",
-      "ms": 6.272984000000179,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "refuse-3:registered",
-      "ms": 6.276057000000037,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "refuse-4:registered",
-      "ms": 4.307189999999991,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q01:paraphrase",
-      "ms": 4.337849999999889,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q02:paraphrase",
-      "ms": 4.301741999999649,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q03:paraphrase",
-      "ms": 5.175305000000208,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q04:paraphrase",
-      "ms": 4.288751999999931,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q05:paraphrase",
-      "ms": 4.265145999999731,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q06:paraphrase",
-      "ms": 4.285538999999972,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q07:paraphrase",
-      "ms": 4.965085999999701,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q08:paraphrase",
-      "ms": 4.300275000000056,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q09:paraphrase",
-      "ms": 5.9095360000001165,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q10:paraphrase",
-      "ms": 4.586761000000024,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q11:paraphrase",
-      "ms": 4.510703999999805,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q12:paraphrase",
-      "ms": 5.425752000000102,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q13:paraphrase",
-      "ms": 4.227642000000287,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q14:paraphrase",
-      "ms": 4.330726000000141,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q15:paraphrase",
-      "ms": 7.082292999999936,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q16:paraphrase",
-      "ms": 6.291212999999971,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q17:paraphrase",
-      "ms": 4.295874999999796,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q18:paraphrase",
-      "ms": 4.207318000000214,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q19:paraphrase",
-      "ms": 6.166059000000132,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q20:paraphrase",
-      "ms": 4.7793100000003506,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
-      "query": "q21:paraphrase",
-      "ms": 4.972557999999935,
-      "rebuildMs": 0
-    },
-    {
-      "row": "local-hybrid/parent-1200/fused",
       "query": "q22:paraphrase",
       "ms": 4.201101999999992,
       "rebuildMs": 0
     },
     {
+      "row": "local-hybrid/parent-2000/lexical",
+      "query": "q23:paraphrase",
+      "ms": 4.026362999999947,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/lexical",
+      "query": "q24:paraphrase",
+      "ms": 3.946674999999914,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q01:registered",
+      "ms": 8.364771000000246,
+      "rebuildMs": 3.6583740000000944
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q02:registered",
+      "ms": 4.324231000000054,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q03:registered",
+      "ms": 4.176100000000133,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q04:registered",
+      "ms": 4.433950000000095,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q05:registered",
+      "ms": 4.09550500000023,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q06:registered",
+      "ms": 4.19265200000018,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q07:registered",
+      "ms": 4.7117050000001655,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q08:registered",
+      "ms": 4.410065000000031,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q09:registered",
+      "ms": 4.450012999999672,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q10:registered",
+      "ms": 4.05744199999981,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q11:registered",
+      "ms": 4.534520000000157,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q12:registered",
+      "ms": 4.2295970000000125,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q13:registered",
+      "ms": 4.079999999999927,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q14:registered",
+      "ms": 4.971441000000141,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q15:registered",
+      "ms": 3.9548460000000887,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q16:registered",
+      "ms": 4.050875999999789,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q17:registered",
+      "ms": 4.10618999999997,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q18:registered",
+      "ms": 3.9248139999999694,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q19:registered",
+      "ms": 4.052552000000105,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q20:registered",
+      "ms": 4.312637999999879,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q21:registered",
+      "ms": 4.0994150000001355,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q22:registered",
+      "ms": 4.2835150000000795,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q23:registered",
+      "ms": 4.017912000000251,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q24:registered",
+      "ms": 4.035650999999689,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "abstain-1:registered",
+      "ms": 4.006736999999703,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "abstain-2:registered",
+      "ms": 4.029366000000209,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "abstain-3:registered",
+      "ms": 4.107027000000016,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "abstain-4:registered",
+      "ms": 4.356636999999864,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "refuse-1:registered",
+      "ms": 4.546881999999641,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "refuse-2:registered",
+      "ms": 7.420599999999922,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "refuse-3:registered",
+      "ms": 6.856499999999869,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "refuse-4:registered",
+      "ms": 4.608831000000009,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q01:paraphrase",
+      "ms": 4.732238000000052,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q02:paraphrase",
+      "ms": 6.240998000000218,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q03:paraphrase",
+      "ms": 4.767297999999755,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q04:paraphrase",
+      "ms": 4.04019100000005,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q05:paraphrase",
+      "ms": 3.9816639999999097,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q06:paraphrase",
+      "ms": 3.948211999999785,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q07:paraphrase",
+      "ms": 5.366737000000285,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q08:paraphrase",
+      "ms": 3.8654499999997824,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q09:paraphrase",
+      "ms": 5.438043999999991,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q10:paraphrase",
+      "ms": 3.9656009999998787,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q11:paraphrase",
+      "ms": 5.298432999999932,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q12:paraphrase",
+      "ms": 4.414045999999871,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q13:paraphrase",
+      "ms": 4.145230999999967,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q14:paraphrase",
+      "ms": 4.5297709999999825,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q15:paraphrase",
+      "ms": 5.476944999999887,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q16:paraphrase",
+      "ms": 5.425333000000137,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q17:paraphrase",
+      "ms": 3.856789999999819,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q18:paraphrase",
+      "ms": 4.2347649999996975,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q19:paraphrase",
+      "ms": 5.603914999999688,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q20:paraphrase",
+      "ms": 5.5103979999998955,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q21:paraphrase",
+      "ms": 4.129515999999967,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q22:paraphrase",
+      "ms": 3.9852960000002895,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q23:paraphrase",
+      "ms": 4.284004000000095,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-2000/fused",
+      "query": "q24:paraphrase",
+      "ms": 4.537732999999662,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q01:registered",
+      "ms": 4.553447000000233,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q02:registered",
+      "ms": 4.371302999999898,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q03:registered",
+      "ms": 4.358452999999827,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q04:registered",
+      "ms": 4.400286999999935,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q05:registered",
+      "ms": 4.844610999999986,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q06:registered",
+      "ms": 5.408222000000023,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q07:registered",
+      "ms": 4.380591999999979,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q08:registered",
+      "ms": 4.24028300000009,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q09:registered",
+      "ms": 4.322135999999773,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q10:registered",
+      "ms": 4.260815999999977,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q11:registered",
+      "ms": 6.029940000000352,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q12:registered",
+      "ms": 4.408668000000034,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q13:registered",
+      "ms": 4.367671999999857,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q14:registered",
+      "ms": 4.427804000000378,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q15:registered",
+      "ms": 4.49038100000007,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q16:registered",
+      "ms": 4.357404999999744,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q17:registered",
+      "ms": 4.343297999999777,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q18:registered",
+      "ms": 4.51405799999975,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q19:registered",
+      "ms": 4.400286999999935,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q20:registered",
+      "ms": 4.382967000000008,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q21:registered",
+      "ms": 4.358173000000079,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q22:registered",
+      "ms": 4.379824000000099,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q23:registered",
+      "ms": 4.327514000000065,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q24:registered",
+      "ms": 4.36746200000016,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "abstain-1:registered",
+      "ms": 4.337641000000076,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "abstain-2:registered",
+      "ms": 5.719430000000102,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "abstain-3:registered",
+      "ms": 4.666728000000148,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "abstain-4:registered",
+      "ms": 4.538920000000417,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "refuse-1:registered",
+      "ms": 5.226008999999976,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "refuse-2:registered",
+      "ms": 4.424171999999999,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "refuse-3:registered",
+      "ms": 4.479137000000264,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "refuse-4:registered",
+      "ms": 4.3546110000002045,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q01:paraphrase",
+      "ms": 4.495758999999907,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q02:paraphrase",
+      "ms": 4.5022539999999935,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q03:paraphrase",
+      "ms": 4.408039999999801,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q04:paraphrase",
+      "ms": 4.545485000000099,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q05:paraphrase",
+      "ms": 4.587738000000172,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q06:paraphrase",
+      "ms": 4.334078999999747,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q07:paraphrase",
+      "ms": 5.804845999999998,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q08:paraphrase",
+      "ms": 5.464652999999998,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q09:paraphrase",
+      "ms": 5.997674000000188,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q10:paraphrase",
+      "ms": 4.520202999999583,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q11:paraphrase",
+      "ms": 4.717083000000002,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q12:paraphrase",
+      "ms": 4.41907399999991,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q13:paraphrase",
+      "ms": 4.810807999999724,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q14:paraphrase",
+      "ms": 4.442260999999689,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q15:paraphrase",
+      "ms": 4.459092999999939,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q16:paraphrase",
+      "ms": 4.406573000000208,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q17:paraphrase",
+      "ms": 4.389462000000094,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q18:paraphrase",
+      "ms": 4.463912000000164,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q19:paraphrase",
+      "ms": 4.423614000000271,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q20:paraphrase",
+      "ms": 4.929396999999881,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q21:paraphrase",
+      "ms": 5.144994999999653,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q22:paraphrase",
+      "ms": 5.570390999999745,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q23:paraphrase",
+      "ms": 4.817721999999776,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/semantic",
+      "query": "q24:paraphrase",
+      "ms": 4.998469000000114,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q01:registered",
+      "ms": 7.639550000000327,
+      "rebuildMs": 2.734316999999919
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q02:registered",
+      "ms": 4.580475000000206,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q03:registered",
+      "ms": 4.691520999999739,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q04:registered",
+      "ms": 5.0842329999995854,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q05:registered",
+      "ms": 5.892285999999785,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q06:registered",
+      "ms": 5.082557000000179,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q07:registered",
+      "ms": 5.67403400000012,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q08:registered",
+      "ms": 5.043167000000267,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q09:registered",
+      "ms": 4.670849000000089,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q10:registered",
+      "ms": 4.615743999999722,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q11:registered",
+      "ms": 4.717920999999933,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q12:registered",
+      "ms": 5.410178000000087,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q13:registered",
+      "ms": 4.744810000000143,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q14:registered",
+      "ms": 4.74851099999978,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q15:registered",
+      "ms": 4.472082999999657,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q16:registered",
+      "ms": 4.535149000000274,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q17:registered",
+      "ms": 4.396446000000196,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q18:registered",
+      "ms": 4.406572999999753,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q19:registered",
+      "ms": 4.5887859999998,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q20:registered",
+      "ms": 4.393373000000338,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q21:registered",
+      "ms": 4.396376000000146,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q22:registered",
+      "ms": 4.4156520000001365,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q23:registered",
+      "ms": 4.490521000000172,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q24:registered",
+      "ms": 4.458394000000226,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "abstain-1:registered",
+      "ms": 3.358270000000175,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "abstain-2:registered",
+      "ms": 3.5170169999996688,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "abstain-3:registered",
+      "ms": 4.86577299999999,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "abstain-4:registered",
+      "ms": 3.311615999999958,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "refuse-1:registered",
+      "ms": 4.256346000000121,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "refuse-2:registered",
+      "ms": 4.539338999999927,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "refuse-3:registered",
+      "ms": 4.523624999999811,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "refuse-4:registered",
+      "ms": 3.3498199999999088,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q01:paraphrase",
+      "ms": 3.4452220000002853,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q02:paraphrase",
+      "ms": 3.5242809999999736,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q03:paraphrase",
+      "ms": 4.801658999999745,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q04:paraphrase",
+      "ms": 4.856902999999875,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q05:paraphrase",
+      "ms": 3.376078999999663,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q06:paraphrase",
+      "ms": 1.7874919999999292,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q07:paraphrase",
+      "ms": 1.7117849999999635,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q08:paraphrase",
+      "ms": 3.2822839999998905,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q09:paraphrase",
+      "ms": 1.0159660000003896,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q10:paraphrase",
+      "ms": 3.0759760000000824,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q11:paraphrase",
+      "ms": 3.5314039999998386,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q12:paraphrase",
+      "ms": 3.3804089999998723,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q13:paraphrase",
+      "ms": 1.7098299999997835,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q14:paraphrase",
+      "ms": 3.362180999999964,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q15:paraphrase",
+      "ms": 5.509770000000117,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q16:paraphrase",
+      "ms": 5.747785000000022,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q17:paraphrase",
+      "ms": 1.0564739999999802,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q18:paraphrase",
+      "ms": 1.3947100000000319,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q19:paraphrase",
+      "ms": 5.023263000000043,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q20:paraphrase",
+      "ms": 1.0660419999999249,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q21:paraphrase",
+      "ms": 3.3475149999999303,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q22:paraphrase",
+      "ms": 3.3739839999998367,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q23:paraphrase",
+      "ms": 4.323951999999736,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/lexical",
+      "query": "q24:paraphrase",
+      "ms": 4.264866999999867,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q01:registered",
+      "ms": 6.923686999999973,
+      "rebuildMs": 2.2163110000001325
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q02:registered",
+      "ms": 4.741736000000401,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q03:registered",
+      "ms": 4.643261000000166,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q04:registered",
+      "ms": 4.580405000000155,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q05:registered",
+      "ms": 4.464471000000231,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q06:registered",
+      "ms": 4.518387000000075,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q07:registered",
+      "ms": 4.548697999999604,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q08:registered",
+      "ms": 5.573743999999806,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q09:registered",
+      "ms": 4.72602199999983,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q10:registered",
+      "ms": 4.480115000000296,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q11:registered",
+      "ms": 4.419214000000011,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q12:registered",
+      "ms": 4.7156159999999545,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q13:registered",
+      "ms": 4.627966999999899,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q14:registered",
+      "ms": 4.832948000000215,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q15:registered",
+      "ms": 4.790833999999904,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q16:registered",
+      "ms": 4.568463000000065,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q17:registered",
+      "ms": 4.465866999999889,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q18:registered",
+      "ms": 4.454553000000033,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q19:registered",
+      "ms": 4.412998000000243,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q20:registered",
+      "ms": 4.518596999999772,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q21:registered",
+      "ms": 4.512102000000141,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q22:registered",
+      "ms": 5.404101999999966,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q23:registered",
+      "ms": 4.401475000000119,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q24:registered",
+      "ms": 4.366414999999961,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "abstain-1:registered",
+      "ms": 4.3945599999997285,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "abstain-2:registered",
+      "ms": 4.704302000000098,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "abstain-3:registered",
+      "ms": 4.4978540000001885,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "abstain-4:registered",
+      "ms": 4.427384999999958,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "refuse-1:registered",
+      "ms": 4.493523999999979,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "refuse-2:registered",
+      "ms": 6.754253999999946,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "refuse-3:registered",
+      "ms": 6.402468999999655,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "refuse-4:registered",
+      "ms": 4.445542999999816,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q01:paraphrase",
+      "ms": 4.455111000000215,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q02:paraphrase",
+      "ms": 4.436255000000074,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q03:paraphrase",
+      "ms": 5.469333000000006,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q04:paraphrase",
+      "ms": 4.469708999999966,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q05:paraphrase",
+      "ms": 4.532424999999876,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q06:paraphrase",
+      "ms": 4.767297999999755,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q07:paraphrase",
+      "ms": 5.689609000000019,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q08:paraphrase",
+      "ms": 4.87848299999996,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q09:paraphrase",
+      "ms": 6.116962000000058,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q10:paraphrase",
+      "ms": 5.134030000000166,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q11:paraphrase",
+      "ms": 4.82736100000011,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q12:paraphrase",
+      "ms": 5.598887000000104,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q13:paraphrase",
+      "ms": 4.460139999999683,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q14:paraphrase",
+      "ms": 4.478648000000248,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q15:paraphrase",
+      "ms": 7.593385000000126,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q16:paraphrase",
+      "ms": 6.427122999999938,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q17:paraphrase",
+      "ms": 4.399798999999803,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q18:paraphrase",
+      "ms": 4.372699999999895,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q19:paraphrase",
+      "ms": 6.28674299999966,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q20:paraphrase",
+      "ms": 4.9180129999999735,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q21:paraphrase",
+      "ms": 5.455854000000272,
+      "rebuildMs": 0
+    },
+    {
+      "row": "local-hybrid/parent-1200/fused",
+      "query": "q22:paraphrase",
+      "ms": 4.573072000000138,
+      "rebuildMs": 0
+    },
+    {
       "row": "local-hybrid/parent-1200/fused",
       "query": "q23:paraphrase",
-      "ms": 4.285679000000073,
+      "ms": 4.508609999999862,
       "rebuildMs": 0
     },
     {
       "row": "local-hybrid/parent-1200/fused",
       "query": "q24:paraphrase",
-      "ms": 4.281418999999914,
+      "ms": 4.43827999999985,
       "rebuildMs": 0
     }
   ],
-  "receiptId": "b1fd2a39ccdb997d09124f3c73e7df1bd6ed55157d42a832f3a22f96ca9a1278"
+  "receiptId": "7aeb7a2c69c56288e3a2bfccabf611cec4624242ebcd71f18951caa2f5c24051"
 }
