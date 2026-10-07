@@ -146,3 +146,13 @@ first records a local terminal state, then requests backend cancellation and
 reports a refused or unknown remote result separately. A late response from a
 cancelled or superseded attempt cannot stage an artifact. No pipeline command
 activates an artifact or establishes a model-quality improvement.
+
+The HTTP training backend speaks the [committed service protocol](docs/TRAINING_SERVICE.md)
+over injected fetch, clock and credentials. It retains fixed submission keys,
+counts transport failures, honors server backoff and independently verifies
+bounded artifact downloads. Inference-only providers refuse before submission;
+unknown cost does not satisfy a finite budget. Native contracts, retry arithmetic
+and the shared document response reader own the transport primitives. The host
+owns its trainer, durable service ledger, network policy and inference endpoint.
+The CGT `--live --train` command renders a frozen, credential-free plan with zero
+requests; live training and learned quality remain unmeasured.

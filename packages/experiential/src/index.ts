@@ -30,3 +30,8 @@ export type { FakeTrainingBackendOptions, FakeTrainingBackend } from './backend-
 
 export { initialTrainingProgress, planExperientialTrainingUpdate, checkTrainingBindings, trainingTerminal, type ExperientialTrainingUpdate } from './training.ts';
 export { EXPERIENTIAL_TRAINING_DAG, EXPERIENTIAL_TRAINING_NODES, experientialTrainingRevision, experientialTrainingJobKind, planExperientialTraining, createExperientialTrainingTasks, cancelExperientialTraining, ExperientialTrainingPending, ExperientialSubmissionUnknown, type ExperientialTrainingNode, type ExperientialTrainingInput, type ExperientialTrainingPlan, type ExperientialTrainingContext } from './pipeline.ts';
+
+export { createHttpTrainingBackend } from './backend-http.ts';
+export type { HttpTrainingBackend, HttpTrainingBackendOptions, HttpTrainingBudget, HttpTrainingStats } from './backend-http.ts';
+export { readTrainingEnv, trainingServiceBase } from './training-env.ts';
+export type { TrainingEnvironment, TrainingEnvironmentPlan } from './training-env.ts';

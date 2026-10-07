@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { deepFreeze, equalsJson } from '@jarenjs/core/object';
 import { runIdentitySchema } from '@tangleai/config';
+import { readTrainingEnv } from '@tangleai/experiential';
 import schema from '../schemas/cgt.schema.json' with { type: 'json' };
 import { generateCgtFixture, validateCgtFixture, renderCgtRule } from './cgt-fixture.ts';
 import { CGT_LIVE_ROWS, CGT_ROW_IDS, measureCgtRows } from './cgt-rows.ts';
@@ -24,7 +25,7 @@ export const SOURCE_FILES = ['package.json', 'package-lock.json', MANIFEST_PATH,
   'benchmark/lib/source-manifest.ts', 'benchmark/lib/report-envelope.ts', 'benchmark/lib/validate.ts',
   'benchmark/lib/args.ts', 'benchmark/lib/table.ts', 'benchmark/lib/locomo-parity.ts', 'benchmark/lib/porter.ts',
   'benchmark/lib/ai-env.ts', 'apps/desktop/src/ai-host.ts'];
-export const SOURCE_ROOTS = ['packages/core', 'packages/config', 'packages/context', 'packages/models', 'packages/memory'];
+export const SOURCE_ROOTS = ['packages/core', 'packages/config', 'packages/context', 'packages/models', 'packages/memory', 'packages/experiential'];
 export const validateCgtReportShape = createReportValidator(schema, [runIdentitySchema]);
 
 export async function loadCgtFixture(root: string, options: { seed?: number; sessions?: number } = {}): Promise<CgtFixture> {
@@ -182,17 +183,23 @@ export function renderDocument(report: CgtReport): string {
 }
 
 /** Plans bind source, fixture, row census and hard ceilings without containing credentials. */
-export async function planCgtLive(options: { root?: string; seed?: number; sessions?: number; env?: Record<string, string | undefined> } = {}) {
+export async function planCgtLive(options: { root?: string; seed?: number; sessions?: number; env?: Record<string, string | undefined>; train?: boolean } = {}) {
   const root = options.root ?? process.cwd(), fixture = await loadCgtFixture(root, options), env = readAiEnv(options.env);
   await validateCgtFixture(fixture);
   const identity = env.live ? await envConfigIdentity(env, null) : null;
   const freshPerRow = fixture.questions.length + fixture.manifest.sessions * fixture.questions.filter(value => value.partition === 'novel').length;
   const maximumFreshCalls = CGT_LIVE_ROWS.length * freshPerRow + 3 * fixture.questions.filter(value => value.partition === 'novel').length;
+  const training = options.train ? readTrainingEnv(options.env ?? process.env) : null;
+  if (training && !training.ok) throw Error('cgt training plan: ' + training.issues.map(issue => issue.code + ' ' + issue.detail).join('; '));
+  const trainingPlan = training?.ok ? { configured: training.value.configured, missing: training.value.missing,
+    configuration: training.value.plan, status: 'not-run', physicalRequests: 0, spend: 0 } : null;
   const body = { schemaVersion: 1, benchmark: 'cgt-live-plan', source: await measuredSource(root),
     manifestDigest: await canonicalSha256(fixture.manifest), fixtureId: fixture.fixtureId, rows: [...CGT_LIVE_ROWS],
     K: fixture.manifest.retrievalK, T: fixture.manifest.sessions, maximumFreshCalls, maxCalls: env.maxCalls,
-    modelIdentity: identity, configured: env.live, executable: false,
-    reason: !env.live ? env.reason : maximumFreshCalls > env.maxCalls ? 'planned requests exceed TANGLE_AI_MAX_CALLS; no executor is installed' : 'No live executor is installed.' };
+    modelIdentity: identity, configured: trainingPlan ? trainingPlan.configured : env.live, executable: false,
+    ...(trainingPlan ? { training: trainingPlan } : {}),
+    reason: trainingPlan ? trainingPlan.configured ? 'Training plan only; no live executor is installed.' : 'Training configuration is incomplete; no requests were made.'
+      : !env.live ? env.reason : maximumFreshCalls > env.maxCalls ? 'planned requests exceed TANGLE_AI_MAX_CALLS; no executor is installed' : 'No live executor is installed.' };
   return deepFreeze({ ...body, planId: await canonicalSha256(body) });
 }
 export function authorizeCgtLive(plan: Awaited<ReturnType<typeof planCgtLive>>, authorization?: string): 'dry-run' | 'skipped' | 'implementation-missing' {

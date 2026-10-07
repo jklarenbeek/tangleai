@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "source": "scripted-contract-conformance",
+  "physicalRequests": 0,
+  "base": "https://training.example/v1",
+  "runtime": {
+    "servedModel": "fixture-adapter",
+    "provider": "fixture",
+    "base": "https://inference.example.test/v1"
+  },
+  "spec": {
+    "datasetId": "000000000000000000000000000000000000000000000000000000000000000d",
+    "manifestDigest": "000000000000000000000000000000000000000000000000000000000000000b",
+    "baseArtifactId": "000000000000000000000000000000000000000000000000000000000000000e",
+    "baseChecksum": "000000000000000000000000000000000000000000000000000000000000000f",
+    "method": "lora",
+    "hyperparameters": {
+      "learningRate": 0.001,
+      "epochs": 1,
+      "rank": 8,
+      "alpha": 16
+    },
+    "seed": 17753,
+    "precision": "fp32",
+    "tokenizerIdentity": "fixture-tokenizer/v1",
+    "chatTemplateIdentity": "fixture-chat/v1",
+    "budget": {
+      "maxRecords": 1024,
+      "maxBytes": 65536,
+      "maxWallMs": 10000,
+      "maxPolls": 8,
+      "maxSpend": 10
+    }
+  },
+  "job": {
+    "id": "fixture-job",
+    "specDigest": "4c9afea242e0b0c50a41da660765922cd5163c64651ec19065287a2fdd4ca521"
+  },
+  "receipt": {
+    "jobId": "fixture-job",
+    "specDigest": "4c9afea242e0b0c50a41da660765922cd5163c64651ec19065287a2fdd4ca521",
+    "datasetId": "000000000000000000000000000000000000000000000000000000000000000d",
+    "baseArtifactId": "000000000000000000000000000000000000000000000000000000000000000e",
+    "baseChecksum": "000000000000000000000000000000000000000000000000000000000000000f",
+    "method": "lora",
+    "kind": "adapter",
+    "storageUri": "https://training.example/v1/artifacts/fixture.bin",
+    "sha256": "86679b4363f7f6be16de0938330468992ac2a4f53d4dc4a2929a44bb4a5bd5ee",
+    "sizeBytes": 22,
+    "runtime": {
+      "servedModel": "fixture-adapter",
+      "provider": "fixture",
+      "base": "https://inference.example.test/v1"
+    },
+    "deterministic": true,
+    "logRefs": [],
+    "metricsRef": null
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/capabilities",
+        "headers": {
+          "authorization": "Bearer <redacted>"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "methods": [
+            "lora"
+          ],
+          "baseModels": [
+            "000000000000000000000000000000000000000000000000000000000000000e"
+          ],
+          "resumable": true,
+          "artifactKinds": [
+            "adapter"
+          ],
+          "trainable": true
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v1/jobs",
+        "headers": {
+          "authorization": "Bearer <redacted>",
+          "idempotency-key": "4c9afea242e0b0c50a41da660765922cd5163c64651ec19065287a2fdd4ca521"
+        },
+        "body": {
+          "datasetId": "000000000000000000000000000000000000000000000000000000000000000d",
+          "manifestDigest": "000000000000000000000000000000000000000000000000000000000000000b",
+          "baseArtifactId": "000000000000000000000000000000000000000000000000000000000000000e",
+          "baseChecksum": "000000000000000000000000000000000000000000000000000000000000000f",
+          "method": "lora",
+          "hyperparameters": {
+            "learningRate": 0.001,
+            "epochs": 1,
+            "rank": 8,
+            "alpha": 16
+          },
+          "seed": 17753,
+          "precision": "fp32",
+          "tokenizerIdentity": "fixture-tokenizer/v1",
+          "chatTemplateIdentity": "fixture-chat/v1",
+          "budget": {
+            "maxRecords": 1024,
+            "maxBytes": 65536,
+            "maxWallMs": 10000,
+            "maxPolls": 8,
+            "maxSpend": 10
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "id": "fixture-job",
+          "specDigest": "4c9afea242e0b0c50a41da660765922cd5163c64651ec19065287a2fdd4ca521"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/jobs/fixture-job",
+        "headers": {
+          "authorization": "Bearer <redacted>"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 503,
+        "headers": {
+          "retry-after": "2"
+        },
+        "body": {
+          "message": "internal credential must never escape"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/jobs/fixture-job",
+        "headers": {
+          "authorization": "Bearer <redacted>"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "jobId": "fixture-job",
+          "state": "queued",
+          "stopReason": null,
+          "logRefs": [],
+          "metricsRef": null,
+          "spend": 0.25
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/jobs/fixture-job",
+        "headers": {
+          "authorization": "Bearer <redacted>"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "jobId": "fixture-job",
+          "state": "training",
+          "stopReason": null,
+          "logRefs": [],
+          "metricsRef": null,
+          "spend": 0.25
+        }
+      }
+    }
+  ]
+}

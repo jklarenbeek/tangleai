@@ -11,7 +11,7 @@
       },
       {
         "path": "benchmark/cgt.ts",
-        "sha256": "fac77068a09d98a9cf0afb0e2401af57ce2368e1be3779c8af12efcab67894e5"
+        "sha256": "996032678d47928f2eb8b97cad9f20aa0c0b5ad8343f09d79dc90e0048bda094"
       },
       {
         "path": "benchmark/fixtures/cgt/manifest.json",
@@ -39,7 +39,7 @@
       },
       {
         "path": "benchmark/lib/cgt.ts",
-        "sha256": "844f38a206a267c4eedd0992d2e274baa3ea2ebaf55732d31dcd813dd2d61b18"
+        "sha256": "51901cbe536e3fea747f2d7f6a942fb9cce20a93008f81e9779805f9afe78771"
       },
       {
         "path": "benchmark/lib/cgt.types.ts",
@@ -75,11 +75,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "590da38ecb25e435322b112e44a84498501ff86f23650b3b9f4348e9c1c203d9"
+        "sha256": "cf1961f0d47607bee6c2f59db68dd4c40c7bfb0ebd6cd548ec68568859f69add"
       },
       {
         "path": "package.json",
-        "sha256": "b968c112d320236434f881f1d100efd7875a14390bedbd9e5fdd45f295371e30"
+        "sha256": "490af752ef299632ba1deadcf030133937af693a0fc7866f0f6b1beb721cfc33"
       },
       {
         "path": "packages/config/package.json",
@@ -248,6 +248,102 @@
       {
         "path": "packages/core/src/tokens.ts",
         "sha256": "3ed5be7b4a494a31eeb603467084fe2c3660dd9f745ccf93d029f76c93c9d6f5"
+      },
+      {
+        "path": "packages/experiential/package.json",
+        "sha256": "738732396eee1f5e5a7d0d5d026b7965a6c21cfe825e56f51938e460e830fb8d"
+      },
+      {
+        "path": "packages/experiential/schemas/experiential.schema.json",
+        "sha256": "74f2c8db2b9d0d389497de4576ace4d7ceb7ff5f88b218267f7ad5faba1de5f6"
+      },
+      {
+        "path": "packages/experiential/schemas/training-service.contract.json",
+        "sha256": "66bb859f594782fca149993402e3ae766a4d35a26b196cb1a7bd3698b29186af"
+      },
+      {
+        "path": "packages/experiential/src/backend-fake.ts",
+        "sha256": "f557eaf138d4fadd622224ed2129631ae6a5fa484d9fd561629c205dc13aa576"
+      },
+      {
+        "path": "packages/experiential/src/backend-http.ts",
+        "sha256": "e2059d397bdd8dcce3386e3328aea7b5240073144600e8c6ce71073f1adeebf3"
+      },
+      {
+        "path": "packages/experiential/src/backend.ts",
+        "sha256": "e7637b62cceba21ad3fef3ba1ba30709adcc34a509ba464ca1c7d3ed5a47cb92"
+      },
+      {
+        "path": "packages/experiential/src/contracts.gen.ts",
+        "sha256": "859791d4864fb77ac73adf241d3c5e784af1106c39f162745ed4d843f6d597e6"
+      },
+      {
+        "path": "packages/experiential/src/dataset.ts",
+        "sha256": "bb1aca6a0467a4d6b587d44df6e569109539a768a0d17261aa820124595a7fe9"
+      },
+      {
+        "path": "packages/experiential/src/errors.ts",
+        "sha256": "a33badc169ee6fe6bf2cad9ac3b0af78659f7af82305e00f8263a92573511580"
+      },
+      {
+        "path": "packages/experiential/src/grouping.ts",
+        "sha256": "5680bc88d704c4428f84af75c3ea6872821ab05ec2d654b2e8e0f0f956e3d5de"
+      },
+      {
+        "path": "packages/experiential/src/identity.ts",
+        "sha256": "2a69ad7efea7fbc7192334e16296133f35d727fec46aed6352f193e2ef9eb7ff"
+      },
+      {
+        "path": "packages/experiential/src/index.ts",
+        "sha256": "db6184625e5e94e851471348b70d1ac3b3b39cceb681e482c5017ee007853a57"
+      },
+      {
+        "path": "packages/experiential/src/lifecycle.ts",
+        "sha256": "3fa501d12c0f55defae15f9f6296fd2715ab80040c134e308fa234007cbf048d"
+      },
+      {
+        "path": "packages/experiential/src/lineage.ts",
+        "sha256": "d0aa3573f1461ad436d3df7a3bc63f037209be7118e607d3314530c255bcd265"
+      },
+      {
+        "path": "packages/experiential/src/persistence-memory.ts",
+        "sha256": "ca947d4623dbc697e1b602077f181a05ad17a854d20e27b94181217861eaa6fd"
+      },
+      {
+        "path": "packages/experiential/src/pipeline.ts",
+        "sha256": "8e22dc35a96ff2e7df6a65b631921a3788a2f6f820359fee7977776751c5461a"
+      },
+      {
+        "path": "packages/experiential/src/schema.ts",
+        "sha256": "ec16d973ae5189d9338bc0906098fc899d0a7804df76896b18bead53befa0107"
+      },
+      {
+        "path": "packages/experiential/src/selection.ts",
+        "sha256": "c7b5350dfec917b9179136c7b5b5aa989854913dccf570e0d76f7df2026d4e5d"
+      },
+      {
+        "path": "packages/experiential/src/store-types.ts",
+        "sha256": "0e3626c6cef7b4f11015d560212eab42a74a21822d8bc0cd8c203ee59cf813c5"
+      },
+      {
+        "path": "packages/experiential/src/store.ts",
+        "sha256": "7362310da8ca3ed1c4571c96e794f3041801c8b7191b0ea2f0dc1c61409e0310"
+      },
+      {
+        "path": "packages/experiential/src/training-env.ts",
+        "sha256": "0c767e222f69dac74143742f9bfc94ec25ce781beaee5f0001bc6c2fae090364"
+      },
+      {
+        "path": "packages/experiential/src/training.ts",
+        "sha256": "40d372a1ef139897a8d890792dbdac4c8e20bf3120dff621789a9c69aae62ccd"
+      },
+      {
+        "path": "packages/experiential/src/trust.ts",
+        "sha256": "8cd23b8e7d9d12975e9da5da33b4f16855fcabd09645839007662ca5a97bb759"
+      },
+      {
+        "path": "packages/experiential/templates/experience-example.jtlt.json",
+        "sha256": "828cfe34bb7825e516a22ba76734d065568cf8572b2247ebba04dc6b4b3ba49a"
       },
       {
         "path": "packages/memory/package.json",
@@ -530,7 +626,7 @@
         "sha256": "6f5ce12b0f04a0ae3d85cea3d6e63f8ffa3e65d07ad22dded1e8278d47bfefa4"
       }
     ],
-    "sha256": "762ea1a8bcc4f963a4785fdfaf9eee5bf25f368708bca6110a2419605cd4373f"
+    "sha256": "5b5bb626ba1be79e1833281dd6df3f40ff92bc18e36441299b15979fbdbad43a"
   },
   "registration": {
     "manifest": {
@@ -111021,5 +111117,5 @@
     "No provider or trainer ran. Every identity status is not-run; cost, training, live quality and alpha(K) remain unmeasured.",
     "Live planning has no executor. Matching authorization cannot train, infer, activate, or establish a learning claim."
   ],
-  "reportId": "917a8caaed9b8e12770e8fceafe1ddb20b6c64ff191908864e5fb13f3cc68ba1"
+  "reportId": "e18380743098199194a47c20832ed2513be5c88ed829d90cb57bec582089f92d"
 }

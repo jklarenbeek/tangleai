@@ -91,7 +91,7 @@
       },
       {
         "path": "benchmark/lib/cgt.ts",
-        "sha256": "844f38a206a267c4eedd0992d2e274baa3ea2ebaf55732d31dcd813dd2d61b18"
+        "sha256": "51901cbe536e3fea747f2d7f6a942fb9cce20a93008f81e9779805f9afe78771"
       },
       {
         "path": "benchmark/lib/cgt.types.ts",
@@ -1115,11 +1115,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "590da38ecb25e435322b112e44a84498501ff86f23650b3b9f4348e9c1c203d9"
+        "sha256": "cf1961f0d47607bee6c2f59db68dd4c40c7bfb0ebd6cd548ec68568859f69add"
       },
       {
         "path": "package.json",
-        "sha256": "b968c112d320236434f881f1d100efd7875a14390bedbd9e5fdd45f295371e30"
+        "sha256": "490af752ef299632ba1deadcf030133937af693a0fc7866f0f6b1beb721cfc33"
       },
       {
         "path": "packages/agents/package.json",
@@ -1834,7 +1834,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "ea20927690323b1a8a084e84f02305fafc96c13b041af81dc0d448448c1686ed"
+    "sha256": "b1a006179382f7afcfe839a19b4081768680f3f473a0c8f91a070bcff3b36d23"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45299,5 +45299,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "55780118f00e038032dd6bbee724f4e26b9cf29ad2b93d08de368145d04c16ed"
+  "reportId": "43b2bb4fb01c7132f5fead0cfa934fcae609ddc3f67e161df3356305a39d4f06"
 }

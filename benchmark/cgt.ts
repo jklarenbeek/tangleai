@@ -30,9 +30,10 @@ async function assertOutputPaths(root: string, paths: string[]): Promise<void> {
 }
 
 export async function cgtMain(argv: readonly string[], options: { root?: string; env?: Record<string, string | undefined> } = {}): Promise<void> {
-  const args = parseArgs(argv, { flags: ['check', 'live'], values: ['json', 'md', 'out-dir', 'require', 'authorize', 'seed', 'sessions'] });
+  const args = parseArgs(argv, { flags: ['check', 'live', 'train'], values: ['json', 'md', 'out-dir', 'require', 'authorize', 'seed', 'sessions'] });
   if (args.rest.length) throw Error('cgt: unexpected positional argument');
   if (args.values.has('authorize') && !args.flags.has('live')) throw Error('cgt: --authorize requires --live');
+  if (args.flags.has('train') && !args.flags.has('live')) throw Error('cgt: --train requires --live');
   const integer = (name: string): number | undefined => {
     const value = args.values.get(name);
     if (value === undefined) return undefined;
@@ -46,7 +47,7 @@ export async function cgtMain(argv: readonly string[], options: { root?: string;
     if (args.flags.has('live')) {
       if (['check'].some(flag => args.flags.has(flag)) || ['json', 'md', 'out-dir', 'require'].some(name => args.values.has(name)))
         throw Error('cgt: live plan cannot write or check measurement outputs');
-      const plan = await planCgtLive({ ...selected, env: options.env });
+      const plan = await planCgtLive({ ...selected, env: options.env, train: args.flags.has('train') });
       console.log(JSON.stringify({ plan, status: authorizeCgtLive(plan, args.values.get('authorize')), requests: 0 }, null, 2));
       return;
     }

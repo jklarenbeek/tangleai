@@ -174,6 +174,36 @@ it('CGT source receipt must reconcile even after a report is rehashed', async ()
   await assert.rejects(validateCgtReport(await rehash(forged)), /source receipt/);
 });
 
+it('CGT training plans freeze exact configuration and matching authorization makes zero requests', async () => {
+  const env = { TANGLE_TRAINING_BASE: 'https://training.example/v1', TANGLE_TRAINING_API_KEY: 'private-training-canary',
+    TANGLE_TRAINING_DATASET_ID: 'a'.repeat(64), TANGLE_TRAINING_MANIFEST_DIGEST: 'b'.repeat(64),
+    TANGLE_TRAINING_BASE_ARTIFACT_ID: 'c'.repeat(64), TANGLE_TRAINING_BASE_CHECKSUM: 'd'.repeat(64),
+    TANGLE_TRAINING_METHOD: 'lora', TANGLE_TRAINING_MAX_SPEND: '5', TANGLE_TRAINING_MAX_WALL_MS: '60000' };
+  let calls = 0; const original = globalThis.fetch, log = console.log, rendered: string[] = [];
+  globalThis.fetch = async () => { calls++; throw Error('unexpected training request'); };
+  console.log = value => { rendered.push(String(value)); };
+  try {
+    const one = await planCgtLive({ root, env, train: true }), two = await planCgtLive({ root, env, train: true });
+    assert.equal(JSON.stringify(one), JSON.stringify(two)); assert.ok(Object.isFrozen(one));
+    assert.equal(one.training?.configuration?.baseChecksum, env.TANGLE_TRAINING_BASE_CHECKSUM);
+    assert.equal(one.training?.status, 'not-run'); assert.equal(one.executable, false);
+    assert.equal(authorizeCgtLive(one), 'dry-run'); assert.equal(authorizeCgtLive(one, one.planId), 'implementation-missing');
+    assert.throws(() => authorizeCgtLive(one, 'wrong'), /plan-id mismatch/);
+    const missing = await planCgtLive({ root, env: {}, train: true }); assert.equal(authorizeCgtLive(missing), 'skipped');
+    assert.throws(() => authorizeCgtLive(missing, 'wrong'), /plan-id mismatch/);
+    assert.equal((await planCgtLive({ root, train: true, env: { ...env, TANGLE_TRAINING_API_KEY: 'rotated-canary' } })).planId, one.planId);
+    assert.notEqual((await planCgtLive({ root, train: true, env: { ...env, TANGLE_TRAINING_MAX_SPEND: '6' } })).planId, one.planId);
+    await cgtMain(['--live', '--train'], { root, env }); await cgtMain(['--live', '--train'], { root, env });
+    assert.equal(rendered[0], rendered[1]);
+    await cgtMain(['--live', '--train', '--authorize', one.planId], { root, env });
+    assert.equal(JSON.parse(rendered[2]!).status, 'implementation-missing');
+    await assert.rejects(cgtMain(['--live', '--train', '--authorize', 'wrong'], { root, env }), /plan-id mismatch/);
+    await assert.rejects(cgtMain(['--train'], { root, env }), /requires --live/);
+    await assert.rejects(cgtMain(['--live', '--train'], { root, env: { ...env, TANGLE_TRAINING_BASE: 'https://name:secret@training.example' } }), /TEXP1001/);
+    assert.equal(calls, 0); assert.equal(rendered.join('\n').includes('private-training-canary'), false);
+  } finally { globalThis.fetch = original; console.log = log; }
+});
+
 it('CGT alpha cannot claim a measured model while that model row is not-run', async () => {
   const forged = structuredClone(report);
   forged.alpha[0] = { ...forged.alpha[0], status: 'run', accuracy: .5, reason: null };

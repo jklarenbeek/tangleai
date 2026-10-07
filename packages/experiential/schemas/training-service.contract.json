@@ -1,0 +1,576 @@
+{
+  "$contract": "0.1",
+  "id": "tangle-training-service",
+  "version": "1",
+  "$defs": {
+    "TrainingCapabilities": {
+      "type": "object",
+      "properties": {
+        "methods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialMethod"
+          },
+          "maxItems": 3,
+          "uniqueItems": true
+        },
+        "baseModels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialId"
+          },
+          "maxItems": 256,
+          "uniqueItems": true
+        },
+        "resumable": {
+          "type": "boolean"
+        },
+        "artifactKinds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "adapter",
+              "weights"
+            ]
+          },
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "trainable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "methods",
+        "baseModels",
+        "resumable",
+        "artifactKinds",
+        "trainable"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialMethod": {
+      "type": "string",
+      "enum": [
+        "lora",
+        "full",
+        "knowledge-edit"
+      ]
+    },
+    "ExperientialId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "TrainingSpec": {
+      "type": "object",
+      "properties": {
+        "datasetId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "manifestDigest": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "baseArtifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "baseChecksum": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "method": {
+          "$ref": "#/$defs/ExperientialMethod"
+        },
+        "hyperparameters": {
+          "$ref": "#/$defs/ExperientialHyperparameters"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "precision": {
+          "type": "string",
+          "enum": [
+            "fp32",
+            "fp16",
+            "bf16",
+            "int8",
+            "int4"
+          ]
+        },
+        "tokenizerIdentity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "chatTemplateIdentity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "budget": {
+          "$ref": "#/$defs/ExperientialTrainingBudget"
+        }
+      },
+      "required": [
+        "datasetId",
+        "manifestDigest",
+        "baseArtifactId",
+        "baseChecksum",
+        "method",
+        "hyperparameters",
+        "seed",
+        "precision",
+        "tokenizerIdentity",
+        "chatTemplateIdentity",
+        "budget"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialHyperparameters": {
+      "type": "object",
+      "properties": {
+        "learningRate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "epochs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0
+        },
+        "dropout": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "maxSteps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "targetModules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "\\S"
+          },
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "learningRate",
+        "epochs"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialTrainingBudget": {
+      "type": "object",
+      "properties": {
+        "maxRecords": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxWallMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxPolls": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxSpend": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "maxRecords",
+        "maxBytes",
+        "maxWallMs",
+        "maxPolls",
+        "maxSpend"
+      ],
+      "additionalProperties": false
+    },
+    "BackendJob": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "specDigest": {
+          "$ref": "#/$defs/ExperientialId"
+        }
+      },
+      "required": [
+        "id",
+        "specDigest"
+      ],
+      "additionalProperties": false
+    },
+    "BackendJobState": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "preparing",
+            "training",
+            "materializing",
+            "complete",
+            "failed",
+            "cancelled",
+            "unknown"
+          ]
+        },
+        "stopReason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "logRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialRef"
+          },
+          "maxItems": 256,
+          "uniqueItems": true
+        },
+        "metricsRef": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "spend": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "jobId",
+        "state",
+        "stopReason",
+        "logRefs",
+        "metricsRef",
+        "spend"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialRef": {
+      "type": "object",
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "digest": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "sourceId",
+        "digest",
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "ArtifactReceipt": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "specDigest": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "datasetId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "baseArtifactId": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "baseChecksum": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "method": {
+          "$ref": "#/$defs/ExperientialMethod"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "adapter",
+            "weights"
+          ]
+        },
+        "storageUri": {
+          "$ref": "#/$defs/ExperientialUri"
+        },
+        "sha256": {
+          "$ref": "#/$defs/ExperientialId"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "runtime": {
+          "$ref": "#/$defs/ExperientialRuntime"
+        },
+        "deterministic": {
+          "type": "boolean"
+        },
+        "logRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperientialRef"
+          },
+          "maxItems": 256,
+          "uniqueItems": true
+        },
+        "metricsRef": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperientialRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "jobId",
+        "specDigest",
+        "datasetId",
+        "baseArtifactId",
+        "baseChecksum",
+        "method",
+        "kind",
+        "storageUri",
+        "sha256",
+        "sizeBytes",
+        "runtime",
+        "deterministic",
+        "logRefs",
+        "metricsRef"
+      ],
+      "additionalProperties": false
+    },
+    "ExperientialUri": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^(?:https?://[^/?#@\\s]+(?:/[^?#\\s]*)?|urn:[^?#\\s]+|memory:[^?#\\s]+)$"
+    },
+    "ExperientialRuntime": {
+      "type": "object",
+      "properties": {
+        "servedModel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "base": {
+          "$ref": "#/$defs/ExperientialUri"
+        }
+      },
+      "required": [
+        "servedModel",
+        "provider",
+        "base"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "operations": {
+    "training.capabilities": {
+      "kind": "read",
+      "input": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "output": {
+        "$ref": "#/$defs/TrainingCapabilities"
+      },
+      "http": {
+        "method": "GET",
+        "path": "/capabilities"
+      }
+    },
+    "training.submit": {
+      "kind": "command",
+      "input": {
+        "$ref": "#/$defs/TrainingSpec"
+      },
+      "output": {
+        "$ref": "#/$defs/BackendJob"
+      },
+      "policy": {
+        "idempotency": "required"
+      },
+      "http": {
+        "method": "POST",
+        "path": "/jobs"
+      }
+    },
+    "training.inspect": {
+      "kind": "read",
+      "input": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "$ref": "#/$defs/BackendJobState"
+      },
+      "http": {
+        "method": "GET",
+        "path": "/jobs/{jobId}"
+      }
+    },
+    "training.cancel": {
+      "kind": "command",
+      "input": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "$ref": "#/$defs/BackendJobState"
+      },
+      "policy": {
+        "idempotency": "required"
+      },
+      "http": {
+        "method": "POST",
+        "path": "/jobs/{jobId}/cancel"
+      }
+    },
+    "training.materialize": {
+      "kind": "read",
+      "input": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "$ref": "#/$defs/ArtifactReceipt"
+      },
+      "http": {
+        "method": "GET",
+        "path": "/jobs/{jobId}/artifact"
+      }
+    }
+  }
+}

@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./contracts": "./src/contracts.gen.ts",
     "./schemas/experiential": "./schemas/experiential.schema.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./schemas/training-service": "./schemas/training-service.contract.json"
   },
   "engines": {
     "node": ">=24"
@@ -19,7 +20,9 @@
     "@jarenjs/core": "0.91.4",
     "@jarenjs/json": "0.91.4",
     "@jarenjs/validate": "0.91.4",
-    "@tangleai/outcomes": "^0.39.0"
+    "@tangleai/outcomes": "^0.39.0",
+    "@jarenjs/contract": "0.91.4",
+    "@tangleai/documents": "^0.39.0"
   },
   "private": false,
   "types": "./src/index.ts",

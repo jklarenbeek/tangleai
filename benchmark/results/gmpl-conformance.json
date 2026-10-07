@@ -203,11 +203,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "590da38ecb25e435322b112e44a84498501ff86f23650b3b9f4348e9c1c203d9"
+        "sha256": "cf1961f0d47607bee6c2f59db68dd4c40c7bfb0ebd6cd548ec68568859f69add"
       },
       {
         "path": "package.json",
-        "sha256": "b968c112d320236434f881f1d100efd7875a14390bedbd9e5fdd45f295371e30"
+        "sha256": "490af752ef299632ba1deadcf030133937af693a0fc7866f0f6b1beb721cfc33"
       },
       {
         "path": "packages/agents/package.json",
@@ -419,7 +419,7 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "c6a459c240b06310224fcbbb797e82bfe1ed49006a072bf7bde82ae5414a48ca"
+        "sha256": "738732396eee1f5e5a7d0d5d026b7965a6c21cfe825e56f51938e460e830fb8d"
       },
       {
         "path": "packages/forecast/package.json",
@@ -1146,7 +1146,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "4c795ce3b16df097fcfd7333d3c8a40a67e30ea835c79a4bb9a75cf21a6b37c1"
+    "sha256": "8fcfc0dcdd0f23f0a41d06417db6d845f962a793e641a48e3fa54b230bdfd4fa"
   },
   "ablations": [
     {
@@ -76700,5 +76700,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "f20178daed33c9d04e4d5614ee14d0996589b8df24ae39b428af2b9c18e0ff40"
+  "reportId": "c097b99386213cfb9b77e556feb936c7bdfc4e6d42c8101f755b57a154e013e7"
 }
