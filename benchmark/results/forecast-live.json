@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "60b92ad0831438676d8ef2c5f52eb83b0b054c26",
-      "sha256": "a181727c3c2855f995a8b384a5c1dd39cea83cb725196fd6e5f43e96598c9b93",
+      "head": "1beddfc531b517d3b9745223b476d30927efce86",
+      "sha256": "45830ede6710d693422035e487aaaf8aba592225a3dcc0e5366c53465d70177e",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -110,7 +110,7 @@
         },
         {
           "path": "benchmark/lib/cgt.types.ts",
-          "sha256": "3b6281a335d01574b8a191e30d50ae1fb6e193014ca84363754415f068affdb5"
+          "sha256": "79fe18536d2995873d86178dcfe7ab74b9700e409820253163894c8bfc8b022d"
         },
         {
           "path": "benchmark/lib/config-conformance.ts",
@@ -1130,15 +1130,15 @@
         },
         {
           "path": "package-lock.json",
-          "sha256": "ddbdcfb85ce18f07d9f92ea85afa9039c6077332fa322c1c5c526c585687d641"
+          "sha256": "de7b8b424b749f709ce5a7199438ce0afe746b87f9ae49df007b4458047c0136"
         },
         {
           "path": "package.json",
-          "sha256": "66957edc054e7231cb2a084204c5be53e0049648f648f09bab53dec58333372e"
+          "sha256": "d0b5994e06493094ac346b7729cb7c2b25c68337e5c9a2a35208bb5e423de02b"
         },
         {
           "path": "packages/agents/package.json",
-          "sha256": "6e82e7ba49b1e50ebf14bc7dc39cfc42c05c3cb2005fb66835baee4890d52577"
+          "sha256": "c25e1d684cb1ce60fd08b931f08f2364a0dcc879aeca1de52e061ee9e1020f56"
         },
         {
           "path": "packages/agents/src/agent.ts",
@@ -1182,7 +1182,7 @@
         },
         {
           "path": "packages/context/package.json",
-          "sha256": "338d13ec0eb295c25dbd76228152733c734c5dc7c0fb3fdb6d6d64e460b51834"
+          "sha256": "62e9e8c1cdf016187a7067406294e7e0017cfe65a43858fcd617255806eff47a"
         },
         {
           "path": "packages/context/src/archive.ts",
@@ -1238,7 +1238,7 @@
         },
         {
           "path": "packages/documents/package.json",
-          "sha256": "47816d2b9f78cb8de7cd3ddcd6c9a16e95b654eb8cdbe1b5d7670f24834b1022"
+          "sha256": "f15203fccadfe82f0ffe55a20e06d32b13e9f2e308cae2100f0b30f2936207ea"
         },
         {
           "path": "packages/documents/src/browser.ts",
@@ -1290,7 +1290,7 @@
         },
         {
           "path": "packages/forecast/package.json",
-          "sha256": "d9cc2dcf38b59eb1741c3911e70dc909950a56fee2b39be87d4a1b7e8449d339"
+          "sha256": "7900b2184e9547e5581dc4939cf3684bc89b7dfae0c23812b015b5989afcc800"
         },
         {
           "path": "packages/forecast/schemas/forecast.contract.json",
@@ -1462,7 +1462,7 @@
         },
         {
           "path": "packages/mas/package.json",
-          "sha256": "4113987404eb285256b96dd1c199e64f98826228d743a7aa5927532d26e6291d"
+          "sha256": "849ec82e3e3856f398cf907b1e4e2e89fcaef81c6578e969cf294c27f01754e5"
         },
         {
           "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -1594,7 +1594,7 @@
         },
         {
           "path": "packages/models/package.json",
-          "sha256": "98140f0461aaa37f1fe35568db924da6c9e3952bdc830872d937a8897cfdffcc"
+          "sha256": "646bf60f2e6618969b19763487cb396ac3bd33618dd5bcf9cb1cf6f01aca43de"
         },
         {
           "path": "packages/models/src/check.ts",
@@ -1650,7 +1650,7 @@
         },
         {
           "path": "packages/search/package.json",
-          "sha256": "313faefcd8ed6a4b9ae7541f432dff2644bb339cc5035551869ec77e4fa82ab4"
+          "sha256": "ae7bebf42fd415d54ef54bda2b603d613e1e7b9a8ad6368be56f0494e05ef99a"
         },
         {
           "path": "packages/search/src/index.ts",
@@ -1662,7 +1662,7 @@
         },
         {
           "path": "packages/store/package.json",
-          "sha256": "384b8f367a9c8b382ed926dafb458ae7e7dc9f85dbd120a5d1697cc72cac4ad8"
+          "sha256": "df714e28b05aba82d0a22667aef9e62cc05df25003454dfbb37385717a5fe658"
         },
         {
           "path": "packages/store/src/consolidation-model.ts",
@@ -2085,7 +2085,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "18ecb877e7725e70af1bd00c9be5b7c9da5ab7eb8bb583ae81f72b425f206892",
+    "planId": "b4e3d11fce9824362778c145ca25eb435a22276f5422c55944d4b3565dc022b1",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

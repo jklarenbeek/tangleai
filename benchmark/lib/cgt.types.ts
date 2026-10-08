@@ -2570,7 +2570,12 @@ export interface Experiential_ExperientialTrainingRun {
  */
 export type Experiential_ExperientialApprovalPart1 = unknown;
 
-export type Experiential_ExperientialApproval = Experiential_ExperientialApprovalPart1 & { document: "experiential-approval"; schemaVersion: 1; id: Experiential_ExperientialId; scope: Experiential_ExperientialScope; recordedAt: Experiential_ExperientialTime; profile: string; action: "activate" | "canary" | "rollback"; artifactId: Experiential_ExperientialId; evaluationId: Experiential_ExperientialId; expectedHead: Experiential_ExperientialExpectedHead; principal: Experiential_ExperientialPrincipal; reason: string; deploymentId: Experiential_ExperientialId; expectedDeploymentRevision: number; rolloutFraction: number | null; };
+/**
+ * Schema constraints this type cannot express: if={"properties":{"evaluationId":{"type":"null"}}}, then={"properties":{"action":{"const":"rollback"}},"required":["baseDigest"]}, else={"not":{"required":["baseDigest"]}}
+ */
+export type Experiential_ExperientialApprovalPart2 = unknown;
+
+export type Experiential_ExperientialApproval = Experiential_ExperientialApprovalPart1 & Experiential_ExperientialApprovalPart2 & { document: "experiential-approval"; schemaVersion: 1; id: Experiential_ExperientialId; scope: Experiential_ExperientialScope; recordedAt: Experiential_ExperientialTime; profile: string; action: "activate" | "canary" | "rollback"; artifactId: Experiential_ExperientialId; evaluationId: Experiential_ExperientialId | null; expectedHead: Experiential_ExperientialExpectedHead; principal: Experiential_ExperientialPrincipal; reason: string; deploymentId: Experiential_ExperientialId; expectedDeploymentRevision: number; rolloutFraction: number | null; baseDigest?: Experiential_ExperientialId; };
 
 /**
  * Schema constraints this type cannot express: if={"properties":{"canaryArtifactId":{"type":"null"}}}, then={"properties":{"rolloutFraction":{"const":0}}}

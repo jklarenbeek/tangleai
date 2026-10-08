@@ -1,5 +1,18 @@
 # @tangleai/evolve
 
+## 0.40.0
+
+### Patch Changes
+
+- Updated dependencies [a8765d5]
+- Updated dependencies [1beddfc]
+  - @tangleai/outcomes@0.40.0
+  - @tangleai/config@0.40.0
+  - @tangleai/context@0.40.0
+  - @tangleai/core@0.40.0
+  - @tangleai/mas@0.40.0
+  - @tangleai/models@0.40.0
+
 ## 0.39.0
 
 ### Patch Changes

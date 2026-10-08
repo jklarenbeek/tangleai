@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "version": "0.40.0",
+  "baseVersion": "0.39.0",
+  "baseCommit": "60b92ad0831438676d8ef2c5f52eb83b0b054c26",
+  "preparationCommit": "1beddfc531b517d3b9745223b476d30927efce86",
+  "initial": false,
+  "inputHash": "925ec0ada56aab2d2bbbe2261662ef6ed36c18d6426463da7f56c57c89ecb507",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add disabled-by-default host ticks with durable cadence and budget reservations,\nstale-parent cancellation or rebasing, and counted replay and no-op outcomes.\nRetain episode lineage through atomic archival with dependency, rollback-window,\nhold and sole-provenance checks. Include a keyless native SQLite tick walkthrough.",
+      "id": "bounded-experiential-cadence"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add a closed HTTP training service contract, bounded idempotent backend adapter,\nverified artifact downloads and credential-free training configuration.",
+      "id": "bounded-training-service"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add closed experiential record contracts with credential-free, synchronous validation.",
+      "id": "closed-experiential-records"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Run bounded training through durable native DAG jobs, preserve uncertain submissions and consumed poll credits across restarts, and atomically stage independently verified artifacts.",
+      "id": "durable-experiential-training"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add content-addressed experiential lineage, checked lifecycle plans and atomic memory and SQLite persistence with replay and native deployment-head comparison.",
+      "id": "experiential-atomic-state"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Expose eight native read-only operations over atomic experiential snapshots,\nwith schema-derived redacted views, retained log digests and pure retention\npreviews. Publish the registered scientific claim as not-run beside a real\nscripted rollback receipt, and qualify installed Node, Bun and browser APIs.\nPreserve native persistence refusal codes through inspection, lineage, inference\nstartup, artifact byte reads, policy revision and scheduling without exposing raw\ndiagnostics or nesting causes outside the closed issue schema.",
+      "id": "inspect-experiential-lineage"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "minor"
+        }
+      ],
+      "summary": "Bind serving deployments to approved evaluations, deterministic canaries, immutable run pins and atomic rollback. Register the resolved base role before serving; deployment approvals now bind the deployment revision and canary fraction, and new pins use the checked pin command. Export the existing native head assertion so read-time fences use the same comparison as transitions.",
+      "id": "pinned-experiential-deployments"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Register immutable evaluation inputs before measuring a candidate and enforce\nrecorded learning, retention, security and operational gates in atomic state\ntransitions. Publish reproducible scripted candidate losses and refusals without\nclaiming training quality or activation.\n\nEvaluation records now require the complete registration and measurement\nbindings. Generic writes no longer grant evaluation or artifact transition\nauthority; callers use `startEvaluation` and `recordEvaluation` with retained\npolicies, datasets and artifact receipts.",
+      "id": "registered-experiential-gates"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Restore an experiential deployment to its exact registered base under explicit rollback authority. Bind the base role digest, fence both revisions, retain an incremented null learned head, and atomically archive failed routing with its audit. Preserve learned evaluations and in-flight pins across rollback, reopen and later activation; keep learned-target approval gates unchanged.",
+      "id": "restore-registered-experiential-base"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add independent evidence-bound selection, retained duplicate and episode grouping, deterministic dataset partitions and pinned JTLT example rendering. Recheck selection authority and leakage at dataset admission.",
+      "id": "reviewed-experiential-datasets"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        }
+      ],
+      "summary": "Define the injected training backend and verify artifact bytes, submission ancestry and configured runtime before registration.",
+      "id": "verified-training-backend"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.40.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.40.0"
+    }
+  ]
+}

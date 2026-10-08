@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "60b92ad0831438676d8ef2c5f52eb83b0b054c26",
+    "head": "1beddfc531b517d3b9745223b476d30927efce86",
     "clean": false,
     "files": [
       {
@@ -203,15 +203,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "ddbdcfb85ce18f07d9f92ea85afa9039c6077332fa322c1c5c526c585687d641"
+        "sha256": "de7b8b424b749f709ce5a7199438ce0afe746b87f9ae49df007b4458047c0136"
       },
       {
         "path": "package.json",
-        "sha256": "66957edc054e7231cb2a084204c5be53e0049648f648f09bab53dec58333372e"
+        "sha256": "d0b5994e06493094ac346b7729cb7c2b25c68337e5c9a2a35208bb5e423de02b"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "6e82e7ba49b1e50ebf14bc7dc39cfc42c05c3cb2005fb66835baee4890d52577"
+        "sha256": "c25e1d684cb1ce60fd08b931f08f2364a0dcc879aeca1de52e061ee9e1020f56"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -255,7 +255,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "d32e85577f883714af916f6a67d659e28927c4d672486529c943c69fb7ae2693"
+        "sha256": "526eb5f454acad35ff3a08da087f0f7f361bc4f60dd835a43f82eb0a49b13aad"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -291,7 +291,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "338d13ec0eb295c25dbd76228152733c734c5dc7c0fb3fdb6d6d64e460b51834"
+        "sha256": "62e9e8c1cdf016187a7067406294e7e0017cfe65a43858fcd617255806eff47a"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -347,7 +347,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "429fed7f26c587ee8922bf50ec16443d50a679c560c44dd30287d372a85679c9"
+        "sha256": "d78af24ba0e0c2ac61146d7a38d3683d412b2455bf4fd9e6ed55e4ea1a5e8590"
       },
       {
         "path": "packages/core/src/clustering.ts",
@@ -411,19 +411,19 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "47816d2b9f78cb8de7cd3ddcd6c9a16e95b654eb8cdbe1b5d7670f24834b1022"
+        "sha256": "f15203fccadfe82f0ffe55a20e06d32b13e9f2e308cae2100f0b30f2936207ea"
       },
       {
         "path": "packages/evolve/package.json",
-        "sha256": "f365e3f4d480ef047c10bc46d6f95b8694a05fe6edac96562d89a6cba244a93e"
+        "sha256": "2c148cb7784574b52989a8eaaf9014288a5a8ca16200f723de421b0b9b649505"
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "7b41f4577b4765d38ce1dba493067b7616dcf9824f90af5252edb2743cb62c97"
+        "sha256": "dafa88de598ae6f93de46e233874a3a122dd83dff987712693a46f4db7b49be5"
       },
       {
         "path": "packages/forecast/package.json",
-        "sha256": "d9cc2dcf38b59eb1741c3911e70dc909950a56fee2b39be87d4a1b7e8449d339"
+        "sha256": "7900b2184e9547e5581dc4939cf3684bc89b7dfae0c23812b015b5989afcc800"
       },
       {
         "path": "packages/gmpl/artifacts/catalog.json",
@@ -431,7 +431,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "ae0dbb090bd4529a33bd704e6973aeefac541622ee6b9a7bda1283ffbff1e6c4"
+        "sha256": "c8f6e93a2646810e90af3c9315e22aa4b84fdab448bb3524e2b1e2dc862958cd"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -547,27 +547,27 @@
       },
       {
         "path": "packages/grounding/package.json",
-        "sha256": "2ef58f5b9eb750aec3511968dba2dfc286a8d406be52b2763ae8a2fd963fc51a"
+        "sha256": "0a96bc768e9549d3bbc25a3610ca7e88baf94f3a851c0f185f451e98b9c6867d"
       },
       {
         "path": "packages/hera/package.json",
-        "sha256": "9f9b9b50726c17e1ccd0bf7d7314db7d0074448abc43ad2a5351ab92ecf9812d"
+        "sha256": "b26858d7a9f6d9816b483db7bb9ff5109d048f30469bf4d10c05081b79a44776"
       },
       {
         "path": "packages/jaren/package.json",
-        "sha256": "201655e446fa033579184099ef057d46b4468e836dd0994f5a907739fcedf651"
+        "sha256": "8f5e53e916f71e1326a8a1b97cc8df72af60b2f4e6267e97eb35d5adf6e6ca80"
       },
       {
         "path": "packages/lightrag/package.json",
-        "sha256": "56fbdced17a42553fa9fe9163a6430d60cf8bbb17e7dbebf0827dee918a0ab1b"
+        "sha256": "501b19869fb02b61bfea78638e5a232035ac4e39f89d63d40e0f3098f52ab78a"
       },
       {
         "path": "packages/linq/package.json",
-        "sha256": "ae1d8bc207e000f63e59b0afb8d9ff910422fbc6a581da32034951bc1d546fd1"
+        "sha256": "4cbaedc94b1419f02b684efe519953f30dc5060553b7cb957e869a608ede904b"
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "4113987404eb285256b96dd1c199e64f98826228d743a7aa5927532d26e6291d"
+        "sha256": "849ec82e3e3856f398cf907b1e4e2e89fcaef81c6578e969cf294c27f01754e5"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -699,11 +699,11 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "20e3e2488ea9801f7aa48ca236dc8a8d0e1190e744a43a0123fd13892eece173"
+        "sha256": "8fffa9905bfde276274dafceb8a147fd698d361a75ca0ef4aff3a1fa17192675"
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "98140f0461aaa37f1fe35568db924da6c9e3952bdc830872d937a8897cfdffcc"
+        "sha256": "646bf60f2e6618969b19763487cb396ac3bd33618dd5bcf9cb1cf6f01aca43de"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -759,23 +759,23 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "15bed1b34116ead8573cb2ab82a3a92720e60486d5d7fda3f6f24dc62b462003"
+        "sha256": "8b3a938f1f204381d5ad4dc5e28080e78bed04267936e13a5c7eec0ff324b08d"
       },
       {
         "path": "packages/pipeline/package.json",
-        "sha256": "a04246a17427804f97ba5a0e1f23b9b25f48f10481cef9d3a8ebf06a5d7d64ec"
+        "sha256": "a01722bd34cb03b41bee6a527edf020ba98190619029a27c3290b80477c82a89"
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "28cb33ee513aa0ceebed2f0375b5d5c835ba77133c165ba5c1511da5b3366eef"
+        "sha256": "518a0f7d68302df808618e3b24b2f7068b760622578331fc92681abeea3c22f6"
       },
       {
         "path": "packages/search/package.json",
-        "sha256": "313faefcd8ed6a4b9ae7541f432dff2644bb339cc5035551869ec77e4fa82ab4"
+        "sha256": "ae7bebf42fd415d54ef54bda2b603d613e1e7b9a8ad6368be56f0494e05ef99a"
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "384b8f367a9c8b382ed926dafb458ae7e7dc9f85dbd120a5d1697cc72cac4ad8"
+        "sha256": "df714e28b05aba82d0a22667aef9e62cc05df25003454dfbb37385717a5fe658"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -955,11 +955,11 @@
       },
       {
         "path": "packages/trace2skill/package.json",
-        "sha256": "18277c49cba072afb99d0c7f987496fbd71c576cc2ddf2f74e4556c461896265"
+        "sha256": "ecce3f326283312011467a4fe6cdeb9e6b8868d9ab10421761defd14eddf0607"
       },
       {
         "path": "packages/trading/package.json",
-        "sha256": "2cd84d5f5c3866c7700d29a0f1dd9e614c97993e4cfc5a903beebed4ebbc3a40"
+        "sha256": "6373c5f5b5e1fb9ada9b8fdc66ca38705c541b54c05ae587470c005219901618"
       },
       {
         "path": "prompts/gmpl/analysis/analyst.toml",
@@ -1146,7 +1146,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "d03b13cd9c828de2999ccc688eba29d3a86ecb8e81f2d542cf6a88521f7fdadc"
+    "sha256": "3b7b38ab3dc751f0d8c6ff30697a4ca4c85c5ec287024cd63222bdcd2ccdc086"
   },
   "ablations": [
     {
@@ -3628,7 +3628,7 @@
     "catalogRevision": "fcd08dd3306f267d5719d79b3d832aecd42cb0aaa0aa7de66cb257460fb815ef"
   },
   "suite": {
-    "tangle": "0.39.0",
+    "tangle": "0.40.0",
     "jaren": "0.91.4"
   },
   "registrationId": "7eabacf078c23663d796bc6ac2438fce7ec241cf467751deb30707d511306873",
@@ -76700,5 +76700,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "4a29c495383f1ca79d80c596b0e9b4ae49e8a20e0d8fc6bc7b315366d1e14cc3"
+  "reportId": "c70b87a9c7312f315016d6a0d5953eab564bd5d2c99ffa59635d6c779928fb1a"
 }

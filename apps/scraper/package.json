@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/scraper",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "private": true,
   "description": "Optional isolated Playwright renderer for dynamic document ingestion",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "bun": ">=1.4.2"
   },
   "dependencies": {
-    "@tangleai/documents": "0.39.0",
+    "@tangleai/documents": "0.40.0",
     "playwright-core": "1.62.1"
   }
 }

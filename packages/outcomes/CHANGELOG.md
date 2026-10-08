@@ -1,5 +1,20 @@
 # @tangleai/outcomes
 
+## 0.40.0
+
+### Minor Changes
+
+- a8765d5: Bind serving deployments to approved evaluations, deterministic canaries, immutable run pins and atomic rollback. Register the resolved base role before serving; deployment approvals now bind the deployment revision and canary fraction, and new pins use the checked pin command. Export the existing native head assertion so read-time fences use the same comparison as transitions.
+- 1beddfc: Restore an experiential deployment to its exact registered base under explicit rollback authority. Bind the base role digest, fence both revisions, retain an incremented null learned head, and atomically archive failed routing with its audit. Preserve learned evaluations and in-flight pins across rollback, reopen and later activation; keep learned-target approval gates unchanged.
+
+### Patch Changes
+
+- @tangleai/agents@0.40.0
+  - @tangleai/config@0.40.0
+  - @tangleai/core@0.40.0
+  - @tangleai/memory@0.40.0
+  - @tangleai/models@0.40.0
+
 ## 0.39.0
 
 ### Patch Changes
