@@ -5,14 +5,12 @@ import {getHeapStatistics} from 'node:v8';
 import {join} from 'node:path';
 import {nodeDriver} from '@jarenjs/db/node';
 import {canonicalSha256} from '@jarenjs/json/canonical';
-import {mulberry32} from '@jarenjs/core/random';
 import {createBudgetAccount} from '@tangleai/agents';
-import {SafeStaticFetcher,createDocumentIngester,type DocumentCorpusStore} from '@tangleai/documents';
-import {createHashEmbedder} from '@tangleai/models/embed';
-import {openTangleDb,createDocumentStore,createLightRagStore,createCorpusPromotion} from '@tangleai/store';
-import {createScriptedExtractor,createScriptedProfiler,createScriptedCoreferenceJudge,createScriptedPlanner,retrieveLightRag,lightragMust,type LightRagStore,type GraphExtractionReply} from '@tangleai/lightrag';
+import {type DocumentCorpusStore} from '@tangleai/documents';
+import {openTangleDb} from '@tangleai/store';
+import {createScriptedPlanner,retrieveLightRag,lightragMust,type LightRagStore} from '@tangleai/lightrag';
 import {loadLightRagFixture,createLightRagValidator,type LoadedLightRagFixture} from './lightrag.ts';
-import {graphFixturePrompts,LIGHTRAG_SCRIPTED_MODEL} from './lightrag-corpus.ts';
+import {createLightRagLadderCorpus} from './lightrag-ladder-corpus.ts';
 import {sourceManifest} from './source-manifest.ts';
 import {latency} from './stats.ts';
 import {describeErrors} from './validate.ts';
@@ -22,7 +20,7 @@ import registered from '../fixtures/lightrag/ladder-registration.json' with {typ
 export const LIGHTRAG_LADDER_REGISTRATION=registered as LightragLadderRegistration;
 const now=()=>new Date().toISOString();
 export async function lightRagLadderSource(root=process.cwd()){
-    const result=await sourceManifest(root,['benchmark/lib/lightrag-ladder.ts','benchmark/lightrag-ladder.ts','benchmark/fixtures/lightrag/ladder-registration.json',
+    const result=await sourceManifest(root,['benchmark/lib/lightrag-ladder.ts','benchmark/lib/lightrag-ladder-corpus.ts','benchmark/lightrag-ladder.ts','benchmark/fixtures/lightrag/ladder-registration.json',
         'benchmark/fixtures/lightrag/manifest.json','benchmark/lib/lightrag.ts','benchmark/lib/lightrag-corpus.ts','benchmark/lib/stats.ts','benchmark/lib/source-manifest.ts','benchmark/lib/validate.ts','benchmark/lib/lightrag.types.ts','benchmark/schemas/lightrag.schema.json',
         'packages/store/src/document-store.ts','packages/store/src/document-state.ts','packages/store/src/corpus-promotion.ts','packages/store/src/lightrag-store.ts','packages/store/src/lightrag-model.ts',
         'packages/documents/src/ingest.ts','packages/documents/src/chunking.ts','packages/documents/src/retrieval.ts','packages/documents/src/contracts.ts','packages/models/src/embed.ts','packages/core/src/tokens.ts','packages/agents/src/recursive.ts','packages/context/src/ledger.ts','packages/outcomes/src/transitions.ts','packages/outcomes/src/errors.ts'],['packages/lightrag']);
@@ -45,18 +43,6 @@ export async function readLightRagLadder(path:string,root=process.cwd()):Promise
     if(receipt.source.sha256!==(await lightRagLadderSource(root)).sha256)throw Error('Graph scale receipt source is stale; measure the current implementation.');
     return receipt;
 }
-function syntheticCorpus(loaded:LoadedLightRagFixture,size:number){
-    const random=mulberry32(registered.seed),entities=new Map(loaded.fixture.entities.map(row=>[row.key,row])),replies:GraphExtractionReply[]=[],sections:string[]=[];
-    for(let index=0;index<size;index++){
-        const relation=loaded.fixture.relations[Math.floor(random()*loaded.fixture.relations.length)]!,from=entities.get(relation.source)!,to=entities.get(relation.target)!,ordinal=String(index).padStart(5,'0');
-        const source=from.name+' sample '+ordinal+' source',target=to.name+' sample '+ordinal+' target';
-        let description=`${source} links to ${target} through ${relation.themes.join(' and ')}.`;
-        while(description.length<registered.minParagraphCharacters)description+=registered.paddingSentence;
-        sections.push(`# Sample ${ordinal}\n\n${description}`);
-        replies.push({entities:[{name:source,type:from.type,description},{name:target,type:to.type,description}],relations:[{source,target,description,strength:1,themes:relation.themes}],contentKeywords:relation.themes});
-    }
-    return {text:sections.join('\n\n'),replies};
-}
 function observedStores(graph:LightRagStore,documents:DocumentCorpusStore){
     const counts={graph:0,documents:0};
     const graphRead:LightRagStore={...graph,
@@ -72,25 +58,7 @@ function observedStores(graph:LightRagStore,documents:DocumentCorpusStore){
 async function measureSize(loaded:LoadedLightRagFixture,size:number,timer:()=>number,onProgress:(line:string)=>void):Promise<LadderRow>{
     const directory=await mkdtemp(join(tmpdir(),'tangle-graph-ladder-')),db=await openTangleDb({path:join(directory,'graph.db'),driver:nodeDriver()});
     try{
-        const documents=createDocumentStore(db),graph=createLightRagStore(db),promotion=createCorpusPromotion({db,documents,lightrag:graph}),hash=createHashEmbedder({dims:registered.embeddedBy.dims});
-        const work={embeddingCalls:0,embeddingTexts:0,extracted:0,profiled:0,reviewed:0},embedder={...hash,embed:async(texts:string[])=>{work.embeddingCalls++;work.embeddingTexts+=texts.length;return hash.embed(texts);}};
-        const corpus=syntheticCorpus(loaded,size),at=()=> '2026-06-01T00:00:00.000Z',url='https://scale.example/registered-graph';
-        const ingester=createDocumentIngester({store:documents,embedder,now:at,fetcher:new SafeStaticFetcher({now:at,lookup:async()=>[{address:'93.184.216.34',family:4}],
-            limits:{respectRobots:false,perHostDelayMs:0},fetch:async()=>new Response(corpus.text,{headers:{'content-type':'text/markdown'}})})});
-        const started=timer(),document=await ingester.prepare({url,maxTokens:registered.chunker.maxTokens,overlapTokens:registered.chunker.overlapTokens,extractLimits:{maxElements:size*registered.extract.maxElementsPerChunk,minUsefulChars:registered.extract.minUsefulChars,allowPartial:registered.extract.allowPartial}});
-        if(document.status!=='prepared')throw Error('The synthetic graph document did not prepare: '+JSON.stringify(document));
-        if(document.bundle.chunks.length!==size)throw Error(`Registered ${size} chunks but the native chunker produced ${document.bundle.chunks.length}.`);
-        const prompts=graphFixturePrompts(),raw=createScriptedExtractor(Object.fromEntries(document.bundle.chunks.map((chunk,index)=>{
-            if(chunk.order!==index||!chunk.text.includes(corpus.replies[index].entities[0].name))throw Error('Synthetic chunk order or source evidence differs.');return [chunk.id,corpus.replies[index]];
-        })),{modelIdentity:LIGHTRAG_SCRIPTED_MODEL,promptRevision:prompts.extraction});
-        const extractor=Object.assign(async(...args:Parameters<typeof raw>)=>{work.extracted++;return raw(...args);},{modelIdentity:raw.modelIdentity,promptRevision:raw.promptRevision,budget:null});
-        const profiler=createScriptedProfiler(input=>{work.profiled++;return {profile:input.contexts.map(row=>row.description).join(' '),themes:[]};},{modelIdentity:LIGHTRAG_SCRIPTED_MODEL,promptRevision:prompts.profiling});
-        const judge=createScriptedCoreferenceJudge(()=>{work.reviewed++;throw Error('Distinct synthetic names must not invoke co-reference review.');},{modelIdentity:LIGHTRAG_SCRIPTED_MODEL,promptRevision:prompts.deduplication});
-        const prepared=lightragMust(await promotion.prepare({document,graph:{extractor,profiler,judge,embedder,budget:createBudgetAccount({turns:size*3,tokens:size*1000},()=>0),clock:()=>0,
-            identities:{extraction:'structured-graph/1',chunker:{version:document.bundle.version.chunkerVersion,config:document.bundle.version.chunkerConfig},embedder:document.bundle.version.embeddedBy,prompts,model:LIGHTRAG_SCRIPTED_MODEL}}}));
-        if(prepared.status!=='prepared')throw Error('Expected a new synthetic contribution.');
-        const preparedAt=timer();lightragMust(await promotion.promote(prepared));const promotedAt=timer(),indexing={...work};
-        const canonicals={entities:(await graph.listEntities()).length,relations:(await graph.listRelations()).length},claims=prepared.contribution.stats.entityClaims+prepared.contribution.stats.relationClaims;
+        const {documents,graph,embedder,prepared,document,corpus,canonicals,claims,indexing,indexingMs,promotionMs}=await createLightRagLadderCorpus(loaded,size,db,timer);
         const observed=observedStores(graph,documents),planner=createScriptedPlanner(loaded.fixture.questions),samples:LadderSample[]=[],skipped={identity:0,width:0,unresolvable:0},evidence=new Set(document.bundle.chunks.map(row=>row.id));
         async function query(question:LoadedLightRagFixture['fixture']['questions'][number],record:boolean){
             const plan=lightragMust(await planner(question.text,{mode:'hybrid',limits:registered.limits}));observed.reset();const start=timer();
@@ -103,7 +71,7 @@ async function measureSize(loaded:LoadedLightRagFixture,size:number,timer:()=>nu
         await query(loaded.fixture.questions[0],false);for(const question of loaded.fixture.questions)await query(question,true);
         const measured=latency(samples.map(row=>row.ms)),supplied=samples.reduce((n,row)=>n+row.citations,0);
         const row:LadderRow={chunks:size,...canonicals,claims,extractedChunks:indexing.extracted,profiledCanonicals:indexing.profiled,reviewCalls:indexing.reviewed,providerCalls:0,
-            queryLocalCalls:samples.reduce((n,row)=>n+row.localCalls,0),queryBudgetTokens:samples.reduce((n,row)=>n+row.budgetTokens,0),embeddingCalls:indexing.embeddingCalls,embeddingTexts:indexing.embeddingTexts,budgetTokens:prepared.contribution.spend.tokens,indexingMs:preparedAt-started,promotionMs:promotedAt-preparedAt,
+            queryLocalCalls:samples.reduce((n,row)=>n+row.localCalls,0),queryBudgetTokens:samples.reduce((n,row)=>n+row.budgetTokens,0),embeddingCalls:indexing.embeddingCalls,embeddingTexts:indexing.embeddingTexts,budgetTokens:prepared.contribution.spend.tokens,indexingMs,promotionMs,
             peakRssBytes:process.resourceUsage().maxRSS*1024,corpusSha256:await canonicalSha256(corpus),rowsRead:{graph:samples.reduce((n,row)=>n+row.graphRows,0),documents:samples.reduce((n,row)=>n+row.documentRows,0)},skipped,
             citationResolution:{supplied,resolved:supplied,ratio:1},retrieval:{p50Ms:measured.medianMs!,p95Ms:measured.p95Ms!,samples}};
         onProgress(`SQLite graph ${size} chunks: hybrid p50 ${row.retrieval.p50Ms.toFixed(2)} ms, p95 ${row.retrieval.p95Ms.toFixed(2)} ms.`);return row;

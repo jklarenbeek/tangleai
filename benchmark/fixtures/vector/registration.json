@@ -1,0 +1,30 @@
+{
+  "version": "graph-vector/1",
+  "sizes": [
+    100,
+    1000,
+    10000
+  ],
+  "dims": 64,
+  "model": "hash-trigram-64",
+  "maxP95Ms": 250,
+  "warmupQueries": 1,
+  "questions": 18,
+  "seed": 17753,
+  "randomRows": 128,
+  "randomProbes": 16,
+  "randomK": 10,
+  "randomOverlapMin": 0,
+  "randomOverlapMax": 32,
+  "scoreEquality": "Object.is",
+  "rankingOrder": "descending-score-then-binary-id",
+  "scope": "joint-lightrag-entities-and-relations",
+  "nativeRandomRows": 1000,
+  "nativeRandomProbes": 20,
+  "nativeWindows": [
+    1,
+    10,
+    37,
+    1000
+  ]
+}

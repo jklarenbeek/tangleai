@@ -1,0 +1,1608 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tangleai.dev/schemas/vector-scale",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/VectorScaleReport"
+    },
+    {
+      "$ref": "#/$defs/VectorScaleReceipt"
+    }
+  ],
+  "$defs": {
+    "VectorParity": {
+      "type": "object",
+      "properties": {
+        "equal": {
+          "type": "boolean"
+        },
+        "differences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "equal",
+        "differences",
+        "paths"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "equal": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "differences": {
+                "const": 0
+              },
+              "paths": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "differences": {
+                "minimum": 1
+              },
+              "paths": {
+                "minItems": 1,
+                "maxItems": 32
+              }
+            }
+          }
+        }
+      ]
+    },
+    "VectorSqlCounts": {
+      "type": "object",
+      "properties": {
+        "statements": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "returnedRows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "elapsedMs": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "statements",
+        "returnedRows",
+        "writes",
+        "failures",
+        "elapsedMs"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$le": [
+          "$.failures",
+          "$.statements"
+        ]
+      }
+    },
+    "VectorSqlTables": {
+      "type": "object",
+      "properties": {
+        "lightrag_entities": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "lightrag_relations": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "lightrag_projections": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "lightrag_chunk_profiles": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "lightrag_entity_claims": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "lightrag_relation_claims": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "sources": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "document_versions": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "document_elements": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "document_chunks": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "document_parents": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "settings": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        },
+        "_jaren_migrations": {
+          "$ref": "#/$defs/VectorSqlCounts"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "VectorTrigger": {
+      "type": "object",
+      "properties": {
+        "releaseCommit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "releaseVersion": {
+          "type": "string"
+        },
+        "receiptSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "receiptId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sourceSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "fixtureId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "registrationId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "releaseCommit",
+        "releaseVersion",
+        "receiptSha256",
+        "receiptId",
+        "sourceSha256",
+        "fixtureId",
+        "registrationId"
+      ],
+      "additionalProperties": false
+    },
+    "VectorRegistration": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": "graph-vector/1"
+        },
+        "sizes": {
+          "const": [
+            100,
+            1000,
+            10000
+          ]
+        },
+        "dims": {
+          "const": 64
+        },
+        "model": {
+          "const": "hash-trigram-64"
+        },
+        "maxP95Ms": {
+          "const": 250
+        },
+        "warmupQueries": {
+          "const": 1
+        },
+        "questions": {
+          "const": 18
+        },
+        "seed": {
+          "const": 17753
+        },
+        "randomRows": {
+          "const": 128
+        },
+        "randomProbes": {
+          "const": 16
+        },
+        "randomK": {
+          "const": 10
+        },
+        "randomOverlapMin": {
+          "const": 0
+        },
+        "randomOverlapMax": {
+          "const": 32
+        },
+        "scoreEquality": {
+          "const": "Object.is"
+        },
+        "rankingOrder": {
+          "const": "descending-score-then-binary-id"
+        },
+        "scope": {
+          "const": "joint-lightrag-entities-and-relations"
+        },
+        "nativeRandomRows": {
+          "const": 1000
+        },
+        "nativeRandomProbes": {
+          "const": 20
+        },
+        "nativeWindows": {
+          "const": [
+            1,
+            10,
+            37,
+            1000
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "sizes",
+        "dims",
+        "model",
+        "maxP95Ms",
+        "warmupQueries",
+        "questions",
+        "seed",
+        "randomRows",
+        "randomProbes",
+        "randomK",
+        "randomOverlapMin",
+        "randomOverlapMax",
+        "scoreEquality",
+        "rankingOrder",
+        "scope",
+        "nativeRandomRows",
+        "nativeRandomProbes",
+        "nativeWindows"
+      ],
+      "additionalProperties": false
+    },
+    "VectorControls": {
+      "type": "object",
+      "properties": {
+        "golden": {
+          "$ref": "#/$defs/VectorParity"
+        },
+        "goldenRows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "score"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "randomSeed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "randomQueries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "randomOverlap": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "randomOverlapPassed": {
+          "type": "boolean"
+        },
+        "randomOrderDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "golden",
+        "goldenRows",
+        "randomSeed",
+        "randomQueries",
+        "randomOverlap",
+        "randomOverlapPassed",
+        "randomOrderDigest"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.randomSeed",
+              17753
+            ]
+          },
+          {
+            "$eq": [
+              "$.randomQueries",
+              16
+            ]
+          },
+          {
+            "$eq": [
+              "$.randomOverlapPassed",
+              {
+                "$and": [
+                  {
+                    "$ge": [
+                      "$.randomOverlap",
+                      0
+                    ]
+                  },
+                  {
+                    "$le": [
+                      "$.randomOverlap",
+                      32
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "VectorQuestion": {
+      "type": "object",
+      "properties": {
+        "questionId": {
+          "type": "string"
+        },
+        "resultDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "residentDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "parity": {
+          "$ref": "#/$defs/VectorParity"
+        },
+        "traceRows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pruned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "object",
+          "properties": {
+            "identity": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unresolvable": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "identity",
+            "width",
+            "unresolvable"
+          ],
+          "additionalProperties": false
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "selectedScores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "score"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "nativeDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "questionId",
+        "resultDigest",
+        "residentDigest",
+        "parity",
+        "traceRows",
+        "pruned",
+        "skipped",
+        "citations",
+        "selectedScores",
+        "nativeDigest"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$ge": [
+              "$.traceRows",
+              "$.pruned"
+            ]
+          },
+          {
+            "$eq": [
+              "$.resultDigest",
+              "$.residentDigest"
+            ]
+          },
+          {
+            "$eq": [
+              "$.nativeDigest",
+              "$.resultDigest"
+            ]
+          }
+        ]
+      }
+    },
+    "VectorScaleRow": {
+      "type": "object",
+      "properties": {
+        "chunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "entities": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "claims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "corpusSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VectorQuestion"
+          }
+        },
+        "nativeStatus": {
+          "enum": [
+            "implementation-missing",
+            "measured",
+            "failed"
+          ]
+        },
+        "nativeReason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "chunks",
+        "entities",
+        "relations",
+        "claims",
+        "corpusSha256",
+        "questions",
+        "nativeStatus",
+        "nativeReason"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.entities",
+              {
+                "$mul": [
+                  "$.chunks",
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.relations",
+              "$.chunks"
+            ]
+          },
+          {
+            "$eq": [
+              "$.claims",
+              {
+                "$mul": [
+                  "$.chunks",
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.questions[*]"
+              },
+              18
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.questions[*].questionId"
+                }
+              },
+              18
+            ]
+          }
+        ]
+      }
+    },
+    "VectorSourceFile": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "VectorScaleReport": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "vector-scale"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "reportId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "registration": {
+          "$ref": "#/$defs/VectorRegistration"
+        },
+        "registrationId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "trigger": {
+          "$ref": "#/$defs/VectorTrigger"
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/VectorSourceFile"
+              }
+            }
+          },
+          "required": [
+            "sha256",
+            "files"
+          ],
+          "additionalProperties": false
+        },
+        "controls": {
+          "$ref": "#/$defs/VectorControls"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VectorScaleRow"
+          }
+        },
+        "untriggered": {
+          "const": [
+            "memory",
+            "documents",
+            "locomo",
+            "ledger"
+          ]
+        },
+        "physicalRequests": {
+          "const": 0
+        },
+        "status": {
+          "enum": [
+            "measured",
+            "probe"
+          ]
+        },
+        "nativeQualification": {
+          "enum": [
+            "implementation-missing",
+            "parity-passed",
+            "parity-failed"
+          ]
+        },
+        "qualification": {
+          "$ref": "#/$defs/VectorNativeQualification"
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "reportId",
+        "registration",
+        "registrationId",
+        "trigger",
+        "source",
+        "controls",
+        "rows",
+        "untriggered",
+        "physicalRequests",
+        "nativeQualification",
+        "status",
+        "qualification"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "measured"
+              }
+            }
+          },
+          "then": {
+            "$query": {
+              "$eq": [
+                [
+                  "$.rows[*].chunks"
+                ],
+                [
+                  100,
+                  1000,
+                  10000
+                ]
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "VectorTimingSample": {
+      "type": "object",
+      "properties": {
+        "questionId": {
+          "type": "string"
+        },
+        "totalMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "rankingMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "fetchMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "sql": {
+          "$ref": "#/$defs/VectorSqlTables"
+        },
+        "traceRows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "citations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parity": {
+          "$ref": "#/$defs/VectorParity"
+        },
+        "spendMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "planSpendMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "native": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/VectorNativeStats"
+            }
+          ]
+        }
+      },
+      "required": [
+        "questionId",
+        "totalMs",
+        "rankingMs",
+        "fetchMs",
+        "sql",
+        "traceRows",
+        "citations",
+        "parity",
+        "spendMs",
+        "planSpendMs",
+        "native"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$le": [
+              "$.rankingMs",
+              "$.totalMs"
+            ]
+          },
+          {
+            "$le": [
+              "$.fetchMs",
+              "$.totalMs"
+            ]
+          }
+        ]
+      }
+    },
+    "VectorBackendTiming": {
+      "type": "object",
+      "properties": {
+        "backend": {
+          "enum": [
+            "resident",
+            "sqlite-sweep",
+            "sqlite-native"
+          ]
+        },
+        "chunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VectorTimingSample"
+          }
+        },
+        "p50Ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p95Ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peakRssBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "backend",
+        "chunks",
+        "samples",
+        "p50Ms",
+        "p95Ms",
+        "peakRssBytes"
+      ],
+      "additionalProperties": false
+    },
+    "VectorBuildCost": {
+      "type": "object",
+      "properties": {
+        "chunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "prepareMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "promoteMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "snapshotMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "storageBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sql": {
+          "$ref": "#/$defs/VectorSqlTables"
+        },
+        "embeddingCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embeddingTexts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "migrationMs": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "migrationSteps": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "stagingMs": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "migrationStatus": {
+          "enum": [
+            "implementation-missing",
+            "measured",
+            "failed"
+          ]
+        },
+        "nativeStorageBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "migrationSql": {
+          "$ref": "#/$defs/VectorSqlTables"
+        },
+        "staging": {
+          "$ref": "#/$defs/VectorStageCost"
+        }
+      },
+      "required": [
+        "chunks",
+        "prepareMs",
+        "promoteMs",
+        "snapshotMs",
+        "storageBytes",
+        "sql",
+        "embeddingCalls",
+        "embeddingTexts",
+        "migrationMs",
+        "migrationSteps",
+        "stagingMs",
+        "migrationStatus",
+        "nativeStorageBytes",
+        "migrationSql",
+        "staging"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "migrationStatus": {
+                "const": "implementation-missing"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "migrationMs": {
+                "const": null
+              },
+              "migrationSteps": {
+                "const": null
+              },
+              "stagingMs": {
+                "const": null
+              }
+            }
+          },
+          "else": {
+            "if": {
+              "properties": {
+                "migrationStatus": {
+                  "const": "measured"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "migrationMs": {
+                  "type": "number"
+                },
+                "migrationSteps": {
+                  "type": "integer"
+                },
+                "stagingMs": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "VectorScaleReceipt": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "vector-scale-receipt"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "receiptId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reportId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "at": {
+          "type": "string"
+        },
+        "host": {
+          "type": "object",
+          "properties": {
+            "platform": {
+              "type": "string"
+            },
+            "arch": {
+              "type": "string"
+            },
+            "cpu": {
+              "type": "string"
+            },
+            "logicalCpus": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "runtime": {
+              "type": "string"
+            },
+            "loadAverage": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          },
+          "required": [
+            "platform",
+            "arch",
+            "cpu",
+            "logicalCpus",
+            "runtime",
+            "loadAverage"
+          ],
+          "additionalProperties": false
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VectorBackendTiming"
+          }
+        },
+        "costs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VectorBuildCost"
+          }
+        },
+        "decision": {
+          "enum": [
+            "not-applicable",
+            "keep-native",
+            "restore-sweep"
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "physicalRequests": {
+          "const": 0
+        },
+        "gates": {
+          "type": "object",
+          "properties": {
+            "completeLadder": {
+              "type": "boolean"
+            },
+            "parity": {
+              "type": "boolean"
+            },
+            "latency": {
+              "type": "boolean"
+            },
+            "costs": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "completeLadder",
+            "parity",
+            "latency",
+            "costs"
+          ],
+          "additionalProperties": false
+        },
+        "qualificationPassed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "receiptId",
+        "reportId",
+        "at",
+        "host",
+        "rows",
+        "costs",
+        "decision",
+        "reasons",
+        "physicalRequests",
+        "gates",
+        "qualificationPassed"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.decision",
+              {
+                "$if": [
+                  {
+                    "$not": "$.gates.completeLadder"
+                  },
+                  "not-applicable",
+                  {
+                    "$if": [
+                      {
+                        "$and": [
+                          "$.gates.parity",
+                          "$.gates.latency",
+                          "$.gates.costs"
+                        ]
+                      },
+                      "keep-native",
+                      "restore-sweep"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.gates.completeLadder",
+              {
+                "$eq": [
+                  [
+                    {
+                      "$for": {
+                        "r": "$.rows[*]"
+                      },
+                      "$where": {
+                        "$eq": [
+                          "$r.backend",
+                          "sqlite-native"
+                        ]
+                      },
+                      "$return": "$r.chunks"
+                    }
+                  ],
+                  [
+                    100,
+                    1000,
+                    10000
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.gates.latency",
+              {
+                "$some": {
+                  "r": "$.rows[*]"
+                },
+                "$satisfies": {
+                  "$and": [
+                    {
+                      "$eq": [
+                        "$r.backend",
+                        "sqlite-native"
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$r.chunks",
+                        10000
+                      ]
+                    },
+                    {
+                      "$le": [
+                        "$r.p95Ms",
+                        250
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.gates.parity",
+              {
+                "$and": [
+                  "$.qualificationPassed",
+                  {
+                    "$every": {
+                      "r": "$.rows[*]"
+                    },
+                    "$satisfies": {
+                      "$every": {
+                        "s": "$r.samples[*]"
+                      },
+                      "$satisfies": {
+                        "$and": [
+                          "$s.parity.equal",
+                          {
+                            "$eq": [
+                              "$s.parity.differences",
+                              0
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.gates.costs",
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.costs[*]"
+                      },
+                      {
+                        "$count": {
+                          "$for": {
+                            "r": "$.rows[*]"
+                          },
+                          "$where": {
+                            "$eq": [
+                              "$r.backend",
+                              "sqlite-native"
+                            ]
+                          },
+                          "$return": "$r.chunks"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "$every": {
+                      "c": "$.costs[*]"
+                    },
+                    "$satisfies": {
+                      "$and": [
+                        {
+                          "$eq": [
+                            "$c.migrationStatus",
+                            "measured"
+                          ]
+                        },
+                        {
+                          "$ne": [
+                            "$c.migrationMs",
+                            null
+                          ]
+                        },
+                        {
+                          "$ne": [
+                            "$c.migrationSteps",
+                            null
+                          ]
+                        },
+                        {
+                          "$ne": [
+                            "$c.stagingMs",
+                            null
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$c.staging.staged",
+                            1
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$c.staging.failed",
+                            0
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "VectorNativeQualification": {
+      "type": "object",
+      "properties": {
+        "randomCases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "goldenCases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "typedCases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedProbes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fallbackCases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retrievalCases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fenceCases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "diverted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "proofs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "randomCases",
+        "goldenCases",
+        "typedCases",
+        "refusedProbes",
+        "fallbackCases",
+        "retrievalCases",
+        "fenceCases",
+        "diverted",
+        "passed",
+        "digest",
+        "proofs"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          "$.passed",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.randomCases",
+                  160
+                ]
+              },
+              {
+                "$eq": [
+                  "$.goldenCases",
+                  8
+                ]
+              },
+              {
+                "$eq": [
+                  "$.typedCases",
+                  4
+                ]
+              },
+              {
+                "$eq": [
+                  "$.refusedProbes",
+                  4
+                ]
+              },
+              {
+                "$eq": [
+                  "$.fallbackCases",
+                  2
+                ]
+              },
+              {
+                "$eq": [
+                  "$.retrievalCases",
+                  216
+                ]
+              },
+              {
+                "$eq": [
+                  "$.fenceCases",
+                  2
+                ]
+              },
+              {
+                "$eq": [
+                  "$.diverted",
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "VectorNativeStats": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "queries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "candidates": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fullFetches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "diverted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fallback": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unrankable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "proofs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "calls",
+        "queries",
+        "rows",
+        "candidates",
+        "fullFetches",
+        "diverted",
+        "fallback",
+        "refused",
+        "unrankable",
+        "proofs"
+      ],
+      "additionalProperties": false
+    },
+    "VectorStageCost": {
+      "type": "object",
+      "properties": {
+        "totalMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "columnMigrationMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "initializeMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "prepareMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "columnMigrationSteps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "copiedRows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "staged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "interrupted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embeddingCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embeddingTexts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "storageBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sql": {
+          "$ref": "#/$defs/VectorSqlTables"
+        },
+        "target": {
+          "const": {
+            "model": "hash-trigram-128",
+            "dims": 128
+          }
+        },
+        "abandoned": {
+          "const": true
+        },
+        "journalDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "totalMs",
+        "columnMigrationMs",
+        "initializeMs",
+        "prepareMs",
+        "columnMigrationSteps",
+        "copiedRows",
+        "writes",
+        "staged",
+        "skipped",
+        "failed",
+        "interrupted",
+        "embeddingCalls",
+        "embeddingTexts",
+        "storageBytes",
+        "sql",
+        "target",
+        "abandoned",
+        "journalDigest"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

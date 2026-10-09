@@ -1,0 +1,996 @@
+{
+  "document": "lightrag-ladder",
+  "schemaVersion": 1,
+  "status": "measured",
+  "registration": {
+    "version": "synthetic-directed-pairs/1",
+    "sizes": [
+      100,
+      1000,
+      10000
+    ],
+    "seed": 24105779,
+    "sourcesPerSize": 1,
+    "entitiesPerChunk": 2,
+    "relationsPerChunk": 1,
+    "topology": "Distinct directed pairs with seeded fixture names and themes; ordinal suffixes prevent canonical collapse.",
+    "chunker": {
+      "version": "heading-recursive/1",
+      "maxTokens": 100,
+      "overlapTokens": 0
+    },
+    "embeddedBy": {
+      "model": "hash-trigram-64",
+      "dims": 64
+    },
+    "mode": "hybrid",
+    "questions": 18,
+    "warmupQueries": 1,
+    "samplesPerQuestion": 1,
+    "targetChunks": 10000,
+    "maxP95Ms": 250,
+    "quantile": "nearest-rank",
+    "rowsRead": "Logical rows returned by graph and document store reads; not physical SQLite page scans.",
+    "rss": "Process lifetime high-water RSS at the end of each size; includes earlier sizes.",
+    "limits": {
+      "keywordsPerLevel": 8,
+      "candidatesPerKeyword": 10,
+      "expansionEntities": 20,
+      "expansionRelations": 40,
+      "chunksPerSource": 3,
+      "contextTokens": 4000
+    },
+    "extract": {
+      "maxElementsPerChunk": 3,
+      "minUsefulChars": 1,
+      "allowPartial": false
+    },
+    "minParagraphCharacters": 240,
+    "paddingSentence": " This is registered synthetic evidence.",
+    "questionIds": [
+      "specific-equipment",
+      "specific-funding",
+      "specific-launch",
+      "specific-archive-host",
+      "specific-timber",
+      "specific-produce",
+      "abstract-training",
+      "abstract-grant-admin",
+      "abstract-cargo",
+      "abstract-festival-host",
+      "abstract-restoration",
+      "abstract-school-funding",
+      "hop-shelves",
+      "hop-launch",
+      "hop-archive-host",
+      "hop-timber",
+      "hop-grant-admin",
+      "hop-opening"
+    ]
+  },
+  "registrationId": "9f3eea9b56bd6237ed3025553259e8db3da6c61182e2ff92c933915fbb3488a5",
+  "fixtureId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+  "source": {
+    "files": [
+      {
+        "path": "benchmark/fixtures/lightrag/ladder-registration.json",
+        "sha256": "f07a23ee3b4ca0911523d42492fe03d0980e76ede47a0e39b0e35f00aa298d13"
+      },
+      {
+        "path": "benchmark/fixtures/lightrag/manifest.json",
+        "sha256": "6706da9364b20d2d023ab18cd0235cf0e9a43472760bc77a36d5f986f9a2bf24"
+      },
+      {
+        "path": "benchmark/lib/lightrag-corpus.ts",
+        "sha256": "ba6ef4fe9037cd2c555151501cf241b379a18afd7ae3303bc937a3afac57f14e"
+      },
+      {
+        "path": "benchmark/lib/lightrag-ladder.ts",
+        "sha256": "ccc58cd661913cc6fa9942e40ed3b6fde71a59d57b51a0feccec0ecd5e3d0d93"
+      },
+      {
+        "path": "benchmark/lib/lightrag.ts",
+        "sha256": "15e6cdd1b76daaf9cbdb69f73e145e0b9976f23f6c67f90a84bb3eed17b20d21"
+      },
+      {
+        "path": "benchmark/lib/lightrag.types.ts",
+        "sha256": "85563e12e29a292bcd4dbe5f7f138bd1a3d8b70db467eb62521c50273937a5b7"
+      },
+      {
+        "path": "benchmark/lib/source-manifest.ts",
+        "sha256": "1ef15c822791160d23f1b97e80f4dc7d91558b65575aedd8c96e45aaac118367"
+      },
+      {
+        "path": "benchmark/lib/stats.ts",
+        "sha256": "36bda7652aba14360e699adb9ef45cba11cfbeb062ee653a444dfa06390d0dee"
+      },
+      {
+        "path": "benchmark/lib/validate.ts",
+        "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
+      },
+      {
+        "path": "benchmark/lightrag-ladder.ts",
+        "sha256": "26038d2193614d1bd717edf24ebb098d2abc6995d422e8568daba41b6ee6c57c"
+      },
+      {
+        "path": "benchmark/schemas/lightrag.schema.json",
+        "sha256": "39addf431d8e4acc1a325440dd5dba681f97738741dfa3f946219e70059c4aaf"
+      },
+      {
+        "path": "packages/agents/src/recursive.ts",
+        "sha256": "8a7de531f5c831091ea6c5c321f6ac145bf47cbab067b8ebcdcc52b05142d44d"
+      },
+      {
+        "path": "packages/context/src/ledger.ts",
+        "sha256": "e1f70b6e3c6c5e5d77272f42a8019d8e112616070ad8507cefc737e49eaeace9"
+      },
+      {
+        "path": "packages/core/src/tokens.ts",
+        "sha256": "3ed5be7b4a494a31eeb603467084fe2c3660dd9f745ccf93d029f76c93c9d6f5"
+      },
+      {
+        "path": "packages/documents/src/chunking.ts",
+        "sha256": "d53994760b67c59e7f1b3e8f1111f68bd9dee3f3b428fc490d9ae9d52b3ab7b7"
+      },
+      {
+        "path": "packages/documents/src/contracts.ts",
+        "sha256": "888e282066482201552d329d46b7925b9d536da63b53e67982df497f48926d5a"
+      },
+      {
+        "path": "packages/documents/src/ingest.ts",
+        "sha256": "a1d1ead8cbc500ea71169f664852d86d3ed1d2af2f65952d356ae2caa6044251"
+      },
+      {
+        "path": "packages/documents/src/retrieval.ts",
+        "sha256": "62cee952bb02f60c33b27e69b7e28b4a9d464ee38258523ca786ebc9a47ace92"
+      },
+      {
+        "path": "packages/lightrag/artifacts/prompts.json",
+        "sha256": "7d0f8d9b96c43690edbda792c469131fc4d3a3edf2e205afcebf6fbcaed10e0c"
+      },
+      {
+        "path": "packages/lightrag/package.json",
+        "sha256": "501b19869fb02b61bfea78638e5a232035ac4e39f89d63d40e0f3098f52ab78a"
+      },
+      {
+        "path": "packages/lightrag/schemas/lightrag.schema.json",
+        "sha256": "07df3c80de5b4b4003a036b86b9a4b3f89ef7e973aab57502d8f396c41f4e298"
+      },
+      {
+        "path": "packages/lightrag/src/answer.ts",
+        "sha256": "7923edc62130a342fc56385badc7dde1b2e369f158a2319fe98b912d5ea8c485"
+      },
+      {
+        "path": "packages/lightrag/src/apply.ts",
+        "sha256": "5882f13a44532dcf08e84f5a00c5dda38754d7f053f2cb5c935383420376eef4"
+      },
+      {
+        "path": "packages/lightrag/src/catalog.ts",
+        "sha256": "c99966399a4cd7b92873e47afa9024565b3ef2d0ba5a1a3d5e8f98904f357092"
+      },
+      {
+        "path": "packages/lightrag/src/context.ts",
+        "sha256": "0ffc8e34fbf6e5361a085bc9264bef9576ec5c94c54137e8dbba60ff38563ba1"
+      },
+      {
+        "path": "packages/lightrag/src/contracts.gen.ts",
+        "sha256": "93941658827d5f677f33f6a3f0d9e08c1cb71cf45d8b0a1f2c79707011a6c271"
+      },
+      {
+        "path": "packages/lightrag/src/contribution.ts",
+        "sha256": "0086a9c7f3f6215e4a1f48df5e78c70936630093bd3f0fdea7054aabb3867464"
+      },
+      {
+        "path": "packages/lightrag/src/embed.ts",
+        "sha256": "242c61518634c8ffaf1950fee64ef66eef2d51ef028b4070d9b7acd2b1a3da83"
+      },
+      {
+        "path": "packages/lightrag/src/errors.ts",
+        "sha256": "7f86a93b67411ad36f7ae27a7aa5d489e52d6a96412eeb0374a9a0c8368bc5c8"
+      },
+      {
+        "path": "packages/lightrag/src/extract.ts",
+        "sha256": "a411cbb2863bf97ba2953fbd3f560bffc863ad6012928d2cb96c33b058856c01"
+      },
+      {
+        "path": "packages/lightrag/src/identity.ts",
+        "sha256": "618c499c0c20b8690b668b82716ef234d233baefef8c428b989b4e624669d3e1"
+      },
+      {
+        "path": "packages/lightrag/src/index.ts",
+        "sha256": "a9474956ea3fc092cc88ba06f0daa666e05347b4491942aebbf25b10883b2291"
+      },
+      {
+        "path": "packages/lightrag/src/integrity.ts",
+        "sha256": "e58d3c495d0c55aaaf5c931f8520a0c00bfc0bfe529c3157beb8d2862bf232e8"
+      },
+      {
+        "path": "packages/lightrag/src/limits.ts",
+        "sha256": "3d554223292cf2621970fc58b8a82ac712b5af641dfcd8031e1df58bd6486f50"
+      },
+      {
+        "path": "packages/lightrag/src/memory-persistence.ts",
+        "sha256": "a619d562d644ac5d70a3045efd84360d48d83855377a323b246600a29aafe904"
+      },
+      {
+        "path": "packages/lightrag/src/meter.ts",
+        "sha256": "33f9f0717046bc7e77fa521177a497cb358ce188aca18d16f0152729b33f93da"
+      },
+      {
+        "path": "packages/lightrag/src/normalize.ts",
+        "sha256": "e3976304d4c878f52a7b59ab77191a52abfe902583af1a72b5af0ede1095b29b"
+      },
+      {
+        "path": "packages/lightrag/src/persistence.ts",
+        "sha256": "739d9fde6deef894b05faddb18818cb4bd27e47e24e53c803b82bda4a8fa9187"
+      },
+      {
+        "path": "packages/lightrag/src/plan-query.ts",
+        "sha256": "46552e73d3402d3d3f58cd4aff7f4dbabba7ffa2aad695ac0cdb4c4611503b4d"
+      },
+      {
+        "path": "packages/lightrag/src/plan.ts",
+        "sha256": "509972b638c06d82295853cead4a36717f62b174b0b9e29ab3d43cae399b3715"
+      },
+      {
+        "path": "packages/lightrag/src/profile.ts",
+        "sha256": "c135fffa20e619dfd0a7d0ef3fb365f3030117ddfd01622fef5a59c622cdf660"
+      },
+      {
+        "path": "packages/lightrag/src/projection.ts",
+        "sha256": "d91923bbf6f0364ced77b1e6985b658564f45ffce02ddac1f41e30b8229811d0"
+      },
+      {
+        "path": "packages/lightrag/src/prompts.ts",
+        "sha256": "69d4f3e7e186ecdde505518faba07f1b4596d5c7907c56e9aaaf72caf38bc031"
+      },
+      {
+        "path": "packages/lightrag/src/resolve.ts",
+        "sha256": "9812b714ed4d76758cd100f5708120492482fd1532bc0b2aad639b9db7ee2019"
+      },
+      {
+        "path": "packages/lightrag/src/retrieve.ts",
+        "sha256": "85191aebb4dd4efdb63097d1a2d4a22e229c65c83ad47dcefdd8ccd2e2e367e4"
+      },
+      {
+        "path": "packages/lightrag/src/reuse.ts",
+        "sha256": "91a05ffe3f9b693b3962322daa4a1a22f1248ce7f985a542f7b91da2b8c303fa"
+      },
+      {
+        "path": "packages/lightrag/src/schema.ts",
+        "sha256": "5d8991afee1c6a2e2a218571d6c1b6d7c8e8f224df93488340b978b1f1a58bc7"
+      },
+      {
+        "path": "packages/lightrag/src/snapshot.ts",
+        "sha256": "297b7bb4309a90181943279b2649d2e27c89722e7346d79a556cb50fec6b6d03"
+      },
+      {
+        "path": "packages/lightrag/src/store.ts",
+        "sha256": "49a23e2624b26d8702e5268d7531e0076b38680353a2c13b627306e5800e97a6"
+      },
+      {
+        "path": "packages/lightrag/src/structured.ts",
+        "sha256": "9854a17c8fba5091df7aaf40cfe1bacf1c54a9e52b3b8c5af8648e2802a84e88"
+      },
+      {
+        "path": "packages/lightrag/src/write-plan.ts",
+        "sha256": "b806e22eb75560b00fdbe94575924ded645811909cd76c1f5d9349bd75e9c54a"
+      },
+      {
+        "path": "packages/models/src/embed.ts",
+        "sha256": "1c1b8fb32687ecb9c73c566d99b4d1aa327e685eb68dd626111d8f3bbfa365d1"
+      },
+      {
+        "path": "packages/outcomes/src/errors.ts",
+        "sha256": "4907924f6c96a589585f4501006419d5563e9ca00e609a35c68d6eb3f2e8b773"
+      },
+      {
+        "path": "packages/outcomes/src/transitions.ts",
+        "sha256": "7ccee2572d99d00691d68c0d6e6416478c124788037630f00129e20f47c835e8"
+      },
+      {
+        "path": "packages/store/src/corpus-promotion.ts",
+        "sha256": "379ade18c66a21bbe19f916c05cda3a1a575a4e37983e5b2b61fedf1b66a9230"
+      },
+      {
+        "path": "packages/store/src/document-state.ts",
+        "sha256": "500148e4ee398f6c1657eaef823d2f1947def18cfbc4c1c0f01ab9b32ebad33c"
+      },
+      {
+        "path": "packages/store/src/document-store.ts",
+        "sha256": "b958ece6dd2b668358d1fa328315be800320c1ac36f09bec17c59167395e43ba"
+      },
+      {
+        "path": "packages/store/src/lightrag-model.ts",
+        "sha256": "de7e29cb7ef692aa86f423d33699a4c48521daf42f0578562ae367a57aa3ae0f"
+      },
+      {
+        "path": "packages/store/src/lightrag-store.ts",
+        "sha256": "b7924fee427099830d4805f824f425269567da9b34f4befc877718d2549c2454"
+      }
+    ],
+    "sha256": "87033f86e03fa858525f2119ad5be80059d2c82b97b193a740dc45e25dda2a69"
+  },
+  "at": "2026-10-08T00:17:24.394Z",
+  "sizes": [
+    100,
+    1000,
+    10000
+  ],
+  "rows": [
+    {
+      "chunks": 100,
+      "entities": 200,
+      "relations": 100,
+      "claims": 300,
+      "extractedChunks": 100,
+      "profiledCanonicals": 300,
+      "reviewCalls": 0,
+      "providerCalls": 0,
+      "queryLocalCalls": 36,
+      "queryBudgetTokens": 175,
+      "embeddingCalls": 15,
+      "embeddingTexts": 400,
+      "budgetTokens": 2228,
+      "indexingMs": 767.3565500000002,
+      "promotionMs": 4952.065949,
+      "peakRssBytes": 487915520,
+      "corpusSha256": "838b264949d9a9aeb8b3300a25078cff2e1590f84d0c0ebce0d150a9b43160c2",
+      "rowsRead": {
+        "graph": 6603,
+        "documents": 1872
+      },
+      "skipped": {
+        "identity": 0,
+        "width": 0,
+        "unresolvable": 0
+      },
+      "citationResolution": {
+        "supplied": 54,
+        "resolved": 54,
+        "ratio": 1
+      },
+      "retrieval": {
+        "p50Ms": 23.94315800000004,
+        "p95Ms": 31.329382999999325,
+        "samples": [
+          {
+            "questionId": "specific-equipment",
+            "ms": 31.329382999999325,
+            "graphRows": 367,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-funding",
+            "ms": 28.038026000000173,
+            "graphRows": 382,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-launch",
+            "ms": 23.589977000000545,
+            "graphRows": 358,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "specific-archive-host",
+            "ms": 25.87801000000036,
+            "graphRows": 373,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-timber",
+            "ms": 27.96413499999926,
+            "graphRows": 376,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-produce",
+            "ms": 23.94315800000004,
+            "graphRows": 364,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "abstract-training",
+            "ms": 24.805335000000014,
+            "graphRows": 373,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "abstract-grant-admin",
+            "ms": 23.73203199999989,
+            "graphRows": 364,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 11
+          },
+          {
+            "questionId": "abstract-cargo",
+            "ms": 25.827025999999933,
+            "graphRows": 358,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "abstract-festival-host",
+            "ms": 23.422010999999657,
+            "graphRows": 361,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "abstract-restoration",
+            "ms": 23.45190199999979,
+            "graphRows": 364,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "abstract-school-funding",
+            "ms": 23.84719799999948,
+            "graphRows": 364,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "hop-shelves",
+            "ms": 23.32940300000064,
+            "graphRows": 361,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "hop-launch",
+            "ms": 23.70968300000004,
+            "graphRows": 358,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "hop-archive-host",
+            "ms": 24.6074779999999,
+            "graphRows": 373,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "hop-timber",
+            "ms": 23.788392999999814,
+            "graphRows": 376,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "hop-grant-admin",
+            "ms": 25.23066100000051,
+            "graphRows": 364,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 11
+          },
+          {
+            "questionId": "hop-opening",
+            "ms": 24.619630000000143,
+            "graphRows": 367,
+            "documentRows": 104,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          }
+        ]
+      }
+    },
+    {
+      "chunks": 1000,
+      "entities": 2000,
+      "relations": 1000,
+      "claims": 3000,
+      "extractedChunks": 1000,
+      "profiledCanonicals": 3000,
+      "reviewCalls": 0,
+      "providerCalls": 0,
+      "queryLocalCalls": 36,
+      "queryBudgetTokens": 175,
+      "embeddingCalls": 127,
+      "embeddingTexts": 4000,
+      "budgetTokens": 22330,
+      "indexingMs": 8565.602568999999,
+      "promotionMs": 61738.36231,
+      "peakRssBytes": 2014035968,
+      "corpusSha256": "fdc888f3036885d0f32a3c3d50505dd65b6926cebb1b7d8a0f5305e79c2351d6",
+      "rowsRead": {
+        "graph": 55446,
+        "documents": 18072
+      },
+      "skipped": {
+        "identity": 0,
+        "width": 0,
+        "unresolvable": 0
+      },
+      "citationResolution": {
+        "supplied": 54,
+        "resolved": 54,
+        "ratio": 1
+      },
+      "retrieval": {
+        "p50Ms": 221.74875699999393,
+        "p95Ms": 240.27888499999244,
+        "samples": [
+          {
+            "questionId": "specific-equipment",
+            "ms": 225.65603399999964,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-funding",
+            "ms": 219.48579700000118,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-launch",
+            "ms": 226.89129699999467,
+            "graphRows": 3079,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "specific-archive-host",
+            "ms": 221.84632399999828,
+            "graphRows": 3079,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-timber",
+            "ms": 218.4316289999988,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-produce",
+            "ms": 221.74875699999393,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "abstract-training",
+            "ms": 240.27888499999244,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "abstract-grant-admin",
+            "ms": 226.10273199999938,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 11
+          },
+          {
+            "questionId": "abstract-cargo",
+            "ms": 228.0266879999981,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "abstract-festival-host",
+            "ms": 224.97292799998831,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "abstract-restoration",
+            "ms": 219.07758199999807,
+            "graphRows": 3079,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "abstract-school-funding",
+            "ms": 215.60903999999573,
+            "graphRows": 3076,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "hop-shelves",
+            "ms": 218.80813799999305,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "hop-launch",
+            "ms": 216.6870229999913,
+            "graphRows": 3079,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "hop-archive-host",
+            "ms": 235.9388789999939,
+            "graphRows": 3076,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "hop-timber",
+            "ms": 222.05752099999518,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "hop-grant-admin",
+            "ms": 218.0385690000112,
+            "graphRows": 3082,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 11
+          },
+          {
+            "questionId": "hop-opening",
+            "ms": 215.52180899999803,
+            "graphRows": 3076,
+            "documentRows": 1004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          }
+        ]
+      }
+    },
+    {
+      "chunks": 10000,
+      "entities": 20000,
+      "relations": 10000,
+      "claims": 30000,
+      "extractedChunks": 10000,
+      "profiledCanonicals": 30000,
+      "reviewCalls": 0,
+      "providerCalls": 0,
+      "queryLocalCalls": 36,
+      "queryBudgetTokens": 175,
+      "embeddingCalls": 1251,
+      "embeddingTexts": 40000,
+      "budgetTokens": 223564,
+      "indexingMs": 289627.287442,
+      "promotionMs": 726725.0702520001,
+      "peakRssBytes": 8192368640,
+      "corpusSha256": "103ca03b58669f3096ca4d6c9eed8c759c79b907e529221c745d711a009510b4",
+      "rowsRead": {
+        "graph": 541470,
+        "documents": 180072
+      },
+      "skipped": {
+        "identity": 0,
+        "width": 0,
+        "unresolvable": 0
+      },
+      "citationResolution": {
+        "supplied": 54,
+        "resolved": 54,
+        "ratio": 1
+      },
+      "retrieval": {
+        "p50Ms": 2869.5676179998554,
+        "p95Ms": 3439.4230000001844,
+        "samples": [
+          {
+            "questionId": "specific-equipment",
+            "ms": 2912.106861999957,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-funding",
+            "ms": 2820.173222000012,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-launch",
+            "ms": 2850.1761710001156,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "specific-archive-host",
+            "ms": 3067.0824180000927,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-timber",
+            "ms": 2900.072368999943,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "specific-produce",
+            "ms": 2821.628829000052,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "abstract-training",
+            "ms": 2873.6990780001506,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "abstract-grant-admin",
+            "ms": 2749.620773999952,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 11
+          },
+          {
+            "questionId": "abstract-cargo",
+            "ms": 2874.0602909999434,
+            "graphRows": 30076,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "abstract-festival-host",
+            "ms": 2869.5676179998554,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "abstract-restoration",
+            "ms": 2884.6590120000765,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "abstract-school-funding",
+            "ms": 2930.2615810001735,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "hop-shelves",
+            "ms": 2733.352924000006,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "hop-launch",
+            "ms": 2733.365146000171,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 9
+          },
+          {
+            "questionId": "hop-archive-host",
+            "ms": 3439.4230000001844,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "hop-timber",
+            "ms": 3038.0635149998125,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          },
+          {
+            "questionId": "hop-grant-admin",
+            "ms": 2781.576940000057,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 11
+          },
+          {
+            "questionId": "hop-opening",
+            "ms": 2734.789184999885,
+            "graphRows": 30082,
+            "documentRows": 10004,
+            "skipped": 0,
+            "citations": 3,
+            "localCalls": 2,
+            "budgetTokens": 10
+          }
+        ]
+      }
+    }
+  ],
+  "backendDecision": "scale-row-registered",
+  "physicalRequests": 0,
+  "identity": {
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD Ryzen 9 5900HX with Radeon Graphics",
+    "logicalCpus": 16,
+    "totalMemoryBytes": 33009840128,
+    "runtime": "node 24.20.0; V8 heap limit 8791261184 bytes",
+    "driver": "node:sqlite",
+    "loadAverage": [
+      4.36,
+      3.53,
+      3.17
+    ]
+  },
+  "receiptId": "c032ee6b844ce1a5e53f0c2014cb5b0c24555c98f8087141f66c5f853cce18ab"
+}

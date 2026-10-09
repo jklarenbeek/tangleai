@@ -1,13 +1,16 @@
 /** Logical graph reads never expose an uncommitted or implicitly staged contribution. */
 import { cloneJson } from '@jarenjs/core/object';
 import { readGraphSnapshotWithin,type GraphSnapshotRequest } from './snapshot.ts';
-import type { GraphProjection, GraphEntity, GraphRelation, GraphChunkProfile, GraphClaimSet, GraphContributionSnapshot, ProjectionWritePlan } from './contracts.gen.ts';
+import type { GraphProjection, GraphEntity, GraphRelation, GraphChunkProfile, GraphClaimSet, GraphContributionSnapshot, ProjectionWritePlan, LightRagEmbeddedBy } from './contracts.gen.ts';
 import type { LightRagPersistence, LightRagReadView, LightRagReadQuery } from './persistence.ts';
 import { createMemoryLightRagPersistence, type MemoryLightRagOptions } from './memory-persistence.ts';
 import { applyLightRagWritePlanWithin, type LightRagApplyReceipt } from './apply.ts';
 import { lightragFailure, type LightRagOutcome } from './errors.ts';
 export interface LightRagVisibility { includeStaged?: boolean; includeSuperseded?: boolean }
+/** Complete candidate rows, including invalid vectors; null requests the ordinary sweep. */
+export interface LightRagRankRequest { kind: 'entity' | 'relation'; identity: LightRagEmbeddedBy; vector: readonly number[] | Float32Array | Float64Array }
 export interface LightRagStore {
+    rankRows?(request: LightRagRankRequest): Promise<Array<GraphEntity | GraphRelation> | null>;
     readContributionSnapshot(request: GraphSnapshotRequest): Promise<GraphContributionSnapshot>;
     getProjection(id: string): Promise<GraphProjection | undefined>;
     listProjections(filter?: Partial<Pick<GraphProjection, 'sourceId' | 'versionId' | 'status'>>): Promise<GraphProjection[]>;

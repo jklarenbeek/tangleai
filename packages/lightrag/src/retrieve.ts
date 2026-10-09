@@ -21,8 +21,8 @@ export interface LightRagRetrievalOptions {
 }
 type GraphRow=GraphEntity|GraphRelation;
 type Selection<T extends GraphRow>={row:T;score:number};
-const compare=(a:{id:string;score:number},b:{id:string;score:number})=>b.score-a.score||(a.id<b.id?-1:a.id>b.id?1:0);
-const ordered=<T extends GraphRow>(rows:Map<string,Selection<T>>)=>[...rows.values()].sort((a,b)=>compare({id:a.row.id,score:a.score},{id:b.row.id,score:b.score}));
+export const compareLightRagScores=(a:{id:string;score:number},b:{id:string;score:number})=>b.score-a.score||(a.id<b.id?-1:a.id>b.id?1:0);
+const ordered=<T extends GraphRow>(rows:Map<string,Selection<T>>)=>[...rows.values()].sort((a,b)=>compareLightRagScores({id:a.row.id,score:a.score},{id:b.row.id,score:b.score}));
 const stamps=(projections:GraphProjection[])=>projections.map(row=>({id:row.id,sourceId:row.sourceId,versionId:row.versionId,contributionRevision:row.contributionRevision,head:row.head})).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
 /** Source heads determine the graph revision shown by retrieval and read surfaces. */
 export const lightRagGraphRevisionOf=(projections:GraphProjection[])=>lightragRevisionOf(stamps(projections.filter(row=>row.status==='active')));
@@ -47,25 +47,31 @@ export async function retrieveLightRag(options:LightRagRetrievalOptions):Promise
             if(!isVector(row.embedding,identity!.dims)){skip(kind,row.id,'width');return 'width';}return null;
         };
         function select<T extends GraphRow>(selected:Map<string,Selection<T>>,row:T,score:number){const old=selected.get(row.id);if(!old||score>old.score)selected.set(row.id,{row,score});}
-        function rank<T extends GraphRow>(kind:'entity'|'relation',rows:T[],keywords:string[],vectors:number[][],selected:Map<string,Selection<T>>){
+        async function rank<T extends GraphRow>(kind:'entity'|'relation',read:()=>Promise<T[]>,keywords:string[],vectors:number[][],selected:Map<string,Selection<T>>){
+            let sweep:T[]|undefined;
             for(const [index,keyword]of keywords.entries()){
+                // Full candidate traces require every row. A storage capability
+                // may order its native candidates, but the existing kernel and
+                // binary tie rule remain the public score authority.
+                const native=await options.store.rankRows?.({kind,identity:identity!,vector:vectors[index]});
+                const rows=native===null||native===undefined?(sweep??=await read()):[...native].sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0) as T[];
                 const ranked:Array<{row:T;id:string;score:number}>=[];
                 for(const row of rows){if(row.status!=='active')continue;const prune=validVector(kind,row);
                     if(prune){trace.push({id:row.id,kind,keyword,score:0,reason:kind==='entity'?'low':'high',fromId:null,prune});continue;}
                     ranked.push({row,id:row.id,score:cosineSimilarity(row.embedding,vectors[index])});
                 }
-                ranked.sort(compare);
+                ranked.sort(compareLightRagScores);
                 for(const [position,candidate]of ranked.entries()){
                     const prune=position>=limits.candidatesPerKeyword?'candidate-limit':null;
                     trace.push({id:candidate.id,kind,keyword,score:candidate.score,reason:kind==='entity'?'low':'high',fromId:null,prune});if(!prune)select(selected,candidate.row,candidate.score);
                 }
             }
         }
-        if(levels.low)rank('entity',await options.store.listEntities(),plan.lowLevelKeywords,lowVectors,selectedEntities);
-        if(levels.high)rank('relation',await options.store.listRelations(),plan.highLevelKeywords,highVectors,selectedRelations);
+        if(levels.low)await rank('entity',()=>options.store.listEntities(),plan.lowLevelKeywords,lowVectors,selectedEntities);
+        if(levels.high)await rank('relation',()=>options.store.listRelations(),plan.highLevelKeywords,highVectors,selectedRelations);
         const afterRanking=time(),roots=new Map([...selectedEntities].map(([id,value])=>[id,value.score]));let addedEntities=0,addedRelations=0;
         const expandEntities=async(requests:Array<{id:string;score:number;fromId:string;root:boolean}>)=>{
-            requests.sort((a,b)=>compare(a,b)||(a.fromId<b.fromId?-1:a.fromId>b.fromId?1:0));
+            requests.sort((a,b)=>compareLightRagScores(a,b)||(a.fromId<b.fromId?-1:a.fromId>b.fromId?1:0));
             const found=new Map((await options.store.listEntities({ids:[...new Set(requests.map(row=>row.id))]})).map(row=>[row.id,row]));
             for(const request of requests){const row=found.get(request.id);let prune:LightRagCandidate['prune']=null;
                 if(!row||row.status!=='active'){prune='unresolvable';skip('entity',request.id,'unresolvable');}
@@ -80,7 +86,7 @@ export async function retrieveLightRag(options:LightRagRetrievalOptions):Promise
         const adjacent=(await options.store.listRelations({entityIds:[...roots.keys()]})).filter(row=>row.status==='active').map(row=>{
             const origins=[row.sourceEntityId,row.targetEntityId].filter(id=>roots.has(id)).sort((a,b)=>(roots.get(b)!-roots.get(a)!)||(a<b?-1:1));
             return {row,id:row.id,score:roots.get(origins[0])??-Infinity,fromId:origins[0]};
-        }).filter(row=>row.fromId!==undefined).sort(compare),endpoints:Array<{id:string;score:number;fromId:string;root:boolean}>=[];
+        }).filter(row=>row.fromId!==undefined).sort(compareLightRagScores),endpoints:Array<{id:string;score:number;fromId:string;root:boolean}>=[];
         for(const candidate of adjacent){let prune:LightRagCandidate['prune']=validVector('relation',candidate.row);
             if(!prune&&!selectedRelations.has(candidate.id)&&addedRelations>=limits.expansionRelations)prune='expansion-limit';
             trace.push({id:candidate.id,kind:'relation',keyword:null,score:candidate.score,reason:'one-hop',fromId:candidate.fromId,prune});
@@ -106,7 +112,7 @@ export async function retrieveLightRag(options:LightRagRetrievalOptions):Promise
             chunkScores.set(id,Math.max(chunkScores.get(id)??-Infinity,score));trace.push({id,kind:'chunk',keyword:null,score,reason:'support',fromId:row.id,prune:null});void kind;
         }
         const sourceCounts=new Map<string,number>(),candidates:LightRagChunkContext[]=[],citations:DocumentCitation[]=[];
-        for(const {id,score}of [...chunkScores].map(([id,score])=>({id,score})).sort(compare)){
+        for(const {id,score}of [...chunkScores].map(([id,score])=>({id,score})).sort(compareLightRagScores)){
             const {source,chunk}=active.get(id)!,count=sourceCounts.get(source.id)??0;
             if(count>=limits.chunksPerSource){mark('chunk',id,'source-limit');continue;}sourceCounts.set(source.id,count+1);
             candidates.push({id,sourceId:source.id,versionId:chunk.versionId,text:chunk.text,score});
