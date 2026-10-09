@@ -382,7 +382,7 @@ Nearby queries prove that nine contiguous native cells cover the requested
 radius, then refine their candidates by geodesic distance. A cell prefix never
 establishes proximity. The SQLite gazetteer adapter verifies its full immutable
 inventory and coordinate mirrors on reads and replays loads with zero writes.
-The [registered scale receipt](../benchmark/receipts/place-scale.json) retains
+The [registered scale receipt](../benchmark/receipts/place-scale-2026-10-08.json) retains
 the in-memory candidate sweep: both measured runtimes meet the target, so no
 derived bbox or R-tree is adopted. Full adapter validation and semantic
 retrieval are outside that timing claim.
@@ -393,6 +393,27 @@ The [API guide](../packages/memory/docs/PLACE.md),
 Reporting-session annotations do not establish historical trip times; source
 point proxies do not establish traveled routes. Ordinary routing remains off,
 live extraction is unmeasured and canonical LoCoMo controls remain unchanged.
+
+## Optional graph vector storage
+
+The default graph model and retrieval sweep remain explicit controls. An opt-in
+graph declaration adds native vector columns only to canonical entities and
+relations. Jaren owns native candidate plans, vector kernels, physical backfill,
+shadow validation and migration history. Tangle checks settled graph identities
+and the native plan, preserves complete retrieval traces, and measures actual
+physical rows and complete-call latency. The
+[registered scale report](VECTOR_SCALE.md) derives its decision from exact parity,
+the unchanged 10,000-chunk target, and operational costs.
+
+Identity migration prepares every active source in a separate bounded store.
+One revision-fenced immediate transaction then uses the existing document/graph
+promotion owner for the complete swap. Durable reservations prevent removal of
+columns needed by a pending stage. Retained preparations and claim-bound profiles
+permit exact rollback without new embedding calls. Explicit abandonment and
+rollback disposal retain audit evidence; column removal checks their state again
+inside the native migration. Normal imports and ordinary retrieval run no DDL.
+See the [store API](../packages/store/README.md#optional-graph-vector-storage) and
+[disposable example](../examples/vector-migration.ts).
 
 ## Immutable consolidation
 

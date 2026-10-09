@@ -12,7 +12,7 @@ import { validatePlaceShape } from './place-validation.ts';
 import type { Report, Source, Outcome, Measurement, Counts, Summary, PlaceScaleReceipt } from './place-report.types.ts';
 import type { PlaceCoverage } from '@tangleai/memory/place';
 import { placeAblation } from './place-ablation.ts';
-import { readPlaceScaleReceipt, validatePlaceScaleReceipt, placeScaleIndex } from './place-scale-receipt.ts';
+import { readPlaceScaleReceipt, validatePlaceScaleReceipt, placeScaleIndex, PLACE_SCALE_RECEIPT } from './place-scale-receipt.ts';
 
 export interface PlaceContext { loaded: LoadedPlaceFixture; source: Source; locomo: Report['locomo']; scaleReceipt: PlaceScaleReceipt; }
 export interface PlaceRuntimeMeasurement { outcome: Outcome; coverage: PlaceCoverage; }
@@ -24,7 +24,7 @@ export async function placeContext(loaded?: LoadedPlaceFixture, root = process.c
       'benchmark/lib/place-validation.ts', 'benchmark/lib/place-fixture.ts', 'benchmark/lib/place-oracle.ts', 'benchmark/lib/place-projection.ts',
       'benchmark/lib/place-baselines.ts', 'benchmark/lib/place-conformance.ts', 'benchmark/lib/place-report.types.ts', 'benchmark/lib/place-render.ts',
       'benchmark/lib/place-runtime.ts', 'benchmark/scripts/place-backend.ts', 'scripts/runtime-fixture.ts',
-      'benchmark/lib/place-ablation.ts', 'benchmark/lib/place-scale.ts', 'benchmark/lib/place-scale-receipt.ts', 'benchmark/place-scale.ts', 'benchmark/receipts/place-scale.json',
+      'benchmark/lib/place-ablation.ts', 'benchmark/lib/place-scale.ts', 'benchmark/lib/place-scale-receipt.ts', 'benchmark/place-scale.ts', PLACE_SCALE_RECEIPT,
       'benchmark/lib/locomo.ts', 'benchmark/lib/locomo-corpus.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts', 'benchmark/lib/report-envelope.ts',
       `${PLACE_FIXTURE_PATH}/manifest.json`, ...PLACE_MEMBERS.map(p => `${PLACE_FIXTURE_PATH}/${p}`)],
     ['packages/core', 'packages/memory', 'packages/models', 'packages/jaren', 'packages/store']),

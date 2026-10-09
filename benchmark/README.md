@@ -16,6 +16,31 @@ Explicitly named inputs are always bound. This keeps a fresh checkout and a
 working checkout comparable without hiding reviewed source edits or depending
 on leftover compiled declarations.
 
+## Registered graph vector comparison
+
+`npm run benchmark:vector -- --require` measures the unchanged graph ladder at
+100, 1,000 and 10,000 chunks with 64-dimensional embeddings. A detached resident
+oracle, SQLite sweep and explicit native graph columns answer the same eighteen
+hybrid questions and preserve every candidate trace, score, context and citation.
+`--check --require` validates retained source bindings, raw samples, quantiles,
+native plans, physical counts and the derived decision without rerunning the
+expensive ladder. `--sizes 2` is a development probe and cannot qualify a release.
+
+The command writes the canonical report, a dated receipt and
+[`docs/VECTOR_SCALE.md`](../docs/VECTOR_SCALE.md). Source, registration, corpus,
+qualification and semantic digests are independent of physical clocks. The
+dated receipt retains complete-call, fetch and ranking samples, SQLite rows,
+native query counters, RSS, file sizes, builds, backfills, and complete isolated
+128-dimensional staging. Staging prepares the full corpus and then explicitly
+abandons its reservation; its timing does not claim a live identity swap.
+
+Native production retention requires exact parity, complete hybrid p95 at
+10,000 chunks of at most 250 ms, and all operational cost evidence. Losses keep
+the production sweep and both instrument paths. Memory/document recall, LoCoMo
+and the ledger are outside this graph-specific trigger. No provider is called.
+The released trigger is checked against its original commit and every declared
+source file. An absent trigger is a stated optional skip; required mode refuses.
+
 ## Why this is a workspace of its own
 
 `package.json` here is private and separate on purpose. CONVENTIONS §1 binds
@@ -191,7 +216,7 @@ verifies and preserves those dated results without buying another execution.
 |---|---|---|
 | [`cgt.ts`](./cgt.ts) | Authored compositional fixture: oracle and supplied-rule ceilings, seeded chance, exact lookup and native retrieval controls; novel-pair losses, four leakage guards, five scripted candidate evaluations and six unrun live rows. Strict gates publish ties and missing retention as refusals; no candidate earns scientific approval. The native scripted rollback drill records 32 immutable pins and exact restoration by receipt ID; all five scientific claim conditions remain `not-run`. [Report](../docs/CGT_BENCHMARK.md). | `npm run benchmark:cgt` (`--check`, `--out-dir`, `--json`, `--md`, `--require gates`, `--live` dry plan) |
 | [`place.ts`](./place.ts) | Sourced annotation coverage, native oracle, seeded control and measured ordinary/temporal/place rows, with equal-budget paired losses and explicit refusals. No result is a LoCoMo score. [Report](../docs/PLACE_BENCHMARK.md) | `npm run benchmark:place` (`--json`, `--md`, `--check`, `--require`) |
-| [`place-scale.ts`](./place-scale.ts) | Registered sparse candidate sweep on Node/Bun; bbox and R-tree trials only after a target miss. Raw samples, native plans and quantiles remain in the separate [receipt](receipts/place-scale.json). | `npm run benchmark:place:scale` (`--json`, `--check`) |
+| [`place-scale.ts`](./place-scale.ts) | Registered sparse candidate sweep on Node/Bun; bbox and R-tree trials only after a target miss. Raw samples, native plans and quantiles remain in the separate [receipt](receipts/place-scale-2026-10-08.json). | `npm run benchmark:place:scale` (`--json`, `--check`) |
 | [`research.ts`](./research.ts) | Core, guarded-lesson and computational/tabular row families feed one registered ablation matrix. Comparisons retain unknown denominators, unequal identities, losses and activation refusals. An independent artifact reader resolves manuscript numbers, source passages and provenance, with retained fabricated-number and dangling-citation controls. ARC-Bench is `not-run: manifest-unpinned`; no live provider tier or spending flag is supplied. [Report](../docs/RESEARCH_BENCHMARK.md). | `npm run benchmark:research` (`--check`, `--out`, `--rows matrix\|lessons\|domains`, `--audit`, `--require registration\|oracle\|bundles\|analysis\|writing`) |
 | [`research-query.ts`](./research-query.ts) | Native query handoff with fixture/report identities, all eight rows, public record names and complete operating-mode disclosures. | `npm run benchmark:research:handoff` (`--check`) |
 | [`trading.ts`](./trading.ts) | Causal fixture controls, five baselines, complete scripted native workflow, registered ablations, durable recovery and explicit licensed-replay availability. [Report](../docs/TRADING_BENCHMARK.md). | `npm run benchmark:trading -- --require complete` (`--check`, `--profile paper`, `--live` dry plan) |

@@ -150,7 +150,7 @@ table retains temporal eligibility's five location losses alongside its 40 wins;
 distance/proximity gains over baselines without geometry are labelled structural.
 Correct refusals are scored, and no paired interval or live-model gain is claimed.
 
-The separate [candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale.json)
+The separate [candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale-2026-10-08.json)
 measures the shared sweep over 50,000 sparse synthetic points. Node and Bun both
 meet the 50 ms warm p95 target, so no bbox or R-tree is adopted. These timings
 exclude gazetteer validation, semantic ranking and full SQLite adapter I/O.

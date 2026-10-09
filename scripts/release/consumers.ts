@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import vm from 'node:vm';
 import ts from 'typescript';
 import { ROOT, config, npm, readJson, writeJson, inputHash, integrity, sha256, isMain } from './common.ts';
-import type { Artifacts } from './build.ts';
+import { jsonDeclarationAttributes, type Artifacts } from './build.ts';
 import { readFoundationArtifacts, verifyFoundationArtifacts } from '../jaren-artifacts.ts';
 import { checkProgramBundle } from '../check-program-bundle.ts';
 import { runRuntimeFixture } from '../runtime-fixture.ts';
@@ -86,6 +86,23 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     for (const file of ['lightrag-consumer.mjs', 'lightrag-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'lightrag-consumer.mjs']);
     await sqliteFixture('bun', ['lightrag-consumer.mjs']);
+    execFileSync('bun', ['build', 'examples/vector-migration.ts', '--target=node', '--format=esm', '--packages=external', '--outfile=' + resolve(directory, 'vector-example.mjs')],
+      { cwd: root, stdio: 'inherit', timeout: 120_000 });
+    // External JSON imports need the same attributes as installed declarations.
+    // The pinned bundler omits them from this example's private fixture helpers.
+    const vectorExample = resolve(directory, 'vector-example.mjs');
+    const vectorSource = ts.createSourceFile(vectorExample, readFileSync(vectorExample, 'utf8'), ts.ScriptTarget.ES2022, true, ts.ScriptKind.JS);
+    const vectorImports = ts.transform(vectorSource, [jsonDeclarationAttributes]);
+    try {
+      const source = vectorImports.transformed[0];
+      assert.ok(ts.isSourceFile(source));
+      writeFileSync(vectorExample, ts.createPrinter({ newLine: ts.NewLineKind.LineFeed }).printFile(source));
+    } finally { vectorImports.dispose(); }
+    assert.ok(!readFileSync(resolve(directory, 'vector-example.mjs'), 'utf8').includes(root), 'Graph vector consumer must use installed package imports');
+    cpSync(resolve(root, 'benchmark/fixtures/lightrag'), resolve(directory, 'benchmark/fixtures/lightrag'), { recursive: true });
+    cpSync(resolve(root, 'test/release/fixtures/vector-consumer.mjs'), resolve(directory, 'vector-consumer.mjs'));
+    await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'vector-consumer.mjs']);
+    await sqliteFixture('bun', ['vector-consumer.mjs']);
     writeFileSync(resolve(directory, 'hera-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/hera.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     for (const file of ['hera-consumer.mjs', 'hera-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'hera-consumer.mjs']);

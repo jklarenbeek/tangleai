@@ -1,5 +1,6 @@
 /** Render measured losses, unavailable evidence and the exact registered denominator. */
 import type { Report, PlaceScaleReceipt } from './place-report.types.ts';
+import { PLACE_SCALE_RECEIPT } from './place-scale-receipt.ts';
 export function renderPlaceReport(r: Report, receipt: PlaceScaleReceipt): string {
   if (r.index.receiptSha256 !== receipt.sha256) throw Error('place renderer received another scale receipt');
   const c = r.coverage, f = r.floor;
@@ -50,7 +51,7 @@ export function renderPlaceReport(r: Report, receipt: PlaceScaleReceipt): string
     '|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|',
     ...r.ablation.pairs.map(p => `| ${p.left} | ${p.right} | ${p.kind} | ${p.comparison} | ${p.questions} | ${p.paired} | ${p.unpaired} | ${p.wins} | ${p.losses} | ${p.ties} | ${p.refusedLeft} | ${p.refusedRight} |`), '',
     '## Registered candidate scale decision', '',
-    `Separate timing receipt: [place-scale.json](../benchmark/receipts/place-scale.json), SHA-256 \`${receipt.sha256}\`; measurement source \`${receipt.source.sha256}\`. The canonical conformance JSON binds this receipt and decision without copying observed timings. Run \`npm run benchmark:place:scale -- --check\` to verify it without sampling a clock.`, '',
+    `Separate timing receipt: [${PLACE_SCALE_RECEIPT.split('/').at(-1)}](../${PLACE_SCALE_RECEIPT}), SHA-256 \`${receipt.sha256}\`; measurement source \`${receipt.source.sha256}\`. The canonical conformance JSON binds this receipt and decision without copying observed timings. Run \`npm run benchmark:place:scale -- --check\` to verify it without sampling a clock.`, '',
     `Registered ${receipt.registration.entries} entries, ${receipt.registration.probes} probes, ${receipt.registration.warmups} warmups, seed ${receipt.registration.seed}, precision ${receipt.registration.precision}, radius ${receipt.registration.radiusMetres} metres. ${receipt.registration.distribution}. Decision: **${receipt.decision}**; target met: **${receipt.targetMet}**, against **${receipt.registration.targetP95Ms} ms** warm p95 on every measured runtime. Bbox is tried only after the sweep fails; R-tree requires a failing bbox and the native capability.`, '',
     '| Runtime | Shape | Used prefilter | Cold p50 ms | Cold p95 ms | Warm p50 ms | Warm p95 ms | Warm candidate sum | Warm refined sum | Status |',
     '|---|---|---|---:|---:|---:|---:|---:|---:|---|',

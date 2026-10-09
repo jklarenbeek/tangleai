@@ -44,8 +44,15 @@ revisions. Identical retained contributions reactivate without new claim writes.
 
 Write plans bind retained preparation in their request and prior projection
 snapshots. Projection writes omit that duplicate payload; the checked apply
-boundary restores its exact bytes before storage. Pass the complete plan to
-`storedLightRagWrite(write, plan)` when inspecting a physical write. Recompute
+boundary restores its exact bytes before storage. The optional
+`compactPreparations` planner setting stores an incoming contribution plan once
+and binds prior cached preparations by their canonical hashes. The transaction
+checks those hashes against retained bytes before resolving any writes or replay;
+a missing or changed cache refuses the transition. This bounds serialization
+without removing stored evidence. `checkLightRagWritePlanWithin` returns the
+resolved `preparationSources`; pass them to
+`storedLightRagWrite(write, preparationSources)` when inspecting physical writes.
+The complete plan also supplies those sources for the default representation. Recompute
 serialized write plans created with the older expanded representation before
 applying them; stored projections and retained contributions keep their format.
 
@@ -127,6 +134,20 @@ indexed adjacency pass from the initial roots. Newly reached endpoints do not
 start another pass. Identity or width mismatches are skipped and counted. Every
 canonical support address must resolve to the source's active document version;
 source and graph fences are checked again before a result is returned.
+
+The optional `LightRagStore.rankRows` seam returns complete candidate rows or
+`null` to request the ordinary sweep. Retrieval retains the same cosine kernel,
+binary tie order, invalid-vector counts and full rejected-candidate trace.
+Storage details stay in `@tangleai/store`'s explicit graph vector capability;
+the default store uses the sweep. A bounded top-k native window alone cannot
+reproduce this public trace. The [scale report](../../docs/VECTOR_SCALE.md)
+measures the complete retrieval call, including its final validation and copy.
+
+Complete embedding-identity swaps use the joint document/graph staging owner.
+Inactive canonicals retain their own validated identity and evidence. Active
+and incoming graph contributions still require the current settled identity.
+A retained rollback can supply its original claim-bound profiles during rebase,
+so exact rollback preserves profile text as well as vectors and support.
 
 `LIGHTRAG_LIMITS` records 8 keywords per level, 10 candidates per keyword,
 20 added entities, 40 added relations, 3 citation chunks per source and 4,000

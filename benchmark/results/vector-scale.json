@@ -1,0 +1,3002 @@
+{
+  "document": "vector-scale",
+  "schemaVersion": 1,
+  "status": "measured",
+  "registration": {
+    "version": "graph-vector/1",
+    "sizes": [
+      100,
+      1000,
+      10000
+    ],
+    "dims": 64,
+    "model": "hash-trigram-64",
+    "maxP95Ms": 250,
+    "warmupQueries": 1,
+    "questions": 18,
+    "seed": 17753,
+    "randomRows": 128,
+    "randomProbes": 16,
+    "randomK": 10,
+    "randomOverlapMin": 0,
+    "randomOverlapMax": 32,
+    "scoreEquality": "Object.is",
+    "rankingOrder": "descending-score-then-binary-id",
+    "scope": "joint-lightrag-entities-and-relations",
+    "nativeRandomRows": 1000,
+    "nativeRandomProbes": 20,
+    "nativeWindows": [
+      1,
+      10,
+      37,
+      1000
+    ]
+  },
+  "registrationId": "cc57b80e790a059b61ad754cb12e8dafe4908eb4afe8949f92c77813d0d36619",
+  "trigger": {
+    "releaseCommit": "2be71c633567e6f1e0598fdc6543259862318013",
+    "releaseVersion": "0.40.0",
+    "receiptSha256": "3267440daef115d13c87711a0411ed0c005d5f9bfdd47ef0b97b1a50db64252b",
+    "receiptId": "c032ee6b844ce1a5e53f0c2014cb5b0c24555c98f8087141f66c5f853cce18ab",
+    "sourceSha256": "87033f86e03fa858525f2119ad5be80059d2c82b97b193a740dc45e25dda2a69",
+    "fixtureId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+    "registrationId": "9f3eea9b56bd6237ed3025553259e8db3da6c61182e2ff92c933915fbb3488a5"
+  },
+  "source": {
+    "files": [
+      {
+        "path": "benchmark/fixtures/lightrag/ladder-registration.json",
+        "sha256": "f07a23ee3b4ca0911523d42492fe03d0980e76ede47a0e39b0e35f00aa298d13"
+      },
+      {
+        "path": "benchmark/fixtures/lightrag/manifest.json",
+        "sha256": "6706da9364b20d2d023ab18cd0235cf0e9a43472760bc77a36d5f986f9a2bf24"
+      },
+      {
+        "path": "benchmark/fixtures/vector/registration.json",
+        "sha256": "6af75601591c2bb22d34dc43261e0de3c461f675bbf5ca9d722cc14b889ca666"
+      },
+      {
+        "path": "benchmark/fixtures/vector/trigger-ladder.json",
+        "sha256": "3267440daef115d13c87711a0411ed0c005d5f9bfdd47ef0b97b1a50db64252b"
+      },
+      {
+        "path": "benchmark/fixtures/vector/trigger.json",
+        "sha256": "8f31809f15fdf23e521456ab2c50132f8d3509ffd54a482e5d70a2754e93f36b"
+      },
+      {
+        "path": "benchmark/lib/lightrag-corpus.ts",
+        "sha256": "ba6ef4fe9037cd2c555151501cf241b379a18afd7ae3303bc937a3afac57f14e"
+      },
+      {
+        "path": "benchmark/lib/lightrag-ladder-corpus.ts",
+        "sha256": "461544b3b327557e76676d943e8740fed1a1dbe66a286a3b7d277e3f3b94ccb6"
+      },
+      {
+        "path": "benchmark/lib/lightrag-ladder.ts",
+        "sha256": "a490606195f012f78677a69c048ca15e4ebe5e98a611c2fbf78953b4ff6ebe3f"
+      },
+      {
+        "path": "benchmark/lib/lightrag.ts",
+        "sha256": "15e6cdd1b76daaf9cbdb69f73e145e0b9976f23f6c67f90a84bb3eed17b20d21"
+      },
+      {
+        "path": "benchmark/lib/source-manifest.ts",
+        "sha256": "1ef15c822791160d23f1b97e80f4dc7d91558b65575aedd8c96e45aaac118367"
+      },
+      {
+        "path": "benchmark/lib/stats.ts",
+        "sha256": "36bda7652aba14360e699adb9ef45cba11cfbeb062ee653a444dfa06390d0dee"
+      },
+      {
+        "path": "benchmark/lib/validate.ts",
+        "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
+      },
+      {
+        "path": "benchmark/lib/vector-controls.ts",
+        "sha256": "f5685e9ee93ae6e21852f02da403730aec3d0aedc493994d55b837346fbdaa85"
+      },
+      {
+        "path": "benchmark/lib/vector-native-parity.ts",
+        "sha256": "42dfa565bbb6d90344a08cc01762138e12c779bf3d6453f321fb1fd346da66ca"
+      },
+      {
+        "path": "benchmark/lib/vector-observation.ts",
+        "sha256": "6c5ba72d006d04f495fbe6b1b513d0393a3096709b343c0092b6005dc7028e89"
+      },
+      {
+        "path": "benchmark/lib/vector-parity.ts",
+        "sha256": "51553b106a574e1075e62676fd7b56da23140a7aeacda196120ca689e4a76b23"
+      },
+      {
+        "path": "benchmark/lib/vector-resident.ts",
+        "sha256": "adcef566a701e20769dfdb48ee60ae25cdeb6fae4d0e930ca7cc5b536de9f447"
+      },
+      {
+        "path": "benchmark/lib/vector-scale.ts",
+        "sha256": "a2e2c393ddaaad2c1f17812759a4f5e371868a73fb1cfc7b5f9cff0f242e50d1"
+      },
+      {
+        "path": "benchmark/lib/vector-scale.types.ts",
+        "sha256": "0e5ef3d94d6b51b7e7fc55a0ec9b07acf22c165be80398fcab76145cefb51463"
+      },
+      {
+        "path": "benchmark/lib/vector-staging-cost.ts",
+        "sha256": "a52598fb650352afb19edf5bdb07afa2e402a7eeb436f5057bb4eaf88c82dd07"
+      },
+      {
+        "path": "benchmark/schemas/vector-scale.schema.json",
+        "sha256": "f75ca6a7a652ba66bdf8e3c344b2bffe70039d25be4ad47736f946030123f744"
+      },
+      {
+        "path": "benchmark/vector-scale.ts",
+        "sha256": "fcca2d3e93f147e065492e24c6f2228909fd88bceafa9a366d786ab3d30925d0"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "7dbdb59366c33e6480b918fc8d1dbe44083b4ccc765a18a16a6a2c3827c356af"
+      },
+      {
+        "path": "package.json",
+        "sha256": "772aebb360af690461628f737b907b94e3f69d1ac2a2927ee454b06c1b4615ce"
+      },
+      {
+        "path": "packages/agents/package.json",
+        "sha256": "fa1e51b457d8372ff409373632818dfa46abdc3dd40c23834684ea653b1faeb9"
+      },
+      {
+        "path": "packages/agents/src/agent.ts",
+        "sha256": "a6fcef581d5e7e319e3895f09f1ceef35dfab1bde80b51b2bf07535288e6e57e"
+      },
+      {
+        "path": "packages/agents/src/index.ts",
+        "sha256": "36355e7726b6d9786a3158732d9ddd899804b61226211ea5add60c11238754d9"
+      },
+      {
+        "path": "packages/agents/src/program-result.ts",
+        "sha256": "50ed9252fc6783683e2f5e8bdf1571c3b3cf94e8858f31c4eb4a1dd803196e88"
+      },
+      {
+        "path": "packages/agents/src/program-session.ts",
+        "sha256": "995166b26fb0fe43b1eb8b8b3d0839ea723a0d609ed676a17474d60e65e2d596"
+      },
+      {
+        "path": "packages/agents/src/program-shape.ts",
+        "sha256": "2d27247e01db6682e4187adc528c48aa8bca01bf61930ca52c27bd4d00494eca"
+      },
+      {
+        "path": "packages/agents/src/program.ts",
+        "sha256": "7be2e758ec4cbaeba82b71886ed07619c5be80080f79aa3104b433728e1d3d64"
+      },
+      {
+        "path": "packages/agents/src/recursive.ts",
+        "sha256": "8a7de531f5c831091ea6c5c321f6ac145bf47cbab067b8ebcdcc52b05142d44d"
+      },
+      {
+        "path": "packages/agents/src/refine.ts",
+        "sha256": "7f2a6fb02c6d92716788708917b944402205debaf17cc07e6810ee3117e92a29"
+      },
+      {
+        "path": "packages/agents/src/schemas/program.ts",
+        "sha256": "05814c19ed9ae525d0662fea927f83341eabef86ffc44e026ebe2b01a33206b2"
+      },
+      {
+        "path": "packages/agents/src/toolbox.ts",
+        "sha256": "0622a7ba6479de0a6fcdf9e0689fa36468df3d32dd7d06f098df97adb6fdc9d1"
+      },
+      {
+        "path": "packages/context/package.json",
+        "sha256": "64ff2d6bee0110b6a6cc820bd7bb6a00e2bb0e5bae4c7004cff7c06597870a7b"
+      },
+      {
+        "path": "packages/context/src/archive.ts",
+        "sha256": "0a92d5b36f08d2ee58b73270b5981a4d0a4158354533f22442e15098b8d09173"
+      },
+      {
+        "path": "packages/context/src/environment.ts",
+        "sha256": "0b8e0942db6b0cecf3df013e741aae6e068f25a83ea60101780f1d0b818a7e0b"
+      },
+      {
+        "path": "packages/context/src/evidence.ts",
+        "sha256": "7112cfab33b523b7578ab821ff44128360df87bc2b41060d7083ea8995cd0aae"
+      },
+      {
+        "path": "packages/context/src/index.ts",
+        "sha256": "ea700a38bf2e4f58553d9914a7e14d25a4ee82fc00e48af1918a66151ce17056"
+      },
+      {
+        "path": "packages/context/src/ledger.ts",
+        "sha256": "e1f70b6e3c6c5e5d77272f42a8019d8e112616070ad8507cefc737e49eaeace9"
+      },
+      {
+        "path": "packages/context/src/recall.ts",
+        "sha256": "97145268dee1db55ca5c94e5c3882cb45ed4ab0751895a2381a9ab33d6caeab1"
+      },
+      {
+        "path": "packages/context/src/retention.ts",
+        "sha256": "3ee9e01daae7c170207b468ac0acd1a2bbb4a7af5bcd7ee4c96c02fa658f9bba"
+      },
+      {
+        "path": "packages/context/src/schemas/evidence.ts",
+        "sha256": "1d2cdd73857a14b1c800e9e0cc6fad6f3772adce1aedfab29ec2dc46ac217a65"
+      },
+      {
+        "path": "packages/context/src/schemas/ledger.ts",
+        "sha256": "0eebad0ce2fe991c33b308753e3f4614a58a62a54aaf51a99b50ad5ac98a16e1"
+      },
+      {
+        "path": "packages/context/src/schemas/patch.ts",
+        "sha256": "f23094574686cf6d7f9ebe7c132e1fac4a71bfab99a0c4dcd5a4bb4ac0320690"
+      },
+      {
+        "path": "packages/context/src/storage/memory.ts",
+        "sha256": "6a80da5238cb8e3f2b45c8c2ab772dea295db38b2a720d4590e243e97af95fe2"
+      },
+      {
+        "path": "packages/context/src/storage/slot.ts",
+        "sha256": "f7fcbc6eaa5bb6e23bde496d8f5def4b5aa2abea0f84dcc40c46b4797beaedb5"
+      },
+      {
+        "path": "packages/context/src/storage/transaction.ts",
+        "sha256": "92b859d4dd5b834f71707493d7221d146ac58441139131683d42e83ecfdddd4b"
+      },
+      {
+        "path": "packages/core/package.json",
+        "sha256": "326409aec54b3acbb912eea1ca7ff3d3d55811fc1fb813d1af2e5602b560601c"
+      },
+      {
+        "path": "packages/core/schemas/consolidation.schema.json",
+        "sha256": "b4bc1fd472f846c38d73ac375ba00255d2a9811bdeaa238d8ce937a1fd093296"
+      },
+      {
+        "path": "packages/core/schemas/place.schema.json",
+        "sha256": "4fe51c587fad2dea8ba88aeb5b1f84d8e845dde130dadacbe7d443003b3bb931"
+      },
+      {
+        "path": "packages/core/schemas/temporal.schema.json",
+        "sha256": "e9718b1e84443d5bf38acdd11455dc49a59fb4c489e8ec37adf70a58c601970b"
+      },
+      {
+        "path": "packages/core/src/clustering.ts",
+        "sha256": "187735729918d97b7c95f666a6a6cbbe1bd34fb93d016aa9df8300d8d516aea5"
+      },
+      {
+        "path": "packages/core/src/errors.ts",
+        "sha256": "3da1bad0dec4172170e80cc3543758bcf195ed3c4817e92c635194c472ec8979"
+      },
+      {
+        "path": "packages/core/src/http-capture.ts",
+        "sha256": "9f2a0b9bbd8762483f71e2e5d209da1f0fc6bd6aa8e364a40f8fc624ab41ae2c"
+      },
+      {
+        "path": "packages/core/src/index.ts",
+        "sha256": "198c9ab461507bfaae110e000bd4182ac501940e0ae8d8f88096cfe4b91d027c"
+      },
+      {
+        "path": "packages/core/src/lexical.ts",
+        "sha256": "4f10e2230c09f8e07a73176833e63c3b6c43931fd0b3d6138ba5d3327cd4b4f8"
+      },
+      {
+        "path": "packages/core/src/schemas/consolidation-definition.ts",
+        "sha256": "8f733fba2344927440ee97fc424809b0b3de8ec030a65c770a7567b79f81c63b"
+      },
+      {
+        "path": "packages/core/src/schemas/consolidation.gen.ts",
+        "sha256": "1f898c4e52d631deb5292717e89ad8c75091ecf5537a5d508a29561e5886c3df"
+      },
+      {
+        "path": "packages/core/src/schemas/consolidation.ts",
+        "sha256": "83520df75b1cd0aea4180406128db0abc2a700f2386418587b339cca3523c594"
+      },
+      {
+        "path": "packages/core/src/schemas/memory.ts",
+        "sha256": "0d38bcbf2ee4d4c18dc0980a4f827d96d5767cb056fababea4940f2e0c6a38d4"
+      },
+      {
+        "path": "packages/core/src/schemas/place-definition.ts",
+        "sha256": "98b03ecc58a02a26b38ca3e09d76024c7c40f6c2daf433fbc2c826b96586481d"
+      },
+      {
+        "path": "packages/core/src/schemas/place.gen.ts",
+        "sha256": "5031495c50dff62af9a573d852bd5f9e1297aaba5ec424d242c2970cae658c15"
+      },
+      {
+        "path": "packages/core/src/schemas/place.ts",
+        "sha256": "f50a75a6aa1e56e6f73bbb175c021a164d94a57cf0c6063936d7ac7ccbfe13f4"
+      },
+      {
+        "path": "packages/core/src/schemas/temporal.gen.ts",
+        "sha256": "1c7e78e64191c0176d76a2b6ab5b5b5e80d551b32ff842763430d144056abe4c"
+      },
+      {
+        "path": "packages/core/src/schemas/temporal.ts",
+        "sha256": "9ff3de1a96c633d8356f86dd7b605c712134819a635eb7da6513cfb36dfced4e"
+      },
+      {
+        "path": "packages/core/src/tokens.ts",
+        "sha256": "3ed5be7b4a494a31eeb603467084fe2c3660dd9f745ccf93d029f76c93c9d6f5"
+      },
+      {
+        "path": "packages/documents/package.json",
+        "sha256": "c381e3120733ae7b4fa833a1d53163213875cb5cba7dc041a4f45d63912a89b6"
+      },
+      {
+        "path": "packages/documents/src/browser.ts",
+        "sha256": "46921cffac282c89634a97472cbac3b5b939d718a134642c5330e42fc9a00ea4"
+      },
+      {
+        "path": "packages/documents/src/chunking.ts",
+        "sha256": "d53994760b67c59e7f1b3e8f1111f68bd9dee3f3b428fc490d9ae9d52b3ab7b7"
+      },
+      {
+        "path": "packages/documents/src/contracts.ts",
+        "sha256": "888e282066482201552d329d46b7925b9d536da63b53e67982df497f48926d5a"
+      },
+      {
+        "path": "packages/documents/src/extract-common.ts",
+        "sha256": "3d0bd73e702d677d5a9a11d1a358ca01b7206d1f1837df3acefd25c36dfee9f1"
+      },
+      {
+        "path": "packages/documents/src/extract-static.ts",
+        "sha256": "e53702569f261ac12add6156db712b1d1e9e84ee72c0921884c2789994527864"
+      },
+      {
+        "path": "packages/documents/src/extract.ts",
+        "sha256": "2730ca7dac406865133ca3ba014789901b9fe7353597077bc6328a7b86bcab2d"
+      },
+      {
+        "path": "packages/documents/src/fetch.ts",
+        "sha256": "c16c63edbe192aaa6273a16b115149fe8e2fbf9b6519985450df576f39a85920"
+      },
+      {
+        "path": "packages/documents/src/grounding.ts",
+        "sha256": "5de1bcb66ef6dbd31872c3541195f70905358d0ba7b9f0e49871c2a1c879acf3"
+      },
+      {
+        "path": "packages/documents/src/index.ts",
+        "sha256": "1689484279c75431c2b54542bfea7fd680f9a1a9d29dcf2e0234b2caa142bcfe"
+      },
+      {
+        "path": "packages/documents/src/ingest.ts",
+        "sha256": "a1d1ead8cbc500ea71169f664852d86d3ed1d2af2f65952d356ae2caa6044251"
+      },
+      {
+        "path": "packages/documents/src/retrieval.ts",
+        "sha256": "62cee952bb02f60c33b27e69b7e28b4a9d464ee38258523ca786ebc9a47ace92"
+      },
+      {
+        "path": "packages/documents/src/url-policy.ts",
+        "sha256": "15d22a3916e39395b7f4dccbd31acf507b1707e535540ab630fa8d8237754ffe"
+      },
+      {
+        "path": "packages/lightrag/artifacts/prompts.json",
+        "sha256": "e2d2cce2d4c680d9385f352510e8286e34e6d0402f3e0c77fc2c72d8af9ff4da"
+      },
+      {
+        "path": "packages/lightrag/package.json",
+        "sha256": "f958c5dc07ea5d565b50f084a6bbfbd5db072cb6f9f514fb5c6a6cdb74a88791"
+      },
+      {
+        "path": "packages/lightrag/schemas/lightrag.schema.json",
+        "sha256": "3959f15b75a3214494fa6c34cc4f6b87b9e003250d6ab236bc6c3733f4e0f7db"
+      },
+      {
+        "path": "packages/lightrag/src/answer.ts",
+        "sha256": "7923edc62130a342fc56385badc7dde1b2e369f158a2319fe98b912d5ea8c485"
+      },
+      {
+        "path": "packages/lightrag/src/apply.ts",
+        "sha256": "c49e3a5489bd99b6961f4e8be1900b6a78fc9d6b1f15b10e972d4119eb31d13c"
+      },
+      {
+        "path": "packages/lightrag/src/catalog.ts",
+        "sha256": "c99966399a4cd7b92873e47afa9024565b3ef2d0ba5a1a3d5e8f98904f357092"
+      },
+      {
+        "path": "packages/lightrag/src/context.ts",
+        "sha256": "0ffc8e34fbf6e5361a085bc9264bef9576ec5c94c54137e8dbba60ff38563ba1"
+      },
+      {
+        "path": "packages/lightrag/src/contracts.gen.ts",
+        "sha256": "d3fb9e87303d791fb57dd28910c5f58e0b1cbd740d0d46e83c857491328787e1"
+      },
+      {
+        "path": "packages/lightrag/src/contribution.ts",
+        "sha256": "0086a9c7f3f6215e4a1f48df5e78c70936630093bd3f0fdea7054aabb3867464"
+      },
+      {
+        "path": "packages/lightrag/src/embed.ts",
+        "sha256": "242c61518634c8ffaf1950fee64ef66eef2d51ef028b4070d9b7acd2b1a3da83"
+      },
+      {
+        "path": "packages/lightrag/src/errors.ts",
+        "sha256": "7f86a93b67411ad36f7ae27a7aa5d489e52d6a96412eeb0374a9a0c8368bc5c8"
+      },
+      {
+        "path": "packages/lightrag/src/extract.ts",
+        "sha256": "a411cbb2863bf97ba2953fbd3f560bffc863ad6012928d2cb96c33b058856c01"
+      },
+      {
+        "path": "packages/lightrag/src/identity.ts",
+        "sha256": "618c499c0c20b8690b668b82716ef234d233baefef8c428b989b4e624669d3e1"
+      },
+      {
+        "path": "packages/lightrag/src/index.ts",
+        "sha256": "a9474956ea3fc092cc88ba06f0daa666e05347b4491942aebbf25b10883b2291"
+      },
+      {
+        "path": "packages/lightrag/src/integrity.ts",
+        "sha256": "e58d3c495d0c55aaaf5c931f8520a0c00bfc0bfe529c3157beb8d2862bf232e8"
+      },
+      {
+        "path": "packages/lightrag/src/limits.ts",
+        "sha256": "3d554223292cf2621970fc58b8a82ac712b5af641dfcd8031e1df58bd6486f50"
+      },
+      {
+        "path": "packages/lightrag/src/memory-persistence.ts",
+        "sha256": "a619d562d644ac5d70a3045efd84360d48d83855377a323b246600a29aafe904"
+      },
+      {
+        "path": "packages/lightrag/src/meter.ts",
+        "sha256": "33f9f0717046bc7e77fa521177a497cb358ce188aca18d16f0152729b33f93da"
+      },
+      {
+        "path": "packages/lightrag/src/normalize.ts",
+        "sha256": "e3976304d4c878f52a7b59ab77191a52abfe902583af1a72b5af0ede1095b29b"
+      },
+      {
+        "path": "packages/lightrag/src/persistence.ts",
+        "sha256": "739d9fde6deef894b05faddb18818cb4bd27e47e24e53c803b82bda4a8fa9187"
+      },
+      {
+        "path": "packages/lightrag/src/plan-query.ts",
+        "sha256": "46552e73d3402d3d3f58cd4aff7f4dbabba7ffa2aad695ac0cdb4c4611503b4d"
+      },
+      {
+        "path": "packages/lightrag/src/plan.ts",
+        "sha256": "c269c9619df3a9b42cabe5a19f070472df91db692006cab0e4b4ebc1229ede2b"
+      },
+      {
+        "path": "packages/lightrag/src/preparation-bindings.ts",
+        "sha256": "5be526e739ca4c6430c3098c3a66926e131535a4f7b96fea39d08284d9f16ba4"
+      },
+      {
+        "path": "packages/lightrag/src/profile.ts",
+        "sha256": "c135fffa20e619dfd0a7d0ef3fb365f3030117ddfd01622fef5a59c622cdf660"
+      },
+      {
+        "path": "packages/lightrag/src/projection.ts",
+        "sha256": "d91923bbf6f0364ced77b1e6985b658564f45ffce02ddac1f41e30b8229811d0"
+      },
+      {
+        "path": "packages/lightrag/src/prompts.ts",
+        "sha256": "69d4f3e7e186ecdde505518faba07f1b4596d5c7907c56e9aaaf72caf38bc031"
+      },
+      {
+        "path": "packages/lightrag/src/resolve.ts",
+        "sha256": "9812b714ed4d76758cd100f5708120492482fd1532bc0b2aad639b9db7ee2019"
+      },
+      {
+        "path": "packages/lightrag/src/retrieve.ts",
+        "sha256": "3ee0e9d7683f54c5b2dfdeaeaf395e700f62ea588c86b11da2d16498b5e94427"
+      },
+      {
+        "path": "packages/lightrag/src/reuse.ts",
+        "sha256": "1deb05a95f1a1a3721e350c319fba7ed088469e9a4a01a47928f7f3bca8e0670"
+      },
+      {
+        "path": "packages/lightrag/src/schema.ts",
+        "sha256": "e6efc8639f9d9930f76211167a771e1bc2c5036d677b3912aafb1d8aaa5054e8"
+      },
+      {
+        "path": "packages/lightrag/src/snapshot.ts",
+        "sha256": "297b7bb4309a90181943279b2649d2e27c89722e7346d79a556cb50fec6b6d03"
+      },
+      {
+        "path": "packages/lightrag/src/store.ts",
+        "sha256": "9a397a40b9a56abed33fcd824bdd12a6ef13106da0448679b4ebb4ddd64db65b"
+      },
+      {
+        "path": "packages/lightrag/src/structured.ts",
+        "sha256": "9854a17c8fba5091df7aaf40cfe1bacf1c54a9e52b3b8c5af8648e2802a84e88"
+      },
+      {
+        "path": "packages/lightrag/src/write-plan.ts",
+        "sha256": "2fc1638f1cb49a1770106438c570fdb2ef41f3f453d81826e9271d0ed1e02cc6"
+      },
+      {
+        "path": "packages/models/package.json",
+        "sha256": "e784a1acdea0d4d9f1591841ae11e74828c081b22d5f406cea1c140d7888c901"
+      },
+      {
+        "path": "packages/models/src/check.ts",
+        "sha256": "a50c8df8e3183e8d98f530a0ded9b1be39fea64e18c2e3b00ae018ed58a07309"
+      },
+      {
+        "path": "packages/models/src/client.ts",
+        "sha256": "16c5fe1ef149df3fd08c88170b17f5d1a4b852bc0db867c0af25e215536b7c09"
+      },
+      {
+        "path": "packages/models/src/embed.ts",
+        "sha256": "1c1b8fb32687ecb9c73c566d99b4d1aa327e685eb68dd626111d8f3bbfa365d1"
+      },
+      {
+        "path": "packages/models/src/embedding-vector.ts",
+        "sha256": "e0677f51dc94fa3b924a59d511c078e96a82cd2b968de37de8819d04a7200633"
+      },
+      {
+        "path": "packages/models/src/errors.ts",
+        "sha256": "ebfc7a3500b902f508f239b5317a653ad4de6202767877997117e062054d8d25"
+      },
+      {
+        "path": "packages/models/src/grammar.ts",
+        "sha256": "6a10ca484cc722afe3504011d0bb31f2095a42134e84742ee47b3f1d6cb1ae9d"
+      },
+      {
+        "path": "packages/models/src/index.ts",
+        "sha256": "6b18665bc0523d9880441f67dd93202b4a119d194627bbf7ba2172f83930d2e0"
+      },
+      {
+        "path": "packages/models/src/providers.ts",
+        "sha256": "fee58bf041fa7b64054c7fa406d8bb489c01a96b5637e318667e2fda2d177862"
+      },
+      {
+        "path": "packages/models/src/replay.ts",
+        "sha256": "39eec52df317797cd92c078adfab54a2eef407be943bcac1f0cb62f9ddefa4c3"
+      },
+      {
+        "path": "packages/models/src/retry.ts",
+        "sha256": "d2f6f39f57313e66fe7a59d3674ad31ad681c4f3d92a2317f07cff5c88f4b1b1"
+      },
+      {
+        "path": "packages/models/src/routing.ts",
+        "sha256": "489fe50ce52b2b4efa458423670c5c254e4a21bf1c0b42a6ad308567404981b1"
+      },
+      {
+        "path": "packages/models/src/sse.ts",
+        "sha256": "200e59454e826c2905f3609a40c03a169dbeab53c622f01541e248cd8874ae62"
+      },
+      {
+        "path": "packages/models/src/structured.ts",
+        "sha256": "43dafdff66bfe4d6933fb8bbfcef9a8ded801b366ed5eebf02402e84d91bd1e5"
+      },
+      {
+        "path": "packages/outcomes/package.json",
+        "sha256": "e6404ae8b6869e0e62796043984c2ac4230b158f540f86a6d48846dc26ad6f42"
+      },
+      {
+        "path": "packages/outcomes/schemas/direction-delta.schema.json",
+        "sha256": "c2539104d887cee2193d188658f7f25e7fcf8c4cac283f77c6426f20e036246d"
+      },
+      {
+        "path": "packages/outcomes/schemas/exact-match.schema.json",
+        "sha256": "dd0c2a0c8b929d2a9f205c6b17a29b88a04fffa90cd2e69073631a081392efdc"
+      },
+      {
+        "path": "packages/outcomes/schemas/outcomes.contract.json",
+        "sha256": "75081c961e2659897ac5eedde9b5b11c3122f1cee8c9fc1b64febff66c757ec9"
+      },
+      {
+        "path": "packages/outcomes/schemas/outcomes.schema.json",
+        "sha256": "f8cc0cd0557569e04a30a7552437f961df946fa482d4f7c0fcfa20deff49bc0c"
+      },
+      {
+        "path": "packages/outcomes/src/adapters.ts",
+        "sha256": "6b3ff3d2284855a2c59d1f9a34676441959bd21dccf0e0fc16f692d229d9355a"
+      },
+      {
+        "path": "packages/outcomes/src/adapters/direction-delta.gen.ts",
+        "sha256": "c3c94807689d43a6a164be8cf87c97c21380b74d1ef61d1728e52edb519b1a1e"
+      },
+      {
+        "path": "packages/outcomes/src/adapters/direction-delta.ts",
+        "sha256": "128d4dcd9b8f5f8fc69beeb46cb7ddc0fcca889fd40dba286ecfd1711dfeb1a1"
+      },
+      {
+        "path": "packages/outcomes/src/adapters/exact-match.gen.ts",
+        "sha256": "fd5766463a7adaf46fde0fadee9ed3e2ac1168d4bb16d7ea57d8c3589e307224"
+      },
+      {
+        "path": "packages/outcomes/src/adapters/exact-match.ts",
+        "sha256": "1b754063fc4f38cad8daeaf48d895530b6bcacdb2552a0baa7caa13390922630"
+      },
+      {
+        "path": "packages/outcomes/src/contract.ts",
+        "sha256": "93819708ba122f5c72698cae6e4fcbb256aa8936987ea97bdfaa932f1448276f"
+      },
+      {
+        "path": "packages/outcomes/src/domain.ts",
+        "sha256": "ac5391869f1e0f8da86c934c2ac82389a1586080f6255834e78e5c52e1265178"
+      },
+      {
+        "path": "packages/outcomes/src/errors.ts",
+        "sha256": "4907924f6c96a589585f4501006419d5563e9ca00e609a35c68d6eb3f2e8b773"
+      },
+      {
+        "path": "packages/outcomes/src/evaluation.ts",
+        "sha256": "f5ff065398672d08ccc918a6b9f5abd6289c007af134e6b70bff8386098d02dd"
+      },
+      {
+        "path": "packages/outcomes/src/handlers.ts",
+        "sha256": "55c18a202b83763652ba88f612c1cf56c7ceb70eab8b533bbd248465d4f7bd20"
+      },
+      {
+        "path": "packages/outcomes/src/history.ts",
+        "sha256": "43e2a0ef4bad28a5163f8e75fd8f00ddda202a537e1cde9a150079fd4a515eca"
+      },
+      {
+        "path": "packages/outcomes/src/identity.ts",
+        "sha256": "4a3417d9290c37d2c00c8887f355af4312603159e2af60eda6313f652c74a66e"
+      },
+      {
+        "path": "packages/outcomes/src/index.ts",
+        "sha256": "c2e7d618032f60d21597b05a2653cc4196d6c3a409120034c4a375e649feee84"
+      },
+      {
+        "path": "packages/outcomes/src/operations.ts",
+        "sha256": "4a96299fc20abc94e69775e05e603606a7617e64c1c5cbaf148365904d8cce8e"
+      },
+      {
+        "path": "packages/outcomes/src/outcomes.contracts.gen.ts",
+        "sha256": "7b3142ace008592bdbdf3417d98a574a2e303fe295d2a752a02a79486e237c6f"
+      },
+      {
+        "path": "packages/outcomes/src/persistence.ts",
+        "sha256": "8c209b356273d987d12ee89d427caad8c759c8416e6295f72a197995b4761c1c"
+      },
+      {
+        "path": "packages/outcomes/src/projection.ts",
+        "sha256": "0bcc00750775550e3204b8cfa5513f105c1f7a3967eb30cc8beeed1c1e5d2a45"
+      },
+      {
+        "path": "packages/outcomes/src/promotion.ts",
+        "sha256": "3cdc0755c970ac3231621e6b6700984219bb21514f62ec3b675bf7961829e8bb"
+      },
+      {
+        "path": "packages/outcomes/src/proposal-operation.ts",
+        "sha256": "3f5dc47356c5f59990646040a90865b9767ac3dc74a3f91fecdb3c3f1f2e0f6a"
+      },
+      {
+        "path": "packages/outcomes/src/proposer.ts",
+        "sha256": "77ae7ef40ce7eef402de4afd25a0ddfc8c8dae9303968597beb6a70bd2bfe02d"
+      },
+      {
+        "path": "packages/outcomes/src/refinement.ts",
+        "sha256": "da429b0ce5c654a7478adc8b773af6c9af63f10c6a18f812b08bf1ba43b825a8"
+      },
+      {
+        "path": "packages/outcomes/src/resolution.ts",
+        "sha256": "05cddd8589b33fa6c2299173ddae03b99c4816d57cf5a3d1ea5e64d6b5ebb19f"
+      },
+      {
+        "path": "packages/outcomes/src/schema.ts",
+        "sha256": "7bf7bf3ec698d34bad5513d405455310414d79bfac4eea55dda52e4180457620"
+      },
+      {
+        "path": "packages/outcomes/src/scoring.ts",
+        "sha256": "db20e9c84e2913fab8096346ba3b5585d330694771e85dcff2cd141a000d4b99"
+      },
+      {
+        "path": "packages/outcomes/src/service-context.ts",
+        "sha256": "fae3edc35fbde54dd07f24dd47ea234c8ba35a03339a1c4a6e26fa4ef76acad1"
+      },
+      {
+        "path": "packages/outcomes/src/service.ts",
+        "sha256": "19230b6bb5a554a02f39381058e500fab8dbc5bc31af28173a0c2864e2510892"
+      },
+      {
+        "path": "packages/outcomes/src/store.ts",
+        "sha256": "cf948ff67da9d2fd614f7d833286bf2b8ce60ce53afe7692c81db8115ff992c5"
+      },
+      {
+        "path": "packages/outcomes/src/transitions.ts",
+        "sha256": "7ccee2572d99d00691d68c0d6e6416478c124788037630f00129e20f47c835e8"
+      },
+      {
+        "path": "packages/store/package.json",
+        "sha256": "b2c1f915b39021e1f9842c0fac442a33383476cbc11094fca4622a7b933045d6"
+      },
+      {
+        "path": "packages/store/src/consolidation-model.ts",
+        "sha256": "935f7d2f9ee2b1d3e5d53a1acee9ca4f63217fd7cb25e0c2beed7327febfdfd4"
+      },
+      {
+        "path": "packages/store/src/consolidation-store.ts",
+        "sha256": "3ee37a6ada77d46849f3eae2c7d37a65213f5de5ad83aadbf5fe164bd23c20bc"
+      },
+      {
+        "path": "packages/store/src/corpus-promotion.ts",
+        "sha256": "f6fd03d6f1a8c11601dbe9527a453962e9a115e2043a3aa968273b8a93eb5ab1"
+      },
+      {
+        "path": "packages/store/src/db.ts",
+        "sha256": "891c7415c6f2af2be0a909069741c42211de2d505e2005c679e1baf3b3b75d0c"
+      },
+      {
+        "path": "packages/store/src/document-state.ts",
+        "sha256": "7f95df2961ce98ab9e86c1ec55e3e1058ab6be05614a2627ea214bdfe1b02e2c"
+      },
+      {
+        "path": "packages/store/src/document-store.ts",
+        "sha256": "d68f9d6dec21e9fa7bf1a2dfe79b9f14a9f6372ff48760e9821e38b1d92d6f9d"
+      },
+      {
+        "path": "packages/store/src/evolve-effects.ts",
+        "sha256": "1d005532058e5b0ca3985cb9231f4c1b9c4d7e1a6d051283a9ff6290f885c326"
+      },
+      {
+        "path": "packages/store/src/evolve-model.ts",
+        "sha256": "1cf2677b5f6556c96a68eae7bcf7dcf506f6c663ed056386150f74841209da68"
+      },
+      {
+        "path": "packages/store/src/evolve-store.ts",
+        "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+      },
+      {
+        "path": "packages/store/src/experiential-jobs.ts",
+        "sha256": "8ae4a1c71fa28002c02f2f3f44f2ba3135a70002c4f6f51226794e7374d00b94"
+      },
+      {
+        "path": "packages/store/src/experiential-model.ts",
+        "sha256": "214711939f576a7452f1d242ce7bfb9cc39229506983efb06137013676b94a14"
+      },
+      {
+        "path": "packages/store/src/experiential-store.ts",
+        "sha256": "0a19a76428bf52a35f2bb0119abf72d07bbabb7b1c6c93a3906be10ae446de6d"
+      },
+      {
+        "path": "packages/store/src/forecast-model.ts",
+        "sha256": "b78417c857b252e7294abd4604b3520694639c1bb9efd556c0170b2943996d52"
+      },
+      {
+        "path": "packages/store/src/forecast-store.ts",
+        "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
+      },
+      {
+        "path": "packages/store/src/gc.ts",
+        "sha256": "e95f99cb4e02e58f04f360710422ffe6ad00c167a35e6607b5a64289ba32eaf7"
+      },
+      {
+        "path": "packages/store/src/graph-vector-migration.ts",
+        "sha256": "f8dac0e45737b14742dec6c501759a1d553618d2c0fe9bf28aeb3b9474fd6a15"
+      },
+      {
+        "path": "packages/store/src/graph-vector-model.ts",
+        "sha256": "154384d068450ed993241eb82f88312a40f36185962dcc2840c725adb265f14f"
+      },
+      {
+        "path": "packages/store/src/graph-vector-plan.ts",
+        "sha256": "5f3858c84b2e357b82b5fe02fad6ee63b7c0661c3ea481ca3a7b748b46a12af8"
+      },
+      {
+        "path": "packages/store/src/graph-vector-rank.ts",
+        "sha256": "c3d18baca1077973b60137cdc534089ddc47405a1f7984ec9123be8969c9aadc"
+      },
+      {
+        "path": "packages/store/src/graph-vector-stage.ts",
+        "sha256": "cfd75e9b68b99cccd3a3f6c6f9be490b8098737dc0da32f61aa398da8839944a"
+      },
+      {
+        "path": "packages/store/src/graph-vector-state.ts",
+        "sha256": "01086c1e097b6b00993c2fcd8dd0e2a4807cf20d30e81622910da1adf65c707f"
+      },
+      {
+        "path": "packages/store/src/grounding-clarification.ts",
+        "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
+      },
+      {
+        "path": "packages/store/src/grounding-host.ts",
+        "sha256": "1cd2ba5ebd69bc29f860b1b12123ef055e3d7e6fc89468f6128f310501edf115"
+      },
+      {
+        "path": "packages/store/src/grounding-model.ts",
+        "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
+      },
+      {
+        "path": "packages/store/src/grounding-store.ts",
+        "sha256": "2966eccd4e5711c98388fb29f79cdac90f405029087e75a5b8a689d9f0828648"
+      },
+      {
+        "path": "packages/store/src/hera-model.ts",
+        "sha256": "888217856fb746f709e223651d872dd37392eaf02ff23dcad40558e23361bdd0"
+      },
+      {
+        "path": "packages/store/src/hera-store.ts",
+        "sha256": "c775eb635822bec772cd39addff5b6632ce3fa047387d41124cffbd57f106387"
+      },
+      {
+        "path": "packages/store/src/identities.ts",
+        "sha256": "ccaa309d775cbfbc94168f32e616353cec3743c7f5b3f7919e4f7af218da3fef"
+      },
+      {
+        "path": "packages/store/src/index.ts",
+        "sha256": "d44b9c0c6b74a9668e62481385bd647db87203a4cc16a35ea49baf08d8dc2c33"
+      },
+      {
+        "path": "packages/store/src/ledger-storage.ts",
+        "sha256": "d6f56bf244b22429934e8bbc8efe43d97cf04f2d490232a07edf70fac80303b0"
+      },
+      {
+        "path": "packages/store/src/lightrag-model.ts",
+        "sha256": "de7e29cb7ef692aa86f423d33699a4c48521daf42f0578562ae367a57aa3ae0f"
+      },
+      {
+        "path": "packages/store/src/lightrag-store.ts",
+        "sha256": "031e226aae56e101353378f0f5aa7f0fbb2a0c1c6301afe3065c50465c04a5c3"
+      },
+      {
+        "path": "packages/store/src/mas-jobs.ts",
+        "sha256": "63f72606024de256c7bf042d0e3410a2bbbdeceafa3f198d7122dec05d02232f"
+      },
+      {
+        "path": "packages/store/src/mas-segment-driver.ts",
+        "sha256": "a78b777c6f1df7bbe6ed28bb693a4660eede67ea884da3e915488c114c998f30"
+      },
+      {
+        "path": "packages/store/src/mas-store.ts",
+        "sha256": "dc2d8844ab8351f7d10b193433b4db32666f96c1406678c0a995af9532137f29"
+      },
+      {
+        "path": "packages/store/src/memory-store.ts",
+        "sha256": "91bcf7e3d313f3b4508f41392014507bc105a6087e6e8df75e9409ff8a5441c7"
+      },
+      {
+        "path": "packages/store/src/model.ts",
+        "sha256": "3a371e0187d084d6c514fcd2fee61b315fb7e95b56f056b8ecfdb5b09caa97c5"
+      },
+      {
+        "path": "packages/store/src/outcome-store.ts",
+        "sha256": "4f0c579060c928a57b8002687dc8224321d8264f91b61afd40d4bacbab6faea4"
+      },
+      {
+        "path": "packages/store/src/place-model.ts",
+        "sha256": "05f276115d4877b012ec71623096fd0a0e8ca49583d59d658541c803b47e4f26"
+      },
+      {
+        "path": "packages/store/src/place-store.ts",
+        "sha256": "a5bdefe05b9fe8784d1518281657189e457c525839ba6e90d20093e0e56f0841"
+      },
+      {
+        "path": "packages/store/src/research-model.ts",
+        "sha256": "fee2f3393aedab0a596d6c52af82270cc387e32d197ec6b96919240cb9617534"
+      },
+      {
+        "path": "packages/store/src/research-store.ts",
+        "sha256": "d2d649525389499cba1b25f2a10d50581780868ca6a121bc8c4cf7f70eebb9dd"
+      },
+      {
+        "path": "packages/store/src/runs.ts",
+        "sha256": "148dbfbea9c65f5aff6fb89b654d6cf0dfaac1da39ec4cc80ad46781764c0deb"
+      },
+      {
+        "path": "packages/store/src/temporal-backfill.ts",
+        "sha256": "e6d8e58af583b61e7f522bcf5dea9281af7e3307ef7f690f8e4685ec1fe849a6"
+      },
+      {
+        "path": "packages/store/src/temporal-model.ts",
+        "sha256": "8e6766505ab4a150c04ebdc70573db75d85c860ad5ba88f9a3ac0c29e6394654"
+      },
+      {
+        "path": "packages/store/src/temporal-store.ts",
+        "sha256": "60250f282a68c61511e78b55f29b79e0d956bee493107b660d9d2e702a685bcc"
+      },
+      {
+        "path": "packages/store/src/trace2skill-model.ts",
+        "sha256": "be8ae8f55b6bfe3bc01beddc3c7355a1cece87325e21847c5e6bde0be8c71029"
+      },
+      {
+        "path": "packages/store/src/trace2skill-store.ts",
+        "sha256": "a1db4f236119b2c3a60faae0315ab72917fafc20ce808b581dbca6c68c209b54"
+      },
+      {
+        "path": "packages/store/src/trading-model.ts",
+        "sha256": "d278a7c0d438f8f45e7cd77b9c497639ff4572616ccfaba433cdf1fb2454bf06"
+      },
+      {
+        "path": "packages/store/src/trading-store.ts",
+        "sha256": "18a4d4b871a813d91db94ecfc7db308ab5588ae89af5a3786f36469d778da94a"
+      }
+    ],
+    "sha256": "9a20867eacc7ad32b54e4acd58dc471c41bab2368a838a8f6a49e35dac9dc390"
+  },
+  "controls": {
+    "golden": {
+      "equal": true,
+      "differences": 0,
+      "paths": []
+    },
+    "goldenRows": [
+      {
+        "id": "positive",
+        "score": 1
+      },
+      {
+        "id": "B",
+        "score": 0
+      },
+      {
+        "id": "b",
+        "score": 0
+      },
+      {
+        "id": "negative",
+        "score": -1
+      }
+    ],
+    "randomSeed": 17753,
+    "randomQueries": 16,
+    "randomOverlap": 11,
+    "randomOverlapPassed": true,
+    "randomOrderDigest": "7f1866fcb0fd06a60e2a5bf454dc030867cdd03d113ff0509015f1886e2b9237"
+  },
+  "qualification": {
+    "randomCases": 160,
+    "goldenCases": 8,
+    "typedCases": 4,
+    "refusedProbes": 4,
+    "fallbackCases": 2,
+    "retrievalCases": 216,
+    "fenceCases": 2,
+    "diverted": 0,
+    "passed": true,
+    "digest": "624f330033b2231de9712dd71ddc035fb9ce913573f126e9a4ba8a45d2665dfc",
+    "proofs": [
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_entities_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":1,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_entities USING INDEX lightrag_entities_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_entities\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_entities_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":10,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_entities USING INDEX lightrag_entities_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_entities\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_entities_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":1000,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_entities USING INDEX lightrag_entities_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_entities\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_entities_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":2,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_entities USING INDEX lightrag_entities_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_entities\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_entities_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":37,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_entities USING INDEX lightrag_entities_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_entities\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_entities_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":4,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_entities USING INDEX lightrag_entities_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_entities\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_entities_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":7,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_entities USING INDEX lightrag_entities_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_entities\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_relations_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":1,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_relations USING INDEX lightrag_relations_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_relations\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_relations_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":10,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_relations USING INDEX lightrag_relations_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_relations\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_relations_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":1000,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_relations USING INDEX lightrag_relations_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_relations\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_relations_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":2,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_relations USING INDEX lightrag_relations_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_relations\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_relations_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":37,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_relations USING INDEX lightrag_relations_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_relations\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_relations_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":4,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_relations USING INDEX lightrag_relations_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_relations\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}",
+      "{\"column\":\"gx_payload_embedding_v64\",\"dims\":64,\"explain\":{\"barrier\":{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"},\"barriers\":[{\"operator\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}],\"budget\":{\"bytes\":null,\"depth\":null,\"estimatedRows\":\"unavailable\",\"includedRows\":null,\"limits\":null,\"profile\":null,\"rows\":null,\"scan\":\"unbounded\",\"time\":\"unavailable\"},\"collations\":[],\"externals\":[\"q\"],\"fallback\":null,\"functions\":[],\"group\":null,\"indexes\":[\"lightrag_relations_by_status\"],\"limits\":null,\"mode\":\"knn\",\"operators\":[\"$and\",\"$const\",\"$eq\",\"$similarity\",\"$subsequence\"],\"order\":null,\"params\":[{\"literal\":\"active\"},{\"literal\":\"hash-trigram-64\"},{\"literal\":64}],\"prefilters\":[],\"projection\":null,\"rank\":{\"alternatives\":[{\"column\":\"gx_payload_embedding_v64\",\"dims\":64}],\"decides\":\"engine\",\"limit\":7,\"margin\":0.000001,\"offset\":0,\"probe\":{\"external\":\"q\"},\"selected\":64},\"residual\":{\"mode\":\"knn\",\"reasons\":[{\"construct\":\"$orderby\",\"reason\":\"k-nearest rank is engine work: the vector column cuts the candidates and the engine orders them\"}]},\"residualProjection\":null,\"scanNarrative\":\"SEARCH lightrag_relations USING INDEX lightrag_relations_by_status (gx_status=?)\",\"series\":null,\"sql\":\"SELECT \\\"rowid\\\" AS \\\"rid\\\", \\\"gx_payload_embedding_v64\\\" AS \\\"vec\\\" FROM \\\"lightrag_relations\\\" WHERE ((json_type(\\\"doc\\\", '$.\\\"status\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"status\\\"') = 'text' AND \\\"gx_status\\\" = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = 'text' AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"model\\\"') = ?) AND (json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IS NOT NULL AND json_type(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') IN ('integer', 'real') AND jsonb_extract(\\\"doc\\\", '$.\\\"payload\\\".\\\"embeddedBy\\\".\\\"dims\\\"') = ?))\",\"streaming\":\"buffered\",\"udfs\":[],\"wrapped\":false},\"mode\":\"knn\"}"
+    ]
+  },
+  "rows": [
+    {
+      "chunks": 100,
+      "entities": 200,
+      "relations": 100,
+      "claims": 300,
+      "corpusSha256": "838b264949d9a9aeb8b3300a25078cff2e1590f84d0c0ebce0d150a9b43160c2",
+      "questions": [
+        {
+          "questionId": "specific-equipment",
+          "resultDigest": "55d28a27686ec10feb59dc044c608d3cdeb553c51dc85fb2d4ff9a7b49281f3c",
+          "residentDigest": "55d28a27686ec10feb59dc044c608d3cdeb553c51dc85fb2d4ff9a7b49281f3c",
+          "nativeDigest": "55d28a27686ec10feb59dc044c608d3cdeb553c51dc85fb2d4ff9a7b49281f3c",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 410,
+          "pruned": 381,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-13257eb8e24725489f396a3d1b8becf8",
+            "chk-6c0c0cc7fa48c205abf51f459573249c",
+            "chk-754c4cfb983fe51a056a305cccdbae47"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-13257eb8e24725489f396a3d1b8becf8",
+              "score": 1
+            },
+            {
+              "id": "chk-6c0c0cc7fa48c205abf51f459573249c",
+              "score": 1
+            },
+            {
+              "id": "chk-754c4cfb983fe51a056a305cccdbae47",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-funding",
+          "resultDigest": "635bc97d0dd4720019ea077751842df7edec10484dd0046a278c9c66490a276a",
+          "residentDigest": "635bc97d0dd4720019ea077751842df7edec10484dd0046a278c9c66490a276a",
+          "nativeDigest": "635bc97d0dd4720019ea077751842df7edec10484dd0046a278c9c66490a276a",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 430,
+          "pruned": 407,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-53d05cddec5dd1878682495d2474f6ce",
+            "chk-c91dcb3e2efe395510809d3f2df17148",
+            "chk-74ae6a0473ac643188b6ad683f43c167"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-53d05cddec5dd1878682495d2474f6ce",
+              "score": 1
+            },
+            {
+              "id": "chk-c91dcb3e2efe395510809d3f2df17148",
+              "score": 1
+            },
+            {
+              "id": "chk-74ae6a0473ac643188b6ad683f43c167",
+              "score": 0.7935753920489564
+            }
+          ]
+        },
+        {
+          "questionId": "specific-launch",
+          "resultDigest": "73c6bcc0077442f5205ad3587bf105fce7242323a5ce8a291096dfd988140f48",
+          "residentDigest": "73c6bcc0077442f5205ad3587bf105fce7242323a5ce8a291096dfd988140f48",
+          "nativeDigest": "73c6bcc0077442f5205ad3587bf105fce7242323a5ce8a291096dfd988140f48",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 392,
+          "pruned": 362,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-548fce39802aced7a3aba4d4f9c47e3a",
+            "chk-c7b82530c7369868d706fe65ef9ff64c",
+            "chk-cddb85be8c26a8ad39a26b8ed3330a29"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-548fce39802aced7a3aba4d4f9c47e3a",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-c7b82530c7369868d706fe65ef9ff64c",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-cddb85be8c26a8ad39a26b8ed3330a29",
+              "score": 0.9999999999999999
+            }
+          ]
+        },
+        {
+          "questionId": "specific-archive-host",
+          "resultDigest": "c6d5750a752c4a027fd36063dbf42f108d2010bcd734a697043e0844d8218ea5",
+          "residentDigest": "c6d5750a752c4a027fd36063dbf42f108d2010bcd734a697043e0844d8218ea5",
+          "nativeDigest": "c6d5750a752c4a027fd36063dbf42f108d2010bcd734a697043e0844d8218ea5",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 418,
+          "pruned": 388,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-12526a5a8aa7d03e0d67b22f343be3b0",
+            "chk-6916f1b4b606eefa74474d0916e2c197",
+            "chk-e5abea0234394222af99446d2630eac3"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-12526a5a8aa7d03e0d67b22f343be3b0",
+              "score": 1
+            },
+            {
+              "id": "chk-6916f1b4b606eefa74474d0916e2c197",
+              "score": 1
+            },
+            {
+              "id": "chk-e5abea0234394222af99446d2630eac3",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-timber",
+          "resultDigest": "a23cd08924bdb8b5d4bc3dae9be7ce4d2fa9324a07e3a56637120b444f35e4ce",
+          "residentDigest": "a23cd08924bdb8b5d4bc3dae9be7ce4d2fa9324a07e3a56637120b444f35e4ce",
+          "nativeDigest": "a23cd08924bdb8b5d4bc3dae9be7ce4d2fa9324a07e3a56637120b444f35e4ce",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 422,
+          "pruned": 394,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-3c1b97cd75095a626f15f7f7724b4dd2",
+            "chk-b65f41db8302dfa3ce799e3715f1c650",
+            "chk-b917f4ce20a745e1fe100ff0264c11c9"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-3c1b97cd75095a626f15f7f7724b4dd2",
+              "score": 1
+            },
+            {
+              "id": "chk-b65f41db8302dfa3ce799e3715f1c650",
+              "score": 1
+            },
+            {
+              "id": "chk-b917f4ce20a745e1fe100ff0264c11c9",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-produce",
+          "resultDigest": "3ea8709c6a2729fb73a4ff209ef5a5a9577019fab050d2b78123f6f1a256ea6b",
+          "residentDigest": "3ea8709c6a2729fb73a4ff209ef5a5a9577019fab050d2b78123f6f1a256ea6b",
+          "nativeDigest": "3ea8709c6a2729fb73a4ff209ef5a5a9577019fab050d2b78123f6f1a256ea6b",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 404,
+          "pruned": 374,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-3ce2a1e6450a308a13c855e61f726688",
+            "chk-722dcbab2261dc060212d809ce4fa326",
+            "chk-9fe690eedc9727684eeb2c10f285d00d"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-3ce2a1e6450a308a13c855e61f726688",
+              "score": 1
+            },
+            {
+              "id": "chk-722dcbab2261dc060212d809ce4fa326",
+              "score": 1
+            },
+            {
+              "id": "chk-9fe690eedc9727684eeb2c10f285d00d",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-training",
+          "resultDigest": "bc5825bc945fc3c5f1b45e44ff5bf76146a1a583ae19648e8cddc13b3eaf65b8",
+          "residentDigest": "bc5825bc945fc3c5f1b45e44ff5bf76146a1a583ae19648e8cddc13b3eaf65b8",
+          "nativeDigest": "bc5825bc945fc3c5f1b45e44ff5bf76146a1a583ae19648e8cddc13b3eaf65b8",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 418,
+          "pruned": 389,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-3ab9d6253a3fc1f510c5bcd9124a708b",
+            "chk-854bbed4f9f4b5d9a8751980a7012a34",
+            "chk-975f524b8f820df15f9bdda135e0a241"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-3ab9d6253a3fc1f510c5bcd9124a708b",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-854bbed4f9f4b5d9a8751980a7012a34",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-975f524b8f820df15f9bdda135e0a241",
+              "score": 0.9999999999999999
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-grant-admin",
+          "resultDigest": "1f1e500c223f6c9559347baea326041260b813a1be54e821e1d1551be9b7d0dc",
+          "residentDigest": "1f1e500c223f6c9559347baea326041260b813a1be54e821e1d1551be9b7d0dc",
+          "nativeDigest": "1f1e500c223f6c9559347baea326041260b813a1be54e821e1d1551be9b7d0dc",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 404,
+          "pruned": 374,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-313a0fdbb64095fc77673e50be363e05",
+            "chk-65c51a2ec53bca663e5bcfdc6e8bf9be",
+            "chk-b84bd0a2802f13a050b39926c3d4654c"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-313a0fdbb64095fc77673e50be363e05",
+              "score": 1
+            },
+            {
+              "id": "chk-65c51a2ec53bca663e5bcfdc6e8bf9be",
+              "score": 1
+            },
+            {
+              "id": "chk-b84bd0a2802f13a050b39926c3d4654c",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-cargo",
+          "resultDigest": "ccbfda28521d46a0c06742edab18446b9ac698d86c20828e50cd6ffc4ee94e44",
+          "residentDigest": "ccbfda28521d46a0c06742edab18446b9ac698d86c20828e50cd6ffc4ee94e44",
+          "nativeDigest": "ccbfda28521d46a0c06742edab18446b9ac698d86c20828e50cd6ffc4ee94e44",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 392,
+          "pruned": 362,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-1938b75a152af2ba10f453aa15d33a97",
+            "chk-28ea5404ac7ea588909fd6e7f116446a",
+            "chk-678e20d9e85339db2d28ec7d42846d0c"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-1938b75a152af2ba10f453aa15d33a97",
+              "score": 1
+            },
+            {
+              "id": "chk-28ea5404ac7ea588909fd6e7f116446a",
+              "score": 1
+            },
+            {
+              "id": "chk-678e20d9e85339db2d28ec7d42846d0c",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-festival-host",
+          "resultDigest": "75aba81d59d1cda08a895069a60b155a164ba0636b20252e85de36c9859c0ad3",
+          "residentDigest": "75aba81d59d1cda08a895069a60b155a164ba0636b20252e85de36c9859c0ad3",
+          "nativeDigest": "75aba81d59d1cda08a895069a60b155a164ba0636b20252e85de36c9859c0ad3",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 398,
+          "pruned": 368,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0895977cde2676bdf2dfe2ba754a6cad",
+            "chk-17c8250796a1c8139765b95b448059de",
+            "chk-1f065b1794d56482a3c7f37ceffc74ab"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0895977cde2676bdf2dfe2ba754a6cad",
+              "score": 0.9999999999999998
+            },
+            {
+              "id": "chk-17c8250796a1c8139765b95b448059de",
+              "score": 0.9999999999999998
+            },
+            {
+              "id": "chk-1f065b1794d56482a3c7f37ceffc74ab",
+              "score": 0.9999999999999998
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-restoration",
+          "resultDigest": "8a13bf1965876523bcde6ab51f8d65a5814fa71632698f29fa742463e411a0fd",
+          "residentDigest": "8a13bf1965876523bcde6ab51f8d65a5814fa71632698f29fa742463e411a0fd",
+          "nativeDigest": "8a13bf1965876523bcde6ab51f8d65a5814fa71632698f29fa742463e411a0fd",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 404,
+          "pruned": 374,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0e12919a57e01bb0ce6a4fabccda5cf3",
+            "chk-3fc20e4866284ac0cacf39898c2019c0",
+            "chk-78c2e1411d10e027915fb5c22b987930"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0e12919a57e01bb0ce6a4fabccda5cf3",
+              "score": 1
+            },
+            {
+              "id": "chk-3fc20e4866284ac0cacf39898c2019c0",
+              "score": 1
+            },
+            {
+              "id": "chk-78c2e1411d10e027915fb5c22b987930",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-school-funding",
+          "resultDigest": "fe1ecfa2407beeac771830dcfc340528e620c09d3a677ae205116a3f3d7eb381",
+          "residentDigest": "fe1ecfa2407beeac771830dcfc340528e620c09d3a677ae205116a3f3d7eb381",
+          "nativeDigest": "fe1ecfa2407beeac771830dcfc340528e620c09d3a677ae205116a3f3d7eb381",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 404,
+          "pruned": 374,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-3c1517d25fe02dcadeee5313241e16b4",
+            "chk-4a86fa5486d7fbf7416ed57eb64725da",
+            "chk-516415dd541be9e8e68e896a47358e60"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-3c1517d25fe02dcadeee5313241e16b4",
+              "score": 1
+            },
+            {
+              "id": "chk-4a86fa5486d7fbf7416ed57eb64725da",
+              "score": 1
+            },
+            {
+              "id": "chk-516415dd541be9e8e68e896a47358e60",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-shelves",
+          "resultDigest": "3a40b05b3e5a98142085bd39835323961df9bdef72b172da839ef83593979b18",
+          "residentDigest": "3a40b05b3e5a98142085bd39835323961df9bdef72b172da839ef83593979b18",
+          "nativeDigest": "3a40b05b3e5a98142085bd39835323961df9bdef72b172da839ef83593979b18",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 398,
+          "pruned": 368,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0f5d69ad58a987fedaad5f9210e799dd",
+            "chk-6100fadb5e1a3750989c5d5f47f7e007",
+            "chk-7fbc39a1be7faf8815a104cc7ddf92c5"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0f5d69ad58a987fedaad5f9210e799dd",
+              "score": 1
+            },
+            {
+              "id": "chk-6100fadb5e1a3750989c5d5f47f7e007",
+              "score": 1
+            },
+            {
+              "id": "chk-7fbc39a1be7faf8815a104cc7ddf92c5",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-launch",
+          "resultDigest": "2ea8d6a013dc0da45380d163c8c8b31057b1c29838c2a661ab819a5d10a889b2",
+          "residentDigest": "2ea8d6a013dc0da45380d163c8c8b31057b1c29838c2a661ab819a5d10a889b2",
+          "nativeDigest": "2ea8d6a013dc0da45380d163c8c8b31057b1c29838c2a661ab819a5d10a889b2",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 392,
+          "pruned": 362,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-548fce39802aced7a3aba4d4f9c47e3a",
+            "chk-c7b82530c7369868d706fe65ef9ff64c",
+            "chk-cddb85be8c26a8ad39a26b8ed3330a29"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-548fce39802aced7a3aba4d4f9c47e3a",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-c7b82530c7369868d706fe65ef9ff64c",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-cddb85be8c26a8ad39a26b8ed3330a29",
+              "score": 0.9999999999999999
+            }
+          ]
+        },
+        {
+          "questionId": "hop-archive-host",
+          "resultDigest": "b953361afc7198c0db32c8069c70697f466c702838e8a948aa0ea33e35bb167f",
+          "residentDigest": "b953361afc7198c0db32c8069c70697f466c702838e8a948aa0ea33e35bb167f",
+          "nativeDigest": "b953361afc7198c0db32c8069c70697f466c702838e8a948aa0ea33e35bb167f",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 418,
+          "pruned": 388,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-12526a5a8aa7d03e0d67b22f343be3b0",
+            "chk-6916f1b4b606eefa74474d0916e2c197",
+            "chk-e5abea0234394222af99446d2630eac3"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-12526a5a8aa7d03e0d67b22f343be3b0",
+              "score": 1
+            },
+            {
+              "id": "chk-6916f1b4b606eefa74474d0916e2c197",
+              "score": 1
+            },
+            {
+              "id": "chk-e5abea0234394222af99446d2630eac3",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-timber",
+          "resultDigest": "60f19ce20879538e83a432da7f765d55e872609cc96271cd39274277e5bd3709",
+          "residentDigest": "60f19ce20879538e83a432da7f765d55e872609cc96271cd39274277e5bd3709",
+          "nativeDigest": "60f19ce20879538e83a432da7f765d55e872609cc96271cd39274277e5bd3709",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 422,
+          "pruned": 394,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-3c1b97cd75095a626f15f7f7724b4dd2",
+            "chk-b65f41db8302dfa3ce799e3715f1c650",
+            "chk-b917f4ce20a745e1fe100ff0264c11c9"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-3c1b97cd75095a626f15f7f7724b4dd2",
+              "score": 1
+            },
+            {
+              "id": "chk-b65f41db8302dfa3ce799e3715f1c650",
+              "score": 1
+            },
+            {
+              "id": "chk-b917f4ce20a745e1fe100ff0264c11c9",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-grant-admin",
+          "resultDigest": "9e0670e8b2a39514c3a4143a23a71be49916b5d746420800bfd14d5a15aae152",
+          "residentDigest": "9e0670e8b2a39514c3a4143a23a71be49916b5d746420800bfd14d5a15aae152",
+          "nativeDigest": "9e0670e8b2a39514c3a4143a23a71be49916b5d746420800bfd14d5a15aae152",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 404,
+          "pruned": 374,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-313a0fdbb64095fc77673e50be363e05",
+            "chk-65c51a2ec53bca663e5bcfdc6e8bf9be",
+            "chk-b84bd0a2802f13a050b39926c3d4654c"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-313a0fdbb64095fc77673e50be363e05",
+              "score": 1
+            },
+            {
+              "id": "chk-65c51a2ec53bca663e5bcfdc6e8bf9be",
+              "score": 1
+            },
+            {
+              "id": "chk-b84bd0a2802f13a050b39926c3d4654c",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-opening",
+          "resultDigest": "df35ce860f4bb5433d0e04aa54481e913cdbe7f56a4406d06e91408e8f821624",
+          "residentDigest": "df35ce860f4bb5433d0e04aa54481e913cdbe7f56a4406d06e91408e8f821624",
+          "nativeDigest": "df35ce860f4bb5433d0e04aa54481e913cdbe7f56a4406d06e91408e8f821624",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 410,
+          "pruned": 380,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-123b6b604e4c11861cd892f9df015f0b",
+            "chk-4fa0624a52abce565741cc74335d081c",
+            "chk-a2b243e8c74fbdd9fe7bdf5f6206915c"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-123b6b604e4c11861cd892f9df015f0b",
+              "score": 1
+            },
+            {
+              "id": "chk-4fa0624a52abce565741cc74335d081c",
+              "score": 1
+            },
+            {
+              "id": "chk-a2b243e8c74fbdd9fe7bdf5f6206915c",
+              "score": 1
+            }
+          ]
+        }
+      ],
+      "nativeStatus": "measured",
+      "nativeReason": "Explicit native columns preserve the complete candidate trace; production selection follows the registered decision."
+    },
+    {
+      "chunks": 1000,
+      "entities": 2000,
+      "relations": 1000,
+      "claims": 3000,
+      "corpusSha256": "fdc888f3036885d0f32a3c3d50505dd65b6926cebb1b7d8a0f5305e79c2351d6",
+      "questions": [
+        {
+          "questionId": "specific-equipment",
+          "resultDigest": "745f9ca09d72364e8bcbc22164e492040d8817795e0b2218a7c4845a7f7b114e",
+          "residentDigest": "745f9ca09d72364e8bcbc22164e492040d8817795e0b2218a7c4845a7f7b114e",
+          "nativeDigest": "745f9ca09d72364e8bcbc22164e492040d8817795e0b2218a7c4845a7f7b114e",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0e3010acb4a32470c0368f9452e75e6b",
+            "chk-13904482844405e8f7ffcee6c72ff0de",
+            "chk-213231027210c8260b61ee5ebdc43b6b"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0e3010acb4a32470c0368f9452e75e6b",
+              "score": 1
+            },
+            {
+              "id": "chk-13904482844405e8f7ffcee6c72ff0de",
+              "score": 1
+            },
+            {
+              "id": "chk-213231027210c8260b61ee5ebdc43b6b",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-funding",
+          "resultDigest": "553dd416cac9bc07cbcdf47dc2fa82c74d3c95561eebf78811ce640b03e528dc",
+          "residentDigest": "553dd416cac9bc07cbcdf47dc2fa82c74d3c95561eebf78811ce640b03e528dc",
+          "nativeDigest": "553dd416cac9bc07cbcdf47dc2fa82c74d3c95561eebf78811ce640b03e528dc",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-52924322fc429d4dbbf1bd32e36c2ee5",
+            "chk-534335018baa892ddaa6a8950677729c",
+            "chk-93d3a41e76aed7ae426a3ee939a18525"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-52924322fc429d4dbbf1bd32e36c2ee5",
+              "score": 1
+            },
+            {
+              "id": "chk-534335018baa892ddaa6a8950677729c",
+              "score": 1
+            },
+            {
+              "id": "chk-93d3a41e76aed7ae426a3ee939a18525",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-launch",
+          "resultDigest": "cd26ff327cecdb0e95f7b6f4416637045d5ed43c757cb7b89230ee20819be729",
+          "residentDigest": "cd26ff327cecdb0e95f7b6f4416637045d5ed43c757cb7b89230ee20819be729",
+          "nativeDigest": "cd26ff327cecdb0e95f7b6f4416637045d5ed43c757cb7b89230ee20819be729",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3126,
+          "pruned": 3099,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0812d00ac74a9192671f27127c5fcfd5",
+            "chk-0f17801973a6beaf184279e96e9762f9",
+            "chk-1412f81389a03e82be44f078ff666dbd"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0812d00ac74a9192671f27127c5fcfd5",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-0f17801973a6beaf184279e96e9762f9",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-1412f81389a03e82be44f078ff666dbd",
+              "score": 0.9999999999999999
+            }
+          ]
+        },
+        {
+          "questionId": "specific-archive-host",
+          "resultDigest": "8f29629f35cd67534cb0cb2047df5c58f571d24d63f0f45525f3ccc26cf43fc4",
+          "residentDigest": "8f29629f35cd67534cb0cb2047df5c58f571d24d63f0f45525f3ccc26cf43fc4",
+          "nativeDigest": "8f29629f35cd67534cb0cb2047df5c58f571d24d63f0f45525f3ccc26cf43fc4",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3126,
+          "pruned": 3099,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-05a2331e7cf03531ce786c25d52fe6db",
+            "chk-09246d9fc76596067c1310b66d7cc6c5",
+            "chk-2cf00c82097c40be52f117f52c1c8118"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-05a2331e7cf03531ce786c25d52fe6db",
+              "score": 1
+            },
+            {
+              "id": "chk-09246d9fc76596067c1310b66d7cc6c5",
+              "score": 1
+            },
+            {
+              "id": "chk-2cf00c82097c40be52f117f52c1c8118",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-timber",
+          "resultDigest": "56b565572f9cecfc509d84af00b59f1b59796d32735579b67370c8af6ec8ff07",
+          "residentDigest": "56b565572f9cecfc509d84af00b59f1b59796d32735579b67370c8af6ec8ff07",
+          "nativeDigest": "56b565572f9cecfc509d84af00b59f1b59796d32735579b67370c8af6ec8ff07",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-10061b9e2e4da0ec21261cb5a805cbe4",
+            "chk-292f78ced062f3fdcd3f4970b990abb8",
+            "chk-4d1b30b2d4441b3b49cbdfee24ffb45a"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-10061b9e2e4da0ec21261cb5a805cbe4",
+              "score": 1
+            },
+            {
+              "id": "chk-292f78ced062f3fdcd3f4970b990abb8",
+              "score": 1
+            },
+            {
+              "id": "chk-4d1b30b2d4441b3b49cbdfee24ffb45a",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-produce",
+          "resultDigest": "46ef177700a3dac0236c5c91362abe94a82e875c4d1801ff40c968796924c1a1",
+          "residentDigest": "46ef177700a3dac0236c5c91362abe94a82e875c4d1801ff40c968796924c1a1",
+          "nativeDigest": "46ef177700a3dac0236c5c91362abe94a82e875c4d1801ff40c968796924c1a1",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0883232a27129655d3e97639d5827797",
+            "chk-4838bef5e1bc9cf802ea8e02df555867",
+            "chk-60bddeeaba775d22b252eea11246fb9c"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0883232a27129655d3e97639d5827797",
+              "score": 1
+            },
+            {
+              "id": "chk-4838bef5e1bc9cf802ea8e02df555867",
+              "score": 1
+            },
+            {
+              "id": "chk-60bddeeaba775d22b252eea11246fb9c",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-training",
+          "resultDigest": "135d8710882da1ebcf02df5902a2c40c6563954dc6df746c94b1bf8d9da2e030",
+          "residentDigest": "135d8710882da1ebcf02df5902a2c40c6563954dc6df746c94b1bf8d9da2e030",
+          "nativeDigest": "135d8710882da1ebcf02df5902a2c40c6563954dc6df746c94b1bf8d9da2e030",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0853f51d05eea0d2388d757d62bc5ca7",
+            "chk-47aa0676c5e8d1c242e6762d4d476352",
+            "chk-4af74e1f8ee65404b261460acda31522"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0853f51d05eea0d2388d757d62bc5ca7",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-47aa0676c5e8d1c242e6762d4d476352",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-4af74e1f8ee65404b261460acda31522",
+              "score": 0.9999999999999999
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-grant-admin",
+          "resultDigest": "a3f3d0d3a7593213eb4906b6202f965be300ddaa4a2859866545fe228e7ca89d",
+          "residentDigest": "a3f3d0d3a7593213eb4906b6202f965be300ddaa4a2859866545fe228e7ca89d",
+          "nativeDigest": "a3f3d0d3a7593213eb4906b6202f965be300ddaa4a2859866545fe228e7ca89d",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-3487a72eae7d04bed1a2466dc082461d",
+            "chk-60a79fa5555ff0d92f2841dabf6ca2d6",
+            "chk-7f77d24f171614d303abb64b3933b672"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-3487a72eae7d04bed1a2466dc082461d",
+              "score": 1
+            },
+            {
+              "id": "chk-60a79fa5555ff0d92f2841dabf6ca2d6",
+              "score": 1
+            },
+            {
+              "id": "chk-7f77d24f171614d303abb64b3933b672",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-cargo",
+          "resultDigest": "e6199f4c604096cffcae7eb6a2cd2e6f79b377bb9791eee4a1278c54ad07ddd8",
+          "residentDigest": "e6199f4c604096cffcae7eb6a2cd2e6f79b377bb9791eee4a1278c54ad07ddd8",
+          "nativeDigest": "e6199f4c604096cffcae7eb6a2cd2e6f79b377bb9791eee4a1278c54ad07ddd8",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0bf7c179af551634f74a20b2243bad9a",
+            "chk-15d47b2ef2bac76d8a63cf979d326c70",
+            "chk-18354dab7e9963d4f993e718e0099317"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0bf7c179af551634f74a20b2243bad9a",
+              "score": 1
+            },
+            {
+              "id": "chk-15d47b2ef2bac76d8a63cf979d326c70",
+              "score": 1
+            },
+            {
+              "id": "chk-18354dab7e9963d4f993e718e0099317",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-festival-host",
+          "resultDigest": "92c11e0478cde68be648051b6ad9624dfc061d0614d71cd2a821afa878c2a8ed",
+          "residentDigest": "92c11e0478cde68be648051b6ad9624dfc061d0614d71cd2a821afa878c2a8ed",
+          "nativeDigest": "92c11e0478cde68be648051b6ad9624dfc061d0614d71cd2a821afa878c2a8ed",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-159bd67ca0e74b565076284baef1ef84",
+            "chk-2472d2c2668c47bb91d51ea6ebabc3d0",
+            "chk-2517b9e831f2d76fa32bcdb737fe7e3e"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-159bd67ca0e74b565076284baef1ef84",
+              "score": 0.9999999999999998
+            },
+            {
+              "id": "chk-2472d2c2668c47bb91d51ea6ebabc3d0",
+              "score": 0.9999999999999998
+            },
+            {
+              "id": "chk-2517b9e831f2d76fa32bcdb737fe7e3e",
+              "score": 0.9999999999999998
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-restoration",
+          "resultDigest": "8934c3e2bcb9c2e7e95fbb9346e6b8a3e8ba4849b7989fe3c1cf402a136fa66b",
+          "residentDigest": "8934c3e2bcb9c2e7e95fbb9346e6b8a3e8ba4849b7989fe3c1cf402a136fa66b",
+          "nativeDigest": "8934c3e2bcb9c2e7e95fbb9346e6b8a3e8ba4849b7989fe3c1cf402a136fa66b",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3126,
+          "pruned": 3098,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-091e8e6f430436702a32ca0b1fc4d4f2",
+            "chk-1a6c3839805c48b47649827b86abae2b",
+            "chk-1ea874b2fdf0dfc8f149256958129854"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-091e8e6f430436702a32ca0b1fc4d4f2",
+              "score": 1
+            },
+            {
+              "id": "chk-1a6c3839805c48b47649827b86abae2b",
+              "score": 1
+            },
+            {
+              "id": "chk-1ea874b2fdf0dfc8f149256958129854",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-school-funding",
+          "resultDigest": "bdc9368c8cb5a62864a005889876e3c77d04f4b9ded43d59aa260b307353bc05",
+          "residentDigest": "bdc9368c8cb5a62864a005889876e3c77d04f4b9ded43d59aa260b307353bc05",
+          "nativeDigest": "bdc9368c8cb5a62864a005889876e3c77d04f4b9ded43d59aa260b307353bc05",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3122,
+          "pruned": 3093,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-069392d604f047a25694ef16c5da926e",
+            "chk-0bd7ba7596ea2345d9a4a6fa4d2be410",
+            "chk-30db0270b9cd8de230145e0ef954b8f9"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-069392d604f047a25694ef16c5da926e",
+              "score": 1
+            },
+            {
+              "id": "chk-0bd7ba7596ea2345d9a4a6fa4d2be410",
+              "score": 1
+            },
+            {
+              "id": "chk-30db0270b9cd8de230145e0ef954b8f9",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-shelves",
+          "resultDigest": "7a5e7d0706d4a4a451093f4eabd18e3316dd71bf290733de4c30a1b86037929a",
+          "residentDigest": "7a5e7d0706d4a4a451093f4eabd18e3316dd71bf290733de4c30a1b86037929a",
+          "nativeDigest": "7a5e7d0706d4a4a451093f4eabd18e3316dd71bf290733de4c30a1b86037929a",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-01b72f8e1048c9eafb98222b79078209",
+            "chk-44ac9e5dd1d5497459405ba3eccc980a",
+            "chk-503584d85e3032e3cd65f5d64e885be7"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-01b72f8e1048c9eafb98222b79078209",
+              "score": 1
+            },
+            {
+              "id": "chk-44ac9e5dd1d5497459405ba3eccc980a",
+              "score": 1
+            },
+            {
+              "id": "chk-503584d85e3032e3cd65f5d64e885be7",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-launch",
+          "resultDigest": "3d25a81e04631b70bfda5301612694d8c7e5f1e8bb6794834341bb804c135022",
+          "residentDigest": "3d25a81e04631b70bfda5301612694d8c7e5f1e8bb6794834341bb804c135022",
+          "nativeDigest": "3d25a81e04631b70bfda5301612694d8c7e5f1e8bb6794834341bb804c135022",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3126,
+          "pruned": 3099,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0812d00ac74a9192671f27127c5fcfd5",
+            "chk-0f17801973a6beaf184279e96e9762f9",
+            "chk-1412f81389a03e82be44f078ff666dbd"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0812d00ac74a9192671f27127c5fcfd5",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-0f17801973a6beaf184279e96e9762f9",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-1412f81389a03e82be44f078ff666dbd",
+              "score": 0.9999999999999999
+            }
+          ]
+        },
+        {
+          "questionId": "hop-archive-host",
+          "resultDigest": "2df092d08db2b559d2c7234a53c6404a88177fbe23eeea9c382435f80dcf99d0",
+          "residentDigest": "2df092d08db2b559d2c7234a53c6404a88177fbe23eeea9c382435f80dcf99d0",
+          "nativeDigest": "2df092d08db2b559d2c7234a53c6404a88177fbe23eeea9c382435f80dcf99d0",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3122,
+          "pruned": 3093,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-05a2331e7cf03531ce786c25d52fe6db",
+            "chk-09246d9fc76596067c1310b66d7cc6c5",
+            "chk-2cf00c82097c40be52f117f52c1c8118"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-05a2331e7cf03531ce786c25d52fe6db",
+              "score": 1
+            },
+            {
+              "id": "chk-09246d9fc76596067c1310b66d7cc6c5",
+              "score": 1
+            },
+            {
+              "id": "chk-2cf00c82097c40be52f117f52c1c8118",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-timber",
+          "resultDigest": "4e3b3eee4576e6f0a427063dba24aa5fa372917f6d59a7b255cb0352be0f1890",
+          "residentDigest": "4e3b3eee4576e6f0a427063dba24aa5fa372917f6d59a7b255cb0352be0f1890",
+          "nativeDigest": "4e3b3eee4576e6f0a427063dba24aa5fa372917f6d59a7b255cb0352be0f1890",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-10061b9e2e4da0ec21261cb5a805cbe4",
+            "chk-292f78ced062f3fdcd3f4970b990abb8",
+            "chk-4d1b30b2d4441b3b49cbdfee24ffb45a"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-10061b9e2e4da0ec21261cb5a805cbe4",
+              "score": 1
+            },
+            {
+              "id": "chk-292f78ced062f3fdcd3f4970b990abb8",
+              "score": 1
+            },
+            {
+              "id": "chk-4d1b30b2d4441b3b49cbdfee24ffb45a",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-grant-admin",
+          "resultDigest": "d714ab5449e83da1e5d5e2836c480abfb4ed218cf9d34aca5eaadf4b609979d7",
+          "residentDigest": "d714ab5449e83da1e5d5e2836c480abfb4ed218cf9d34aca5eaadf4b609979d7",
+          "nativeDigest": "d714ab5449e83da1e5d5e2836c480abfb4ed218cf9d34aca5eaadf4b609979d7",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3130,
+          "pruned": 3103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-3487a72eae7d04bed1a2466dc082461d",
+            "chk-60a79fa5555ff0d92f2841dabf6ca2d6",
+            "chk-7f77d24f171614d303abb64b3933b672"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-3487a72eae7d04bed1a2466dc082461d",
+              "score": 1
+            },
+            {
+              "id": "chk-60a79fa5555ff0d92f2841dabf6ca2d6",
+              "score": 1
+            },
+            {
+              "id": "chk-7f77d24f171614d303abb64b3933b672",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-opening",
+          "resultDigest": "22413179ac8277f6284604625a9cf9008ff3a7305d9d772836d9bcbbee675698",
+          "residentDigest": "22413179ac8277f6284604625a9cf9008ff3a7305d9d772836d9bcbbee675698",
+          "nativeDigest": "22413179ac8277f6284604625a9cf9008ff3a7305d9d772836d9bcbbee675698",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 3122,
+          "pruned": 3093,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-00251828f876f1cae85ae57fd1285eda",
+            "chk-290754fe58e06888bd66fa6cfa16d028",
+            "chk-2fde3de859aec1a215d8cfd39548b448"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-00251828f876f1cae85ae57fd1285eda",
+              "score": 1
+            },
+            {
+              "id": "chk-290754fe58e06888bd66fa6cfa16d028",
+              "score": 1
+            },
+            {
+              "id": "chk-2fde3de859aec1a215d8cfd39548b448",
+              "score": 1
+            }
+          ]
+        }
+      ],
+      "nativeStatus": "measured",
+      "nativeReason": "Explicit native columns preserve the complete candidate trace; production selection follows the registered decision."
+    },
+    {
+      "chunks": 10000,
+      "entities": 20000,
+      "relations": 10000,
+      "claims": 30000,
+      "corpusSha256": "103ca03b58669f3096ca4d6c9eed8c759c79b907e529221c745d711a009510b4",
+      "questions": [
+        {
+          "questionId": "specific-equipment",
+          "resultDigest": "3466ada6c4a202bd2c90a0f40901e0723c1455c461463d3b48757863eef830ca",
+          "residentDigest": "3466ada6c4a202bd2c90a0f40901e0723c1455c461463d3b48757863eef830ca",
+          "nativeDigest": "3466ada6c4a202bd2c90a0f40901e0723c1455c461463d3b48757863eef830ca",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-1b78bdd29d0f3264d396d13e097b2114",
+            "chk-31c9f06684184da16d044ce769c8eb8b",
+            "chk-3a684faf9f95ad4c84dd8da39e4bb8ab"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-1b78bdd29d0f3264d396d13e097b2114",
+              "score": 1
+            },
+            {
+              "id": "chk-31c9f06684184da16d044ce769c8eb8b",
+              "score": 1
+            },
+            {
+              "id": "chk-3a684faf9f95ad4c84dd8da39e4bb8ab",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-funding",
+          "resultDigest": "fa48fe5a7e710e54995a000f9d3af8daa82d2ffa4d7b7b361cb7cf2ade130cc1",
+          "residentDigest": "fa48fe5a7e710e54995a000f9d3af8daa82d2ffa4d7b7b361cb7cf2ade130cc1",
+          "nativeDigest": "fa48fe5a7e710e54995a000f9d3af8daa82d2ffa4d7b7b361cb7cf2ade130cc1",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-1cb08614c3676feafeb8d376f7814e10",
+            "chk-42fb76254156dcb6ccfcf7b99ed35659",
+            "chk-48fde9b416b3a37bfd13e427f57b2ea4"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-1cb08614c3676feafeb8d376f7814e10",
+              "score": 1
+            },
+            {
+              "id": "chk-42fb76254156dcb6ccfcf7b99ed35659",
+              "score": 1
+            },
+            {
+              "id": "chk-48fde9b416b3a37bfd13e427f57b2ea4",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-launch",
+          "resultDigest": "7387e45010cbb0ffe0f75f4021dc2f0bdf76b75169c2ab795514ae45f65025a7",
+          "residentDigest": "7387e45010cbb0ffe0f75f4021dc2f0bdf76b75169c2ab795514ae45f65025a7",
+          "nativeDigest": "7387e45010cbb0ffe0f75f4021dc2f0bdf76b75169c2ab795514ae45f65025a7",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-158cc40aa49282bb1ccdbc47e7e21f3b",
+            "chk-476e1896ec671e9ddf12db0820ef3835",
+            "chk-5cdb02318b98d7a86fb2da28d0dca78f"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-158cc40aa49282bb1ccdbc47e7e21f3b",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-476e1896ec671e9ddf12db0820ef3835",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-5cdb02318b98d7a86fb2da28d0dca78f",
+              "score": 0.9999999999999999
+            }
+          ]
+        },
+        {
+          "questionId": "specific-archive-host",
+          "resultDigest": "7527813c55745eac76f63b522d78ad54068d4462b2f0ba48062ca1b1ff326707",
+          "residentDigest": "7527813c55745eac76f63b522d78ad54068d4462b2f0ba48062ca1b1ff326707",
+          "nativeDigest": "7527813c55745eac76f63b522d78ad54068d4462b2f0ba48062ca1b1ff326707",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-3609e7226d7286acb0889f33efa26ba2",
+            "chk-808afe3e15cdb8f349a1841a330ddc71",
+            "chk-84c9b0a64e193fc8951b82cce04e7734"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-3609e7226d7286acb0889f33efa26ba2",
+              "score": 1
+            },
+            {
+              "id": "chk-808afe3e15cdb8f349a1841a330ddc71",
+              "score": 1
+            },
+            {
+              "id": "chk-84c9b0a64e193fc8951b82cce04e7734",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-timber",
+          "resultDigest": "4ac870cf8fe14a8e44087fd6083c80414e3ee3acb9cd76c2a754cbeb711f18de",
+          "residentDigest": "4ac870cf8fe14a8e44087fd6083c80414e3ee3acb9cd76c2a754cbeb711f18de",
+          "nativeDigest": "4ac870cf8fe14a8e44087fd6083c80414e3ee3acb9cd76c2a754cbeb711f18de",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0236b73757bc2e18c5fe57321c708a6c",
+            "chk-069b3915ff3cb45fa95d3854fe59cd14",
+            "chk-683142990c738f2eae291a43404972e5"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0236b73757bc2e18c5fe57321c708a6c",
+              "score": 1
+            },
+            {
+              "id": "chk-069b3915ff3cb45fa95d3854fe59cd14",
+              "score": 1
+            },
+            {
+              "id": "chk-683142990c738f2eae291a43404972e5",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "specific-produce",
+          "resultDigest": "135e572cc7a038771d2f77a1077ea1d4710bf91554c8c7da86c1e9cdd28dbdfb",
+          "residentDigest": "135e572cc7a038771d2f77a1077ea1d4710bf91554c8c7da86c1e9cdd28dbdfb",
+          "nativeDigest": "135e572cc7a038771d2f77a1077ea1d4710bf91554c8c7da86c1e9cdd28dbdfb",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-37a7d62071c7f8eeba8fe1913a730166",
+            "chk-4c7400cb9eb929f25978410d095c5b40",
+            "chk-5ba85a10b4a4950b0af9e87371a0a1ac"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-37a7d62071c7f8eeba8fe1913a730166",
+              "score": 1
+            },
+            {
+              "id": "chk-4c7400cb9eb929f25978410d095c5b40",
+              "score": 1
+            },
+            {
+              "id": "chk-5ba85a10b4a4950b0af9e87371a0a1ac",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-training",
+          "resultDigest": "2cfee6deabe6e11c18b565e5070d14e06a3bfd393f212dd0b3622ff3e1b102af",
+          "residentDigest": "2cfee6deabe6e11c18b565e5070d14e06a3bfd393f212dd0b3622ff3e1b102af",
+          "nativeDigest": "2cfee6deabe6e11c18b565e5070d14e06a3bfd393f212dd0b3622ff3e1b102af",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-1b375b34b8381c353867193f6dee5aaf",
+            "chk-42f83956cea8e0253fd3255555623928",
+            "chk-5944c8dc4761008772fa9c6c37a67046"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-1b375b34b8381c353867193f6dee5aaf",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-42f83956cea8e0253fd3255555623928",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-5944c8dc4761008772fa9c6c37a67046",
+              "score": 0.9999999999999999
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-grant-admin",
+          "resultDigest": "4813626530a5a379a6e8c485a4d161f47a5e160adda7a7a5ebfada5f85af5604",
+          "residentDigest": "4813626530a5a379a6e8c485a4d161f47a5e160adda7a7a5ebfada5f85af5604",
+          "nativeDigest": "4813626530a5a379a6e8c485a4d161f47a5e160adda7a7a5ebfada5f85af5604",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-468554890aa0aa85b8ba2ed8ec5fb47b",
+            "chk-5a9d9225bf67e0616c0992b33eb904a9",
+            "chk-5ce5ce316c14579279234f91ce8af319"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-468554890aa0aa85b8ba2ed8ec5fb47b",
+              "score": 1
+            },
+            {
+              "id": "chk-5a9d9225bf67e0616c0992b33eb904a9",
+              "score": 1
+            },
+            {
+              "id": "chk-5ce5ce316c14579279234f91ce8af319",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-cargo",
+          "resultDigest": "0f8a0cee34bb785859ad59b28b2657ae188e89571587296984ff70fbcde769cf",
+          "residentDigest": "0f8a0cee34bb785859ad59b28b2657ae188e89571587296984ff70fbcde769cf",
+          "nativeDigest": "0f8a0cee34bb785859ad59b28b2657ae188e89571587296984ff70fbcde769cf",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30122,
+          "pruned": 30095,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-37c58e64f3bc761c95b4642639f0cd67",
+            "chk-7509a93e08f0e3935cdbc9cc653d2767",
+            "chk-7fc84cb781bde000b35a4ddbf2c6e4c7"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-37c58e64f3bc761c95b4642639f0cd67",
+              "score": 1
+            },
+            {
+              "id": "chk-7509a93e08f0e3935cdbc9cc653d2767",
+              "score": 1
+            },
+            {
+              "id": "chk-7fc84cb781bde000b35a4ddbf2c6e4c7",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-festival-host",
+          "resultDigest": "15c5890077c30c61be8b36878b12b0ae3d659cff22e849062d9eada12d009d4b",
+          "residentDigest": "15c5890077c30c61be8b36878b12b0ae3d659cff22e849062d9eada12d009d4b",
+          "nativeDigest": "15c5890077c30c61be8b36878b12b0ae3d659cff22e849062d9eada12d009d4b",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0d02a40efd008f858e60b2fc1aaa3184",
+            "chk-13edbb83e9dd1ad65407c9089a0db9f5",
+            "chk-1f400056d83dc63810e82340203f3aaa"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0d02a40efd008f858e60b2fc1aaa3184",
+              "score": 0.9999999999999998
+            },
+            {
+              "id": "chk-13edbb83e9dd1ad65407c9089a0db9f5",
+              "score": 0.9999999999999998
+            },
+            {
+              "id": "chk-1f400056d83dc63810e82340203f3aaa",
+              "score": 0.9999999999999998
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-restoration",
+          "resultDigest": "9c2375a8248a03d133c8978e4b1cc48601ea5205b6d37fa43a50c5e5240982e0",
+          "residentDigest": "9c2375a8248a03d133c8978e4b1cc48601ea5205b6d37fa43a50c5e5240982e0",
+          "nativeDigest": "9c2375a8248a03d133c8978e4b1cc48601ea5205b6d37fa43a50c5e5240982e0",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-01419fabea4319007530e18805d3f875",
+            "chk-1bc83c45b5a1a9b7b445bdcd397dde6a",
+            "chk-83841e2726dce3ce2e9b1488afc6f786"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-01419fabea4319007530e18805d3f875",
+              "score": 1
+            },
+            {
+              "id": "chk-1bc83c45b5a1a9b7b445bdcd397dde6a",
+              "score": 1
+            },
+            {
+              "id": "chk-83841e2726dce3ce2e9b1488afc6f786",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "abstract-school-funding",
+          "resultDigest": "63cbdc70d761a4e8c99a63afb16b824aeac1e5ff21c18c9749f95d7e93d87a10",
+          "residentDigest": "63cbdc70d761a4e8c99a63afb16b824aeac1e5ff21c18c9749f95d7e93d87a10",
+          "nativeDigest": "63cbdc70d761a4e8c99a63afb16b824aeac1e5ff21c18c9749f95d7e93d87a10",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-12254aac21611a791632e6c756b374a3",
+            "chk-15ae1cc6c423eaef006ee7cbf25d98e3",
+            "chk-37bdc0cd5d3641fa4b6e97e52edbbcad"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-12254aac21611a791632e6c756b374a3",
+              "score": 1
+            },
+            {
+              "id": "chk-15ae1cc6c423eaef006ee7cbf25d98e3",
+              "score": 1
+            },
+            {
+              "id": "chk-37bdc0cd5d3641fa4b6e97e52edbbcad",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-shelves",
+          "resultDigest": "de671ad07ffb06a3f2c95c868900a603572bca3ad63102908cad28c2a4bcc1d4",
+          "residentDigest": "de671ad07ffb06a3f2c95c868900a603572bca3ad63102908cad28c2a4bcc1d4",
+          "nativeDigest": "de671ad07ffb06a3f2c95c868900a603572bca3ad63102908cad28c2a4bcc1d4",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-18f5d51f37a820b1c02275beedf70c0e",
+            "chk-1aa02de9c0ad03b7bbaa77132ebfef54",
+            "chk-21c942ac8273daa068d63e37d790c795"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-18f5d51f37a820b1c02275beedf70c0e",
+              "score": 1
+            },
+            {
+              "id": "chk-1aa02de9c0ad03b7bbaa77132ebfef54",
+              "score": 1
+            },
+            {
+              "id": "chk-21c942ac8273daa068d63e37d790c795",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-launch",
+          "resultDigest": "efbb99c593716c48cc9a1429558569e9f359bb72c8e33b0d1d9facd377d72bcc",
+          "residentDigest": "efbb99c593716c48cc9a1429558569e9f359bb72c8e33b0d1d9facd377d72bcc",
+          "nativeDigest": "efbb99c593716c48cc9a1429558569e9f359bb72c8e33b0d1d9facd377d72bcc",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-158cc40aa49282bb1ccdbc47e7e21f3b",
+            "chk-476e1896ec671e9ddf12db0820ef3835",
+            "chk-5cdb02318b98d7a86fb2da28d0dca78f"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-158cc40aa49282bb1ccdbc47e7e21f3b",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-476e1896ec671e9ddf12db0820ef3835",
+              "score": 0.9999999999999999
+            },
+            {
+              "id": "chk-5cdb02318b98d7a86fb2da28d0dca78f",
+              "score": 0.9999999999999999
+            }
+          ]
+        },
+        {
+          "questionId": "hop-archive-host",
+          "resultDigest": "f36bb39ca024a23798c99e77f59c56dfa913e473b57f241d7244cdae7e0be330",
+          "residentDigest": "f36bb39ca024a23798c99e77f59c56dfa913e473b57f241d7244cdae7e0be330",
+          "nativeDigest": "f36bb39ca024a23798c99e77f59c56dfa913e473b57f241d7244cdae7e0be330",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-3609e7226d7286acb0889f33efa26ba2",
+            "chk-808afe3e15cdb8f349a1841a330ddc71",
+            "chk-84c9b0a64e193fc8951b82cce04e7734"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-3609e7226d7286acb0889f33efa26ba2",
+              "score": 1
+            },
+            {
+              "id": "chk-808afe3e15cdb8f349a1841a330ddc71",
+              "score": 1
+            },
+            {
+              "id": "chk-84c9b0a64e193fc8951b82cce04e7734",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-timber",
+          "resultDigest": "be38a9264cec7fe6be13caabfb5fdb2daefdef0734dfeeee4dbb78d5d4a4dde2",
+          "residentDigest": "be38a9264cec7fe6be13caabfb5fdb2daefdef0734dfeeee4dbb78d5d4a4dde2",
+          "nativeDigest": "be38a9264cec7fe6be13caabfb5fdb2daefdef0734dfeeee4dbb78d5d4a4dde2",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-0236b73757bc2e18c5fe57321c708a6c",
+            "chk-069b3915ff3cb45fa95d3854fe59cd14",
+            "chk-683142990c738f2eae291a43404972e5"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-0236b73757bc2e18c5fe57321c708a6c",
+              "score": 1
+            },
+            {
+              "id": "chk-069b3915ff3cb45fa95d3854fe59cd14",
+              "score": 1
+            },
+            {
+              "id": "chk-683142990c738f2eae291a43404972e5",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-grant-admin",
+          "resultDigest": "3145e83fb02cc9b4343b2acb29c789d6c939617c65b779f7f4aacec0b190a0bf",
+          "residentDigest": "3145e83fb02cc9b4343b2acb29c789d6c939617c65b779f7f4aacec0b190a0bf",
+          "nativeDigest": "3145e83fb02cc9b4343b2acb29c789d6c939617c65b779f7f4aacec0b190a0bf",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-468554890aa0aa85b8ba2ed8ec5fb47b",
+            "chk-5a9d9225bf67e0616c0992b33eb904a9",
+            "chk-5ce5ce316c14579279234f91ce8af319"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-468554890aa0aa85b8ba2ed8ec5fb47b",
+              "score": 1
+            },
+            {
+              "id": "chk-5a9d9225bf67e0616c0992b33eb904a9",
+              "score": 1
+            },
+            {
+              "id": "chk-5ce5ce316c14579279234f91ce8af319",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "questionId": "hop-opening",
+          "resultDigest": "49d9a149188df9f4a51801de4448bccaa394adcbdac72f5efe38a3a172cd7e3b",
+          "residentDigest": "49d9a149188df9f4a51801de4448bccaa394adcbdac72f5efe38a3a172cd7e3b",
+          "nativeDigest": "49d9a149188df9f4a51801de4448bccaa394adcbdac72f5efe38a3a172cd7e3b",
+          "parity": {
+            "equal": true,
+            "differences": 0,
+            "paths": []
+          },
+          "traceRows": 30130,
+          "pruned": 30103,
+          "skipped": {
+            "identity": 0,
+            "unresolvable": 0,
+            "width": 0
+          },
+          "citations": [
+            "chk-19311239c3e02a814564a800990dcbd1",
+            "chk-22929665d10b8f025741699846dc3e7f",
+            "chk-26461fe183e18a0ff78c91c939f456dc"
+          ],
+          "selectedScores": [
+            {
+              "id": "chk-19311239c3e02a814564a800990dcbd1",
+              "score": 1
+            },
+            {
+              "id": "chk-22929665d10b8f025741699846dc3e7f",
+              "score": 1
+            },
+            {
+              "id": "chk-26461fe183e18a0ff78c91c939f456dc",
+              "score": 1
+            }
+          ]
+        }
+      ],
+      "nativeStatus": "measured",
+      "nativeReason": "Explicit native columns preserve the complete candidate trace; production selection follows the registered decision."
+    }
+  ],
+  "untriggered": [
+    "memory",
+    "documents",
+    "locomo",
+    "ledger"
+  ],
+  "physicalRequests": 0,
+  "nativeQualification": "parity-passed",
+  "reportId": "27bd953cf23b66a956cb46c32946b699b274a7d04dd326b6a930dd1f6de97994"
+}

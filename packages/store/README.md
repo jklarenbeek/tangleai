@@ -114,6 +114,79 @@ chain again performs zero migrations. The application still owns migration
 approval, backups and worker coordination; this package does not run DDL during
 normal trace operations.
 
+## Optional graph vector storage
+
+`openTangleDb({ graphVectors: declareGraphVectors(active, retained) })` explicitly
+adds native vector columns to canonical graph entities and relations. Each
+identity contains its settled model and positive width; retained identities keep
+their required columns. The default model remains unchanged. Memory and document
+recall do not use this capability.
+
+For an existing database, save and review `planGraphVectorMigration(before,
+after, id)`, stop its readers and writers, and apply the complete saved chain with
+`applyGraphVectorMigrations`. Jaren owns model comparison, shadow validation,
+backfill, history and drift checks. Reopen with the resulting declaration.
+Jaren 0.91.4 currently refuses `dryRun: true` for a pending vector derive step
+with native cause `JD0023`; this adapter preserves that refusal. Actual migration
+still validates its shadow before applying. A preview failure is not a successful
+dry run.
+
+`TVEC1003` identifies a Tangle staging or migration precondition refusal;
+`TVEC1004` retains a native migration failure or drift report. A returned native
+status with `upToDate: false` is a refusal even when no migration was pending.
+
+`createGraphVectorRank(db, declaration)` exposes explicit native candidate reads
+and diagnostics. A host can opt a graph store into qualification with
+`{ ...createLightRagStore(db), rankRows: rank.rows }`. The default graph store
+uses its existing sweep. Each native request verifies `knn`, the selected width,
+and a rank-only residual; an unproven plan returns `null` for the counted sweep
+fallback. Wrong probes refuse with `TVEC1001`. Execution errors retain their
+cause and cannot impersonate empty results. Diagnostics include actual native
+row, candidate, full-fetch and diversion counters, bounded plan/refusal samples,
+and a reset operation. Native full-trace retrieval requests every candidate;
+its physical read volume is not bounded by the selected top-k window.
+
+Identity changes use `createGraphVectorStage` with a separate disposable native
+store, the currently active declaration, and an injected target embedder. Both
+widths must already exist. `initialize` snapshots the complete corpus and retains
+a primary reservation. `stage` calls the host's existing document preparation
+and graph preparation seams. It requires unchanged source bytes and chunking;
+partial or failed preparations cannot promote. Completed source preparations
+replay with zero embedding calls and zero writes. Recovery of an interrupted
+attempt requires `resumeInterrupted: true` after the host has stopped that attempt.
+Staging uses compact graph write plans: incoming contribution bytes occur once,
+and prior preparations remain in storage with checked hash bindings. The joint
+transaction resolves their exact bytes for writes and replay, avoiding aggregate
+JSON string limits caused by repeated caches while preserving retained evidence.
+
+`promote` checks source heads and the settled identity inside one immediate
+transaction, then uses the ordinary joint document/graph owner to swap every
+source. A fault rolls back the entire swap. A retained identity can be staged
+back using its saved document and graph preparations, preserving original
+profiles, vectors and evidence without embedding calls. Replaying an old swap
+writes nothing and does not rewind a newer identity. The lifecycle bounds are
+128 active sources, 100,000 retained chunks and 32 rollback authorities.
+
+`abandon(reason)` releases an unpromoted reservation and retains its reason.
+`disposeGraphVectorRollback` relinquishes one rollback authority with an exact
+revision and reason; it preserves the evidence and an audit record. Removing a
+column requires `dropState` and a reviewed independent shadow fixture. Native
+preconditions refuse removal while active rows, retained rollback authority, or
+a pending stage still needs that width. The
+[disposable migration example](../../examples/vector-migration.ts) demonstrates
+backfill, reopen, a complete identity swap, exact rollback, explicit disposal,
+column removal and zero-step replay on Node and Bun:
+
+```sh
+npm run store:vector:smoke
+bun examples/vector-migration.ts
+```
+
+The [graph scale report](../../docs/VECTOR_SCALE.md) separates full retrieval
+latency from ranking and fetch costs, and records build, backfill and complete
+isolated staging work. Optional columns and successful parity alone do not
+establish a production performance improvement.
+
 ## Sourced gazetteers
 
 `createPlaceDbStore(db)` persists a header and one canonical row per entry in
@@ -138,7 +211,7 @@ Longitude and latitude are numeric mirrors in each JSON row; the declared
 gazetteer and cell indexes materialize their own native scalar columns. No
 longitude/latitude index, derived bounding box or R-tree is created.
 
-The [registered candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale.json)
+The [registered candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale-2026-10-08.json)
 keeps the in-memory sweep after both Node and Bun meet the target on the
 50,000-entry sparse synthetic workload. Bbox and R-tree trials remain
 untriggered. That measurement reuses the internal candidate owner; synthetic

@@ -69,3 +69,20 @@ createLightRagEngine({retrieve:composed,client:null,embedder:engineOptions.embed
 // @ts-expect-error a host cannot invent an answer mode
 engine.answer('Cedar?',{mode:'global-community'});
 void [GROUNDED_ANSWER_SCHEMA,barrelAnswerSchema,grounded];
+
+import { declareGraphVectors, createTangleDbModel, createGraphVectorRank, createGraphVectorStage,
+  planGraphVectorMigration, disposeGraphVectorRollback, type GraphVectorDeclaration, type GraphVectorState } from '@tangleai/store';
+import type { LightRagRankRequest } from '@tangleai/lightrag';
+declare const stagingDb:TangleDb, retainedState:GraphVectorState;
+const vectorDeclaration:GraphVectorDeclaration=declareGraphVectors({model:'hash-trigram-64',dims:64});
+const vectorModel=createTangleDbModel({graphVectors:vectorDeclaration}), nativeRank=createGraphVectorRank(db,vectorDeclaration);
+const nativeRequest:LightRagRankRequest={kind:'entity',identity:vectorDeclaration.active,vector:new Float64Array(64)};
+const nativeStore:LightRagStore={...durable,rankRows:nativeRank.rows};
+const nativeRows=await nativeRank.rows(nativeRequest), graphMigration=planGraphVectorMigration(null,vectorDeclaration,'consumer-vector');
+const vectorStage=createGraphVectorStage({db,staging:stagingDb,declaration:vectorDeclaration,embedder:engineOptions.embedder,operationKey:'consumer-stage',now:()=>''});
+const vectorDisposal=await disposeGraphVectorRollback(db,{id:'retained',expectedRevision:retainedState.revision,reason:'Host decision.'});
+// @ts-expect-error the native graph capability cannot rank memory records
+nativeRank.rows({...nativeRequest,kind:'memory'});
+// @ts-expect-error disposal requires an exact retained identity revision
+disposeGraphVectorRollback(db,{id:'retained',reason:'Host decision.'});
+void [vectorModel,nativeStore,nativeRows,graphMigration,vectorStage,vectorDisposal];

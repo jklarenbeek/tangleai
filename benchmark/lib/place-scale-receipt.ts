@@ -10,7 +10,7 @@ import type { FixtureManifest, PlaceIndex, PlaceScaleReceipt, ScaleRuntime } fro
 import manifest from '../fixtures/place/manifest.json' with { type: 'json' };
 
 export const PLACE_SCALE_REGISTRATION = (manifest as FixtureManifest).scale;
-export const PLACE_SCALE_RECEIPT = 'benchmark/receipts/place-scale.json';
+export const PLACE_SCALE_RECEIPT = 'benchmark/receipts/place-scale-2026-10-08.json';
 const shapes: PlaceScaleShape[] = ['sweep', 'bbox', 'rtree'];
 const same = (a: unknown, b: unknown) => canonicalizeJson(a) === canonicalizeJson(b);
 

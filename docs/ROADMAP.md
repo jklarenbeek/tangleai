@@ -308,6 +308,12 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   `scale-row-registered`; architecture resemblance cannot open it or change a
   default. Conservative model-dependent call bounds must fit an explicitly
   approved live plan before provider work can start.
+  The [registered native-vector comparison](VECTOR_SCALE.md) passes complete
+  retrieval parity at 100, 1,000 and 10,000 chunks, but its 10,000-chunk native
+  hybrid p95 is 3112.47 ms against the unchanged 250 ms target. Production
+  retrieval therefore remains on the sweep. Column backfill, storage, reads and
+  complete 128-dimensional staging costs are published with that failed latency
+  gate; future graph performance work must preserve the same complete results.
   Large retained-source admission also remains memory intensive: the registered
   10,000-chunk command grants Node 8 GiB of old-space heap after default-heap
   exhaustion. Reducing retained-payload memory cost must preserve complete
@@ -316,7 +322,7 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Configuration and persistence
 
-- [ ] **The vector column.** *Wanted:* `recallByEmbedding` and
+- [ ] **Memory, document and ledger vector adoption.** *Wanted:* `recallByEmbedding` and
   `recallDocumentChunks` over `@jarenjs/db`'s `derive: 'vector'` column and its
   k-nearest plan instead of `list()` plus a cosine sweep. *Constraint:* `dims` is
   the column's identity and the embedder is a runtime SETTING — declaring the
@@ -326,8 +332,11 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   document lane has a second sweep with a worse constant — every chunk of every
   active version, and activation scanning all elements and chunks to clean the
   superseded one — and a document corpus grows faster than curated memory, so it
-  reaches the column first. *Closes on:* the instrument showing the sweep costs at
-  Tangle's sizes; then pin `dims` in settings and declare the column.
+  may reach its own native-column trigger. The graph-specific capability and
+  [scale instrument](VECTOR_SCALE.md) do not qualify these other corpora.
+  *Closes on:* a registered measurement showing their sweep costs at Tangle's
+  sizes, complete retrieval parity, settled identity migrations, and a measured
+  complete-call improvement with build, storage and write costs included.
 
 ## Surfaces
 
