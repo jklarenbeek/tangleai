@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.41.0",
+  "baseVersion": "0.40.0",
+  "baseCommit": "2be71c633567e6f1e0598fdc6543259862318013",
+  "preparationCommit": "2be71c633567e6f1e0598fdc6543259862318013",
+  "initial": false,
+  "inputHash": "79b8a8dfb6ac9e56e5a84808d9ee51f0d7fc67a91b340fe57b1cde6970119695",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add explicit native graph vector declarations and guarded migrations for canonical\nentities and relations. Complete document and graph identity changes stage in a\nseparate store, swap atomically, and retain exact zero-embedding rollback with\nrevision-fenced disposal and column-removal guards.\n\nExpose an optional native graph candidate seam with plan verification, physical\nstatistics, complete trace parity and counted sweep fallback. Default graph\nretrieval continues to use the sweep; the registered scale instrument measures\nnative performance and operational costs before any production adoption.",
+      "id": "optional-graph-vectors"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.41.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.41.0"
+    }
+  ]
+}

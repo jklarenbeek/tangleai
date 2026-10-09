@@ -1,5 +1,17 @@
 # Tangle releases
 
+## 0.41.0
+
+Add explicit native graph vector declarations and guarded migrations for canonical
+entities and relations. Complete document and graph identity changes stage in a
+separate store, swap atomically, and retain exact zero-embedding rollback with
+revision-fenced disposal and column-removal guards.
+
+Expose an optional native graph candidate seam with plan verification, physical
+statistics, complete trace parity and counted sweep fallback. Default graph
+retrieval continues to use the sweep; the registered scale instrument measures
+native performance and operational costs before any production adoption.
+
 ## 0.40.0
 
 Add disabled-by-default host ticks with durable cadence and budget reservations,

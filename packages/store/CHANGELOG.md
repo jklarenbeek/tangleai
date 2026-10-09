@@ -1,5 +1,38 @@
 # @tangleai/store
 
+## 0.41.0
+
+### Minor Changes
+
+- Add explicit native graph vector declarations and guarded migrations for canonical
+  entities and relations. Complete document and graph identity changes stage in a
+  separate store, swap atomically, and retain exact zero-embedding rollback with
+  revision-fenced disposal and column-removal guards.
+
+  Expose an optional native graph candidate seam with plan verification, physical
+  statistics, complete trace parity and counted sweep fallback. Default graph
+  retrieval continues to use the sweep; the registered scale instrument measures
+  native performance and operational costs before any production adoption.
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/lightrag@0.41.0
+  - @tangleai/config@0.41.0
+  - @tangleai/core@0.41.0
+  - @tangleai/documents@0.41.0
+  - @tangleai/evolve@0.41.0
+  - @tangleai/experiential@0.41.0
+  - @tangleai/forecast@0.41.0
+  - @tangleai/grounding@0.41.0
+  - @tangleai/hera@0.41.0
+  - @tangleai/mas@0.41.0
+  - @tangleai/memory@0.41.0
+  - @tangleai/outcomes@0.41.0
+  - @tangleai/research@0.41.0
+  - @tangleai/trace2skill@0.41.0
+  - @tangleai/trading@0.41.0
+
 ## 0.40.0
 
 ### Minor Changes

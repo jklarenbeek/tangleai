@@ -1,6 +1,6 @@
 {
   "document": "lightrag-parity",
-  "planId": "24abc6a77818cada9b664ffa2ca7999784415b464093e504c7a52fc9f17097cc",
+  "planId": "e680bf6a6e37c52b2b57c04a6932de25413750c721db8585f806a39dc007f44c",
   "status": "not-run",
   "reason": "No separately obtained UltraDomain dataset path was supplied. No dataset licence acknowledgement was supplied. No matching separate parity authorization was supplied. This entry records a protocol only. The four licensed corpora, generated questions, original prompt bytes, exact model snapshots, embedder, tokenizer, overlap and baseline settings need independent parity qualification before execution. The Tangle prompt revisions in this plan identify the mechanism port, not exact upstream prompt parity.",
   "datasetPath": null,
@@ -33,10 +33,10 @@
     "measurement": "No paper-score comparison until corpus, generated questions, prompt bytes, model snapshots, embedder, tokenizer, overlap and all baseline settings are pinned and the full separately authorized protocol executes."
   },
   "promptRevisions": {
-    "extraction": "2ca694e166f45d838ecfb662077fbadbce9306e4bf30da36dd8c4e4e70e7b430",
-    "profiling": "0574c2873d53f2143604b2dddb0edb90d2c12e34017e1c862e0584348a313221",
-    "deduplication": "da0fcdb6ecb2ef91ddae3f7df7d7586ffdd39fbf139588c65754c6db07e41f95",
-    "planning": "fbdd42da8693e7488ded365bb11d2412ad70d278fd6e303bd78b4d96fc433d60",
+    "extraction": "13bb3390dde3816d564a4ee82c8eb1c6857f5c5d6a8e1946e12fba7bbc0e46f5",
+    "profiling": "e578af0f029a65aa866e8f256937731c3adafcf8488e83a410c73ac05ecc42df",
+    "deduplication": "8b42b06a03ccd5f44a8331d34b0ef1d2224d3f098d0f8ec3dd055c92ec7b432b",
+    "planning": "531143fb8e40d39cea03e0dbc6e41024d06a9a935d0c54a81cc854a814497d1c",
     "generation": "f20c70213c8315cf4490cd011240d46404f10fcb68ed1192655520794dabbef9",
     "judge": "0e29c10e5a4a6c4b0094d7dc2dc5b84d7ef54e7f3f7e662bec1c06184b9607cb"
   },

@@ -198,7 +198,7 @@
       },
       {
         "path": "benchmark/lib/lightrag-ladder.ts",
-        "sha256": "ccc58cd661913cc6fa9942e40ed3b6fde71a59d57b51a0feccec0ecd5e3d0d93"
+        "sha256": "a490606195f012f78677a69c048ca15e4ebe5e98a611c2fbf78953b4ff6ebe3f"
       },
       {
         "path": "benchmark/lib/lightrag-measure.ts",
@@ -298,15 +298,15 @@
       },
       {
         "path": "packages/lightrag/artifacts/prompts.json",
-        "sha256": "7d0f8d9b96c43690edbda792c469131fc4d3a3edf2e205afcebf6fbcaed10e0c"
+        "sha256": "e2d2cce2d4c680d9385f352510e8286e34e6d0402f3e0c77fc2c72d8af9ff4da"
       },
       {
         "path": "packages/lightrag/package.json",
-        "sha256": "501b19869fb02b61bfea78638e5a232035ac4e39f89d63d40e0f3098f52ab78a"
+        "sha256": "f958c5dc07ea5d565b50f084a6bbfbd5db072cb6f9f514fb5c6a6cdb74a88791"
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
-        "sha256": "07df3c80de5b4b4003a036b86b9a4b3f89ef7e973aab57502d8f396c41f4e298"
+        "sha256": "3959f15b75a3214494fa6c34cc4f6b87b9e003250d6ab236bc6c3733f4e0f7db"
       },
       {
         "path": "packages/lightrag/src/answer.ts",
@@ -314,7 +314,7 @@
       },
       {
         "path": "packages/lightrag/src/apply.ts",
-        "sha256": "5882f13a44532dcf08e84f5a00c5dda38754d7f053f2cb5c935383420376eef4"
+        "sha256": "c49e3a5489bd99b6961f4e8be1900b6a78fc9d6b1f15b10e972d4119eb31d13c"
       },
       {
         "path": "packages/lightrag/src/catalog.ts",
@@ -326,7 +326,7 @@
       },
       {
         "path": "packages/lightrag/src/contracts.gen.ts",
-        "sha256": "93941658827d5f677f33f6a3f0d9e08c1cb71cf45d8b0a1f2c79707011a6c271"
+        "sha256": "d3fb9e87303d791fb57dd28910c5f58e0b1cbd740d0d46e83c857491328787e1"
       },
       {
         "path": "packages/lightrag/src/contribution.ts",
@@ -382,7 +382,11 @@
       },
       {
         "path": "packages/lightrag/src/plan.ts",
-        "sha256": "509972b638c06d82295853cead4a36717f62b174b0b9e29ab3d43cae399b3715"
+        "sha256": "c269c9619df3a9b42cabe5a19f070472df91db692006cab0e4b4ebc1229ede2b"
+      },
+      {
+        "path": "packages/lightrag/src/preparation-bindings.ts",
+        "sha256": "5be526e739ca4c6430c3098c3a66926e131535a4f7b96fea39d08284d9f16ba4"
       },
       {
         "path": "packages/lightrag/src/profile.ts",
@@ -402,15 +406,15 @@
       },
       {
         "path": "packages/lightrag/src/retrieve.ts",
-        "sha256": "85191aebb4dd4efdb63097d1a2d4a22e229c65c83ad47dcefdd8ccd2e2e367e4"
+        "sha256": "3ee0e9d7683f54c5b2dfdeaeaf395e700f62ea588c86b11da2d16498b5e94427"
       },
       {
         "path": "packages/lightrag/src/reuse.ts",
-        "sha256": "91a05ffe3f9b693b3962322daa4a1a22f1248ce7f985a542f7b91da2b8c303fa"
+        "sha256": "1deb05a95f1a1a3721e350c319fba7ed088469e9a4a01a47928f7f3bca8e0670"
       },
       {
         "path": "packages/lightrag/src/schema.ts",
-        "sha256": "5d8991afee1c6a2e2a218571d6c1b6d7c8e8f224df93488340b978b1f1a58bc7"
+        "sha256": "e6efc8639f9d9930f76211167a771e1bc2c5036d677b3912aafb1d8aaa5054e8"
       },
       {
         "path": "packages/lightrag/src/snapshot.ts",
@@ -418,7 +422,7 @@
       },
       {
         "path": "packages/lightrag/src/store.ts",
-        "sha256": "49a23e2624b26d8702e5268d7531e0076b38680353a2c13b627306e5800e97a6"
+        "sha256": "9a397a40b9a56abed33fcd824bdd12a6ef13106da0448679b4ebb4ddd64db65b"
       },
       {
         "path": "packages/lightrag/src/structured.ts",
@@ -426,7 +430,7 @@
       },
       {
         "path": "packages/lightrag/src/write-plan.ts",
-        "sha256": "b806e22eb75560b00fdbe94575924ded645811909cd76c1f5d9349bd75e9c54a"
+        "sha256": "2fc1638f1cb49a1770106438c570fdb2ef41f3f453d81826e9271d0ed1e02cc6"
       },
       {
         "path": "packages/models/src/embed.ts",
@@ -438,15 +442,15 @@
       },
       {
         "path": "packages/store/src/corpus-promotion.ts",
-        "sha256": "379ade18c66a21bbe19f916c05cda3a1a575a4e37983e5b2b61fedf1b66a9230"
+        "sha256": "f6fd03d6f1a8c11601dbe9527a453962e9a115e2043a3aa968273b8a93eb5ab1"
       },
       {
         "path": "packages/store/src/document-state.ts",
-        "sha256": "500148e4ee398f6c1657eaef823d2f1947def18cfbc4c1c0f01ab9b32ebad33c"
+        "sha256": "7f95df2961ce98ab9e86c1ec55e3e1058ab6be05614a2627ea214bdfe1b02e2c"
       },
       {
         "path": "packages/store/src/document-store.ts",
-        "sha256": "b958ece6dd2b668358d1fa328315be800320c1ac36f09bec17c59167395e43ba"
+        "sha256": "d68f9d6dec21e9fa7bf1a2dfe79b9f14a9f6372ff48760e9821e38b1d92d6f9d"
       },
       {
         "path": "packages/store/src/lightrag-model.ts",
@@ -454,7 +458,7 @@
       },
       {
         "path": "packages/store/src/lightrag-store.ts",
-        "sha256": "b7924fee427099830d4805f824f425269567da9b34f4befc877718d2549c2454"
+        "sha256": "031e226aae56e101353378f0f5aa7f0fbb2a0c1c6301afe3065c50465c04a5c3"
       },
       {
         "path": "prompts/graph/deduplication.toml",
@@ -481,7 +485,7 @@
         "sha256": "63a768ca799206589866bdd61c0c225cdde67239bf038ec3014ffaf0ce7e35d1"
       }
     ],
-    "sha256": "d0c06549e104310a666cc2fe47cec6de8708b000e83830ef9182a6f7786743fa"
+    "sha256": "c8c46edda61f774ff6622a72a231673ee217e59fb8d1dd51d55c70657d1a225c"
   },
   "configIdentities": {
     "identities": [],
@@ -1982,10 +1986,10 @@
           "model": "scripted"
         },
         "prompts": {
-          "extraction": "2ca694e166f45d838ecfb662077fbadbce9306e4bf30da36dd8c4e4e70e7b430",
-          "profiling": "0574c2873d53f2143604b2dddb0edb90d2c12e34017e1c862e0584348a313221",
-          "deduplication": "da0fcdb6ecb2ef91ddae3f7df7d7586ffdd39fbf139588c65754c6db07e41f95",
-          "planning": "fbdd42da8693e7488ded365bb11d2412ad70d278fd6e303bd78b4d96fc433d60"
+          "extraction": "13bb3390dde3816d564a4ee82c8eb1c6857f5c5d6a8e1946e12fba7bbc0e46f5",
+          "profiling": "e578af0f029a65aa866e8f256937731c3adafcf8488e83a410c73ac05ecc42df",
+          "deduplication": "8b42b06a03ccd5f44a8331d34b0ef1d2224d3f098d0f8ec3dd055c92ec7b432b",
+          "planning": "531143fb8e40d39cea03e0dbc6e41024d06a9a935d0c54a81cc854a814497d1c"
         },
         "chunker": {
           "version": "heading-recursive/1",
@@ -2083,9 +2087,9 @@
               "funding",
               "equipment",
               "grant-admin",
-              "restoration",
               "opening",
               "outreach",
+              "restoration",
               "produce",
               "school-funding",
               "timber",
@@ -2387,8 +2391,8 @@
               "cargo",
               "membership",
               "produce",
-              "restoration",
               "launch",
+              "restoration",
               "opening",
               "auditing",
               "funding",
@@ -2690,9 +2694,9 @@
               "funding",
               "equipment",
               "grant-admin",
-              "restoration",
               "opening",
               "outreach",
+              "restoration",
               "produce",
               "school-funding",
               "timber",
@@ -2891,8 +2895,8 @@
               "produce",
               "outreach",
               "shelves",
-              "restoration",
               "festival-host",
+              "restoration",
               "archive-host",
               "timber",
               "school-funding"
@@ -2989,8 +2993,8 @@
               "cargo",
               "membership",
               "produce",
-              "restoration",
               "launch",
+              "restoration",
               "opening",
               "auditing",
               "funding",
@@ -3086,8 +3090,8 @@
               "meridian-device"
             ],
             "relations": [
-              "restoration",
               "timber",
+              "restoration",
               "award",
               "grant-admin",
               "opening",
@@ -3196,8 +3200,8 @@
               "launch",
               "opening",
               "outreach",
-              "restoration",
               "timber",
+              "restoration",
               "award",
               "auditing",
               "training",
@@ -3500,8 +3504,8 @@
               "produce",
               "outreach",
               "shelves",
-              "restoration",
               "launch",
+              "restoration",
               "auditing",
               "funding",
               "grant-admin",
@@ -3976,10 +3980,10 @@
           "model": "scripted"
         },
         "prompts": {
-          "extraction": "2ca694e166f45d838ecfb662077fbadbce9306e4bf30da36dd8c4e4e70e7b430",
-          "profiling": "0574c2873d53f2143604b2dddb0edb90d2c12e34017e1c862e0584348a313221",
-          "deduplication": "da0fcdb6ecb2ef91ddae3f7df7d7586ffdd39fbf139588c65754c6db07e41f95",
-          "planning": "fbdd42da8693e7488ded365bb11d2412ad70d278fd6e303bd78b4d96fc433d60"
+          "extraction": "13bb3390dde3816d564a4ee82c8eb1c6857f5c5d6a8e1946e12fba7bbc0e46f5",
+          "profiling": "e578af0f029a65aa866e8f256937731c3adafcf8488e83a410c73ac05ecc42df",
+          "deduplication": "8b42b06a03ccd5f44a8331d34b0ef1d2224d3f098d0f8ec3dd055c92ec7b432b",
+          "planning": "531143fb8e40d39cea03e0dbc6e41024d06a9a935d0c54a81cc854a814497d1c"
         },
         "chunker": {
           "version": "heading-recursive/1",
@@ -4056,8 +4060,8 @@
               "workshop",
               "lab",
               "grant",
-              "guild",
               "mill",
+              "guild",
               "library",
               "depot",
               "school",
@@ -4185,8 +4189,8 @@
               "opening",
               "outreach",
               "shelves",
-              "restoration",
               "timber",
+              "restoration",
               "cargo"
             ],
             "goldEntities": [
@@ -4387,12 +4391,12 @@
               "auditing",
               "funding",
               "grant-admin",
-              "restoration",
               "outreach",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "award",
               "launch"
             ],
@@ -4482,11 +4486,11 @@
               "fund"
             ],
             "relations": [
-              "restoration",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "cargo",
               "membership",
               "produce",
@@ -4590,8 +4594,8 @@
               "membership",
               "produce",
               "school-funding",
-              "restoration",
               "timber",
+              "restoration",
               "auditing",
               "funding",
               "grant-admin",
@@ -4675,8 +4679,8 @@
               "workshop",
               "lab",
               "grant",
-              "guild",
               "mill",
+              "guild",
               "library",
               "hall",
               "museum",
@@ -4797,8 +4801,8 @@
               "grant-admin",
               "cargo",
               "produce",
-              "restoration",
               "timber",
+              "restoration",
               "opening",
               "festival-host",
               "archive-host",
@@ -5097,8 +5101,8 @@
               "fund"
             ],
             "relations": [
-              "restoration",
               "timber",
+              "restoration",
               "cargo",
               "membership",
               "produce",
@@ -5518,12 +5522,12 @@
               "auditing",
               "funding",
               "grant-admin",
-              "restoration",
               "outreach",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "award",
               "launch"
             ],
@@ -5613,11 +5617,11 @@
               "fund"
             ],
             "relations": [
-              "restoration",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "cargo",
               "membership",
               "produce",
@@ -5724,8 +5728,8 @@
               "grant-admin",
               "cargo",
               "produce",
-              "restoration",
               "timber",
+              "restoration",
               "opening",
               "festival-host",
               "archive-host",
@@ -5810,8 +5814,8 @@
               "workshop",
               "lab",
               "grant",
-              "guild",
               "mill",
+              "guild",
               "depot",
               "school",
               "fund",
@@ -5997,10 +6001,10 @@
           "model": "scripted"
         },
         "prompts": {
-          "extraction": "2ca694e166f45d838ecfb662077fbadbce9306e4bf30da36dd8c4e4e70e7b430",
-          "profiling": "0574c2873d53f2143604b2dddb0edb90d2c12e34017e1c862e0584348a313221",
-          "deduplication": "da0fcdb6ecb2ef91ddae3f7df7d7586ffdd39fbf139588c65754c6db07e41f95",
-          "planning": "fbdd42da8693e7488ded365bb11d2412ad70d278fd6e303bd78b4d96fc433d60"
+          "extraction": "13bb3390dde3816d564a4ee82c8eb1c6857f5c5d6a8e1946e12fba7bbc0e46f5",
+          "profiling": "e578af0f029a65aa866e8f256937731c3adafcf8488e83a410c73ac05ecc42df",
+          "deduplication": "8b42b06a03ccd5f44a8331d34b0ef1d2224d3f098d0f8ec3dd055c92ec7b432b",
+          "planning": "531143fb8e40d39cea03e0dbc6e41024d06a9a935d0c54a81cc854a814497d1c"
         },
         "chunker": {
           "version": "heading-recursive/1",
@@ -6077,8 +6081,8 @@
               "workshop",
               "lab",
               "grant",
-              "guild",
               "mill",
+              "guild",
               "library",
               "depot",
               "school",
@@ -6214,8 +6218,8 @@
               "opening",
               "outreach",
               "shelves",
-              "restoration",
               "timber",
+              "restoration",
               "cargo"
             ],
             "goldEntities": [
@@ -6418,12 +6422,12 @@
               "auditing",
               "funding",
               "grant-admin",
-              "restoration",
               "outreach",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "award",
               "launch",
               "opening"
@@ -6516,11 +6520,11 @@
               "beacon-project"
             ],
             "relations": [
-              "restoration",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "cargo",
               "membership",
               "produce",
@@ -6630,8 +6634,8 @@
               "launch",
               "archive-host",
               "festival-host",
-              "restoration",
               "timber",
+              "restoration",
               "auditing",
               "funding",
               "grant-admin",
@@ -6713,8 +6717,8 @@
               "workshop",
               "lab",
               "grant",
-              "guild",
               "mill",
+              "guild",
               "library",
               "hall",
               "museum",
@@ -6842,8 +6846,8 @@
               "grant-admin",
               "cargo",
               "produce",
-              "restoration",
               "timber",
+              "restoration",
               "opening",
               "festival-host",
               "archive-host",
@@ -6954,8 +6958,8 @@
               "funding",
               "grant-admin",
               "award",
-              "restoration",
               "festival-host",
+              "restoration",
               "archive-host",
               "school-funding"
             ],
@@ -7151,8 +7155,8 @@
               "meridian-device"
             ],
             "relations": [
-              "restoration",
               "timber",
+              "restoration",
               "cargo",
               "membership",
               "produce",
@@ -7576,12 +7580,12 @@
               "auditing",
               "funding",
               "grant-admin",
-              "restoration",
               "outreach",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "award",
               "launch",
               "opening"
@@ -7674,11 +7678,11 @@
               "beacon-project"
             ],
             "relations": [
-              "restoration",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "cargo",
               "membership",
               "produce",
@@ -7787,8 +7791,8 @@
               "grant-admin",
               "cargo",
               "produce",
-              "restoration",
               "timber",
+              "restoration",
               "opening",
               "festival-host",
               "archive-host",
@@ -7873,8 +7877,8 @@
               "workshop",
               "lab",
               "grant",
-              "guild",
               "mill",
+              "guild",
               "depot",
               "school",
               "fund",
@@ -8064,10 +8068,10 @@
           "model": "scripted"
         },
         "prompts": {
-          "extraction": "2ca694e166f45d838ecfb662077fbadbce9306e4bf30da36dd8c4e4e70e7b430",
-          "profiling": "0574c2873d53f2143604b2dddb0edb90d2c12e34017e1c862e0584348a313221",
-          "deduplication": "da0fcdb6ecb2ef91ddae3f7df7d7586ffdd39fbf139588c65754c6db07e41f95",
-          "planning": "fbdd42da8693e7488ded365bb11d2412ad70d278fd6e303bd78b4d96fc433d60"
+          "extraction": "13bb3390dde3816d564a4ee82c8eb1c6857f5c5d6a8e1946e12fba7bbc0e46f5",
+          "profiling": "e578af0f029a65aa866e8f256937731c3adafcf8488e83a410c73ac05ecc42df",
+          "deduplication": "8b42b06a03ccd5f44a8331d34b0ef1d2224d3f098d0f8ec3dd055c92ec7b432b",
+          "planning": "531143fb8e40d39cea03e0dbc6e41024d06a9a935d0c54a81cc854a814497d1c"
         },
         "chunker": {
           "version": "heading-recursive/1",
@@ -8144,8 +8148,8 @@
               "workshop",
               "lab",
               "grant",
-              "guild",
               "mill",
+              "guild",
               "library",
               "depot",
               "school",
@@ -8281,8 +8285,8 @@
               "opening",
               "outreach",
               "shelves",
-              "restoration",
               "timber",
+              "restoration",
               "cargo"
             ],
             "goldEntities": [
@@ -8485,12 +8489,12 @@
               "auditing",
               "funding",
               "grant-admin",
-              "restoration",
               "outreach",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "award",
               "launch",
               "opening"
@@ -8583,11 +8587,11 @@
               "beacon-project"
             ],
             "relations": [
-              "restoration",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "cargo",
               "membership",
               "produce",
@@ -8697,8 +8701,8 @@
               "launch",
               "archive-host",
               "festival-host",
-              "restoration",
               "timber",
+              "restoration",
               "auditing",
               "funding",
               "grant-admin",
@@ -8780,8 +8784,8 @@
               "workshop",
               "lab",
               "grant",
-              "guild",
               "mill",
+              "guild",
               "library",
               "hall",
               "museum",
@@ -8909,8 +8913,8 @@
               "grant-admin",
               "cargo",
               "produce",
-              "restoration",
               "timber",
+              "restoration",
               "opening",
               "festival-host",
               "archive-host",
@@ -9021,8 +9025,8 @@
               "funding",
               "grant-admin",
               "award",
-              "restoration",
               "festival-host",
+              "restoration",
               "archive-host",
               "school-funding"
             ],
@@ -9218,8 +9222,8 @@
               "meridian-device"
             ],
             "relations": [
-              "restoration",
               "timber",
+              "restoration",
               "cargo",
               "membership",
               "produce",
@@ -9643,12 +9647,12 @@
               "auditing",
               "funding",
               "grant-admin",
-              "restoration",
               "outreach",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "award",
               "launch",
               "opening"
@@ -9741,11 +9745,11 @@
               "beacon-project"
             ],
             "relations": [
-              "restoration",
               "timber",
               "training",
               "equipment",
               "shelves",
+              "restoration",
               "cargo",
               "membership",
               "produce",
@@ -9854,8 +9858,8 @@
               "grant-admin",
               "cargo",
               "produce",
-              "restoration",
               "timber",
+              "restoration",
               "opening",
               "festival-host",
               "archive-host",
@@ -9940,8 +9944,8 @@
               "workshop",
               "lab",
               "grant",
-              "guild",
               "mill",
+              "guild",
               "depot",
               "school",
               "fund",
@@ -10466,7 +10470,7 @@
           },
           {
             "path": "packages/documents/package.json",
-            "sha256": "f15203fccadfe82f0ffe55a20e06d32b13e9f2e308cae2100f0b30f2936207ea"
+            "sha256": "c381e3120733ae7b4fa833a1d53163213875cb5cba7dc041a4f45d63912a89b6"
           },
           {
             "path": "packages/documents/src/browser.ts",
@@ -10518,15 +10522,15 @@
           },
           {
             "path": "packages/lightrag/artifacts/prompts.json",
-            "sha256": "7d0f8d9b96c43690edbda792c469131fc4d3a3edf2e205afcebf6fbcaed10e0c"
+            "sha256": "e2d2cce2d4c680d9385f352510e8286e34e6d0402f3e0c77fc2c72d8af9ff4da"
           },
           {
             "path": "packages/lightrag/package.json",
-            "sha256": "501b19869fb02b61bfea78638e5a232035ac4e39f89d63d40e0f3098f52ab78a"
+            "sha256": "f958c5dc07ea5d565b50f084a6bbfbd5db072cb6f9f514fb5c6a6cdb74a88791"
           },
           {
             "path": "packages/lightrag/schemas/lightrag.schema.json",
-            "sha256": "07df3c80de5b4b4003a036b86b9a4b3f89ef7e973aab57502d8f396c41f4e298"
+            "sha256": "3959f15b75a3214494fa6c34cc4f6b87b9e003250d6ab236bc6c3733f4e0f7db"
           },
           {
             "path": "packages/lightrag/src/answer.ts",
@@ -10534,7 +10538,7 @@
           },
           {
             "path": "packages/lightrag/src/apply.ts",
-            "sha256": "5882f13a44532dcf08e84f5a00c5dda38754d7f053f2cb5c935383420376eef4"
+            "sha256": "c49e3a5489bd99b6961f4e8be1900b6a78fc9d6b1f15b10e972d4119eb31d13c"
           },
           {
             "path": "packages/lightrag/src/catalog.ts",
@@ -10546,7 +10550,7 @@
           },
           {
             "path": "packages/lightrag/src/contracts.gen.ts",
-            "sha256": "93941658827d5f677f33f6a3f0d9e08c1cb71cf45d8b0a1f2c79707011a6c271"
+            "sha256": "d3fb9e87303d791fb57dd28910c5f58e0b1cbd740d0d46e83c857491328787e1"
           },
           {
             "path": "packages/lightrag/src/contribution.ts",
@@ -10602,7 +10606,11 @@
           },
           {
             "path": "packages/lightrag/src/plan.ts",
-            "sha256": "509972b638c06d82295853cead4a36717f62b174b0b9e29ab3d43cae399b3715"
+            "sha256": "c269c9619df3a9b42cabe5a19f070472df91db692006cab0e4b4ebc1229ede2b"
+          },
+          {
+            "path": "packages/lightrag/src/preparation-bindings.ts",
+            "sha256": "5be526e739ca4c6430c3098c3a66926e131535a4f7b96fea39d08284d9f16ba4"
           },
           {
             "path": "packages/lightrag/src/profile.ts",
@@ -10622,15 +10630,15 @@
           },
           {
             "path": "packages/lightrag/src/retrieve.ts",
-            "sha256": "85191aebb4dd4efdb63097d1a2d4a22e229c65c83ad47dcefdd8ccd2e2e367e4"
+            "sha256": "3ee0e9d7683f54c5b2dfdeaeaf395e700f62ea588c86b11da2d16498b5e94427"
           },
           {
             "path": "packages/lightrag/src/reuse.ts",
-            "sha256": "91a05ffe3f9b693b3962322daa4a1a22f1248ce7f985a542f7b91da2b8c303fa"
+            "sha256": "1deb05a95f1a1a3721e350c319fba7ed088469e9a4a01a47928f7f3bca8e0670"
           },
           {
             "path": "packages/lightrag/src/schema.ts",
-            "sha256": "5d8991afee1c6a2e2a218571d6c1b6d7c8e8f224df93488340b978b1f1a58bc7"
+            "sha256": "e6efc8639f9d9930f76211167a771e1bc2c5036d677b3912aafb1d8aaa5054e8"
           },
           {
             "path": "packages/lightrag/src/snapshot.ts",
@@ -10638,7 +10646,7 @@
           },
           {
             "path": "packages/lightrag/src/store.ts",
-            "sha256": "49a23e2624b26d8702e5268d7531e0076b38680353a2c13b627306e5800e97a6"
+            "sha256": "9a397a40b9a56abed33fcd824bdd12a6ef13106da0448679b4ebb4ddd64db65b"
           },
           {
             "path": "packages/lightrag/src/structured.ts",
@@ -10646,11 +10654,11 @@
           },
           {
             "path": "packages/lightrag/src/write-plan.ts",
-            "sha256": "b806e22eb75560b00fdbe94575924ded645811909cd76c1f5d9349bd75e9c54a"
+            "sha256": "2fc1638f1cb49a1770106438c570fdb2ef41f3f453d81826e9271d0ed1e02cc6"
           },
           {
             "path": "packages/models/package.json",
-            "sha256": "646bf60f2e6618969b19763487cb396ac3bd33618dd5bcf9cb1cf6f01aca43de"
+            "sha256": "e784a1acdea0d4d9f1591841ae11e74828c081b22d5f406cea1c140d7888c901"
           },
           {
             "path": "packages/models/src/check.ts",
@@ -10706,7 +10714,7 @@
           },
           {
             "path": "packages/store/package.json",
-            "sha256": "df714e28b05aba82d0a22667aef9e62cc05df25003454dfbb37385717a5fe658"
+            "sha256": "b2c1f915b39021e1f9842c0fac442a33383476cbc11094fca4622a7b933045d6"
           },
           {
             "path": "packages/store/src/consolidation-model.ts",
@@ -10718,19 +10726,19 @@
           },
           {
             "path": "packages/store/src/corpus-promotion.ts",
-            "sha256": "379ade18c66a21bbe19f916c05cda3a1a575a4e37983e5b2b61fedf1b66a9230"
+            "sha256": "f6fd03d6f1a8c11601dbe9527a453962e9a115e2043a3aa968273b8a93eb5ab1"
           },
           {
             "path": "packages/store/src/db.ts",
-            "sha256": "a27aca0b1113eeec06864f171c5c1b34d796d3fb59e2dbd6f4f78bdb0c5beca1"
+            "sha256": "891c7415c6f2af2be0a909069741c42211de2d505e2005c679e1baf3b3b75d0c"
           },
           {
             "path": "packages/store/src/document-state.ts",
-            "sha256": "500148e4ee398f6c1657eaef823d2f1947def18cfbc4c1c0f01ab9b32ebad33c"
+            "sha256": "7f95df2961ce98ab9e86c1ec55e3e1058ab6be05614a2627ea214bdfe1b02e2c"
           },
           {
             "path": "packages/store/src/document-store.ts",
-            "sha256": "b958ece6dd2b668358d1fa328315be800320c1ac36f09bec17c59167395e43ba"
+            "sha256": "d68f9d6dec21e9fa7bf1a2dfe79b9f14a9f6372ff48760e9821e38b1d92d6f9d"
           },
           {
             "path": "packages/store/src/evolve-effects.ts",
@@ -10769,6 +10777,30 @@
             "sha256": "e95f99cb4e02e58f04f360710422ffe6ad00c167a35e6607b5a64289ba32eaf7"
           },
           {
+            "path": "packages/store/src/graph-vector-migration.ts",
+            "sha256": "f8dac0e45737b14742dec6c501759a1d553618d2c0fe9bf28aeb3b9474fd6a15"
+          },
+          {
+            "path": "packages/store/src/graph-vector-model.ts",
+            "sha256": "154384d068450ed993241eb82f88312a40f36185962dcc2840c725adb265f14f"
+          },
+          {
+            "path": "packages/store/src/graph-vector-plan.ts",
+            "sha256": "5f3858c84b2e357b82b5fe02fad6ee63b7c0661c3ea481ca3a7b748b46a12af8"
+          },
+          {
+            "path": "packages/store/src/graph-vector-rank.ts",
+            "sha256": "c3d18baca1077973b60137cdc534089ddc47405a1f7984ec9123be8969c9aadc"
+          },
+          {
+            "path": "packages/store/src/graph-vector-stage.ts",
+            "sha256": "cfd75e9b68b99cccd3a3f6c6f9be490b8098737dc0da32f61aa398da8839944a"
+          },
+          {
+            "path": "packages/store/src/graph-vector-state.ts",
+            "sha256": "01086c1e097b6b00993c2fcd8dd0e2a4807cf20d30e81622910da1adf65c707f"
+          },
+          {
             "path": "packages/store/src/grounding-clarification.ts",
             "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
           },
@@ -10798,7 +10830,7 @@
           },
           {
             "path": "packages/store/src/index.ts",
-            "sha256": "94ccfad3eb97b7cdd956a8fa5aacdf07e2a6dc2bca0261249302265db616e5a2"
+            "sha256": "d44b9c0c6b74a9668e62481385bd647db87203a4cc16a35ea49baf08d8dc2c33"
           },
           {
             "path": "packages/store/src/ledger-storage.ts",
@@ -10810,7 +10842,7 @@
           },
           {
             "path": "packages/store/src/lightrag-store.ts",
-            "sha256": "b7924fee427099830d4805f824f425269567da9b34f4befc877718d2549c2454"
+            "sha256": "031e226aae56e101353378f0f5aa7f0fbb2a0c1c6301afe3065c50465c04a5c3"
           },
           {
             "path": "packages/store/src/mas-jobs.ts",
@@ -10830,7 +10862,7 @@
           },
           {
             "path": "packages/store/src/model.ts",
-            "sha256": "49683b5633514c5fd0551c10f7ff74d8bb68dc146906ffc4736e276e651093eb"
+            "sha256": "3a371e0187d084d6c514fcd2fee61b315fb7e95b56f056b8ecfdb5b09caa97c5"
           },
           {
             "path": "packages/store/src/outcome-store.ts",
@@ -10889,7 +10921,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "9bd7bb70370ac5c8d4ec5b53ddeb9e4551ee93a3dcb773fa38347c2cd88f90c5"
+        "sha256": "c64fb5f968b9d92e0286843eb573699f1bdd1cf17ca8fc2b451d818c68c64c51"
       },
       "questionIds": [
         "q-relay-port",
@@ -10917,10 +10949,10 @@
         "lightrag-hybrid"
       ],
       "prompts": {
-        "extraction": "2ca694e166f45d838ecfb662077fbadbce9306e4bf30da36dd8c4e4e70e7b430",
-        "profiling": "0574c2873d53f2143604b2dddb0edb90d2c12e34017e1c862e0584348a313221",
-        "deduplication": "da0fcdb6ecb2ef91ddae3f7df7d7586ffdd39fbf139588c65754c6db07e41f95",
-        "planning": "fbdd42da8693e7488ded365bb11d2412ad70d278fd6e303bd78b4d96fc433d60",
+        "extraction": "13bb3390dde3816d564a4ee82c8eb1c6857f5c5d6a8e1946e12fba7bbc0e46f5",
+        "profiling": "e578af0f029a65aa866e8f256937731c3adafcf8488e83a410c73ac05ecc42df",
+        "deduplication": "8b42b06a03ccd5f44a8331d34b0ef1d2224d3f098d0f8ec3dd055c92ec7b432b",
+        "planning": "531143fb8e40d39cea03e0dbc6e41024d06a9a935d0c54a81cc854a814497d1c",
         "generation": "f20c70213c8315cf4490cd011240d46404f10fcb68ed1192655520794dabbef9",
         "flat": "357b25d553c62f28109410a99d18fec106c02cda487e6e89e84d068ce5dcc9ca"
       },
@@ -11000,7 +11032,7 @@
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)",
         "The conservative 56953-request bound exceeds TANGLE_AI_MAX_CALLS=200; model-dependent profiling and review allowances cannot be silently discarded."
       ],
-      "planId": "b622ebb430316ed01763db3a1695685c47b24f9d4a6377396dbb0d880c69d49e"
+      "planId": "4ee1b30524942d816acf242c19705cf992630c02364ac6f0c02e4d25c877d064"
     },
     "rows": [],
     "indexing": {
@@ -11032,7 +11064,7 @@
       "defaultChanged": false,
       "clauses": []
     },
-    "reportId": "7389bf83161ad2e258af43da5bb88d4f2260246df53ed9de6ad6e028b0d6a71b"
+    "reportId": "f2fbf4515653e3308f1a5fde4477a2b86fbd8fd89a976b80f357bce75f4a57fe"
   },
   "judge": {
     "document": "lightrag-judge",
@@ -11134,7 +11166,7 @@
           },
           {
             "path": "packages/documents/package.json",
-            "sha256": "f15203fccadfe82f0ffe55a20e06d32b13e9f2e308cae2100f0b30f2936207ea"
+            "sha256": "c381e3120733ae7b4fa833a1d53163213875cb5cba7dc041a4f45d63912a89b6"
           },
           {
             "path": "packages/documents/src/browser.ts",
@@ -11186,15 +11218,15 @@
           },
           {
             "path": "packages/lightrag/artifacts/prompts.json",
-            "sha256": "7d0f8d9b96c43690edbda792c469131fc4d3a3edf2e205afcebf6fbcaed10e0c"
+            "sha256": "e2d2cce2d4c680d9385f352510e8286e34e6d0402f3e0c77fc2c72d8af9ff4da"
           },
           {
             "path": "packages/lightrag/package.json",
-            "sha256": "501b19869fb02b61bfea78638e5a232035ac4e39f89d63d40e0f3098f52ab78a"
+            "sha256": "f958c5dc07ea5d565b50f084a6bbfbd5db072cb6f9f514fb5c6a6cdb74a88791"
           },
           {
             "path": "packages/lightrag/schemas/lightrag.schema.json",
-            "sha256": "07df3c80de5b4b4003a036b86b9a4b3f89ef7e973aab57502d8f396c41f4e298"
+            "sha256": "3959f15b75a3214494fa6c34cc4f6b87b9e003250d6ab236bc6c3733f4e0f7db"
           },
           {
             "path": "packages/lightrag/src/answer.ts",
@@ -11202,7 +11234,7 @@
           },
           {
             "path": "packages/lightrag/src/apply.ts",
-            "sha256": "5882f13a44532dcf08e84f5a00c5dda38754d7f053f2cb5c935383420376eef4"
+            "sha256": "c49e3a5489bd99b6961f4e8be1900b6a78fc9d6b1f15b10e972d4119eb31d13c"
           },
           {
             "path": "packages/lightrag/src/catalog.ts",
@@ -11214,7 +11246,7 @@
           },
           {
             "path": "packages/lightrag/src/contracts.gen.ts",
-            "sha256": "93941658827d5f677f33f6a3f0d9e08c1cb71cf45d8b0a1f2c79707011a6c271"
+            "sha256": "d3fb9e87303d791fb57dd28910c5f58e0b1cbd740d0d46e83c857491328787e1"
           },
           {
             "path": "packages/lightrag/src/contribution.ts",
@@ -11270,7 +11302,11 @@
           },
           {
             "path": "packages/lightrag/src/plan.ts",
-            "sha256": "509972b638c06d82295853cead4a36717f62b174b0b9e29ab3d43cae399b3715"
+            "sha256": "c269c9619df3a9b42cabe5a19f070472df91db692006cab0e4b4ebc1229ede2b"
+          },
+          {
+            "path": "packages/lightrag/src/preparation-bindings.ts",
+            "sha256": "5be526e739ca4c6430c3098c3a66926e131535a4f7b96fea39d08284d9f16ba4"
           },
           {
             "path": "packages/lightrag/src/profile.ts",
@@ -11290,15 +11326,15 @@
           },
           {
             "path": "packages/lightrag/src/retrieve.ts",
-            "sha256": "85191aebb4dd4efdb63097d1a2d4a22e229c65c83ad47dcefdd8ccd2e2e367e4"
+            "sha256": "3ee0e9d7683f54c5b2dfdeaeaf395e700f62ea588c86b11da2d16498b5e94427"
           },
           {
             "path": "packages/lightrag/src/reuse.ts",
-            "sha256": "91a05ffe3f9b693b3962322daa4a1a22f1248ce7f985a542f7b91da2b8c303fa"
+            "sha256": "1deb05a95f1a1a3721e350c319fba7ed088469e9a4a01a47928f7f3bca8e0670"
           },
           {
             "path": "packages/lightrag/src/schema.ts",
-            "sha256": "5d8991afee1c6a2e2a218571d6c1b6d7c8e8f224df93488340b978b1f1a58bc7"
+            "sha256": "e6efc8639f9d9930f76211167a771e1bc2c5036d677b3912aafb1d8aaa5054e8"
           },
           {
             "path": "packages/lightrag/src/snapshot.ts",
@@ -11306,7 +11342,7 @@
           },
           {
             "path": "packages/lightrag/src/store.ts",
-            "sha256": "49a23e2624b26d8702e5268d7531e0076b38680353a2c13b627306e5800e97a6"
+            "sha256": "9a397a40b9a56abed33fcd824bdd12a6ef13106da0448679b4ebb4ddd64db65b"
           },
           {
             "path": "packages/lightrag/src/structured.ts",
@@ -11314,11 +11350,11 @@
           },
           {
             "path": "packages/lightrag/src/write-plan.ts",
-            "sha256": "b806e22eb75560b00fdbe94575924ded645811909cd76c1f5d9349bd75e9c54a"
+            "sha256": "2fc1638f1cb49a1770106438c570fdb2ef41f3f453d81826e9271d0ed1e02cc6"
           },
           {
             "path": "packages/models/package.json",
-            "sha256": "646bf60f2e6618969b19763487cb396ac3bd33618dd5bcf9cb1cf6f01aca43de"
+            "sha256": "e784a1acdea0d4d9f1591841ae11e74828c081b22d5f406cea1c140d7888c901"
           },
           {
             "path": "packages/models/src/check.ts",
@@ -11374,7 +11410,7 @@
           },
           {
             "path": "packages/store/package.json",
-            "sha256": "df714e28b05aba82d0a22667aef9e62cc05df25003454dfbb37385717a5fe658"
+            "sha256": "b2c1f915b39021e1f9842c0fac442a33383476cbc11094fca4622a7b933045d6"
           },
           {
             "path": "packages/store/src/consolidation-model.ts",
@@ -11386,19 +11422,19 @@
           },
           {
             "path": "packages/store/src/corpus-promotion.ts",
-            "sha256": "379ade18c66a21bbe19f916c05cda3a1a575a4e37983e5b2b61fedf1b66a9230"
+            "sha256": "f6fd03d6f1a8c11601dbe9527a453962e9a115e2043a3aa968273b8a93eb5ab1"
           },
           {
             "path": "packages/store/src/db.ts",
-            "sha256": "a27aca0b1113eeec06864f171c5c1b34d796d3fb59e2dbd6f4f78bdb0c5beca1"
+            "sha256": "891c7415c6f2af2be0a909069741c42211de2d505e2005c679e1baf3b3b75d0c"
           },
           {
             "path": "packages/store/src/document-state.ts",
-            "sha256": "500148e4ee398f6c1657eaef823d2f1947def18cfbc4c1c0f01ab9b32ebad33c"
+            "sha256": "7f95df2961ce98ab9e86c1ec55e3e1058ab6be05614a2627ea214bdfe1b02e2c"
           },
           {
             "path": "packages/store/src/document-store.ts",
-            "sha256": "b958ece6dd2b668358d1fa328315be800320c1ac36f09bec17c59167395e43ba"
+            "sha256": "d68f9d6dec21e9fa7bf1a2dfe79b9f14a9f6372ff48760e9821e38b1d92d6f9d"
           },
           {
             "path": "packages/store/src/evolve-effects.ts",
@@ -11437,6 +11473,30 @@
             "sha256": "e95f99cb4e02e58f04f360710422ffe6ad00c167a35e6607b5a64289ba32eaf7"
           },
           {
+            "path": "packages/store/src/graph-vector-migration.ts",
+            "sha256": "f8dac0e45737b14742dec6c501759a1d553618d2c0fe9bf28aeb3b9474fd6a15"
+          },
+          {
+            "path": "packages/store/src/graph-vector-model.ts",
+            "sha256": "154384d068450ed993241eb82f88312a40f36185962dcc2840c725adb265f14f"
+          },
+          {
+            "path": "packages/store/src/graph-vector-plan.ts",
+            "sha256": "5f3858c84b2e357b82b5fe02fad6ee63b7c0661c3ea481ca3a7b748b46a12af8"
+          },
+          {
+            "path": "packages/store/src/graph-vector-rank.ts",
+            "sha256": "c3d18baca1077973b60137cdc534089ddc47405a1f7984ec9123be8969c9aadc"
+          },
+          {
+            "path": "packages/store/src/graph-vector-stage.ts",
+            "sha256": "cfd75e9b68b99cccd3a3f6c6f9be490b8098737dc0da32f61aa398da8839944a"
+          },
+          {
+            "path": "packages/store/src/graph-vector-state.ts",
+            "sha256": "01086c1e097b6b00993c2fcd8dd0e2a4807cf20d30e81622910da1adf65c707f"
+          },
+          {
             "path": "packages/store/src/grounding-clarification.ts",
             "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
           },
@@ -11466,7 +11526,7 @@
           },
           {
             "path": "packages/store/src/index.ts",
-            "sha256": "94ccfad3eb97b7cdd956a8fa5aacdf07e2a6dc2bca0261249302265db616e5a2"
+            "sha256": "d44b9c0c6b74a9668e62481385bd647db87203a4cc16a35ea49baf08d8dc2c33"
           },
           {
             "path": "packages/store/src/ledger-storage.ts",
@@ -11478,7 +11538,7 @@
           },
           {
             "path": "packages/store/src/lightrag-store.ts",
-            "sha256": "b7924fee427099830d4805f824f425269567da9b34f4befc877718d2549c2454"
+            "sha256": "031e226aae56e101353378f0f5aa7f0fbb2a0c1c6301afe3065c50465c04a5c3"
           },
           {
             "path": "packages/store/src/mas-jobs.ts",
@@ -11498,7 +11558,7 @@
           },
           {
             "path": "packages/store/src/model.ts",
-            "sha256": "49683b5633514c5fd0551c10f7ff74d8bb68dc146906ffc4736e276e651093eb"
+            "sha256": "3a371e0187d084d6c514fcd2fee61b315fb7e95b56f056b8ecfdb5b09caa97c5"
           },
           {
             "path": "packages/store/src/outcome-store.ts",
@@ -11557,7 +11617,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "9bd7bb70370ac5c8d4ec5b53ddeb9e4551ee93a3dcb773fa38347c2cd88f90c5"
+        "sha256": "c64fb5f968b9d92e0286843eb573699f1bdd1cf17ca8fc2b451d818c68c64c51"
       },
       "reportId": null,
       "promptRevision": "1d390f8d00465dc21cc63a21d762343b5d869519b1030daa53a0461bb5c9ae82",
@@ -11608,7 +11668,7 @@
         "A completed graph live report with retained per-question attempts is required.",
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)"
       ],
-      "planId": "36a29b0f558a43542462ff25ffc7d83a108fe080ff541545f7a277f39aa5b01d"
+      "planId": "e42f90f29ba4ae3c56cc9b6a5725aacc52b0e0b9503f8da2fdb31629147b3a7d"
     },
     "status": "not-run",
     "tier": "not-run",
@@ -11623,11 +11683,11 @@
     },
     "physicalRequests": 0,
     "defaultInput": false,
-    "reportId": "2b72387af2665f6e5e9c47b1ca699a49624f74f7ae37bece787f2391801e8c27"
+    "reportId": "3fc259c6def901180886678b25a39e34ea87409c5297e7fc181e3226235b188f"
   },
   "parity": {
     "document": "lightrag-parity",
-    "planId": "24abc6a77818cada9b664ffa2ca7999784415b464093e504c7a52fc9f17097cc",
+    "planId": "e680bf6a6e37c52b2b57c04a6932de25413750c721db8585f806a39dc007f44c",
     "status": "not-run",
     "reason": "No separately obtained UltraDomain dataset path was supplied. No dataset licence acknowledgement was supplied. No matching separate parity authorization was supplied. This entry records a protocol only. The four licensed corpora, generated questions, original prompt bytes, exact model snapshots, embedder, tokenizer, overlap and baseline settings need independent parity qualification before execution. The Tangle prompt revisions in this plan identify the mechanism port, not exact upstream prompt parity.",
     "datasetPath": null,
@@ -11660,10 +11720,10 @@
       "measurement": "No paper-score comparison until corpus, generated questions, prompt bytes, model snapshots, embedder, tokenizer, overlap and all baseline settings are pinned and the full separately authorized protocol executes."
     },
     "promptRevisions": {
-      "extraction": "2ca694e166f45d838ecfb662077fbadbce9306e4bf30da36dd8c4e4e70e7b430",
-      "profiling": "0574c2873d53f2143604b2dddb0edb90d2c12e34017e1c862e0584348a313221",
-      "deduplication": "da0fcdb6ecb2ef91ddae3f7df7d7586ffdd39fbf139588c65754c6db07e41f95",
-      "planning": "fbdd42da8693e7488ded365bb11d2412ad70d278fd6e303bd78b4d96fc433d60",
+      "extraction": "13bb3390dde3816d564a4ee82c8eb1c6857f5c5d6a8e1946e12fba7bbc0e46f5",
+      "profiling": "e578af0f029a65aa866e8f256937731c3adafcf8488e83a410c73ac05ecc42df",
+      "deduplication": "8b42b06a03ccd5f44a8331d34b0ef1d2224d3f098d0f8ec3dd055c92ec7b432b",
+      "planning": "531143fb8e40d39cea03e0dbc6e41024d06a9a935d0c54a81cc854a814497d1c",
       "generation": "f20c70213c8315cf4490cd011240d46404f10fcb68ed1192655520794dabbef9",
       "judge": "0e29c10e5a4a6c4b0094d7dc2dc5b84d7ef54e7f3f7e662bec1c06184b9607cb"
     },
@@ -11758,8 +11818,12 @@
           "sha256": "ba6ef4fe9037cd2c555151501cf241b379a18afd7ae3303bc937a3afac57f14e"
         },
         {
+          "path": "benchmark/lib/lightrag-ladder-corpus.ts",
+          "sha256": "461544b3b327557e76676d943e8740fed1a1dbe66a286a3b7d277e3f3b94ccb6"
+        },
+        {
           "path": "benchmark/lib/lightrag-ladder.ts",
-          "sha256": "ccc58cd661913cc6fa9942e40ed3b6fde71a59d57b51a0feccec0ecd5e3d0d93"
+          "sha256": "a490606195f012f78677a69c048ca15e4ebe5e98a611c2fbf78953b4ff6ebe3f"
         },
         {
           "path": "benchmark/lib/lightrag.ts",
@@ -11819,15 +11883,15 @@
         },
         {
           "path": "packages/lightrag/artifacts/prompts.json",
-          "sha256": "7d0f8d9b96c43690edbda792c469131fc4d3a3edf2e205afcebf6fbcaed10e0c"
+          "sha256": "e2d2cce2d4c680d9385f352510e8286e34e6d0402f3e0c77fc2c72d8af9ff4da"
         },
         {
           "path": "packages/lightrag/package.json",
-          "sha256": "501b19869fb02b61bfea78638e5a232035ac4e39f89d63d40e0f3098f52ab78a"
+          "sha256": "f958c5dc07ea5d565b50f084a6bbfbd5db072cb6f9f514fb5c6a6cdb74a88791"
         },
         {
           "path": "packages/lightrag/schemas/lightrag.schema.json",
-          "sha256": "07df3c80de5b4b4003a036b86b9a4b3f89ef7e973aab57502d8f396c41f4e298"
+          "sha256": "3959f15b75a3214494fa6c34cc4f6b87b9e003250d6ab236bc6c3733f4e0f7db"
         },
         {
           "path": "packages/lightrag/src/answer.ts",
@@ -11835,7 +11899,7 @@
         },
         {
           "path": "packages/lightrag/src/apply.ts",
-          "sha256": "5882f13a44532dcf08e84f5a00c5dda38754d7f053f2cb5c935383420376eef4"
+          "sha256": "c49e3a5489bd99b6961f4e8be1900b6a78fc9d6b1f15b10e972d4119eb31d13c"
         },
         {
           "path": "packages/lightrag/src/catalog.ts",
@@ -11847,7 +11911,7 @@
         },
         {
           "path": "packages/lightrag/src/contracts.gen.ts",
-          "sha256": "93941658827d5f677f33f6a3f0d9e08c1cb71cf45d8b0a1f2c79707011a6c271"
+          "sha256": "d3fb9e87303d791fb57dd28910c5f58e0b1cbd740d0d46e83c857491328787e1"
         },
         {
           "path": "packages/lightrag/src/contribution.ts",
@@ -11903,7 +11967,11 @@
         },
         {
           "path": "packages/lightrag/src/plan.ts",
-          "sha256": "509972b638c06d82295853cead4a36717f62b174b0b9e29ab3d43cae399b3715"
+          "sha256": "c269c9619df3a9b42cabe5a19f070472df91db692006cab0e4b4ebc1229ede2b"
+        },
+        {
+          "path": "packages/lightrag/src/preparation-bindings.ts",
+          "sha256": "5be526e739ca4c6430c3098c3a66926e131535a4f7b96fea39d08284d9f16ba4"
         },
         {
           "path": "packages/lightrag/src/profile.ts",
@@ -11923,15 +11991,15 @@
         },
         {
           "path": "packages/lightrag/src/retrieve.ts",
-          "sha256": "85191aebb4dd4efdb63097d1a2d4a22e229c65c83ad47dcefdd8ccd2e2e367e4"
+          "sha256": "3ee0e9d7683f54c5b2dfdeaeaf395e700f62ea588c86b11da2d16498b5e94427"
         },
         {
           "path": "packages/lightrag/src/reuse.ts",
-          "sha256": "91a05ffe3f9b693b3962322daa4a1a22f1248ce7f985a542f7b91da2b8c303fa"
+          "sha256": "1deb05a95f1a1a3721e350c319fba7ed088469e9a4a01a47928f7f3bca8e0670"
         },
         {
           "path": "packages/lightrag/src/schema.ts",
-          "sha256": "5d8991afee1c6a2e2a218571d6c1b6d7c8e8f224df93488340b978b1f1a58bc7"
+          "sha256": "e6efc8639f9d9930f76211167a771e1bc2c5036d677b3912aafb1d8aaa5054e8"
         },
         {
           "path": "packages/lightrag/src/snapshot.ts",
@@ -11939,7 +12007,7 @@
         },
         {
           "path": "packages/lightrag/src/store.ts",
-          "sha256": "49a23e2624b26d8702e5268d7531e0076b38680353a2c13b627306e5800e97a6"
+          "sha256": "9a397a40b9a56abed33fcd824bdd12a6ef13106da0448679b4ebb4ddd64db65b"
         },
         {
           "path": "packages/lightrag/src/structured.ts",
@@ -11947,7 +12015,7 @@
         },
         {
           "path": "packages/lightrag/src/write-plan.ts",
-          "sha256": "b806e22eb75560b00fdbe94575924ded645811909cd76c1f5d9349bd75e9c54a"
+          "sha256": "2fc1638f1cb49a1770106438c570fdb2ef41f3f453d81826e9271d0ed1e02cc6"
         },
         {
           "path": "packages/models/src/embed.ts",
@@ -11963,15 +12031,15 @@
         },
         {
           "path": "packages/store/src/corpus-promotion.ts",
-          "sha256": "379ade18c66a21bbe19f916c05cda3a1a575a4e37983e5b2b61fedf1b66a9230"
+          "sha256": "f6fd03d6f1a8c11601dbe9527a453962e9a115e2043a3aa968273b8a93eb5ab1"
         },
         {
           "path": "packages/store/src/document-state.ts",
-          "sha256": "500148e4ee398f6c1657eaef823d2f1947def18cfbc4c1c0f01ab9b32ebad33c"
+          "sha256": "7f95df2961ce98ab9e86c1ec55e3e1058ab6be05614a2627ea214bdfe1b02e2c"
         },
         {
           "path": "packages/store/src/document-store.ts",
-          "sha256": "b958ece6dd2b668358d1fa328315be800320c1ac36f09bec17c59167395e43ba"
+          "sha256": "d68f9d6dec21e9fa7bf1a2dfe79b9f14a9f6372ff48760e9821e38b1d92d6f9d"
         },
         {
           "path": "packages/store/src/lightrag-model.ts",
@@ -11979,12 +12047,12 @@
         },
         {
           "path": "packages/store/src/lightrag-store.ts",
-          "sha256": "b7924fee427099830d4805f824f425269567da9b34f4befc877718d2549c2454"
+          "sha256": "031e226aae56e101353378f0f5aa7f0fbb2a0c1c6301afe3065c50465c04a5c3"
         }
       ],
-      "sha256": "87033f86e03fa858525f2119ad5be80059d2c82b97b193a740dc45e25dda2a69"
+      "sha256": "ffd26790d1a12c90abdee30e7da823d7f0a9d3bb2d90d299a7d919f068560037"
     },
-    "at": "2026-10-08T00:17:24.394Z",
+    "at": "2026-10-09T16:11:24.346Z",
     "sizes": [
       100,
       1000,
@@ -12005,9 +12073,9 @@
         "embeddingCalls": 15,
         "embeddingTexts": 400,
         "budgetTokens": 2228,
-        "indexingMs": 767.3565500000002,
-        "promotionMs": 4952.065949,
-        "peakRssBytes": 487915520,
+        "indexingMs": 728.222374,
+        "promotionMs": 4114.529656000001,
+        "peakRssBytes": 483467264,
         "corpusSha256": "838b264949d9a9aeb8b3300a25078cff2e1590f84d0c0ebce0d150a9b43160c2",
         "rowsRead": {
           "graph": 6603,
@@ -12024,12 +12092,12 @@
           "ratio": 1
         },
         "retrieval": {
-          "p50Ms": 23.94315800000004,
-          "p95Ms": 31.329382999999325,
+          "p50Ms": 23.046991000000162,
+          "p95Ms": 32.118162999999186,
           "samples": [
             {
               "questionId": "specific-equipment",
-              "ms": 31.329382999999325,
+              "ms": 32.118162999999186,
               "graphRows": 367,
               "documentRows": 104,
               "skipped": 0,
@@ -12039,7 +12107,7 @@
             },
             {
               "questionId": "specific-funding",
-              "ms": 28.038026000000173,
+              "ms": 27.51241200000004,
               "graphRows": 382,
               "documentRows": 104,
               "skipped": 0,
@@ -12049,7 +12117,7 @@
             },
             {
               "questionId": "specific-launch",
-              "ms": 23.589977000000545,
+              "ms": 22.84089700000004,
               "graphRows": 358,
               "documentRows": 104,
               "skipped": 0,
@@ -12059,7 +12127,7 @@
             },
             {
               "questionId": "specific-archive-host",
-              "ms": 25.87801000000036,
+              "ms": 24.254147999999986,
               "graphRows": 373,
               "documentRows": 104,
               "skipped": 0,
@@ -12069,7 +12137,7 @@
             },
             {
               "questionId": "specific-timber",
-              "ms": 27.96413499999926,
+              "ms": 26.88487299999997,
               "graphRows": 376,
               "documentRows": 104,
               "skipped": 0,
@@ -12079,7 +12147,7 @@
             },
             {
               "questionId": "specific-produce",
-              "ms": 23.94315800000004,
+              "ms": 23.1080750000001,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12089,7 +12157,7 @@
             },
             {
               "questionId": "abstract-training",
-              "ms": 24.805335000000014,
+              "ms": 23.80916999999954,
               "graphRows": 373,
               "documentRows": 104,
               "skipped": 0,
@@ -12099,7 +12167,7 @@
             },
             {
               "questionId": "abstract-grant-admin",
-              "ms": 23.73203199999989,
+              "ms": 22.8970419999996,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12109,7 +12177,7 @@
             },
             {
               "questionId": "abstract-cargo",
-              "ms": 25.827025999999933,
+              "ms": 23.74946799999998,
               "graphRows": 358,
               "documentRows": 104,
               "skipped": 0,
@@ -12119,7 +12187,7 @@
             },
             {
               "questionId": "abstract-festival-host",
-              "ms": 23.422010999999657,
+              "ms": 22.787617999999384,
               "graphRows": 361,
               "documentRows": 104,
               "skipped": 0,
@@ -12129,7 +12197,7 @@
             },
             {
               "questionId": "abstract-restoration",
-              "ms": 23.45190199999979,
+              "ms": 22.46247299999959,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12139,7 +12207,7 @@
             },
             {
               "questionId": "abstract-school-funding",
-              "ms": 23.84719799999948,
+              "ms": 22.393254999999954,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12149,7 +12217,7 @@
             },
             {
               "questionId": "hop-shelves",
-              "ms": 23.32940300000064,
+              "ms": 22.48613699999987,
               "graphRows": 361,
               "documentRows": 104,
               "skipped": 0,
@@ -12159,7 +12227,7 @@
             },
             {
               "questionId": "hop-launch",
-              "ms": 23.70968300000004,
+              "ms": 22.791275999999925,
               "graphRows": 358,
               "documentRows": 104,
               "skipped": 0,
@@ -12169,7 +12237,7 @@
             },
             {
               "questionId": "hop-archive-host",
-              "ms": 24.6074779999999,
+              "ms": 23.745480999999927,
               "graphRows": 373,
               "documentRows": 104,
               "skipped": 0,
@@ -12179,7 +12247,7 @@
             },
             {
               "questionId": "hop-timber",
-              "ms": 23.788392999999814,
+              "ms": 23.046991000000162,
               "graphRows": 376,
               "documentRows": 104,
               "skipped": 0,
@@ -12189,7 +12257,7 @@
             },
             {
               "questionId": "hop-grant-admin",
-              "ms": 25.23066100000051,
+              "ms": 21.76716899999974,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12199,7 +12267,7 @@
             },
             {
               "questionId": "hop-opening",
-              "ms": 24.619630000000143,
+              "ms": 23.782349999999497,
               "graphRows": 367,
               "documentRows": 104,
               "skipped": 0,
@@ -12224,9 +12292,9 @@
         "embeddingCalls": 127,
         "embeddingTexts": 4000,
         "budgetTokens": 22330,
-        "indexingMs": 8565.602568999999,
-        "promotionMs": 61738.36231,
-        "peakRssBytes": 2014035968,
+        "indexingMs": 7958.303057000001,
+        "promotionMs": 52977.704002000006,
+        "peakRssBytes": 2064683008,
         "corpusSha256": "fdc888f3036885d0f32a3c3d50505dd65b6926cebb1b7d8a0f5305e79c2351d6",
         "rowsRead": {
           "graph": 55446,
@@ -12243,12 +12311,12 @@
           "ratio": 1
         },
         "retrieval": {
-          "p50Ms": 221.74875699999393,
-          "p95Ms": 240.27888499999244,
+          "p50Ms": 217.34944400000677,
+          "p95Ms": 222.5974700000079,
           "samples": [
             {
               "questionId": "specific-equipment",
-              "ms": 225.65603399999964,
+              "ms": 217.97963699999673,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12258,7 +12326,7 @@
             },
             {
               "questionId": "specific-funding",
-              "ms": 219.48579700000118,
+              "ms": 216.66862799999944,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12268,7 +12336,7 @@
             },
             {
               "questionId": "specific-launch",
-              "ms": 226.89129699999467,
+              "ms": 219.58894200000213,
               "graphRows": 3079,
               "documentRows": 1004,
               "skipped": 0,
@@ -12278,7 +12346,7 @@
             },
             {
               "questionId": "specific-archive-host",
-              "ms": 221.84632399999828,
+              "ms": 220.94809099999839,
               "graphRows": 3079,
               "documentRows": 1004,
               "skipped": 0,
@@ -12288,7 +12356,7 @@
             },
             {
               "questionId": "specific-timber",
-              "ms": 218.4316289999988,
+              "ms": 210.3911850000004,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12298,7 +12366,7 @@
             },
             {
               "questionId": "specific-produce",
-              "ms": 221.74875699999393,
+              "ms": 219.63870399999723,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12308,7 +12376,7 @@
             },
             {
               "questionId": "abstract-training",
-              "ms": 240.27888499999244,
+              "ms": 213.6680720000004,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12318,7 +12386,7 @@
             },
             {
               "questionId": "abstract-grant-admin",
-              "ms": 226.10273199999938,
+              "ms": 222.5974700000079,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12328,7 +12396,7 @@
             },
             {
               "questionId": "abstract-cargo",
-              "ms": 228.0266879999981,
+              "ms": 213.62034399999538,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12338,7 +12406,7 @@
             },
             {
               "questionId": "abstract-festival-host",
-              "ms": 224.97292799998831,
+              "ms": 209.62236300000222,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12348,7 +12416,7 @@
             },
             {
               "questionId": "abstract-restoration",
-              "ms": 219.07758199999807,
+              "ms": 219.82705500000156,
               "graphRows": 3079,
               "documentRows": 1004,
               "skipped": 0,
@@ -12358,7 +12426,7 @@
             },
             {
               "questionId": "abstract-school-funding",
-              "ms": 215.60903999999573,
+              "ms": 220.31449199999042,
               "graphRows": 3076,
               "documentRows": 1004,
               "skipped": 0,
@@ -12368,7 +12436,7 @@
             },
             {
               "questionId": "hop-shelves",
-              "ms": 218.80813799999305,
+              "ms": 213.9298199999903,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12378,7 +12446,7 @@
             },
             {
               "questionId": "hop-launch",
-              "ms": 216.6870229999913,
+              "ms": 217.34944400000677,
               "graphRows": 3079,
               "documentRows": 1004,
               "skipped": 0,
@@ -12388,7 +12456,7 @@
             },
             {
               "questionId": "hop-archive-host",
-              "ms": 235.9388789999939,
+              "ms": 213.49228600000788,
               "graphRows": 3076,
               "documentRows": 1004,
               "skipped": 0,
@@ -12398,7 +12466,7 @@
             },
             {
               "questionId": "hop-timber",
-              "ms": 222.05752099999518,
+              "ms": 221.84065300000657,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12408,7 +12476,7 @@
             },
             {
               "questionId": "hop-grant-admin",
-              "ms": 218.0385690000112,
+              "ms": 219.42729099999997,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12418,7 +12486,7 @@
             },
             {
               "questionId": "hop-opening",
-              "ms": 215.52180899999803,
+              "ms": 209.3094609999971,
               "graphRows": 3076,
               "documentRows": 1004,
               "skipped": 0,
@@ -12443,9 +12511,9 @@
         "embeddingCalls": 1251,
         "embeddingTexts": 40000,
         "budgetTokens": 223564,
-        "indexingMs": 289627.287442,
-        "promotionMs": 726725.0702520001,
-        "peakRssBytes": 8192368640,
+        "indexingMs": 272418.828629,
+        "promotionMs": 626508.2181510001,
+        "peakRssBytes": 8179101696,
         "corpusSha256": "103ca03b58669f3096ca4d6c9eed8c759c79b907e529221c745d711a009510b4",
         "rowsRead": {
           "graph": 541470,
@@ -12462,12 +12530,12 @@
           "ratio": 1
         },
         "retrieval": {
-          "p50Ms": 2869.5676179998554,
-          "p95Ms": 3439.4230000001844,
+          "p50Ms": 2409.8926310000243,
+          "p95Ms": 2566.6239380000625,
           "samples": [
             {
               "questionId": "specific-equipment",
-              "ms": 2912.106861999957,
+              "ms": 2464.513658999931,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12477,7 +12545,7 @@
             },
             {
               "questionId": "specific-funding",
-              "ms": 2820.173222000012,
+              "ms": 2423.5246000000043,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12487,7 +12555,7 @@
             },
             {
               "questionId": "specific-launch",
-              "ms": 2850.1761710001156,
+              "ms": 2433.4510149999987,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12497,7 +12565,7 @@
             },
             {
               "questionId": "specific-archive-host",
-              "ms": 3067.0824180000927,
+              "ms": 2566.6239380000625,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12507,7 +12575,7 @@
             },
             {
               "questionId": "specific-timber",
-              "ms": 2900.072368999943,
+              "ms": 2408.2033489999594,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12517,7 +12585,7 @@
             },
             {
               "questionId": "specific-produce",
-              "ms": 2821.628829000052,
+              "ms": 2409.8926310000243,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12527,7 +12595,7 @@
             },
             {
               "questionId": "abstract-training",
-              "ms": 2873.6990780001506,
+              "ms": 2438.4534110000823,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12537,7 +12605,7 @@
             },
             {
               "questionId": "abstract-grant-admin",
-              "ms": 2749.620773999952,
+              "ms": 2377.995375000057,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12547,7 +12615,7 @@
             },
             {
               "questionId": "abstract-cargo",
-              "ms": 2874.0602909999434,
+              "ms": 2324.471327999956,
               "graphRows": 30076,
               "documentRows": 10004,
               "skipped": 0,
@@ -12557,7 +12625,7 @@
             },
             {
               "questionId": "abstract-festival-host",
-              "ms": 2869.5676179998554,
+              "ms": 2552.9697879999876,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12567,7 +12635,7 @@
             },
             {
               "questionId": "abstract-restoration",
-              "ms": 2884.6590120000765,
+              "ms": 2395.7364379999926,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12577,7 +12645,7 @@
             },
             {
               "questionId": "abstract-school-funding",
-              "ms": 2930.2615810001735,
+              "ms": 2399.6285069999285,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12587,7 +12655,7 @@
             },
             {
               "questionId": "hop-shelves",
-              "ms": 2733.352924000006,
+              "ms": 2564.371757999994,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12597,7 +12665,7 @@
             },
             {
               "questionId": "hop-launch",
-              "ms": 2733.365146000171,
+              "ms": 2420.928840999957,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12607,7 +12675,7 @@
             },
             {
               "questionId": "hop-archive-host",
-              "ms": 3439.4230000001844,
+              "ms": 2401.0868110000156,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12617,7 +12685,7 @@
             },
             {
               "questionId": "hop-timber",
-              "ms": 3038.0635149998125,
+              "ms": 2477.900971999974,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12627,7 +12695,7 @@
             },
             {
               "questionId": "hop-grant-admin",
-              "ms": 2781.576940000057,
+              "ms": 2400.552205999964,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12637,7 +12705,7 @@
             },
             {
               "questionId": "hop-opening",
-              "ms": 2734.789184999885,
+              "ms": 2405.1310130000347,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12656,16 +12724,16 @@
       "arch": "x64",
       "cpu": "AMD Ryzen 9 5900HX with Radeon Graphics",
       "logicalCpus": 16,
-      "totalMemoryBytes": 33009840128,
+      "totalMemoryBytes": 33009926144,
       "runtime": "node 24.20.0; V8 heap limit 8791261184 bytes",
       "driver": "node:sqlite",
       "loadAverage": [
-        4.36,
-        3.53,
-        3.17
+        1.79,
+        1.62,
+        1.81
       ]
     },
-    "receiptId": "c032ee6b844ce1a5e53f0c2014cb5b0c24555c98f8087141f66c5f853cce18ab"
+    "receiptId": "745f53148cb711cf8969e8cca273dd323c68df58d8f6010b39eaff7d7c966f72"
   },
   "gate": {
     "passed": true,
@@ -12857,5 +12925,5 @@
     "defaultChanged": false,
     "clauses": []
   },
-  "reportId": "b1d0d5f3fea6fefe36a75461ff4cadd92d7a1d6efe613044d6129a874c859c97"
+  "reportId": "4d56ab4ef30eecb9a02669c2b7106d4803f504cfef8df5d39ca67d32e72c429b"
 }

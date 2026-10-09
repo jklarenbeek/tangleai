@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "1beddfc531b517d3b9745223b476d30927efce86",
+    "head": "2be71c633567e6f1e0598fdc6543259862318013",
     "clean": false,
     "files": [
       {
@@ -109,7 +109,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "49683b5633514c5fd0551c10f7ff74d8bb68dc146906ffc4736e276e651093eb"
+        "sha256": "3a371e0187d084d6c514fcd2fee61b315fb7e95b56f056b8ecfdb5b09caa97c5"
       },
       {
         "path": "packages/store/src/runs.ts",
@@ -120,7 +120,7 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "7e762af8ad0f1a8db0389e9b51a61e0a14e978fbec2b35ac482820a325b71935"
+    "sha256": "0f771f6628f5b4558d9dbe49cabba95f3d5f3a1e9522325750d1ec55011ec97b"
   },
   "suite": {
     "packages": [
@@ -218,15 +218,15 @@
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.40.0"
+        "version": "0.41.0"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.40.0"
+        "version": "0.41.0"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.40.0"
+        "version": "0.41.0"
       }
     ]
   },
@@ -344,7 +344,7 @@
     ],
     "desktopContract": {
       "operations": 53,
-      "revision": "d8e30e13c301526aca9735ee214c7439c9c833c14cff84bfe2bce82c5ed84b6f"
+      "revision": "e536aaba47a4e0fad678c8d817797e6f2769f5851d7aa612e5b4d2843b98ea32"
     },
     "summary": {
       "hostInputs": 2,
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "4e579d078e2cdf6464176f866b55f4887209ea7a315f28304b68a8c4fdb1ca54"
+  "reportId": "7b1ef7a234a2881ab04a3b2df50866f2e7eb99aeb3c279419535673967e042fb"
 }
