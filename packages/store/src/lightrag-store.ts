@@ -54,7 +54,7 @@ export function lightRagViewWithin(scope: TransactionStore, options: LightRagDbO
         },
     };
 }
-export function createLightRagDbPersistence(db: TangleDb, options: LightRagDbOptions = {}): LightRagPersistence {
+export function createLightRagDbPersistence(db: TangleDb | TransactionStore, options: LightRagDbOptions = {}): LightRagPersistence {
     if (options.applyProbe !== undefined && typeof options.applyProbe !== 'function') throw new TypeError('The write probe must be a function.');
     return {
         read: task => db.transaction(scope => task(lightRagViewWithin(scope)), { mode: 'deferred' }),
@@ -64,7 +64,7 @@ export function createLightRagDbPersistence(db: TangleDb, options: LightRagDbOpt
     };
 }
 
-export function createLightRagStore(db: TangleDb, options: LightRagDbOptions = {}): LightRagStore {
+export function createLightRagStore(db: TangleDb | TransactionStore, options: LightRagDbOptions = {}): LightRagStore {
     return createLightRagStoreAdapter(createLightRagDbPersistence(db, options));
 }
 /** A caller-owned joint transaction must let a refusal unwind the entire scope. */

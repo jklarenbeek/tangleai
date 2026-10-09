@@ -8,11 +8,13 @@ import { validateLightRagShape } from './schema.ts';
 import { validateGraphProjection, planProjectionActivation, planProjectionRetirement, sourceGraphHead } from './projection.ts';
 import { contributionRevisionOf, lightragRevisionOf, immutableLightRagJson } from './identity.ts';
 import { lightragMust, lightragReject, lightragFailure, type LightRagOutcome } from './errors.ts';
+import { bindProjectionPreparations } from './preparation-bindings.ts';
 const ids = (values: readonly string[]) => [...new Set(values)].sort();
 export interface ProjectionPlanOptions {
     projection: GraphProjection; contribution: GraphContributionPlan; projections: readonly GraphProjection[];
     actualHead: Head; expectedHead: Head; at: string | null;
     document?: GraphDocumentBinding; profilePolicy?: 'prepared' | 'retained-evidence';
+    compactPreparations?: boolean;
 }
 export function planProjectionWrites(options: ProjectionPlanOptions): Promise<LightRagOutcome<ProjectionWritePlan>> { return buildWrites('activate', options); }
 export function planRetraction(options: ProjectionPlanOptions): Promise<LightRagOutcome<ProjectionWritePlan>> { return buildWrites('retract', options); }
@@ -89,7 +91,8 @@ async function buildWrites(operation: ProjectionWritePlan['operation'], options:
             const { prepared: _prepared, ...row } = write.row;
             return { ...write, row };
         });
-        const body = { operation, request, contribution, priorProjections, actualHead: options.actualHead, expectedHead: options.expectedHead, nextHead,
+        const snapshots = options.compactPreparations ? await bindProjectionPreparations(request, priorProjections, contribution) : { request, priorProjections };
+        const body = { operation, ...snapshots, contribution, actualHead: options.actualHead, expectedHead: options.expectedHead, nextHead,
             at: options.at, reactivation, writes: compactWrites, ...(document ? { document } : {}), ...(options.profilePolicy ? { profilePolicy: options.profilePolicy } : {}) };
         return { valid: true, value: immutableLightRagJson(lightragMust(validateLightRagShape('projectionWritePlan', { ...body, revision: await lightragRevisionOf(body) }))) };
     } catch (cause) { return lightragFailure(cause); }

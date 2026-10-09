@@ -7,9 +7,9 @@ import type { GraphDocumentBinding,LightRagStored } from '@tangleai/lightrag';
 import { DocumentError, assertStoredDocumentBundle, type DocumentSource, type DocumentVersion,
   type StoredDocumentBundle } from '@tangleai/documents/contracts';
 
-const sourceLocks = new WeakMap<TangleDb, Map<string, Promise<void>>>();
+const sourceLocks = new WeakMap<TangleDb | TransactionStore, Map<string, Promise<void>>>();
 /** Documents and graph promotion share one per-database/source admission queue. */
-export async function serialDocumentSource<T>(db: TangleDb, sourceId: string, operation: () => Promise<T>): Promise<T> {
+export async function serialDocumentSource<T>(db: TangleDb | TransactionStore, sourceId: string, operation: () => Promise<T>): Promise<T> {
   let locks = sourceLocks.get(db); if (!locks) { locks = new Map(); sourceLocks.set(db, locks); }
   while (locks.has(sourceId)) await locks.get(sourceId);
   let release = (): void => {};

@@ -10,6 +10,7 @@ import { validateGraphProjection, sourceGraphHead } from './projection.ts';
 import { planProjectionWrites, planRetraction } from './write-plan.ts';
 import { lightragMust, lightragReject } from './errors.ts';
 import { immutableLightRagJson } from './identity.ts';
+import { resolveProjectionPreparations, type ProjectionPreparationSources } from './preparation-bindings.ts';
 const unique = (values: readonly string[]) => [...new Set(values)].sort();
 const order = <T extends { id: string }>(rows: readonly T[]) => [...rows].sort((a,b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 export interface LightRagApplyReceipt { projectionId: string; head: ProjectionWritePlan['nextHead']; writes: number; newClaims: number; reactivation: boolean; replayed: boolean }
@@ -30,9 +31,9 @@ async function projectionsFor(view: LightRagReadView, sourceId: string): Promise
     }
     lightragMust(sourceGraphHead(projections, sourceId)); return order(projections);
 }
-async function unchangedResult(view: LightRagReadView, plan: ProjectionWritePlan): Promise<boolean> {
+async function unchangedResult(view: LightRagReadView, plan: ProjectionWritePlan, preparations: ProjectionPreparationSources): Promise<boolean> {
     const final = new Map<string, { table: LightRagTable; stored: LightRagStored }>();
-    for (const write of plan.writes) { const stored = storedLightRagWrite(write, plan); final.set(write.table + ':' + stored.id, { table: write.table, stored }); }
+    for (const write of plan.writes) { const stored = storedLightRagWrite(write, preparations); final.set(write.table + ':' + stored.id, { table: write.table, stored }); }
     for (const row of final.values()) if (!same(await view.get(row.table, row.stored.id) ?? null, row.stored)) return false;
     return contributionResultMatchesWithin(view, plan.request.id, plan.contribution, plan.operation === 'activate');
 }
@@ -102,28 +103,32 @@ async function checkClaimSnapshot(view: LightRagReadView, plan: ProjectionWriteP
     }
 }
 /** The host must call this inside its transaction; a refusal unwinds that scope. */
-export async function checkLightRagWritePlanWithin(view: LightRagReadView, value: ProjectionWritePlan): Promise<{ plan: ProjectionWritePlan; replay: LightRagApplyReceipt | null }> {
+export async function checkLightRagWritePlanWithin(view: LightRagReadView, value: ProjectionWritePlan): Promise<{ plan: ProjectionWritePlan; replay: LightRagApplyReceipt | null; preparationSources: ProjectionPreparationSources }> {
     const plan = lightragMust(validateLightRagShape('projectionWritePlan', value));
+    let actualProjections = plan.preparations ? await projectionsFor(view, plan.request.sourceId) : null;
+    const preparationSources = actualProjections ? await resolveProjectionPreparations(plan, actualProjections) : plan;
     const recompute = plan.operation === 'activate' ? planProjectionWrites : planRetraction;
-    const reproduced = lightragMust(await recompute({ projection: plan.request, contribution: plan.contribution, projections: plan.priorProjections,
-        actualHead: plan.actualHead, expectedHead: plan.expectedHead, at: plan.at, document: plan.document, profilePolicy: plan.profilePolicy }));
+    const reproduced = lightragMust(await recompute({ projection: preparationSources.request, contribution: plan.contribution, projections: preparationSources.priorProjections,
+        actualHead: plan.actualHead, expectedHead: plan.expectedHead, at: plan.at, document: plan.document, profilePolicy: plan.profilePolicy,
+        compactPreparations: plan.preparations !== undefined }));
     if (!same(plan, reproduced)) lightragReject('TLRAG1002', '/writes', 'The write plan differs from its independently reproduced transition.');
-    const actualProjections = await projectionsFor(view, plan.request.sourceId), actualHead = lightragMust(sourceGraphHead(actualProjections, plan.request.sourceId));
-    if (same(actualHead, plan.nextHead) && await unchangedResult(view, plan)) return { plan, replay: immutableLightRagJson({ projectionId: plan.request.id, head: actualHead, writes: 0, newClaims: 0, reactivation: plan.reactivation, replayed: true }) };
+    actualProjections ??= await projectionsFor(view, plan.request.sourceId);
+    const actualHead = lightragMust(sourceGraphHead(actualProjections, plan.request.sourceId));
+    if (same(actualHead, plan.nextHead) && await unchangedResult(view, plan, preparationSources)) return { plan, preparationSources, replay: immutableLightRagJson({ projectionId: plan.request.id, head: actualHead, writes: 0, newClaims: 0, reactivation: plan.reactivation, replayed: true }) };
     let next;
     try { next = planHeadTransition(actualHead, plan.expectedHead, plan.request.id); }
     catch (cause) { lightragReject('TLRAG1006', '/expectedHead', 'The source graph head moved before this transaction.', cause); }
-    if (!same(next, plan.nextHead) || !same(actualProjections, plan.priorProjections)) lightragReject('TLRAG1006', '/priorProjections', 'The prepared projection states differ from the transaction snapshot.');
+    if (!same(next, plan.nextHead) || !same(actualProjections, preparationSources.priorProjections)) lightragReject('TLRAG1006', '/priorProjections', 'The prepared projection states differ from the transaction snapshot.');
     await checkCanonicalSnapshot(view, plan); await checkClaimSnapshot(view, plan);
-    return { plan, replay: null };
+    return { plan, preparationSources, replay: null };
 }
 /** The host must call this inside its transaction; a refusal unwinds that scope. */
 export async function applyLightRagWritePlanWithin(view: LightRagWriteView, value: ProjectionWritePlan): Promise<LightRagApplyReceipt> {
-    const { plan, replay } = await checkLightRagWritePlanWithin(view, value);
+    const { plan, replay, preparationSources } = await checkLightRagWritePlanWithin(view, value);
     if (replay) return replay;
     let writes = 0, newClaims = 0;
     for (const write of plan.writes) {
-        const stored = storedLightRagWrite(write, plan), before = await view.get(write.table, stored.id);
+        const stored = storedLightRagWrite(write, preparationSources), before = await view.get(write.table, stored.id);
         if (same(before ?? null, stored)) continue;
         if (before && 'projectionId' in write) lightragReject('TLRAG1002', '/members', 'An immutable contribution member cannot be overwritten.');
         await view.put(write.table, stored); writes++;

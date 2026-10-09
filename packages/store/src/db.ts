@@ -18,7 +18,8 @@ import { openStore, type Collection, type OpenStoreOptions, type Store } from '@
 import { nodeDriver } from '@jarenjs/db/node';
 import { bunDriver } from '@jarenjs/db/bun';
 
-import { TANGLE_DB_MODEL } from './model.ts';
+import { createTangleDbModel } from './model.ts';
+import type { GraphVectorDeclaration } from './graph-vector-model.ts';
 
 /** A @jarenjs/db collection handle over documents of shape `T`. */
 export type DbCollection<T = unknown> = Collection<T>;
@@ -30,6 +31,7 @@ export type TangleDb = Store;
  * pragmas, validation, live bounds and read-only profiles. */
 export interface OpenTangleDbOptions extends Omit<OpenStoreOptions, 'driver'> {
   driver?: OpenStoreOptions['driver'];
+  graphVectors?: GraphVectorDeclaration;
 }
 
 export function pickDriver(): OpenStoreOptions['driver'] {
@@ -40,5 +42,6 @@ export function pickDriver(): OpenStoreOptions['driver'] {
 
 export function openTangleDb(options: OpenTangleDbOptions = {}): Promise<TangleDb> {
   const driver = options.driver ?? pickDriver();
-  return openStore(TANGLE_DB_MODEL, { ...options, driver, path: options.path ?? ':memory:' });
+  const { graphVectors, ...native } = options;
+  return openStore(createTangleDbModel({ graphVectors }), { ...native, driver, path: options.path ?? ':memory:' });
 }

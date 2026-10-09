@@ -55,6 +55,7 @@ import { TRADING_COLLECTIONS } from './trading-model.ts';
 import { RESEARCH_COLLECTIONS } from './research-model.ts';
 import { EXPERIENTIAL_COLLECTIONS } from './experiential-model.ts';
 import { FRAME_KINDS } from './runs.ts';
+import { graphVectorCollections, type GraphVectorDeclaration } from './graph-vector-model.ts';
 
 const ID: JsonSchema = { type: 'string', minLength: 1 };
 
@@ -373,3 +374,9 @@ export const TANGLE_DB_MODEL = {
     },
   },
 } as const;
+
+/** The default model is unchanged; graph columns require an explicit declaration. */
+export function createTangleDbModel(options: { graphVectors?: GraphVectorDeclaration } = {}) {
+  return options.graphVectors === undefined ? TANGLE_DB_MODEL : { ...TANGLE_DB_MODEL,
+    collections: { ...TANGLE_DB_MODEL.collections, ...graphVectorCollections(options.graphVectors) } };
+}

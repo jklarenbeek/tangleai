@@ -669,6 +669,45 @@ export interface LightRagAnswerRecord {
 
 export type LightRagWrite = { table: "projections"; row: GraphProjection; } | { table: "entity_claims"; row: GraphEntityClaim; projectionId: LightRagRevision; } | { table: "relation_claims"; row: GraphRelationClaim; projectionId: LightRagRevision; } | { table: "chunk_profiles"; row: GraphChunkProfile; projectionId: LightRagRevision; } | { table: "entities"; row: GraphEntity; } | { table: "relations"; row: GraphRelation; };
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphPreparationMetadataWarningsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphPreparationMetadataCompletedChunkIdsItem = string;
+
+export interface GraphPreparationMetadata {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  sourceId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  versionId: string;
+  identities: LightRagIdentities;
+  contributionRevision: LightRagRevision;
+  spend: LightRagSpend;
+  warnings: Array<GraphPreparationMetadataWarningsItem>;
+  failures: Array<GraphChunkFailure>;
+  partial: boolean;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  completedChunkIds: Array<GraphPreparationMetadataCompletedChunkIdsItem>;
+  stats: GraphPreparationStats;
+}
+
+
+export interface GraphPreparationBindings {
+  request?: GraphPreparationMetadata;
+  prior: Array<{ id: LightRagRevision; revision: LightRagRevision; }>;
+}
+
+
 export interface ProjectionWritePlan {
   operation: "activate" | "retract";
   request: GraphProjection;
@@ -683,6 +722,7 @@ export interface ProjectionWritePlan {
   revision: LightRagRevision;
   document?: GraphDocumentBinding;
   profilePolicy?: "prepared" | "retained-evidence";
+  preparations?: GraphPreparationBindings;
 }
 
 

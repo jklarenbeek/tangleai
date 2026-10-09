@@ -1803,6 +1803,9 @@
             "prepared",
             "retained-evidence"
           ]
+        },
+        "preparations": {
+          "$ref": "#/$defs/graphPreparationBindings"
         }
       }
     },
@@ -2647,6 +2650,99 @@
           }
         }
       ]
+    },
+    "graphPreparationMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "versionId",
+        "identities",
+        "contributionRevision",
+        "spend",
+        "warnings",
+        "failures",
+        "partial",
+        "completedChunkIds",
+        "stats"
+      ],
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identities": {
+          "$ref": "#/$defs/lightRagIdentities"
+        },
+        "contributionRevision": {
+          "$ref": "#/$defs/lightRagRevision"
+        },
+        "spend": {
+          "$ref": "#/$defs/lightRagSpend"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/graphChunkFailure"
+          }
+        },
+        "partial": {
+          "type": "boolean"
+        },
+        "completedChunkIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "stats": {
+          "$ref": "#/$defs/graphPreparationStats"
+        }
+      }
+    },
+    "graphPreparationBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prior"
+      ],
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/graphPreparationMetadata"
+        },
+        "prior": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "revision"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/lightRagRevision"
+              },
+              "revision": {
+                "$ref": "#/$defs/lightRagRevision"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

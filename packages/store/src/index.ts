@@ -1,6 +1,6 @@
 /** @tangleai/store barrel. */
 
-export { TANGLE_DB_MODEL } from './model.ts';
+export { TANGLE_DB_MODEL, createTangleDbModel } from './model.ts';
 export { openTangleDb, pickDriver } from './db.ts';
 export type { TangleDb, DbCollection, OpenTangleDbOptions } from './db.ts';
 export { createDbMemoryStore, asRows } from './memory-store.ts';
@@ -76,6 +76,12 @@ export { EXPERIENTIAL_COLLECTIONS } from './experiential-model.ts';
 
 export { activateDocumentWithin } from './document-store.ts';
 export * from './corpus-promotion.ts';
+export * from './graph-vector-model.ts';
+export * from './graph-vector-plan.ts';
+export * from './graph-vector-rank.ts';
+export * from './graph-vector-migration.ts';
+export * from './graph-vector-state.ts';
+export * from './graph-vector-stage.ts';
 export * from './gc.ts';
 
 export { enqueueExperientialTraining, createExperientialTrainingRunner, type ExperientialTrainingRunnerOptions } from './experiential-jobs.ts';

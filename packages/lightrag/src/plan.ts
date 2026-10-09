@@ -102,8 +102,11 @@ async function planContributionInternal(value: GraphContributionInput, prepare: 
         }
         if (new Set(input.profiles.map(row => row.chunkId)).size !== input.profiles.length) lightragReject('TLRAG1001', '/profiles', 'Chunk profiles must have unique addresses.');
         const previousEntities = keyed(input.existing.canonicals.entities, '/existing/entities'), previousRelations = keyed(input.existing.canonicals.relations, '/existing/relations');
-        for (const row of previousEntities.values()) lightragMust(await checked.entity(row, { previous: row, expectedEmbeddedBy: input.embeddedBy }));
-        for (const row of previousRelations.values()) lightragMust(await checked.relation(row, previousEntities, { expectedEmbeddedBy: input.embeddedBy }));
+        // Withdrawn evidence keeps its original vector identity. Every active
+        // canonical and every incoming candidate must use the current identity.
+        const identityFor = (row: GraphEntity | GraphRelation) => row.status === 'active' ? input.embeddedBy : row.embeddedBy;
+        for (const row of previousEntities.values()) lightragMust(await checked.entity(row, { previous: row, expectedEmbeddedBy: identityFor(row) }));
+        for (const row of previousRelations.values()) lightragMust(await checked.relation(row, previousEntities, { expectedEmbeddedBy: identityFor(row) }));
         const entities = new Map([...previousEntities].map(([id, row]) => [id, cloneJson(row)])), relations = new Map([...previousRelations].map(([id, row]) => [id, cloneJson(row)]));
         for (const candidate of keyed(input.candidates.entities, '/candidates/entities').values()) {
             if (candidate.status !== 'active') lightragReject('TLRAG1006', '/candidates', 'Only active canonical candidates can enter a contribution.');
@@ -188,8 +191,8 @@ async function planContributionInternal(value: GraphContributionInput, prepare: 
             if (!retired.has(claim) && activeEntityOwners.get(claim) !== (redirects.get(old.id) ?? old.id))
                 lightragReject('TLRAG1006', '/supportClaimIds', 'An existing entity claim can move only through an explicit merge.');
         }
-        for (const row of entities.values()) lightragMust(await checked.entity(row, { previous: previousEntities.get(row.id), expectedEmbeddedBy: input.embeddedBy }));
-        for (const row of relations.values()) lightragMust(await checked.relation(row, entities, { expectedEmbeddedBy: input.embeddedBy }));
+        for (const row of entities.values()) lightragMust(await checked.entity(row, { previous: previousEntities.get(row.id), expectedEmbeddedBy: identityFor(row) }));
+        for (const row of relations.values()) lightragMust(await checked.relation(row, entities, { expectedEmbeddedBy: identityFor(row) }));
         const body = { input, canonicals: { entities: sorted(entities.values()), relations: sorted(relations.values()) },
             touchedEntityIds: sorted(entities.values()).filter(row => !same(previousEntities.get(row.id) ?? null, row)).map(row => row.id),
             touchedRelationIds: sorted(relations.values()).filter(row => !same(previousRelations.get(row.id) ?? null, row)).map(row => row.id) };

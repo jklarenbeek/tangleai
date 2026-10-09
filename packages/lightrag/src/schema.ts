@@ -7,6 +7,9 @@ import { lightragRefuse, type LightRagOutcome } from './errors.ts';
 import { immutableLightRagJson } from './identity.ts';
 export { lightRagSchema };
 export interface LightRagRecords {
+    lightRagEmbeddedBy: C.LightRagEmbeddedBy;
+    lightRagHead: C.LightRagHead;
+    graphCanonicalProfile: C.GraphCanonicalProfile;
     graphDocumentBinding: C.GraphDocumentBinding;
     graphContributionSnapshot: C.GraphContributionSnapshot;
     graphExtractionReply: C.GraphExtractionReply;

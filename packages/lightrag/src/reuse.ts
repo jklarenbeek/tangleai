@@ -23,7 +23,8 @@ async function evidenceProfiles(input:GraphContributionInput,cached:GraphContrib
 }
 /** Cache eligibility is checked by the host against the persisted source projection.
  * Canonical lineage may redirect old ids; this is retained membership, not a new semantic judgment. */
-export async function rebaseRetainedContribution(options:{retained:GraphContribution;existing:GraphContributionSnapshot;retiredClaimIds:readonly string[]}):Promise<LightRagOutcome<GraphContribution>>{
+export async function rebaseRetainedContribution(options:{retained:GraphContribution;existing:GraphContributionSnapshot;retiredClaimIds:readonly string[];
+    retainedProfiles?:GraphContributionInput['profileUpdates']}):Promise<LightRagOutcome<GraphContribution>>{
     try{
         const retained=lightragMust(await validateGraphContribution(options.retained)),claims=retained.plan.input.claims,existing=options.existing;
         const prior=new Map(existing.canonicals.entities.map(row=>[row.id,row])),redirects=new Map<string,string>(),groups=new Map<string,{row:GraphEntity;claims:GraphEntityClaim[]}>();
@@ -65,7 +66,7 @@ export async function rebaseRetainedContribution(options:{retained:GraphContribu
         input.chunks=addresses(input);
         // A valid empty extraction can still own a chunk profile.
         for(const address of retained.plan.input.chunks)if(input.profiles.some(row=>row.chunkId===address.id)&&!input.chunks.some(row=>row.id===address.id))input.chunks.push(address);
-        const profiles=await evidenceProfiles(input,retained.plan.input.profileUpdates),plan=lightragMust(await planContribution(input));
+        const profiles=await evidenceProfiles(input,[...options.retainedProfiles??[],...retained.plan.input.profileUpdates]),plan=lightragMust(await planContribution(input));
         return validateGraphContribution({...retained,plan,spend:emptyGraphSpend(),warnings:[...retained.warnings,`Retained evidence profiles: ${profiles.reused} exact cached bases, ${profiles.composed} deterministic description unions; zero model or embedding calls.`],
             stats:{...retained.stats,entities:entities.length,relations:relations.length,merges:0,decisions:0,embeddingCalls:0}});
     }catch(cause){return lightragFailure(cause);}

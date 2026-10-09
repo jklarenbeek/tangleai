@@ -25,7 +25,7 @@ async function rows<T>(db: Pick<TransactionStore, 'collection'>, collection: str
   }));
 }
 
-export function createDocumentStore(db: TangleDb): DocumentCorpusStore {
+export function createDocumentStore(db: TangleDb | TransactionStore): DocumentCorpusStore {
   const sources = db.collection<DocumentSource>('sources');
   const versions = db.collection<DocumentVersion>('document_versions');
   const elements = db.collection<DocumentElement>('document_elements');

@@ -11,6 +11,7 @@ import { buildContribution,createCandidateResolver,validateGraphContribution,val
 import type { TangleDb } from './db.ts';
 import { lightRagViewWithin,applyLightRagPlanWithin } from './lightrag-store.ts';
 import { applyDocumentBundle,documentBundleIsActiveWithin,serialDocumentSource } from './document-state.ts';
+import { assertGraphVectorWriteIdentity, readGraphVectorState } from './graph-vector-state.ts';
 export interface CorpusGraphPreparationOptions extends Omit<BuildContributionOptions,'chunks'|'sourceId'|'versionId'|'resolver'|'retiredClaimIds'> {
     judge:CoreferenceJudge;maxDecisions?:number;
 }
@@ -20,7 +21,7 @@ export type CorpusPreparationOutcome = {valid:true;value:CorpusPreparation}|({va
 export interface CorpusPromotionRequest {document:StoredDocumentBundle;contribution:GraphContribution;expectedHead:Head;allowPartial?:boolean;profilePolicy?:'prepared'|'retained-evidence';}
 export interface CorpusPromotionReceipt {sourceId:string;versionId:string;documentWrites:number;graph:LightRagApplyReceipt;spend:LightRagSpend;}
 export interface CorpusRetractionReceipt {sourceId:string;versionId:string|null;documentWrites:number;graph:LightRagApplyReceipt|null;spend:LightRagSpend;}
-export interface CorpusPromotionOptions {db:TangleDb;documents:DocumentCorpusStore;lightrag:LightRagStore;applyProbe?:(step:string)=>void|Promise<void>;}
+export interface CorpusPromotionOptions {db:TangleDb|TransactionStore;documents:DocumentCorpusStore;lightrag:LightRagStore;compactGraphPreparations?:boolean;applyProbe?:(step:string)=>void|Promise<void>;}
 const sorted=(values:readonly string[])=>[...new Set(values)].sort();
 const members=(projection:GraphProjection|undefined)=>projection?[...projection.entityClaimIds,...projection.relationClaimIds]:[];
 const json=<T>(value:T):T=>JSON.parse(JSON.stringify(value));
@@ -69,7 +70,7 @@ function preparationFailure(cause:unknown,spend:LightRagSpend=emptyGraphSpend(),
     return {valid:false,issues:result.issues,spend:result.spend,completedChunkIds,stopReason:result.stopReason};
 }
 export function createCorpusPromotion(options:CorpusPromotionOptions){
-    const {db,documents,lightrag}=options,probe=options.applyProbe;
+    const {db,documents,lightrag,compactGraphPreparations}=options,probe=options.applyProbe;
     if(probe!==undefined&&typeof probe!=='function')throw new TypeError('The corpus write probe must be a function.');
     return {
         async prepare(input:{document:PreparedOutcome;graph:CorpusGraphPreparationOptions}):Promise<CorpusPreparationOutcome>{
@@ -89,7 +90,9 @@ export function createCorpusPromotion(options:CorpusPromotionOptions){
                 if(retained){
                     const checked=lightragMust(await validateGraphProjection(retained)),cached=checked.prepared!,names=cached.plan.input.claims.entities.map(row=>row.normalizedName);
                     const existing=await lightrag.readContributionSnapshot({normalizedNames:names,retiredClaimIds:members(active)});
-                    contribution=lightragMust(await rebaseRetainedContribution({retained:cached,existing,retiredClaimIds:members(active)}));
+                    const identityState=await readGraphVectorState(db),rollback=[...(identityState?.retained??[])].reverse().find(row=>equalsJson(row.identity,input.graph.identities.embedder)
+                        &&row.sources.some(source=>source.version.id===version.id));
+                    contribution=lightragMust(await rebaseRetainedContribution({retained:cached,existing,retiredClaimIds:members(active),retainedProfiles:rollback?.profiles}));
                 }else{
                     const resolver=createCandidateResolver({lookup:request=>lightrag.readContributionSnapshot(request),judge:input.graph.judge,maxDecisions:input.graph.maxDecisions});
                     const prepared=await buildContribution({...input.graph,chunks:bundle.chunks,sourceId:source.id,versionId:version.id,resolver,retiredClaimIds:members(active)});
@@ -106,6 +109,7 @@ export function createCorpusPromotion(options:CorpusPromotionOptions){
                 if((contribution.partial||document.version.metrics.partial)&&input.allowPartial!==true)lightragReject('TLRAG1006','/partial','Partial document or graph preparation requires explicit allowPartial.');
                 const binding=await documentBinding(document),id=await projectionIdOf(contribution.sourceId,contribution.versionId,contribution.contributionRevision);
                 return {valid:true,value:await serialDocumentSource(db,document.source.id,()=>db.transaction(async scope=>{
+                    await assertGraphVectorWriteIdentity(scope,contribution.identities.embedder);
                     const view=lightRagViewWithin(scope),projections=await projectionsWithin(scope,document.source.id),actualHead=lightragMust(sourceGraphHead(projections,document.source.id)),retained=projections.find(row=>row.id===id);
                     const audit=retained?.audit?.at(-1);
                     if(retained?.status==='active'&&audit?.operation==='activate'&&equalsJson(audit.previousHead,input.expectedHead)&&audit.contributionPlanRevision===contribution.plan.revision&&equalsJson(audit.document,binding)){
@@ -114,7 +118,7 @@ export function createCorpusPromotion(options:CorpusPromotionOptions){
                     }
                     assertExpected(actualHead,input.expectedHead,id);await assertRealEvidence(scope,contribution.plan,document);
                     const projection=lightragMust(await projectionForContribution(contribution,retained)),plan=lightragMust(await planProjectionWrites({projection,contribution:contribution.plan,projections,actualHead,expectedHead:input.expectedHead,
-                        at:document.source.fetchedAt,document:binding,profilePolicy:input.profilePolicy??'prepared'}));
+                        at:document.source.fetchedAt,document:binding,profilePolicy:input.profilePolicy??'prepared',compactPreparations:compactGraphPreparations}));
                     await checkLightRagWritePlanWithin(view,plan);await probe?.('validated');
                     const documentWrites=await applyDocumentBundle(scope,document,probe,binding);await probe?.('document');
                     const graph=await applyLightRagPlanWithin(scope,plan,{applyProbe:step=>probe?.('graph:'+step)});await probe?.('graph');
@@ -137,7 +141,7 @@ export function createCorpusPromotion(options:CorpusPromotionOptions){
                     const version=await scope.collection<DocumentVersion>('document_versions').get(active.versionId);if(!version||version.status!=='active')lightragReject('TLRAG1003','/version','The active document version is missing.');
                     await assertRealEvidence(scope,contribution!);
                     const document={sourceId,versionId:active.versionId,revision:await lightragRevisionOf({source,version})},at=input.at??source.fetchedAt;
-                    const plan=lightragMust(await planRetraction({projection:active,contribution:contribution!,projections:current,actualHead,expectedHead,at,document,profilePolicy:'retained-evidence'}));
+                    const plan=lightragMust(await planRetraction({projection:active,contribution:contribution!,projections:current,actualHead,expectedHead,at,document,profilePolicy:'retained-evidence',compactPreparations:compactGraphPreparations}));
                     await checkLightRagWritePlanWithin(lightRagViewWithin(scope),plan);await probe?.('validated');
                     const {activeVersionId:_active,error:_error,...retiredSource}=source;
                     await scope.collection('document_versions').put({...version,status:'superseded',supersededAt:at??source.fetchedAt});await probe?.('put:document_versions');
