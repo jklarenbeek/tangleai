@@ -2,10 +2,11 @@ import {corpusFixture} from './corpus-promotion.ts';
 import {EMPTY_HEAD} from '@tangleai/outcomes';
 import {createBudgetAccount} from '@tangleai/agents';
 import {createHashEmbedder} from '@tangleai/models/embed';
+import type {TangleDb} from '@tangleai/store';
 import {createMemoryLightRagStore,createScriptedPlanner,retrieveLightRag,projectionForContribution,planProjectionWrites,lightragMust,type LightRagMode,type LightRagLimits,type LightRagStore} from '@tangleai/lightrag';
 import control from '../../benchmark/fixtures/lightrag/one-hop-control.json' with{type:'json'};
-export async function retrievalFixture(){
-    const f=await corpusFixture({dims:64}),memory=createMemoryLightRagStore(),chunkByKey=new Map<string,string>(),sourceByKey=new Map<string,string>();
+export async function retrievalFixture(options:{db?:TangleDb}={}){
+    const f=await corpusFixture({...options,dims:64}),memory=createMemoryLightRagStore(),chunkByKey=new Map<string,string>(),sourceByKey=new Map<string,string>();
     try{
         for(const source of control.sources){
             const url='https://graph.example/'+source.key;f.setBody(url,'# '+source.key+'\n\n'+source.text);
