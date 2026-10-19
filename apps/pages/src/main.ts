@@ -98,7 +98,8 @@ function view(state: any): any {
         '. Documents run; policies are measured before they are believed.'],
       ['nav', { class: 'links' },
         ['a', { class: 'button', href: 'https://github.com/jklarenbeek/tangleai' }, 'GitHub'],
-        ['a', { class: 'button ghost', href: 'https://github.com/jklarenbeek/tangleai#readme' }, 'README']],
+        ['a', { class: 'button ghost', href: 'https://github.com/jklarenbeek/tangleai#readme' }, 'README'],
+        ['a', { class: 'button ghost', href: './os/' }, 'Radiant OS']],
     ],
 
     ['section', { class: 'panel' },

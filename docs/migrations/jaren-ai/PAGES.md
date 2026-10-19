@@ -74,6 +74,46 @@ is never cleared. Native browser availability is recorded separately from the
 injected matrix. Focus requests a fresh binding after an unavailable result;
 there is no browser sniffing, import-time cache or polling timer.
 
+## Radiant OS
+
+`apps/pages/src/os` is Radiant OS, served from `os/` as its own installable app:
+its own page, manifest, service worker and bundles (`app.js`, `db-worker.js`,
+`sw.js`), all strict TypeScript. It is a `@jarenjs/app` document whose
+documents are shared with the Jaren edition at `/jarenjs/os/`: the program is a
+jaren-fsm turmite, a council session is a jaren-workflow (a DAG proposes,
+simulates and tallies by merit; a wait state holds the winner for the human),
+merit is a jaren-dag of query documents, the chrome and the stage's scene are
+JSLT, and the exports are JTLT. The documents keep to operators Jaren 0.91.4
+has; the host rounds what it publishes.
+
+Storage identities are the edition's own, because both editions share the
+origin: the OPFS access-handle pool `radiant-os-tangle` (database
+`/radiant-os.db`, memory when another tab holds it), service-worker caches
+prefixed `tangle-radiant-os-` (the Jaren worker retires `radiant-os-` caches),
+and the local-storage key `radiant-os-prefs`, which both editions read for the
+theme and motion preference. The worker precaches the shell and every file in
+`precache.json` at install and answers network-first, because the build's file
+names carry no hash. The database worker's store contract answers nullable reads
+as a type union rather than `oneOf`: Jaren 0.91.4's validator reaches for
+`process` when it records a failed branch, which a worker does not have.
+
+The oracle's seat reads the assistant's `tangle-ai` settings and follows them
+when another tab changes them. The configured model is called only when the
+human has spoken to the council since it last answered; every other session,
+and every session without a model, is answered by the scripted oracle through
+the same `createChatClient` + `createStructuredOutput` road with a fetch that
+answers like a chat endpoint. Answers are constrained by the contract's `Change`
+grammar (strict provider mode off, local validation on), and the OS assigns the
+proposal's id and seat. WebMCP registers the public contract operations as
+`radiant_*` tools seated as the oracle; the veto, early approval and repeal
+carry `audience: "server"` and are never offered to a tool caller.
+
+`test/pages/os-*.test.ts` drive the kernel, a council session on a fake clock,
+the oracle seat (scripted and against a recording chat endpoint), the system
+calls over `node:sqlite` and memory, the stage, the whole app over the DOM stub,
+and the service worker in a vm sandbox. `.e2e/os.e2e.mjs` checks the built page
+in a browser: boot, the oracle hearing the human, the veto and the database.
+
 ## Reproduce the browser checks
 
 Run `npm run pages:build`, serve `apps/pages/dist` on `127.0.0.1:4715`, then run
@@ -82,6 +122,7 @@ Run `npm run pages:build`, serve `apps/pages/dist` on `127.0.0.1:4715`, then run
 the qualified Playwright installation (the existing sibling Jaren development
 installation by default). This is test tooling only. The Pages runtime and
 published packages consume installed Jaren artifacts, never sibling source.
-Also retain `.e2e/pages.e2e.mjs` for the landing pipeline and the existing desktop
-source/binary browser checks. Scripted provider responses use fixture endpoints;
+Also retain `.e2e/pages.e2e.mjs` for the landing pipeline, `.e2e/os.e2e.mjs` for
+Radiant OS (`CHROMIUM_PATH` names a browser outside Playwright's cache) and the
+existing desktop source/binary browser checks. Scripted provider responses use fixture endpoints;
 no paid model call is needed for this campaign.

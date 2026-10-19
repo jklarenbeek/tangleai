@@ -479,8 +479,21 @@ is not a mock: the real pipeline document executes in your browser over
 the in-memory store, and the recall you ask for afterwards is real
 ranked retrieval — the superseded record provably cannot surface.
 
+Its `os/` page is **Radiant OS**, an installable offline PWA: a browser OS that
+is a two-dimensional Turing machine — the program a jaren-fsm document, the
+tape a 3D floor its outlined dancers paint — governed by a council of its own
+parts in jaren-workflow sessions, with merit kept by a jaren-dag and every call
+passing one `$contract`. The veto, the early approval and the repeal are the
+human's alone and appear in no tool projection. The oracle's seat is a language
+model through `@tangleai/models`: the Tangle assistant's model settings seat it,
+it is called only when the human has spoken to the council since it last
+answered, and its answer is constrained by the contract's `Change` grammar and
+validated locally. Without a model, a scripted oracle answers offline through
+the same client. See [Tangle Pages hosts](docs/migrations/jaren-ai/PAGES.md#radiant-os).
+
 The private Pages build uses the official `@sqlite.org/sqlite-wasm`
-`3.53.0-build1` initializer for its browser Data and project workers. This is a
+`3.53.0-build1` initializer for its browser Data and project workers and Radiant
+OS's database worker. This is a
 narrow exception to the JarenJS-only dependency rule: it is a Pages build
 dependency, bundled with its WASM asset for that private application. Published
 Tangle packages and Jaren's shared editors contain no foreign initializer; the
