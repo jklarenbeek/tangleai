@@ -54,7 +54,7 @@ Every other workflow file points here instead of restating these.
 | Policy contract | `npm run policy:check`, `npm run policy:contract:check`, `npm run emit:policy -- --check` (also in `check`) | when memory defaults or their contract change |
 | Skeleton | `npm run skeleton` | when the loop's policies or core schemas changed |
 | Desktop e2e | `.e2e/desktop.e2e.mjs` via the `ubuntu-playwright` distrobox (usage header in the script) | when the desktop UI or contract changed |
-| Pages build | `bun apps/pages/build.ts` (+ `.e2e/pages.e2e.mjs`) | when apps/pages or the pipeline document changed |
+| Pages build | `bun apps/pages/build.ts` (+ `.e2e/pages.e2e.mjs`, `.e2e/os.e2e.mjs`) | when apps/pages or the pipeline document changed |
 | Migrated Pages browsers | `npm run pages:test:browser` against the built site; same Playwright toolchain as desktop, selected by `PLAYWRIGHT_PACKAGE` | when assistant, game or editor hosts change |
 | Instruments | `npm run documents:benchmark`, `npm run benchmark:locomo:census`, `npm run benchmark:locomo:recall`, `npm run benchmark:locomo:qa`, `npm run benchmark:locomo:policy` (keyless; `--live` spends a key and is never a gate) | when a measured claim, a chunker, or a benchmark's corpus changed |
 | Binary | `npm run desktop:compile`, then run `dist/tangle` from a foreign cwd | when the server, static layer or embed script changed |

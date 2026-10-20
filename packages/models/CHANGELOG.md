@@ -1,5 +1,36 @@
 # @tangleai/models
 
+## 0.42.0
+
+### Minor Changes
+
+- 4567009: Size tool calls to the model that makes them. `@tangleai/models/profile` reads a
+  model id into a profile with a tool budget (`modelProfile`, `resolveToolBudget`,
+  `TOOL_BUDGETS`): a mixture of experts is tiered by its active parameters, a dense
+  model by its size, with overridable heuristic defaults. `@tangleai/agents/staging`
+  (`stageTools`, `estimateArgumentChars`) builds any tool whose typical input exceeds
+  the budget as a draft in budget-sized, sub-schema-checked calls and commits it
+  through the tool's own validation, offers small catalogs to small budgets, and
+  refuses duplicate tool names. A tool call cut off at the reply's length limit now
+  says where it was cut and points at the drafts. `@tangleai/jaren/contract-tools`
+  (`createContractToolbox`) turns a Jaren contract into such tools, with host-pinned
+  input members and outcomes shaped for a model; `@tangleai/jaren` now depends on
+  `@jarenjs/contract` 0.91.4. Existing exports are unchanged.
+
+### Patch Changes
+
+- fb8a15e: Host Radiant OS on the Pages site at `os/`: an installable, offline browser OS
+  that is a two-dimensional Turing machine governed by a council of its own parts
+  under the human's veto. Its studio is a turn-based crew game for finishing small
+  apps together (up to four people add ideas, the crew builds each one as a block
+  through the OS contract, and the people approve or veto it), with a board of
+  linked notes and todos, mail that keeps every conversation, a library of the
+  suite's documentation to read, hear and ask, and three games: Monkey Grove,
+  Tape Dancers and Bench Arena. A configured model plays the oracle, the crew and
+  the library's voice. The crew builds with `createContractToolbox` under the
+  model's tool budget, and the library answers only from the passages it is given,
+  citing them. Without a model, a scripted oracle and crew run the same paths.
+
 ## 0.41.0
 
 No changes in this release.

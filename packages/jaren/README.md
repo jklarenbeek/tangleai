@@ -18,11 +18,20 @@ Models, context and agent policy remain in their respective Tangle packages.
   Accepting those declarations never implicitly applies a table migration.
 - `/stylesheet`, `/spatial`, `/geo-tools`: compiler-gated stylesheet authoring,
   spatial agents and tools backed by Jaren's shipped spatial operations.
+- `/contract-tools`: `createContractToolbox` turns a compiled Jaren contract's public
+  operations into agent tools sized to the model that calls them. Host-pinned input
+  members leave the schema the model fills and are applied on every call; outcomes keep
+  `{ ok, value }` or `{ ok: false, error: { code, message, details } }` and the operation
+  id; an operation whose input exceeds the model's tool budget is built as a draft.
+  Server-audience operations are never offered.
 
 Pass an editor returned by `@jarenjs/studio/component`, `/flow` or `/data`.
 These adapters own no editor controller, view, worker, database or task registry.
 Every write requires the revision returned by `read`; rejected writes preserve
 manual work. Hosts own mounts, lifecycle, templates and explicit execution.
+
+See [contract tools](docs/CONTRACT_TOOLS.md) for budgets, pins, outcome shapes and
+WebMCP publication.
 
 See [engine authoring and measured limits](docs/AUTHORING.md) for the retained
 compile-gated recipes, schema-size tradeoffs, spatial intent limits and original

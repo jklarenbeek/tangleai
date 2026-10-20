@@ -2,7 +2,7 @@
   "benchmark": "mas-runtime-handoff",
   "query": "queries/mas/runtime-handoff.json",
   "queryRevision": "7221519bef5fb34f99e2bdaa375c0233455701f4e99f6283fa9dc41d36ca0e62",
-  "reportId": "e8748161fb25ebb16d6ee948856154df4c74a2d6589ae76a0fe051eb1f86bd7c",
+  "reportId": "893b419f78387ba4de0d57034871d9077d1bf46dc3ccb035b518d526e28f2d9d",
   "handoff": {
     "decision": "runtime-conformant",
     "clauses": {
@@ -14,7 +14,7 @@
       "persistenceIdentity": true,
       "hygiene": true
     },
-    "reportId": "e8748161fb25ebb16d6ee948856154df4c74a2d6589ae76a0fe051eb1f86bd7c",
+    "reportId": "893b419f78387ba4de0d57034871d9077d1bf46dc3ccb035b518d526e28f2d9d",
     "registration": {
       "manifestRevision": "ceee5f7eefd6dc1ad74a8c776a0a62d5e38325f1a34ad2f6aaa9b185694d5702",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
@@ -32,7 +32,7 @@
     },
     "weeklyReport": {
       "workflowVersionId": "8f835f3a240bb51b8266fa7fd96d9c201f6341fe204f21398c1905b22ff42486",
-      "executableRevision": "8857f37e70a9292aa1575404859ac06dfc24fe6331be96e9f74d0d20f9432ade",
+      "executableRevision": "a9ae08648b3c7883897d78ff735201aa099dc35a6ec504962e3a8572b93ed449",
       "maxObservedConcurrency": 3,
       "calls": 11,
       "state": "runtime-pass"
@@ -112,5 +112,5 @@
       "nested graph, switch and loop interactions require host-supplied typed responses and resumed segments; waiting holds no worker and does not consume active time"
     ]
   },
-  "artifactId": "c8c8816de93e3380a13fba8a108924e90d5e403a07196c96d9fee11afea1bb6c"
+  "artifactId": "48e264068b1b992723f61e59fd374756f1b2679afb773cbb9cde89f13e242dd7"
 }

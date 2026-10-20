@@ -301,6 +301,7 @@ export function createAgent(options: {
       ...(recalling ? recallBox!.box.toFunctionTools() : []),
       ...envTools,
     ];
+    const drafting = draftPrefix(tools);
 
     const steps: any[] = [];
     // the goal and the retrieved state, composed onto whatever base
@@ -384,9 +385,11 @@ export function createAgent(options: {
       for (const call of reply.toolCalls) {
         hooks.onToolCall?.({ name: call.name, arguments: call.arguments });
         const parsed = parseArguments(call.arguments);
-        const result = parsed.error !== undefined
-          ? parsed
-          : await dispatch(call.name, parsed.value, listed);
+        const result = parsed.error === undefined
+          ? await dispatch(call.name, parsed.value, listed)
+          : completion.finishReason === 'length'
+            ? cutOff(call.arguments, drafting)
+            : parsed;
         hooks.onToolResult?.({ name: call.name, result });
         steps.push({ name: call.name, arguments: call.arguments, result });
         messages.push({
@@ -446,6 +449,38 @@ function parseArguments(text: string): {
   catch (err: any) {
     return { error: `tool arguments are not valid JSON: ${(err as Error).message}` };
   }
+}
+
+/**
+ * The prefix of the staged-call protocol among the listed tools
+ * (`@tangleai/agents/staging`), or null when the request offers none.
+ */
+function draftPrefix(tools: any[]): string | null {
+  const names = new Set(tools.map((tool: any) => tool?.function?.name));
+  for (const name of names) {
+    if (typeof name !== 'string' || !name.endsWith('draft_open')) continue;
+    const prefix = name.slice(0, -'draft_open'.length);
+    if (names.has(`${prefix}draft_set`) && names.has(`${prefix}draft_commit`)) return prefix;
+  }
+  return null;
+}
+
+/**
+ * The error of a call whose arguments do not parse because the reply hit
+ * its length limit — the way a weak model fails on a large input. "Not
+ * valid JSON" would send it back to write the same call again; this says
+ * where it was cut and, when the request offers drafts, how to send the
+ * input in parts instead.
+ */
+function cutOff(text: unknown, drafting: string | null): { error: string } {
+  const chars = typeof text === 'string' ? text.length : 0;
+  return {
+    error: `tool call cut off at ${chars} characters: the reply reached its length limit before the arguments were complete`
+      + (drafting === null
+        ? ', so they are not valid JSON — send a smaller input'
+        : ` — build this input in parts instead: ${drafting}draft_open, then ${drafting}draft_set`
+          + ` (or ${drafting}draft_append for list items) in small calls, then ${drafting}draft_commit`),
+  };
 }
 
 //#region the objective in the prompt
