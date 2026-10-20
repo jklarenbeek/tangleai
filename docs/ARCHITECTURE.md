@@ -540,7 +540,9 @@ Two packages and two apps sit on top of the loop, jarenjs-suite-only:
   document in the browser over the in-memory store. Its `os/` page, Radiant
   OS, is a `@jarenjs/app` document over a jaren-fsm Turing machine, a
   jaren-workflow council and a `$contract` system-call table, with
-  `@tangleai/models` answering for the oracle's seat.
+  `@tangleai/models` answering for the oracle's seat and, through
+  `@tangleai/jaren/contract-tools`, for the studio's crew and the Library's
+  answers.
 
 Chat grounding: question → embed → `recallByEmbedding` over live memories
 (only those embedded by the same identity as the question) plus

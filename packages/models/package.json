@@ -18,6 +18,7 @@
     "./routing": "./src/routing.ts",
     "./grammar": "./src/grammar.ts",
     "./replay": "./src/replay.ts",
+    "./profile": "./src/profile.ts",
     "./package.json": "./package.json"
   },
   "engines": {

@@ -1,0 +1,102 @@
+{
+  "$contract": "0.1",
+  "id": "board",
+  "version": "1",
+  "$defs": {
+    "Note": {
+      "type": "object",
+      "required": ["id", "title", "text", "tags", "links"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^n[0-9]+$" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "text": { "type": "string", "minLength": 1, "maxLength": 400 },
+        "tags": { "type": "array", "maxItems": 6, "items": { "type": "string", "minLength": 1, "maxLength": 24 } },
+        "links": { "type": "array", "maxItems": 6, "items": { "type": "string", "pattern": "^n[0-9]+$" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "operations": {
+    "board.import": {
+      "kind": "command",
+      "doc": "Import a batch of notes into a board. Every note carries its id, title, text, tags and the ids of the notes it links to.",
+      "input": {
+        "type": "object",
+        "required": ["board", "by", "notes"],
+        "properties": {
+          "board": { "type": "string", "minLength": 1, "maxLength": 40 },
+          "by": { "type": "string", "enum": ["oracle", "human"] },
+          "notes": { "type": "array", "minItems": 6, "maxItems": 40, "items": { "$ref": "#/$defs/Note" } }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "required": ["board", "imported"],
+        "properties": {
+          "board": { "type": "string" },
+          "imported": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false
+      },
+      "errors": {
+        "duplicate": {
+          "status": 409,
+          "schema": { "type": "object", "required": ["id"], "properties": { "id": { "type": "string" } } }
+        }
+      },
+      "http": { "method": "POST", "path": "/api/boards/{board}/import" }
+    },
+    "board.rename": {
+      "kind": "command",
+      "doc": "Rename a board.",
+      "input": {
+        "type": "object",
+        "required": ["board", "title", "by"],
+        "properties": {
+          "board": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "by": { "type": "string", "enum": ["oracle", "human"] }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "required": ["board", "title"],
+        "properties": { "board": { "type": "string" }, "title": { "type": "string" } }
+      },
+      "http": { "method": "PUT", "path": "/api/boards/{board}/title" }
+    },
+    "board.read": {
+      "kind": "read",
+      "doc": "Read the notes of a board.",
+      "input": {
+        "type": "object",
+        "required": ["board"],
+        "properties": { "board": { "type": "string", "minLength": 1 } },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "required": ["board", "notes"],
+        "properties": {
+          "board": { "type": "string" },
+          "notes": { "type": "array", "items": { "$ref": "#/$defs/Note" } }
+        }
+      },
+      "http": { "method": "GET", "path": "/api/boards/{board}" }
+    },
+    "board.purge": {
+      "kind": "command",
+      "doc": "Delete a board and every note on it. Only a person at the console may do this.",
+      "input": {
+        "type": "object",
+        "required": ["board"],
+        "properties": { "board": { "type": "string", "minLength": 1 } }
+      },
+      "output": true,
+      "policy": { "audience": "server" },
+      "http": { "method": "DELETE", "path": "/api/boards/{board}" }
+    }
+  }
+}

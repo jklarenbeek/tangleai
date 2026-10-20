@@ -17,6 +17,7 @@ import type { Layout } from '../stage/sculpture.ts';
 import { DOCUMENTS } from './documents.ts';
 import type { OsDocument } from './documents.ts';
 import { PALETTE } from './state.ts';
+import { studioUi } from './studio-viewmodel.ts';
 
 /** The most token runs a code panel renders; longer documents show their
  * first part, and say so. */
@@ -220,6 +221,7 @@ export function viewModel(state: any): any {
       },
       exports: state.exports.text ? tokensOf(textKey(state.exports.text, exportsLang)) : EMPTY_TOKENS,
       label: `Radiant stage: ${state.world.heads.length} dancers on a ${state.world.width} by ${state.world.height} floor, tick ${state.world.tick}, harmony ${fixed2(measureNow.harmony ?? 0)}.`,
+      studio: studioUi(state, state.arcade.shelf ?? []),
     },
   };
 }

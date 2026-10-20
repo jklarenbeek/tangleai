@@ -10,6 +10,7 @@ import { createWorld, isWorld } from '../kernel/machine.ts';
 import { measure } from '../kernel/metrics.ts';
 import { MEMBERS, DANCERS, isTempo } from '../kernel/council.ts';
 import { SESSION_EVERY, VERDICT_MS } from '../kernel/session.ts';
+import { studioState, restoreStudio, studioSlice } from './studio-state.ts';
 
 /** The tape inks, symbol by symbol: paper, then the five brights the
  * council wears. Blue leads, amber follows, then red, green and cyan — a
@@ -40,7 +41,7 @@ export const SEATS = Object.freeze(Object.fromEntries(MEMBERS.map((m) => [m.id, 
 }])));
 
 /** A fresh OS: the default program, a blank floor, every merit at one. */
-export function initialState(options: { edition: string, title: string, theme?: 'light' | 'dark', reduce?: boolean, app?: string }): any {
+export function initialState(options: { edition: string, title: string, theme?: 'light' | 'dark' | 'neon', reduce?: boolean, app?: string }): any {
   const machine = rulesToFsm(DEFAULT_RULES);
   const world = createWorld({
     width: WORLD_SIZE,
@@ -85,6 +86,7 @@ export function initialState(options: { edition: string, title: string, theme?: 
     exports: { format: 'css', text: '', name: '', mime: '', status: 'idle' },
     gallery: { items: [], status: 'idle', title: '' },
     source: { doc: 'machine' },
+    ...studioState(options.theme),
   };
 }
 
@@ -100,6 +102,7 @@ export function restoreState(fresh: any, saved: any): any {
   const tempo = isTempo(saved.program?.tempo) ? saved.program.tempo : fresh.program.tempo;
   return {
     ...fresh,
+    ...restoreStudio(fresh, saved),
     program: isProgram(saved.program?.machine) ? { ...fresh.program, machine: saved.program.machine, tempo } : fresh.program,
     world,
     machine: { ...fresh.machine, measure: measure(world) },
@@ -117,6 +120,7 @@ export function restoreState(fresh: any, saved: any): any {
 /** The part of the state a session save keeps. */
 export function sessionSlice(state: any) {
   return {
+    ...studioSlice(state),
     program: { machine: state.program.machine, tempo: state.program.tempo },
     world: state.world,
     council: { session: state.council.session, merits: state.council.merits, leader: state.council.leader, log: state.council.log },

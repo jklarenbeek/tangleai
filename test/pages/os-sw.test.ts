@@ -15,7 +15,7 @@ import vm from 'node:vm';
 
 const SOURCE = stripTypeScriptTypes(readFileSync(new URL('../../apps/pages/src/os/sw.ts', import.meta.url), 'utf8'));
 const SCOPE = 'https://host/tangleai/os/';
-const BUILT = ['app.js', 'db-worker.js', 'os.css', 'sqlite3.wasm', 'sqlite3-opfs-async-proxy.js'];
+const BUILT = ['app.js', 'db-worker.js', 'os.css', 'sqlite3.wasm', 'sqlite3-opfs-async-proxy.js', 'library.json'];
 
 const keyUrl = (k: any) => (typeof k === 'string' ? k : k.url);
 const response = (body: any, ok: boolean) => ({ ok, status: ok ? 200 : 404, body, clone() { return { ...this }; }, json: () => Promise.resolve(body) });
@@ -109,8 +109,8 @@ describe('the Radiant OS service worker', () => {
   });
 
   it('retires only its own old caches', async () => {
-    const sw = bootSw(() => Promise.reject(new Error('offline')), ['tangle-radiant-os-v0', 'tangle-radiant-os-v1', 'radiant-os-v1', 'jaren-website-v29']);
+    const sw = bootSw(() => Promise.reject(new Error('offline')), ['tangle-radiant-os-v0', 'tangle-radiant-os-v1', 'tangle-radiant-os-v2', 'radiant-os-v2', 'jaren-website-v29']);
     await lifecycle(sw.listeners, 'activate');
-    assert.deepEqual(sw.deleted, ['tangle-radiant-os-v0']);
+    assert.deepEqual(sw.deleted, ['tangle-radiant-os-v0', 'tangle-radiant-os-v1']);
   });
 });

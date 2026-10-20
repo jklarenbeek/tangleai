@@ -23,15 +23,18 @@
 import { lerpColor } from '@jarenjs/core/color';
 import { project, depthOf } from './camera.ts';
 import type { View } from './camera.ts';
-import { POSES, mixPose, person, baby, hand, heartOutline, motionMarks, signGlyph } from './figures.ts';
-import type { Shape } from './figures.ts';
+import { POSES, mixPose, person, baby, hand, heartOutline, motionMarks, signGlyph, skeletonShape } from './figures.ts';
+import type { Shape, Pose, Skeleton } from './figures.ts';
+import { shade, shadowPolygon } from '../engine/light.ts';
+import type { Lighting } from '../engine/light.ts';
 
 export type Item =
   | { t: 'poly', p: number[], fill: string | null, stroke: string | null, w: number, a?: number }
   | { t: 'line', p: number[], stroke: string, w: number, a?: number }
   | { t: 'disc', x: number, y: number, r: number, fill: string | null, stroke: string | null, w: number, a?: number }
   | { t: 'rect', x: number, y: number, wd: number, ht: number, r: number, fill: string | null, stroke: string | null, w: number, a?: number }
-  | { t: 'arc', x: number, y: number, r: number, a0: number, a1: number, stroke: string, w: number, a?: number };
+  | { t: 'arc', x: number, y: number, r: number, a0: number, a1: number, stroke: string, w: number, a?: number }
+  | { t: 'text', x: number, y: number, text: string, size: number, fill: string, stroke?: string | null, w: number, align?: 'left' | 'center' | 'right', a?: number };
 export type Pick = { kind: 'head' | 'seat' | 'sign', id: string, x: number, y: number, r: number };
 export type SceneHead = { id: string, x: number, y: number, dir: number, ink: number, merit: number, lead: boolean, pose: string, figure: string };
 export type SceneSeat = { id: string, ink: number, merit: number, lead: boolean, pose: string, figure: string };
@@ -40,26 +43,35 @@ export type SceneEvent = { seq: number, kind: string, by?: string, change?: any 
 export type Scene = {
   width: number, height: number, tape: number[], palette: string[], heads: SceneHead[], seats: SceneSeat[],
   session: SceneSession, events: SceneEvent[], tick: number, tempo: number, running: boolean,
-  theme: 'light' | 'dark', focus: string | null,
+  theme: 'light' | 'dark' | 'neon', focus: string | null, light?: Lighting | null,
 };
+/**
+ * `bodies`: ragdoll skeletons by figure id (drawn instead of the posed
+ * figure); `light`: the lighting rig the blocks are cel-shaded by and that
+ * casts their shadows; `fx`: effect groups to sort in.
+ */
 export type Motion = {
   time: number, now: number, moving: boolean,
   heads: Record<string, { x: number, z: number, hop: number }>,
   heights: ArrayLike<number> | null,
   stamps: Array<{ cell: number, age: number }>,
   effects: Array<{ kind: string, age: number, by?: string, change?: any }>,
+  bodies?: Record<string, Skeleton>, light?: Lighting | null,
+  fx?: Array<{ d: number, items: Item[] }>,
 };
-export type StageTheme = { paper: string, floor: string, grid: string, ray: string, ink: string, shade: string, glow: string };
+export type StageTheme = { paper: string, floor: string, grid: string, ray: string, ink: string, shade: string, glow: string, neon?: boolean };
 type Group = { d: number, items: Item[] };
 
 /** Theme colours of the stage itself; the inks come from the scene's palette. */
-export const STAGE_THEMES: Readonly<Record<'light' | 'dark', StageTheme>> = Object.freeze({
+export const STAGE_THEMES: Readonly<Record<'light' | 'dark' | 'neon', StageTheme>> = Object.freeze({
   light: Object.freeze({ paper: '#fff7e6', floor: '#fffdf6', grid: '#eadfc6', ray: '#ffeec4', ink: '#11131c', shade: '#11131c', glow: '#fde68a' }),
   dark: Object.freeze({ paper: '#0c0f17', floor: '#171c2a', grid: '#283048', ray: '#131a29', ink: '#f4efe1', shade: '#000000', glow: '#3b2f0b' }),
+  // the third art direction: lines that glow on night blue, colour in the line and not the fill
+  neon: Object.freeze({ paper: '#070b18', floor: '#0d1428', grid: '#1b2a4d', ray: '#0b1226', ink: '#7dd3fc', shade: '#000000', glow: '#0e3a4f', neon: true }),
 });
 
 /** The theme a scene asks for, or the light one. */
-export const themeOf = (name: unknown): StageTheme => (name === 'dark' ? STAGE_THEMES.dark : STAGE_THEMES.light);
+export const themeOf = (name: unknown): StageTheme => (name === 'dark' || name === 'neon' ? STAGE_THEMES[name] : STAGE_THEMES.light);
 
 /** The human's colour: an orange no tape symbol uses. */
 export const HUMAN_INK = '#f97316';
@@ -93,6 +105,7 @@ export function composeFrame(scene: Scene, view: View, motion: Motion): { items:
 
   sky(items, view, motion, theme);
   floor(items, scene, view, theme, px);
+  lighting(items, scene, view, motion, theme);
 
   const groups: Group[] = [];
   blocks(groups, scene, view, motion, theme, px);
@@ -135,6 +148,7 @@ export function composeFrame(scene: Scene, view: View, motion: Motion): { items:
     }, t, motion, theme, picks);
   }
 
+  if (motion.fx) groups.push(...motion.fx);
   groups.sort((a, b) => b.d - a.d);
   for (const g of groups) for (const item of g.items) items.push(item);
 
@@ -194,8 +208,44 @@ function floor(items: Item[], scene: Scene, view: View, theme: StageTheme, px: n
   }
 }
 
+/** What the light lays on the floor: each block's hard shadow, swung by
+ * the hour, and at night a pool of light under every dancer. */
+function lighting(items: Item[], scene: Scene, view: View, motion: Motion, theme: StageTheme) {
+  const light = motion.light;
+  if (!light) return;
+  const hw = scene.width / 2;
+  const hh = scene.height / 2;
+  if (light.shadows) {
+    for (let j = 0; j < scene.height; j++) {
+      for (let i = 0; i < scene.width; i++) {
+        const cell = j * scene.width + i;
+        const h = motion.heights?.[cell] ?? blockHeight(scene.tape[cell] ?? 0);
+        const poly = shadowPolygon({ x0: i - hw + 0.07, x1: i - hw + 0.93, z0: j - hh + 0.07, z1: j - hh + 0.93, h }, light.sun, 3);
+        if (poly.length === 0) continue;
+        const p: number[] = [];
+        for (let k = 0; k < poly.length; k += 2) { const q = project(view, poly[k], 0.004, poly[k + 1]); p.push(q[0], q[1]); }
+        items.push({ t: 'poly', p, fill: theme.shade, stroke: null, w: 0, a: 0.14 });
+      }
+    }
+  }
+  if (light.night) {
+    for (const head of scene.heads) {
+      const at = motion.heads[head.id] ?? { x: head.x - hw + 0.5, z: head.y - hh + 0.5 };
+      const p: number[] = [];
+      for (let k = 0; k < 20; k++) {
+        const a = (k / 20) * Math.PI * 2;
+        const q = project(view, at.x + Math.cos(a) * 1.25, 0.006, at.z + Math.sin(a) * 1.25);
+        p.push(q[0], q[1]);
+      }
+      items.push({ t: 'poly', p, fill: inkOf(scene, head), stroke: null, w: 0, a: 0.24 });
+    }
+  }
+}
+
 /** The written cells as outlined blocks, each its own painter's group. */
 function blocks(groups: Group[], scene: Scene, view: View, motion: Motion, theme: StageTheme, px: number) {
+  const neon = theme.neon === true;
+  const light = motion.light ?? null;
   const hw = scene.width / 2;
   const hh = scene.height / 2;
   const [ex, , ez] = view.eye;
@@ -213,14 +263,19 @@ function blocks(groups: Group[], scene: Scene, view: View, motion: Motion, theme
       const z1 = j - hh + 1 - inset;
       const top = Math.max(0.02, h);
       const out: Item[] = [];
+      const edge = neon && symbol !== 0 ? color : theme.ink;
       const quad = (pts: number[][], fill: string) => {
-        out.push({ t: 'poly', p: pts.flatMap(([x, y, z]) => project(view, x, y, z).slice(0, 2)), fill, stroke: theme.ink, w: 2.6 * px });
+        out.push({ t: 'poly', p: pts.flatMap(([x, y, z]) => project(view, x, y, z).slice(0, 2)), fill, stroke: edge, w: 2.6 * px });
       };
-      if (ez > z1) quad([[x0, 0, z1], [x1, 0, z1], [x1, top, z1], [x0, top, z1]], lerpColor(color, theme.shade, 0.16));
-      else if (ez < z0) quad([[x1, 0, z0], [x0, 0, z0], [x0, top, z0], [x1, top, z0]], lerpColor(color, theme.shade, 0.16));
-      if (ex > x1) quad([[x1, 0, z1], [x1, 0, z0], [x1, top, z0], [x1, top, z1]], lerpColor(color, theme.shade, 0.32));
-      else if (ex < x0) quad([[x0, 0, z0], [x0, 0, z1], [x0, top, z1], [x0, top, z0]], lerpColor(color, theme.shade, 0.32));
-      quad([[x0, top, z0], [x1, top, z0], [x1, top, z1], [x0, top, z1]], symbol === 0 ? theme.floor : color);
+      // a lit rig cuts each face into cel bands; without one, the two fixed tones
+      const face = (normal: [number, number, number], k: number) => (neon
+        ? lerpColor(theme.floor, color, 0.34 - k * 0.5)
+        : light ? shade(color, normal, light, theme.shade) : lerpColor(color, theme.shade, k));
+      if (ez > z1) quad([[x0, 0, z1], [x1, 0, z1], [x1, top, z1], [x0, top, z1]], face([0, 0, 1], 0.16));
+      else if (ez < z0) quad([[x1, 0, z0], [x0, 0, z0], [x0, top, z0], [x1, top, z0]], face([0, 0, -1], 0.16));
+      if (ex > x1) quad([[x1, 0, z1], [x1, 0, z0], [x1, top, z0], [x1, top, z1]], face([1, 0, 0], 0.32));
+      else if (ex < x0) quad([[x0, 0, z0], [x0, 0, z1], [x0, top, z1], [x0, top, z0]], face([-1, 0, 0], 0.32));
+      quad([[x0, top, z0], [x1, top, z0], [x1, top, z1], [x0, top, z1]], symbol === 0 ? theme.floor : neon ? lerpColor(theme.floor, color, 0.42) : light ? shade(color, [0, 1, 0], light, theme.shade) : color);
       groups.push({ d: depthOf(view, (x0 + x1) / 2, top / 2, (z0 + z1) / 2), items: out });
     }
   }
@@ -285,22 +340,18 @@ function figureGroup(groups: Group[], scene: Scene, view: View, who: Who, t: num
   const up = project(view, who.x, who.y + stature, who.z);
   const unit = Math.abs(anchor[1] - up[1]);
   const seed = hashUnit(who.id);
-  const beat = (Math.sin(t / 260 + seed * 6.28) + 1) / 2;
   const sway = t === 0 ? 0.32 : Math.sin(t / 1100 + seed * 6.28) * 0.42;
   const squash = Math.max(0.35, Math.cos(sway));
-  const vetoing = motion.effects.some((e) => e.kind === 'veto' && e.age < EFFECT_MS.veto);
 
   let shape: Shape;
   if (who.figure === 'baby') {
     shape = baby(t === 0 ? 0 : t / 160);
   }
   else {
-    const base = POSES[who.pose] ?? POSES.dance;
-    // a dancer moves between its own pose and the jubilant one; a veto
-    // makes every proposer of the refused amendment bow
-    const refused = vetoing && motion.effects.some((e) => e.kind === 'veto' && e.by === who.id);
-    const pose = refused ? POSES.bow : mixPose(base, POSES.jubilant, t === 0 ? 0 : beat * 0.55);
-    shape = person(pose, { bounce: t === 0 ? 0 : beat * 0.1, head: who.figure === 'tv' ? 'tv' : 'round' });
+    const { pose, bounce, head } = poseFor(who, t, motion);
+    // a ragdoll, when the stage keeps one for this figure, is the pose with liveliness in it
+    const body = motion.bodies?.[who.id];
+    shape = body ? skeletonShape(body, { head }) : person(pose, { bounce, head });
   }
 
   const out: Item[] = [];
@@ -346,6 +397,38 @@ function figureGroup(groups: Group[], scene: Scene, view: View, who: Who, t: num
 }
 
 /**
+ * The pose a figure takes at time `t`: its own pose swinging toward the
+ * jubilant one on its beat — or a bow, for a proposer whose amendment
+ * the human just vetoed. The stage's ragdolls chase exactly this pose.
+ */
+export function poseFor(who: { id: string, pose: string, figure: string }, t: number, motion: Motion): { pose: Pose, bounce: number, head: 'round' | 'tv' } {
+  const seed = hashUnit(who.id);
+  const beat = (Math.sin(t / 260 + seed * 6.28) + 1) / 2;
+  const vetoing = motion.effects.some((e) => e.kind === 'veto' && e.age < EFFECT_MS.veto);
+  const refused = vetoing && motion.effects.some((e) => e.kind === 'veto' && e.by === who.id);
+  const base = POSES[who.pose] ?? POSES.dance;
+  return {
+    pose: refused ? POSES.bow : mixPose(base, POSES.jubilant, t === 0 ? 0 : beat * 0.55),
+    bounce: t === 0 ? 0 : beat * 0.1,
+    head: who.figure === 'tv' ? 'tv' : 'round',
+  };
+}
+
+/**
+ * Every standing figure on the stage — the dancers and the oracle; the
+ * crawling baby keeps no ragdoll — with the pose it holds now (a
+ * proposer holds up its sign while the council sits).
+ */
+export function performers(scene: Scene): Array<{ id: string, pose: string, figure: string }> {
+  const phase = scene.session?.phase ?? 'idle';
+  const proposers = new Set((scene.session?.proposals ?? []).map((p) => p.by));
+  const holding = (id: string) => (phase === 'convening' || phase === 'veto') && proposers.has(id);
+  return [...scene.heads, ...scene.seats]
+    .filter((w) => w.figure !== 'baby')
+    .map((w) => ({ id: w.id, pose: holding(w.id) ? 'hold' : w.pose, figure: w.figure }));
+}
+
+/**
  * Draw a shape as a cut-out standing toward the viewer: a thin extruded
  * edge in ink (offset by the sway, so a turning figure shows its
  * thickness), the outline pass, the fill pass, and a television's
@@ -353,7 +436,7 @@ function figureGroup(groups: Group[], scene: Scene, view: View, who: Who, t: num
  * pixels, pixels per figure unit and the sway angle.
  */
 export function cutout(out: Item[], shape: Shape, frame: { x: number, y: number, unit: number, sway: number },
-  color: string, theme: { ink: string, paper: string }, alpha = 1) {
+  color: string, theme: { ink: string, paper: string, neon?: boolean }, alpha = 1) {
   const { unit, sway } = frame;
   const squash = Math.max(0.35, Math.cos(sway));
   const sx = (u: number) => frame.x + u * unit * squash;
@@ -372,9 +455,11 @@ export function cutout(out: Item[], shape: Shape, frame: { x: number, y: number,
     }
   };
   const depth = 0.034 * unit * Math.abs(Math.sin(sway)) * (Math.sin(sway) >= 0 ? 1 : -1);
-  for (let k = 3; k >= 1; k--) pass(-depth * k, theme.ink, OUTLINE);
-  pass(0, theme.ink, OUTLINE);
-  pass(0, color, 0);
+  // neon draws the figure as a glowing tube: the colour in the line, the night in the fill
+  const neon = theme.neon === true;
+  for (let k = 3; k >= 1; k--) pass(-depth * k, neon ? color : theme.ink, OUTLINE);
+  pass(0, neon ? color : theme.ink, OUTLINE);
+  pass(0, neon ? theme.paper : color, 0);
   if (shape.screen) {
     const s = shape.screen;
     out.push({ t: 'rect', x: sx(s.c[0]) - s.w / 2 * unit * squash, y: sy(s.c[1]) - s.h / 2 * unit,

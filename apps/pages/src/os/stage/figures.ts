@@ -59,31 +59,54 @@ const ARM = 0.17;
 const LEG = 0.19;
 const HEAD = 0.25;
 
-/**
- * A standing figure in a pose. `head` picks the head: a round one, or a
- * television set — the oracle, a voice that comes out of a machine.
- */
-export function person(pose: Pose, options: { bounce?: number, head?: 'round' | 'tv' } = {}): Shape {
+/** The joints of a figure, in drawing order: what a pose places and a
+ * ragdoll simulates. */
+export const JOINTS = Object.freeze(['hip', 'neck', 'skull', 'elbowL', 'handL', 'elbowR', 'handR', 'kneeL', 'footL', 'kneeR', 'footR'] as const);
+
+/** Bone lengths in figure units: torso, neck to skull (round, television),
+ * upper and lower arm, thigh and shin. */
+export const BONES = Object.freeze({ torso: 0.62, skull: 0.36, screen: 0.4, upperArm: 0.38, foreArm: 0.34, thigh: 0.48, shin: 0.48 });
+
+export type Skeleton = Record<'hip' | 'neck' | 'skull' | 'elbowL' | 'handL' | 'elbowR' | 'handR' | 'kneeL' | 'footL' | 'kneeR' | 'footR', P2>;
+
+/** Where a pose puts every joint of a standing figure. */
+export function skeleton(pose: Pose, options: { bounce?: number, head?: 'round' | 'tv' } = {}): Skeleton {
   const hip: P2 = [0, 0.98 + (options.bounce ?? 0)];
-  const neck = along(hip, dir(Math.PI + pose.lean), 0.62);
-  const skull = along(neck, dir(Math.PI + pose.lean + pose.head), options.head === 'tv' ? 0.4 : 0.36);
-  const limb = (origin: P2, a: P2, l1: number, l2: number): P2[] => {
-    const joint = along(origin, dir(a[0]), l1);
-    return [origin, joint, along(joint, dir(a[0] + a[1]), l2)];
+  const neck = along(hip, dir(Math.PI + pose.lean), BONES.torso);
+  const skull = along(neck, dir(Math.PI + pose.lean + pose.head), options.head === 'tv' ? BONES.screen : BONES.skull);
+  const elbowL = along(neck, dir(pose.aL[0]), BONES.upperArm);
+  const elbowR = along(neck, dir(pose.aR[0]), BONES.upperArm);
+  const kneeL = along(hip, dir(pose.lL[0]), BONES.thigh);
+  const kneeR = along(hip, dir(pose.lR[0]), BONES.thigh);
+  return {
+    hip, neck, skull,
+    elbowL, handL: along(elbowL, dir(pose.aL[0] + pose.aL[1]), BONES.foreArm),
+    elbowR, handR: along(elbowR, dir(pose.aR[0] + pose.aR[1]), BONES.foreArm),
+    kneeL, footL: along(kneeL, dir(pose.lL[0] + pose.lL[1]), BONES.shin),
+    kneeR, footR: along(kneeR, dir(pose.lR[0] + pose.lR[1]), BONES.shin),
   };
+}
+
+/**
+ * The drawn figure over a skeleton — posed, or simulated by a ragdoll.
+ * `head` picks the head: a round one, or a television set — the oracle,
+ * a voice that comes out of a machine.
+ */
+export function skeletonShape(s: Skeleton, options: { head?: 'round' | 'tv' } = {}): Shape {
   const shape: Shape = {
     strokes: [
-      { pts: [hip, neck], w: BODY },
-      { pts: limb(neck, pose.aL, 0.38, 0.34), w: ARM },
-      { pts: limb(neck, pose.aR, 0.38, 0.34), w: ARM },
-      { pts: limb(hip, pose.lL, 0.48, 0.48), w: LEG },
-      { pts: limb(hip, pose.lR, 0.48, 0.48), w: LEG },
+      { pts: [s.hip, s.neck], w: BODY },
+      { pts: [s.neck, s.elbowL, s.handL], w: ARM },
+      { pts: [s.neck, s.elbowR, s.handR], w: ARM },
+      { pts: [s.hip, s.kneeL, s.footL], w: LEG },
+      { pts: [s.hip, s.kneeR, s.footR], w: LEG },
     ],
     dots: [],
     boxes: [],
-    center: [0, 1.2 + (options.bounce ?? 0)],
-    top: skull[1] + HEAD,
+    center: [s.hip[0], s.hip[1] + 0.22],
+    top: s.skull[1] + HEAD,
   };
+  const skull = s.skull;
   if (options.head === 'tv') {
     shape.boxes.push({ c: skull, w: 0.66, h: 0.48, r: 0.08 });
     shape.screen = { c: skull, w: 0.42, h: 0.27, r: 0.05 };
@@ -96,6 +119,11 @@ export function person(pose: Pose, options: { bounce?: number, head?: 'round' | 
     shape.dots.push({ c: skull, r: HEAD });
   }
   return shape;
+}
+
+/** A standing figure in a pose. */
+export function person(pose: Pose, options: { bounce?: number, head?: 'round' | 'tv' } = {}): Shape {
+  return skeletonShape(skeleton(pose, options), options);
 }
 
 /**

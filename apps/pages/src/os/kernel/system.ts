@@ -31,6 +31,8 @@ import { QUEUE_MAX } from './session.ts';
 import type { CouncilDriver } from './session.ts';
 import { sceneOf } from '../app/scene.ts';
 import { stillFrame } from '../stage/widget.ts';
+import { createStudioHandlers } from './studio.ts';
+import type { StudioHost } from './studio.ts';
 
 /** The OS contract, compiled with a collecting validator. */
 export const osContract: any = compileContract(contractDoc as any, { validator: new JarenValidator({ collectErrors: true }) } as any);
@@ -59,6 +61,10 @@ export type SystemHost = {
   council: Pick<CouncilDriver, 'open' | 'convene' | 'verdict' | 'repeal'>,
   store: StorePort | null,
   ids?: () => string,
+  now?: () => number,
+  library?: StudioHost['library'],
+  arcade?: StudioHost['arcade'],
+  reply?: StudioHost['reply'],
 };
 export type Tool = { name: string, description: string, inputSchema: any, execute: (args: any, ctx?: any) => Promise<any> };
 
@@ -211,6 +217,16 @@ export function createSystem(host: SystemHost) {
     },
   };
 
+  // the studio's operations: the board, mail, the library, the crew, the arcade, camera and light
+  Object.assign(handlers, createStudioHandlers({
+    getState: host.getState,
+    dispatch: host.dispatch,
+    now: host.now ?? (() => Date.now()),
+    library: host.library ?? (() => null),
+    arcade: host.arcade ?? (() => null),
+    ...(host.reply ? { reply: host.reply } : {}),
+  }));
+
   const client: { invoke: (op: string, input?: any) => Promise<Outcome> } = openLocalClient(osContract, handlers as any, {
     validateOutput: 'always',
     // the in-process binding needs no globally unique trace; a counter
@@ -225,18 +241,25 @@ export function createSystem(host: SystemHost) {
     handlers,
     /**
      * The contract as agent tools — every public operation, none of the
-     * human's. `by` is pinned to the seat the agent sits in, so a tool
-     * call can speak only for that seat.
+     * human's. `by` is the seat the agent sits in: it is no part of what
+     * a tool asks for (one field fewer for a small model to get right)
+     * and every call that speaks is pinned to that seat, so a tool call
+     * can speak for no one else.
      */
     tools(options: { seat?: string, prefix?: string } = {}): Tool[] {
       const seat = options.seat ?? 'oracle';
       const prefix = options.prefix ?? 'radiant_';
       return (contractTools(osContract, client as any, { name: (id: string) => `${prefix}${id.replace(/\./g, '_')}` } as any) as Tool[])
-        .map((tool) => ({
-          ...tool,
-          execute: (args: any, ctx?: any) => tool.execute(
-            args && typeof args === 'object' && 'by' in args ? { ...args, by: seat } : args, ctx),
-        }));
+        .map((tool) => {
+          const schema = tool.inputSchema;
+          if (!schema?.properties?.by) return tool;
+          const { by: _seat, ...properties } = schema.properties;
+          return {
+            ...tool,
+            inputSchema: { ...schema, properties, required: (schema.required ?? []).filter((k: string) => k !== 'by') },
+            execute: (args: any, ctx?: any) => tool.execute({ ...(args && typeof args === 'object' ? args : {}), by: seat }, ctx),
+          };
+        });
     },
   };
 }

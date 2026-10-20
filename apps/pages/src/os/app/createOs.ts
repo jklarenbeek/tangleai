@@ -19,8 +19,15 @@ import type { StorePort } from '../kernel/system.ts';
 import { renderArt } from '../kernel/exports.ts';
 import { stageWidget } from '../stage/widget.ts';
 import { sculptureWidget } from '../stage/sculpture.ts';
+import type { Hit } from '../kernel/library.ts';
+import type { Project } from '../kernel/crew.ts';
+import type { createAudio } from '../engine/audio.ts';
+import type { GameModule } from '../games/game.ts';
 import { initialState, restoreState, sessionSlice } from './state.ts';
 import { ACTIONS } from './actions.ts';
+import { STUDIO_ACTIONS } from './studio-actions.ts';
+import { createStudioHost } from './studio-host.ts';
+import type { Speech } from './studio-host.ts';
 import { VIEW } from './view.ts';
 import { viewModel } from './viewmodel.ts';
 
@@ -55,7 +62,7 @@ export type Timers = {
 export type OsOptions = {
   node?: any, document?: any,
   edition: string, title: string, about?: any,
-  theme?: 'light' | 'dark', reduce?: boolean, app?: string,
+  theme?: 'light' | 'dark' | 'neon', reduce?: boolean, app?: string,
   store?: StorePort | null,
   saved?: any,
   oracle?: Oracle,
@@ -66,6 +73,13 @@ export type OsOptions = {
   timers?: Timers, now?: () => number,
   schedule?: (flush: () => void) => void,
   onError?: (error: any) => void,
+  games?: Record<string, GameModule>,
+  audio?: ReturnType<typeof createAudio> | null,
+  speech?: Speech | null,
+  loadLibrary?: (() => Promise<any>) | null,
+  askDocs?: ((question: string, hits: Hit[]) => Promise<{ text: string, citations: any[] }>) | null,
+  crewTurn?: ((project: Project) => Promise<boolean>) | null,
+  onBudget?: (tier: string) => void,
 };
 type Send = (action: string, payload?: any) => void;
 
@@ -88,6 +102,24 @@ export function createOs(options: OsOptions) {
     clearTimer: (id) => timers.clearTimeout(id),
     now,
   });
+  // the studio is bound to the contract the system serves, and the system
+  // to the studio's library and arcade: each reaches the other late
+  const studio = createStudioHost({
+    getState,
+    dispatch,
+    timers,
+    now,
+    council,
+    invoke: (op, input) => system.client.invoke(op, input),
+    games: options.games ?? {},
+    audio: options.audio ?? null,
+    speech: options.speech ?? null,
+    loadLibrary: options.loadLibrary ?? null,
+    askDocs: options.askDocs ?? null,
+    crewTurn: options.crewTurn ?? null,
+    ...(options.onBudget ? { onBudget: options.onBudget } : {}),
+    report,
+  });
   const system = createSystem({
     edition: options.edition,
     title: options.title,
@@ -95,6 +127,8 @@ export function createOs(options: OsOptions) {
     dispatch,
     council,
     store: options.store ?? null,
+    now,
+    ...studio.system,
   });
 
   // what the tape unit remembers between ticks: the tapes the dancer's
@@ -155,6 +189,7 @@ export function createOs(options: OsOptions) {
     redispatch(props: { action: string, payload?: any }, send: Send) {
       send(props.action, props.payload ?? null);
     },
+    ...studio.effects,
   };
 
   const subs = {
@@ -167,7 +202,7 @@ export function createOs(options: OsOptions) {
       const id = timers.setInterval(() => send('os/clock', now()), 500);
       return () => timers.clearInterval(id);
     },
-    /** The human's keys: V vetoes, A lets it pass, Space runs or pauses. */
+    /** The human's keys: V vetoes, A lets it pass, Space runs or pauses the machine, Esc or P pauses everything. */
     keys(_props: unknown, send: Send) {
       const target = options.keys;
       if (!target) return undefined;
@@ -177,6 +212,10 @@ export function createOs(options: OsOptions) {
         const tag = element?.tagName;
         if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || element?.isContentEditable) return;
         const key = e.key.toLowerCase();
+        // Esc and P pause anywhere, M mutes anywhere; while a game is in front its keys are the game's
+        if (key === 'escape' || key === 'p') { e.preventDefault(); send('os/pause'); return; }
+        if (key === 'm') { send('settings/mute'); return; }
+        if (getState().arcade.game !== null) return;
         if (key === 'v') send('council/veto');
         else if (key === 'a') send('council/approve');
         else if (key === ' ' && tag !== 'BUTTON' && tag !== 'A') { e.preventDefault(); send('machine/toggle'); }
@@ -191,6 +230,7 @@ export function createOs(options: OsOptions) {
       const id = timers.setInterval(save, AUTOSAVE_MS);
       return () => { timers.clearInterval(id); save(); };
     },
+    ...studio.subs,
     /** Re-render the theme the chrome wears when the leader or the light
      * changes. Deferred a turn: the first start happens while the app is
      * still booting, before its state can be read. */
@@ -207,6 +247,8 @@ export function createOs(options: OsOptions) {
   const state = restoreState(fresh, options.saved);
   state.os.about = options.about ?? { lead: '', sections: [], links: [] };
   state.os.now = null;
+  // the arcade's shelf: what the games say about themselves
+  state.arcade.shelf = Object.values(options.games ?? {}).map((g) => ({ id: g.id, title: g.title, blurb: g.blurb, duel: g.duel === true }));
 
   const doc = {
     $app: '0.1',
@@ -214,6 +256,7 @@ export function createOs(options: OsOptions) {
     view: VIEW,
     actions: {
       ...ACTIONS,
+      ...STUDIO_ACTIONS,
       'os/clock': { patch: [{ op: 'replace', path: '/os/now', value: '$payload' }] },
     },
     subs: [
@@ -222,6 +265,7 @@ export function createOs(options: OsOptions) {
       { run: 'keys' },
       { run: 'autosave' },
       { run: 'theme', withQuery: { leader: '$.council.leader', theme: '$.os.theme' } },
+      ...studio.entries,
     ],
   };
 
@@ -230,16 +274,19 @@ export function createOs(options: OsOptions) {
     ...(options.document ? { document: options.document } : {}),
     effects,
     subs,
-    widgets: { stage: stageWidget, sculpture: sculptureWidget },
+    widgets: { stage: stageWidget, sculpture: sculptureWidget, ...studio.widgets },
     viewModel,
     onError: report,
     ...(options.schedule ? { schedule: options.schedule } : {}),
   } as any);
+  // the saved sound mix, before the first note
+  studio.effects.mix();
 
   return {
     app,
     system,
     council,
+    studio,
     /** Stop the OS: timers, the council, the app. */
     destroy() {
       council.dispose();

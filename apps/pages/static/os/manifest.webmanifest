@@ -1,7 +1,7 @@
 {
-  "name": "Radiant OS — a Turing machine that dances (Tangle edition)",
+  "name": "Radiant OS — a turn-based studio where a Turing machine dances (Tangle edition)",
   "short_name": "Radiant OS",
-  "description": "A browser OS that is a Turing machine: dancing heads paint the tape, a council of its own parts — a language model among them — amends the program, and you hold the veto. Built on Jaren documents and Tangle AI, offline-first.",
+  "description": "Build small apps turn by turn with a crew a language model can play, play Monkey Grove, Tape Dancers and Bench Arena, and read, hear and ask the Tangle documentation. A Turing machine governed by a council under your veto, on Jaren documents and Tangle AI, offline-first.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
@@ -9,11 +9,99 @@
   "orientation": "any",
   "background_color": "#fff7e6",
   "theme_color": "#2563eb",
-  "categories": ["entertainment", "education", "developer"],
+  "categories": [
+    "education",
+    "games",
+    "developer",
+    "entertainment"
+  ],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "radiant.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "radiant.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Crew",
+      "short_name": "Crew",
+      "description": "Start a project with the crew",
+      "url": "./?app=crew",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Library",
+      "short_name": "Library",
+      "description": "Read, hear and ask the docs",
+      "url": "./?app=library",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Monkey Grove",
+      "short_name": "Grove",
+      "description": "Number puzzles in the grove",
+      "url": "./?game=grove",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Tape Dancers",
+      "short_name": "Dancers",
+      "description": "Write a Turing machine",
+      "url": "./?game=dancers",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "og-card.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Radiant OS: dancers on a floor of tape"
+    }
   ]
 }

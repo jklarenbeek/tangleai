@@ -9,6 +9,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./toolbox": "./src/toolbox.ts",
+    "./staging": "./src/staging.ts",
     "./agent": "./src/agent.ts",
     "./program": "./src/program.ts",
     "./recursive": "./src/recursive.ts",

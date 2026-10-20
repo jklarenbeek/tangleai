@@ -489,7 +489,15 @@ model through `@tangleai/models`: the Tangle assistant's model settings seat it,
 it is called only when the human has spoken to the council since it last
 answered, and its answer is constrained by the contract's `Change` grammar and
 validated locally. Without a model, a scripted oracle answers offline through
-the same client. See [Tangle Pages hosts](docs/migrations/jaren-ai/PAGES.md#radiant-os).
+the same client. Around the machine is a studio played like a turn-based board
+game: the people at the screen add ideas, the crew builds an app block by block
+through the contract, and the people approve or veto every block before it
+ships. With a model seated, the model plays the crew through
+`@tangleai/jaren/contract-tools`, its tool calls sized to the model by its tool
+budget, and answers the Library's questions from the passages it cites. A board
+of linked notes and todos, a mail client of every conversation, the docs to
+read, hear and ask, and an arcade of three games (Monkey Grove, Tape Dancers and
+Bench Arena) complete it. See [Tangle Pages hosts](docs/migrations/jaren-ai/PAGES.md#radiant-os).
 
 The private Pages build uses the official `@sqlite.org/sqlite-wasm`
 `3.53.0-build1` initializer for its browser Data and project workers and Radiant

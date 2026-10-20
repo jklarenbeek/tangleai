@@ -20,6 +20,7 @@ exports and emitted npm JavaScript share one implementation.
 - `@tangleai/models/routing`
 - `@tangleai/models/grammar`
 - `@tangleai/models/replay`
+- `@tangleai/models/profile`
 - `@tangleai/models/package.json`
 
 See [ownership and verification](../../docs/JAREN_AI_MIGRATION.md) for source
@@ -266,3 +267,62 @@ parsed (accidental code fences stripped) and **validated locally** by `@jarenjs/
 the model with the instancePath'd errors for a bounded number of repairs (`maxRepairs`,
 default 1). The query/JSLT grammars ship LLM-profile twins built for exactly this
 (see `@jarenjs/json`'s README).
+
+## Per-model tool profiles
+
+```js
+import { modelProfile, resolveToolBudget } from '@tangleai/models/profile';
+
+modelProfile('qwen/qwen3.6-35b-a3b');
+// → { model: 'qwen/qwen3.6-35b-a3b', family: 'qwen3.6', params: 35, activeParams: 3, moe: true,
+//     tools: { tier: 'small', maxArgumentChars: 600, maxItems: 4, catalog: true, maxSchemaChars: 1500 } }
+resolveToolBudget('auto', 'qwen/qwen3.8-27b');            // the medium tier
+resolveToolBudget({ maxItems: 2 }, 'qwen/qwen3.8-27b');   // medium, two items per append
+modelProfile('qwen3:4b', { tier: 'small' });              // an override wins over the heuristic
+```
+
+`providers.ts` profiles the wire; `profile.ts` profiles the **model**, because one provider
+serves models whose tool calls differ by an order of magnitude. A tool call's arguments
+are generated text, and a weaker model loses a large one — the reply stops at its length
+limit, or the JSON breaks part-way — before any validator sees it. The tool budget is a
+**dynamic per-model parameter**: the largest argument a model emits reliably in one call,
+the items one append may carry, whether to offer a small catalog instead of every schema
+up front, and how much schema one describe answer may carry. `@tangleai/agents/staging`
+reads it to turn oversized tools into incremental drafts, and
+`@tangleai/jaren/contract-tools` resolves it from a model id.
+
+| tier | `maxArgumentChars` | `maxItems` | `catalog` | `maxSchemaChars` |
+| --- | --- | --- | --- | --- |
+| `tiny` | 300 | 2 | yes | 800 |
+| `small` | 600 | 4 | yes | 1,500 |
+| `medium` | 2,400 | 12 | no | 4,000 |
+| `large` | 12,000 | 48 | no | 16,000 |
+| `unlimited` | Infinity | Infinity | no | Infinity |
+
+The tier is read off the model id, after the provider prefix is stripped and the id
+lowercased:
+
+| the id carries | tier | example |
+| --- | --- | --- |
+| an active-parameter tag of at most 4B (mixture of experts) | `small` | `qwen/qwen3.6-35b-a3b` |
+| an active-parameter tag of at most 12B | `medium` | an id ending `-a12b` |
+| a larger active-parameter tag | `large` | `qwen/qwen3-235b-a22b-2507` |
+| a size tag under 8B (dense) | `tiny` | `qwen3:4b` |
+| a size tag under 20B | `small` | `meta-llama/llama-3.1-8b-instruct` |
+| a size tag under 40B | `medium` | `qwen/qwen3.8-27b` |
+| a larger size tag | `large` | `meta-llama/llama-3.3-70b-instruct` |
+| no size tag, a hosted frontier family (`claude…`, `gpt-4…`, `gpt-5…`, `gemini…`) | `large` | `anthropic/claude-sonnet-4.5` |
+| nothing recognized | `medium` | `z-ai/glm-5.3-flash` |
+
+A mixture of experts is classified by its active parameters because that is the case
+that motivated the profile: on the one task this repository has measured, authoring a
+compile-checked stylesheet in the remeasured run, the dense `qwen3.6-27b` was correct 6 of
+6 times and the mixture-of-experts `qwen3.6-35b-a3b` 3 of 6, and a large
+`response_format` schema made the 35b-a3b answer empty three times out of three
+([measured limits](../jaren/docs/AUTHORING.md)). That task does not rank model families,
+and the tier limits above are **starting points, not measurements**. They are overridable
+everywhere they are used — `modelProfile(model, { tier, tools })`, or a `budget` setting
+(`'auto'`, a tier name, or a partial budget over the model's own) — and the number that
+matters is the one measured on the host's own task. An id that is not a non-empty string,
+an unknown tier or member, or a limit that is not a positive integer (or `Infinity`)
+throws `AI0001`.

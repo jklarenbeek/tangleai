@@ -1,13 +1,14 @@
 /**
  * Radiant OS stage (Pages, Tangle edition): the camera, the figures, the
  * frame composer, both paint backends, the stage widget and the
- * sculpture — still frames, verdict animation, picks and the sculptor.
+ * sculpture — still frames, the frame loop, verdict animation, picks and
+ * the sculptor.
  */
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { renderToString } from '@jarenjs/view';
-import { createStubHost, serialize } from '../assistant/dom.stub.ts';
+import { StubDocument, createStubHost, fire, serialize } from '../assistant/dom.stub.ts';
 import { HOME_CAMERA, viewOf, project, orbit, dolly, DISTANCE_MAX } from '../../apps/pages/src/os/stage/camera.ts';
 import { POSES, person, baby, hand, signGlyph } from '../../apps/pages/src/os/stage/figures.ts';
 import { composeFrame, HUMAN_INK, STAGE_THEMES } from '../../apps/pages/src/os/stage/scene.ts';
@@ -27,6 +28,76 @@ function sceneAfter(ticks = 120, tweak?: (state: any) => void) {
 }
 const still = (): Motion => ({ time: 0, now: 0, moving: false, heads: {}, heights: null, stamps: [], effects: [] });
 const view = viewOf(HOME_CAMERA, 960, 640);
+
+/** A 2D context that records every call and assignment. */
+function recorder() {
+  const calls: any[] = [];
+  const target: any = { calls };
+  return new Proxy(target, {
+    get(t, prop) {
+      if (prop in t) return t[prop];
+      return (...args: any[]) => { calls.push([prop, ...args]); };
+    },
+    set(t, prop, value) {
+      t[prop] = value;
+      calls.push([`=${String(prop)}`, value]);
+      return true;
+    },
+  });
+}
+
+/**
+ * A stub host for a surface: a fake window with a clock, optional
+ * animation frames and an optional ResizeObserver, and a canvas that has
+ * a 2D context only when asked.
+ */
+function stageHost(options: { canvas?: boolean, raf?: boolean, observer?: boolean } = {}) {
+  const frames = new Map<number, (t: number) => void>();
+  const listeners = new Map<string, Function>();
+  let nextFrame = 1;
+  const win: any = {
+    devicePixelRatio: 3,
+    time: 1000,
+    performance: { now: () => win.time },
+    addEventListener: (type: string, fn: Function) => listeners.set(type, fn),
+    removeEventListener: (type: string) => listeners.delete(type),
+    listeners,
+    frames,
+    /** Run every pending frame at the window's time. */
+    flush() {
+      const pending = [...frames.values()];
+      frames.clear();
+      for (const fn of pending) fn(win.time);
+    },
+  };
+  if (options.raf) {
+    win.requestAnimationFrame = (fn: (t: number) => void) => { frames.set(nextFrame, fn); return nextFrame++; };
+    win.cancelAnimationFrame = (id: number) => { frames.delete(id); };
+  }
+  if (options.observer) {
+    win.ResizeObserver = class {
+      constructor(fn: () => void) { win.resize = fn; }
+      observe(el: any) { win.observed = el; }
+      disconnect() { win.disconnected = true; }
+    };
+  }
+  const document: any = new StubDocument();
+  document.defaultView = win;
+  const ctx = options.canvas ? recorder() : null;
+  const make = document.createElement.bind(document);
+  document.createElement = (tag: string) => {
+    const el = make(tag);
+    if (tag === 'canvas') {
+      el.style = {};
+      if (ctx) el.getContext = () => ctx;
+    }
+    return el;
+  };
+  const host = document.createElement('div');
+  host.clientWidth = 800;
+  host.clientHeight = 500;
+  return { win, document, host, ctx };
+}
 
 describe('the stage', () => {
   it('projects, orbits and dollies the camera', () => {
@@ -92,5 +163,51 @@ describe('the stage', () => {
       { time: 0, moving: false, active: new Set(['$']) }, 'dark');
     assert.equal((items[0] as any).fill, STAGE_THEMES.dark.floor);
     assert.ok(items.some((i) => i.t === 'disc' && i.fill === STAGE_THEMES.dark.glow), 'what executes glows');
+  });
+});
+
+describe('the stage widget', () => {
+  it('runs its own frame loop, drifting when the viewer lets go', () => {
+    const { host, document, win, ctx } = stageHost({ canvas: true, raf: true, observer: true });
+    const scene = sceneAfter(30);
+    const handle = stageWidget.mount(host, { scene, tempo: 12 }, () => {}, undefined);
+    assert.equal(win.frames.size, 1);
+    fire(host, 'keydown', { key: 'ArrowLeft', preventDefault() {}, stopPropagation() {} });
+    assert.ok(handle.director.camera.azimuth < HOME_CAMERA.azimuth, 'the arrow keys turn the stage');
+    handle.director.cut(HOME_CAMERA);
+    host.clientWidth = 640;
+    win.resize();
+    assert.equal(handle.surface.width, 640, 'the stage follows its host’s size');
+    assert.equal(win.frames.size, 1, 'a resize while animating waits for the next frame');
+    stageWidget.update(handle, { scene: sceneAfter(31), tempo: 12 }, { scene, tempo: 12 });
+    assert.equal(win.frames.size, 1, 'one frame at a time');
+    const sparks = handle.fx.particles.length;
+    const cheered = { scene: sceneAfter(31), tempo: 12, cheer: { who: 'painter', seq: 1 } };
+    stageWidget.update(handle, cheered, { scene: sceneAfter(31), tempo: 12 });
+    assert.ok(handle.fx.particles.length > sparks, 'a crew member who built a block hops for joy in sparks');
+    const after = handle.fx.particles.length;
+    stageWidget.update(handle, cheered, cheered);
+    stageWidget.update(handle, { ...cheered, cheer: { who: 'nobody', seq: 2 } }, cheered);
+    assert.equal(handle.fx.particles.length, after, 'once per cheer, and only for a member on the stage');
+    const azimuth = handle.director.camera.azimuth;
+    win.time = 20000;
+    win.flush();
+    assert.ok(handle.director.camera.azimuth > azimuth, 'the idle camera drifts');
+    assert.ok(ctx.calls.some((c: any[]) => c[0] === 'fillRect'));
+    assert.equal(win.frames.size, 1, 'and asks for the next frame');
+    fire(host, 'pointerdown', { pointerId: 1, clientX: 0, clientY: 0 });
+    const held = handle.director.camera.azimuth;
+    win.time = 20016;
+    win.flush();
+    assert.equal(handle.director.camera.azimuth, held, 'not while the viewer holds it');
+    handle.props = { ...handle.props, reduce: true };
+    win.flush();
+    assert.equal(win.frames.size, 0, 'reduced motion stops the loop');
+    handle.props = { ...handle.props, reduce: false };
+    stageWidget.update(handle, handle.props, handle.props);
+    stageWidget.unmount(handle);
+    assert.equal(win.frames.size, 0, 'unmounting cancels the pending frame');
+    win.flush();
+    assert.equal(document.defaultView, win);
   });
 });

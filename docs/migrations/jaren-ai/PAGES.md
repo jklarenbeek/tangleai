@@ -108,11 +108,39 @@ proposal's id and seat. WebMCP registers the public contract operations as
 `radiant_*` tools seated as the oracle; the veto, early approval and repeal
 carry `audience: "server"` and are never offered to a tool caller.
 
+The studio around the machine is shared with the Jaren edition, module for
+module: the crew game (`kernel/crew.ts`, its turn order a jaren-fsm, its blocks
+compiled into a `@jarenjs/app` document by `kernel/blocks.ts`), the board, the
+mail, the Library, the coach and the skill ladder, the engines under them
+(`engine/`: mesh collision, ragdolls, synthesized audio, effects, the camera
+director, lighting, the game loop) and the arcade's three games (`games/`).
+Starting a project, adding ideas, ending a turn and reviewing carry
+`audience: "server"`, so a model builds and never judges its own work.
+
+Two seats are this edition's own. The crew's seat (`kernel/crew-seat.ts`) plays
+the crew's turn when a model is configured: each planned idea is built by the
+member the plan seats, as that member, through `createContractToolbox` offering
+`crew.build` and `crew.say` with the seat pinned and the budget the OS setting
+names ('auto' reads it from the model's id). A small model is offered the
+catalog of three short tools, a large input is staged as a draft, a member that
+needed more than two calls says how many it took, and an idea the model leaves
+unbuilt is built by the scripted crew. Without a model the seat sits the turn
+out and the scripted crew plays it. The docs' voice (`kernel/docs-voice.ts`)
+answers a Library question from the passages the Library's own search found,
+keeping an answer only when it cites a passage it was given; otherwise, and
+offline, the passages answer for themselves. The Library's documents are this
+edition's guide (`documents/guide.md`) and every published package's README,
+collected at build into `library.json` (`library-sources.ts`), which the worker
+precaches.
+
 `test/pages/os-*.test.ts` drive the kernel, a council session on a fake clock,
 the oracle seat (scripted and against a recording chat endpoint), the system
 calls over `node:sqlite` and memory, the stage, the whole app over the DOM stub,
-and the service worker in a vm sandbox. `.e2e/os.e2e.mjs` checks the built page
-in a browser: boot, the oracle hearing the human, the veto and the database.
+the studio and its engines and games, the crew's seat and the docs' voice
+against a scripted endpoint on the OpenAI wire (`os-seats.test.ts`), and the
+service worker in a vm sandbox. `.e2e/os.e2e.mjs` checks the built page in a
+browser: boot, the oracle hearing the human, the veto, the database, a crew
+project shipped, the board, the Library and every game.
 
 ## Reproduce the browser checks
 

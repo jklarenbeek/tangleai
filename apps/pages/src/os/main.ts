@@ -3,9 +3,11 @@
  * Radiant OS, Tangle edition — the browser bootstrap. Everything that
  * needs a real browser lives here and nowhere else: the database worker,
  * the service worker, the stylesheet the JTLT theme renders into, file
- * downloads, saved preferences, WebMCP, and the oracle's model settings,
- * read from the Tangle assistant's own storage slot. The OS itself
- * (`createOs`) runs the same with or without any of them.
+ * downloads, saved preferences, sound (opened on the first gesture, as
+ * browsers require), reading aloud, the library the build ships, WebMCP,
+ * and the model settings the oracle, the crew and the docs' voice are
+ * seated with, read from the Tangle assistant's own storage slot. The OS
+ * itself (`createOs`) runs the same with or without any of them.
  */
 
 import { compileContract } from '@jarenjs/contract';
@@ -17,8 +19,15 @@ import { createMemoryStore } from './kernel/store.ts';
 import { createOracleSeat } from './kernel/oracle.ts';
 import type { ModelSettings } from './kernel/oracle.ts';
 import type { StorePort } from './kernel/system.ts';
+import { createCrewSeat } from './kernel/crew-seat.ts';
+import type { CrewSeat } from './kernel/crew-seat.ts';
+import { createDocsVoice } from './kernel/docs-voice.ts';
+import type { Speech } from './app/studio-host.ts';
 import { createOs } from './app/createOs.ts';
 import { sessionSlice } from './app/state.ts';
+import { APPS } from './app/view.ts';
+import { createAudio } from './engine/audio.ts';
+import { GAMES } from './games/registry.ts';
 
 /** The preferences both editions share on this origin. */
 const PREFS_KEY = 'radiant-os-prefs';
@@ -46,12 +55,12 @@ const ABOUT = {
 };
 
 /** Saved preferences, or the system's. */
-function readPrefs(window: any): { theme: 'light' | 'dark', reduce: boolean } {
+function readPrefs(window: any): { theme: 'light' | 'dark' | 'neon', reduce: boolean } {
   let saved: { theme?: string, reduce?: boolean } = {};
   try { saved = JSON.parse(window.localStorage.getItem(PREFS_KEY) ?? '{}') ?? {}; }
   catch { saved = {}; }
   return {
-    theme: saved.theme === 'dark' || saved.theme === 'light'
+    theme: saved.theme === 'dark' || saved.theme === 'light' || saved.theme === 'neon'
       ? saved.theme
       : (window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light'),
     reduce: typeof saved.reduce === 'boolean' ? saved.reduce : !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches,
@@ -62,6 +71,83 @@ function readPrefs(window: any): { theme: 'light' | 'dark', reduce: boolean } {
 function readSettings(window: any): ModelSettings | null {
   try { return JSON.parse(window.localStorage.getItem(SETTINGS_KEY) ?? 'null'); }
   catch { return null; }
+}
+
+/**
+ * The studio's sound. A browser opens an audio context only after a
+ * gesture, so none is made before one: until the first press every
+ * effect is quietly skipped, and `arm` calls back once sound is allowed.
+ */
+function browserAudio(window: any) {
+  const Context = window.AudioContext ?? window.webkitAudioContext;
+  if (typeof Context !== 'function') return null;
+  let allowed = false;
+  const audio = createAudio({ createContext: () => (allowed ? new Context() : null) });
+  const arm = (onFirst: () => void) => {
+    const unlock = () => {
+      window.removeEventListener('pointerdown', unlock, true);
+      window.removeEventListener('keydown', unlock, true);
+      allowed = true;
+      if (audio.unlock()) onFirst();
+    };
+    window.addEventListener('pointerdown', unlock, true);
+    window.addEventListener('keydown', unlock, true);
+  };
+  return { audio, arm };
+}
+
+/**
+ * Reading aloud through the browser's speech synthesis, a sentence at a
+ * time so the page can light the one being read.
+ */
+function browserSpeech(window: any): Speech | null {
+  const synth = window.speechSynthesis;
+  const Utterance = window.SpeechSynthesisUtterance;
+  if (!synth || typeof Utterance !== 'function') return null;
+  // each reading has its own token: a cancelled one's late callbacks are ignored
+  let token = 0;
+  return {
+    speak(lines, hooks) {
+      synth.cancel();
+      const mine = ++token;
+      const say = (i: number) => {
+        if (mine !== token) return;
+        if (i >= lines.length) { hooks.end(); return; }
+        const utterance = new Utterance(lines[i]);
+        utterance.lang = window.document.documentElement.lang || 'en';
+        utterance.onstart = () => { if (mine === token) hooks.sentence(i); };
+        utterance.onend = () => say(i + 1);
+        utterance.onerror = () => { if (mine === token) { token += 1; hooks.end(); } };
+        synth.speak(utterance);
+      };
+      say(0);
+    },
+    cancel() {
+      token += 1;
+      synth.cancel();
+    },
+  };
+}
+
+/**
+ * Where a link asks the OS to open: `?app=<app>`, or `?game=<game>` for
+ * a game on the arcade's shelf — one address per app and per game.
+ * Nothing it does not know: the OS opens as it would without one.
+ */
+function landing(window: any): { app: string | null, game: string | null } {
+  const params = new URLSearchParams(window.location.search);
+  const app = params.get('app');
+  const game = params.get('game');
+  const known = game !== null && Object.hasOwn(GAMES, game) ? game : null;
+  return { app: APPS.some((a) => a.id === app) ? app : (known ? 'arcade' : null), game: known };
+}
+
+/** The library the build ships: this edition's guide and every package's README. */
+function libraryLoader(window: any) {
+  return async () => {
+    const response = await window.fetch(new URL('library.json', window.document.baseURI));
+    return response.ok ? response.json() : null;
+  };
 }
 
 /** Start the database worker and wait for it; fall back to memory. */
@@ -126,6 +212,15 @@ async function boot(window: any) {
     fetch: window.fetch.bind(window),
     onError: (error: any) => notify(`The oracle could not answer: ${error?.message ?? error}`),
   });
+  // the docs' voice answers from the library's passages; the crew's seat needs the OS's contract, so it sits once the OS is up
+  const voice = createDocsVoice({
+    settings: readSettings(window),
+    fetch: window.fetch.bind(window),
+    onError: (error: any) => notify(`The model could not answer from the docs: ${error?.message ?? error}`),
+  });
+  let crew: CrewSeat | null = null;
+  const sound = browserAudio(window);
+  const land = landing(window);
   node.textContent = '';
   const os = createOs({
     node,
@@ -143,15 +238,46 @@ async function boot(window: any) {
     download: downloader(document),
     savePrefs: (p) => { try { window.localStorage.setItem(PREFS_KEY, JSON.stringify(p)); } catch { /* private mode: the toggle still works for this visit */ } },
     keys: window,
+    games: GAMES,
+    audio: sound?.audio ?? null,
+    speech: browserSpeech(window),
+    loadLibrary: libraryLoader(window),
+    askDocs: (question, hits) => voice.ask(question, hits),
+    crewTurn: (project) => (crew ? crew.turn(project) : Promise.resolve(false)),
     // a boundary failure is reported, never thrown into the frame loop
     onError: (error) => { report(error); },
   });
   notify = (text) => os.app.dispatch('os/notice', { tone: 'warn', text });
+  crew = createCrewSeat({
+    contract: os.system.contract as any,
+    client: os.system.client as any,
+    settings: readSettings(window),
+    fetch: window.fetch.bind(window),
+    budget: () => os.app.getState().settings.ai.budget,
+    profile: () => os.app.getState().settings.ai.model,
+    onError: (error: any) => notify(`The crew's model could not build: ${error?.message ?? error}`),
+  });
   os.app.dispatch('os/oracle', { label: seat.label });
-  // the assistant's settings changed in another tab: seat the new model
+  // a landing app opens the way a press on the dock opens it (the library loads, the coach notices)
+  if (land.app) os.app.dispatch('os/app', land.app);
+  if (land.game) os.app.dispatch('arcade/open', land.game);
+  sound?.arm(() => os.app.dispatch('studio/music', 'ensure'));
+  // a hidden tab is quiet, and a game in play waits for you to come back
+  document.addEventListener('visibilitychange', () => {
+    const s = os.app.getState();
+    if (document.hidden) {
+      sound?.audio.pause();
+      if (s.arcade.flow.current === 'playing') os.app.dispatch('arcade/pause');
+    }
+    else if (!s.studio.paused && s.arcade.flow.current !== 'paused') sound?.audio.resume();
+  });
+  // the assistant's settings changed in another tab: seat the new model everywhere
   window.addEventListener('storage', (event: StorageEvent) => {
     if (event.key !== SETTINGS_KEY) return;
-    seat.configure(readSettings(window));
+    const settings = readSettings(window);
+    seat.configure(settings);
+    crew?.configure(settings);
+    voice.configure(settings);
     os.app.dispatch('os/oracle', { label: seat.label });
   });
   const info = await store.invoke('store.info');

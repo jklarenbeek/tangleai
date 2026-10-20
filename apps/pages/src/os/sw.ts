@@ -3,8 +3,9 @@
  *
  *   - install: precache the shell and every file the build emitted, read
  *     from the list the build writes (`precache.json`: the app, its
- *     styles, the database worker, the SQLite wasm and its OPFS proxy) —
- *     so an OS installed once boots with no network at all;
+ *     styles, the database worker, the SQLite wasm and its OPFS proxy,
+ *     the Library's documents) — so an OS installed once boots, and
+ *     reads its documentation, with no network at all;
  *   - everything else in scope: network-first, falling back to the
  *     cache — the build's file names carry no hash, so a cache-first
  *     worker would keep serving the release it was installed with; a
@@ -21,7 +22,7 @@
 
 const worker = globalThis as any;
 const PREFIX = 'tangle-radiant-os-';
-const CACHE = `${PREFIX}v1`;
+const CACHE = `${PREFIX}v2`;
 const BASE: string = worker.registration.scope; // e.g. https://host/tangleai/os/
 const SHELL_PATH = new URL(BASE).pathname;
 

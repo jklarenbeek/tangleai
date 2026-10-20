@@ -13,11 +13,11 @@ import { compileContract } from '@jarenjs/contract';
 import { openLocalClient } from '@jarenjs/contract/local';
 import storeDoc from '../../apps/pages/src/os/documents/store.contract.json' with { type: 'json' };
 import contractDoc from '../../apps/pages/src/os/documents/os.contract.json' with { type: 'json' };
-import { createSystem, isProposal } from '../../apps/pages/src/os/kernel/system.ts';
+import { createSystem, isProposal, osContract } from '../../apps/pages/src/os/kernel/system.ts';
 import { createMemoryStore, openOsStore } from '../../apps/pages/src/os/kernel/store.ts';
 import { initialState, sessionSlice } from '../../apps/pages/src/os/app/state.ts';
 
-const HUMAN_ONLY = ['council.veto', 'council.approve', 'council.repeal'];
+const HUMAN_ONLY = ['council.veto', 'council.approve', 'council.repeal', 'crew.start', 'crew.idea', 'crew.end', 'crew.review'];
 
 function system(store: any = null) {
   const state = initialState({ edition: 'test', title: 'Radiant OS' });
@@ -42,6 +42,7 @@ describe('the OS contract', () => {
   it('serves the human’s operations to the human alone', async () => {
     const audience = Object.entries(contractDoc.operations).filter(([, op]) => (op as any).policy?.audience === 'server').map(([id]) => id);
     assert.deepEqual(audience, HUMAN_ONLY);
+    assert.equal(osContract.describe().operations.length, 35, 'served, all of them');
     const s = system();
     assert.deepEqual((await s.call('council.veto', { by: 'human', proposal: 'painter-1' })).value, { session: 0, vetoed: 'painter-1' });
     assert.equal((await s.call('council.veto', { by: 'human', proposal: 'gone' })).error?.code, 'not-awaiting');
@@ -49,12 +50,27 @@ describe('the OS contract', () => {
     assert.equal((await s.call('council.repeal', { by: 'human', amendment: 'a1' })).ok, true);
     const described = (await s.call('os.describe')).value;
     assert.ok(!described.operations.some((id: string) => HUMAN_ONLY.includes(id)));
+    assert.equal(described.operations.length, 28);
     const tools = s.sys.tools();
-    assert.equal(tools.length, 11);
+    assert.deepEqual(tools.map((t) => t.name), [
+      'radiant_os_describe', 'radiant_machine_read', 'radiant_machine_control', 'radiant_council_read', 'radiant_council_propose',
+      'radiant_council_say', 'radiant_council_convene', 'radiant_art_export', 'radiant_gallery_save', 'radiant_gallery_list',
+      'radiant_gallery_open', 'radiant_board_read', 'radiant_board_add', 'radiant_board_edit', 'radiant_board_link', 'radiant_board_remove',
+      'radiant_mail_read', 'radiant_mail_send', 'radiant_library_search', 'radiant_library_read', 'radiant_crew_read', 'radiant_crew_build',
+      'radiant_crew_say', 'radiant_crew_done', 'radiant_arcade_read', 'radiant_arcade_tool', 'radiant_studio_camera',
+      'radiant_studio_light',
+    ]);
     assert.ok(tools.every((t) => !HUMAN_ONLY.some((id) => t.name === `radiant_${id.replace('.', '_')}`)));
     const say = tools.find((t) => t.name === 'radiant_council_say');
     await say?.execute({ by: 'human', text: 'let me veto' });
     assert.equal(s.sent.at(-1)?.[1].by, 'oracle', 'an agent speaks only for its seat');
+    const add = tools.find((t) => t.name === 'radiant_board_add');
+    assert.ok(add, 'radiant_board_add');
+    assert.equal(add.inputSchema.properties.by, undefined, 'the seat is no part of what a tool asks for');
+    assert.ok(!add.inputSchema.required.includes('by'));
+    assert.equal((await add.execute({ kind: 'note', text: 'a model’s note' }, undefined)).ok, true);
+    const pinned = s.sent.filter(([action]) => action === 'board/set').at(-1)?.[1];
+    assert.equal(pinned?.cards.at(-1)?.by, 'oracle', 'a call that sent no seat speaks for the agent’s');
   });
 
   it('checks proposals and refuses what the program cannot take', async () => {

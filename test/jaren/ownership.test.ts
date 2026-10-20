@@ -20,7 +20,7 @@ it('Jaren AI integrations depend only on public engine/editor and mechanism entr
       if (specifier.startsWith('.')) { assert.match(specifier, /^\.\/[\w-]+\.ts$/); continue; }
       const name = specifier.split('/').slice(0, 2).join('/');
       assert.ok(pkg.dependencies[name], `${path}: undeclared ${name}`);
-      assert.match(name, /^@(?:jarenjs\/(?:core|validate|json|app|flow|db|studio|linq)|tangleai\/(?:models|context|agents))$/);
+      assert.match(name, /^@(?:jarenjs\/(?:core|validate|json|app|flow|db|studio|linq|contract)|tangleai\/(?:models|context|agents))$/);
       assert.doesNotMatch(specifier, /\/src\/|\/dist\/|website|vendor/);
       assert.ok(import.meta.resolve(specifier), `${path}: public entry missing`); checked++;
     }

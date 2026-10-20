@@ -9,55 +9,26 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { createStubHost, fire, serialize } from '../assistant/dom.stub.ts';
+import { fakeTimers, keyTarget, recordingStore, findNode } from './os-harness.ts';
 import { createOs, describeFailure, AUTOSAVE_MS } from '../../apps/pages/src/os/app/createOs.ts';
 import type { OsOptions } from '../../apps/pages/src/os/app/createOs.ts';
 import { viewModel } from '../../apps/pages/src/os/app/viewmodel.ts';
 import { DOCUMENTS } from '../../apps/pages/src/os/app/documents.ts';
+import { APPS } from '../../apps/pages/src/os/app/view.ts';
 import { initialState, restoreState, sessionSlice } from '../../apps/pages/src/os/app/state.ts';
-import { createMemoryStore } from '../../apps/pages/src/os/kernel/store.ts';
 import { createOracleSeat } from '../../apps/pages/src/os/kernel/oracle.ts';
-
-function fakeTimers() {
-  let now = 0;
-  let next = 1;
-  const jobs = new Map<number, { fn: () => void, at: number, every: number }>();
-  return {
-    jobs,
-    get now() { return now; },
-    setTimeout: (fn: () => void, ms: number) => { jobs.set(next, { fn, at: now + ms, every: 0 }); return next++; },
-    clearTimeout: (id: number) => { jobs.delete(id); },
-    setInterval: (fn: () => void, ms: number) => { jobs.set(next, { fn, at: now + ms, every: ms }); return next++; },
-    clearInterval: (id: number) => { jobs.delete(id); },
-    advance(ms: number) {
-      const end = now + ms;
-      for (;;) {
-        let due: [number, { fn: () => void, at: number, every: number }] | null = null;
-        for (const entry of jobs) if (entry[1].at <= end && (!due || entry[1].at < due[1].at)) due = entry;
-        if (!due) break;
-        const [id, job] = due;
-        now = job.at;
-        if (job.every) job.at += job.every;
-        else jobs.delete(id);
-        job.fn();
-      }
-      now = end;
-    },
-  };
-}
 
 function boot(options: Partial<OsOptions> = {}) {
   const { document, container } = createStubHost();
   const timers = fakeTimers();
-  const listeners = new Set<(e: any) => void>();
-  const handlers = createMemoryStore() as any;
-  const calls: Array<[string, any]> = [];
-  const store = { invoke: async (op: string, input?: any) => { calls.push([op, input]); return { ok: true, value: await handlers[op](input) }; } };
+  const keys = keyTarget();
+  const store = recordingStore();
   const downloads: any[] = [];
   const os = createOs({
     node: container, document, edition: 'tangle edition', title: 'Radiant OS',
     store, oracle: createOracleSeat().oracle,
     download: (file) => downloads.push(file),
-    keys: { addEventListener: (_type, fn) => listeners.add(fn), removeEventListener: (_type, fn) => listeners.delete(fn) },
+    keys,
     timers, now: () => timers.now, schedule: (flush) => flush(), onError: (error) => { throw error; },
     ...options,
   });
@@ -69,16 +40,8 @@ function boot(options: Partial<OsOptions> = {}) {
     }
     assert.fail(`timed out waiting for ${what}`);
   };
-  const press = (key: string) => { for (const fn of listeners) fn({ key, target: { tagName: 'BODY' }, preventDefault() {} }); };
-  const find = (test: (n: any) => boolean, node: any = container): any => {
-    if (test(node)) return node;
-    for (const child of node.childNodes ?? []) {
-      const hit = find(test, child);
-      if (hit !== undefined) return hit;
-    }
-    return undefined;
-  };
-  return { os, container, timers, calls, downloads, state, until, press, find, html: () => serialize(container as any) };
+  const find = (test: (n: any) => boolean, node: any = container): any => findNode(node, test);
+  return { os, container, timers, calls: store.calls, downloads, state, until, press: keys.press, find, html: () => serialize(container as any) };
 }
 
 describe('the OS document', () => {
@@ -86,10 +49,21 @@ describe('the OS document', () => {
     const t = boot();
     assert.match(t.html(), /<span class="os-edition">tangle edition<\/span>/);
     assert.match(t.html(), /class="os-stage-svg"/);
+    const dock = t.find((n) => n.getAttribute?.('class') === 'os-dock');
+    assert.equal(dock?.childNodes.filter((n: any) => n.tagName === 'button').length, APPS.length);
+    assert.equal(dock?.childNodes.filter((n: any) => n.getAttribute?.('class') === 'os-dock-gap').length, 2, 'studio, machine, system');
     for (let i = 0; i < 50; i++) { t.timers.advance(20); await new Promise((resolve) => setImmediate(resolve)); }
     assert.ok(t.state().world.tick >= 10, `ticks: ${t.state().world.tick}`);
     t.os.app.dispatch('os/oracle', { label: 'scripted' });
     assert.match(t.html(), /<span class="os-pill-label">oracle<\/span> <span class="os-pill-value">scripted<\/span>/);
+    t.os.app.dispatch('os/theme');
+    assert.equal(t.state().os.theme, 'dark');
+    t.os.app.dispatch('os/theme');
+    assert.equal(t.state().os.theme, 'neon', 'the third art direction');
+    assert.equal(t.state().settings.art, 'neon');
+    t.os.app.dispatch('os/theme');
+    assert.equal(t.state().os.theme, 'light');
+    assert.equal(t.state().settings.art, 'pop');
     t.os.destroy();
   });
 
@@ -158,7 +132,9 @@ describe('the OS document', () => {
     const t = boot();
     t.timers.advance(AUTOSAVE_MS);
     await new Promise((resolve) => setImmediate(resolve));
-    assert.equal(t.calls.filter(([op]) => op === 'session.put').length, 1);
+    const saves = t.calls.filter(([op]) => op === 'session.put');
+    assert.equal(saves.length, 1);
+    assert.deepEqual(Object.keys(saves[0][1].state), ['settings', 'mail', 'board', 'crew', 'arcade', 'coach', 'profile', 'program', 'world', 'council']);
     t.os.destroy();
     const fresh = initialState({ edition: 'e', title: 't' });
     const saved = sessionSlice(t.state());

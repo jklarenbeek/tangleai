@@ -23,6 +23,8 @@ export type Context2D = {
   arcTo(x1: number, y1: number, x2: number, y2: number, r: number): void,
   fill(): void, stroke(): void,
   setTransform(a: number, b: number, c: number, d: number, e: number, f: number): void,
+  font: string, textAlign: string, textBaseline: string,
+  fillText(text: string, x: number, y: number): void, strokeText(text: string, x: number, y: number): void,
 };
 
 /** Draw a display list into a canvas 2D context. */
@@ -73,10 +75,23 @@ export function paintCanvas(ctx: Context2D, items: readonly Item[], background: 
         ctx.stroke();
         break;
       }
+      case 'text': {
+        ctx.font = `800 ${Math.max(1, Math.round(item.size))}px ${TEXT_FONT}`;
+        ctx.textAlign = item.align ?? 'center';
+        ctx.textBaseline = 'middle';
+        // an outlined label: the ink stroke under the fill, like the figures
+        if (item.stroke && item.w > 0) { ctx.strokeStyle = item.stroke; ctx.lineWidth = item.w; ctx.strokeText(item.text, item.x, item.y); }
+        ctx.fillStyle = item.fill;
+        ctx.fillText(item.text, item.x, item.y);
+        break;
+      }
     }
   }
   ctx.globalAlpha = 1;
 }
+
+/** The face labels on the stage are set in: the chrome's rounded face. */
+export const TEXT_FONT = 'ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif';
 
 function tracePoints(ctx: Context2D, p: readonly number[]) {
   ctx.moveTo(p[0], p[1]);
@@ -148,6 +163,13 @@ export function toSvg(items: readonly Item[], frame: { width: number, height: nu
         children.push(['path', { ...common, d, fill: 'none', stroke: item.stroke, 'stroke-width': n2(item.w), 'stroke-linecap': 'round' }]);
         break;
       }
+      case 'text':
+        children.push(['text', { ...common, x: n2(item.x), y: n2(item.y), fill: item.fill,
+          'font-family': TEXT_FONT, 'font-weight': 800, 'font-size': n2(item.size),
+          'text-anchor': item.align === 'left' ? 'start' : item.align === 'right' ? 'end' : 'middle',
+          'dominant-baseline': 'central',
+          ...(item.stroke && item.w > 0 ? { stroke: item.stroke, 'stroke-width': n2(item.w), 'paint-order': 'stroke', 'stroke-linejoin': 'round' } : {}) }, item.text]);
+        break;
     }
   }
   return ['svg', {

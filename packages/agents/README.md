@@ -11,6 +11,7 @@ exports and emitted npm JavaScript share one implementation.
 
 - `@tangleai/agents`
 - `@tangleai/agents/toolbox`
+- `@tangleai/agents/staging`
 - `@tangleai/agents/agent`
 - `@tangleai/agents/program`
 - `@tangleai/agents/recursive`
@@ -93,6 +94,88 @@ refusal the model can read (`{ error }`). And there is **no overlay**: a request
 `geo_union`, `geo_intersection`, `geo_difference`, `geo_buffer` or their kin is answered
 with a refusal naming why — a half-correct clipper is worse than none, and JSTS or Turf do
 that work — never an approximation.
+
+## Staged tool calls for weak models
+
+```js
+import { modelProfile } from '@tangleai/models/profile';
+import { stageTools } from '@tangleai/agents/staging';
+import { createToolbox } from '@tangleai/agents/toolbox';
+import { createAgent } from '@tangleai/agents/agent';
+
+const staged = stageTools(tools, { budget: modelProfile('qwen/qwen3.6-35b-a3b').tools });
+const toolbox = createToolbox();
+for (const tool of staged.tools) toolbox.add(tool);
+const agent = createAgent({ client, toolbox });
+staged.staged;   // the tools this model builds as drafts
+staged.drafts(); // [{ draft, tool, size, missing }] for every open draft
+```
+
+A tool call's arguments are generated text, and a weak model — notably a mixture of
+experts with a few billion active parameters — cannot emit a large JSON argument in one
+piece: the reply stops at its length limit, or the JSON breaks part-way, and the toolbox
+never receives a value it could validate or repair. Reading a schema is not the problem;
+emitting the value at once is. `stageTools` keeps the schema and shrinks the unit the model
+emits, for any `ToolDef`, under the model's tool budget (`@tangleai/models/profile`).
+
+**When a tool is staged.** `estimateArgumentChars(inputSchema)` is a conservative size of a
+typical valid instance: every declared member, required or not; a string twelve characters
+(or its `minLength`, its format's usual length, its longest `enum` member); a number four;
+an array three items (or `minItems`); `$ref`s resolved within the schema's own `$defs`;
+the largest `oneOf`/`anyOf` branch; `allOf` object parts added up; recursion cut at a small
+depth. A tool whose estimate exceeds `budget.maxArgumentChars` is staged — never under an
+unlimited budget — and every other tool passes through unchanged, the same definition.
+
+**The protocol.** When anything is staged, six draft tools join the toolbox:
+
+| tool | input | answers |
+| --- | --- | --- |
+| `draft_open` | `{ tool, value? }` | `{ draft, tool, missing, budget, hint }` |
+| `draft_set` | `{ draft, path, value }` | `{ ok, path, missing, size }` |
+| `draft_append` | `{ draft, path, items }` | `{ ok, path, length, missing, size }` |
+| `draft_view` | `{ draft, path? }` | `{ value, truncated, size, next? }` |
+| `draft_commit` | `{ draft }` | the tool's own answer — or the errors, with the draft kept |
+| `draft_discard` | `{ draft }` | `{ ok, discarded }` |
+
+A `path` is a JSON Pointer into the tool's input; `draft_set` creates missing parents (an
+array where the next token is an index or `-`), and `draft_append` creates the array it
+appends to, or continues a text. `missing` lists the required members still unset. Every
+call is held to the budget: a value over `maxArgumentChars`, or an append over `maxItems`,
+is refused with the paths to send instead — an object's members, an array's items, a
+text's next part. A value is checked against the sub-schema at its path whenever that can
+be found without choosing a branch (`properties`, a single matching `patternProperties`
+entry, `additionalProperties`, `items`, `prefixItems`, `$ref`s into `$defs`), with errors at
+the full path; past a `oneOf`, `anyOf` or `allOf` the check waits for the commit.
+`draft_commit` validates the whole input against the tool's own schema with the toolbox's
+validator and runs the tool only if it passes. A rejected commit answers at most eight
+`{ instancePath, keyword, message }` errors and keeps the draft, so the model fixes just
+those paths; a tool that throws keeps it too. At most `maxDrafts` (default eight) are open
+at once, with ids `d1`, `d2`, … that are never reused. Without a catalog, the staged tools'
+schemas travel in full in `draft_open`'s description.
+
+**The catalog.** Under a budget with `catalog: true` (the `tiny` and `small` tiers), the
+direct tools are not listed one by one either: `tool_list` names every tool with the first
+sentence of its description, whether it is staged, and whether its input is `none`,
+`small` or `large`; `tool_describe { name, path? }` answers the (sub)schema at a path, cut
+at `maxSchemaChars`, with the `next` paths to drill into; `tool_call { name, input }`
+validates and runs a direct tool, and points a staged one at the drafts. Every generated
+name takes `prefix`, and every name, given or generated, must match
+`^[a-zA-Z0-9_-]{1,64}$` and be unique: a duplicate is refused with `AI0001` rather than
+silently replacing a tool. Every `execute` resolves to plain JSON and never throws.
+
+**A reply cut at its length limit.** When a reply finishes with `finishReason: 'length'`
+and a tool call's arguments do not parse, the agent loop's tool result says that the call
+was cut off at how many characters and — when the request offers draft tools — to build
+the input with `draft_open`, `draft_set` (or `draft_append`) and `draft_commit` instead.
+Without drafts it asks for a smaller input. A malformed call that was not cut answers as
+before.
+
+What is proven and what is not: the test suite drives the protocol end to end through
+`createAgent` with a scripted model that cannot emit more than 700 characters per call
+(`test/jaren/contract-tools.test.ts`): offered the whole tool, its import is cut off twice
+and the handler never runs; under its own budget it reads the cut-off hint, builds the
+same twelve notes in four appends and commits them, and the handler receives the full
+input once. No live model has been measured against this protocol yet.
 
 
 ## The agent loop

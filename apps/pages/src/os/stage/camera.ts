@@ -12,7 +12,9 @@
 
 import { Mat4 } from '@jarenjs/core/math/mat4';
 
-export type Camera = { azimuth: number, elevation: number, distance: number, lift: number, fov: number };
+/** A camera orbits a point: the centre of the tape unless it names a
+ * `target` (a figure it follows, a game's island). */
+export type Camera = { azimuth: number, elevation: number, distance: number, lift: number, fov: number, target?: [number, number, number] };
 export type View = { matrix: ArrayLike<number>, eye: [number, number, number], width: number, height: number, camera: Camera };
 
 /** The resting camera: a three-quarter view from above, like a figure
@@ -48,14 +50,16 @@ export function viewOf(camera: Camera, width: number, height: number): View {
   const fit = aspect < 1 ? 1 / Math.max(0.55, aspect) : 1;
   const distance = camera.distance * fit;
   const projection = Mat4.perspective(camera.fov, aspect, 0.5, 400);
-  const view = Mat4.multiply(
+  const [tx, ty, tz] = camera.target ?? [0, 0, 0];
+  let view = Mat4.multiply(
     Mat4.translation(0, -camera.lift, -distance),
     Mat4.multiply(Mat4.rotationX(camera.elevation), Mat4.rotationY(camera.azimuth)));
+  if (camera.target) view = Mat4.multiply(view, Mat4.translation(-tx, -ty, -tz));
   const y = camera.lift * Math.cos(camera.elevation) + distance * Math.sin(camera.elevation);
   const z = distance * Math.cos(camera.elevation) - camera.lift * Math.sin(camera.elevation);
   return {
     matrix: Mat4.multiply(projection, view) as ArrayLike<number>,
-    eye: [-z * Math.sin(camera.azimuth), y, z * Math.cos(camera.azimuth)],
+    eye: [tx - z * Math.sin(camera.azimuth), ty + y, tz + z * Math.cos(camera.azimuth)],
     width,
     height,
     camera,
