@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "version": "0.42.0",
+  "baseVersion": "0.41.0",
+  "baseCommit": "003ec8dc912b227077a694d26fbcbf42469cb986",
+  "preparationCommit": "456700987263a2de18d9a7981755b1f34e8c3b67",
+  "initial": false,
+  "inputHash": "d6535c7c857a2eee4d8fb8f158aca6bc3261322898104b45ef7b1b88a68ca4ad",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "minor"
+        }
+      ],
+      "summary": "Size tool calls to the model that makes them. `@tangleai/models/profile` reads a\nmodel id into a profile with a tool budget (`modelProfile`, `resolveToolBudget`,\n`TOOL_BUDGETS`): a mixture of experts is tiered by its active parameters, a dense\nmodel by its size, with overridable heuristic defaults. `@tangleai/agents/staging`\n(`stageTools`, `estimateArgumentChars`) builds any tool whose typical input exceeds\nthe budget as a draft in budget-sized, sub-schema-checked calls and commits it\nthrough the tool's own validation, offers small catalogs to small budgets, and\nrefuses duplicate tool names. A tool call cut off at the reply's length limit now\nsays where it was cut and points at the drafts. `@tangleai/jaren/contract-tools`\n(`createContractToolbox`) turns a Jaren contract into such tools, with host-pinned\ninput members and outcomes shaped for a model; `@tangleai/jaren` now depends on\n`@jarenjs/contract` 0.91.4. Existing exports are unchanged.",
+      "id": "per-model-staged-tool-calls"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        }
+      ],
+      "summary": "Host Radiant OS on the Pages site at `os/`: an installable, offline browser OS\nthat is a two-dimensional Turing machine governed by a council of its own parts\nunder the human's veto. Its studio is a turn-based crew game for finishing small\napps together (up to four people add ideas, the crew builds each one as a block\nthrough the OS contract, and the people approve or veto it), with a board of\nlinked notes and todos, mail that keeps every conversation, a library of the\nsuite's documentation to read, hear and ask, and three games: Monkey Grove,\nTape Dancers and Bench Arena. A configured model plays the oracle, the crew and\nthe library's voice. The crew builds with `createContractToolbox` under the\nmodel's tool budget, and the library answers only from the passages it is given,\nciting them. Without a model, a scripted oracle and crew run the same paths.",
+      "id": "radiant-os-pages"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.42.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.42.0"
+    }
+  ]
+}

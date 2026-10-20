@@ -34,4 +34,4 @@ Candidate confidence after the final ranked round: S-partial-select=0.9500000000
 
 This fixture compares selection mechanics. It establishes neither model quality nor improvement on Tangle or Jaren source. A live host must print its frozen model, attempt and token plan, then explicitly authorize its injected client.
 
-Registration: `772b071835420303f5086a08ec73cc2265fd685b2c8883dd544f89cb13196288`. Source: `2671b62679f8ebb88fa5990d454aa54ff8b724ec9aacb374f03a1c33b25a9ca9`. Report: `e8ecc3ed8ee27f4c2262ec8b5dfff209b5735343980f0784ef322095b0dccc16`.
+Registration: `772b071835420303f5086a08ec73cc2265fd685b2c8883dd544f89cb13196288`. Source: `d5e0d43ba2dc480418502f4dc703ae3a29fa246bc60ef374cedeb036ba571dbd`. Report: `8b92cb0ce8bd48873b6c342de714b794e52d9b2b64366c5949552cba48f840cd`.
