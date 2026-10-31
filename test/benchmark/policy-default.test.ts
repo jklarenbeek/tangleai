@@ -12,7 +12,7 @@ it('the real confirmed default, its runtime behavior and public provenance match
   const { renderMarkdown } = await import('../../benchmark/lib/locomo-policy.ts');
   const path = 'benchmark/results/locomo-policy.json';
   const { report, artifact } = await readPolicyDecision(path);
-  assert.equal(report.reportId, 'b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14');
+  assert.equal(report.reportId, '1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf');
   assert.equal(report.purchases!.physical, 258);
   assert.equal(report.selection.decision!.qualifiesAsDefault, false);
   assert.deepEqual(DEFAULT_MEMORY_POLICY, artifact.policy);

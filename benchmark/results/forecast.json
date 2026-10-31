@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "2be71c633567e6f1e0598fdc6543259862318013",
+    "head": "003ec8dc912b227077a694d26fbcbf42469cb986",
     "clean": false,
     "files": [
       {
@@ -599,7 +599,7 @@
       },
       {
         "path": "benchmark/lib/place-scale-receipt.ts",
-        "sha256": "8e32119e83f8ab47b1813192d29084b9e78b4e17303553c437c7ac6edd4bf841"
+        "sha256": "f6dcaa3a7e390b87bb55776229884e71532135aae30eab0f0450729051200385"
       },
       {
         "path": "benchmark/lib/place-scale.ts",
@@ -811,7 +811,7 @@
       },
       {
         "path": "benchmark/lib/research-lessons-fixture.ts",
-        "sha256": "8fc47b285f1f0fa4044d7a9bac811e5020ef4a56a49cb10da950f788dd0a8b08"
+        "sha256": "f8f0fa484a9f48d760c62943e9ce46188c1e46828d663a26ade1ea1384637691"
       },
       {
         "path": "benchmark/lib/research-lessons-mechanism.ts",
@@ -819,7 +819,7 @@
       },
       {
         "path": "benchmark/lib/research-lessons-oracle.ts",
-        "sha256": "0bda77e23403ea6a50a08f9de5d2c8ec5b1ee08f266a284cca9226f1026b1415"
+        "sha256": "374b10e0022d019065dcfcfd94b252b7a3d612548d3d722fbeaee0b99567ebb1"
       },
       {
         "path": "benchmark/lib/research-lessons-refusals.ts",
@@ -1163,15 +1163,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "7dbdb59366c33e6480b918fc8d1dbe44083b4ccc765a18a16a6a2c3827c356af"
+        "sha256": "241d58a9c64bc2227fb68728e7f620ec4fe6cc01fb80e83f6f62d828fddab246"
       },
       {
         "path": "package.json",
-        "sha256": "772aebb360af690461628f737b907b94e3f69d1ac2a2927ee454b06c1b4615ce"
+        "sha256": "9a36919c90ee89fc274c8de8cf1fb1b3e27fe4e9ebc41de93625c3001911c158"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "fa1e51b457d8372ff409373632818dfa46abdc3dd40c23834684ea653b1faeb9"
+        "sha256": "5c14b5bfb5d21460369300c6a3af0fe5385b9f13f9c4159b38ba1183268d4524"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -1195,7 +1195,7 @@
       },
       {
         "path": "packages/agents/src/program.ts",
-        "sha256": "7be2e758ec4cbaeba82b71886ed07619c5be80080f79aa3104b433728e1d3d64"
+        "sha256": "5fc41f84052ba7957ddc3a7b82e13cf9de9bcae6fbaf88f7808389aa949b17d9"
       },
       {
         "path": "packages/agents/src/recursive.ts",
@@ -1203,7 +1203,7 @@
       },
       {
         "path": "packages/agents/src/refine.ts",
-        "sha256": "7f2a6fb02c6d92716788708917b944402205debaf17cc07e6810ee3117e92a29"
+        "sha256": "2e9611f4188b09b37cc9f12d337cf2e20a54a58a9ab53f76bf97b7c08ef759cf"
       },
       {
         "path": "packages/agents/src/schemas/program.ts",
@@ -1215,7 +1215,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "64ff2d6bee0110b6a6cc820bd7bb6a00e2bb0e5bae4c7004cff7c06597870a7b"
+        "sha256": "649a0929c490613472c9728bbaea4b3b8b85bef31250faf569d69de3add1fc20"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -1271,7 +1271,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "c381e3120733ae7b4fa833a1d53163213875cb5cba7dc041a4f45d63912a89b6"
+        "sha256": "3b5e7927c0b7733cddb02573d812027d16b2d8f2486018b3700740f136863f2e"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -1323,7 +1323,7 @@
       },
       {
         "path": "packages/forecast/package.json",
-        "sha256": "255bdf46f26a34229bf339c33d05a26ee34741d5788b9e8af0b81decdd288517"
+        "sha256": "f1ad28c2fe7473d866937d80d44ea82e614ba33a7acc354e7ab9fd812d55238d"
       },
       {
         "path": "packages/forecast/schemas/forecast.contract.json",
@@ -1495,7 +1495,7 @@
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "4e0e0d858cbd8b8292ba9c94e4e8847d306d87d3d724ec6586f025af0c496766"
+        "sha256": "2ddb3dd4ef2cc4071dba3e84492d76479183119df5591d2e1b896f10a3a6369d"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -1566,12 +1566,8 @@
         "sha256": "1a21a8c4ca96a19b4c7d7919d481c379fb75e25dd59e07e50d9e1a9f44bbe053"
       },
       {
-        "path": "packages/mas/src/jaren-flow.d.ts",
-        "sha256": "a1759b25d2f9fb46cb779b0ecd5a3c8e86819d541d89f930673c9e74840ab7bf"
-      },
-      {
         "path": "packages/mas/src/lower.ts",
-        "sha256": "f0dc9797a802abde2fe5a0ae8f5201a4a53a30d2376a544641aef532ea4641c5"
+        "sha256": "5edb126c62e232117d330e0ec549fa81797a73bae65a7cc75da6e3c2fd56908c"
       },
       {
         "path": "packages/mas/src/mermaid.ts",
@@ -1627,7 +1623,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "e784a1acdea0d4d9f1591841ae11e74828c081b22d5f406cea1c140d7888c901"
+        "sha256": "b029367be52efd2d662235b3fe8668a5c1c6822f19d2b1afb670dbf2a7539b2d"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -1667,7 +1663,7 @@
       },
       {
         "path": "packages/models/src/retry.ts",
-        "sha256": "d2f6f39f57313e66fe7a59d3674ad31ad681c4f3d92a2317f07cff5c88f4b1b1"
+        "sha256": "9eec3798e5c9a08843c6483548fedd457c1839877736348998c4c1d7dc4625e9"
       },
       {
         "path": "packages/models/src/routing.ts",
@@ -1683,7 +1679,7 @@
       },
       {
         "path": "packages/search/package.json",
-        "sha256": "074c8558ab3e636200652ca89d6b2ec04f15a1191beb1a5c1534bd2b1a8fbb08"
+        "sha256": "eee62b3b5ab0903327a9325b9a0f54980a6022364676c7a7cc09da01f9f573b0"
       },
       {
         "path": "packages/search/src/index.ts",
@@ -1695,7 +1691,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "b2c1f915b39021e1f9842c0fac442a33383476cbc11094fca4622a7b933045d6"
+        "sha256": "94cdf2bc55cd0a513578f3a83ba5905df82cd07dfcc615ce46560a4d431fd1dc"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1759,7 +1755,7 @@
       },
       {
         "path": "packages/store/src/graph-vector-migration.ts",
-        "sha256": "f8dac0e45737b14742dec6c501759a1d553618d2c0fe9bf28aeb3b9474fd6a15"
+        "sha256": "ba0555da89c09d7287b56e096719385f1a200bd2cfd535761b028d127c366137"
       },
       {
         "path": "packages/store/src/graph-vector-model.ts",
@@ -1906,7 +1902,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "ac9b779a6f50daf19d670a2f92ccc4c5d472b9496c5bce7e41fe3bd42f7986ab"
+    "sha256": "ee6bf882a7ed48214c06015fdf96982dfe7a3cd2b37801c53fc1815bab710214"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44237,7 +44233,7 @@
         {
           "id": "revision-resume-identity",
           "holds": true,
-          "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable 1eb9f7c7146ac0625760e785e660419409d3402d88887d6bf5698c722c335824."
+          "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable b46dc14389dbc78f274c4622d33c391a3bc70c6d24bdf653d704c1d54aa47e03."
         },
         {
           "id": "adapter-score-parity",
@@ -45233,7 +45229,7 @@
     {
       "id": "resume-identity",
       "holds": true,
-      "detail": "27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable 1eb9f7c7146ac0625760e785e660419409d3402d88887d6bf5698c722c335824. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3."
+      "detail": "27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable b46dc14389dbc78f274c4622d33c391a3bc70c6d24bdf653d704c1d54aa47e03. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3."
     },
     {
       "id": "duplicate-delivery",
@@ -45278,7 +45274,7 @@
     {
       "id": "revision-resume-identity",
       "holds": true,
-      "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable 1eb9f7c7146ac0625760e785e660419409d3402d88887d6bf5698c722c335824."
+      "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable b46dc14389dbc78f274c4622d33c391a3bc70c6d24bdf653d704c1d54aa47e03."
     },
     {
       "id": "adapter-score-parity",
@@ -45371,5 +45367,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "1a412ea60763064e64598c07c770ef43dafe4f77cc8b5c2b592203759aca1ea4"
+  "reportId": "e863b0f70ca192d658d2ad135a9ea53b1d97b7b099632efffdab8f4a44a59ecc"
 }

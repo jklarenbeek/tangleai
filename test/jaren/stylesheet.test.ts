@@ -195,7 +195,9 @@ describe('ai — the operator crib the profile displaces', function () {
 
 describe('ai — the unknown-operator gate', function () {
   /** The document the live tier produced: right in every particular
-   * except an operator that does not exist in the core grammar. */
+   * except an operator that does not exist in the core grammar. The model
+   * wrote `$abs`, which the grammar has since gained; `$absolute` keeps the
+   * document exactly one unknown operator away from valid. */
   const withAbs = {
     $jslt: '0.1',
     rules: [{
@@ -204,7 +206,7 @@ describe('ai — the unknown-operator gate', function () {
         $head: {
           $for: { r: '$.records[*]' },
           $where: { $eq: ['$r.class', 'upper'] },
-          $orderby: { $abs: { $sub: ['$r.probability', '$.target'] } },
+          $orderby: { $absolute: { $sub: ['$r.probability', '$.target'] } },
           $return: '$r',
         },
       },
@@ -217,9 +219,9 @@ describe('ai — the unknown-operator gate', function () {
     assert.ok(typeof outcome === 'object' && outcome !== null && 'errors' in outcome);
     assert.strictEqual(outcome.errors[0].code, 'AI0225');
     assert.ok(typeof outcome === 'object' && outcome !== null && 'errors' in outcome);
-    assert.match(outcome.errors[0].message, /\$abs/, 'the message names the operator');
+    assert.match(outcome.errors[0].message, /\$absolute/, 'the message names the operator');
     assert.ok(typeof outcome === 'object' && outcome !== null && 'errors' in outcome);
-    assert.strictEqual(outcome.errors[0].docPath, '/rules/0/body/$head/$orderby/$abs');
+    assert.strictEqual(outcome.errors[0].docPath, '/rules/0/body/$head/$orderby/$absolute');
   });
 
   it('is why it runs before the canonical schema', function () {
@@ -230,20 +232,20 @@ describe('ai — the unknown-operator gate', function () {
     const outcome = validator.compile(canonicalSchema)(withAbs);
     assert.strictEqual(outcome.valid, false, 'the canonical grammar does refuse it');
 
-    // 280 errors, of which a repair prompt carries the first 8
+    // 343 errors, of which a repair prompt carries the first 8
     // (structured.js MAX_ERRORS). The first that mentions the offending
-    // member is number 67 — so what goes back to the model is a wall of
+    // member is number 65 — so what goes back to the model is a wall of
     // anyOf branches describing everything except what to change.
     const CARRIED = 8;
     const paths = outcome.errors.map((e) => `${e.instancePath} ${e.message}`);
     assert.ok(paths.length > 100, `${paths.length} errors from one wrong member`);
-    const first = paths.findIndex((p) => p.includes('$abs'));
+    const first = paths.findIndex((p) => p.includes('$absolute'));
     assert.ok(first > CARRIED,
       `the first error naming it is #${first}, past the ${CARRIED} a repair round carries`);
   });
 
   it('accepts what a host registry adds, because the compiler does', function () {
-    assert.strictEqual(unknownOperatorGate({ grammar: querySchema, extra: ['$abs'] })(withAbs), true);
+    assert.strictEqual(unknownOperatorGate({ grammar: querySchema, extra: ['$absolute'] })(withAbs), true);
   });
 
   it('passes a document that stays inside the vocabulary', function () {

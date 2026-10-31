@@ -170,9 +170,10 @@ describe('the engine’s two rules', () => {
       planCommit: (next: unknown) => next,
       commit: async () => { written++; },
     });
-    const sync = engine.prepare({ n: 1 }, 1);
-    assert.equal(sync.valid, false);
-    assert.match(String(sync.errors[0]?.message), /asynchronous hook/, 'the synchronous path says why');
+    assert.throws(() => engine.prepare({ n: 1 }, 1),
+      (error: unknown) => (error as { code?: string }).code === 'JG0002'
+        && /validateCandidate hook answered a promise/.test((error as Error).message),
+      'the synchronous path says why, with a coded error');
     const awaited = await engine.prepareAsync({ n: 1 }, 1);
     assert.deepEqual(awaited.errors.map((one: { message: string }) => one.message), ['the evaluator said no']);
     const committed = await engine.commit(1);
@@ -185,8 +186,8 @@ describe('the engine’s two rules', () => {
     const refiner = createStrategyRefiner({ ledger: ledger as never, at: AT });
     const snapshot = await refiner.read();
 
-    // If any validator returned a Promise the synchronous path would refuse
-    // it, so a VALID proposal preparing cleanly is itself the proof that
+    // If any validator returned a Promise the synchronous path would throw
+    // JG0002, so a VALID proposal preparing cleanly is itself the proof that
     // none of them does.
     const prepared = refiner.prepare(snapshot, [evidenceOperation(APPEND)]);
     assert.equal(prepared.valid, true, JSON.stringify(prepared.errors));

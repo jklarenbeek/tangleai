@@ -31,7 +31,7 @@ describe('scoped bounded outcome audit reads', () => {
       code(await foreign.inspect({ scopeId: foreign.scopeId, artifactKey: 'a', input: { id: ids[0] } }), 'OUTC1003');
       if (db) {
         const plan = await db.collection('outcome_records').explain({ $subsequence: [{ $for: { r: '$[*]' }, $where: { $and: [{ $eq: ['$r.scopeId', { $const: scopeId }] }, { $eq: ['$r.artifactKey', { $const: 'a' }] }, { $gt: ['$r.seq', 0] }, { $le: ['$r.seq', first.upper] }] }, $orderby: ['$r.seq', '$r.id'], $return: '$r' }, 0, 51] }) as { mode: string; sql: string; scanNarrative: string };
-        assert.equal(plan.mode, 'native'); assert.match(plan.sql, /LIMIT 51/); assert.match(plan.scanNarrative, /SEARCH outcome_records USING INDEX/);
+        assert.equal(plan.mode, 'native'); assert.match(plan.sql, /LIMIT (?:CASE WHEN [\s\S]+ THEN 0 ELSE )?51\b/); assert.match(plan.scanNarrative, /SEARCH outcome_records USING INDEX/);
       }
     } finally { await db?.close(); }
   });

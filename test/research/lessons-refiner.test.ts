@@ -86,8 +86,8 @@ it('pins the current native synchronous thenable refusal and its distinct asynch
   let writes = 0;
   const engine = createGuardedRefiner({ read: async () => ({}), validateProposal: async () => ({ valid: true }), apply: () => ({}),
     validateCandidate: () => ({ valid: true }), planCommit: () => ({}), commit: async () => { writes++; } });
-  const prepared = engine.prepare({}, {}); assert.equal(prepared.valid, false); assert.equal(prepared.errors[0].code, 'GUARDED');
-  assert.match(prepared.errors[0].message, /asynchronous hook/); assert.equal(writes, 0);
+  assert.throws(() => engine.prepare({}, {}), (error: unknown) => (error as { code?: string }).code === 'JG0002'
+    && /validateProposal hook answered a promise/.test((error as Error).message)); assert.equal(writes, 0);
   assert.equal((await engine.commit({})).ok, true); assert.equal(writes, 1);
 });
 it('copies requests before a checked read can yield', async () => {

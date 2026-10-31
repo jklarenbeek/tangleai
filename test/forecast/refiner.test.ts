@@ -24,7 +24,7 @@ it('a harness patch cannot rename a component, add a fourth, grant a tool, excee
   const f = await fixture();
   for (const path of ['/skills/0/name','/skills/3','/skills/0/tools','/skills/0/__proto__','/scopeKey']) {
     const refused = f.refiner.guarded.prepare(f.refiner.previous,[{ op: 'add',path,value: 'escape' }]);
-    assert.equal(refused.valid,false,path); assert.equal(refused.errors[0].code,'TFCT1007'); assert.equal(refused.errors[0].docPath,'/patch/0/path');
+    assert.equal(refused.valid,false,path); assert.equal(refused.errors[0].code,'TFCT1007'); assert.equal((refused.errors[0] as { docPath?: string }).docPath,'/patch/0/path');
   }
   for (const sources of [['dangling'],['note:' + 'f'.repeat(64)]]) { const p = await f.refiner.prepareGuidance([{ ...f.item,sources }]); assert.equal(p.valid,false); assert.equal(p.errors[0].code,'TFCT1007'); }
   for (const limits of [{ maxGrowthBytes: 1 },{ maxComponentBytes: 20 },{ maxComponents: 0 },{ maxOps: 0 },{ maxHarnessBytes: 10 }]) {

@@ -61,10 +61,13 @@ export async function probeResearchLessonNegative(fixture: LoadedLessonFixture, 
   if (negative.asyncValidator) {
     const guarded = createGuardedRefiner({ read: async () => ({}), apply: value => value,
       validateProposal: async () => true, validateCandidate: () => true, planCommit: value => value, commit: async () => true });
-    const prepared = guarded.prepare({}, {});
-    if (prepared.valid) throw Error('The native synchronous guarded boundary accepted a thenable.');
-    const error = prepared.errors[0];
-    return fail('TRSH2004', error?.code ?? null, [error?.message ?? 'Native asynchronous-validator refusal omitted a reason.']);
+    // The native synchronous boundary refuses a thenable by throwing its coded JG0002.
+    try { guarded.prepare({}, {}); }
+    catch (cause) {
+      const error = cause as { code?: string; message?: string };
+      return fail('TRSH2004', error.code ?? null, [error.message ?? 'Native asynchronous-validator refusal omitted a reason.']);
+    }
+    throw Error('The native synchronous guarded boundary accepted a thenable.');
   }
   // The minority domain makes positive aggregate transfer insufficient for the volatile control.
   const issues = await lessonOracleEligibility(negative.candidateUtilities, negative.baselineUtilities, ['majority', 'majority', 'minority']);

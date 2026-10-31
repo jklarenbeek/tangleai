@@ -96,7 +96,7 @@
       "kind": "policy",
       "package": "@tangleai/memory",
       "export": "DEFAULT_MEMORY_POLICY",
-      "revision": "b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14",
+      "revision": "1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf",
       "description": "Measured default cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; effective values and live/lexical provenance are owned by @tangleai/memory/policy."
     }
   ],

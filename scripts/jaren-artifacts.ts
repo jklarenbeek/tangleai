@@ -63,7 +63,7 @@ export function readFoundationArtifacts(root = ROOT): FoundationArtifacts | null
       for (const [name, range] of Object.entries(dependencies)) {
         assert.ok(name.startsWith('@jarenjs/') && name !== '@jarenjs/ai', `${pkg.name}: non-foundation or legacy dependency ${name}`);
         assert.ok(result.packages.some(other => other.name === name), `${pkg.name}: unrecorded dependency ${name}`);
-        assert.equal(range, `^${result.source.version}`, `${pkg.name}: dependency version drift`);
+        assert.ok(range === result.source.version || range === `^${result.source.version}`, `${pkg.name}: dependency version drift`);
       }
     }
   }

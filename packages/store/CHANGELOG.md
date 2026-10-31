@@ -1,5 +1,30 @@
 # @tangleai/store
 
+## 0.42.0
+
+### Minor Changes
+
+- Move every package onto the Jaren 0.161.0 foundation, consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Absorb its typed check outcomes, stage-discriminated guarded commits, strict retry options and typed migration plans; remove the two declaration bridges its corrected LINQ declarations make unnecessary; re-derive the paid memory policy report's interval statistics under its corrected nearest-rank quantile, which changes the default policy's provenance report id but no selection, decision or default value; and raise the program pen bundle ceiling to 29,000 bytes for the larger captured-expression module.
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/mas@0.42.0
+  - @tangleai/memory@0.42.0
+  - @tangleai/evolve@0.42.0
+  - @tangleai/grounding@0.42.0
+  - @tangleai/research@0.42.0
+  - @tangleai/documents@0.42.0
+  - @tangleai/experiential@0.42.0
+  - @tangleai/forecast@0.42.0
+  - @tangleai/hera@0.42.0
+  - @tangleai/lightrag@0.42.0
+  - @tangleai/outcomes@0.42.0
+  - @tangleai/trace2skill@0.42.0
+  - @tangleai/trading@0.42.0
+  - @tangleai/config@0.42.0
+  - @tangleai/core@0.42.0
+
 ## 0.41.0
 
 ### Minor Changes

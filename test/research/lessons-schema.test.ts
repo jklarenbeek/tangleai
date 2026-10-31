@@ -49,9 +49,6 @@ it('lesson injection accepts native outcome hashes and refuses slugs or malforme
 it('the current native synchronous guarded boundary names an asynchronous-validator refusal', () => {
   const refiner = createGuardedRefiner({ read: async () => ({}), apply: value => value,
     validateProposal: async () => true, validateCandidate: () => true, planCommit: value => value, commit: async () => true });
-  const result = refiner.prepare({}, {});
-  assert.equal(result.valid, false);
-  assert.equal(result.errors.length, 1);
-  assert.equal(result.errors[0].code, 'GUARDED');
-  assert.match(result.errors[0].message, /asynchronous hook requires prepareAsync or commit/);
+  assert.throws(() => refiner.prepare({}, {}), (error: unknown) => (error as { code?: string }).code === 'JG0002'
+    && /validateProposal hook answered a promise, which the synchronous prepare cannot await/.test((error as Error).message));
 });

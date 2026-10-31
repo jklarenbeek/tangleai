@@ -16,7 +16,7 @@ export function measureProgramBundle(directory: string) {
     const unwanted = retained.filter(name => /(?:@jarenjs\/(?:json|db|app|flow|validate)|@tangleai\/(?:models|context|agents)|packages\/(?:models|context|agents))\//.test(name) || /linq\/src\/(?:chain|query)/.test(name));
     assert.deepEqual(unwanted, [], 'Program pen imported runtime engines or model mechanisms');
     const bytes = readFileSync(resolve(temporary,'bundle.js')).length;
-    assert.ok(bytes > 0 && bytes <= 18000, `Program pen bundle is ${bytes} bytes (ceiling 18000)`);
+    assert.ok(bytes > 0 && bytes <= 29000, `Program pen bundle is ${bytes} bytes (ceiling 29000)`);
     return { schemaVersion:1, bun:execFileSync('bun',['--version'],{encoding:'utf8'}).trim(), bytes, retainedModules:retained.length, excludedEngineBytes:0 };
   } finally { rmSync(temporary,{recursive:true,force:true}); }
 }

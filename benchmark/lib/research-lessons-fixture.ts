@@ -34,7 +34,7 @@ const expected = {
   'cross-domain': ['TRSH2003', null], unsupported: ['TRSH2002', 'EVIDENCE_UNADMITTED'],
   'regression-inducing': ['TRSH2007', 'OUTC1011'], 'web-uncorroborated': ['TRSH2006', null],
   'leaked-origin': ['TRSH2005', null], 'active-edit-attempt': ['TRSH2007', null],
-  'async-validator': ['TRSH2004', 'GUARDED'],
+  'async-validator': ['TRSH2004', 'JG0002'],
 } as const;
 const text = (value: unknown) => new TextEncoder().encode(JSON.stringify(value, null, 2) + '\n');
 const validator = (name: string) => createReportValidator({ $ref: RESEARCH_LESSONS_SCHEMA.$id + '#/$defs/' + name },

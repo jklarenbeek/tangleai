@@ -10,10 +10,10 @@
  * Two rules this consumer keeps, both deliberate:
  *
  *  - every validator is SYNCHRONOUS, because preparation is the engine's
- *    synchronous `prepare`. That path refuses an asynchronous hook with a
- *    stated reason (only `prepareAsync` and `commit` await one), so a
- *    Promise here would turn every proposal into that refusal. A test pins
- *    that ours are synchronous.
+ *    synchronous `prepare`. That path throws the coded `JG0002` for an
+ *    asynchronous hook (only `prepareAsync` and `commit` await one), so a
+ *    Promise here would make every preparation throw. A test pins that
+ *    ours are synchronous.
  *  - every refusal carries at least one error: a refusal with no reason
  *    tells the proposer nothing it can act on.
  *

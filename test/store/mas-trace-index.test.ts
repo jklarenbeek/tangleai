@@ -83,7 +83,7 @@ it('the native model migration preserves prior trace records and queued jobs thr
     assert.ok('applied' in applied); assert.deepEqual(applied.applied, ['mas-trace-run-indexes']);
     const replay = await migrate({ driver, path }, [planned.migration], options);
     assert.ok('applied' in replay); assert.deepEqual(replay.applied, []);
-    assert.equal((await migrationStatus({ driver, path }, [planned.migration], options)).upToDate, true);
+    assert.equal((await migrationStatus({ driver, path }, [planned.migration], { model: options.model, shadowDriver: options.shadowDriver })).upToDate, true);
     db = await openTangleDb({ driver, path, jobs: true }); open = true;
     for (const name of collections) {
       assert.deepEqual(await db.collection(name).execute(query), [rows[1], rows[0]]);

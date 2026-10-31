@@ -19,7 +19,7 @@
     },
     {
       "path": "negative/async-validator.json",
-      "sha256": "3a8850457d5e087e11b6736de16bdbefc20d050699f3ecb0a6382d8cd59c1bf7"
+      "sha256": "90695280134760c755e5c40c9985bd04ed9cfc6b4c9745eb4c1d12daca78a15e"
     },
     {
       "path": "negative/cross-domain.json",
@@ -59,7 +59,7 @@
     },
     {
       "path": "registration.json",
-      "sha256": "eb8f45a33723975a1f7a865772a4a52d472f795390aa1e7a230ed610afaa825d"
+      "sha256": "1041a9053da8ff897d2abdfc349b16265fe97b541c7196ba7b5f61b36f41d9bc"
     }
   ]
 }

@@ -15,7 +15,7 @@ Two numbers per row, always together: the **ceiling** is evidence recall at k �
 | **RAG over session summaries** | the release's own `session_summary` corpus (272 summaries, each evidencing its whole session) | the 10 nearest summaries | SESSION-level: a retrieved summary counts as holding every turn of its session, whether or not it kept the fact |
 | **long-horizon agent** | `createLongHorizonAgent` over `createEnvironment` — the suite's own answer to a corpus that will not fit: it authors a compile-gated program over the transcript's digest and fans sub-calls over the pieces | the root sees a digest; each sub-call sees one piece | the gold turns some sub-call was shown |
 | **Historical Tangle** (`near`) | the historical shipped thresholds at this run’s embedder | the 10 nearest surviving memories | the gold turns among them (a merged survivor cites every turn it absorbed) |
-| Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14) | measured memory policy; see LOCOMO_POLICY.md | selected retrieval controls | gold evidence in the retrieved memories |
+| Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report 1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf) | measured memory policy; see LOCOMO_POLICY.md | selected retrieval controls | gold evidence in the retrieved memories |
 
 ## The corpus and the questions
 
@@ -61,8 +61,8 @@ The ceiling at k = 10, over all 1,540 scorable questions and over the sample; an
 | **long-horizon agent (createLongHorizonAgent over createEnvironment)** | sample | — | — | — | — | — | — | — | — | — | — |
 | **Tangle (historical shipped thresholds; this run’s embedder)** | all | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 | 0.020 | 0.058 | 0.003 | 0.011 | 0.015 |
 | **Tangle (historical shipped thresholds; this run’s embedder)** | sample | 0.318 | 0.115 | 0.469 | 0.188 | 0.500 | 0.022 | 0.054 | 0.005 | 0.016 | 0.014 |
-| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14)** | all | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 | 0.020 | 0.058 | 0.003 | 0.011 | 0.015 |
-| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14)** | sample | 0.318 | 0.115 | 0.469 | 0.188 | 0.500 | 0.022 | 0.054 | 0.005 | 0.016 | 0.014 |
+| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report 1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf)** | all | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 | 0.020 | 0.058 | 0.003 | 0.011 | 0.015 |
+| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report 1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf)** | sample | 0.318 | 0.115 | 0.469 | 0.188 | 0.500 | 0.022 | 0.054 | 0.005 | 0.016 | 0.014 |
 
 The keyless embedder is the suite's hashed-trigram reference — LEXICAL, so a ranked row's ceiling here says whether the mechanism carries a fact to the prompt, not what an embedding model would find. The live tier below ranks through a real embedding wire and reads its own ceiling.
 

@@ -25,8 +25,8 @@
  * would make "how well has this strategy done" a question with two answers.
  *
  * Both validators are SYNCHRONOUS, because `prepare` is the engine's
- * synchronous path, which refuses an asynchronous hook rather than awaiting
- * it. Every refusal carries at least one error, so no refusal reaches the
+ * synchronous path, which throws `JG0002` for an asynchronous hook rather
+ * than awaiting it. Every refusal carries at least one error, so no refusal reaches the
  * caller without a reason it can act on.
  */
 
@@ -239,7 +239,7 @@ export function createStrategyRefiner(options: StrategyRefinerOptions) {
           : [evolveIssue('TEVO1011', '/commit', 'The ledger refused the refinement.', {
             code: 'LEDGER_CONFLICT',
             docPath: '',
-            message: JSON.stringify(errors.length > 0 ? errors[0] : (result.cause ?? 'refused')),
+            message: JSON.stringify(errors.length > 0 ? errors[0] : (('cause' in result ? result.cause : undefined) ?? 'refused')),
           })]);
       }
       const value = result.value as { error?: string } | unknown[];

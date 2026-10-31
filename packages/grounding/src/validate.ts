@@ -95,5 +95,5 @@ export async function repairPrihaClaims(draftInput: PrihaAnswer, viewInput: Clai
             committed = immutableGroundingJson(candidate); return committed;
         } });
     const result = await refiner.commit(proposal);
-    return result.ok && committed ? { ok: true as const, value: committed } : { ok: false as const, errors: result.errors ?? [] };
+    return result.ok && committed ? { ok: true as const, value: committed } : { ok: false as const, errors: result.ok ? [] : result.errors };
 }

@@ -61,7 +61,8 @@ export function isTransientFailure(err: unknown): boolean {
  * @returns milliseconds
  */
 export function retryDelay(policy: RetryPolicy, attempt: number, retryAfter: number | undefined): number {
-  return backoffDelay({ ...policy, policy: 'ai-compat' }, attempt, retryAfter);
+  const { baseMs, maxMs, random } = policy;
+  return backoffDelay({ policy: 'ai-compat', baseMs, maxMs, random }, attempt, retryAfter);
 }
 
 /**

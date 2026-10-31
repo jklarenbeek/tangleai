@@ -206,7 +206,8 @@ export function compileProgram(doc: any, options: {
       + ' a plan naming slots is small; one carrying content is not', '');
   }
   const shape = checkOutcome(new JarenValidator({ skipErrors: false, collectErrors: true }).compile(PROGRAM_SCHEMA)(doc));
-  if (!shape.valid) throw new ProgramError('AI0200', 'the document violates the program schema', shape.errors[0]?.instancePath ?? '');
+  const [first] = shape.errors;
+  if (!shape.valid) throw new ProgramError('AI0200', 'the document violates the program schema', first && 'instancePath' in first ? first.instancePath : '');
 
   /** binding name → the step index that produced it and what kind it is */
   const bound = new Map();
@@ -480,9 +481,10 @@ export function createProgramRunner(options: {
   async function compileHere(doc: any) {
     const outcome = checkOutcome(shape(doc));
     if (!outcome.valid) {
+      const [first] = outcome.errors;
       throw new ProgramError('AI0200',
-        outcome.errors[0]?.message ?? 'the document is not a program',
-        outcome.errors[0]?.instancePath ?? '');
+        first?.message ?? 'the document is not a program',
+        first && 'instancePath' in first ? first.instancePath : '');
     }
     const names = (await environment.ledger.listSlots()).map((s: any) => s.name);
     return compileProgram(doc, {

@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import {defineDag,edge,input,output,task} from '@jarenjs/linq/flow';
 import {executeDagRegion} from '../../packages/mas/src/dag-runtime.ts';
 import {MasInteractionWait,MasNodeFailure} from '../../packages/mas/src/node-lifecycle.ts';
-import type {} from '../../packages/mas/src/jaren-flow.d.ts';
 it('a nested human pause drains a started sibling without cancelling it; real failures still win',async()=>{
   const document=defineDag({nodes:{scope:input(),'t:human':task('human'),'t:paid':task('paid'),expose:output()},edges:[edge('scope','t:human'),edge('scope','t:paid'),edge('t:human','expose',{port:'human'}),edge('t:paid','expose',{port:'paid'})]});
   for(const fail of [false,true]){

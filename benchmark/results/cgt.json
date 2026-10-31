@@ -2,7 +2,7 @@
   "benchmark": "cgt",
   "schemaVersion": 1,
   "source": {
-    "head": "2be71c633567e6f1e0598fdc6543259862318013",
+    "head": "003ec8dc912b227077a694d26fbcbf42469cb986",
     "clean": false,
     "files": [
       {
@@ -111,15 +111,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "7dbdb59366c33e6480b918fc8d1dbe44083b4ccc765a18a16a6a2c3827c356af"
+        "sha256": "241d58a9c64bc2227fb68728e7f620ec4fe6cc01fb80e83f6f62d828fddab246"
       },
       {
         "path": "package.json",
-        "sha256": "772aebb360af690461628f737b907b94e3f69d1ac2a2927ee454b06c1b4615ce"
+        "sha256": "9a36919c90ee89fc274c8de8cf1fb1b3e27fe4e9ebc41de93625c3001911c158"
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "bf355bfcd42846d0c83aec7e9142622632c0e995261351aac247bc7f4768e8ce"
+        "sha256": "d630481d76d2ad6d3a17293e0c744d5ab29fcd47d4be057a280401307e264d8e"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -155,7 +155,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "64ff2d6bee0110b6a6cc820bd7bb6a00e2bb0e5bae4c7004cff7c06597870a7b"
+        "sha256": "649a0929c490613472c9728bbaea4b3b8b85bef31250faf569d69de3add1fc20"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -211,7 +211,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "326409aec54b3acbb912eea1ca7ff3d3d55811fc1fb813d1af2e5602b560601c"
+        "sha256": "3ced813a13a41d0a0062bb9c38e906a3cdcc5e0bb85fe82703becad5d39462b5"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -287,7 +287,7 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "147704035caf109c7cdc934ab176f292b5a9a972d73547b5618dde41597a65ae"
+        "sha256": "591ae61ea282911175fb413e1e7a3b982dc8dabba864b103d6a78e166c93904f"
       },
       {
         "path": "packages/experiential/schemas/experiential.contract.json",
@@ -431,7 +431,7 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "1b766bf064a0195aedfa3759a912f3505551c1772799cbe3b43d74a0658db146"
+        "sha256": "29c91068b66e44ef5b99f053b0d08c7061e79dde7aad3a168d06b4bac8ad1651"
       },
       {
         "path": "packages/memory/schemas/policy.contract.json",
@@ -559,7 +559,7 @@
       },
       {
         "path": "packages/memory/src/policy.gen.ts",
-        "sha256": "a48c39bb8e9fdb94f9d8e0fe564126dab53bbec89e9d18a6f8c95b8450753d9a"
+        "sha256": "e45bcd5ccde07377f3b0c06eae0b1787230bd8fbb7190256a119dade7b1fb866"
       },
       {
         "path": "packages/memory/src/policy.ts",
@@ -651,7 +651,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "e784a1acdea0d4d9f1591841ae11e74828c081b22d5f406cea1c140d7888c901"
+        "sha256": "b029367be52efd2d662235b3fe8668a5c1c6822f19d2b1afb670dbf2a7539b2d"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -691,7 +691,7 @@
       },
       {
         "path": "packages/models/src/retry.ts",
-        "sha256": "d2f6f39f57313e66fe7a59d3674ad31ad681c4f3d92a2317f07cff5c88f4b1b1"
+        "sha256": "9eec3798e5c9a08843c6483548fedd457c1839877736348998c4c1d7dc4625e9"
       },
       {
         "path": "packages/models/src/routing.ts",
@@ -707,7 +707,7 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "e6404ae8b6869e0e62796043984c2ac4230b158f540f86a6d48846dc26ad6f42"
+        "sha256": "3c86f183d5251480346bf2ef488ed924ed23fa3ee4ba11d705fb7a1a92559a4f"
       },
       {
         "path": "packages/outcomes/schemas/direction-delta.schema.json",
@@ -839,7 +839,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "b2c1f915b39021e1f9842c0fac442a33383476cbc11094fca4622a7b933045d6"
+        "sha256": "94cdf2bc55cd0a513578f3a83ba5905df82cd07dfcc615ce46560a4d431fd1dc"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -903,7 +903,7 @@
       },
       {
         "path": "packages/store/src/graph-vector-migration.ts",
-        "sha256": "f8dac0e45737b14742dec6c501759a1d553618d2c0fe9bf28aeb3b9474fd6a15"
+        "sha256": "ba0555da89c09d7287b56e096719385f1a200bd2cfd535761b028d127c366137"
       },
       {
         "path": "packages/store/src/graph-vector-model.ts",
@@ -1058,7 +1058,7 @@
         "sha256": "30bbda9de7067320328bc07d30936df63fbf419f3e4642d8bc9867c3a8c5af75"
       }
     ],
-    "sha256": "3681cff172cdc06f4d1d1e0e2e476c05a939951273571d17e37e1edbc9b64657"
+    "sha256": "458fb273bd0acb76a7f76fc3f8f0ec3c5a525cd250cae175715c5b364c5b9999"
   },
   "evaluations": [
     {
@@ -1073,13 +1073,13 @@
           "artifactId": "a39515d06a2c466d804b47eb6d922766fc4dce1ddafe5b31b315e6e1280d5646",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+          "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "c32027e33243ab8d4b3d16ccc5da1064bfd32d308c60882f21b69ab9f36e03ad",
+          "id": "49cf2cc44509f1e70efd5fac749284c463e9f035b6dd8bb451811585b2332bbe",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -1109,7 +1109,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -1147,7 +1147,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "7b0c6e402784cefabd8582769ba0dc699a7fb16b16d779ba4d29bfc83bf4b874",
+        "id": "612e5e854dadb445021a6857aafaf27ffb57199d867fdecf9d32c605d6d4d89e",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -1181,8 +1181,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "c32027e33243ab8d4b3d16ccc5da1064bfd32d308c60882f21b69ab9f36e03ad",
-        "reportId": "7dda1874e997ad9ea6ceeeec6fe64b9538aabffe9a43691d7e80e9750e885fec",
+        "registrationId": "49cf2cc44509f1e70efd5fac749284c463e9f035b6dd8bb451811585b2332bbe",
+        "reportId": "0c03b6df7509580bb7930bb6fe1f2af043a35c9ddf4b5a6b91faf1740c1b4ba3",
         "retention": [
           {
             "drop": 0.9609375,
@@ -1210,7 +1210,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "fde50d0846382296a5ccc185f188a9f6d4f0a2a9a6064fd0d9973e4b1dcf7921",
+            "identityId": "1fb7709e7575f9c88caf0d7187bf05da78c07107d066bd10275ef06ccfea83ad",
             "retention": 0.0390625,
             "rowId": "frozen-none",
             "samples": 224,
@@ -1220,7 +1220,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "559c72484d2278a6c97a6c528e0250f04033e6369f8eb6fcd56afbd11127dea7",
+            "identityId": "455ff7a8b67d9db22e2dc20b86245df7460facae9123d47e86bde77f23b877c2",
             "retention": 0.0390625,
             "rowId": "frozen-retrieval",
             "samples": 224,
@@ -1230,7 +1230,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "92325a5bef3dd1b29cd75643131f253c51b6959738d7cfada7c4118cb57511ef",
+            "identityId": "d78ee813a65aa10b27dc13176acbfde1ca7fdb84b67f6a79cac77b33bc6b33f1",
             "retention": 1,
             "rowId": "frozen-distilled-rule",
             "samples": 224,
@@ -1240,7 +1240,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "812091fc7a128c3aea6592e6378cdb935d9426f15eb5b975817084ee8234b88e",
+            "identityId": "a82a1e669e2678d7fcd43e8362f9a08b6387804a59432ad0f8b90c3d791bb951",
             "retention": 1,
             "rowId": "active-artifact-no-retrieval",
             "samples": 224,
@@ -1250,7 +1250,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "91f5fd632677e1c18cae6e409447d30a9fff2a3031504ee617aed2f8479e5b31",
+            "identityId": "2d7ded58ad548455ab4dcaab79c788977fc8613d3892e20f067a3571be4fdc32",
             "retention": 0.0390625,
             "rowId": "candidate-no-retrieval",
             "samples": 224,
@@ -1284,7 +1284,7 @@
       },
       "evidence": {
         "candidateId": "candidate-memorizer",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -1297,9 +1297,9 @@
           {
             "rowId": "frozen-none",
             "identity": {
-              "identityId": "fde50d0846382296a5ccc185f188a9f6d4f0a2a9a6064fd0d9973e4b1dcf7921",
+              "identityId": "1fb7709e7575f9c88caf0d7187bf05da78c07107d066bd10275ef06ccfea83ad",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -7555,9 +7555,9 @@
           {
             "rowId": "frozen-retrieval",
             "identity": {
-              "identityId": "559c72484d2278a6c97a6c528e0250f04033e6369f8eb6fcd56afbd11127dea7",
+              "identityId": "455ff7a8b67d9db22e2dc20b86245df7460facae9123d47e86bde77f23b877c2",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -20005,9 +20005,9 @@
           {
             "rowId": "frozen-distilled-rule",
             "identity": {
-              "identityId": "92325a5bef3dd1b29cd75643131f253c51b6959738d7cfada7c4118cb57511ef",
+              "identityId": "d78ee813a65aa10b27dc13176acbfde1ca7fdb84b67f6a79cac77b33bc6b33f1",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -26263,9 +26263,9 @@
           {
             "rowId": "active-artifact-no-retrieval",
             "identity": {
-              "identityId": "812091fc7a128c3aea6592e6378cdb935d9426f15eb5b975817084ee8234b88e",
+              "identityId": "a82a1e669e2678d7fcd43e8362f9a08b6387804a59432ad0f8b90c3d791bb951",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -32521,9 +32521,9 @@
           {
             "rowId": "candidate-no-retrieval",
             "identity": {
-              "identityId": "91f5fd632677e1c18cae6e409447d30a9fff2a3031504ee617aed2f8479e5b31",
+              "identityId": "2d7ded58ad548455ab4dcaab79c788977fc8613d3892e20f067a3571be4fdc32",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -40128,7 +40128,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "fde50d0846382296a5ccc185f188a9f6d4f0a2a9a6064fd0d9973e4b1dcf7921",
+              "identityId": "1fb7709e7575f9c88caf0d7187bf05da78c07107d066bd10275ef06ccfea83ad",
               "samples": 224
             },
             {
@@ -40138,7 +40138,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "559c72484d2278a6c97a6c528e0250f04033e6369f8eb6fcd56afbd11127dea7",
+              "identityId": "455ff7a8b67d9db22e2dc20b86245df7460facae9123d47e86bde77f23b877c2",
               "samples": 224
             },
             {
@@ -40148,7 +40148,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "92325a5bef3dd1b29cd75643131f253c51b6959738d7cfada7c4118cb57511ef",
+              "identityId": "d78ee813a65aa10b27dc13176acbfde1ca7fdb84b67f6a79cac77b33bc6b33f1",
               "samples": 224
             },
             {
@@ -40158,7 +40158,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "812091fc7a128c3aea6592e6378cdb935d9426f15eb5b975817084ee8234b88e",
+              "identityId": "a82a1e669e2678d7fcd43e8362f9a08b6387804a59432ad0f8b90c3d791bb951",
               "samples": 224
             },
             {
@@ -40168,7 +40168,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "91f5fd632677e1c18cae6e409447d30a9fff2a3031504ee617aed2f8479e5b31",
+              "identityId": "2d7ded58ad548455ab4dcaab79c788977fc8613d3892e20f067a3571be4fdc32",
               "samples": 224
             }
           ],
@@ -40247,7 +40247,7 @@
           },
           "cost": null
         },
-        "reportId": "7dda1874e997ad9ea6ceeeec6fe64b9538aabffe9a43691d7e80e9750e885fec"
+        "reportId": "0c03b6df7509580bb7930bb6fe1f2af043a35c9ddf4b5a6b91faf1740c1b4ba3"
       },
       "plannedState": "rejected"
     },
@@ -40263,13 +40263,13 @@
           "artifactId": "ced706a3dedcbcec1983328fba18b4b3c2b81b7d527d4048853129f1c35ae87b",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+          "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "29787d3d070b3bad8d2a9d9cddb98a02240bb74a1114321a27ba86337a97f6cd",
+          "id": "1315bc73561023156a39179d7501bc1d3965f1c3c951732b71200959e2fc3bb5",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -40299,7 +40299,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -40325,7 +40325,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "3ff38cf21ca2b9b9512a2f8503dc166ff412abaa4ca4e9dbed149b1a11a69b6c",
+        "id": "e71efa358f25b602cfc251e42406578a2b43fed91b5140a7627bb57920c72308",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -40359,8 +40359,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "29787d3d070b3bad8d2a9d9cddb98a02240bb74a1114321a27ba86337a97f6cd",
-        "reportId": "44580edb96ecabd089a057058f6afbb834f1501b63b2a30719c73a24edc53170",
+        "registrationId": "1315bc73561023156a39179d7501bc1d3965f1c3c951732b71200959e2fc3bb5",
+        "reportId": "72de98c7856dc3355ce900fb109a809c577412ee45534f5890b30f2ac84f857a",
         "retention": [
           {
             "drop": 0,
@@ -40388,7 +40388,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "106088d779b065eb60b7e392f8a8eb805bae013e4df75c8f2d2bce1bfbc527c7",
+            "identityId": "6865e04926cd6b380e466dc5ee2c77c2ac832ea2f1e4a9a342995e93e73877ab",
             "retention": 0.0390625,
             "rowId": "frozen-none",
             "samples": 224,
@@ -40398,7 +40398,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "94b27be400627374df77553a0f6fb4c02b1b4caf049e8d1fb51228544189c12c",
+            "identityId": "407ba69f29749cad05ed80add90e633a8cbcb74a7c3788195bba53614e819f6e",
             "retention": 0.0390625,
             "rowId": "frozen-retrieval",
             "samples": 224,
@@ -40408,7 +40408,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "3ae3c27221a4d142811dd5a0ee603c897ca0cdea8223e4b49f1dce91115c6cbb",
+            "identityId": "30e346dd4db9f2c3c8673c577914e028c71d474d000725e2613f5ab96e8e912e",
             "retention": 1,
             "rowId": "frozen-distilled-rule",
             "samples": 224,
@@ -40418,7 +40418,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "8a331ebe3b20101ec15897932cd72885c4d8ea6db06f6c7652d3d2a490da819a",
+            "identityId": "04d32f1997d58c2f5658be6db67bda637bc4f3b5c69ea0be8b35fedda6fcf0eb",
             "retention": 1,
             "rowId": "active-artifact-no-retrieval",
             "samples": 224,
@@ -40428,7 +40428,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "67319125375db078c48753c13e47eb244c30b5db1166c59b853fec39816c2d51",
+            "identityId": "5e266854668fe83faaca227af9d7887083c9a4f5ede57349cb0a69b7810b70ee",
             "retention": 1,
             "rowId": "candidate-no-retrieval",
             "samples": 224,
@@ -40462,7 +40462,7 @@
       },
       "evidence": {
         "candidateId": "candidate-rule-follower",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -40475,9 +40475,9 @@
           {
             "rowId": "frozen-none",
             "identity": {
-              "identityId": "106088d779b065eb60b7e392f8a8eb805bae013e4df75c8f2d2bce1bfbc527c7",
+              "identityId": "6865e04926cd6b380e466dc5ee2c77c2ac832ea2f1e4a9a342995e93e73877ab",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -46733,9 +46733,9 @@
           {
             "rowId": "frozen-retrieval",
             "identity": {
-              "identityId": "94b27be400627374df77553a0f6fb4c02b1b4caf049e8d1fb51228544189c12c",
+              "identityId": "407ba69f29749cad05ed80add90e633a8cbcb74a7c3788195bba53614e819f6e",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -59183,9 +59183,9 @@
           {
             "rowId": "frozen-distilled-rule",
             "identity": {
-              "identityId": "3ae3c27221a4d142811dd5a0ee603c897ca0cdea8223e4b49f1dce91115c6cbb",
+              "identityId": "30e346dd4db9f2c3c8673c577914e028c71d474d000725e2613f5ab96e8e912e",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -65441,9 +65441,9 @@
           {
             "rowId": "active-artifact-no-retrieval",
             "identity": {
-              "identityId": "8a331ebe3b20101ec15897932cd72885c4d8ea6db06f6c7652d3d2a490da819a",
+              "identityId": "04d32f1997d58c2f5658be6db67bda637bc4f3b5c69ea0be8b35fedda6fcf0eb",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -71699,9 +71699,9 @@
           {
             "rowId": "candidate-no-retrieval",
             "identity": {
-              "identityId": "67319125375db078c48753c13e47eb244c30b5db1166c59b853fec39816c2d51",
+              "identityId": "5e266854668fe83faaca227af9d7887083c9a4f5ede57349cb0a69b7810b70ee",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -79306,7 +79306,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "106088d779b065eb60b7e392f8a8eb805bae013e4df75c8f2d2bce1bfbc527c7",
+              "identityId": "6865e04926cd6b380e466dc5ee2c77c2ac832ea2f1e4a9a342995e93e73877ab",
               "samples": 224
             },
             {
@@ -79316,7 +79316,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "94b27be400627374df77553a0f6fb4c02b1b4caf049e8d1fb51228544189c12c",
+              "identityId": "407ba69f29749cad05ed80add90e633a8cbcb74a7c3788195bba53614e819f6e",
               "samples": 224
             },
             {
@@ -79326,7 +79326,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "3ae3c27221a4d142811dd5a0ee603c897ca0cdea8223e4b49f1dce91115c6cbb",
+              "identityId": "30e346dd4db9f2c3c8673c577914e028c71d474d000725e2613f5ab96e8e912e",
               "samples": 224
             },
             {
@@ -79336,7 +79336,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "8a331ebe3b20101ec15897932cd72885c4d8ea6db06f6c7652d3d2a490da819a",
+              "identityId": "04d32f1997d58c2f5658be6db67bda637bc4f3b5c69ea0be8b35fedda6fcf0eb",
               "samples": 224
             },
             {
@@ -79346,7 +79346,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "67319125375db078c48753c13e47eb244c30b5db1166c59b853fec39816c2d51",
+              "identityId": "5e266854668fe83faaca227af9d7887083c9a4f5ede57349cb0a69b7810b70ee",
               "samples": 224
             }
           ],
@@ -79425,7 +79425,7 @@
           },
           "cost": null
         },
-        "reportId": "44580edb96ecabd089a057058f6afbb834f1501b63b2a30719c73a24edc53170"
+        "reportId": "72de98c7856dc3355ce900fb109a809c577412ee45534f5890b30f2ac84f857a"
       },
       "plannedState": "rejected"
     },
@@ -79441,13 +79441,13 @@
           "artifactId": "72824a9c955a37b6ab07aa754ff5e17547215c262cba5912f7dee0d9e19a1237",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+          "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "2b7e0094c56f73b7fb9e311736027d5294d748f5c2d08c522e2fee4f788623c5",
+          "id": "431e5795039c2c856c931e6510ed089d10458967011221ecc265a836079320e1",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -79477,7 +79477,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -79515,7 +79515,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "3758ab392bfd725f4b26ad948f6650e1616415d80ded4b37c7eec9d0ceb8cb51",
+        "id": "d49e2c2de61cd7d4a8bbf5d9e7d89921d11c56ad5e362b46245be9f216a5e69d",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -79549,8 +79549,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "2b7e0094c56f73b7fb9e311736027d5294d748f5c2d08c522e2fee4f788623c5",
-        "reportId": "5942b9c609adb6370759db0c08b33fd4060032313b7dd1b3c067afd148e11392",
+        "registrationId": "431e5795039c2c856c931e6510ed089d10458967011221ecc265a836079320e1",
+        "reportId": "8cfef24f2ff191bb8bcd68dc99b0297759422c36fc98a91c2c7fbf4b459e56c6",
         "retention": [
           {
             "drop": 0.9609375,
@@ -79578,7 +79578,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "1436d246ddedafc6ef19681f75497b5511c6b9416c0473cec7623af052f77146",
+            "identityId": "719da483d8ba5d5f7ca690b39250556b627b2413f16f620bea0c524b373fc9f7",
             "retention": 0.0390625,
             "rowId": "frozen-none",
             "samples": 224,
@@ -79588,7 +79588,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "b28e0d83c04e4f3909624203ffd44865986a6ffe9c56eaf285aac8c3bf119fde",
+            "identityId": "30c7a3bacbaad851a6189319c3f2e1838c636119375b19e02bb87c0ed19dff81",
             "retention": 0.0390625,
             "rowId": "frozen-retrieval",
             "samples": 224,
@@ -79598,7 +79598,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "b078cd1cadec044cc9777d6eb01bcac4c05242b7ab2ecdeea6a1730f96ff5207",
+            "identityId": "6947d1406607caf7bb5c667ffd9dbc9ed5574e870f9d902b8c478ce16fd2ce8f",
             "retention": 1,
             "rowId": "frozen-distilled-rule",
             "samples": 224,
@@ -79608,7 +79608,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "ae5568599074ed3c24473f258e246d94405f02696f925e4177783e5f61c53f2e",
+            "identityId": "9cdf41599f9912eb488d24c9cabb14afb48e2f6d04ab8811bfc6e0562e8e0f98",
             "retention": 1,
             "rowId": "active-artifact-no-retrieval",
             "samples": 224,
@@ -79618,7 +79618,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "6de9bb760a6ed290d9dca5f31b8b16d9637ab204f00e11c22530476d576d756e",
+            "identityId": "26f52a39de1bcf92cf81aedb36e61601b69017c9a9a7cf503274562f95e950d5",
             "retention": 0.0390625,
             "rowId": "candidate-no-retrieval",
             "samples": 224,
@@ -79652,7 +79652,7 @@
       },
       "evidence": {
         "candidateId": "candidate-forgetting",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -79665,9 +79665,9 @@
           {
             "rowId": "frozen-none",
             "identity": {
-              "identityId": "1436d246ddedafc6ef19681f75497b5511c6b9416c0473cec7623af052f77146",
+              "identityId": "719da483d8ba5d5f7ca690b39250556b627b2413f16f620bea0c524b373fc9f7",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -85923,9 +85923,9 @@
           {
             "rowId": "frozen-retrieval",
             "identity": {
-              "identityId": "b28e0d83c04e4f3909624203ffd44865986a6ffe9c56eaf285aac8c3bf119fde",
+              "identityId": "30c7a3bacbaad851a6189319c3f2e1838c636119375b19e02bb87c0ed19dff81",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -98373,9 +98373,9 @@
           {
             "rowId": "frozen-distilled-rule",
             "identity": {
-              "identityId": "b078cd1cadec044cc9777d6eb01bcac4c05242b7ab2ecdeea6a1730f96ff5207",
+              "identityId": "6947d1406607caf7bb5c667ffd9dbc9ed5574e870f9d902b8c478ce16fd2ce8f",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -104631,9 +104631,9 @@
           {
             "rowId": "active-artifact-no-retrieval",
             "identity": {
-              "identityId": "ae5568599074ed3c24473f258e246d94405f02696f925e4177783e5f61c53f2e",
+              "identityId": "9cdf41599f9912eb488d24c9cabb14afb48e2f6d04ab8811bfc6e0562e8e0f98",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -110889,9 +110889,9 @@
           {
             "rowId": "candidate-no-retrieval",
             "identity": {
-              "identityId": "6de9bb760a6ed290d9dca5f31b8b16d9637ab204f00e11c22530476d576d756e",
+              "identityId": "26f52a39de1bcf92cf81aedb36e61601b69017c9a9a7cf503274562f95e950d5",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -118496,7 +118496,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "1436d246ddedafc6ef19681f75497b5511c6b9416c0473cec7623af052f77146",
+              "identityId": "719da483d8ba5d5f7ca690b39250556b627b2413f16f620bea0c524b373fc9f7",
               "samples": 224
             },
             {
@@ -118506,7 +118506,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "b28e0d83c04e4f3909624203ffd44865986a6ffe9c56eaf285aac8c3bf119fde",
+              "identityId": "30c7a3bacbaad851a6189319c3f2e1838c636119375b19e02bb87c0ed19dff81",
               "samples": 224
             },
             {
@@ -118516,7 +118516,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "b078cd1cadec044cc9777d6eb01bcac4c05242b7ab2ecdeea6a1730f96ff5207",
+              "identityId": "6947d1406607caf7bb5c667ffd9dbc9ed5574e870f9d902b8c478ce16fd2ce8f",
               "samples": 224
             },
             {
@@ -118526,7 +118526,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "ae5568599074ed3c24473f258e246d94405f02696f925e4177783e5f61c53f2e",
+              "identityId": "9cdf41599f9912eb488d24c9cabb14afb48e2f6d04ab8811bfc6e0562e8e0f98",
               "samples": 224
             },
             {
@@ -118536,7 +118536,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "6de9bb760a6ed290d9dca5f31b8b16d9637ab204f00e11c22530476d576d756e",
+              "identityId": "26f52a39de1bcf92cf81aedb36e61601b69017c9a9a7cf503274562f95e950d5",
               "samples": 224
             }
           ],
@@ -118615,7 +118615,7 @@
           },
           "cost": null
         },
-        "reportId": "5942b9c609adb6370759db0c08b33fd4060032313b7dd1b3c067afd148e11392"
+        "reportId": "8cfef24f2ff191bb8bcd68dc99b0297759422c36fc98a91c2c7fbf4b459e56c6"
       },
       "plannedState": "rejected"
     },
@@ -118631,13 +118631,13 @@
           "artifactId": "2f25be04e9ce8102cc9bce91a41bd44a0bae23102ecbcabd98695ddce7f71350",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+          "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "d791ae0f80f7a94532b64fb4f09460dc24ed7ad593c9f0c8fbc45b78d3a476c8",
+          "id": "1fe19d2aa6dbfadfd90063a23d2a77a939ae9c6c1093f2f992f2d7b3f845ad38",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -118667,7 +118667,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -118723,7 +118723,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "b5bdba75ec2017de22abba8c1cc63bdd990cb517992ee3600d5447a4ee654fb9",
+        "id": "777a3f68c7f6e76d9fdbb1d73de6205e5a376d5beda108c9ce2a165067c89c23",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -118757,8 +118757,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "d791ae0f80f7a94532b64fb4f09460dc24ed7ad593c9f0c8fbc45b78d3a476c8",
-        "reportId": "45ee98388fac890352b5db04ced4a3acd258f9d458ea35277c4cae71aa12bacd",
+        "registrationId": "1fe19d2aa6dbfadfd90063a23d2a77a939ae9c6c1093f2f992f2d7b3f845ad38",
+        "reportId": "5e39c0c2747ea06fdf6c5078113c154de4a270126aa464c6997f41ed4a97817b",
         "retention": [
           {
             "drop": 0,
@@ -118786,7 +118786,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "2713b50860ee2cd25d2b2affb695752a32493871e5f9244ee797c708c28dda07",
+            "identityId": "b309fd7bc7cd717baf82588334010b279e8c88cba2dcc0050a8230f99f0d9dcf",
             "retention": 0.0390625,
             "rowId": "frozen-none",
             "samples": 224,
@@ -118796,7 +118796,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "e8917984acc8c02f264ff2af49dd9587ae3fe37413f373666111e5f2bddbc52a",
+            "identityId": "fe3edc694709fcab2f70edafa5517df660b96718058f1eaf4f02d9918318f4e5",
             "retention": 0.0390625,
             "rowId": "frozen-retrieval",
             "samples": 224,
@@ -118806,7 +118806,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "e34456bf2db8ee257c85f978ff92f67bf8412ed4492ce50257f66da530e4dcb4",
+            "identityId": "c3f258ec0f4feb7bafbcd02470110df18df60c9facdc354bf4bd63a9c8d942a7",
             "retention": 1,
             "rowId": "frozen-distilled-rule",
             "samples": 224,
@@ -118816,7 +118816,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "88be6493d81849b295f20d11d804c80dc470c515b9f1a89607b48729981db332",
+            "identityId": "036cc21287c001efd0c1aa61b939a2370bfd742315ea462c808fa6d77d5f8ab5",
             "retention": 1,
             "rowId": "active-artifact-no-retrieval",
             "samples": 224,
@@ -118826,7 +118826,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "2ebe34f27d1937ce50b001e2c02b5512162a71ca7d4b0a51656f9c9aadd21ea3",
+            "identityId": "8b2d33d7b65dcc899bc23f348c51ebfd926c114a278fda13c319136efad750d7",
             "retention": 1,
             "rowId": "candidate-no-retrieval",
             "samples": 224,
@@ -118860,7 +118860,7 @@
       },
       "evidence": {
         "candidateId": "candidate-tainted",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -118873,9 +118873,9 @@
           {
             "rowId": "frozen-none",
             "identity": {
-              "identityId": "2713b50860ee2cd25d2b2affb695752a32493871e5f9244ee797c708c28dda07",
+              "identityId": "b309fd7bc7cd717baf82588334010b279e8c88cba2dcc0050a8230f99f0d9dcf",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -125131,9 +125131,9 @@
           {
             "rowId": "frozen-retrieval",
             "identity": {
-              "identityId": "e8917984acc8c02f264ff2af49dd9587ae3fe37413f373666111e5f2bddbc52a",
+              "identityId": "fe3edc694709fcab2f70edafa5517df660b96718058f1eaf4f02d9918318f4e5",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -137581,9 +137581,9 @@
           {
             "rowId": "frozen-distilled-rule",
             "identity": {
-              "identityId": "e34456bf2db8ee257c85f978ff92f67bf8412ed4492ce50257f66da530e4dcb4",
+              "identityId": "c3f258ec0f4feb7bafbcd02470110df18df60c9facdc354bf4bd63a9c8d942a7",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -143839,9 +143839,9 @@
           {
             "rowId": "active-artifact-no-retrieval",
             "identity": {
-              "identityId": "88be6493d81849b295f20d11d804c80dc470c515b9f1a89607b48729981db332",
+              "identityId": "036cc21287c001efd0c1aa61b939a2370bfd742315ea462c808fa6d77d5f8ab5",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -150097,9 +150097,9 @@
           {
             "rowId": "candidate-no-retrieval",
             "identity": {
-              "identityId": "2ebe34f27d1937ce50b001e2c02b5512162a71ca7d4b0a51656f9c9aadd21ea3",
+              "identityId": "8b2d33d7b65dcc899bc23f348c51ebfd926c114a278fda13c319136efad750d7",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -157704,7 +157704,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "2713b50860ee2cd25d2b2affb695752a32493871e5f9244ee797c708c28dda07",
+              "identityId": "b309fd7bc7cd717baf82588334010b279e8c88cba2dcc0050a8230f99f0d9dcf",
               "samples": 224
             },
             {
@@ -157714,7 +157714,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "e8917984acc8c02f264ff2af49dd9587ae3fe37413f373666111e5f2bddbc52a",
+              "identityId": "fe3edc694709fcab2f70edafa5517df660b96718058f1eaf4f02d9918318f4e5",
               "samples": 224
             },
             {
@@ -157724,7 +157724,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "e34456bf2db8ee257c85f978ff92f67bf8412ed4492ce50257f66da530e4dcb4",
+              "identityId": "c3f258ec0f4feb7bafbcd02470110df18df60c9facdc354bf4bd63a9c8d942a7",
               "samples": 224
             },
             {
@@ -157734,7 +157734,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "88be6493d81849b295f20d11d804c80dc470c515b9f1a89607b48729981db332",
+              "identityId": "036cc21287c001efd0c1aa61b939a2370bfd742315ea462c808fa6d77d5f8ab5",
               "samples": 224
             },
             {
@@ -157744,7 +157744,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "2ebe34f27d1937ce50b001e2c02b5512162a71ca7d4b0a51656f9c9aadd21ea3",
+              "identityId": "8b2d33d7b65dcc899bc23f348c51ebfd926c114a278fda13c319136efad750d7",
               "samples": 224
             }
           ],
@@ -157823,7 +157823,7 @@
           },
           "cost": null
         },
-        "reportId": "45ee98388fac890352b5db04ced4a3acd258f9d458ea35277c4cae71aa12bacd"
+        "reportId": "5e39c0c2747ea06fdf6c5078113c154de4a270126aa464c6997f41ed4a97817b"
       },
       "plannedState": "rejected"
     },
@@ -157839,13 +157839,13 @@
           "artifactId": "c73209476232920ad3141a0f7d2ef953c773511393d9f486e5c5fd84ff015c81",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+          "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "175c6d989c4f272daaf9eceee944c6bd2720a39e16fdeafd0314b71c2077f100",
+          "id": "715258eb25aafb65fdb9b5085f3ab7c080dc5f2ec954f743ff987b96c5e790ab",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -157875,7 +157875,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -157907,7 +157907,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "a15224e81c72754bd297a53b44895b278616a365779b2f70195104a4c52a0bf2",
+        "id": "1a275d2f3b2a23979f5333db73b62965c7996c28f78f27ba739fb921ccd18243",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -157941,8 +157941,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "175c6d989c4f272daaf9eceee944c6bd2720a39e16fdeafd0314b71c2077f100",
-        "reportId": "15fb6345485d0279adaee14a63b4fa8b06eaedce28e82c79be7950d0de1097bf",
+        "registrationId": "715258eb25aafb65fdb9b5085f3ab7c080dc5f2ec954f743ff987b96c5e790ab",
+        "reportId": "434b49695255ff0abea6bcae86155d2b38653188e9363a2efc3c0b55f7ea3d57",
         "retention": [
           {
             "drop": 0,
@@ -157970,7 +157970,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "c6a7e2770d12e29f11ec7575b55c419aae1061b795d61dfa190b314cca56ff94",
+            "identityId": "c778ef45bf8abc192a766737b601cab6561ca53e4c7b54dfe8e7b009baaf0916",
             "retention": 0.0390625,
             "rowId": "frozen-none",
             "samples": 224,
@@ -157980,7 +157980,7 @@
             "cgc": 0.026785714285714284,
             "cost": null,
             "failures": 0,
-            "identityId": "c102c8bfcfeaa17a079e799de0e7c14bc8addd5e8b1dc345482b0be975d19be2",
+            "identityId": "df875fc81a84262fbb6aeb40b8ded66319c101d7d76f634099780f9cf631eb1d",
             "retention": 0.0390625,
             "rowId": "frozen-retrieval",
             "samples": 224,
@@ -157990,7 +157990,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "1897b0679918f1752e78b00208c27a7c332e102fe177ac220c33ca96cf0a814c",
+            "identityId": "4cf5d22ef2973a277898896eed320c21f87584c04a1d2c602b73959647bc0a09",
             "retention": 1,
             "rowId": "frozen-distilled-rule",
             "samples": 224,
@@ -158000,7 +158000,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "4aafc4ded37e0db9893d8b0e0a8971e47019f4921f479aa923f2062a9ee051cf",
+            "identityId": "17dfef5a249f92493011c8da567743e934e53373fa005717d0b1646d6de9888a",
             "retention": 1,
             "rowId": "active-artifact-no-retrieval",
             "samples": 224,
@@ -158010,7 +158010,7 @@
             "cgc": 1,
             "cost": null,
             "failures": 0,
-            "identityId": "6619e7827d51babfbef2cba802d45f1e3d998b5474268bc397f73bfef4fe6ad1",
+            "identityId": "ebeba50a4bbdfc3715d2136ff50c5d8c499981316cab9cb7a73272a53cf610c3",
             "retention": 1,
             "rowId": "candidate-no-retrieval",
             "samples": 224,
@@ -158044,7 +158044,7 @@
       },
       "evidence": {
         "candidateId": "candidate-oversized",
-        "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+        "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -158057,9 +158057,9 @@
           {
             "rowId": "frozen-none",
             "identity": {
-              "identityId": "c6a7e2770d12e29f11ec7575b55c419aae1061b795d61dfa190b314cca56ff94",
+              "identityId": "c778ef45bf8abc192a766737b601cab6561ca53e4c7b54dfe8e7b009baaf0916",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -164315,9 +164315,9 @@
           {
             "rowId": "frozen-retrieval",
             "identity": {
-              "identityId": "c102c8bfcfeaa17a079e799de0e7c14bc8addd5e8b1dc345482b0be975d19be2",
+              "identityId": "df875fc81a84262fbb6aeb40b8ded66319c101d7d76f634099780f9cf631eb1d",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -176765,9 +176765,9 @@
           {
             "rowId": "frozen-distilled-rule",
             "identity": {
-              "identityId": "1897b0679918f1752e78b00208c27a7c332e102fe177ac220c33ca96cf0a814c",
+              "identityId": "4cf5d22ef2973a277898896eed320c21f87584c04a1d2c602b73959647bc0a09",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -183023,9 +183023,9 @@
           {
             "rowId": "active-artifact-no-retrieval",
             "identity": {
-              "identityId": "4aafc4ded37e0db9893d8b0e0a8971e47019f4921f479aa923f2062a9ee051cf",
+              "identityId": "17dfef5a249f92493011c8da567743e934e53373fa005717d0b1646d6de9888a",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -189281,9 +189281,9 @@
           {
             "rowId": "candidate-no-retrieval",
             "identity": {
-              "identityId": "6619e7827d51babfbef2cba802d45f1e3d998b5474268bc397f73bfef4fe6ad1",
+              "identityId": "ebeba50a4bbdfc3715d2136ff50c5d8c499981316cab9cb7a73272a53cf610c3",
               "registryRevision": null,
-              "hostManifestRevision": "72b6c70b6f7bf6eef68a46582139dcfaf61991c9821c8657393e8f6eaef8dba8",
+              "hostManifestRevision": "304c9f37d550a0ef2e8be9252950d7f5884e8d32700338f0060b35f440f53b66",
               "requested": {
                 "kind": "legacy",
                 "chat": {
@@ -196888,7 +196888,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "c6a7e2770d12e29f11ec7575b55c419aae1061b795d61dfa190b314cca56ff94",
+              "identityId": "c778ef45bf8abc192a766737b601cab6561ca53e4c7b54dfe8e7b009baaf0916",
               "samples": 224
             },
             {
@@ -196898,7 +196898,7 @@
               "retention": 0.0390625,
               "failures": 0,
               "cost": null,
-              "identityId": "c102c8bfcfeaa17a079e799de0e7c14bc8addd5e8b1dc345482b0be975d19be2",
+              "identityId": "df875fc81a84262fbb6aeb40b8ded66319c101d7d76f634099780f9cf631eb1d",
               "samples": 224
             },
             {
@@ -196908,7 +196908,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "1897b0679918f1752e78b00208c27a7c332e102fe177ac220c33ca96cf0a814c",
+              "identityId": "4cf5d22ef2973a277898896eed320c21f87584c04a1d2c602b73959647bc0a09",
               "samples": 224
             },
             {
@@ -196918,7 +196918,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "4aafc4ded37e0db9893d8b0e0a8971e47019f4921f479aa923f2062a9ee051cf",
+              "identityId": "17dfef5a249f92493011c8da567743e934e53373fa005717d0b1646d6de9888a",
               "samples": 224
             },
             {
@@ -196928,7 +196928,7 @@
               "retention": 1,
               "failures": 0,
               "cost": null,
-              "identityId": "6619e7827d51babfbef2cba802d45f1e3d998b5474268bc397f73bfef4fe6ad1",
+              "identityId": "ebeba50a4bbdfc3715d2136ff50c5d8c499981316cab9cb7a73272a53cf610c3",
               "samples": 224
             }
           ],
@@ -197007,7 +197007,7 @@
           },
           "cost": null
         },
-        "reportId": "15fb6345485d0279adaee14a63b4fa8b06eaedce28e82c79be7950d0de1097bf"
+        "reportId": "434b49695255ff0abea6bcae86155d2b38653188e9363a2efc3c0b55f7ea3d57"
       },
       "plannedState": "rejected"
     }
@@ -213000,7 +213000,7 @@
       "storageUri": "memory:cgt/scripted-base",
       "trainingRunId": null
     },
-    "evaluatorRevision": "01439701d58c9a9280904176971079147857a85df1c2216df034a9faabe6219a",
+    "evaluatorRevision": "9e3eab0f7f118eb22518fd49a2c5094c93cc3125b39e07c17b796a4b3ca27c28",
     "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
     "live": {
       "status": "not-run",
@@ -213124,8 +213124,8 @@
   "runtime": {
     "node": "24.20.0",
     "bun": null,
-    "tangle": "0.41.0",
-    "jaren": "0.91.4"
+    "tangle": "0.42.0",
+    "jaren": "0.161.0"
   },
   "rows": [
     {
@@ -323562,5 +323562,5 @@
     "Scripted operations use an injected fixed clock and zero training submissions: their zero milliseconds and zero external spend are fixture accounting, not measured trainer or model performance.",
     "Each evaluation reportId addresses its retained candidate evidence block, avoiding a circular identity with this enclosing report. All paired bootstrap intervals use the shared instrument implementation."
   ],
-  "reportId": "1ccf1e00d534942be1ab019182f4ab995f991b55f4e80d0769ac6c9d319e5c7b"
+  "reportId": "5e02664ed0daa4e6bfab0e6870c8e2a7acd657a4a1e4bd4f0d6c94c0579f5109"
 }

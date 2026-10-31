@@ -27,7 +27,6 @@ import flowPackage from '@jarenjs/flow/package.json' with { type: 'json' };
 import modelsPackage from '@tangleai/models/package.json' with { type: 'json' };
 import contextPackage from '@tangleai/context/package.json' with { type: 'json' };
 import agentsPackage from '@tangleai/agents/package.json' with { type: 'json' };
-import type {} from './jaren-flow.d.ts';
 
 import { masIssue, refuse, type MasValidated } from './errors.ts';
 import { masRevisionOf } from './identity.ts';

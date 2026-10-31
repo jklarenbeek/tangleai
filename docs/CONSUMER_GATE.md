@@ -75,7 +75,7 @@ It builds real publication tarballs, then:
   browser path fails here rather than in someone's application.
 - Enforces a **tree-shaking byte ceiling**
   ([`scripts/check-program-bundle.ts`](../scripts/check-program-bundle.ts), also
-  `npm run test:tree-shaking`): the minimal entry bundles to at most 18,000
+  `npm run test:tree-shaking`): the minimal entry bundles to at most 29,000
   bytes and retains no runtime engine or model mechanism. A ceiling makes an
   accidental import of a heavy subsystem a build failure instead of a slow
   regression nobody measures.

@@ -71,7 +71,7 @@ it('uses native cell predicates for every fixture neighbourhood and refuses unsu
       mode: string; residual: unknown; sql: string; scanNarrative: string;
     };
     assert.equal(explain.mode, 'native'); assert.equal(explain.residual, null);
-    assert.match(explain.sql, /"gx_cell6" = \?/, 'cell refinement executes in native SQL');
+    assert.match(explain.sql, /"gx_cell6" (?:= \?|IN \(SELECT value FROM json_each\(\?\))/, 'cell refinement executes in native SQL');
     assert.match(explain.scanNarrative, /SEARCH place_gazetteer USING INDEX place_gazetteer_by_gazetteer(?:_cell)? \(/,
       'check the actual SQLite seek, not the inventory of available indexes');
   } finally { await db.close(); }

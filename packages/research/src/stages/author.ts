@@ -32,7 +32,7 @@ export function researchCodeStaticIssues(text: string): ResearchIssue[] {
     () => !/(?:["'](?:node:)?(?:https?|net|tls|dns|dgram)["']|\b(?:fetch|WebSocket)\s*\()/i.test(text)
       || { valid: false, errors: [researchIssue('TRSH1010', '/code', 'Source mentions a network import or operation.')] },
   )(text));
-  return checked.valid ? [] : checked.errors;
+  return checked.valid ? [] : checked.errors.map(error => 'path' in error ? error : researchIssue('TRSH1010', '/code', error.message, error));
 }
 export async function researchCodeWriteId(attemptId: string, path: string): Promise<string> {
   return 'code-' + await researchRevisionOf({ attemptId, path });

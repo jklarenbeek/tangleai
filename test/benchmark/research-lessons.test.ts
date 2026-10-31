@@ -53,7 +53,7 @@ it('every negative lesson control reaches its registered native refusal', async 
   assert.deepEqual(report.rows.slice(6).map(row => row.native!.phase),
     ['approval', 'approval', 'proposal', 'proposal', 'approval', 'materialization', 'validation', 'materialization', 'materialization']);
   assert.equal(report.rows.at(-1)!.native!.cause, 'TRSH2004');
-  assert.equal(report.rows.at(-1)!.observedCause, 'GUARDED', 'The pre-mechanism analytic result remains separately visible.');
+  assert.equal(report.rows.at(-1)!.observedCause, 'JG0002', 'The pre-mechanism analytic result remains separately visible.');
   const volatile = report.rows.find(row => row.id === 'lesson-refusal:volatile')!;
   assert.ok(volatile.eligibilityIssues.some(issue => issue.includes('domain regressed')));
   assert.deepEqual(await lessonOracleEligibility([1, 1, 1], [.5, .5, .5], ['a', 'a', 'b']), []);

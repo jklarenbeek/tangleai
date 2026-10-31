@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "2be71c633567e6f1e0598fdc6543259862318013",
+    "head": "003ec8dc912b227077a694d26fbcbf42469cb986",
     "clean": false,
     "files": [
       {
@@ -53,7 +53,7 @@
       },
       {
         "path": "benchmark/results/locomo-policy.json",
-        "sha256": "3641111f8d3dbd091fc20e7757955c778691e41fe859c177aa7750bb4f157f95"
+        "sha256": "67880981d76fac21df545d53625d61519912e37e65f931db38c1c0fe0ce6d97e"
       },
       {
         "path": "benchmark/results/locomo-qa-live.json",
@@ -61,11 +61,11 @@
       },
       {
         "path": "benchmark/results/locomo-qa.json",
-        "sha256": "96cfde7a69f81175c508364dd125b58697a17c9057c47c7461cf9537b047a489"
+        "sha256": "f28461c0411291b5c24ca6586adeed47baad246d7a8fe7c6accfe06aaa471d07"
       },
       {
         "path": "benchmark/results/locomo-recall.json",
-        "sha256": "31101cb189fca4550f0ddbe06510027e9f50d61dd3b8c44609c1da3c7ae7ae83"
+        "sha256": "0d9badecfa2a9565623384187ac77909f9a14480a5bdcbfeca9ab4b351273c4c"
       },
       {
         "path": "benchmark/schemas/config-conformance.schema.json",
@@ -120,113 +120,113 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "0f771f6628f5b4558d9dbe49cabba95f3d5f3a1e9522325750d1ec55011ec97b"
+    "sha256": "f6dd887d7c55d1865a4ac54c6fe38e0a149d8f8b0687a992d9c1af2fc9c4aa77"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.41.0"
+        "version": "0.42.0"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.41.0"
+        "version": "0.42.0"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.41.0"
+        "version": "0.42.0"
       }
     ]
   },
@@ -344,7 +344,7 @@
     ],
     "desktopContract": {
       "operations": 53,
-      "revision": "e536aaba47a4e0fad678c8d817797e6f2769f5851d7aa612e5b4d2843b98ea32"
+      "revision": "24b2fb58fee67df36dd35f4f40cff31db4748873591655359dbc7bafbc0fc894"
     },
     "summary": {
       "hostInputs": 2,
@@ -825,7 +825,7 @@
         "detail": "default settings produce the built-in embedder identity and no chat wire; that fallback is intentional product behavior and only the unconfigured legacy request keeps it"
       },
       "status": "holds",
-      "observed": "the unconfigured legacy request resolves to no chat wire and the built-in hash-trigram-512 identity at 512 dimensions (identity fd8f7a7df75a…)"
+      "observed": "the unconfigured legacy request resolves to no chat wire and the built-in hash-trigram-512 identity at 512 dimensions (identity 674aec38016a…)"
     },
     {
       "id": "l-custom-no-base",
@@ -959,7 +959,7 @@
         "detail": "today a chat message stores only a 'provider/model' label; the campaign records the identity reference and provider-reported usage beside it"
       },
       "status": "holds",
-      "observed": "a chat answer stores its identity reference (fd8f7a7df75a…) beside the display label, and the identity is retrievable from the repository"
+      "observed": "a chat answer stores its identity reference (674aec38016a…) beside the display label, and the identity is retrievable from the repository"
     },
     {
       "id": "l-report-identity-absence",
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "7b1ef7a234a2881ab04a3b2df50866f2e7eb99aeb3c279419535673967e042fb"
+  "reportId": "6ffd201e319096908e7235fd3e301debfc0dc574f5c64602402d825c49eb0f03"
 }

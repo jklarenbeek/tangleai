@@ -8,9 +8,10 @@ import { createTangleDbModel } from './model.ts';
 import { assertGraphVectorDeclaration, GRAPH_VECTOR_COLLECTIONS, GraphVectorRefusal, type GraphVectorDeclaration } from './graph-vector-model.ts';
 import { GRAPH_VECTOR_STATE_KEY, validateGraphVectorState, type GraphVectorState } from './graph-vector-state.ts';
 
+type NativeGraphStep = { kind: string; collection?: string; draft?: boolean; [key: string]: unknown };
 interface NativeGraphMigration {
   $migration: string; id: string; from: string; to: string;
-  steps: Array<{ kind: string; collection?: string; draft?: boolean; [key: string]: unknown }>;
+  steps: NativeGraphStep[];
 }
 export interface GraphVectorMigrationPlan {
   before: GraphVectorDeclaration | null;
@@ -34,7 +35,7 @@ export function planGraphVectorMigration(before: GraphVectorDeclaration | null, 
   } else if (options.dropState) throw new GraphVectorRefusal('TVEC1003', 'A column-add plan cannot carry a removal precondition.');
   try {
     const planned = planModelMigration(createTangleDbModel({ graphVectors: before ?? undefined }),
-      createTangleDbModel({ graphVectors: after }), { dialect: sqliteDialect, id }) as { migration: NativeGraphMigration;
+      createTangleDbModel({ graphVectors: after }), { dialect: sqliteDialect, id }) as { migration: Omit<NativeGraphMigration, 'steps'> & { steps: readonly NativeGraphStep[] };
         report: { added: unknown[]; removed: unknown[]; schemaChanged: string[]; drafts: string[] } };
     if (planned.report.added.length || planned.report.removed.length
       || planned.report.schemaChanged.some(name => !(GRAPH_VECTOR_COLLECTIONS as readonly string[]).includes(name)))

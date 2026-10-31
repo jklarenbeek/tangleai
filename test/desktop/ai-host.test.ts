@@ -247,7 +247,7 @@ describe('the resolved stack', () => {
  * named. Pinned as a literal so the legacy projection cannot drift while
  * the selected one is being built beside it.
  */
-const LEGACY_DEFAULT_IDENTITY = 'fd8f7a7df75a3719a541709e2abf6ecaed7d53cedfa33a48e446ef96aec49e47';
+const LEGACY_DEFAULT_IDENTITY = '674aec38016a8cb01862f213387e28f16cae592fa18013a7de12754c6a361f3a';
 
 /** The shipped selection, with a chat key merely HELD for the candidate's provider. */
 const selected = (over: Partial<Settings['chat']> = {}): Settings => wired({

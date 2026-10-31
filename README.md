@@ -45,6 +45,7 @@ retain ties, losses and refused comparisons; lesson writeback stays off.
 ```sh
 # Use .nvmrc (Node 24.20.0), npm 11.12.1 and Bun 1.4.2:
 git submodule update --init vendor/jarenjs
+node scripts/jaren-artifacts.ts --bootstrap   # Jaren tarballs from the pinned source
 npm ci --ignore-scripts
 npm run check      # strict typecheck + complete offline test suite
 npm run skeleton   # the whole loop, end to end, offline
@@ -269,7 +270,10 @@ The historical shipped control also failed the overall interval; it had no
 incumbency privilege. This result is bounded to one model, dataset and sample.
 
 The default is derived from report
-`b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14`.
+`1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf`. Its interval
+statistics were re-derived under Jaren 0.161.0's corrected nearest-rank
+quantile, which moved three of its 29 comparisons by one bootstrap rank; the raw
+paid rows, purchase receipt, selection and decision are unchanged.
 Its independent offline width decision (512) comes from lexical evidence recall,
 not live answer quality. The screen allocated live budget; it did not predict
 the wire. The [full report](docs/LOCOMO_POLICY.md) retains every loss, category
@@ -489,13 +493,15 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-Tangle consumes 23 AI-free Jaren **0.91.4** packages from npm. The source
-submodule at `vendor/jarenjs` pins `30ec046081c02c80ad1916569c45e134e33fb82b`.
-The [registry receipt](docs/integration/jaren-0.91.4-registry.json) verifies all
-23 downloaded archives against the exact lockfile integrities.
-`npm ci --ignore-scripts` installs from npm without a foundation bootstrap;
-`npm run jaren:check` verifies source, manifests, installed versions and archive
-URLs. Installed packages are never patched or source-linked. The existing
+Tangle consumes 23 AI-free Jaren **0.161.0** packages as candidate tarballs
+packed from the source submodule at `vendor/jarenjs`, which pins
+`aed618b8f8cc9b9695e0a8f90a3962a14ac23e74` (tag `v0.161.0`); npm does not serve
+that release. Run `node scripts/jaren-artifacts.ts --bootstrap` before
+`npm ci --ignore-scripts`: it rebuilds the tarballs from the pinned source and
+refuses any byte that differs from the
+[recorded closure](docs/migrations/jaren-ai/foundations.json).
+`npm run jaren:check` verifies source, manifests, installed bytes and lock
+entries. Installed packages are never patched or source-linked. The existing
 storage seam accepts supervised Node processes; `npm run store:supervised:smoke`
 runs both outcome domains and proves zero-effect replay after reopening.
 Native SQLite schema plans, column references and JSON type inspection are

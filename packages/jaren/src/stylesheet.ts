@@ -603,12 +603,13 @@ export function stylesheetSystemMessage(crib: string, options: {
     + ' Iterate and rank with {"$for": {"i": "<path>"}, "$where": …, "$orderby": …, "$return": …},'
     + ' take the first with {"$head": …}.'
     + (crib === '' ? '' : `\n\n${crib}`)
-    // a grammar fact, not a hint for one question: the language has no
-    // absolute value, and every nearest/closest/distance ask needs one.
-    // Measured: both tiers reach for "$abs" unprompted and neither
-    // recovers from being told only that the document does not validate.
-    + '\n\nThere is no absolute-value operator. Write |a − b| as'
-    + ' {"$if": [{"$gt": [a, b]}, {"$sub": [a, b]}, {"$sub": [b, a]}]}.'
+    // a grammar fact, not a hint for one question: a vocabulary without an
+    // absolute value needs one spelled out, because every nearest/closest/
+    // distance ask needs one. Measured: both tiers reach for "$abs"
+    // unprompted and neither recovers from being told only that the
+    // document does not validate. A crib that lists `$abs` already says so.
+    + (/\$abs\b/.test(crib) ? '' : '\n\nThere is no absolute-value operator. Write |a − b| as'
+      + ' {"$if": [{"$gt": [a, b]}, {"$sub": [a, b]}, {"$sub": [b, a]}]}.')
     + (options.extra === undefined || options.extra === '' ? '' : `\n\n${options.extra}`)
     + `\n\n${intro}\n`
     + JSON.stringify(example)

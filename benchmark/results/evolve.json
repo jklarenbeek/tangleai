@@ -212,7 +212,7 @@
       },
       {
         "path": "packages/evolve/src/patch.ts",
-        "sha256": "05e6a92fd6a6a04de8e0b4235ef49dee1396a9a252b1ecbc40391f0911e62e60"
+        "sha256": "6dd6c07ed4d723e7710e2d6892819205d4476588c93316587bf29d80bdb3495e"
       },
       {
         "path": "packages/evolve/src/policy.ts",
@@ -240,7 +240,7 @@
       },
       {
         "path": "packages/evolve/src/strategy-refiner.ts",
-        "sha256": "ed41fdb7a962f9e8028b8ccf57fbb7552eeae5bab724a9bc8878cc669ca9643c"
+        "sha256": "574f371a867bfef14f8e0d81cc0699dde68e69387168dace841db1f98ba3833b"
       },
       {
         "path": "packages/evolve/src/strategy.ts",
@@ -255,129 +255,129 @@
         "sha256": "1b35b9772c50a55a3f2da2d76c5db2952662b5b70d9776e89c6a44a337d388d8"
       }
     ],
-    "sha256": "c9a000605dacb323f1059a0ba4cc9e5b0ffe9613e07128a29fd931a89b276b13"
+    "sha256": "044fb9014c003c1cbbf770600c70115701ebee60af9e760551162e1379830ad6"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.91.4"
+        "version": "0.161.0"
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.41.0"
+        "version": "0.42.0"
       },
       {
         "name": "@tangleai/config",
-        "version": "0.41.0"
+        "version": "0.42.0"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.41.0"
+        "version": "0.42.0"
       },
       {
         "name": "@tangleai/mas",
-        "version": "0.41.0"
+        "version": "0.42.0"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.41.0"
+        "version": "0.42.0"
       },
       {
         "name": "@tangleai/outcomes",
-        "version": "0.41.0"
+        "version": "0.42.0"
       },
       {
         "name": "@tangleai/store",
-        "version": "0.41.0"
+        "version": "0.42.0"
       }
     ]
   },
@@ -1326,5 +1326,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "0195d2460fb76e917e112574f40c3ad1644077f867f38cda4e7f042d0be5b638"
+  "reportId": "0e0d2371243bfb6feb6de73cb8ccac837416f0b6d2c2f2cc62ee8f7c08d872f5"
 }

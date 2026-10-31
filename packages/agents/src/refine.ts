@@ -383,12 +383,7 @@ export function createRefiner(options: {
    * instead of landing half-way and being rolled back.
    * @param document - the state as it stands
    */
-  function dryRun(document: any, patch: any[]): {
-    valid: boolean;
-    errors: any[];
-    plan?: any;
-    next?: any;
-  } {
+  function dryRun(document: any, patch: any[]) {
     return guarded.prepare(document, patch);
   }
 
@@ -472,12 +467,15 @@ export function createRefiner(options: {
     }
 
     const outcome = await guarded.commitPrepared(document, dry);
-    const token = outcome.snapshot;
     if (!outcome.ok) {
+      if (outcome.stage === 'validation') {
+        return { error: 'the refinement was rejected', errors: outcome.errors, patchSchema };
+      }
       if (outcome.stage === 'snapshot') return {
         error: 'the refinement could not take a snapshot; nothing was written',
         cause: outcome.cause, errors: outcome.errors, patchSchema
       };
+      const token = outcome.snapshot;
       if ('restoreError' in outcome && outcome.restoreError !== undefined) return {
         error: 'the refinement failed and rollback failed; storage requires recovery',
         snapshot: token, patchSchema, cause: outcome.cause, restoreError: outcome.restoreError,
@@ -500,7 +498,7 @@ export function createRefiner(options: {
       // the token is returned, not kept: rolling a refinement back is the
       // host's call to make, and a snapshot nobody was told about is a
       // reversal nobody can perform
-      snapshot: token,
+      snapshot: outcome.snapshot,
       removed: { memories: plan.memories.remove, skills: plan.skills.remove },
       ...written,
       ...(options.deduplicate ? { deduplicated: plan.memories.deduplicated } : {}),

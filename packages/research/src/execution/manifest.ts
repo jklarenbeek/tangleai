@@ -80,7 +80,10 @@ function checkEntries(manifest: WorkspaceManifest, limits: ResearchExecutionLimi
     },
   );
   const checked = checkOutcome(checks(manifest));
-  if (!checked.valid) throw new ResearchFailure(checked.errors[0]);
+  if (!checked.valid) {
+    const [first] = checked.errors;
+    throw new ResearchFailure(first && 'path' in first ? first : researchIssue('TRSH1010', '', first?.message ?? 'The workspace manifest is invalid.', first));
+  }
 }
 export function captureResearchWorkspace(input: ResearchWorkspace): ResearchWorkspace {
   const manifest = researchValue(validateResearchShape<WorkspaceManifest>('WorkspaceManifest', input.manifest));

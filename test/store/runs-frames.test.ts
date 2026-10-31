@@ -374,7 +374,7 @@ describe('run frames: a database written before frames existed', () => {
       } finally { await legacy.close(); }
       await assert.rejects(open({ path }), (error: unknown) => (error as { code?: string }).code === 'JD0002');
       const planned = planMigration(legacyModel, TANGLE_DB_MODEL, { dialect: driver.dialect, id: 'legacy-desktop-trace-indexes' }) as {
-        migration: { steps: Array<{ draft?: boolean }> };
+        migration: { steps: ReadonlyArray<{ draft?: boolean }> };
         report: { destructive: boolean; schemaChanged: string[]; drafts: string[] };
       };
       assert.equal(planned.report.destructive, false);

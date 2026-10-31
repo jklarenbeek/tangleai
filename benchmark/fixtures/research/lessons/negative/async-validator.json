@@ -2,7 +2,7 @@
   "id": "async-validator",
   "expected": {
     "code": "TRSH2004",
-    "cause": "GUARDED"
+    "cause": "JG0002"
   },
   "lesson": {
     "corroboration": null,

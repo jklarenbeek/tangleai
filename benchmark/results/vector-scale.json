@@ -134,15 +134,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "7dbdb59366c33e6480b918fc8d1dbe44083b4ccc765a18a16a6a2c3827c356af"
+        "sha256": "241d58a9c64bc2227fb68728e7f620ec4fe6cc01fb80e83f6f62d828fddab246"
       },
       {
         "path": "package.json",
-        "sha256": "772aebb360af690461628f737b907b94e3f69d1ac2a2927ee454b06c1b4615ce"
+        "sha256": "9a36919c90ee89fc274c8de8cf1fb1b3e27fe4e9ebc41de93625c3001911c158"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "fa1e51b457d8372ff409373632818dfa46abdc3dd40c23834684ea653b1faeb9"
+        "sha256": "5c14b5bfb5d21460369300c6a3af0fe5385b9f13f9c4159b38ba1183268d4524"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -166,7 +166,7 @@
       },
       {
         "path": "packages/agents/src/program.ts",
-        "sha256": "7be2e758ec4cbaeba82b71886ed07619c5be80080f79aa3104b433728e1d3d64"
+        "sha256": "5fc41f84052ba7957ddc3a7b82e13cf9de9bcae6fbaf88f7808389aa949b17d9"
       },
       {
         "path": "packages/agents/src/recursive.ts",
@@ -174,7 +174,7 @@
       },
       {
         "path": "packages/agents/src/refine.ts",
-        "sha256": "7f2a6fb02c6d92716788708917b944402205debaf17cc07e6810ee3117e92a29"
+        "sha256": "2e9611f4188b09b37cc9f12d337cf2e20a54a58a9ab53f76bf97b7c08ef759cf"
       },
       {
         "path": "packages/agents/src/schemas/program.ts",
@@ -186,7 +186,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "64ff2d6bee0110b6a6cc820bd7bb6a00e2bb0e5bae4c7004cff7c06597870a7b"
+        "sha256": "649a0929c490613472c9728bbaea4b3b8b85bef31250faf569d69de3add1fc20"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -242,7 +242,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "326409aec54b3acbb912eea1ca7ff3d3d55811fc1fb813d1af2e5602b560601c"
+        "sha256": "3ced813a13a41d0a0062bb9c38e906a3cdcc5e0bb85fe82703becad5d39462b5"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -318,7 +318,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "c381e3120733ae7b4fa833a1d53163213875cb5cba7dc041a4f45d63912a89b6"
+        "sha256": "3b5e7927c0b7733cddb02573d812027d16b2d8f2486018b3700740f136863f2e"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -374,7 +374,7 @@
       },
       {
         "path": "packages/lightrag/package.json",
-        "sha256": "f958c5dc07ea5d565b50f084a6bbfbd5db072cb6f9f514fb5c6a6cdb74a88791"
+        "sha256": "83da1e990a0649f2b9f0579892329ff6f0405cd2516b8653c5bf3d03406bb600"
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
@@ -506,7 +506,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "e784a1acdea0d4d9f1591841ae11e74828c081b22d5f406cea1c140d7888c901"
+        "sha256": "b029367be52efd2d662235b3fe8668a5c1c6822f19d2b1afb670dbf2a7539b2d"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -546,7 +546,7 @@
       },
       {
         "path": "packages/models/src/retry.ts",
-        "sha256": "d2f6f39f57313e66fe7a59d3674ad31ad681c4f3d92a2317f07cff5c88f4b1b1"
+        "sha256": "9eec3798e5c9a08843c6483548fedd457c1839877736348998c4c1d7dc4625e9"
       },
       {
         "path": "packages/models/src/routing.ts",
@@ -562,7 +562,7 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "e6404ae8b6869e0e62796043984c2ac4230b158f540f86a6d48846dc26ad6f42"
+        "sha256": "3c86f183d5251480346bf2ef488ed924ed23fa3ee4ba11d705fb7a1a92559a4f"
       },
       {
         "path": "packages/outcomes/schemas/direction-delta.schema.json",
@@ -694,7 +694,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "b2c1f915b39021e1f9842c0fac442a33383476cbc11094fca4622a7b933045d6"
+        "sha256": "94cdf2bc55cd0a513578f3a83ba5905df82cd07dfcc615ce46560a4d431fd1dc"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -758,7 +758,7 @@
       },
       {
         "path": "packages/store/src/graph-vector-migration.ts",
-        "sha256": "f8dac0e45737b14742dec6c501759a1d553618d2c0fe9bf28aeb3b9474fd6a15"
+        "sha256": "ba0555da89c09d7287b56e096719385f1a200bd2cfd535761b028d127c366137"
       },
       {
         "path": "packages/store/src/graph-vector-model.ts",
@@ -897,7 +897,7 @@
         "sha256": "18a4d4b871a813d91db94ecfc7db308ab5588ae89af5a3786f36469d778da94a"
       }
     ],
-    "sha256": "9a20867eacc7ad32b54e4acd58dc471c41bab2368a838a8f6a49e35dac9dc390"
+    "sha256": "18d5533d7f9b6ab1160c989741c9030ac918335c8c75a88a607933782944e3c0"
   },
   "controls": {
     "golden": {
@@ -2998,5 +2998,5 @@
   ],
   "physicalRequests": 0,
   "nativeQualification": "parity-passed",
-  "reportId": "27bd953cf23b66a956cb46c32946b699b274a7d04dd326b6a930dd1f6de97994"
+  "reportId": "faad0ad39d25fd841088f66cd229c2494c928a2d1549d618828a5fe5b09c27a8"
 }

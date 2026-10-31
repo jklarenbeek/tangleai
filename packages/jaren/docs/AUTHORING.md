@@ -86,7 +86,7 @@ document: no document. The LLM-profile twin does not help, because a relaxation 
 every constraint it removes and therefore **grows** the schema.
 
 Those runs were measured when the canonical grammar was 18,831 characters and its LLM
-profile 19,158. It is **23,515** today, and the profile **23,870**: every operator the
+profile 19,158. It is **24,555** today, and the profile **24,822**: every operator the
 vocabulary gains lands in the response format, so the gap this section is about widens
 rather than closes with time. That is the failure `@tangleai/jaren/stylesheet` fixes:
 
@@ -118,14 +118,14 @@ Four changes, each one answering something that was measured rather than suspect
 **1. Narrow the response format; move the vocabulary to the prompt.**
 [`jaren-jslt.authoring.schema.json`](https://github.com/jklarenbeek/jarenjs/blob/3491513e164dc30e429c84e709bd738841f4df16/packages/json/schemas/jaren-jslt.authoring.schema.json) is
 the canonical grammar cut at the one `$ref` that pulls in the whole expression language —
-**23,515 → 3,491 characters**, the document shape intact and the body open. The cut is
+**24,555 → 3,491 characters**, the document shape intact and the body open. The cut is
 where all the growth is, so the authoring profile has not moved a byte while the grammar
-it is cut from has grown by a quarter. It is mechanically derived and the artifact test
+it is cut from has grown by nearly a third. It is mechanically derived and the artifact test
 asserts the committed file *is* the derivation.
 It is deliberately weaker than the canonical schema, which is why `canonical` is validated
 locally afterwards and the compiler still gates everything: the same validate-then-compile
 pipeline, with a smaller thing driving the decoder. What the cut removes goes into the
-system message instead, as **1,303 characters of operator names grouped by arity** —
+system message instead, as **1,451 characters of operator names grouped by arity** —
 `operatorCrib(querySchema)`, read off the injected artifact so it cannot rot. Arity is in
 there because leaving it out was measured too: on the small schema alone the model reached
 the right algorithm and wrote `{"$if": {"$gt": …, "then": …, "else": …}}` — named members
@@ -181,7 +181,10 @@ everything except what to fix. It repaired to the identical document twice.
 `unknownOperatorGate` walks the bodies, checks every `$`-member against the grammar's own
 closed vocabulary, and says *`'$abs' is not an operator in this grammar`* with a pointer.
 It runs **before** the canonical schema, because the first invalid check is the one whose
-errors travel. A host that mounts a registry passes `operators: registry.names()` and both
+errors travel. Jaren's core grammar has since gained `$abs`, so the system message drops its
+absolute-value workaround whenever the crib lists it, and the gate's test document uses
+`$absolute` instead: the canonical schema answers it with 343 errors, the first naming the
+member at number 65. A host that mounts a registry passes `operators: registry.names()` and both
 the crib and the gate widen together — a gate stricter than the prompt would refuse what
 the instructions offered.
 

@@ -144,8 +144,8 @@ not this package's: the ledger's refinement vocabulary cannot address inside
 a record, and its skill schema is closed with no evidence member, so the
 trail is an appended memory rather than an edited skill. Every pointer but
 `/memories/-` is refused `TEVO1011`, both validators are synchronous
-(preparation uses the engine's synchronous path, which refuses an
-asynchronous hook), and no refusal ever carries an empty `errors`.
+(preparation uses the engine's synchronous path, which throws `JG0002`
+for an asynchronous hook), and no refusal ever carries an empty `errors`.
 
 ## What a round amounts to
 

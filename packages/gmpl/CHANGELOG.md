@@ -1,5 +1,12 @@
 # @tangleai/gmpl
 
+## 0.42.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/mas@0.42.0
+
 ## 0.41.0
 
 ### Patch Changes

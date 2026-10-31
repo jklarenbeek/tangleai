@@ -34532,7 +34532,7 @@
           "pairs": 16,
           "mean": -0.08407738095238096,
           "sd": 0.18182063780293412,
-          "lowerBound": -0.1636904761904762
+          "lowerBound": -0.1651785714285714
         },
         {
           "category": 2,
@@ -34561,7 +34561,7 @@
         "mean": -0.08972663139329805,
         "sd": 0.2541815711216369,
         "interval": {
-          "low": -0.16291887125220458,
+          "low": -0.16313932980599646,
           "high": -0.029541446208112877
         },
         "blocks": true
@@ -34594,7 +34594,7 @@
           {
             "clause": "category-floor",
             "passed": false,
-            "detail": "category 1's lower bound -0.1637 is below -0.05; category 2's lower bound -0.3125 is below -0.05; category 4's lower bound -0.1875 is below -0.05"
+            "detail": "category 1's lower bound -0.1652 is below -0.05; category 2's lower bound -0.3125 is below -0.05; category 4's lower bound -0.1875 is below -0.05"
           },
           {
             "clause": "token-ratio",
@@ -34609,7 +34609,7 @@
           {
             "clause": "acting-set",
             "passed": false,
-            "detail": "on the 54 prompts it changed the interval is [-0.1629, -0.0295] — harmful exactly where it acts"
+            "detail": "on the 54 prompts it changed the interval is [-0.1631, -0.0295] — harmful exactly where it acts"
           }
         ],
         "reasons": [
@@ -34627,7 +34627,7 @@
           },
           {
             "code": "category-floor",
-            "detail": "category 1's lower bound -0.1637 is below -0.05; category 2's lower bound -0.3125 is below -0.05; category 4's lower bound -0.1875 is below -0.05"
+            "detail": "category 1's lower bound -0.1652 is below -0.05; category 2's lower bound -0.3125 is below -0.05; category 4's lower bound -0.1875 is below -0.05"
           },
           {
             "code": "token-ratio",
@@ -34639,7 +34639,7 @@
           },
           {
             "code": "acting-set",
-            "detail": "on the 54 prompts it changed the interval is [-0.1629, -0.0295] — harmful exactly where it acts"
+            "detail": "on the 54 prompts it changed the interval is [-0.1631, -0.0295] — harmful exactly where it acts"
           }
         ]
       }
@@ -35603,7 +35603,7 @@
       "questionSet": "988ddf56cd2556adaf1a6dcb9c38d747eaee043c139a869d5a6b55edff5bd1b5",
       "mean": -0.016523092668605785,
       "interval": {
-        "low": -0.052949077225736545,
+        "low": -0.05294907722573655,
         "high": 0.005544452478991813
       },
       "power": {
@@ -35648,7 +35648,7 @@
         "mean": -0.05874877393282057,
         "sd": 0.24597217770653243,
         "interval": {
-          "low": -0.189162748746375,
+          "low": -0.18931250209380276,
           "high": 0.021438715672657455
         },
         "blocks": false
@@ -35699,7 +35699,7 @@
           {
             "clause": "acting-set",
             "passed": true,
-            "detail": "on the 18 prompts it changed the interval is [-0.1892, 0.0214]"
+            "detail": "on the 18 prompts it changed the interval is [-0.1893, 0.0214]"
           }
         ],
         "reasons": [
@@ -36099,7 +36099,7 @@
       "questionSet": "46b793886a67e260f4b5c2e64cc0986266c6cd55641de1c30ea7f09bdf0b4fa5",
       "mean": 0.010004072221861298,
       "interval": {
-        "low": -0.0014692302113825128,
+        "low": -0.0014696542257679078,
         "high": 0.02712765029474826
       },
       "power": {
@@ -36144,7 +36144,7 @@
         "mean": 0.03179865813377341,
         "sd": 0.1269916276309812,
         "interval": {
-          "low": -0.0037345694671233674,
+          "low": -0.0037684452827088885,
           "high": 0.0850187025187025
         },
         "blocks": false
@@ -36195,7 +36195,7 @@
           {
             "clause": "acting-set",
             "passed": true,
-            "detail": "on the 28 prompts it changed the interval is [-0.0037, 0.0850]"
+            "detail": "on the 28 prompts it changed the interval is [-0.0038, 0.0850]"
           }
         ],
         "reasons": [
@@ -36510,7 +36510,7 @@
     "passed": true,
     "failures": []
   },
-  "reportId": "b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14",
+  "reportId": "1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf",
   "purchases": {
     "path": "benchmark/results/locomo-policy.json.purchases.json",
     "sha256": "0918d46ff99ac51d73f6c5f165923e4fc5831d26c1cc911d3ce85097f5e5186e",

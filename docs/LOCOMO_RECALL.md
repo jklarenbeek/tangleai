@@ -45,7 +45,7 @@ One memory per turn, `evidence` = `<sample_id>/<dia_id>`, tags = speaker and ses
 | **recency (last k turns)** | 0.004 | 0.002 | 0.000 | 0.044 | 0.002 |
 | **near (policies off)** | 0.288 | 0.092 | 0.366 | 0.083 | 0.347 |
 | **near (historical shipped thresholds; this run’s embedder)** | 0.288 | 0.092 | 0.366 | 0.083 | 0.347 |
-| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14; default k=10, minScore=0)** | 0.288 | 0.092 | 0.366 | 0.083 | 0.347 |
+| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report 1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf; default k=10, minScore=0)** | 0.288 | 0.092 | 0.366 | 0.083 | 0.347 |
 | _analytic ceiling_ | 0.991 | 0.973 | 0.997 | 0.951 | 1.000 |
 
 Gold hits credited through a crystallized survivor's absorbed address rather than its own: near-raw 0, near 0, selected-default 0.
@@ -59,7 +59,7 @@ Gold hits credited through a crystallized survivor's absorbed address rather tha
 | **recency (last k turns)** | 0.013 | 0.004 | 0.009 | 0.055 | 0.012 |
 | **near (policies off)** | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 |
 | **near (historical shipped thresholds; this run’s embedder)** | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 |
-| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14; default k=10, minScore=0)** | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 |
+| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report 1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf; default k=10, minScore=0)** | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 |
 | _analytic ceiling_ | 0.995 | 0.992 | 0.997 | 0.964 | 1.000 |
 
 Gold hits credited through a crystallized survivor's absorbed address rather than its own: near-raw 0, near 0, selected-default 0.
@@ -73,7 +73,7 @@ Gold hits credited through a crystallized survivor's absorbed address rather tha
 | **recency (last k turns)** | 0.027 | 0.011 | 0.034 | 0.076 | 0.024 |
 | **near (policies off)** | 0.434 | 0.197 | 0.547 | 0.179 | 0.499 |
 | **near (historical shipped thresholds; this run’s embedder)** | 0.434 | 0.197 | 0.547 | 0.179 | 0.499 |
-| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14; default k=10, minScore=0)** | 0.434 | 0.197 | 0.547 | 0.179 | 0.499 |
+| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report 1b71a78b5f2cf83d3cd72ef3cd0ce50b67bb7080c69b6c46f1cfa28b176fdaaf; default k=10, minScore=0)** | 0.434 | 0.197 | 0.547 | 0.179 | 0.499 |
 | _analytic ceiling_ | 0.996 | 0.994 | 0.997 | 0.969 | 1.000 |
 
 Gold hits credited through a crystallized survivor's absorbed address rather than its own: near-raw 0, near 0, selected-default 0.

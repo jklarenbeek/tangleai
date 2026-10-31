@@ -38,12 +38,14 @@ The release commit follows the work-order commits and the final push includes
 them together. Authorization to close out when the campaign is complete covers
 this sequence; npm publication remains a separate manual author action.
 
-The current checkout consumes Jaren 0.91.4 registry packages. The
-[registry receipt](../integration/jaren-0.91.4-registry.json) verifies downloaded
-archives against the exact lock. Archived 0.84.3 migration receipts retain their
-historical source/archive comparison. Ordinary `npm ci --ignore-scripts` needs
-no foundation bootstrap. The candidate instructions below apply only to a
-checkout with an active `docs/migrations/jaren-ai/foundations.json`.
+The current checkout consumes Jaren 0.161.0 as candidate artifacts: 23 tarballs
+packed from the committed `vendor/jarenjs` source, which npm does not serve. The
+active `docs/migrations/jaren-ai/foundations.json` records each tarball's hashes,
+member inventory and dependency edges, so `npm ci --ignore-scripts` requires the
+bootstrap below first. The [0.91.4 registry receipt](../integration/jaren-0.91.4-registry.json)
+and the archived 0.84.3 migration receipts retain their historical comparisons.
+Publication refuses candidate foundations; registry mode returns once the same
+Jaren release is published and the lock is moved onto its registry archives.
 
 Use the Node version in `.nvmrc`, npm from the root `packageManager`, and Bun from
 `release.config.json`. CI reads those same pins. In candidate foundation mode,

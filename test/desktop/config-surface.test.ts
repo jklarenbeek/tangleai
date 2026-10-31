@@ -42,16 +42,18 @@ describe('the public contract moved compatibly', () => {
     // token settings constrain previously untyped extra properties (R6).
     // The existing output narrowing: `chat.send`'s returned document
     // citations were an unconstrained `{ type: 'object' }`; the measured
-    // grounding contract closes them. The compiled diff classifies that
-    // closure R8 (output-narrowed) — documented here as the deliberate
-    // change; only these documented constraints may narrow.
+    // grounding contract closes them. An old client accepts every closed
+    // citation, so the diff reads that closure from the consumer as
+    // additive R9 (output-narrowed); only the documented input constraints
+    // and the live operation are breaking.
     assert.deepEqual(diff.breaking.map((change: { rule: string, docPath: string }) => ({ rule: change.rule, docPath: change.docPath })), [
       { rule: 'R6', docPath: '/operations/settings.set/input/properties/settings/properties/chat/properties/maxTokens' },
       { rule: 'R6', docPath: '/operations/settings.set/input/properties/settings/properties/chat/properties/maxTokensField' },
       { rule: 'R6', docPath: '/operations/settings.set/input/properties/settings/properties/profile' },
       { rule: 'R1', docPath: '/operations/dag.live' },
-      { rule: 'R8', docPath: '/operations/chat.send/output/properties/documentCitations/items/additionalProperties' },
     ], `unexpected narrowing: ${JSON.stringify(diff.breaking.slice(0, 5))}`);
+    assert.ok(diff.additive.some((change: { rule: string, kind: string, docPath: string }) => change.rule === 'R9' && change.kind === 'output-narrowed'
+      && change.docPath === '/operations/chat.send/output/properties/documentCitations/items/additionalProperties'), 'the citation closure is a compatible output narrowing');
     assert.equal(isCompatible(frozen, current), false, 'clients must negotiate the new release version');
     assert.equal(isCompatible({ ...frozen, version: DESKTOP_CONTRACT.version }, current), true, 'same-version negotiation is separate from the schema diff');
     assert.equal(diff.additive.length > 0, true, 'the campaigns added operations, errors and members');
@@ -69,7 +71,6 @@ describe('the public contract moved compatibly', () => {
       { rule: 'R6', op: 'settings.set' },
       { rule: 'R6', op: 'settings.set' },
       { rule: 'R1', op: 'dag.live' },
-      { rule: 'R8', op: 'chat.send' },
     ]);
     // Members are added to three operations and nothing else; whole
     // operations may also appear, and an operation nobody negotiated for
