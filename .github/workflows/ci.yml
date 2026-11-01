@@ -39,7 +39,8 @@ jobs:
     name: packages (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     # Full native workflow, report reproduction and crash-recovery qualification.
-    timeout-minutes: 180
+    # 0.42.0 needed 2 h 49 m on one runner and exceeded 3 h on another.
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:

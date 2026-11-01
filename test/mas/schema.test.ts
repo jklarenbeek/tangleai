@@ -15,6 +15,7 @@ import {
   validateRegistryShape,
   validateRuntimeRecord,
 } from '@tangleai/mas';
+import { compileEmbeddedSchema } from '../../packages/mas/src/schema.ts';
 
 const manifest = JSON.parse(await readFile('benchmark/fixtures/mas/manifest.json', 'utf8')) as {
   registry: { path: string },
@@ -138,5 +139,28 @@ describe('the runtime record shapes', () => {
     const vague = structuredClone(attempt) as Record<string, unknown>;
     (vague.transcript as { state: string }).state = 'missing';
     assert.equal(validateRuntimeRecord('masNodeAttempt', vague).valid, false, 'an absence must be one of the declared states');
+  });
+});
+
+describe('embedded schema compilation', () => {
+  it('compiles each distinct schema once and keeps every answer independent', () => {
+    const schema = { type: 'object', required: ['text'], properties: { text: { type: 'string' } }, additionalProperties: false };
+    const first = compileEmbeddedSchema(schema);
+    assert.ok(first);
+    assert.equal(compileEmbeddedSchema(structuredClone(schema)), first, 'an equal schema reuses the compiled validator');
+    const refused = first({ text: 1 });
+    const accepted = first({ text: 'hello' });
+    assert.equal(refused.valid, false);
+    assert.equal(accepted.valid, true);
+    assert.ok((refused.errors ?? []).length > 0, 'a later call does not clear an earlier refusal');
+  });
+
+  it('remembers a schema that does not compile and never throws', () => {
+    const broken = { type: 'object', properties: { x: { $ref: '#/$defs/missing' } } };
+    assert.equal(compileEmbeddedSchema(broken), null);
+    assert.equal(compileEmbeddedSchema(structuredClone(broken)), null);
+    const cyclic: Record<string, unknown> = { type: 'object' };
+    cyclic.self = cyclic;
+    assert.doesNotThrow(() => compileEmbeddedSchema(cyclic));
   });
 });

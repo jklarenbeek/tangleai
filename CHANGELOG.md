@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.42.1
+
+Compile each distinct embedded port, state and output schema once rather than on every node attempt, which recovers the cost of the foundation's slower schema compilation. Each validation still returns its own errors, and a schema that does not compile is still answered with null.
+
 ## 0.42.0
 
 Move every package onto the Jaren 0.161.0 foundation, consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Absorb its typed check outcomes, stage-discriminated guarded commits, strict retry options and typed migration plans; remove the two declaration bridges its corrected LINQ declarations make unnecessary; re-derive the paid memory policy report's interval statistics under its corrected nearest-rank quantile, which changes the default policy's provenance report id but no selection, decision or default value; and raise the program pen bundle ceiling to 29,000 bytes for the larger captured-expression module.

@@ -1,5 +1,14 @@
 # @tangleai/mas
 
+## 0.42.1
+
+### Patch Changes
+
+- Compile each distinct embedded port, state and output schema once rather than on every node attempt, which recovers the cost of the foundation's slower schema compilation. Each validation still returns its own errors, and a schema that does not compile is still answered with null.
+- @tangleai/agents@0.42.1
+  - @tangleai/context@0.42.1
+  - @tangleai/models@0.42.1
+
 ## 0.42.0
 
 ### Minor Changes

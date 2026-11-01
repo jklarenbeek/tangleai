@@ -1431,15 +1431,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "241d58a9c64bc2227fb68728e7f620ec4fe6cc01fb80e83f6f62d828fddab246"
+        "sha256": "c68a5e59e9a4a243abce2f3eba55a706c05b5a9ca5b49cb91a87e5dadab52ce1"
       },
       {
         "path": "package.json",
-        "sha256": "9a36919c90ee89fc274c8de8cf1fb1b3e27fe4e9ebc41de93625c3001911c158"
+        "sha256": "35be259cb70d51c5c20837b89e5654aa2e959b70f0a7466b416c24a901d36053"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "5c14b5bfb5d21460369300c6a3af0fe5385b9f13f9c4159b38ba1183268d4524"
+        "sha256": "cfb4bc42c2c5dbea0daba73678d6476118a567ea7cf738ba439a298d4d78796c"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -1483,7 +1483,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "d630481d76d2ad6d3a17293e0c744d5ab29fcd47d4be057a280401307e264d8e"
+        "sha256": "5372395892768ce52913903b5aa08f5873e1b4d231aa6574aa48f99c0d4f04b4"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -1519,7 +1519,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "649a0929c490613472c9728bbaea4b3b8b85bef31250faf569d69de3add1fc20"
+        "sha256": "3d494880c1a411580352d0c622dee0977fa6b0c9abb304ad680bf787083c01ee"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -1575,7 +1575,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "3ced813a13a41d0a0062bb9c38e906a3cdcc5e0bb85fe82703becad5d39462b5"
+        "sha256": "340f2f4d9848ce4b32d01b554cb2c18fa068f3e86dd20145768815c0a6370d97"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -1651,7 +1651,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "3b5e7927c0b7733cddb02573d812027d16b2d8f2486018b3700740f136863f2e"
+        "sha256": "ef2ac4bd483e417a81340d423ea760719ba7874438ebd5eb19dafc7e16a6558a"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -1703,7 +1703,7 @@
       },
       {
         "path": "packages/evolve/package.json",
-        "sha256": "bd8d8e11b355b126092babe144024f3f65e06fe820fb9dade45204c43d2547d6"
+        "sha256": "b00955d45714fcb53d9ea8f04cadc59788073b5ac3e86ba561e3810f514bab8d"
       },
       {
         "path": "packages/evolve/schemas/evolve.contract.json",
@@ -1891,7 +1891,7 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "591ae61ea282911175fb413e1e7a3b982dc8dabba864b103d6a78e166c93904f"
+        "sha256": "825749a3d0947ee7f9c2624689d935471337b30e8be35f93a3319cb535725367"
       },
       {
         "path": "packages/experiential/schemas/experiential.contract.json",
@@ -2035,7 +2035,7 @@
       },
       {
         "path": "packages/forecast/package.json",
-        "sha256": "f1ad28c2fe7473d866937d80d44ea82e614ba33a7acc354e7ab9fd812d55238d"
+        "sha256": "7bd9925f940ee74d430ef0dc378622061fff060b5667d214146fed59dacecad1"
       },
       {
         "path": "packages/forecast/schemas/forecast.contract.json",
@@ -2211,7 +2211,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "1e27e5e8fc5018888cdfa9f9e11a141525c1acae8c15aa341de6c643bb7ac4e9"
+        "sha256": "37f244779bcbe5035517f4c11a583e4c516bf2ce1b5026d5010dc06996c988f1"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -2331,7 +2331,7 @@
       },
       {
         "path": "packages/grounding/package.json",
-        "sha256": "060310a223e81bbd888302165719a8569d5c4337877d543fcc132e6799dc4f63"
+        "sha256": "a4e307f23cb2dfa0ba9f1f92c1ecaa56d0b80bd14f4c45c1528897eedb8574ee"
       },
       {
         "path": "packages/grounding/profiles/priha-hk.json",
@@ -2483,7 +2483,7 @@
       },
       {
         "path": "packages/hera/package.json",
-        "sha256": "792badba6c0c7c4c27fb8d6547e259e79e73e8fbe9cdc1770044a3fe6e3a7781"
+        "sha256": "8afec29a954a1790db065b4282efe7158a265d4be9cfd22bd829b26a590927c7"
       },
       {
         "path": "packages/hera/schemas/hera-definition.json",
@@ -2655,7 +2655,7 @@
       },
       {
         "path": "packages/jaren/package.json",
-        "sha256": "802a3e839094ceff82fc586f0bdd9bb05e4117f5b5a7722e67abfa68cc83500d"
+        "sha256": "eca0423993082cc621a8cac9736a9b2026b5ad4330607e8e51d4ae5a33c5fb6d"
       },
       {
         "path": "packages/jaren/src/data.ts",
@@ -2695,7 +2695,7 @@
       },
       {
         "path": "packages/lightrag/package.json",
-        "sha256": "83da1e990a0649f2b9f0579892329ff6f0405cd2516b8653c5bf3d03406bb600"
+        "sha256": "00c038c24279c84d8a89aa67b548aa165ff77210795692eea606f9429b5c9e5f"
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
@@ -2827,7 +2827,7 @@
       },
       {
         "path": "packages/linq/package.json",
-        "sha256": "d23c59f799d29fdb4d7e1c5b259f4e9ecc8c18bf318b2c01b09bbd803c92bb5b"
+        "sha256": "28383aeaa4ed663fd4995543d44cb94dffc23b4399c63594f3d0f96344141c27"
       },
       {
         "path": "packages/linq/src/errors.ts",
@@ -2843,7 +2843,7 @@
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "2ddb3dd4ef2cc4071dba3e84492d76479183119df5591d2e1b896f10a3a6369d"
+        "sha256": "a2d1752847d6ec0a4cc4951b12cd6a0851e633995fa02f5d3f5c6886ece6068d"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -2947,7 +2947,7 @@
       },
       {
         "path": "packages/mas/src/schema.ts",
-        "sha256": "daaaf72f49446e94486784eb9f476e118d21ca24974c8a7fdd1529daaa60009b"
+        "sha256": "84fc1e06797d1a4774f79fdfa7fe5f0d9cb11d14d9f426af6448223dcfa55798"
       },
       {
         "path": "packages/mas/src/store.ts",
@@ -2971,7 +2971,7 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "29c91068b66e44ef5b99f053b0d08c7061e79dde7aad3a168d06b4bac8ad1651"
+        "sha256": "82978c12582f275b786cf540452386da1a6d78981de97ef5c091ea6155b67318"
       },
       {
         "path": "packages/memory/schemas/policy.contract.json",
@@ -3191,7 +3191,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "b029367be52efd2d662235b3fe8668a5c1c6822f19d2b1afb670dbf2a7539b2d"
+        "sha256": "85a3da0a297562183de89f414dcd8afa9bc6a6a97f918f32245a3527f5c0b2bc"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -3247,7 +3247,7 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "3c86f183d5251480346bf2ef488ed924ed23fa3ee4ba11d705fb7a1a92559a4f"
+        "sha256": "3045d9035b441355b05fb1e11058c3c086e6406ad17d446d0b18ebf9fe773359"
       },
       {
         "path": "packages/outcomes/schemas/direction-delta.schema.json",
@@ -3379,7 +3379,7 @@
       },
       {
         "path": "packages/pipeline/package.json",
-        "sha256": "62121c529d3ba2354c015756c385087ab4892691262248ed54010deb1d3f82d2"
+        "sha256": "faf8965fcba8314ae3259a9a68ab95fb7745327605329a4b7eb65f289f0d2ba2"
       },
       {
         "path": "packages/pipeline/src/dag.ts",
@@ -3415,7 +3415,7 @@
       },
       {
         "path": "packages/research/package.json",
-        "sha256": "2388e10c25f77e0d4e4ea627369e772cde9f5d7e164f2d7a74a7f516c7535117"
+        "sha256": "e4c5c586d9f6e0b3ead69b7d9473b05c475418f6e49b841509c496ce7471194b"
       },
       {
         "path": "packages/research/schemas/decay-hypothesis.schema.json",
@@ -3855,7 +3855,7 @@
       },
       {
         "path": "packages/search/package.json",
-        "sha256": "eee62b3b5ab0903327a9325b9a0f54980a6022364676c7a7cc09da01f9f573b0"
+        "sha256": "6309f74c8431a55f7d44de41bf2ceccbfa72484368fee9422b1093ec3af13ee5"
       },
       {
         "path": "packages/search/src/index.ts",
@@ -3867,7 +3867,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "94cdf2bc55cd0a513578f3a83ba5905df82cd07dfcc615ce46560a4d431fd1dc"
+        "sha256": "3cb7b9a88f5489f59068f89ee98d1ddbcc48b37f9ceecc6cf4d0323bed51c9f1"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -4075,7 +4075,7 @@
       },
       {
         "path": "packages/trace2skill/package.json",
-        "sha256": "256b1c831326f86e641ce54af82da7c8c8c5abfe7bd9158d39e89ff1363ae49f"
+        "sha256": "dcf35d6d0b1ffb5ad6c2a1d490efe830ab57934c6847eb60ae990871bd756e7a"
       },
       {
         "path": "packages/trace2skill/schemas/trace2skill.schema.json",
@@ -4207,7 +4207,7 @@
       },
       {
         "path": "packages/trading/package.json",
-        "sha256": "142939f2f1b9efe782979a25fcf220e7a09e045bf55371ce0fe8eacba0f033d8"
+        "sha256": "0119a8a33e64d14680b366710560006c9dc4388c6341ae73f2391c3de20adb69"
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
@@ -4338,7 +4338,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "29861abfd486247102a2a945f10e172e62efb3017cd3b57e9230ee592e52f3bf"
+    "sha256": "fe8888c40115edb89df081c207a7f1d1a2e7bfbbbc03c75ab1d0a8987037f762"
   },
   "fixtureSource": {
     "files": [
@@ -69528,7 +69528,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "29861abfd486247102a2a945f10e172e62efb3017cd3b57e9230ee592e52f3bf",
+      "sourceSha256": "fe8888c40115edb89df081c207a7f1d1a2e7bfbbbc03c75ab1d0a8987037f762",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69612,7 +69612,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "9d0bd9510eb59eda4915a662d5c3346fec313adfb3241aa473e89b3dfeff36e2"
+      "planId": "f6a21cae980670d73c297b0b8ce4f123af9a67d071d51d3522fad83c0b0f5a57"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69859,5 +69859,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "10c5b6a5031694f4ee0fe6aa99ae8d1d7600ff97cf62f90d624d113cabf8f386"
+  "reportId": "53e4886d79fc2c130ff1fe5b5b2c736ce776a6ceeba1fab0567e55b54dc6a882"
 }

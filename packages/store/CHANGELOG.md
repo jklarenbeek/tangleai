@@ -1,5 +1,26 @@
 # @tangleai/store
 
+## 0.42.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/mas@0.42.1
+  - @tangleai/config@0.42.1
+  - @tangleai/core@0.42.1
+  - @tangleai/documents@0.42.1
+  - @tangleai/evolve@0.42.1
+  - @tangleai/experiential@0.42.1
+  - @tangleai/forecast@0.42.1
+  - @tangleai/grounding@0.42.1
+  - @tangleai/hera@0.42.1
+  - @tangleai/lightrag@0.42.1
+  - @tangleai/memory@0.42.1
+  - @tangleai/outcomes@0.42.1
+  - @tangleai/research@0.42.1
+  - @tangleai/trace2skill@0.42.1
+  - @tangleai/trading@0.42.1
+
 ## 0.42.0
 
 ### Minor Changes

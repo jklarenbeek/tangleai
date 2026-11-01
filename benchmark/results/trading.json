@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "003ec8dc912b227077a694d26fbcbf42469cb986",
+    "head": "326538f10ab06d1570d38caa11c66fa2d45652c8",
     "clean": false,
     "files": [
       {
@@ -211,15 +211,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "241d58a9c64bc2227fb68728e7f620ec4fe6cc01fb80e83f6f62d828fddab246"
+        "sha256": "c68a5e59e9a4a243abce2f3eba55a706c05b5a9ca5b49cb91a87e5dadab52ce1"
       },
       {
         "path": "package.json",
-        "sha256": "9a36919c90ee89fc274c8de8cf1fb1b3e27fe4e9ebc41de93625c3001911c158"
+        "sha256": "35be259cb70d51c5c20837b89e5654aa2e959b70f0a7466b416c24a901d36053"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "5c14b5bfb5d21460369300c6a3af0fe5385b9f13f9c4159b38ba1183268d4524"
+        "sha256": "cfb4bc42c2c5dbea0daba73678d6476118a567ea7cf738ba439a298d4d78796c"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -263,7 +263,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "d630481d76d2ad6d3a17293e0c744d5ab29fcd47d4be057a280401307e264d8e"
+        "sha256": "5372395892768ce52913903b5aa08f5873e1b4d231aa6574aa48f99c0d4f04b4"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -299,7 +299,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "649a0929c490613472c9728bbaea4b3b8b85bef31250faf569d69de3add1fc20"
+        "sha256": "3d494880c1a411580352d0c622dee0977fa6b0c9abb304ad680bf787083c01ee"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -355,7 +355,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "3ced813a13a41d0a0062bb9c38e906a3cdcc5e0bb85fe82703becad5d39462b5"
+        "sha256": "340f2f4d9848ce4b32d01b554cb2c18fa068f3e86dd20145768815c0a6370d97"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -435,7 +435,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "1e27e5e8fc5018888cdfa9f9e11a141525c1acae8c15aa341de6c643bb7ac4e9"
+        "sha256": "37f244779bcbe5035517f4c11a583e4c516bf2ce1b5026d5010dc06996c988f1"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -551,7 +551,7 @@
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "2ddb3dd4ef2cc4071dba3e84492d76479183119df5591d2e1b896f10a3a6369d"
+        "sha256": "a2d1752847d6ec0a4cc4951b12cd6a0851e633995fa02f5d3f5c6886ece6068d"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -655,7 +655,7 @@
       },
       {
         "path": "packages/mas/src/schema.ts",
-        "sha256": "daaaf72f49446e94486784eb9f476e118d21ca24974c8a7fdd1529daaa60009b"
+        "sha256": "84fc1e06797d1a4774f79fdfa7fe5f0d9cb11d14d9f426af6448223dcfa55798"
       },
       {
         "path": "packages/mas/src/store.ts",
@@ -679,7 +679,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "b029367be52efd2d662235b3fe8668a5c1c6822f19d2b1afb670dbf2a7539b2d"
+        "sha256": "85a3da0a297562183de89f414dcd8afa9bc6a6a97f918f32245a3527f5c0b2bc"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -735,7 +735,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "94cdf2bc55cd0a513578f3a83ba5905df82cd07dfcc615ce46560a4d431fd1dc"
+        "sha256": "3cb7b9a88f5489f59068f89ee98d1ddbcc48b37f9ceecc6cf4d0323bed51c9f1"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -943,7 +943,7 @@
       },
       {
         "path": "packages/trading/package.json",
-        "sha256": "142939f2f1b9efe782979a25fcf220e7a09e045bf55371ce0fe8eacba0f033d8"
+        "sha256": "0119a8a33e64d14680b366710560006c9dc4388c6341ae73f2391c3de20adb69"
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
@@ -1274,10 +1274,10 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "57002335c0e0f37707eac89c389059a8a7ab8c962a5491046f4b9cfe7d0db0e3"
+    "sha256": "0cc853069a4bdde6bbf5be689cd3d8107ff34847a7bb4217a1f74ce0ac0eb915"
   },
   "suite": {
-    "tangle": "0.42.0",
+    "tangle": "0.42.1",
     "jaren": "0.161.0"
   },
   "fixture": {
@@ -26075,5 +26075,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "cc3cc12a9a90c6206e19c09e1c3ec9f95e85e9b234ed885605fc826ba81bc51f"
+  "reportId": "cf4d7f7686895d9395ea2c669b950b6730009730ec956115217aac9612a20634"
 }

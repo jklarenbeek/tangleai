@@ -42,6 +42,8 @@ const workflowValidator = compile(masWorkflowSchema as object);
 const registryValidator = compile(masRegistrySchema as object);
 const templateValidator = compile(masTemplateSchema as object);
 const runtimeRecordValidators = new Map<string, (value: unknown) => { valid: boolean, errors?: ValidatorError[] }>();
+const EMBEDDED_VALIDATOR_LIMIT = 512;
+const embeddedValidators = new Map<string, ((value: unknown) => { valid: boolean, errors?: ValidatorError[] }) | null>();
 
 /** Every shape refusal is TMAS1001 at the validator's own pointer. */
 function shapeIssues(errors: ValidatorError[] | undefined): MasIssue[] {
@@ -105,6 +107,25 @@ export function validateRuntimeRecord(kind: string, value: unknown): MasValidate
  * semantic gates for port/input/output/state schemas.
  */
 export function compileEmbeddedSchema(schema: unknown): ((value: unknown) => { valid: boolean, errors?: ValidatorError[] }) | null {
+  // The same port and state schemas recur on every node attempt of every
+  // run, and compiling one is the runtime's dearest step, so each distinct
+  // schema text compiles once. A refusal is remembered too.
+  let key: string | undefined;
+  try { key = JSON.stringify(schema); } catch { key = undefined; }
+  if (typeof key !== 'string') return compileOrNull(schema);
+  if (embeddedValidators.has(key)) {
+    const cached = embeddedValidators.get(key)!;
+    embeddedValidators.delete(key);
+    embeddedValidators.set(key, cached);
+    return cached;
+  }
+  const compiled = compileOrNull(schema);
+  if (embeddedValidators.size >= EMBEDDED_VALIDATOR_LIMIT) embeddedValidators.delete(embeddedValidators.keys().next().value!);
+  embeddedValidators.set(key, compiled);
+  return compiled;
+}
+
+function compileOrNull(schema: unknown) {
   try {
     return compile(schema as object);
   } catch {
