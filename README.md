@@ -43,7 +43,7 @@ retain ties, losses and refused comparisons; lesson writeback stays off.
 ## What runs today
 
 ```sh
-# Use .nvmrc (Node 24.20.0), npm 11.12.1 and Bun 1.4.2:
+# Use .nvmrc (Node 24.20.0), npm 11.12.1 and Bun 1.4.4:
 git submodule update --init vendor/jarenjs
 node scripts/jaren-artifacts.ts --bootstrap   # Jaren tarballs from the pinned source
 npm ci --ignore-scripts
@@ -493,9 +493,9 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-Tangle consumes 23 AI-free Jaren **0.161.0** packages as candidate tarballs
+Tangle consumes 23 AI-free Jaren **0.176.5** packages as candidate tarballs
 packed from the source submodule at `vendor/jarenjs`, which pins
-`aed618b8f8cc9b9695e0a8f90a3962a14ac23e74` (tag `v0.161.0`); npm does not serve
+`fa31d7fb2dbfb6d1016a603bd9a789683cd66ff6` (tag `v0.176.5`); npm does not serve
 that release. Run `node scripts/jaren-artifacts.ts --bootstrap` before
 `npm ci --ignore-scripts`: it rebuilds the tarballs from the pinned source and
 refuses any byte that differs from the

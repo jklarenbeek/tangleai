@@ -60,7 +60,7 @@ for ownership, compatibility and available mechanisms.
 
 ## Reviewed host migrations
 
-Jaren 0.161.0 provides a complete migration lifecycle over an existing native
+Jaren 0.176.5 provides a complete migration lifecycle over an existing native
 connection. Use `planPhysicalMigration` and `@jarenjs/linq/migration` directly;
 Tangle's adapters keep using the same Store. The
 [disposable example](../../examples/physical-migration.ts) runs with
@@ -126,7 +126,7 @@ For an existing database, save and review `planGraphVectorMigration(before,
 after, id)`, stop its readers and writers, and apply the complete saved chain with
 `applyGraphVectorMigrations`. Jaren owns model comparison, shadow validation,
 backfill, history and drift checks. Reopen with the resulting declaration.
-Jaren 0.161.0 still refuses `dryRun: true` for a pending vector derive step
+Jaren 0.176.5 still refuses `dryRun: true` for a pending vector derive step
 with native cause `JD0023`; this adapter preserves that refusal. Actual migration
 still validates its shadow before applying. A preview failure is not a successful
 dry run.
@@ -211,7 +211,7 @@ Longitude and latitude are numeric mirrors in each JSON row; the declared
 gazetteer and cell indexes materialize their own native scalar columns. No
 longitude/latitude index, derived bounding box or R-tree is created.
 
-The [registered candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale-2026-10-31.json)
+The [registered candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale-2026-11-02.json)
 keeps the in-memory sweep after both Node and Bun meet the target on the
 50,000-entry sparse synthetic workload. Bbox and R-tree trials remain
 untriggered. That measurement reuses the internal candidate owner; synthetic

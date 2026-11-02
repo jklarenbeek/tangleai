@@ -1,5 +1,11 @@
 # Tangle releases
 
+## 0.43.0
+
+Upgrade the Bun toolchain to 1.4.4 in the pins, workspace engines, CI setup and the scraper's container runtime.
+
+Move every package onto the Jaren 0.176.5 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its corrected JSLT registry and Node handler declarations remove the playground's options cast and the contract test's handler annotation. Its schema compiler no longer builds a discarded error for each reference-only array item and builds each document with an `$id` once, so compiling the role schemas takes about two thirds of the earlier time. No Tangle interface changes.
+
 ## 0.42.1
 
 Compile each distinct embedded port, state and output schema once rather than on every node attempt, which recovers the cost of the foundation's slower schema compilation. Each validation still returns its own errors, and a schema that does not compile is still answered with null.

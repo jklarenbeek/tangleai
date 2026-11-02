@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "bun": "1.4.2",
-  "bytes": 25473,
+  "bun": "1.4.4",
+  "bytes": 25865,
   "retainedModules": 9,
   "excludedEngineBytes": 0
 }

@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.161.0**, tag `v0.161.0`, source commit
-`aed618b8f8cc9b9695e0a8f90a3962a14ac23e74`. Upstream `main` and the tag agreed
-when checked on 2026-10-31; npm still served 0.91.4. Runtime imports therefore
+Tangle consumes **Jaren 0.176.5**, tag `v0.176.5`, source commit
+`fa31d7fb2dbfb6d1016a603bd9a789683cd66ff6`. Upstream `main` and the tag agreed
+when checked on 2026-11-02; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
-dependency edges. Root dependencies name the tarballs; all 129 workspace
-references are exact `0.161.0` pins. A clean reconstruction from the pinned
+dependency edges. Root dependencies name the tarballs; every workspace
+reference is an exact `0.176.5` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,27 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.161.0 to 0.176.5 and current adoption
+
+73 upstream commits cover this update, twenty-two releases. No package export
+subpath was removed; `@jarenjs/validate/references` is new and unused here.
+Upstream CI now runs on Bun 1.4.4, the version Tangle pins.
+Every consumed package's dependency edges stay inside the 23-package closure.
+Three of the four asks Tangle raised against 0.161.0 are answered upstream; the
+update needs no Tangle source change beyond removing the two workarounds.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| JSLT registry and Node handler declarations | **Upstream fix; local narrowing removed.** `createJsltRegistry().toOptions()` now declares its functions with the callable type `compileJsonQuery` reads, and `NodeResponseLike.writeHead` takes the header lists Node's response takes. The playground passes the registry options without a cast and the contract test passes `toNodeHandler(dispatcher)` straight to `http.createServer`; strict type checking accepts both. |
+| Form error lines (`@jarenjs/app`) | **Adopted unchanged.** `createFormView` marks each error line `dir="auto"`, so a right-to-left message reads in its own direction beside a Latin member name. The playground and game forms use the view as shipped. |
+| Schema compilation cost (`@jarenjs/validate`) | **Upstream fix; measured.** A `$ref`-only array item no longer builds a coded error that compilation then discards: one compile pass over the 48 GMPL role schemas built 32 such errors on 0.161.0 and builds none now. Each document with an `$id` is now built once per compile: the same pass takes 14.90 ms against 22.75 ms on 0.161.0 (×0.65; medians of 9 interleaved processes), and 0.176.3, which builds such documents twice, measured 17.25 ms in the same run. An item that reaches its own `$id` document now locates its errors under `#`, and generated `$def` anchor locations are renumbered; no Tangle test or artifact asserts either. Tangle keeps compiling each distinct embedded MAS schema once, and the hosted job keeps its 240-minute limit. |
+| Collected-error validation (`@jarenjs/validate`) | **Upstream speedup; answers unchanged here.** A collecting walk no longer reads a clock per error, and while `oneOf` or `anyOf` branches are tried, a reference that re-enters a definition on the same member gives its first answer again instead of walking it once per branch. Warmed first-failure checks of a lone type, bound or tuple also take fewer calls. The 1,392 tests over the core, models, config, agents, context, MAS, GMPL, store, Jaren, Pages, program, memory and integration suites pass unchanged; Tangle has no separate timing for this path. |
+| Regex formats and `multipleOf` (`@jarenjs/core`) | **Upstream speedup; answers unchanged here.** A `regex` format value that is not written as a literal is compiled once, and `multipleOf` on a very large or very small value is decided from its printed digits instead of raising ten to its exponent. Tangle schemas reach both only through ordinary validation, and the release gate passes unchanged. |
+| English type messages (`@jarenjs/validate`) | **Adopted unchanged.** A type error now reads `must be an object` or `must be an array` where it read `must be a object` and `must be a array`. No Tangle test or artifact asserts the old text; the stylesheet gate and authoring guide quote it as the reply from the incident that motivated the gate. |
+| SQLite driver cost (`@jarenjs/db`) | **Unchanged.** The driver's cost growth since 0.91.4 is still open upstream; no Tangle statement changed. |
+| Program pen bundle (`@jarenjs/linq/expression`) | **Measured.** The standalone pen bundle measures 25,865 bytes with nine retained modules (25,473 on 0.161.0), within the 29,000-byte ceiling. Upstream keeps the capture-safety refusals in one module, because every capture needs them. |
+| Relational expressions, rule probes, workers and store opens (`@jarenjs/db`) | **Not used.** `sql.binary` keeps every `AND`/`OR` operand and refuses a third operand to any other operator; database rule probes lock rows on PostgreSQL and earlier rule programs are reported; a worker settles through a contended gate; an open verifies existing tables under a read. Tangle builds no `sql.binary` expression, installs no PostgreSQL rule program and uses no strict transaction mode. Its vector migration still receives the native `JD0023` refusal for a `dryRun` over a pending derive step. |
 
 ## Changes from 0.91.4 to 0.161.0 and current adoption
 
@@ -285,7 +306,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.91.4 or earlier must not silently resume as 0.161.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.176.5 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

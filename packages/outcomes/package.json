@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/outcomes",
-  "version": "0.42.1",
+  "version": "0.43.0",
   "description": "Evidenced decisions, deterministic retrospective checks and explicitly approved artifact promotion",
   "license": "MIT",
   "type": "module",
@@ -23,15 +23,15 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.161.0",
-    "@jarenjs/json": "0.161.0",
-    "@jarenjs/validate": "0.161.0",
-    "@tangleai/core": "^0.42.1",
-    "@tangleai/memory": "^0.42.1",
-    "@tangleai/models": "^0.42.1",
-    "@tangleai/agents": "^0.42.1",
-    "@tangleai/config": "^0.42.1",
-    "@jarenjs/contract": "0.161.0"
+    "@jarenjs/core": "0.176.5",
+    "@jarenjs/json": "0.176.5",
+    "@jarenjs/validate": "0.176.5",
+    "@tangleai/core": "^0.43.0",
+    "@tangleai/memory": "^0.43.0",
+    "@tangleai/models": "^0.43.0",
+    "@tangleai/agents": "^0.43.0",
+    "@tangleai/config": "^0.43.0",
+    "@jarenjs/contract": "0.176.5"
   },
   "private": false,
   "types": "./src/index.ts",

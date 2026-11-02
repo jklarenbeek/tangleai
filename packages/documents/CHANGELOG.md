@@ -1,5 +1,15 @@
 # @tangleai/documents
 
+## 0.43.0
+
+### Patch Changes
+
+- Upgrade the Bun toolchain to 1.4.4 in the pins, workspace engines, CI setup and the scraper's container runtime.
+- Updated dependencies
+  - @tangleai/core@0.43.0
+  - @tangleai/context@0.43.0
+  - @tangleai/models@0.43.0
+
 ## 0.42.1
 
 ### Patch Changes

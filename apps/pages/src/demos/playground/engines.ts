@@ -28,11 +28,7 @@ const compileTypeTest = createTypeTestCompiler();
 // functions }`; `.names()` feeds the assistant's engine catalogue.
 export const operatorRegistry = createJsltRegistry()
   .use(mathPack).use(financePack).use(statsPack);
-// The registry declares its functions as `Function`; the query compiler
-// declares the callable shape it actually invokes.
-const registryOptions = operatorRegistry.toOptions() as {
-  extensions: Record<string, any>; functions: Record<string, (...args: any[]) => any>;
-};
+const registryOptions = operatorRegistry.toOptions();
 
 /** Parse a JSON input; returns `{ value }` or `{ node }` (an error node). */
 function parseJson(text: any, label: any) {

@@ -94,8 +94,8 @@ sub-call budgets, storage and result interpretation remain runner concerns.
 
 ## 7. Cost
 
-The isolated program pen costs **<!--fact:bundle.program-->25,473<!--/fact--> bytes**
-with Bun 1.4.2. `npm run test:tree-shaking` and the external packed consumer
+The isolated program pen costs **<!--fact:bundle.program-->25,865<!--/fact--> bytes**
+with Bun 1.4.4. `npm run test:tree-shaking` and the external packed consumer
 measure the same probe, enforce a 29,000-byte ceiling, and reject retained
 model mechanisms, runtime engines and the query chain. Nine modules remain.
 On Jaren 0.91.4 the same probe measured 15,691 bytes under an 18,000-byte

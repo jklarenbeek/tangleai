@@ -29,8 +29,7 @@ it('the contract campaign client projects and executes tools over the real SQLit
     'image.bytes': () => ({ status: 200, headers: { 'content-type': 'application/octet-stream' }, body: new Uint8Array([1]) }),
     'catalog.live': () => rows.live(scan),
   }, { ledger: createMemoryLedger() });
-  const handler: (req: any, res: any) => void = toNodeHandler(dispatcher);
-  const server = http.createServer(handler); server.listen(0, '127.0.0.1'); await once(server, 'listening');
+  const server = http.createServer(toNodeHandler(dispatcher)); server.listen(0, '127.0.0.1'); await once(server, 'listening');
   const client = openHttpClient(contract, { baseUrl: `http://127.0.0.1:${withMember(server.address()!, 'port').port}` });
   t.after(async () => { client.close(); dispatcher.close(); server.closeAllConnections(); server.close(); await once(server, 'close'); await store.close(); });
   const saved = await client.invoke('product.save', { id: 2, revision: 1, product: { id: 2, name: 'second', price: 9 } }); assert.equal(saved.ok, true);

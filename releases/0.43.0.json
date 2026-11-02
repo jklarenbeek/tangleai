@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "version": "0.43.0",
+  "baseVersion": "0.42.1",
+  "baseCommit": "320d1b88bca27b0fe66d31414e5123f55d43ab0c",
+  "preparationCommit": "320d1b88bca27b0fe66d31414e5123f55d43ab0c",
+  "initial": false,
+  "inputHash": "c0c7cf7e4689cca21a0c37ca990db1ad8cda38b6b1a49baaa8eeb33c0c677c49",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        }
+      ],
+      "summary": "Upgrade the Bun toolchain to 1.4.4 in the pins, workspace engines, CI setup and the scraper's container runtime.",
+      "id": "bun-144-toolchain"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        }
+      ],
+      "summary": "Move every package onto the Jaren 0.176.5 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its corrected JSLT registry and Node handler declarations remove the playground's options cast and the contract test's handler annotation. Its schema compiler no longer builds a discarded error for each reference-only array item and builds each document with an `$id` once, so compiling the role schemas takes about two thirds of the earlier time. No Tangle interface changes.",
+      "id": "jaren-0176-foundation"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.43.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.43.0"
+    }
+  ]
+}

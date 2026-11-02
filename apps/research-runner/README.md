@@ -2,7 +2,7 @@
 
 This private optional Bun host executes frozen research workspaces in disposable
 containers. Start it with `npm start --workspace @tangleai/research-runner` and
-probe `http://127.0.0.1:8020/capability`. Bun 1.4.2 or later and a local Docker
+probe `http://127.0.0.1:8020/capability`. Bun 1.4.4 or later and a local Docker
 daemon with cgroup v2 CPU, memory, swap and process limits are required. An absent
 engine is reported as `available: false` with a reason. Podman can be selected,
 but must pass the same capability and container-configuration checks; support is

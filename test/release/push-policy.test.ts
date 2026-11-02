@@ -187,7 +187,7 @@ it('CI accepts only the exact jobs intentionally skipped for documentation', () 
 
 it('Bun pins, workspace engines, lock metadata and container runtime agree', () => {
   const bun = config().bun;
-  assert.equal(bun, '1.4.2');
+  assert.equal(bun, '1.4.4');
   assert.equal(readFileSync(resolve(ROOT, '.bun-version'), 'utf8').trim(), bun);
   const lock = readJson<any>(resolve(ROOT, 'package-lock.json'));
   for (const dir of ['', 'apps/desktop', 'apps/scraper', 'packages/documents']) {
