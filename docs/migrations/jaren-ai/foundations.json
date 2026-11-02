@@ -3,8 +3,8 @@
   "mode": "candidate-artifacts",
   "legacyAiAllowed": false,
   "source": {
-    "commit": "fa31d7fb2dbfb6d1016a603bd9a789683cd66ff6",
-    "version": "0.176.5",
+    "commit": "23c997f6801ce7f69e1eab6ab7541defe5b649de",
+    "version": "0.176.8",
     "node": "24.20.0",
     "npm": "11.12.1",
     "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -13,16 +13,16 @@
   "packages": [
     {
       "name": "@jarenjs/app",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/app",
-      "filename": "jarenjs-app-0.176.5.tgz",
-      "sha256": "7dbb8b7f05372284d2f2822ae75e38c60a6dc0d44a3ad35d4d2d494f64dc5db2",
-      "integrity": "sha512-n0h2bUnRmMr3Hw8QFReiZKOoYtqor3QphM21kdbOls9Zme5/AVnSX5fDI2uOi+C8YfB24UOyR+FIL1vCKOoO4Q==",
+      "filename": "jarenjs-app-0.176.8.tgz",
+      "sha256": "b6512d1105a182c46c830edffff464f59d5923ba7e89c29baba7413518064d4f",
+      "integrity": "sha512-SZhQy0mOT0LsPrtO7KDRCMvSAxr4e1Xnj/A15txW4Pno+ATnGrS4fUxO89m5QqcTJGtQY3X2j/1y0DxHzIYoTg==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/json": "0.176.5",
-          "@jarenjs/view": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/json": "0.176.8",
+          "@jarenjs/view": "0.176.8"
         }
       },
       "files": {
@@ -50,7 +50,7 @@
         "docs/COLLECTION-PROVIDER.md": "4f67d416e9f1a909fe620764fdcd64b090b8ba6b5b2aaa4ee930abab99063c09",
         "docs/SEARCH.md": "d1f92091299f470114337c075d7c21b87fbbd0f4f50bf05b212fd375c9b2e066",
         "docs/TASKS.md": "82aed450794e2e2c6c3baa02521fb6f05edf949a514e908391f1d2695e8370ea",
-        "package.json": "85b54356dab344b09a7009734f8a0773450611d0bd35ca1740e8711b1ffa0aa2",
+        "package.json": "5245dded26351377cb4c8ea30854dea6d7dce1adcf409a57e79af3617a1d2106",
         "schemas/jaren-app.authoring.schema.json": "7c5f4472345a5dc81330bfed2d3b4ea70f344d0a324798ab8f8c8713d41d4289",
         "schemas/jaren-app.draft-07.schema.json": "d20d5b2e9cf2f95b1f9f3c16443dcf3df8cdaa2b384100e27e9731dbc89e9c61",
         "schemas/jaren-app.schema.json": "0a04f5e71c104cbbc77afb86c66fb1fb66b1a7d46f0bfc975909de903ff2dc2f",
@@ -77,17 +77,17 @@
     },
     {
       "name": "@jarenjs/calc",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "components/calc",
-      "filename": "jarenjs-calc-0.176.5.tgz",
-      "sha256": "34a3fbe15a230e3ed494ffe86b025eff65f9886c6b71fa5527cda2d92f93a7f1",
-      "integrity": "sha512-g1zk9RC7wi1C0CLgYI7gAUmvUVehfh/pSO92wJhdlloEpw/tzcbxyXhU76AgweSSN9FdiG5RAqO4ZttEbXhs+w==",
+      "filename": "jarenjs-calc-0.176.8.tgz",
+      "sha256": "445599c0173daa37769c2a0a6bff35561d73464b1d39ec9ab7d2f6e5d283715e",
+      "integrity": "sha512-NRymsSjXAiPnCcAaNtXINYOqn4cmU/VpeNA2IrniONfibR15aZN1rys0qfZBtd1kHaxZnsWKdiitQwrDw4Kehw==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/view": "0.176.5",
-          "@jarenjs/forms": "0.176.5",
-          "@jarenjs/app": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/view": "0.176.8",
+          "@jarenjs/forms": "0.176.8",
+          "@jarenjs/app": "0.176.8"
         }
       },
       "files": {
@@ -119,7 +119,7 @@
         "dist/types/to-expr.d.ts": "90e0bc46c4f58cd46842b06de8835bce10f20d2484f899c4febbb2547ad4d904",
         "dist/types/utils.d.ts": "2f85409b0e0e8ef0ea4adbcfb47542bd0d8eb273bf53895f859222f3e39e129c",
         "docs/CALC-FORMAT.md": "c9668c89240e098bd2623c9b660a7370b1fecca9e163b3cf9f324669d833bb75",
-        "package.json": "5440981b2961054301ad3cdfac4a17922a7e24a49c7d9a070568272a2b012082",
+        "package.json": "ebb11aaa37426a35cdb04fa999f06a8629c33b059d804dbf831ba8d0d8d1bb48",
         "schemas/financial-inputs.schema.json": "b819ebdf3a2e532e0b143b3902901d6b640f8dc0d52c53bdab26bf14cf85a945",
         "schemas/jaren-calc-ast.schema.json": "93c98bfaae3b9dc84b220b65b897779f4ffacfe06b651144a0afc37167f32bfa",
         "schemas/jaren-calc-state.schema.json": "236b151f541405c90732629cf9020b934755f71cc5ab9b6a9c1fd4cc8189da86",
@@ -154,15 +154,15 @@
     },
     {
       "name": "@jarenjs/charts",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "components/charts",
-      "filename": "jarenjs-charts-0.176.5.tgz",
-      "sha256": "18b564a1876d522cf27a52cf54e3e9fd9956c37bbf42f7f5adac7957ae80d3ed",
-      "integrity": "sha512-pjB1DuyS34o5plvoOe8lKxgimxafNn6U9bNri2BA1wFSABZn5dRB6U1gW/9be6AVQFd0mo1bYn7xqbQLQFn56Q==",
+      "filename": "jarenjs-charts-0.176.8.tgz",
+      "sha256": "52fb9f615286eb806da563e8f9881a63f025bb76b7d556a446d6051bc8263d99",
+      "integrity": "sha512-mL97Rw8VBzGdLu+URLrr5IPg2WmeaElinyqaTBYP4E+PLbvoWadW0YmA6fEOsgTij31zcBu8ISY5pXFzu69Q9Q==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/view": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/view": "0.176.8"
         }
       },
       "files": {
@@ -195,7 +195,7 @@
         "dist/types/types/scatter.d.ts": "4ef333f87fab17143cee36e41db04cbbb4f5f59961c075cc1aa54db6bad2107c",
         "dist/types/types/streamgraph.d.ts": "fb7079472ce499d49168b2031d054a3f6e7c9f5231b74b9beeed29aa0ab143a8",
         "dist/types/types/treemap.d.ts": "15a73a691e01f8603190df6903c4cbf66b7843116eb4fbb96449c994c9708458",
-        "package.json": "d9673bec3103354346a4e5f18be16af0a92ef935a03430192220bb8b14005250",
+        "package.json": "a13125e68e64e164c479ca7e5d96b2115bdeb53c3de854182d155996b77308db",
         "schemas/chart-definition.schema.json": "e5bdc6e20edb968f6e24f23a2f7bf06dafd6a281105f22851884c669a4db4bcc",
         "src/component/index.js": "141bc661de6b04fa863350f934332c58db6f3a0abd004d62a08fce75f960d498",
         "src/core/axis.js": "bfac21ffc244408a90b07eec73bcde3f7ae10782d65023be6a3c7b5234468769",
@@ -230,16 +230,16 @@
     },
     {
       "name": "@jarenjs/collection",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "components/collection",
-      "filename": "jarenjs-collection-0.176.5.tgz",
-      "sha256": "b9734e546f65259908719835894838992b9dac1320eac748434980bf1acff509",
-      "integrity": "sha512-Vvne/61MEYJ83uR8YUh9dadZKkejNocmn20qdv0oxni0D1Z1jpJMIxlLklJotL3dK9BPAnrtBTag0Tsr6IcuMw==",
+      "filename": "jarenjs-collection-0.176.8.tgz",
+      "sha256": "04792129e149194c4b47f654d9e453cbfca2e8852b60c51f843751ab085e4842",
+      "integrity": "sha512-aEYtLNM1v7C75ffJyhjBm7Y14qtn6dSb3OerKoiSE+ECsaRCVWiV564w0X2Z1pbtKhkN4H6fuGZm4iqzESpYnA==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/view": "0.176.5",
-          "@jarenjs/app": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/view": "0.176.8",
+          "@jarenjs/app": "0.176.8"
         }
       },
       "files": {
@@ -253,7 +253,7 @@
         "dist/types/interaction.d.ts": "cca8734dd06073319c812f9c888a59251666390bc2f0fd06fd32c62b80a81ac2",
         "docs/COLLECTION.md": "545072d4f3d8753206c734d18e3e0ac8144647dafb39bf6360989def073d4af2",
         "docs/MEASUREMENTS.md": "958bb626bbe8bf8fb2ba88ca622627cf1c55a139f77cc97c8d70d2f01deedb42",
-        "package.json": "f44657d848d004520c0a4efafab0f9a54f7a8c05409934add625500ff4e925ea",
+        "package.json": "371252a3ccd819de67041025e3cc9a2a187e971ad6b3641dd219d81da448c701",
         "src/collection.js": "a49ce96830bb197a83cf79f0b6f9af1692615ac53f44e142836eeb7fd444a999",
         "src/component/drag.js": "009e3507695521a845e55861ba3dceec5272877b71161cab4fbf06b63352693b",
         "src/component/index.js": "4235b82b24acc63c639cd77e7ff6fe184e623fc17d1d011864e0dbd6809e411f",
@@ -265,21 +265,21 @@
     },
     {
       "name": "@jarenjs/contract",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/contract",
-      "filename": "jarenjs-contract-0.176.5.tgz",
-      "sha256": "45e1c60500270db27138a2d6811f211bdb8f5541a5ba75899529234dfbf7ad24",
-      "integrity": "sha512-k8mbZocQBTz3IbdARO8rWReLQNgQV+iudRBOk/Uak23enSoDcF6Bkf/xSlTXJ8dO/OTyrHptyYDLRbKTFn3Eqw==",
+      "filename": "jarenjs-contract-0.176.8.tgz",
+      "sha256": "35b10335e905323645d5049f861222ab0b76671167f7708d75da68b8d4e22539",
+      "integrity": "sha512-rhCSuwYBPWdTiNk79Stgw1Nx9s0v0DU7BvwBGG3S81i0cSNohN5QYIPyzh0TD4EtSGtrtMcp+7Q4MYd3cFTXeQ==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/json": "0.176.5",
-          "@jarenjs/validate": "0.176.5",
-          "@jarenjs/emit": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/json": "0.176.8",
+          "@jarenjs/validate": "0.176.8",
+          "@jarenjs/emit": "0.176.8"
         }
       },
       "files": {
-        "README.md": "9601b47c46fa1d16118da6e038146d5900c9dd1b5bcfa758c271e69fb8fdd6f6",
+        "README.md": "0427a97ab9c61fd2cc4114a7d6dfcb5baa37b8e430eeae944ccddf3a63e18170",
         "dist/types/adapters/fetch.d.ts": "9ab2e1be0d52f374d6f07482c64443189dc868855942b54b86ed440604b64efa",
         "dist/types/adapters/node.d.ts": "3c8071719b35ffdd0cd866ef55f0f5aa14c9ec70cc9a1cb5e1aaa8f2d12e528f",
         "dist/types/app/binding.d.ts": "a0c1ec62524c7f2bd0a98d6fe52017a3939515cfaff93fab286f6e3b6d14d6e0",
@@ -338,7 +338,7 @@
         "docs/CONTRACT-FORMAT.md": "cd052921e5ce77a2b1040fe688dfdc8476117e34a2f3ef22bfa58b6f761fc38f",
         "docs/DURABLE.md": "7e4f766596bd5f03696d305089dfb8872a742e2adf0a6a0a5419ce01a019f48b",
         "docs/PROVIDER-FORMAT.md": "6932cce5113947f6b7a0704dab86123edb877567e9ee0395cf8dcfb98c6ddbcf",
-        "package.json": "c1d6aaddea77cde67af0abfd25dde33432e0ca1a79275bb015210d7aaf60057b",
+        "package.json": "21c98fa651129b760c297cf57f7d407a843e72232a77dd78328b48dd74b47b84",
         "schemas/continuation.schema.json": "1c0516f07269e1b4f5d20c17f8ca45dd59fa899215cf7e8803288dc0df35a529",
         "schemas/jaren-contract-port.draft-07.schema.json": "fe6648943bdd260d9eb3abc36fcf47814a030503bf1a3cb7f5726acabff782b3",
         "schemas/jaren-contract-port.schema.json": "3b0ecb790ede57404f0c78d9a34f497c39255ebfe31d4cce1e83543cdfd1e4f4",
@@ -404,11 +404,11 @@
     },
     {
       "name": "@jarenjs/core",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/core",
-      "filename": "jarenjs-core-0.176.5.tgz",
-      "sha256": "a3f2abc1c3674e7587dcd061be2c1fd6a84218992925c8613b39ef397d397e82",
-      "integrity": "sha512-Efp2IxLSg611kPjSMZ7hirJ9gfCB2YTobTMIEjcC4pgac1vUS93RYi7iKtPvF1lsy52LnuIgnf8joC0CVWtZ4A==",
+      "filename": "jarenjs-core-0.176.8.tgz",
+      "sha256": "de9845ebb2268d3e18295a5ec7fb9c490c7ae0561433f64835e76d8d3d2db643",
+      "integrity": "sha512-XQVw6Rd/9Q4ekvWlBBZ5V3lYwjduisS4LAwg414/h+jN6oQJRSdQW8tKmBciWljwFTfqRmJEqKn0+xkeQ70bCg==",
       "edges": {},
       "files": {
         "ARCHITECTURE.md": "90f7123c0497549f42bea0c55cf35647433df6dc2fb1c8fbf82ddda3d218fa7d",
@@ -477,7 +477,7 @@
         "dist/types/message.d.ts": "b92e94b612ad066557a4ecff64a2ffb3f329dfbe0fa27455718ab2c51c8a1f69",
         "dist/types/model.d.ts": "96e2a2f8ebd469d8cff5f7b35a73dafb08a32a5b1d3ab16d5cb26373588df5af",
         "dist/types/number.d.ts": "91e2c85b1509a083da768a1e7d8f9cddaffd5f4c3eb808a2b46692963f5297c6",
-        "dist/types/object.d.ts": "110e762ffc0d9fb31560d4ba47c185971933703029972af8f6735d2c6e0359ee",
+        "dist/types/object.d.ts": "5e63b25453cd66e0c7ae0d2443042700557f1387fb9057f3f03c4ca434d0803f",
         "dist/types/process-node.d.ts": "e67c67585ca7598f065f70eb90a2f5814cc8da0c8f661e42bc3ece20deed0836",
         "dist/types/random.d.ts": "6a2386d394ac58fdaaaed21e2e82c017a88e1abd6940ad836e3d99cc8c414bdf",
         "dist/types/range/index.d.ts": "979295408f1570f7e1fbf358a61e87b22d688f517470fd63c75bdbed0c1840f0",
@@ -529,7 +529,7 @@
         "docs/SEARCH.md": "e485abd8e719804685bb3bbf8cdd475bc25ffb6c2868eaa21face2d74a18d054",
         "docs/SERIES.md": "9630f8ddff10f4bf4e83a8a1aeeca46584ac26bec3ebcb844e63eae6138464af",
         "docs/VIRTUAL.md": "782f9f1c2e86eef12fccac6f6235ab70a3ee4eed620487746d41a57dc6859058",
-        "package.json": "df132e379b5c43572cfc8876c9ec5963483bbb724166c68f9ddb9c046ff61215",
+        "package.json": "bea2b2cd70dd9ed1eaf7b65739b6bfabaf5a2342c3c6afd83758142cb5c176c6",
         "src/array.js": "940a6854c3d97806eae2726d558875b8479defc591879f75515adbd0e549deb1",
         "src/async.js": "b3aa3dbd441de66a758beb29942d04fb7e78367ab8159f15fe5210f4585f8da4",
         "src/bigint.js": "c89720c74f3ef2519e705b16c59f192bfc6be3eb64ed95c3cb6e0ce042239883",
@@ -593,7 +593,7 @@
         "src/message.js": "08192b3f051a7ebd631009756413e19cb0582846bd0e28211c5818bd912d36fc",
         "src/model.js": "cd26457ba13cdb0e4a4c331f878b2e90c7f5d6c93efb6b6eab794af412a88f7c",
         "src/number.js": "af83aabd6a3bb5c95f614d2e5f1c2c1f11e6d0ebd142d148453cdad37abc31c4",
-        "src/object.js": "81783bb85f9c8fc140c4d40d45c0789e06a7b08dbee6f63c18e1e696ecbe3415",
+        "src/object.js": "457e76ae77228b68f6ffb3ae94d21410364b736eb50622183e61c9773ffcaf9d",
         "src/process-node.js": "31c4e6c0eedff4df7fac909ea90746f75426fe77d4a0f8e6588abacc20eeb0cf",
         "src/random.js": "1a15866e84478c9547f51e79136e5eccd99caa42843f43e29996bf36b56a6c88",
         "src/range/index.js": "96d03d1b829312ef33ea169cf5e7cfd6b7d05b3662d365ddc466aefa635f4ffd",
@@ -639,16 +639,16 @@
     },
     {
       "name": "@jarenjs/db",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/db",
-      "filename": "jarenjs-db-0.176.5.tgz",
-      "sha256": "dbd8270bcca6f689608ffbc00737ec0ee07b3bc3a990728df9a7520d30c80fa4",
-      "integrity": "sha512-uPxZ4OvD0CUJ9hf9YL6eRsVsXRQa6ewO7l5cdlkhpD1Ye991OITINqzA/G7IOKow102B321M/oOObCcxJdeTaQ==",
+      "filename": "jarenjs-db-0.176.8.tgz",
+      "sha256": "aee9585e499bf21c8789a7043474dd9ce22458bbbeebbb936f0a04ce708e7005",
+      "integrity": "sha512-NEhZVtcOix6XgzS1SoOZuOSFgnTU71Q0Tt1qzPM+mGWG+aSqW3Wn5zHHbjoCpn2GtzhwXYAIUYUMxaYAunhi1w==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/json": "0.176.5",
-          "@jarenjs/validate": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/json": "0.176.8",
+          "@jarenjs/validate": "0.176.8"
         }
       },
       "files": {
@@ -658,14 +658,14 @@
         "docs/JOBS-FORMAT.md": "26b8769966a5c11e969249815d47c01f0911aa426669732273bfb732a82c5e5b",
         "docs/LIVE-FORMAT.md": "661e4d337cec248ffe6ffbf182270a32ae4271b96deb8ecfd4dd07132c3aa075",
         "docs/MIGRATION-FORMAT.md": "58cef0a4b59c045b2ab62c79cf81bc2e3a82fafdd06ab141d0797bc5e6350a71",
-        "docs/MIGRATION-UPGRADE.md": "191f3a0ba83964269061e62126155ed16e45b77bc1037650abd01c967e110059",
+        "docs/MIGRATION-UPGRADE.md": "3ea0f5491753d81086030b7faf68a8fb5b030d368c556c71d19529f9d8a63d65",
         "docs/MODEL-FORMAT.md": "d3ca318d046299567956870be2fc2e21857629acaceda00c323d221197e9716e",
         "docs/NATIVE-PLANS.md": "880a5812a92fd310b5dc2a4c1d6a5f548a41340c29c167f99b059afaa13ce299",
         "docs/POSTGRESQL.md": "3035265b8c3c4f8ce029d0afce5f4bab1d38e4ffb8cfc679417d1233c96b7a7e",
         "docs/REPLICATION-FORMAT.md": "a01f2e5e2e6bd94ace6acd57481ac058dca2b9dd5b3c9d3dec3ea1e6550bfed4",
         "docs/SEARCH.md": "81af1b433a512c017b46f4d91d1e517dbfb97fdae7b12b04bc2ba69aad6f0fa9",
         "docs/SQLITE-RELATIONAL.md": "827e4c0fad57c684f922d0c38bf7ee752bd02c3c58e55d3dceca32f58ef6e809",
-        "package.json": "2d0bcb2d85a6adafcd500a2f935c42687df061e5d00ba43c3b0249b22d8be386",
+        "package.json": "1cdb9a0f9d57ba867d58abb4edcd92adf6be15b045be0aebdfd9c6d51c9a3443",
         "schemas/jaren-migration.draft-07.schema.json": "e4c25c89cb9361367208a4091783b2698bfa10661947e210a27cf1950b78c0b0",
         "schemas/jaren-migration.schema.json": "28ed8fc0cc4c8530e77d2a27139f7b95be734a11feb66afa3ba9d284b57e164c",
         "schemas/jaren-model.authoring.schema.json": "80b34410045884da42f288d40595c97a62eda0410155c363505991b05acad728",
@@ -825,16 +825,16 @@
     },
     {
       "name": "@jarenjs/emit",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/emit",
-      "filename": "jarenjs-emit-0.176.5.tgz",
-      "sha256": "a652ee00b482e254cad8cbed8f28fbb01d282b7796589dbb04a221f88f58ec43",
-      "integrity": "sha512-dbXK27UnH1255ZjMx61ilEXAv/fSBaIekhZcVAnRrTMVAk8k5RHiEuJLtCKLEyweqtsDqRpKADpMPw0nsKfv7A==",
+      "filename": "jarenjs-emit-0.176.8.tgz",
+      "sha256": "7739317d3b8204d165d997e5157149d804c701d790fa4a6fbea74ebec50d7b34",
+      "integrity": "sha512-pCT9dPtAiaQlYlZS+20F0/+xxAG7SxZCZJQb39qZdbR7ze2ydI3iWZ1QfmpOzJ5KmrM898rqG0fVrOs6d5Ca/A==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/json": "0.176.5",
-          "@jarenjs/validate": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/json": "0.176.8",
+          "@jarenjs/validate": "0.176.8"
         }
       },
       "files": {
@@ -849,7 +849,7 @@
         "dist/types/output.d.ts": "f960fbecfbafb08b91735f66c6d569c4b3fb5bf1c9e4cfb74a7040d055d6fe55",
         "dist/types/typescript.d.ts": "5e18b3fad192570a2ea0f7598d2f9b3167381da89b9ce3cf456987d4cd1eb68a",
         "docs/EMIT-FORMAT.md": "257d52873b0eb2d000af3b6f865cf378e93cdc747cc88d0edc99bccf02a76479",
-        "package.json": "32f4fa6447c53cc7b4a135ba100440f8c9d83c4e45c28ee1a1075069f8d2bef5",
+        "package.json": "9f3b77ae3504b69a610abc1e7772639ebfc031da6e17cf734f1832bf5ca86700",
         "schemas/jaren-emit-model.schema.json": "90889a8d7d0bc458f2c874d028ef6e4e60ca9512d9728b4aeac0f744b347d977",
         "src/cli.js": "8cc57829f23d1f623cce87292b704b488f5235791c9344140564576927446e74",
         "src/importmap.js": "c099ce1c54f4cedc7022f61ed77ace831e7b3a4303211b1b44d4ba82c9581d83",
@@ -863,15 +863,15 @@
     },
     {
       "name": "@jarenjs/flow",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/flow",
-      "filename": "jarenjs-flow-0.176.5.tgz",
-      "sha256": "2fb5e1e7bad7bfca294681f139ec672b3eb2d85376360b2cbda173da8f092d5d",
-      "integrity": "sha512-9msmT87ySNmkAv8Sc9tovvoAQn5cW0u3zts8yh3W2+/oEqF/PqSnCtrvVmXnUbYfQp5jE17xdWwAyJhy8jxLpA==",
+      "filename": "jarenjs-flow-0.176.8.tgz",
+      "sha256": "f77c474d7cc86c9936bdc294ab14fd9b73e6bfca6f3e62b59dd4039264556b88",
+      "integrity": "sha512-X/EBqRPMhGL4p5Z5OAvAf3bahZoxkf7pzvzei+3misp/+TFPZyvk7bLmnB6ishdWdHoeLRoF5OZzr6E2JDAfIA==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/json": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/json": "0.176.8"
         }
       },
       "files": {
@@ -891,7 +891,7 @@
         "docs/FLOW-FORMAT.md": "5bdca8bb9f33999a619deab4159b34ed3246a998b1a3a70875230291651f2620",
         "docs/STATECHART-FORMAT.md": "d2a62f865da04ed792908adf6e02cf94117553bb4e8817328697a1a8b118fee8",
         "docs/WORKFLOW-FORMAT.md": "1332ff90138123fbb00edc5d7e457e3030278bf1f146fd6a16a52834783f424c",
-        "package.json": "dbc2317ddd61cc7038d1179be0169a11c0a74d2ec480e27cabd05511c1458b5e",
+        "package.json": "7263ee31e877b6284826decf01d1f8095e66d290bc5ba3548af8fed879c7c2fd",
         "schemas/jaren-dag.authoring.schema.json": "58e2eb1dbdfa361d31e60a8fff730145d1f8ba426d16e69665231632f54b7201",
         "schemas/jaren-dag.draft-07.schema.json": "841ed9c2f07590d09b89872b6261d602d96b2c08b027fe5f3e07d84b09517f89",
         "schemas/jaren-dag.schema.json": "ea082ed7248fecc891f51ec3d78749e22a7dee54378ceba5e968805318af0d55",
@@ -921,15 +921,15 @@
     },
     {
       "name": "@jarenjs/formats",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/formats",
-      "filename": "jarenjs-formats-0.176.5.tgz",
-      "sha256": "165b03fea4c0c6ed3b3e720e083a453ecd1895eeea20a4705d3a71c08a14aa78",
-      "integrity": "sha512-HzdFI2tH/59W0O0RpprI7xvIBL1dScKwOnvqL+T0zGA0HoMsOPR8g6oPvH6gDseRkPPm9zrCiKVg+Sz2hyXw6w==",
+      "filename": "jarenjs-formats-0.176.8.tgz",
+      "sha256": "e27163d88f6fa780c3a90bca97d9cb759c1d5e3a27b864390ec62eb80a5a33cb",
+      "integrity": "sha512-C0k9FA8PTRAMhUL2re1h2QQPfxnRKrep6AxLY7mArfx8HSKJKJ4bASliGg82cJjXe3zljABsWJKHc7rX7pw/gg==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/json": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/json": "0.176.8"
         }
       },
       "files": {
@@ -942,7 +942,7 @@
         "dist/types/number.d.ts": "75a87017599b0c988e8a9aa6981c9b5f2bb9e6731e3c4ef5c4837db4b803fb21",
         "dist/types/string.d.ts": "264a2d66034d6eb1e0c38cb71d947f5a007305191fdb993507339c257acf1f1b",
         "dist/types/testers.d.ts": "4b5b3b0604f9ff954218b8f275a27a599256e4e1f7479af7c3baaa50bf4a9b93",
-        "package.json": "3d0b0acda6364b8c72f2a0dbbb7ed33d90014cd7440125fa87d96f2d84af65ce",
+        "package.json": "57d35fc5457343c6dda6c6b6ce0517ed752ca953f0955aa2aefc82a4224d9ade",
         "src/datetime.js": "d9a8cb4dea8fade25a23dc1cfe19dd3a3d721e2d3dec1abcbe312c614c5f2273",
         "src/geo.js": "f5d1cbafc9c5f08873f174e70a0e52110befa89e84bea45e8c9fd4c1471a2609",
         "src/index.js": "c051f2c50d38ec020484b926402fd12d554c195c36a388410855bd3298639360",
@@ -954,17 +954,17 @@
     },
     {
       "name": "@jarenjs/forms",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/forms",
-      "filename": "jarenjs-forms-0.176.5.tgz",
-      "sha256": "03ea2f022b5d7f5eddc7debfc45ccd67f9f8fea774d33960a973110d210216bf",
-      "integrity": "sha512-hU/oH8+vuhbinxrldBpFKSutrN6o9658X1bapVhGHOTJLnDAvRJHHeOrLrtIzGNyf1mmZ+WhbMLZmmzN3sS8+g==",
+      "filename": "jarenjs-forms-0.176.8.tgz",
+      "sha256": "4a6a2bb5f9666782872f62f13a326138bb6f3ae0b369d34c414a106d3a9e2a19",
+      "integrity": "sha512-Tu34hcYk82D7vyS29hpHTd0R4ilLRtQhaj/TcNsySeT35StKlLLSaxzrwz1jzXsGSpcMyY+cWig48jGNEDwj/w==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/formats": "0.176.5",
-          "@jarenjs/json": "0.176.5",
-          "@jarenjs/validate": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/formats": "0.176.8",
+          "@jarenjs/json": "0.176.8",
+          "@jarenjs/validate": "0.176.8"
         }
       },
       "files": {
@@ -979,7 +979,7 @@
         "dist/types/rules.d.ts": "3170b16bd1f0d7c4e84eeb5aa44d3a72ad6566e3c400bb595fd765208a83d30d",
         "dist/types/validate.d.ts": "4af20e0d40e514ddbf2deebe0c7559c0d1b08af0ba63c92dcac8fa834cd6d51a",
         "dist/types/viewmodel.d.ts": "8502b9b3d020f7d71c0e8fa34e622bc03e6d4c6b6e7998e3c947297356f8aeca",
-        "package.json": "ef927da95324215fc8a7f9e2b2195ed7f8e43417cdb0b74080d4142fcff300f5",
+        "package.json": "453faf11bebbfb15efbee8e630f1e7934021404d8b7e8d5fa43b83d846074897",
         "src/data.js": "58f1dea179ae3d98f37e6a837ebf17c3dbb33ab4c1c6e6027df636604db688e1",
         "src/deps.js": "06ee18c72fad9bc8087f5ca645b33e2e846d32f8c699499da003ca396b49e8d3",
         "src/formats.js": "5f0b86e3bd606c4053fbf56bbe0abb0a72e797bef7967f3394f5a80b343845e3",
@@ -993,14 +993,14 @@
     },
     {
       "name": "@jarenjs/josl",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/josl",
-      "filename": "jarenjs-josl-0.176.5.tgz",
-      "sha256": "aa1813a4c599bd7f50bbb97879632aee76bc9735e4acfa817ef4dfb7db043baa",
-      "integrity": "sha512-2w8JznRAF+2xnjq8e49L8K/2sBwH2WSXy8QubOZKdchSISEINa725lX8FPLx7BH0AnIbAT6a8K13ib4j5qrazA==",
+      "filename": "jarenjs-josl-0.176.8.tgz",
+      "sha256": "bd268d53e809296bbb7b0a8e934f1b9514f94098c4cb815a5f3e9a7244718e3b",
+      "integrity": "sha512-EgVcSt0jikjw8F8QV13rBap7NI7Otd8I+oDIozsN5YMIfH0pw1iq5kmIv6DdRs977X4nTf7nctGMEb75cRXBMw==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5"
+          "@jarenjs/core": "0.176.8"
         }
       },
       "files": {
@@ -1026,7 +1026,7 @@
         "dist/types/util.d.ts": "e5ff2439d8a8d6bea550dfc0c906dbab1c88081d885c871d7d4a0470cb122c1d",
         "dist/types/values.d.ts": "17b5bc89a7478fd41e78b845bbbcccedacc16db919bfae9430fb9ab674a69e53",
         "dist/types/write.d.ts": "dbfd98aed21d87d2ea9e93227421234eb1ac5bc472264a8712a01ff6db39b4c4",
-        "package.json": "1ca92355e93d850e5ca7c0af0e673d4add3effc42bc3632730bbb3503839824f",
+        "package.json": "8cc081d09a72bd4af04d682afc90d263e8492bbe568b149ba9f2c4f5dd965d1b",
         "schemas/jaren-josl-data.schema.json": "95c19c6733c032ab6bd1800664499f887b28b44c7416f8663e694a2a80c79ab3",
         "src/cst.js": "4ea3baf889b055105139861e37415131f27bbd05d7ae73518be7d0727ceee941",
         "src/csv-machine.js": "77a9a9272652060f57d9db67a21489546884c69b7a2149cee7df722d58a98700",
@@ -1052,14 +1052,14 @@
     },
     {
       "name": "@jarenjs/json",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/json",
-      "filename": "jarenjs-json-0.176.5.tgz",
-      "sha256": "5e4c59b0b20332dc522c652b48f62187b4d20d8e7b8ea57b360fb93acdde83d2",
-      "integrity": "sha512-+97xo/GHMnKeYyB1Ly3ze1cRVJJC1peHAzYtrzd8/q5sH+r5/MNvtSZ+jPXwAaMBpvfgovNaxuegZQeeQlzHYg==",
+      "filename": "jarenjs-json-0.176.8.tgz",
+      "sha256": "2032371982caba673c01fb84956210b880c927c1d873fd9c9e66700e31f0b2d1",
+      "integrity": "sha512-Q69F+rIwmJbbSCp483VjDT7wB/uB53uwjI3dHxLddMgWA3MJsfGqiLbxCS1lWXKj3SffkQM3lRMLqBj/Q+Jluw==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5"
+          "@jarenjs/core": "0.176.8"
         }
       },
       "files": {
@@ -1124,7 +1124,7 @@
         "docs/JTLT-FORMAT.md": "918990acc5110f8f23ce5aff9459f56a061fc2c6af8ead9da6e6e80de6dbce63",
         "docs/QUERY-FORMAT.md": "a3e291a3b12062e49f414038419daac65ebe613b9152b25fc3a065eea8a475ef",
         "docs/XQUERY-FRONTEND.md": "cf2621153b9d53e731e9d38c6ffa26db3d043e826e6358dedb0ab92cca69aa35",
-        "package.json": "1495444eb7442e7b6bfbc1bae753fd3ffd1c07243b64bec97eeced3d6dabcaaa",
+        "package.json": "cd7e19ead6fe4f046958c44bf0a948ce5dec914588d5b2be60277aa82279d69e",
         "schemas/geojson.draft-07.schema.json": "0aaa3b491640b1164e7164e2a1969375cfd23d60cf9037463959fc2fad63842d",
         "schemas/geojson.jaren.schema.json": "d8b56e9a37d80a5a64577553005284372ca8543d1c530b2187019da59d38aaee",
         "schemas/geojson.schema.json": "931a73bb9dfc20da803b725fc52896f53ceafb68019e117fd9042432c17a8fcf",
@@ -1194,20 +1194,20 @@
     },
     {
       "name": "@jarenjs/linq",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/linq",
-      "filename": "jarenjs-linq-0.176.5.tgz",
-      "sha256": "00c0155145264ed86f4de321c51db17a3c28bc5041f727de858fdcfce9072fa3",
-      "integrity": "sha512-chQCBaRkbeAoiFaWVoWG6O7EdeC+ziXLPdX5fc5fYqf+k9uTKyUIf2u13jTWx2oKWIolH8d0APF0MRsntiRxFQ==",
+      "filename": "jarenjs-linq-0.176.8.tgz",
+      "sha256": "116ffdd36b51b372a3aedff24d5ac22933432c636ce404a9aca8fca82412fe9e",
+      "integrity": "sha512-oZsFbi0iDbiHId8qZs43flJMmk2mzt6FLGQe7+VRm8I5WykHYR/lPh5CPKAP6v4NikZHOyggWACFTMfFhcpwlw==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/json": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/json": "0.176.8"
         },
         "peerDependencies": {
-          "@jarenjs/db": "0.176.5",
-          "@jarenjs/formats": "0.176.5",
-          "@jarenjs/validate": "0.176.5"
+          "@jarenjs/db": "0.176.8",
+          "@jarenjs/formats": "0.176.8",
+          "@jarenjs/validate": "0.176.8"
         }
       },
       "files": {
@@ -1216,20 +1216,20 @@
         "docs/APP-PEN.md": "3900de423e1cc9e297b789ec8908e61cd65a6650f8b51769d00f496633866d6b",
         "docs/CHARTS-PEN.md": "f262e116dec7bfd0f8bec50f9a5fbd310da14021cf993b3cec1e712e5996e420",
         "docs/CONTRACT-PEN.md": "db4d671b630694732fe98f4586f07aac990ef4bb30b0a450f869645c880bba84",
-        "docs/DB-CLIENT.md": "2b5eeeadab8d2baf854422a4a14a684b974d754be5320b2312ff2da9d2438ec7",
+        "docs/DB-CLIENT.md": "f8b280913c49ffa6db6e2d0a82fcc4643041407a0c636f5fcd4f3a281c3fd819",
         "docs/FLOW-PEN.md": "3d9606ac30a090f72873d49c6fd55369ba36725ac1c1d3acc4a3d53b9fa41d32",
         "docs/FORMS-PEN.md": "97aa2b3f34088f7fcf9d9da9bb2c341680df478bc521737c1992ca7b2894f0c9",
         "docs/FORMULA-PEN.md": "f8380a0eda085c9d6a574b4f8ff97af67495cf13860d85ec59e07463ee212db2",
         "docs/JSLT-PEN.md": "3940699f664ac562c9371ac59387077bea0490c555055b1d354309571647d41c",
         "docs/JTLT-PEN.md": "6fc9c6fd196a5fd5df6d32234808b00658eff8286f348ee9ab6f6655ede869b7",
-        "docs/LINQ-FORMAT.md": "a36723992a5800470709fd742a60832b199f2a57158cac58279d3f8f492dafa5",
+        "docs/LINQ-FORMAT.md": "a475afc9161b33035df035bd3f65b8b569e4cc36f25441a08320c63333682c24",
         "docs/MESSAGES-PEN.md": "26ba178407a60fbf92e775f0406de0b8a6d5866e54c223c5c1cedaa9db5dc936",
         "docs/MIGRATION-PEN.md": "f82ab3b39f0af30032877e4bff289fd13cfdea2fcca8a11a9b676c59e2cc2335",
         "docs/MODEL-PEN.md": "fc23402a0579efdd01fb4848c5c29ff502318fcd298e96138c812f70f88de975",
         "docs/PROJECT-PEN.md": "2c7841e8cdd424c6c3c10afb1deffe4291c8a33dc4246c4351546f2507088194",
-        "docs/QUERY-PEN.md": "793e1bb6bf3c71cbc193c85e147b7be0b756597726483f73fde368ca48594648",
+        "docs/QUERY-PEN.md": "49e3f25ca277a00969ddfe8b8a03a16c791c91075ed044dc7b679ebed2b07d6e",
         "docs/SCHEMA-PEN.md": "a6a5e33cba90d702742b8f6527b8f1f44b2daf7249157bad763dc7a94db4e09a",
-        "package.json": "faeb192de7bd75902d0ef692cbf12d6c9839ae0633de09e97e68a4883be5a2d2",
+        "package.json": "7b2d15eaaffeef3a35a0710592d6d6363b4d255b72826293e9b4036af5f05ed3",
         "src/app/action.js": "e756939b7d048a605ed31fbcdc93f73259b7be6919d265d80f7eed3876698793",
         "src/app/await.js": "0254fe989cd21dfa139af72d89d3e1a8d0d78e1aa82efe336e432e178227e3b8",
         "src/app/capture.js": "d880076224dec75be3b2d5ffa6d8686c8cc59efbd47bccbfadb4a9bc6ec9a618",
@@ -1329,14 +1329,14 @@
     },
     {
       "name": "@jarenjs/locales",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/locales",
-      "filename": "jarenjs-locales-0.176.5.tgz",
-      "sha256": "390b0e6d19a38645fedca611f02fbd3938fd60122c78d6aeab2135dc6889a593",
-      "integrity": "sha512-dDROyCO5UnEBIhHvgjwZzPjO2hXPeCyhI8BNlKQxaKEaSSCHHm0keWCQA2/Be1kCvpJTLVV3pUIQhvt8rH8dRw==",
+      "filename": "jarenjs-locales-0.176.8.tgz",
+      "sha256": "478467d14890814031f4abb2f87e890d06539c4308a38641a8671ed0fa53cbff",
+      "integrity": "sha512-HoDqm6DT1GpJIYcfjkTemKkUGP17eyKtrmaTJ6XlF5dJd9A0j34qpzNUDCcDq7Y/w/+QVHu9gtYTDMdBBqEr8w==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5"
+          "@jarenjs/core": "0.176.8"
         }
       },
       "files": {
@@ -1359,7 +1359,7 @@
         "dist/types/ru.d.ts": "d182b6ee2a5775902bb1c4a88eab51948143a4d15b99cf0b66a339743ebe3ad1",
         "dist/types/tr.d.ts": "68e7c99d9e5f96e256dd89061a4f8005bb12537047944dcd5620cc6bb8ffb0b0",
         "dist/types/zh-tw.d.ts": "30d8d4c3bba42e8371a2f848c30af28b760906023238fff572466ff44d5e0fa3",
-        "package.json": "0d65cf3b932db1e62e4c968cbc992572508a61a9522af2af0fa62ab7bfac5e45",
+        "package.json": "fefad8e9e942c753e65cfb12dcb798bf0012563630a7bc6ef18bdbddba6e6930",
         "src/ar.js": "aa3e98f182b6cdea7a6e86c52fdb67249e93cfb5817190054d39a0aa6328d927",
         "src/dates.js": "88c9d268fc1f55b5c50cfdb0ef54754a5393eac924418664d150e14dfd520c63",
         "src/de.js": "fb58b7f33be7e24c174de94755c5a5ab921daeda7ea7e59f94955deac1fffcb2",
@@ -1381,15 +1381,15 @@
     },
     {
       "name": "@jarenjs/md",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "components/md",
-      "filename": "jarenjs-md-0.176.5.tgz",
-      "sha256": "f71fbe95e7b666a0337fb05c64b5e429f519d336a63d8e19cf690d08ecf9ec77",
-      "integrity": "sha512-os8iSpMlyTUH6938B0wD4wNUAfYkPcpXVZRy39aC51heNOYMFDrPlevBO/pwAX8HkA+8w0a4r6S5ZugO971puw==",
+      "filename": "jarenjs-md-0.176.8.tgz",
+      "sha256": "911963a21e43ccad59e38542e3cfcbf207aca624d04c2728518b688737352c99",
+      "integrity": "sha512-2p4qGzWL48FPoWTB1KCZt49cxOFGsT4NtPoFXr9d+OROlQVDupr5SILUrdANNZaovgIW9hwbzqEl26IWEd0ifA==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/view": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/view": "0.176.8"
         }
       },
       "files": {
@@ -1419,7 +1419,7 @@
         "docs/LOADER.md": "cb55bd58ecfb39f6614c12b4d7762cc6bc5a34677b26d45d214538bc7888d887",
         "docs/MD-FORMAT.md": "e2f82f4e9ebf329061aa1ea3b00ee3c4b8bfa8ff1bc05a19b526d055af9c3f86",
         "docs/PLUGINS.md": "4aeb77dc641cfaaf362eea5a2401338bde2798bf638133c0d104d3402f399324",
-        "package.json": "43bcbf4353ea792878a6bda213a0709dde59b15b7bedcc228256e0b60df71081",
+        "package.json": "3a6460865ec2718df11c88e61c0043c2e08560a2ad8091862df9dc5a0cc6f54d",
         "schemas/jaren-md-ast.schema.json": "58330c6cccef7909d2be5be9b197c7ce5515dee600516e004889c9991eb50a91",
         "src/ast.js": "26b3ee53244d2815a021887985162a49f298a2561bc7165eb81b9e469319b5d7",
         "src/bake.js": "a82779abcb6283d3ed97172f6c22cfabd7771be082203ef1b6fa3a47f0936679",
@@ -1448,15 +1448,15 @@
     },
     {
       "name": "@jarenjs/mermaid",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "components/mermaid",
-      "filename": "jarenjs-mermaid-0.176.5.tgz",
-      "sha256": "fe1339e048a02ce939dc1e3a8243484e89b197c5dabb75adceb253f27844ba29",
-      "integrity": "sha512-i3R+3sTVTdtOAbMeu+ltleld8IcrDO2prnzeO+HDKKKL4Vpz+24BX18xInTOKeEsJ2hZtU2jhvG9zp1N303FBQ==",
+      "filename": "jarenjs-mermaid-0.176.8.tgz",
+      "sha256": "9f1d7559ad23897fae2de7fd71064b12997231289c94e79d57e6c6a9307e89ea",
+      "integrity": "sha512-nuHvX5pYpA5ilGvYYG9y1fYMOreYt1jyx8gE3zN6cFrboNIF6432anJGjbTlib9240ezYvN8wRj+OwG/WlSTvA==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/view": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/view": "0.176.8"
         }
       },
       "files": {
@@ -1497,7 +1497,7 @@
         "dist/types/tooltips.d.ts": "e599726fa8e43a25542d27690f937d00ae4f9560cbba02d220a394d0e411d2fa",
         "dist/types/utils.d.ts": "b4f0167e73d2fe6e115cce66c12e23ca1dc836c08084084957259b48c3c70e9e",
         "docs/MERMAID-FORMAT.md": "1b93425cadf1bc34b9c06e74c5ed1d352e1925360f6be06d589dca2c63182703",
-        "package.json": "8ffad82f9bcaac0649c2a9a8ff543a59affd29f0ded556095687d82f1b9a16eb",
+        "package.json": "8f777fb65300c37c97bf54ed138bed6755fe6645d73035eeb1dd6724c9b62c98",
         "schemas/jaren-mermaid-ast.schema.json": "dacf8c8efa26c7416929f38aa586328c7482efb7a902c1161f878767e2176a45",
         "schemas/jaren-workflow.schema.json": "f5c7abe6a1ad9e63494c8e83c55f592cffb5b3a1a784f29b33a350421739a730",
         "src/ast.js": "93be88953d8ca2d99ce4f755b5f972b80449c766383c46c3134b500803be2d64",
@@ -1546,20 +1546,20 @@
     },
     {
       "name": "@jarenjs/play",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "components/play",
-      "filename": "jarenjs-play-0.176.5.tgz",
-      "sha256": "358263eefacc8529053ddd3ac5960c2aded7c5320d08c9e009aa442459465266",
-      "integrity": "sha512-KnUJ/sDpTutKhPiJ+/MVc9WA1+qqbstTca1OSfDePSqV49H1iaN7Qes3nYb6fTvSYc7Y1AOjjIDEKnnWmCb/UA==",
+      "filename": "jarenjs-play-0.176.8.tgz",
+      "sha256": "3e12c4d2ed066e02e28b915f38037e6fb6c0c160fb789d907b5c4c152af8799a",
+      "integrity": "sha512-xo7OmyivufFMEY8jBxZKWBC9aPbYto1sZOjlWDIeXCm/ytwDW39XfVbs3aLnrHrNe5jjn89RCLEUiTbvy5d+rQ==",
       "edges": {
         "dependencies": {
-          "@jarenjs/contract": "0.176.5",
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/emit": "0.176.5",
-          "@jarenjs/josl": "0.176.5",
-          "@jarenjs/json": "0.176.5",
-          "@jarenjs/linq": "0.176.5",
-          "@jarenjs/validate": "0.176.5"
+          "@jarenjs/contract": "0.176.8",
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/emit": "0.176.8",
+          "@jarenjs/josl": "0.176.8",
+          "@jarenjs/json": "0.176.8",
+          "@jarenjs/linq": "0.176.8",
+          "@jarenjs/validate": "0.176.8"
         }
       },
       "files": {
@@ -1574,7 +1574,7 @@
         "dist/types/index.d.ts": "a08084acaf91657f00cadf96912a666b9d65669d3b6ee0b12b3e0671ecc8946d",
         "dist/types/kernels.d.ts": "77200915f251477053d44f89dd39f4b2ac33f75369c5fad49da9916a8251f81a",
         "docs/PLAY-FORMAT.md": "c3d9564fffa94dcaeadc3d1580887cfc4b9d7af4847aae5f0646c3b0c3da8d8d",
-        "package.json": "8ca6359c548ac1d6f788d69efe105a344bc2ba082ac0000dd281ed8ad8b7a2b7",
+        "package.json": "83c0f105580e791d5c3db79ff71017d191a7440bef1c5fe3f281185ce7f888ca",
         "src/chain.js": "958f84695d8d7f749a013d39d4a7b6d759f5e1b378e7d7694e6c87efb0f4a418",
         "src/component/index.js": "bf4802bf3dccc827fb488ae2007242314977d501e87a87bed6262952cc8c7df7",
         "src/component/view.js": "425f536efb83240f62c9bfd14b50f21dd0e1f7bd4170155287d8e080ddf62c5f",
@@ -1589,15 +1589,15 @@
     },
     {
       "name": "@jarenjs/refs",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/refs",
-      "filename": "jarenjs-refs-0.176.5.tgz",
-      "sha256": "af4e36bc3dcdd5c18108d1cbf665e170827a34371ad6bc9f2dd5bbb0a2391c58",
-      "integrity": "sha512-3qiufO7McBnBbVxo0bzamvkAwqFTr7iJBlnavKPfeHIiA+wYYD1AreQEa0ngb0R0afCB9F8eI7d3Hh40GEiMGQ==",
+      "filename": "jarenjs-refs-0.176.8.tgz",
+      "sha256": "6e4ded51fc248514ca3b3a1778ecd9c1c18c07699efb0cedc364c2562cb30a26",
+      "integrity": "sha512-6yoQ3tAYLa37YjZsikWH0xWDScQCi1gIMPMlzfYJwEmTzjLy9m+KQArkq22jW5ITVJfilON1OFvoHw8Icp5y1g==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/json": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/json": "0.176.8"
         }
       },
       "files": {
@@ -1610,7 +1610,7 @@
         "dist/types/json-schema-2019-09/index.import.no-lint.d.ts": "a000066b387e4a016a1c8b7de3aa6e819538daf1d5fb19deb2ab1b71046140b3",
         "dist/types/json-schema-2020-12/index.d.ts": "a2d868d0c76629eef3327d3e6d4267f68f14b7ba1dd6dcf50ab304c933b6c5e0",
         "dist/types/json-schema-2020-12/index.import.no-lint.d.ts": "61f13b35b32db92dcedc2c1ff427d10b19e477e0a6a9aa258bb023b42f0465d3",
-        "package.json": "4f311177ff6fc79ec6e9f27ad4e7f1746d3bc56e903de65d7ab4de516919ddee",
+        "package.json": "1630447a10e8d8f643b8ce18b55eb706cb99eb53e3851d7cf41382cf40dd1b8b",
         "src/data.json": "d24ab8a97c18b3f5afdde7d7024a0e0ac1df0614a16a41cb88f81379edcc2db3",
         "src/index.import.no-lint.js": "80ec60a37736faa820f420fae790159a52c8133af70ca3894bbfe45b237cf598",
         "src/index.js": "579bd1510ef1164292bd054318a7542910a8a93db7c5272e070a736bedeacefb",
@@ -1644,17 +1644,17 @@
     },
     {
       "name": "@jarenjs/rules",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "components/rules",
-      "filename": "jarenjs-rules-0.176.5.tgz",
-      "sha256": "fbbee77b2304daf16255dabf6da9aa9b9a57707bb2905c163aef247c58bdbf72",
-      "integrity": "sha512-1iTrEpm2hlnS56IZ8poIJJ1C+u+6cz2fpwhnvMGdLNzw+iBs3TpYW2hlpZog4HP8L+V2I8xsftFXJtkRqZ1Hbg==",
+      "filename": "jarenjs-rules-0.176.8.tgz",
+      "sha256": "a04c5cfaa40c5bb71913efaddc69c8e70ef3fca3c8ede8afa648e662a744aaf4",
+      "integrity": "sha512-BsvwqMc0Pf8pQQnGsju1XCn7ZaPxB5GaBoSphj5e1K909mC8t4rGqb16F9MYqZpwQz6acZ+qqbHPed3Cxnwwkw==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/view": "0.176.5",
-          "@jarenjs/app": "0.176.5",
-          "@jarenjs/forms": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/view": "0.176.8",
+          "@jarenjs/app": "0.176.8",
+          "@jarenjs/forms": "0.176.8"
         }
       },
       "files": {
@@ -1662,7 +1662,7 @@
         "README.md": "169ccb46b6c14aece3804267e3a5f1d9cde364cb5a975dfd11f23192aeee05f6",
         "dist/types/component/index.d.ts": "282b74e3978406778a341aec405fc68675394e5ed5b22ed285389abeabf8d08a",
         "dist/types/index.d.ts": "a32ba6dc4b51ae95db79e24ee0f11ebf9398b5f38af5908a18ae3bdea75f6c26",
-        "package.json": "dc7be1f50154350dcac38f7652e444e4bb8981a22749e5c40b925b589373f330",
+        "package.json": "44d04cbbba152c95230105f5b388ee2214876d8539403d06700735e88cd827e2",
         "src/component/index.js": "f97839fc464bf78ea57017c32411d5e0b8e4ec2043c10a10770401279831e1ca",
         "src/index.js": "5c84ca193d662d4d8e5db6f3fc3e4d4b33202e1d474feedfea4df207097a7053",
         "styles/rules.css": "e032ea1ec84253095b2d49a3b3bafd19a154c3af917bbc044290734c39746d70"
@@ -1670,25 +1670,25 @@
     },
     {
       "name": "@jarenjs/studio",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "components/studio",
-      "filename": "jarenjs-studio-0.176.5.tgz",
-      "sha256": "0c91fe6239639636e1b7ad23bc51bad02c921f072132c8733ea02daf82a04271",
-      "integrity": "sha512-8CNiPsfHxjMX5jsdICVmHMT9fMa80VPOj0d8PRljl7Ww0Gg8PP6Rz+/kny31Lba7KC33WWlU4sm0SnNDbvfPDg==",
+      "filename": "jarenjs-studio-0.176.8.tgz",
+      "sha256": "e38d486e9a03365537f17135384c0688ced1196c2a78627e671c3d8b43ebcc5c",
+      "integrity": "sha512-A5RN19QY4Cvopxyc6ruHZEnyohnekSb/KsRxwB1mndUBjsgvYv9zZgaTwe3cHQWuRF8ZYddTIz5KHwCs1nmlkA==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/validate": "0.176.5",
-          "@jarenjs/json": "0.176.5",
-          "@jarenjs/app": "0.176.5",
-          "@jarenjs/flow": "0.176.5",
-          "@jarenjs/db": "0.176.5",
-          "@jarenjs/contract": "0.176.5",
-          "@jarenjs/view": "0.176.5",
-          "@jarenjs/forms": "0.176.5",
-          "@jarenjs/formats": "0.176.5",
-          "@jarenjs/charts": "0.176.5",
-          "@jarenjs/mermaid": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/validate": "0.176.8",
+          "@jarenjs/json": "0.176.8",
+          "@jarenjs/app": "0.176.8",
+          "@jarenjs/flow": "0.176.8",
+          "@jarenjs/db": "0.176.8",
+          "@jarenjs/contract": "0.176.8",
+          "@jarenjs/view": "0.176.8",
+          "@jarenjs/forms": "0.176.8",
+          "@jarenjs/formats": "0.176.8",
+          "@jarenjs/charts": "0.176.8",
+          "@jarenjs/mermaid": "0.176.8"
         }
       },
       "files": {
@@ -1747,7 +1747,7 @@
         "dist/types/validate.d.ts": "0fa64afc6c48314ecbac5e7f5b08ff2b3945ab5a994cfbb16477babebc2be756",
         "docs/EDITORS.md": "c1b5ba6e913155033108919e8e164c862a38269fe5fb32f3e6babaf43d246e95",
         "docs/PROJECT-FORMAT.md": "118f33a4d627ad9975465de4bd2dd929c8d1bbff7aca082bc2623f14eb2a378c",
-        "package.json": "159c6356d36a4d54addfbe2da248a2cac99341a48c4136ca4358c662a4e4f1cc",
+        "package.json": "fbed680f1d76f31491a4972eca5b8fd0e6264a81de61bffa5d248c961d08285e",
         "schemas/jaren-project.draft-07.schema.json": "c0ac564eb028efac3b91b5da2a0579b2993ad01c50f072cc88bc220f441983cc",
         "schemas/jaren-project.schema.json": "0ad2b7e5f36757243063d26df2aeb5411a64bbea47310ba2b044b9fb3dd3e78e",
         "src/assemble.js": "33e6cb4745c6ffa2b2c1cda1f87b1083994cc057898d0b1eb77cb2a5ec90149d",
@@ -1809,22 +1809,22 @@
     },
     {
       "name": "@jarenjs/validate",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/validate",
-      "filename": "jarenjs-validate-0.176.5.tgz",
-      "sha256": "1a054c84216cdc0ac0b156b4f9d351bc9b8c61090090c161c32e8df3e4457de4",
-      "integrity": "sha512-CB/eS1bMsQDZcmsQVMsf7qpWMJ0Tci2Qk38IO4P0hrZ7dpFyoSLZ9LLsTEP6XyKk3Wot8Y9DrA0Xdxk/DT/ilw==",
+      "filename": "jarenjs-validate-0.176.8.tgz",
+      "sha256": "183eeedaab9a7f6cff78f4a3f5b5122b8283b744d7fa95bfe9b42569ff335a9b",
+      "integrity": "sha512-DcuRbwFatLoPjePLQGVFImX5aTXdIT9wJ10Zo2ir6K6c0/Y4faKrYrNXIZsH3yxXKoNrutmL7/ren52J/1uuAg==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5",
-          "@jarenjs/json": "0.176.5"
+          "@jarenjs/core": "0.176.8",
+          "@jarenjs/json": "0.176.8"
         }
       },
       "files": {
-        "ARCHITECTURE.md": "f4bf3181603f28770d9ab748596b1ed2d2235d97a3c72fd18a547ed1a6c1c7f9",
+        "ARCHITECTURE.md": "d313fd9b7079bd21bbc106484c7fd19ce97a42a50105bde36d10a761c4a0f7f4",
         "LICENSE": "cf6ca02c7b83774c59b2c6eabb5639dc7789886e035eef15762719e109000dbd",
-        "README.md": "0bc9d66f231becfe1a0e2d6de0fb67e8712d0e6a8dbbe2afa0dae159ca1d81ef",
-        "dist/types/array.d.ts": "79a86baaf80df533781b787f4435982f3983fe7c5364cbf2087bb87c96ce5d5b",
+        "README.md": "37cd80d01d4cdf3e543f7349e58b33bad34fd8fccf36a06100dee48e8f8dc070",
+        "dist/types/array.d.ts": "c281e43e469166e04430698e8403abf9d356d88798ef0ac6e3b9aabe5c760d6b",
         "dist/types/bigint.d.ts": "e09b8d0a34dd8370832f369faf6787c653d1216e0da3682d1db1b559b962e09f",
         "dist/types/combine.d.ts": "0a788045badff980b18e4168b61ab1c5414aefda1f8957c4692bba99db0110f2",
         "dist/types/condition.d.ts": "4627a9b19afbfb2dbc94969534cd1e24edbf2d0e771b7aa9b99a864a966e34c0",
@@ -1841,7 +1841,7 @@
         "dist/types/messages.d.ts": "fac5398602610781517c189408e77f5b86f885a41764388423fed1b64bc8fd57",
         "dist/types/normalize.d.ts": "d09f21c993b7e69e1c0ea4844a8fbf9e5cb7ada9087bfaca636a92bb4448aaf7",
         "dist/types/number.d.ts": "f3dd993ce1be60099a84da04ace4113f4f1054f39adbb05fcb67df0affc1ccaf",
-        "dist/types/object.d.ts": "c6c893a5f32ec4ed112ed724fafe132c5327133571fe5fd448682cd0d7f2c421",
+        "dist/types/object.d.ts": "1ca77c26549e7d8b7baad552e74f63b25728cb61efd9f4fd2954ab1a37893b93",
         "dist/types/origin.d.ts": "c6e26f175b002be5a3937130987662dffb5562fb90c07e497cf70b4af55c10e2",
         "dist/types/output.d.ts": "2faffa86f8cc398517c3794d004312b4a45a0ca0da9e2038fae983580a6f6c65",
         "dist/types/property-dependencies.d.ts": "fac32e3103a2ee9427a6d731b795bf012459dd485435b27685f4de546bd76c2c",
@@ -1852,13 +1852,13 @@
         "dist/types/schema.d.ts": "3443d61ce5b2ce87d7c7be9d624e422da11f2bfecf36bf23c585802e20e209ee",
         "dist/types/strict-profile.d.ts": "6d00c96652abbd997061839d2a9f48ed85ab66d8c762d379552e76bd831ea6c7",
         "dist/types/string.d.ts": "74899fa3ad0f462568710a339046c76bdf27e110036e95c9958bf8017b18a49a",
-        "dist/types/tools.d.ts": "ccdefae92e1cabb3e67eab294087df2c75d430ce53e1921a2d09401d06cb9e47",
+        "dist/types/tools.d.ts": "c499dac320a9b3ab18bec094d98bc725007e1768813829635affdf2261a66aae",
         "dist/types/traverse.d.ts": "da60f59cada81d0be2543dd033fd63f5cd91682197906f6d449078c7259aa9fd",
         "dist/types/unevaluated.d.ts": "962286b6f878515b3e4d0f5dcc23a262bfa19f1b77fa9ebeeac00db75d938476",
         "dist/types/validator-state.d.ts": "f7ecf965e85c61c9430015cba8011d8d25b2223dbb73c0076e6b58fdca16dbab",
         "docs/ERROR-MESSAGES.md": "3f209ddc80fce034e27014866d810781dcafdc521f35ed978451310e31c4411b",
-        "package.json": "9534d5c5603b8798de055fcca1dd90054e9e3e2dbe8e19d2bf777ddd51e6b348",
-        "src/array.js": "936d63bc5de6381d4407b8f5cd9fa62cda380e336a0994e38ad65ad149c924f2",
+        "package.json": "cd6b8e624fdf98b684eb4433d7b7c926b847d703e18c7b782157389204d25ed3",
+        "src/array.js": "799ba3e6b53b6f6040b13387e75681f4f01c482133656056bae71a45fb2c64c5",
         "src/bigint.js": "d5f70059501977d551f458e4ca089200b2885637bf636b3c52a763f05bdbb2f7",
         "src/combine.js": "e62bc5c94a19b6c7fcb23abfac5898182e8611b496fb1c5664c6239f4fba035d",
         "src/condition.js": "c13e80e9e690c94d71404d02d9e74a03dedda5f10ae8fb27d594d118a60ee00a",
@@ -1875,7 +1875,7 @@
         "src/messages.js": "4e6c813e5b0268f1a1850d39acdd82157606fc64b41d0b44898e8328cc03d444",
         "src/normalize.js": "0a3d6f98edfe902b53beccb6138e1b02c4f71d7a663129b6a9b93943ec9b8aaf",
         "src/number.js": "10d3fe8854afb602bd91c0369b79fb69d1e531d722617913efc32ab38f386202",
-        "src/object.js": "b73dd3193dbc95264f6ac16189406a1d05d858269e8f93a49c7cae4f0d799ecb",
+        "src/object.js": "a9f36790b73955e0b80c1a1dc4413f388f6d83a5b86a0b859b5a2136642a27a8",
         "src/origin.js": "817efd60358300f910497d231da93cf8ff3852faa3448e0539277548de4ea06d",
         "src/output.js": "90ffb2f062f47854f46dfc55451c636a7eaaf83e56f68c03f54aba939fe50a71",
         "src/property-dependencies.js": "eb3bd18148ca378b95258f8d9003951bd4954001535a7eb32e16a86fe5cb05d5",
@@ -1883,10 +1883,10 @@
         "src/query.js": "ad0050fe7de1fb77ec47c15f5943522be8d53639dbd2b07d7ef7961e668ea13c",
         "src/references.js": "fc3ad0622b5dc9a8ac94ff1a2b068190680ea944e7d360822ce83f2f57bff674",
         "src/schema-keywords.js": "dc7d685577c09603fc8b267136325d242ceffb044073c457c85a12396305033b",
-        "src/schema.js": "dc7e971456b16e38cd1c2906fcb28fbdda9fa2d73edfa846c9231e9136a0cf56",
+        "src/schema.js": "63e033c2d6ed72da3544fcf2e03908298325de50a34b555f236c57a5caf1f649",
         "src/strict-profile.js": "0d53846f1ccfdedb4e7b4f6c406d28af5735e75d7952047d7982fb076b385c66",
         "src/string.js": "09a0e1187071644a2f713688f02da4f92e1c548720b508ef17e72a1555fdbd43",
-        "src/tools.js": "09e0377ff3ddeb1e97f98812c46fd303dbc9bb9b3b70965de34e5665caae1181",
+        "src/tools.js": "9da980dd44c028d6da0ab774e58e8bec38a4792b9fdcc1988561a2b1148c4738",
         "src/traverse.js": "d0bd0fc2223c7d34de3da91e61ca5178f4ea17ab660de847bb07222271013197",
         "src/unevaluated.js": "580e9496dacf49865c3bdfc6812c0eb13799951b966a460b4013a3dd8596e4fb",
         "src/validator-state.js": "b4190d29cbc4c881337ebafd079c9e09a6c9ad5bf9d6f84323c221f5467e85ba"
@@ -1894,14 +1894,14 @@
     },
     {
       "name": "@jarenjs/view",
-      "version": "0.176.5",
+      "version": "0.176.8",
       "directory": "packages/view",
-      "filename": "jarenjs-view-0.176.5.tgz",
-      "sha256": "f3b445c684fc5fe69fa8489704188cfb12e78438dedb220f96cc89a9966c7dca",
-      "integrity": "sha512-oinNX9zd0+pm02eAzveiVS7azOz5veMe4lDHaJOR4bqxGKILss7qgbH/ARfElederSCGb245GBBMw30fXcqvfQ==",
+      "filename": "jarenjs-view-0.176.8.tgz",
+      "sha256": "54656959a39e89adfbdc51e3f0acb296dbe92721942c318aa934d17c47680b5f",
+      "integrity": "sha512-nTlcMrKENObAEJVWfOwkl3VwKTmF2qA+ogSjGqdKm3ieMcKYHGiU6S/pkZHvqpa9FDnxPYGwPwvuKuUjK7/mIw==",
       "edges": {
         "dependencies": {
-          "@jarenjs/core": "0.176.5"
+          "@jarenjs/core": "0.176.8"
         }
       },
       "files": {
@@ -1921,7 +1921,7 @@
         "dist/types/safe.d.ts": "763b41931f2777c053c72f516b8a251a62964988c9048763ef6dbeaaf0de9721",
         "dist/types/vnode.d.ts": "94444ee4c4a78777d483ab031d0664c9fc15d51846b6abbbcff9a42554333e99",
         "docs/VIEW-FORMAT.md": "3a8fc031fa6864256b5245609ca9ec221077ba51773abe6fd29ff3f421a2f100",
-        "package.json": "b116a1d076cb819bd5838b4c8de69b28b3b76aaeef73d2d00ddbc6334bdd2d78",
+        "package.json": "e4dc2ee2c1a6917100231c9d007c8c15134421bf5e1cdf3d9793a8373407fec3",
         "schemas/jaren-vnode-safe.schema.json": "065807c8c1fb41f9446bc5f8ffcb8d700afa23267ef1a704ba0399edacdbcf70",
         "schemas/jaren-vnode.schema.json": "65bd4ee1cf87e7bcf0921388cd995444e76747e5841d849d327b2cd0f7c5503c",
         "src/dom.js": "e2f8568f96ba0d2049f9297d5502944e8b3f14c5220c06083b8b5ae0e971c73a",

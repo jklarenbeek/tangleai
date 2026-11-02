@@ -2,7 +2,7 @@
   "benchmark": "cgt",
   "schemaVersion": 1,
   "source": {
-    "head": "320d1b88bca27b0fe66d31414e5123f55d43ab0c",
+    "head": "ea4b0c0f5a3d5abab783e0e57b3bdc07cea0c60d",
     "clean": false,
     "files": [
       {
@@ -111,15 +111,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "cf523bfbf86b18ed873b1285d819893eb8e7a8b70bcba725bbce315d15a55e45"
+        "sha256": "349b450d82fecf43f2e0f390d24ef05827421af67d576e4158917cd3812b2288"
       },
       {
         "path": "package.json",
-        "sha256": "fffa92a5eac0c2197c4210200085849c37f32ae49cf636bb9cf8c641aaf2db68"
+        "sha256": "d68147a2dbc39b81dc3b8faab47dfaafaa8645d114c81513d6a2dee4fd9b929c"
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "dd3f3912305890ff9359a1aa71da31489945f5a2c525cd5e7dd3456aade2d94e"
+        "sha256": "3fae3ce7341459fbe8ca748373a8bb2381c80eb8f8740b37731de63cc4396307"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -155,7 +155,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "c6f7baa486a8c957dbba9946f313f1f37e62278cbea1237738839aaa304be9d0"
+        "sha256": "e6b966019d760a0a4890e0164282dd7b622b9a8d2715ed7f0a6cf1f6df440206"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -211,7 +211,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "f79cdd9437dd0f49a7432ce8213b3b910434646e00056d22a691755c3051c274"
+        "sha256": "4c7de99da3081438f11fc7719ce6ec608196ed938f7894a64520b412fe424186"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -287,7 +287,7 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "6caf3ce73f60760ffe9818eb6f08e38210e927915039c229a4c2042b9280c8a4"
+        "sha256": "e9562282ae6823eb8d12c9bb0759a434156608d6862322d3cde138e9661f00ef"
       },
       {
         "path": "packages/experiential/schemas/experiential.contract.json",
@@ -431,7 +431,7 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "581a12432da9b1300968783ccc49d47825a03499e71c9166e42dcc8d9ac0938b"
+        "sha256": "883fe5fdadf4a9103083b523c3f7e36bc8e13e1affc0b2b418740a35f8d7426d"
       },
       {
         "path": "packages/memory/schemas/policy.contract.json",
@@ -651,7 +651,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "c87983f2dda5c29a5d092ad01b0fe648e14758d0b3da54556bceba3cd3ae0c5c"
+        "sha256": "88a14bb46372b9a237d3ea2c00797c6d5368bf637444b0d23f3fe0a7ca7e97c7"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -707,7 +707,7 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "431965f2f7584231a15d814c29531da1334b302c9a0ac2a8e1b3c0ca64a900d4"
+        "sha256": "d8758a7fa718967893819195dc4fc58a7733b1ddc24b2832d628fde082bbe897"
       },
       {
         "path": "packages/outcomes/schemas/direction-delta.schema.json",
@@ -839,7 +839,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "2c23e3fa6f868117c3fa590b56eb55afbcd1c13002263173981f7335b84c05b0"
+        "sha256": "408ed4ccc051847730043d34b33abd976c13fac1aee59d8fa7d84312216eb56a"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1058,7 +1058,7 @@
         "sha256": "30bbda9de7067320328bc07d30936df63fbf419f3e4642d8bc9867c3a8c5af75"
       }
     ],
-    "sha256": "67b83b286140b34769a635c8d0acd7435a2991131ff2a9873880e886d3912b46"
+    "sha256": "92cc2c8568309ffe206076be12418ffd46a506e1b00d2fd2854d04b4f8a784fa"
   },
   "evaluations": [
     {
@@ -1073,13 +1073,13 @@
           "artifactId": "a39515d06a2c466d804b47eb6d922766fc4dce1ddafe5b31b315e6e1280d5646",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+          "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "a4c08d2c472afbe4cc1c40ac1b7f4d093c652365ae70d3af0ebbc8c63cfe0997",
+          "id": "ab49175e67c7712f519aa9537cae7443bc06cbe28520c21c268243f24d4b4667",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -1109,7 +1109,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -1147,7 +1147,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "c5a75b97f866a530d1aa8e2560fe543791d5ed249889a8c15238bac4550ad791",
+        "id": "bf4c166f0b7ff50c3293268b06450d4b0f04855cb1a71edf471ab6a6501409ad",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -1181,8 +1181,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "a4c08d2c472afbe4cc1c40ac1b7f4d093c652365ae70d3af0ebbc8c63cfe0997",
-        "reportId": "2ea0d7abbb2dd1fc0478f8ff5b704a8df8bd3aee2e3b407ad2a13eaac3135429",
+        "registrationId": "ab49175e67c7712f519aa9537cae7443bc06cbe28520c21c268243f24d4b4667",
+        "reportId": "aeefa411b3ddaaf947d185475808715d2899ba12512600545eba315908cd0b96",
         "retention": [
           {
             "drop": 0.9609375,
@@ -1284,7 +1284,7 @@
       },
       "evidence": {
         "candidateId": "candidate-memorizer",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -40247,7 +40247,7 @@
           },
           "cost": null
         },
-        "reportId": "2ea0d7abbb2dd1fc0478f8ff5b704a8df8bd3aee2e3b407ad2a13eaac3135429"
+        "reportId": "aeefa411b3ddaaf947d185475808715d2899ba12512600545eba315908cd0b96"
       },
       "plannedState": "rejected"
     },
@@ -40263,13 +40263,13 @@
           "artifactId": "ced706a3dedcbcec1983328fba18b4b3c2b81b7d527d4048853129f1c35ae87b",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+          "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "cc75333b9cfe6b4a825a08ea2dcbba56636080c06f371a03cdba65f43884f8cd",
+          "id": "80d540e068b43b6af8b762c79c99d1faa05db859c33cc3122d3590f091eac6c4",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -40299,7 +40299,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -40325,7 +40325,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "6fe8f6b60752ae2afad1a0fdfb0e436c132a7dfbdce6cfa137db597fe7d023d0",
+        "id": "48b80b1444b3e65b8be94a9d470354b27c925bcb5932a9ebfe3e83d547cf018f",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -40359,8 +40359,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "cc75333b9cfe6b4a825a08ea2dcbba56636080c06f371a03cdba65f43884f8cd",
-        "reportId": "9262f37c32f697ac6762cc90da3f8e3133a6b9de145d872d1e71c19f0d739c98",
+        "registrationId": "80d540e068b43b6af8b762c79c99d1faa05db859c33cc3122d3590f091eac6c4",
+        "reportId": "e0578d0c49c428d6fd50b9f7b1547e992cb0f30f226e79472300a414cdf15997",
         "retention": [
           {
             "drop": 0,
@@ -40462,7 +40462,7 @@
       },
       "evidence": {
         "candidateId": "candidate-rule-follower",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -79425,7 +79425,7 @@
           },
           "cost": null
         },
-        "reportId": "9262f37c32f697ac6762cc90da3f8e3133a6b9de145d872d1e71c19f0d739c98"
+        "reportId": "e0578d0c49c428d6fd50b9f7b1547e992cb0f30f226e79472300a414cdf15997"
       },
       "plannedState": "rejected"
     },
@@ -79441,13 +79441,13 @@
           "artifactId": "72824a9c955a37b6ab07aa754ff5e17547215c262cba5912f7dee0d9e19a1237",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+          "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "a053481d1cbfc02caf8e56ae4da3be07c25b3c529cf0c928b3c5ff943b7427b1",
+          "id": "f702dea371afcc5446ce8e04a008492252794f28659116c9435ebddc97cc4629",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -79477,7 +79477,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -79515,7 +79515,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "e56b962c1b75fe70c3f3ae2fa045a13274e8f68fd548ec31d8779d80f6be9635",
+        "id": "1d30332d4b0970df791cd6f4fa0a9b6175b0a13cbc8bb8d8ddf211668aaa97b0",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -79549,8 +79549,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "a053481d1cbfc02caf8e56ae4da3be07c25b3c529cf0c928b3c5ff943b7427b1",
-        "reportId": "9a7da1cca67f13c002bb65b3844310aabcfc1acc5146c695a0abc8c975892af6",
+        "registrationId": "f702dea371afcc5446ce8e04a008492252794f28659116c9435ebddc97cc4629",
+        "reportId": "209acd5ca0448fd85ef4c10397009449e827fb07c99a5f08c5e026fa0d6a7caf",
         "retention": [
           {
             "drop": 0.9609375,
@@ -79652,7 +79652,7 @@
       },
       "evidence": {
         "candidateId": "candidate-forgetting",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -118615,7 +118615,7 @@
           },
           "cost": null
         },
-        "reportId": "9a7da1cca67f13c002bb65b3844310aabcfc1acc5146c695a0abc8c975892af6"
+        "reportId": "209acd5ca0448fd85ef4c10397009449e827fb07c99a5f08c5e026fa0d6a7caf"
       },
       "plannedState": "rejected"
     },
@@ -118631,13 +118631,13 @@
           "artifactId": "2f25be04e9ce8102cc9bce91a41bd44a0bae23102ecbcabd98695ddce7f71350",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+          "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "55aafa7f9dfcc9532df45dd1ad93191928a424a3e816672b56db8334e4987b98",
+          "id": "0563fb4564bd1399e590ecfaefd697a14aa5aaaeded4f2c3dbccf9ebad5aa732",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -118667,7 +118667,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -118723,7 +118723,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "df1223f3322092a26eac74b6fb6fb1b24399acfe8a627a28cb31316f0473fd3b",
+        "id": "b84b4feae39e419b614aa04215eecf175fec690702d44b1f5c36fa43de77138b",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -118757,8 +118757,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "55aafa7f9dfcc9532df45dd1ad93191928a424a3e816672b56db8334e4987b98",
-        "reportId": "b30a1ced9259c6b33a3918ee89d70bfa9ac08713dafbc7d67042662d9a379c0d",
+        "registrationId": "0563fb4564bd1399e590ecfaefd697a14aa5aaaeded4f2c3dbccf9ebad5aa732",
+        "reportId": "b4334c9bf7605910d67835574c7d110e168d617a506e4fa181562c575dc6dc1c",
         "retention": [
           {
             "drop": 0,
@@ -118860,7 +118860,7 @@
       },
       "evidence": {
         "candidateId": "candidate-tainted",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -157823,7 +157823,7 @@
           },
           "cost": null
         },
-        "reportId": "b30a1ced9259c6b33a3918ee89d70bfa9ac08713dafbc7d67042662d9a379c0d"
+        "reportId": "b4334c9bf7605910d67835574c7d110e168d617a506e4fa181562c575dc6dc1c"
       },
       "plannedState": "rejected"
     },
@@ -157839,13 +157839,13 @@
           "artifactId": "c73209476232920ad3141a0f7d2ef953c773511393d9f486e5c5fd84ff015c81",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+          "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "8a310580c60ea066d6cfde9000b16ef31729049f797685293d4a523234efa655",
+          "id": "d2ca4cf5e3957b741b91da3fbdc0070f6a78c1144ee7d31d6b96a103731c41db",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -157875,7 +157875,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -157907,7 +157907,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "349dd0c7dd32d30d3d33f2778a53aa453843b151bfcc9d57f86def3f7faa4f27",
+        "id": "3f9db29a691eb95430663226f78607431e62e91b45b313f09038b30dc0852dfb",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -157941,8 +157941,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "8a310580c60ea066d6cfde9000b16ef31729049f797685293d4a523234efa655",
-        "reportId": "4fa3a9b11bb062323335bb225eb41b632228a7fd7ced322f05d9b7190d392351",
+        "registrationId": "d2ca4cf5e3957b741b91da3fbdc0070f6a78c1144ee7d31d6b96a103731c41db",
+        "reportId": "b24392ca7d449c7affb05ae2a9f4d780330aefcacf523f9b690f509bb1cc3626",
         "retention": [
           {
             "drop": 0,
@@ -158044,7 +158044,7 @@
       },
       "evidence": {
         "candidateId": "candidate-oversized",
-        "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+        "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -197007,7 +197007,7 @@
           },
           "cost": null
         },
-        "reportId": "4fa3a9b11bb062323335bb225eb41b632228a7fd7ced322f05d9b7190d392351"
+        "reportId": "b24392ca7d449c7affb05ae2a9f4d780330aefcacf523f9b690f509bb1cc3626"
       },
       "plannedState": "rejected"
     }
@@ -213000,7 +213000,7 @@
       "storageUri": "memory:cgt/scripted-base",
       "trainingRunId": null
     },
-    "evaluatorRevision": "cd0dbb11730a2bc83613a58aa01b2aeb1915cc9d7f3cb57223de449c12441910",
+    "evaluatorRevision": "09e6d8bdb26f08b601729d55bcc2f61c391c027600473fb2b9db15bbe8162e3b",
     "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
     "live": {
       "status": "not-run",
@@ -213124,8 +213124,8 @@
   "runtime": {
     "node": "24.20.0",
     "bun": null,
-    "tangle": "0.43.0",
-    "jaren": "0.176.5"
+    "tangle": "0.43.1",
+    "jaren": "0.176.8"
   },
   "rows": [
     {
@@ -323562,5 +323562,5 @@
     "Scripted operations use an injected fixed clock and zero training submissions: their zero milliseconds and zero external spend are fixture accounting, not measured trainer or model performance.",
     "Each evaluation reportId addresses its retained candidate evidence block, avoiding a circular identity with this enclosing report. All paired bootstrap intervals use the shared instrument implementation."
   ],
-  "reportId": "2bddf7b2420186875fd7e78d53831b09f824df3d6b97e69b345ca5804788f921"
+  "reportId": "c832a715c6eff18bcec9ec0b839524e549742332b86d00c14bc5bd4a15d92edd"
 }

@@ -1,5 +1,20 @@
 # @tangleai/grounding
 
+## 0.43.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/core@0.43.1
+  - @tangleai/agents@0.43.1
+  - @tangleai/config@0.43.1
+  - @tangleai/context@0.43.1
+  - @tangleai/documents@0.43.1
+  - @tangleai/gmpl@0.43.1
+  - @tangleai/mas@0.43.1
+  - @tangleai/models@0.43.1
+  - @tangleai/search@0.43.1
+
 ## 0.43.0
 
 ### Patch Changes

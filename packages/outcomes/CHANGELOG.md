@@ -1,5 +1,16 @@
 # @tangleai/outcomes
 
+## 0.43.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/core@0.43.1
+  - @tangleai/agents@0.43.1
+  - @tangleai/config@0.43.1
+  - @tangleai/memory@0.43.1
+  - @tangleai/models@0.43.1
+
 ## 0.43.0
 
 ### Patch Changes

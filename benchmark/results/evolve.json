@@ -261,123 +261,123 @@
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.176.5"
+        "version": "0.176.8"
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.43.0"
+        "version": "0.43.1"
       },
       {
         "name": "@tangleai/config",
-        "version": "0.43.0"
+        "version": "0.43.1"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.43.0"
+        "version": "0.43.1"
       },
       {
         "name": "@tangleai/mas",
-        "version": "0.43.0"
+        "version": "0.43.1"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.43.0"
+        "version": "0.43.1"
       },
       {
         "name": "@tangleai/outcomes",
-        "version": "0.43.0"
+        "version": "0.43.1"
       },
       {
         "name": "@tangleai/store",
-        "version": "0.43.0"
+        "version": "0.43.1"
       }
     ]
   },
@@ -1326,5 +1326,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "aedccf49e40ba28ebf258640c11a0bf356d2dbe02c99e73d4d1aafc0e7a22b04"
+  "reportId": "4080adf0b2eb80c9498291d09b84730f33df2e79e4b3e0f5900306bf8f321cff"
 }

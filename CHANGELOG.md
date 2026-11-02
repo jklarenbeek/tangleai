@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.43.1
+
+Move every package onto the Jaren 0.176.8 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its validator tests tuples, leading object and array types and type-only members by code, and its default first-failure mode now asserts `required` beside a `properties` that names no member, as its collecting mode already did. No Tangle schema relies on the earlier answer, and no Tangle interface changes.
+
 ## 0.43.0
 
 Upgrade the Bun toolchain to 1.4.4 in the pins, workspace engines, CI setup and the scraper's container runtime.

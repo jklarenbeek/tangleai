@@ -1,6 +1,6 @@
 # 📅 Tangle Roadmap
 
-The current substrate is [JarenJS 0.176.5](JARENJS_INTEGRATION.md): atomic
+The current substrate is [JarenJS 0.176.8](JARENJS_INTEGRATION.md): atomic
 ledger storage, retention options, verified DAG checkpoints, bounded history
 reads, scheduled document transport and supervised Node SQLite execution are
 available. Native relational migrations and revision-aware collection drag are
