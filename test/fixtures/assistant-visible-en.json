@@ -1,0 +1,6194 @@
+{
+  "launcher closed": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    }
+  ],
+  "launcher open, unconfigured": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Provider requests use your settings. This host controls local persistence.",
+      "where": "p.ai-hint",
+      "class": "default"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "API key",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "sk-…",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Test connection",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Pick a provider above, add a model (and a key for OpenRouter), then save — the chat opens right here. Nothing leaves your browser except the calls to the provider you choose.",
+      "where": "p",
+      "class": "owned"
+    }
+  ],
+  "unconfigured local provider": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Provider requests use your settings. This host controls local persistence.",
+      "where": "p.ai-hint",
+      "class": "default"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Test connection",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Pick a provider above, add a model (and a key for OpenRouter), then save — the chat opens right here. Nothing leaves your browser except the calls to the provider you choose.",
+      "where": "p",
+      "class": "owned"
+    }
+  ],
+  "host presentation": [
+    {
+      "text": "‹h:launch-title›",
+      "where": "button.ai-launch@title",
+      "class": "host"
+    },
+    {
+      "text": "‹h:launch-title›",
+      "where": "button.ai-launch@aria-label",
+      "class": "host"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:launch-label›",
+      "where": "span.ai-launch-label",
+      "class": "host"
+    },
+    {
+      "text": "‹h:title›",
+      "where": "span.ai-title",
+      "class": "host"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:settings-hint›",
+      "where": "p.ai-hint",
+      "class": "host"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Test connection",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:intro›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:capability-1›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:capability-2›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "probe busy": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Provider requests use your settings. This host controls local persistence.",
+      "where": "p.ai-hint",
+      "class": "default"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "API key",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "sk-…",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Testing…",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Pick a provider above, add a model (and a key for OpenRouter), then save — the chat opens right here. Nothing leaves your browser except the calls to the provider you choose.",
+      "where": "p",
+      "class": "owned"
+    }
+  ],
+  "probe ok, 1 model": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Provider requests use your settings. This host controls local persistence.",
+      "where": "p.ai-hint",
+      "class": "default"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "API key",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "sk-…",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Test connection",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Connected — 1 model available.",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Pick a provider above, add a model (and a key for OpenRouter), then save — the chat opens right here. Nothing leaves your browser except the calls to the provider you choose.",
+      "where": "p",
+      "class": "owned"
+    }
+  ],
+  "probe ok, 3 models": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Provider requests use your settings. This host controls local persistence.",
+      "where": "p.ai-hint",
+      "class": "default"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "API key",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "sk-…",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Test connection",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Connected — 3 models available.",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Pick a provider above, add a model (and a key for OpenRouter), then save — the chat opens right here. Nothing leaves your browser except the calls to the provider you choose.",
+      "where": "p",
+      "class": "owned"
+    }
+  ],
+  "probe failed": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Provider requests use your settings. This host controls local persistence.",
+      "where": "p.ai-hint",
+      "class": "default"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "API key",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "sk-…",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Test connection",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:error-probe›",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Pick a provider above, add a model (and a key for OpenRouter), then save — the chat opens right here. Nothing leaves your browser except the calls to the provider you choose.",
+      "where": "p",
+      "class": "owned"
+    }
+  ],
+  "configured, empty": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "‹h:capability-1›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:capability-2›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal form with a draft": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal, 1 progress entry": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note-1›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence-1›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal, 4 progress entries": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note-4›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence-4›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note-3›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence-3›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note-2›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence-2›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "…and ",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "1",
+      "where": "p.ai-hint",
+      "class": "glyph"
+    },
+    {
+      "text": " earlier entries",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal, 5 progress entries": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note-5›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence-5›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note-4›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence-4›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note-3›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence-3›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "…and ",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "2",
+      "where": "p.ai-hint",
+      "class": "glyph"
+    },
+    {
+      "text": " earlier entries",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal, checkpoint of 1 source": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note-1›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence-1›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "1 earlier progress entries retained with their evidence.",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal, checkpoint of 3 sources": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note-1›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence-1›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "3 earlier progress entries retained with their evidence.",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal, 1 memory": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "1 remembered fact",
+      "where": "span.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal, 2 memories": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "2 remembered facts",
+      "where": "span.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "remembering": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remembering…",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:answer›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "remembered, no run": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Nothing to remember yet — send a message first.",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "remembered, unconfigured": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Add a provider, model and key in settings first.",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:answer›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "remembered, refused": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Nothing was stored — the model did not produce an applicable refinement",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:answer›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "remembered, request refused": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "AI0002: HTTP 400 from http://localhost:11434/v1/chat/completions: ‹h:error-refinement›",
+      "where": "p.ai-hint",
+      "class": "foreign"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:answer›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "remembered, nothing found": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "The assistant found nothing worth remembering from this session.",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:answer›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "remembered, 1 item": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "1 remembered fact",
+      "where": "span.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Remembered 1 evidenced item.",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:answer›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "remembered, 2 items": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "‹h:note›",
+      "where": "li",
+      "class": "host"
+    },
+    {
+      "text": "‹h:evidence›",
+      "where": "span.ai-evidence",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "1 remembered fact",
+      "where": "span.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "Remembered 2 evidenced items.",
+      "where": "p.ai-hint",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:answer›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "streaming, thinking": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Thinking…",
+      "where": "p.ai-activity",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "…",
+      "where": "button.btn.small.ai-send",
+      "class": "glyph"
+    },
+    {
+      "text": "Cancel",
+      "where": "button.btn.small",
+      "class": "owned"
+    }
+  ],
+  "streaming, 1 reasoning character": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Thinking… (1 characters of reasoning)",
+      "where": "p.ai-activity",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "…",
+      "where": "button.btn.small.ai-send",
+      "class": "glyph"
+    },
+    {
+      "text": "Cancel",
+      "where": "button.btn.small",
+      "class": "owned"
+    }
+  ],
+  "streaming, 120 reasoning characters": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Thinking… (120 characters of reasoning)",
+      "where": "p.ai-activity",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "…",
+      "where": "button.btn.small.ai-send",
+      "class": "glyph"
+    },
+    {
+      "text": "Cancel",
+      "where": "button.btn.small",
+      "class": "owned"
+    }
+  ],
+  "streaming, pending reply": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:partial›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "…",
+      "where": "button.btn.small.ai-send",
+      "class": "glyph"
+    },
+    {
+      "text": "Cancel",
+      "where": "button.btn.small",
+      "class": "owned"
+    }
+  ],
+  "streaming, tool activity": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Running ",
+      "where": "p.ai-activity",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:tool›",
+      "where": "code",
+      "class": "host"
+    },
+    {
+      "text": "…",
+      "where": "p.ai-activity",
+      "class": "glyph"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "…",
+      "where": "button.btn.small.ai-send",
+      "class": "glyph"
+    },
+    {
+      "text": "Cancel",
+      "where": "button.btn.small",
+      "class": "owned"
+    }
+  ],
+  "send, unconfigured": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Provider requests use your settings. This host controls local persistence.",
+      "where": "p.ai-hint",
+      "class": "default"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "API key",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "sk-…",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Test connection",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Pick a provider above, add a model (and a key for OpenRouter), then save — the chat opens right here. Nothing leaves your browser except the calls to the provider you choose.",
+      "where": "p",
+      "class": "owned"
+    },
+    {
+      "text": "Add a provider, model and (for OpenRouter) an API key in settings first.",
+      "where": "p.ai-error",
+      "class": "owned"
+    }
+  ],
+  "settings save refused": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Provider requests use your settings. This host controls local persistence.",
+      "where": "p.ai-hint",
+      "class": "default"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Test connection",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Assistant settings could not be saved.",
+      "where": "p.ai-error",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "settings save threw": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Provider requests use your settings. This host controls local persistence.",
+      "where": "p.ai-hint",
+      "class": "default"
+    },
+    {
+      "text": "Provider",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "OpenRouter",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Ollama",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "LM Studio",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "OpenAI-compatible",
+      "where": "option",
+      "class": "foreign"
+    },
+    {
+      "text": "Base URL",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "http://localhost:11434 · https://…/v1",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Model",
+      "where": "span",
+      "class": "owned"
+    },
+    {
+      "text": "qwen/qwen3-4b · llama3.2 · …",
+      "where": "input.editor.line@placeholder",
+      "class": "technical"
+    },
+    {
+      "text": "Save",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Test connection",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "‹h:error-settings›",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "transcript write refused": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "The assistant transcript could not be saved.",
+      "where": "p.ai-error",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "transcript write threw": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:error-transcript›",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "provider request refused": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "AI0002: HTTP 400 from http://localhost:11434/v1/chat/completions: ‹h:error-provider›",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal refused by the ledger": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "‹h:error-goal›",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal set failed": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "‹h:error-goal-set›",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "goal clear failed": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Objective",
+      "where": "span.ai-goal-label",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear the objective",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:objective›",
+      "where": "p.ai-goal-text",
+      "class": "host"
+    },
+    {
+      "text": "Remember this session",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "‹h:error-goal-clear›",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "archive clear failed": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "‹h:error-archive›",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "ledger read failed": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "‹h:error-ledger›",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "stored provider unknown": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "AI0001: unknown provider 'unknown' (openrouter, ollama, lmstudio, custom)",
+      "where": "p.ai-error",
+      "class": "foreign"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "reasoning-only reply": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "The model spent the whole turn reasoning without a final reply — send another message to continue.",
+      "where": "em",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "empty reply": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "The model ended its turn without a reply — whatever it loaded is on screen; send another message to continue.",
+      "where": "em",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "storage failed": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Storage failed: ‹h:error-storage›",
+      "where": "p.ai-archived",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "single writer": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "Use one tab at a time to update remembered state.",
+      "where": "p.ai-archived",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "retention, 1 evicted": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "1 earlier archive address(es) evicted under the storage budget.",
+      "where": "p.ai-archived",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "retention, 2 evicted": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "2 earlier archive address(es) evicted under the storage budget.",
+      "where": "p.ai-archived",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "archived, 1 round": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "1 earlier round archived — the assistant can fetch any of them back with recall.",
+      "where": "p.ai-archived",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "archived, 2 rounds": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "Describe what you want to get done. The assistant can use the tools this host provides.",
+      "where": "p",
+      "class": "default"
+    },
+    {
+      "text": "2 earlier rounds archived — the assistant can fetch any of them back with recall.",
+      "where": "p.ai-archived",
+      "class": "owned"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ],
+  "reply with heading, page break and footnote": [
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@title",
+      "class": "default"
+    },
+    {
+      "text": "Open assistant",
+      "where": "button.ai-launch@aria-label",
+      "class": "default"
+    },
+    {
+      "text": "✦",
+      "where": "button.ai-launch",
+      "class": "glyph"
+    },
+    {
+      "text": " Assistant",
+      "where": "span.ai-launch-label",
+      "class": "default"
+    },
+    {
+      "text": "Assistant",
+      "where": "span.ai-title",
+      "class": "default"
+    },
+    {
+      "text": "Settings",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Assistant settings",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⚙",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Clear the conversation",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Clear conversation",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "⌫",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Close",
+      "where": "button.ai-icon@title",
+      "class": "owned"
+    },
+    {
+      "text": "Close assistant",
+      "where": "button.ai-icon@aria-label",
+      "class": "owned"
+    },
+    {
+      "text": "✕",
+      "where": "button.ai-icon",
+      "class": "glyph"
+    },
+    {
+      "text": "Set an objective the assistant keeps across sessions…",
+      "where": "input.editor.line@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Set",
+      "where": "button.btn.small",
+      "class": "owned"
+    },
+    {
+      "text": "‹h:question›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "‹h:heading›",
+      "where": "h2",
+      "class": "host"
+    },
+    {
+      "text": "Permalink to ‹h:heading›",
+      "where": "a.md-anchor@aria-label",
+      "class": "suite"
+    },
+    {
+      "text": "#",
+      "where": "a.md-anchor",
+      "class": "glyph"
+    },
+    {
+      "text": "‹h:paragraph›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "1",
+      "where": "a",
+      "class": "glyph"
+    },
+    {
+      "text": "Page break",
+      "where": "div.md-page-break@aria-label",
+      "class": "suite"
+    },
+    {
+      "text": "‹h:after›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Footnotes",
+      "where": "section.footnotes@aria-label",
+      "class": "suite"
+    },
+    {
+      "text": "‹h:footnote›",
+      "where": "p",
+      "class": "host"
+    },
+    {
+      "text": "Back to reference 1",
+      "where": "a.footnote-backref@aria-label",
+      "class": "suite"
+    },
+    {
+      "text": "↩",
+      "where": "a.footnote-backref",
+      "class": "glyph"
+    },
+    {
+      "text": "Ask the assistant…",
+      "where": "textarea.editor@placeholder",
+      "class": "owned"
+    },
+    {
+      "text": "Send",
+      "where": "button.btn.small.ai-send",
+      "class": "owned"
+    }
+  ]
+}

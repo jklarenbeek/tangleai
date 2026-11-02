@@ -365,6 +365,28 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   did; no benchmark claim reaches a surface before the matrix above has put a
   number behind it. *Closes on:* n/a — surface work, held to the content rule.
 
+- [ ] **A view-only assistant and a message catalogue.** `@tangleai/assistant`
+  builds its model client and agent in the page: both of its script entries
+  statically reach the models, agents and context mechanisms, so a host that
+  keeps provider keys and agent runs on its server cannot mount the panel
+  without shipping a model client to the browser. Apart from six presentation
+  options, the panel's visible text is English written into its rules,
+  projection and controller, so a host with a Dutch interface shows English.
+  *Wanted:* an additive view-only entry that renders host-supplied run state
+  and sends start, cancel and navigation intents to a host transport; and one
+  message catalogue, with today's English as its defaults and a Dutch pack,
+  accepted by the controller, the component and the view entry.
+  *Constraint:* the existing entries keep every export, option and English
+  string; Markdown accessibility labels in a rendered reply belong to Jaren's
+  renderer, which today accepts only a footnotes label. *Stands on:*
+  `@jarenjs/app` (`createApp`, `createRunObservation`), the
+  `@jarenjs/core/message` catalogue contract, `@jarenjs/md`. *Closes on:* a test
+  that walks the view entry's static import graph and a bundler probe that both
+  find no models, agents or context module; a key-sentinel render of every
+  pinned panel state that finds no assistant-owned visible literal outside the
+  catalogue; a Dutch render of the same states whose remaining non-Dutch
+  strings are counted and named by owner.
+
 ## The loop that runs the workflows
 
 - [ ] **Repository evolution beyond the registered fixture.** *Wanted:* evaluate

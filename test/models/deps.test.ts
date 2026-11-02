@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { resolve, join, relative, isAbsolute, sep } from 'node:path';
 import ts from 'typescript';
+import { importSpecifiers } from '../import-specifiers.ts';
 const root = new URL('../../', import.meta.url);
 const sourceFiles = (directory: URL) => ts.sys.readDirectory(fileURLToPath(new URL('src/', directory)), ['.ts']);
 const withinPackage = (directory: URL, path: string) => {
@@ -27,17 +28,7 @@ describe('mechanism ownership includes static, dynamic and declaration imports',
     const files = sourceFiles(directory);
     assert.ok(files.length > 0);
     for (const file of files) {
-      const source = readFileSync(file, 'utf8');
-      const specifiers = new Set<string>();
-      const parsed = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
-      const visit = (node: ts.Node) => {
-        if ((ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) specifiers.add(node.moduleSpecifier.text);
-        if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword && node.arguments[0] && ts.isStringLiteral(node.arguments[0])) specifiers.add(node.arguments[0].text);
-        if (ts.isImportTypeNode(node) && ts.isLiteralTypeNode(node.argument) && ts.isStringLiteral(node.argument.literal)) specifiers.add(node.argument.literal.text);
-        ts.forEachChild(node, visit);
-      };
-      visit(parsed);
-      for (const comment of source.matchAll(/\/\*\*[\s\S]*?\*\//g)) for (const match of comment[0].matchAll(/import\((['"])([^'"]+)\1\)/g)) specifiers.add(match[2]!);
+      const specifiers = new Set(importSpecifiers(file).map(entry => entry.specifier));
       for (const specifier of specifiers) {
         if (specifier.startsWith('.')) { assert.ok(withinPackage(directory, resolve(file, '..', specifier))); continue; }
         const pkg = specifier.split('/').slice(0, 2).join('/');
