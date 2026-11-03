@@ -48,7 +48,8 @@ Every other workflow file points here instead of restating these.
 
 | Gate | Command | When |
 |---|---|---|
-| The gate | `npm run check` (strict tsc + all `node --test` suites) | every change, before every commit |
+| The change gate | `node scripts/gate.ts` (every `npm run check` step but the suite, then the test files the change can reach, their Bun legs, and the packed-consumer stage when packaging changed) | every change, before every commit |
+| The full gate | `npm run check` (strict tsc + every test file) | once per release, inside `release:verify`; CI on every push |
 | Release | `npm run release:verify` (full gate, version record, JavaScript tarballs, external consumers and Pages build) | before release closeout |
 | Outcome lifecycle | `npm run outcomes:smoke`, `npm run benchmark:outcome -- --require complete`, `npm run outcomes:contract:check` | when outcome schemas, lifecycle, guards, storage or measurement change |
 | Policy contract | `npm run policy:check`, `npm run policy:contract:check`, `npm run emit:policy -- --check` (also in `check`) | when memory defaults or their contract change |
@@ -58,6 +59,13 @@ Every other workflow file points here instead of restating these.
 | Migrated Pages browsers | `npm run pages:test:browser` against the built site; same Playwright toolchain as desktop, selected by `PLAYWRIGHT_PACKAGE` | when assistant, game or editor hosts change |
 | Instruments | `npm run documents:benchmark`, `npm run benchmark:locomo:census`, `npm run benchmark:locomo:recall`, `npm run benchmark:locomo:qa`, `npm run benchmark:locomo:policy` (keyless; `--live` spends a key and is never a gate) | when a measured claim, a chunker, or a benchmark's corpus changed |
 | Binary | `npm run desktop:compile`, then run `dist/tangle` from a foreign cwd | when the server, static layer or embed script changed |
+
+The change gate over-approximates: a test file runs when the change touches
+its static import closure, a path its code names, or an input declared for it
+in `scripts/gate.ts`; a change to an input of every test, or one no test
+claims, runs the whole suite and names the path. The full gate is the
+backstop — every test runs once per release, before anything is tagged — so a
+selection miss costs a late failure, never a shipped one.
 
 A gate passes when its **exit code is 0**. Grepping output for the word
 "pass" once declared a crashed linter green in jarenjs; the lesson is
@@ -123,7 +131,7 @@ before it is believed.
 ## 5. Work-order commits and campaign close-out
 
 Commit each implemented work order locally on `main` after its acceptance
-checklist, `npm run check` and applicable additional gates pass. Review the
+checklist, the change gate and applicable additional gates pass. Review the
 complete diff, update affected documentation, check whitespace and the desktop
 asset stub, and write the session record before committing. Stage only the
 reviewed changes; keep scratch files ignored and preserve unrelated author edits.
@@ -214,6 +222,7 @@ ambitions; the instrument is the LoCoMo pair in `docs/`.
   "$workflow": "conventions",
   "stages": [],
   "gates": {
+    "change": { "cmd": "node scripts/gate.ts", "pass": "exit==0" },
     "check": { "cmd": "npm run check", "pass": "exit==0" },
     "policy-contract": { "cmd": "npm run policy:check && npm run policy:contract:check && npm run emit:policy -- --check", "pass": "exit==0" },
     "skeleton": { "cmd": "npm run skeleton", "pass": "exit==0" },

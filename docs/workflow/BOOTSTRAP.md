@@ -35,8 +35,9 @@ style.
    nothing less. An order is closed by its measurement, not by its merge:
    run the instrument the order names and record the number.
 4. Prove it green before you call it done, from the repo root:
-   **`npm run check`** — strict typecheck and every test suite, by exit
-   code (`CONVENTIONS.md` §2) — plus `npm run skeleton` when a policy or a
+   **`node scripts/gate.ts`** — the change gate: every `npm run check` step
+   but the suite, then the tests the change can reach, by exit code
+   (`CONVENTIONS.md` §2) — plus `npm run skeleton` when a policy or a
    core schema moved, the instrument when a measured claim, a chunker or a
    corpus moved (the keyless tiers only; `--live` spends a key and is never
    a gate), and the e2e or the binary smoke when a surface moved. A test

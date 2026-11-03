@@ -276,8 +276,8 @@ campaign-specific obligations:
   fix), put it here in full — with the concrete input and the expected-vs-actual
   output.
 - **Files** — what changes, with one clause each.
-- **Steps** — ordered, each small enough to test, with `npm run check` between
-  batches so a regression is attributable.
+- **Steps** — ordered, each small enough to test, with the change gate
+  (`node scripts/gate.ts`) between batches so a regression is attributable.
 - **Acceptance checklist** — behavioral assertions, each independently checkable,
   with exact names, outputs and error codes, and **the measurement** — the number
   the order exists to move, and where it is published. **This IS the definition
@@ -471,7 +471,7 @@ Record work-order commits separately from the final release receipt.
     { "id": "forks", "needs": ["measure"], "run": "put every campaign-shaping fork to the operator", "pass": "each answer is a D-number" },
     { "id": "author", "needs": ["forks"], "run": "router (nine sections) + TODO_<PROGRAM>_NN.md orders per templates/work-order.md; register in local TODO.md", "pass": "authoring checklist all ticked" },
     { "id": "review", "needs": ["author"], "run": "publish concrete plan; confirm execution falls within existing operator authorization or obtain missing authorization" },
-    { "id": "execute", "needs": ["review"], "run": "per order: fresh session with BOOTSTRAP.md + router + order; npm run check between batches; measurement recorded; session record; ledger ticked", "pass": "acceptance checklist, gate exit==0, number recorded" },
+    { "id": "execute", "needs": ["review"], "run": "per order: fresh session with BOOTSTRAP.md + router + order; node scripts/gate.ts between batches; measurement recorded; session record; ledger ticked", "pass": "acceptance checklist, gate exit==0, number recorded" },
     { "id": "commit-order", "needs": ["execute"], "run": "review and commit each green order locally on main; record hash; continue authorized orders", "pass": "single-line commit, no version preparation, tag or push" },
     { "id": "close-out", "needs": ["commit-order"], "run": "after all orders: ROADMAP entry retired/narrowed, docs, measurements regenerated, pins extended, scoped HEALTH hunt; authorized CONVENTIONS §5 release closeout", "pass": "finished-campaign checklist all ticked; release commit/tag/remote refs and CI outcomes recorded" }
   ]
