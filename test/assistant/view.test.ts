@@ -2,6 +2,7 @@ import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { mountAssistantView, createAssistantViewWidget, type AssistantViewState } from '@tangleai/assistant/view';
 import { nl } from '@tangleai/assistant/messages/nl';
+import { ar } from '@tangleai/assistant/messages/ar';
 import { createStubHost, fire, serialize } from './dom.stub.ts';
 
 const IDLE: AssistantViewState = { status: 'idle', messages: [] };
@@ -15,6 +16,8 @@ function type(container: any, text: string) {
   area.value = text; fire(area, 'input');
 }
 const submit = (container: any) => fire(find(container, (n: any) => n.tagName === 'form'), 'submit');
+/** A JSON document of `depth` nested objects. @param depth */
+function deep(depth: number) { let value: any = null; for (let i = 0; i < depth; i++) value = { inner: value }; return value; }
 function mounted(t: any, options: Record<string, any> = {}) {
   const { container } = createStubHost();
   const started: any[] = [], cancelled: string[] = [], intents: any[] = [];
@@ -123,7 +126,8 @@ it('update replaces the host report and renders it as data', async t => {
 
 it('a malformed report is refused with the member it breaks, at mount and at update', t => {
   const cases: [unknown, RegExp][] = [
-    [null, /state must be an object/],
+    [null, /state must be a plain object/],
+    [Object.assign(Object.create({ status: 'idle' }), { messages: [] }), /state must be a plain object/],
     [{ status: 'done', messages: [] }, /status must be 'idle' \| 'running'/],
     [{ status: 'idle' }, /messages must be an array/],
     [{ status: 'idle', messages: [{ role: 'system', content: 'x' }] }, /messages\[0\]\.role must be/],
@@ -131,7 +135,11 @@ it('a malformed report is refused with the member it breaks, at mount and at upd
     [{ status: 'idle', messages: [], usage: {} }, /unknown member usage/],
     [{ status: 'idle', messages: [], links: [{ id: 'a', label: 'A', href: '/a' }] }, /unknown member links\[0\]\.href/],
     [{ status: 'idle', messages: [], progress: { step: 1.5 } }, /progress\.step must be a whole number/],
-    [{ status: 'idle', messages: [], runId: 7 }, /runId must be a string/],
+    [{ status: 'idle', messages: [], progress: { step: -1 } }, /progress\.step must be a whole number/],
+    [{ status: 'idle', messages: [], runId: '' }, /runId must be a non-empty string/],
+    [{ status: 'idle', messages: [], conversation: deep(65) }, /conversation must be JSON at most 64 levels deep/],
+    [{ status: 'idle', messages: [], conversation: deep(20000) }, /conversation must be JSON at most 64 levels deep/],
+    [{ status: 'idle', messages: [], runId: 7 }, /runId must be a non-empty string/],
     [{ status: 'idle', messages: [], conversation: { seen: new Map() } }, /conversation must be JSON/],
   ];
   const refused = (pattern: RegExp) => (error: any) => error instanceof TypeError && pattern.test(error.message);
@@ -142,6 +150,8 @@ it('a malformed report is refused with the member it breaks, at mount and at upd
   const view = mounted(t);
   for (const [state, pattern] of cases) assert.throws(() => view.handle.update(state as any), refused(pattern));
   assert.equal(view.handle.read().state.status, 'idle');
+  view.handle.update({ status: 'idle', messages: [], conversation: deep(64) });
+  assert.deepEqual(view.handle.read().state.conversation, deep(64), 'the bound is exact on every engine');
 });
 
 it('disposal aborts a start in flight, removes DOM and listeners once, and never cancels the run', async t => {
@@ -174,4 +184,80 @@ it('renders every sentence from the catalogue it is given, behind explicit prese
   const html = serialize(view.container);
   for (const shown of ['Bestellingen', 'Bezig…', 'Stap 1.234 — Orders lezen', 'Annuleren', 'Vraag het de assistent…']) assert.ok(html.includes(shown), shown);
   assert.throws(() => mountAssistantView(null, { transport: TRANSPORT, state: IDLE, messages: { 'view/unknown': 'x' } as any }), /unknown assistant message key: view\/unknown/);
+});
+
+it('an Arabic view lays out right to left from its own root', t => {
+  const view = mounted(t, { messages: ar, lang: 'ar', dir: 'rtl', state: { ...RUNNING, progress: { step: 1234, stage: 'قراءة الطلبات' } } });
+  const root = find(view.container, (n: any) => n.tagName === 'section').attributes;
+  assert.deepEqual([root.get('lang'), root.get('dir')], ['ar', 'rtl']);
+  const html = serialize(view.container);
+  for (const shown of ['جارٍ العمل…', 'الخطوة 1,234 — قراءة الطلبات', 'إلغاء']) assert.ok(html.includes(shown), shown);
+  assert.throws(() => mountAssistantView(null, { transport: TRANSPORT, state: IDLE, dir: 'rtl ' as any }), /dir must be 'ltr', 'rtl' or 'auto'/);
+});
+
+it('a cancel refusal counts only for the report it was asked under, and only for its own run', async t => {
+  const refusals: ((error: Error) => void)[] = [];
+  const view = mounted(t, { state: RUNNING, cancel: () => new Promise<void>((_done, reject) => { refusals.push(reject); }) });
+  const cancel = () => fire(button(view.container, 'Cancel'), 'click');
+  cancel(); view.handle.update(RUNNING); cancel();
+  refusals[0]!(new Error('request timed out')); await settle();
+  assert.equal(view.handle.read().cancelling, true, 'the second cancel is still in flight');
+  assert.doesNotMatch(serialize(view.container), /could not be cancelled/);
+  cancel();
+  assert.deepEqual(view.cancelled, ['run-1', 'run-1'], 'no third cancel while the second is in flight');
+  view.handle.update({ ...RUNNING, status: 'cancelled' }); refusals[1]!(new Error('too late')); await settle();
+  assert.doesNotMatch(serialize(view.container), /could not be cancelled/);
+  const other = mounted(t, { state: RUNNING, cancel: () => Promise.reject(new Error('already finished')) });
+  fire(button(other.container, 'Cancel'), 'click'); await settle();
+  other.handle.update(RUNNING);
+  assert.match(serialize(other.container), /could not be cancelled: already finished/, 'the same run still running keeps the reason');
+  other.handle.update({ ...RUNNING, runId: 'run-2' });
+  assert.doesNotMatch(serialize(other.container), /could not be cancelled/, 'another run does not inherit it');
+});
+
+it('a report of the running run settles a start in flight, and text typed meanwhile stays', async t => {
+  let resolve!: (id: string) => void;
+  const view = mounted(t, { start: () => new Promise<string>(done => { resolve = done; }) });
+  type(view.container, 'Plan the week'); submit(view.container);
+  view.handle.update(RUNNING);
+  assert.deepEqual([view.handle.read().starting, view.handle.read().draft], [false, '']);
+  assert.match(serialize(view.container), /role="status">Working…<\/p>/);
+  resolve('run-1'); await settle();
+  assert.deepEqual([view.handle.read().starting, view.handle.read().draft], [false, '']);
+  let finish!: (id: string) => void;
+  const second = mounted(t, { start: () => new Promise<string>(done => { finish = done; }) });
+  type(second.container, 'First'); submit(second.container);
+  type(second.container, 'Second thought');
+  finish('run-9'); await settle();
+  assert.deepEqual([second.handle.read().starting, second.handle.read().draft], [false, 'Second thought']);
+});
+
+it('a refusal without a reason reads as a whole sentence', async t => {
+  const cases: [unknown, string][] = [[{}, 'The run could not be started.'], [undefined, 'The run could not be started.'],
+    [new Error(''), 'The run could not be started.'], ['offline', 'The run could not be started: offline']];
+  for (const [refusal, shown] of cases) {
+    const view = mounted(t, { start: () => Promise.reject(refusal) });
+    type(view.container, 'Plan'); submit(view.container); await settle();
+    assert.ok(serialize(view.container).includes(`<p class="ai-error">${shown}</p>`), shown);
+  }
+});
+
+it('a report is read once and kept apart from the host and the transport', t => {
+  let reads = 0;
+  const report = { messages: [], get status() { reads++; return reads === 1 ? 'running' : 'bogus'; }, runId: 'run-1', conversation: { id: 'c-1' } };
+  const caps = ['Plan orders'];
+  const view = mounted(t, { state: report, capabilities: caps, title: undefined, start: (_message: string, context: any) => { context.conversation.id = 'changed'; return 'run-2'; } });
+  assert.deepEqual([view.handle.read().state.status, reads], ['running', 1]);
+  caps.push('Injected');
+  view.handle.update({ status: 'idle', messages: [], conversation: { id: 'c-1' } });
+  type(view.container, 'Plan'); submit(view.container);
+  assert.equal(view.handle.read().state.conversation && (view.handle.read().state.conversation as any).id, 'c-1', 'the transport gets a copy');
+  const html = serialize(view.container);
+  assert.doesNotMatch(html, /Injected/, 'presentation is copied at mount');
+  assert.match(html, /<span class="ai-title">Assistant<\/span>|>Assistant</, 'a title passed as undefined keeps its default');
+  const zero = mounted(t, { state: { ...RUNNING, progress: { step: -0 } } });
+  assert.ok(Object.is(zero.handle.read().state.progress!.step, 0));
+  assert.match(serialize(zero.container), /Step 0</);
+  const unknown = mounted(t, { lang: '' });
+  assert.equal(find(unknown.container, (n: any) => n.tagName === 'section').attributes.get('lang'), '', 'an empty lang is HTML\'s unknown language');
 });

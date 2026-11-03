@@ -11,6 +11,7 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 const MECHANISMS = ['@tangleai/agents', '@tangleai/context', '@tangleai/models'];
 const WITH_MECHANISMS = ['.', './component'];
 const VIEW_ONLY = ['./view'];
+const PACKS = ['./messages/ar', './messages/de', './messages/es', './messages/fr', './messages/nl', './messages/pt'];
 const workspaces = new Map<string, { directory: string, exports: Record<string, string> }>();
 for (const group of ['packages', 'components']) for (const name of readdirSync(join(root, group))) {
   const path = join(root, group, name, 'package.json');
@@ -71,7 +72,7 @@ it('import specifiers separate runtime edges from type-only ones', async () => {
 
 it('the root and component entries reach the model, agent and context mechanisms', t => {
   const entries = Object.entries(assistant.exports).filter(([, path]) => path.endsWith('.ts'));
-  assert.deepEqual(entries.map(([name]) => name), [...WITH_MECHANISMS, ...VIEW_ONLY, './messages', './messages/nl']);
+  assert.deepEqual(entries.map(([name]) => name), [...WITH_MECHANISMS, ...VIEW_ONLY, './messages', ...PACKS]);
   for (const name of WITH_MECHANISMS) {
     const graph = reach(resolve(assistant.directory, assistant.exports[name]!));
     t.diagnostic(`${name}: ${graph.modules} workspace modules; ${graph.tangle.join(', ')}; ${graph.jaren.length} Jaren entries`);
@@ -80,13 +81,13 @@ it('the root and component entries reach the model, agent and context mechanisms
 });
 
 it('the message catalogues and the panel projection reach no Tangle package', t => {
-  for (const [name, path] of [['./messages', assistant.exports['./messages']!], ['./messages/nl', assistant.exports['./messages/nl']!],
+  for (const [name, path] of [['./messages', assistant.exports['./messages']!], ...PACKS.map(pack => [pack, assistant.exports[pack]!]),
     ['projection', './src/viewmodel.ts']] as const) {
     const graph = reach(resolve(assistant.directory, path));
     t.diagnostic(`${name}: ${graph.modules} workspace modules; ${graph.jaren.join(', ')}`);
     assert.deepEqual(graph.tangle, [], name);
   }
-  assert.deepEqual(reach(resolve(assistant.directory, assistant.exports['./messages/nl']!)), { modules: 1, tangle: [], jaren: [] }, 'the Dutch pack is text and Intl only');
+  for (const pack of PACKS) assert.deepEqual(reach(resolve(assistant.directory, assistant.exports[pack]!)), { modules: 1, tangle: [], jaren: [] }, `${pack} is text and Intl only`);
 });
 
 it('a graph without Tangle imports reaches no Tangle package', () => {
@@ -114,4 +115,11 @@ it('the view reaches only the shared rules, projection, catalogue and mount modu
   // the host owns the run: nothing in the view keeps time, polls or fetches
   for (const file of graph.files)
     assert.doesNotMatch(readFileSync(file, 'utf8'), /\b(?:setTimeout|setInterval|setImmediate|requestAnimationFrame|queueMicrotask|fetch)\s*\(|\bDate\.now\b|\bnew Date\b|\bperformance\./, file);
+});
+
+it('the README names every subpath the package exports', () => {
+  const readme = readFileSync(join(assistant.directory, 'README.md'), 'utf8');
+  const missing = Object.keys(assistant.exports).filter(name => name !== '.' && name !== './package.json')
+    .filter(name => !readme.includes(`\`${name.slice(1)}\``) && !readme.includes(`@tangleai/assistant${name.slice(1)}`));
+  assert.deepEqual(missing, []);
 });

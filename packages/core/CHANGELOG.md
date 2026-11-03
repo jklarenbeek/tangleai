@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.44.0
+
+### Patch Changes
+
+- Move every package onto the Jaren 0.176.11 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its store builds a collection statement's SQL only when the statement is first prepared and gives every transaction view the same lazy member getters, so a finished transaction no longer outlives its collections.
+- @tangleai/context@0.44.0
+
 ## 0.43.1
 
 ### Patch Changes

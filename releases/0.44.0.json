@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "version": "0.44.0",
+  "baseVersion": "0.43.1",
+  "baseCommit": "81bfdb7c86646fd8b9e6ef9f2c07f4faada4200b",
+  "preparationCommit": "a292d57391be677cac8199618e8c0c88beb983b6",
+  "initial": false,
+  "inputHash": "c8525f8b5fb26d6afb5b51aeaa5566d9df88f7f26d38040ca23c4e0614901d14",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/assistant",
+          "type": "minor"
+        }
+      ],
+      "summary": "Render every sentence of the assistant panel from one message catalogue. `@tangleai/assistant/messages` exports the English catalogue and `createAssistantMessages`; `createAssistantController`, `mountAssistant` and `createAssistantWidget` accept a `messages` catalogue that merges over English and refuse an unknown key when it is built. Text another package writes is shown verbatim inside a catalogue message, explicit presentation options still take precedence, and the Markdown footnotes label comes from the catalogue. The panel's projection no longer reaches the model client. English output is unchanged except five counts of one, which now read singular. `@tangleai/assistant/messages/nl`, `/de`, `/fr`, `/es`, `/pt` and `/ar` export formal Dutch, German, French, Spanish, Brazilian Portuguese and Modern Standard Arabic catalogues with exactly the English keys and each language's plurals and digits; pass one as `messages`. Arabic phrases every count around a fixed count noun and keeps Latin digits. Words a language shares with English, setting examples, product names, text another package wrote and Jaren's Markdown labels stay as written. The panel and the view take `lang` and `dir` options for the assistant's root, and the stylesheet sets no physical side, so `dir: 'rtl'` lays the assistant out right to left. `@tangleai/assistant/view` mounts the panel for a host that runs the assistant elsewhere: `mountAssistantView` and `createAssistantViewWidget` render the host's report of its run (`status`, `runId`, `messages`, `pending`, `progress`, `links`, `notice`, `error`, `conversation`) with the panel's rules and catalogue, hand a start and a cancel to the host's transport and opening, closing and following a link to `onIntent`, refuse a malformed report with a `TypeError` naming its member, and never cancel a run when disposed; `update` replaces the report. Its static imports and its browser bundle contain no model, agent or context module.",
+      "id": "assistant-message-catalogue"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        }
+      ],
+      "summary": "Move every package onto the Jaren 0.176.11 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its store builds a collection statement's SQL only when the statement is first prepared and gives every transaction view the same lazy member getters, so a finished transaction no longer outlives its collections.",
+      "id": "jaren-foundation"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.44.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.44.0"
+    }
+  ]
+}

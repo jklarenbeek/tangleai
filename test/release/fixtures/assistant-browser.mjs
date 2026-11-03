@@ -1,6 +1,7 @@
 import { mountAssistant } from '@tangleai/assistant/component';
 import { mountAssistantView } from '@tangleai/assistant/view';
 import { nl } from '@tangleai/assistant/messages/nl';
+import { ar } from '@tangleai/assistant/messages/ar';
 import '@tangleai/assistant/styles/assistant.css';
 import '@jarenjs/md/styles/md.css';
 import { createToolbox } from '@tangleai/agents';
@@ -12,4 +13,8 @@ globalThis.packedAssistants = ['Research', 'Workshop'].map((title, i) => mountAs
 globalThis.packedAssistantView = mountAssistantView(document.getElementById('host-2'), {
   open: true, messages: nl, title: 'Bestellingen', transport: { start: () => 'packed-run', cancel: () => {} },
   state: { status: 'running', runId: 'packed-run', messages: [{ role: 'user', content: 'Plan de week' }], progress: { step: 2, stage: 'Orders lezen' }, links: [{ id: 'orders', label: 'Orders openen' }] },
+});
+globalThis.packedArabicView = mountAssistantView(document.getElementById('host-3'), {
+  open: true, messages: ar, lang: 'ar', dir: 'rtl', transport: { start: () => 'packed-run', cancel: () => {} },
+  state: { status: 'idle', messages: [] },
 });

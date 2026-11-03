@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "ea4b0c0f5a3d5abab783e0e57b3bdc07cea0c60d",
+    "head": "a292d57391be677cac8199618e8c0c88beb983b6",
     "clean": false,
     "files": [
       {
@@ -120,113 +120,113 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "cd822294f6d7703aa2f458ef2cfc92973f3f12df16ff027690f81a106650eebb"
+    "sha256": "e636b79b0a1d964934bdd7324bb2f5440dd0ada09b84b00619788171e883bca0"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.176.8"
+        "version": "0.176.11"
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.43.1"
+        "version": "0.44.0"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.43.1"
+        "version": "0.44.0"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.43.1"
+        "version": "0.44.0"
       }
     ]
   },
@@ -344,7 +344,7 @@
     ],
     "desktopContract": {
       "operations": 53,
-      "revision": "0f772d35f37f65d0e8d549400b53c58e4c39ba1013205e4575eb51da44f5a396"
+      "revision": "a6fb4e6364382e1184c793bef4b9d56cd8bc61a19fe8d194804f6266096a9ee8"
     },
     "summary": {
       "hostInputs": 2,
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "25f845152943a450117234bf7064bb41b4cf9e3566180094dc6c5e7aa3ac5693"
+  "reportId": "e2eab832da74496418154d79f779668d5231e23aad050fde1fe82324b60f6b07"
 }

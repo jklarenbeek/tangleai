@@ -2,7 +2,12 @@ import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { assistantMessagesEn, createAssistantMessages, type AssistantMessageKey } from '@tangleai/assistant/messages';
 import { nl } from '@tangleai/assistant/messages/nl';
-import { NL_COGNATES } from './visible-text.ts';
+import { de } from '@tangleai/assistant/messages/de';
+import { fr } from '@tangleai/assistant/messages/fr';
+import { es } from '@tangleai/assistant/messages/es';
+import { pt } from '@tangleai/assistant/messages/pt';
+import { ar } from '@tangleai/assistant/messages/ar';
+import { COGNATES } from './visible-text.ts';
 import { createAssistantController } from '@tangleai/assistant';
 import { mountAssistant, createAssistantWidget } from '@tangleai/assistant/component';
 
@@ -54,25 +59,56 @@ it('counted messages read singular at one and as before at every other count', (
 /** Every parameter some message reads, so no message renders empty in both languages. @param count */
 const parameters = (count: number) => ({ count, detail: '‹detail›', tool: '‹tool›', step: count, stage: '‹stage›' });
 
-it('the Dutch pack has exactly the English keys and differs from English except the pinned cognates', () => {
-  assert.deepEqual(Object.keys(nl).sort(), Object.keys(assistantMessagesEn).sort());
-  const english = createAssistantMessages(), dutch = createAssistantMessages(nl);
-  const same = (Object.keys(assistantMessagesEn) as AssistantMessageKey[]).filter(key =>
-    [0, 1, 2].some(count => dutch[key](parameters(count)) === english[key](parameters(count))));
-  assert.deepEqual(same.sort(), Object.keys(NL_COGNATES).sort());
+const PACKS = { nl, de, fr, es, pt, ar };
+
+for (const [lang, pack] of Object.entries(PACKS) as [keyof typeof PACKS, object][]) {
+  it(`the ${lang} pack has exactly the English keys and differs from English except its pinned cognates`, () => {
+    assert.deepEqual(Object.keys(pack).sort(), Object.keys(assistantMessagesEn).sort());
+    const english = createAssistantMessages(), translated = createAssistantMessages(pack);
+    const same = (Object.keys(assistantMessagesEn) as AssistantMessageKey[]).filter(key =>
+      [0, 1, 2].some(count => translated[key](parameters(count)) === english[key](parameters(count))));
+    assert.deepEqual(same.sort(), Object.keys(COGNATES[lang]).sort());
+  });
+
+  it(`every ${lang} message uses the parameters its English message uses`, () => {
+    const english = createAssistantMessages(), translated = createAssistantMessages(pack);
+    for (const key of Object.keys(assistantMessagesEn) as AssistantMessageKey[]) {
+      const template = (english[key] as any).parameters;
+      if (template !== undefined && (translated[key] as any).parameters !== undefined) assert.deepEqual((translated[key] as any).parameters, template, key);
+      for (const count of [0, 1, 2, 7]) {
+        const params = parameters(count), en = english[key](params), text = translated[key](params);
+        assert.doesNotMatch(text, /[{}]|undefined|NaN/, key);
+        for (const value of [String(count), params.detail, params.tool, params.stage]) if (en.includes(value)) assert.ok(text.includes(value), `${key} renders ${value}`);
+      }
+    }
+  });
+}
+
+it('every pack addresses the person formally', () => {
+  const text = (pack: object) => Object.values(createAssistantMessages(pack)).map(message => message(parameters(2))).join('\n');
+  // whole words only: an accented letter is part of a word (`requêtes` holds no `tes`)
+  const words = (list: string, flags = 'u') => new RegExp(`(?<!\\p{L})(?:${list})(?!\\p{L})`, flags);
+  assert.doesNotMatch(text(nl), words('je|jij|jou|jouw', 'iu'));
+  assert.match(text(nl), words('u|uw'));
+  assert.doesNotMatch(text(de), words('du|dich|dir|dein|deine|deinen|deiner'));
+  assert.match(text(de), words('Sie|Ihr|Ihre|Ihren'));
+  assert.doesNotMatch(text(fr), words('tu|toi|ton|ta|tes'));
+  assert.match(text(fr), words('vous|votre'));
+  assert.doesNotMatch(text(es), words('tú|tu|tus|ti|te', 'iu'));
+  assert.match(text(es), words('su|usted'));
 });
 
-it('every Dutch message uses the parameters its English message uses', () => {
-  const english = createAssistantMessages(), dutch = createAssistantMessages(nl);
-  for (const key of Object.keys(assistantMessagesEn) as AssistantMessageKey[]) {
-    const template = (english[key] as any).parameters;
-    if (template !== undefined && (dutch[key] as any).parameters !== undefined) assert.deepEqual((dutch[key] as any).parameters, template, key);
-    for (const count of [0, 1, 2, 7]) {
-      const params = parameters(count), en = english[key](params), text = dutch[key](params);
-      assert.doesNotMatch(text, /[{}]|undefined|NaN/, key);
-      for (const value of [String(count), params.detail, params.tool, params.stage]) if (en.includes(value)) assert.ok(text.includes(value), `${key} renders ${value}`);
-    }
-  }
+it('each pack counts in its own plural and digits', () => {
+  const counted = (pack: object, key: AssistantMessageKey, ...counts: number[]) => counts.map(count => createAssistantMessages(pack)[key]({ count }));
+  assert.deepEqual(counted(de, 'ledger/memories', 1, 2), ['1 gemerkter Fakt', '2 gemerkte Fakten']);
+  assert.deepEqual(counted(fr, 'ledger/memories', 0, 2), ['0 fait mémorisé', '2 faits mémorisés'], 'French counts 0 as singular');
+  assert.deepEqual(counted(es, 'ledger/memories', 1, 2), ['1 dato recordado', '2 datos recordados']);
+  assert.deepEqual(counted(pt, 'ledger/memories', 1, 2), ['1 fato lembrado', '2 fatos lembrados']);
+  assert.deepEqual(counted(ar, 'ledger/memories', 1, 2, 11), ['عدد الحقائق المحفوظة: 1', 'عدد الحقائق المحفوظة: 2', 'عدد الحقائق المحفوظة: 11'], 'Arabic never agrees a noun with a number');
+  assert.deepEqual([de, fr, es, pt, ar].map(pack => counted(pack, 'activity/thinking-count', 1234)[0]), [
+    'Denkt nach… (1.234 Zeichen an Überlegungen)', 'Réflexion… (1\u202f234 caractères de raisonnement)',
+    'Pensando… (1234 caracteres de razonamiento)', 'Pensando… (1.234 caracteres de raciocínio)', 'جارٍ التفكير… (عدد أحرف الاستدلال: 1,234)',
+  ]);
 });
 
 it('Dutch counts take the Dutch plural and digits', () => {

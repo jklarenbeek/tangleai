@@ -1,6 +1,6 @@
 # 📅 Tangle Roadmap
 
-The current substrate is [JarenJS 0.176.8](JARENJS_INTEGRATION.md): atomic
+The current substrate is [JarenJS 0.176.11](JARENJS_INTEGRATION.md): atomic
 ledger storage, retention options, verified DAG checkpoints, bounded history
 reads, scheduled document transport and supervised Node SQLite execution are
 available. Native relational migrations and revision-aware collection drag are
@@ -365,27 +365,34 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   did; no benchmark claim reaches a surface before the matrix above has put a
   number behind it. *Closes on:* n/a — surface work, held to the content rule.
 
-- [ ] **A view-only assistant and a message catalogue.** `@tangleai/assistant`
-  builds its model client and agent in the page: both of its script entries
-  statically reach the models, agents and context mechanisms, so a host that
-  keeps provider keys and agent runs on its server cannot mount the panel
-  without shipping a model client to the browser. Apart from six presentation
-  options, the panel's visible text is English written into its rules,
-  projection and controller, so a host with a Dutch interface shows English.
-  *Wanted:* an additive view-only entry that renders host-supplied run state
-  and sends start, cancel and navigation intents to a host transport; and one
-  message catalogue, with today's English as its defaults and a Dutch pack,
-  accepted by the controller, the component and the view entry.
-  *Constraint:* the existing entries keep every export, option and English
-  string; Markdown accessibility labels in a rendered reply belong to Jaren's
-  renderer, which today accepts only a footnotes label. *Stands on:*
-  `@jarenjs/app` (`createApp`, `createRunObservation`), the
-  `@jarenjs/core/message` catalogue contract, `@jarenjs/md`. *Closes on:* a test
-  that walks the view entry's static import graph and a bundler probe that both
-  find no models, agents or context module; a key-sentinel render of every
-  pinned panel state that finds no assistant-owned visible literal outside the
-  catalogue; a Dutch render of the same states whose remaining non-Dutch
-  strings are counted and named by owner.
+- [ ] **Markdown labels and direction in a translated assistant reply.**
+  `@tangleai/assistant` renders every sentence of its panel and its view-only
+  entry from one message catalogue with English, Dutch, German, French,
+  Spanish, Portuguese and Arabic packs, and a render of every pinned state in
+  each pack shows no assistant-owned English; its own stylesheet sets no
+  physical side. A rendered reply still has three English labels (the heading
+  permalink, the page break and the footnote back-reference), and Jaren's
+  Markdown stylesheet sets physical sides (list indents, the quote rule, table
+  alignment, the copy button), so a right-to-left reply does not mirror.
+  *Wanted:* those labels from the catalogue and a direction-neutral Markdown
+  stylesheet. *Constraint:* both belong to Jaren's renderer, which today
+  accepts only a footnotes label; the assistant does not rewrite its output.
+  *Stands on:* `@jarenjs/md` component options and stylesheet, the
+  `@jarenjs/core/message` catalogue. *Closes on:* the per-language render
+  check finding no Markdown label in any pack's residual, and the Markdown
+  stylesheet setting no physical side.
+
+- [ ] **The desktop app and the Pages site in every language.** Tangle is used
+  globally and must allow at least English, Dutch, German, French, Spanish,
+  Portuguese and Arabic. The assistant does; the desktop app and the Pages
+  site write their visible English as literals outside any catalogue, and
+  their stylesheets assume left-to-right. *Wanted:* their visible text from
+  catalogues with the same seven packs, and layouts that mirror for
+  right-to-left. *Constraint:* the formal register the assistant uses; no
+  English left beyond named owners. *Stands on:* `@jarenjs/core/message`, the
+  assistant's packs and its key-sentinel census. *Closes on:* a key-sentinel
+  render of their pinned screens finding no literal outside a catalogue, and a
+  render in each language finding no English beyond named owners.
 
 ## The loop that runs the workflows
 

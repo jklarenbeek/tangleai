@@ -1,5 +1,5 @@
 /**
- * The assistant's sentences in Dutch, informal (`je`), key for key with the
+ * The assistant's sentences in Dutch, formal (`u`), key for key with the
  * English catalogue: pass it as `messages` and every key renders Dutch. The
  * setting examples and product names stay as written; text another package
  * wrote still arrives verbatim inside `error/detail`.
@@ -21,7 +21,7 @@ export const nl = {
   'panel/clear-label': 'Gesprek wissen',
   'panel/close-title': 'Sluiten',
   'panel/close-label': 'Assistent sluiten',
-  'settings/hint': 'Verzoeken aan de provider gebruiken jouw instellingen. Deze host bepaalt wat er lokaal wordt bewaard.',
+  'settings/hint': 'Verzoeken aan de provider gebruiken uw instellingen. Deze host bepaalt wat er lokaal wordt bewaard.',
   'settings/provider': 'Provider',
   'settings/api-key': 'API-sleutel',
   'settings/api-key-example': 'sk-…',
@@ -37,8 +37,8 @@ export const nl = {
   'provider/ollama': 'Ollama',
   'provider/lmstudio': 'LM Studio',
   'provider/custom': 'OpenAI-compatibel',
-  'intro/text': 'Beschrijf wat je gedaan wilt krijgen. De assistent kan de tools gebruiken die deze host aanbiedt.',
-  'intro/setup': 'Kies hierboven een provider, voeg een model toe (en een sleutel voor OpenRouter) en sla op — de chat opent dan meteen hier. Er gaat niets je browser uit behalve de verzoeken aan de provider die je kiest.',
+  'intro/text': 'Beschrijf wat u gedaan wilt krijgen. De assistent kan de tools gebruiken die deze host aanbiedt.',
+  'intro/setup': 'Kies hierboven een provider, voeg een model toe (en een sleutel voor OpenRouter) en sla op — de chat opent dan meteen hier. Er gaat niets uw browser uit behalve de verzoeken aan de provider die u kiest.',
   'composer/placeholder': 'Vraag het de assistent…',
   'composer/send': 'Versturen',
   'composer/cancel': 'Annuleren',
@@ -82,6 +82,6 @@ export const nl = {
   'view/status/cancelled': 'Dit verzoek is geannuleerd.',
   'view/progress': (p: { step?: number, stage?: string }) => p.step === undefined ? p.stage ?? ''
     : p.stage ? `Stap ${number.format(p.step)} — ${p.stage}` : `Stap ${number.format(p.step)}`,
-  'view/start-failed': 'Het verzoek kon niet worden verstuurd: {detail}',
-  'view/cancel-failed': 'Het verzoek kon niet worden geannuleerd: {detail}',
+  'view/start-failed': (p: { detail?: string }) => p.detail ? `Het verzoek kon niet worden verstuurd: ${p.detail}` : 'Het verzoek kon niet worden verstuurd.',
+  'view/cancel-failed': (p: { detail?: string }) => p.detail ? `Het verzoek kon niet worden geannuleerd: ${p.detail}` : 'Het verzoek kon niet worden geannuleerd.',
 } satisfies Required<AssistantCatalogue>;

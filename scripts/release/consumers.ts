@@ -319,7 +319,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       assert.equal(typeof browser.tangleConsumer.mermaid, 'string');
       cpSync(resolve(root, 'test/release/fixtures/assistant-browser.mjs'), resolve(directory, 'assistant-browser.mjs'));
       execFileSync('bun', ['build', 'assistant-browser.mjs', '--target=browser', '--outdir=browser-host'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
-      writeFileSync(resolve(directory, 'browser-host/index.html'), '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=assistant-browser.css><style>.ai-panel{position:relative!important;inset:auto!important}.assistant-slot{max-width:100%}</style><main class=assistant-slot id=host-0></main><main class=assistant-slot id=host-1></main><main class=assistant-slot id=host-2></main><script type=module src=assistant-browser.js></script>');
+      writeFileSync(resolve(directory, 'browser-host/index.html'), '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=assistant-browser.css><style>.ai-panel{position:relative!important;inset:auto!important}.assistant-slot{max-width:100%}</style><main class=assistant-slot id=host-0></main><main class=assistant-slot id=host-1></main><main class=assistant-slot id=host-2></main><main class=assistant-slot id=host-3></main><script type=module src=assistant-browser.js></script>');
       if (process.env.TANGLE_CONSUMER_OUTPUT) cpSync(resolve(directory, 'browser-host'), process.env.TANGLE_CONSUMER_OUTPUT, { recursive: true });
     }
     const verification = {

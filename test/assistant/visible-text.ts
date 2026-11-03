@@ -47,10 +47,8 @@ const MESSAGE = /⟦([^\s⟦⟧]+)(?: ([^⟦⟧]*))?⟧/g;
 const OPENED = /⟦([^\s⟦⟧]+)(?: [^⟦⟧]*)?$/, CLOSED = /^[^⟦⟧]*⟧/;
 /** Presentation options a host may pass; without them the catalogue supplies the text. */
 const DEFAULT_KEYS = ['launcher/label', 'launcher/title', 'panel/title', 'intro/text', 'settings/hint'];
-/** Keys whose Dutch is the English, each for a reason the review settled. */
-export const NL_COGNATES: Record<string, string> = {
-  'settings/provider': 'the loanword Dutch interfaces use for a model host',
-  'settings/model': 'the same word in Dutch',
+/** Keys every pack writes as English: examples and product names, not prose. */
+const AS_WRITTEN: Record<string, string> = {
   'settings/api-key-example': 'a key prefix, not prose',
   'settings/base-url-example': 'example addresses',
   'settings/model-example': 'example model identifiers',
@@ -58,6 +56,20 @@ export const NL_COGNATES: Record<string, string> = {
   'provider/ollama': 'a product name',
   'provider/lmstudio': 'a product name',
 };
+/** Keys whose text in each pack is the English, each for a reason the review settled. */
+export const COGNATES: Record<'nl' | 'de' | 'fr' | 'es' | 'pt' | 'ar', Record<string, string>> = {
+  nl: {
+    'settings/provider': 'the loanword Dutch interfaces use for a model host',
+    'settings/model': 'the same word in Dutch',
+    ...AS_WRITTEN,
+  },
+  de: AS_WRITTEN,
+  fr: { 'launcher/label': 'the same word in French', 'panel/title': 'the same word in French', ...AS_WRITTEN },
+  es: AS_WRITTEN,
+  pt: AS_WRITTEN,
+  ar: AS_WRITTEN,
+};
+export const NL_COGNATES = COGNATES.nl;
 /** Labels Jaren's Markdown renderer writes into a reply. */
 const SUITE = [/^Page break$/, /^Permalink to (this section)?$/, /^Back to reference \d+(, occurrence \d+)?$/, /^Footnotes$/];
 

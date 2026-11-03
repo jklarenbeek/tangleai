@@ -6,6 +6,8 @@ import { createStubHost, fire, serialize } from './dom.stub.ts';
 const settings = { provider: 'custom', baseUrl: 'https://fixture.invalid/v1', model: 'fixture', apiKey: '' };
 const find = (node: any, predicate: any) => predicate(node) ? node : (node.childNodes ?? []).map((child: any) => find(child, predicate)).find(Boolean);
 const settle = () => new Promise(resolve => setTimeout(resolve, 0));
+/** The shipped stylesheet, named once so the packed-consumer copy can point it at the package. */
+const stylesheet = () => readFileSync(new URL('../../components/assistant/styles/assistant.css', import.meta.url), 'utf8');
 function host(t: any, options: Record<string, any> = {}) {
   const { container, document } = createStubHost();
   const handle = mountAssistant((container as any), { schedule: fn => fn(), onError: error => { throw error; }, ...options });
@@ -67,12 +69,27 @@ it('supports the app widget mount/update/unmount contract', async () => {
   await widget.unmount(handle); assert.equal(container.childNodes.length, 0);
 });
 it('ships scoped selectors and retains the mobile sheet and primary tap targets', () => {
-  const css = readFileSync(new URL('../../components/assistant/styles/assistant.css', import.meta.url), 'utf8');
+  const css = stylesheet();
   const selectors = css.replace(/\/\*[\s\S]*?\*\//g, '').match(/[^{}]+(?=\{)/g);
   for (const selector of selectors!) if (!selector.trim().startsWith('@media')) {
     for (const part of selector.split(',')) assert.match(part.trim(), /^:where\(\.tangle-assistant\)/);
   }
   assert.match(css, /85dvh/); assert.match(css, /2\.75rem/); assert.match(css, /safe-area-inset-bottom/);
+});
+
+it('the stylesheet names no physical side, so a right-to-left root mirrors the panel', () => {
+  const css = stylesheet().replace(/\/\*[\s\S]*?\*\//g, '');
+  assert.deepEqual(css.match(/(?:^|[;{\s])(?:left|right|(?:margin|padding|border)-(?:left|right)[\w-]*)\s*:|text-align\s*:\s*(?:left|right)|float\s*:\s*(?:left|right)/g), null);
+  assert.match(css, /inset-inline-end/); assert.match(css, /padding-inline-start/);
+});
+
+it('the panel writes lang and dir on its root only when given, and refuses a bad one', t => {
+  const root = (container: any) => find(container, (n: any) => n.tagName === 'section').attributes;
+  const plain = host(t), arabic = host(t, { lang: 'AR', dir: 'rtl' });
+  assert.deepEqual([root(plain.container).get('lang'), root(plain.container).get('dir')], [undefined, undefined]);
+  assert.deepEqual([root(arabic.container).get('lang'), root(arabic.container).get('dir')], ['ar', 'rtl']);
+  assert.throws(() => mountAssistant(null, { dir: 'left' as any }), { name: 'TypeError', message: "assistant: dir must be 'ltr', 'rtl' or 'auto'" });
+  assert.throws(() => mountAssistant(null, { lang: 'not a tag!' }), { name: 'TypeError', message: 'assistant: lang must be a language tag' });
 });
 
 it('assistant reply heading ids remain outside the host page namespace', async t => {

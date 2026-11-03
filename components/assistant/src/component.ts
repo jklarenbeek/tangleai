@@ -7,11 +7,11 @@ import { assistantRoot, createAssistantRules } from './views.ts';
 import { assistantView } from './viewmodel.ts';
 import { PROVIDER_OPTIONS } from './settings.ts';
 import { createAssistantMessages } from './messages.ts';
-import { defaultPresentation, instanceId, keepFragments, presentation, replyMarkdown } from './mount.ts';
+import { defaultPresentation, instanceId, keepFragments, presentation, replyMarkdown, rootLocale } from './mount.ts';
 
 /** @param node @param [options] */
 export function mountAssistant(node: HTMLElement | null, options: AssistantOptions = {}) {
-  const messages = createAssistantMessages(options.messages);
+  const messages = createAssistantMessages(options.messages), locale = rootLocale(options);
   let app: any, disposed = false, closing: any;
   const id = instanceId();
   let settings = options.settings ?? null, transcript = options.transcript ?? null;
@@ -27,7 +27,7 @@ export function mountAssistant(node: HTMLElement | null, options: AssistantOptio
     actions: { ...ASSISTANT_ACTIONS, 'assistant/presentation': { patch: [{ op: 'replace', path: '/presentation', value: '$payload' }] } },
     view: {
       $jslt: '0.1', modes: { assistant: { unmatched: 'error' } }, rules: [
-        assistantRoot(id),
+        assistantRoot(id, locale),
         ...createAssistantRules(`${id}-models`),
       ]
     },
@@ -79,6 +79,8 @@ export type AssistantPresentation = {
  };
 export type AssistantOptions = AssistantPresentation & Partial<Omit<Parameters<typeof createAssistantController>[0], 'getApp'>> & {
   settings?: any, transcript?: any, open?: boolean,
+  /** The assistant root's language tag and direction; without them the page's apply. */
+  lang?: string, dir?: 'ltr' | 'rtl' | 'auto',
   schedule?: (flush: () => void) => void, onError?: (error: Error) => void,
   renderMarkdown?: (source: string) => any
  };

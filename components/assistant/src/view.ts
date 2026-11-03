@@ -9,7 +9,7 @@ import { createApp, formEventFields } from '@jarenjs/app';
 import { assistantRoot, createAssistantViewRules } from './views.ts';
 import { assistantText, assistantTranscript } from './viewmodel.ts';
 import { createAssistantMessages, type AssistantCatalogue, type AssistantMessages } from './messages.ts';
-import { defaultPresentation, instanceId, keepFragments, presentation, replyMarkdown } from './mount.ts';
+import { defaultPresentation, instanceId, keepFragments, presentation, replyMarkdown, rootLocale } from './mount.ts';
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 export type AssistantViewStatus = 'idle' | 'running' | 'succeeded' | 'failed' | 'cancelled';
@@ -29,6 +29,8 @@ export type AssistantViewOptions = {
   messages?: AssistantCatalogue | AssistantMessages, onIntent?: (intent: AssistantViewIntent) => void,
   title?: string, launchLabel?: string, launchTitle?: string, intro?: string, capabilities?: string[],
   open?: boolean, renderMarkdown?: (source: string) => any,
+  /** The assistant root's language tag and direction; without them the page's apply. */
+  lang?: string, dir?: 'ltr' | 'rtl' | 'auto',
   schedule?: (flush: () => void) => void, onError?: (error: Error) => void,
 };
 export type AssistantViewSnapshot = {
@@ -40,18 +42,25 @@ const STATUSES = ['idle', 'running', 'succeeded', 'failed', 'cancelled'];
 const MEMBERS = ['status', 'runId', 'messages', 'pending', 'progress', 'links', 'notice', 'error', 'conversation'];
 
 const refuse = (member: string, expected: string): never => { throw new TypeError(`assistant view state: ${member} must be ${expected}`); };
+const plain = (value: unknown) => typeof value === 'object' && value !== null && [Object.prototype, null].includes(Object.getPrototypeOf(value));
+/** A plain object's own members, each read once: a getter cannot answer twice and nothing comes from a prototype. */
 function closed(value: unknown, member: string, members: string[]) {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) refuse(member, 'an object');
-  for (const key of Object.keys(value as object))
+  if (!plain(value)) refuse(member, 'a plain object');
+  const entries = Object.entries(value as object);
+  for (const [key] of entries)
     if (!members.includes(key)) throw new TypeError(`assistant view state: unknown member ${member === 'state' ? key : `${member}.${key}`}`);
-  return value as Record<string, unknown>;
+  return Object.fromEntries(entries);
 }
 const string = (value: unknown, member: string) => typeof value === 'string' ? value : refuse(member, 'a string');
 const nullable = (value: unknown, member: string) => value === undefined || value === null ? null : string(value, member);
+/** A run id names a path segment on most hosts, so it is never empty. */
+const runIdOf = (value: unknown) => value === undefined || value === null ? null : typeof value === 'string' && value !== '' ? value : refuse('runId', 'a non-empty string');
+/** Deeper than any conversation handle needs; the bound, not an engine's stack, decides what a deep document gets. */
+const DEPTH = 64;
 function isJson(value: unknown, ancestors: unknown[] = []): boolean {
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return true;
   if (typeof value === 'number') return Number.isFinite(value);
-  if (typeof value !== 'object' || ancestors.includes(value)) return false;
+  if (typeof value !== 'object' || ancestors.includes(value) || ancestors.length === DEPTH) return false;
   if (!Array.isArray(value) && ![Object.prototype, null].includes(Object.getPrototypeOf(value))) return false;
   return Object.values(value).every(item => isJson(item, [...ancestors, value]));
 }
@@ -60,13 +69,13 @@ function checkState(value: unknown): Required<AssistantViewState> {
   const state = closed(value, 'state', MEMBERS);
   if (!STATUSES.includes(state.status as string)) refuse('status', STATUSES.map(name => `'${name}'`).join(' | '));
   if (!Array.isArray(state.messages)) refuse('messages', 'an array');
-  const messages = (state.messages as unknown[]).map((turn, i) => {
+  const messages = (state.messages as unknown[]).slice().map((turn, i) => {
     const { role, content } = closed(turn, `messages[${i}]`, ['role', 'content']);
     if (role !== 'user' && role !== 'assistant') refuse(`messages[${i}].role`, "'user' | 'assistant'");
     return { role: role as 'user' | 'assistant', content: string(content, `messages[${i}].content`) };
   });
   if (state.links !== undefined && !Array.isArray(state.links)) refuse('links', 'an array');
-  const links = ((state.links ?? []) as unknown[]).map((link, i) => {
+  const links = ((state.links ?? []) as unknown[]).slice().map((link, i) => {
     const { id, label } = closed(link, `links[${i}]`, ['id', 'label']);
     return { id: string(id, `links[${i}].id`), label: string(label, `links[${i}].label`) };
   });
@@ -75,18 +84,26 @@ function checkState(value: unknown): Required<AssistantViewState> {
     const { stage, step } = closed(state.progress, 'progress', ['stage', 'step']);
     progress = {};
     if (stage !== undefined) progress.stage = string(stage, 'progress.stage');
-    if (step !== undefined) progress.step = Number.isSafeInteger(step) && (step as number) >= 0 ? step as number : refuse('progress.step', 'a whole number of at least 0');
+    // + 0 turns -0 into 0, which every locale would print with a sign
+    if (step !== undefined) progress.step = Number.isSafeInteger(step) && (step as number) >= 0 ? (step as number) + 0 : refuse('progress.step', 'a whole number of at least 0');
   }
-  if (state.conversation !== undefined && !isJson(state.conversation)) refuse('conversation', 'JSON');
+  let conversation: Json = null;
+  if (state.conversation !== undefined) {
+    // checked on the copy, so a getter cannot hand the check one value and the copy another;
+    // a document too deep for this engine to copy is refused like one too deep for the bound
+    let json = false;
+    try { conversation = structuredClone(state.conversation as Json); json = isJson(conversation); } catch { json = false; }
+    if (!json) refuse('conversation', `JSON at most ${DEPTH} levels deep`);
+  }
   return {
-    status: state.status as AssistantViewStatus, runId: nullable(state.runId, 'runId'), messages,
+    status: state.status as AssistantViewStatus, runId: runIdOf(state.runId), messages,
     pending: state.pending === undefined ? '' : string(state.pending, 'pending'), progress, links,
-    notice: nullable(state.notice, 'notice'), error: nullable(state.error, 'error'),
-    conversation: state.conversation === undefined ? null : structuredClone(state.conversation as Json),
+    notice: nullable(state.notice, 'notice'), error: nullable(state.error, 'error'), conversation,
   };
 }
 
-const reason = (error: unknown) => error instanceof Error ? error.message : String(error);
+/** What a refusal said, when it said something: an `Error`'s message or a string; anything else adds no detail. */
+const reason = (error: unknown) => (error instanceof Error ? error.message : typeof error === 'string' ? error : '').trim();
 const ACTIONS = {
   'ai/toggle': { patch: [{ op: 'replace', path: '/local/open', value: { $not: '$.local.open' } }], effects: [{ run: 'view-toggled' }] },
   'ai/draft': { patch: [{ op: 'replace', path: '/local/draft', value: '$event.value' }] },
@@ -94,11 +111,15 @@ const ACTIONS = {
   'ai/cancel': { effects: [{ run: 'view-cancel' }] },
   'view/link': { effects: [{ run: 'view-intent', with: { type: 'link', id: '$payload.id' } }] },
   'view/starting': { patch: [{ op: 'replace', path: '/local/starting', value: true }, { op: 'replace', path: '/local/startError', value: null }] },
-  'view/started': { patch: [{ op: 'replace', path: '/local/starting', value: false }, { op: 'replace', path: '/local/draft', value: '' }] },
+  'view/started': { patch: [{ op: 'replace', path: '/local/starting', value: false }, { op: 'replace', path: '/local/draft', value: '$payload' }] },
   'view/start-failed': { patch: [{ op: 'replace', path: '/local/starting', value: false }, { op: 'replace', path: '/local/startError', value: '$payload' }] },
   'view/cancelling': { patch: [{ op: 'replace', path: '/local/cancelling', value: true }, { op: 'replace', path: '/local/cancelError', value: null }] },
   'view/cancel-failed': { patch: [{ op: 'replace', path: '/local/cancelling', value: false }, { op: 'replace', path: '/local/cancelError', value: '$payload' }] },
-  'view/host': { patch: [{ op: 'replace', path: '/host', value: '$payload' }, { op: 'replace', path: '/local/cancelling', value: false }] },
+  'view/host': { patch: [
+    { op: 'replace', path: '/host', value: '$payload.host' }, { op: 'replace', path: '/local/cancelling', value: false },
+    { op: 'replace', path: '/local/cancelError', value: '$payload.cancelError' },
+    { op: 'replace', path: '/local/starting', value: '$payload.starting' }, { op: 'replace', path: '/local/draft', value: '$payload.draft' },
+  ] },
 };
 
 /** The projection: the shared parts from the panel's projection, the run as the host reported it. */
@@ -127,28 +148,44 @@ export function mountAssistantView(node: HTMLElement | null, options: AssistantV
   const transport = options.transport;
   if (typeof transport?.start !== 'function' || typeof transport.cancel !== 'function')
     throw new TypeError('assistant view: transport must have start and cancel functions');
-  const host = checkState(options.state);
+  const host = checkState(options.state), locale = rootLocale(options);
   const id = instanceId(), md = replyMarkdown(id, messages), renderMarkdown = options.renderMarkdown ?? md.render;
   // the person leaving is not a cancellation: disposal aborts a start in
   // flight and never cancels the host's run
   const lifetime = new AbortController();
   let app: any, disposed = false, closing: Promise<void> | undefined, starting = false, cancelling = false;
+  // An outcome counts only for the request it answers: each start and each
+  // report gets a number, and a settle under an older number changes nothing.
+  let start = 0, report = 0, sent = '', cancelled: string | null = null;
   const effects = {
     'view-start': (_props: unknown, dispatch: any) => {
       const state = app.getState(), message = state.local.draft.trim();
       if (starting || message === '' || state.host.status === 'running') return;
-      starting = true; dispatch('view/starting');
-      const settle = (action: string, payload: unknown = null) => { starting = false; if (!disposed) dispatch(action, payload); };
+      starting = true; sent = state.local.draft;
+      const attempt = ++start;
+      dispatch('view/starting');
+      const settle = (failure: string | null) => {
+        if (attempt !== start || disposed) return;
+        starting = false;
+        // text the person typed while the start was in flight stays
+        const draft = app.getState().local.draft;
+        if (failure === null) dispatch('view/started', draft === sent ? '' : draft); else dispatch('view/start-failed', failure);
+      };
       let run;
-      try { run = transport.start(message, { conversation: state.host.conversation, signal: lifetime.signal }); }
-      catch (error) { settle('view/start-failed', reason(error)); return; }
-      Promise.resolve(run).then(() => settle('view/started'), error => settle('view/start-failed', reason(error)));
+      try { run = transport.start(message, { conversation: structuredClone(state.host.conversation), signal: lifetime.signal }); }
+      catch (error) { settle(reason(error)); return; }
+      Promise.resolve(run).then(() => settle(null), error => settle(reason(error)));
     },
     'view-cancel': (_props: unknown, dispatch: any) => {
       const { status, runId } = app.getState().host;
       if (cancelling || status !== 'running' || runId === null) return;
-      cancelling = true; dispatch('view/cancelling');
-      const failed = (error: unknown) => { cancelling = false; if (!disposed) dispatch('view/cancel-failed', reason(error)); };
+      cancelling = true; cancelled = runId;
+      const asked = report;
+      dispatch('view/cancelling');
+      const failed = (error: unknown) => {
+        if (asked !== report || disposed) return;
+        cancelling = false; dispatch('view/cancel-failed', reason(error));
+      };
       try { Promise.resolve(transport.cancel(runId)).catch(failed); } catch (error) { failed(error); }
     },
     'view-toggled': () => options.onIntent?.({ type: app.getState().local.open ? 'open' : 'close' }),
@@ -160,7 +197,7 @@ export function mountAssistantView(node: HTMLElement | null, options: AssistantV
       presentation: { ...defaultPresentation(messages), ...presentation(options) },
     },
     actions: ACTIONS,
-    view: { $jslt: '0.1', modes: { assistant: { unmatched: 'error' } }, rules: [assistantRoot(id), ...createAssistantViewRules()] },
+    view: { $jslt: '0.1', modes: { assistant: { unmatched: 'error' } }, rules: [assistantRoot(id, locale), ...createAssistantViewRules()] },
   }, {
     node, document: node?.ownerDocument, schedule: options.schedule, onError: options.onError,
     eventFields: formEventFields(), effects,
@@ -169,11 +206,19 @@ export function mountAssistantView(node: HTMLElement | null, options: AssistantV
   });
   const detach = keepFragments(node);
   return {
-    /** Replace the host's report; a cancel in flight is answered by it. */
+    /**
+     * Replace the host's report. It answers a cancel in flight; a report of
+     * a running run answers a start in flight; a cancel's refusal stays only
+     * while the same run is still running.
+     */
     update(state: AssistantViewState) {
       if (disposed) return;
-      const next = checkState(state);
-      cancelling = false; app.dispatch('view/host', next);
+      const next = checkState(state), local = app.getState().local;
+      report++; cancelling = false;
+      let draft = local.draft;
+      if (starting && next.status === 'running') { starting = false; start++; if (draft === sent) draft = ''; }
+      const cancelError = next.status === 'running' && next.runId === cancelled ? local.cancelError : null;
+      app.dispatch('view/host', { host: next, cancelError, starting, draft });
     },
     read: (): AssistantViewSnapshot => {
       const { host, local } = app.getState();

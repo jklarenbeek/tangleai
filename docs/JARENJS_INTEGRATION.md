@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.176.8**, tag `v0.176.8`, source commit
-`23c997f6801ce7f69e1eab6ab7541defe5b649de`. Upstream `main` and the tag agreed
-when checked on 2026-11-02; npm still served 0.91.4. Runtime imports therefore
+Tangle consumes **Jaren 0.176.11**, tag `v0.176.11`, source commit
+`080ec4a1944ffb47404d6413784d78d225c66bac`. Upstream `main` and the tag agreed
+when checked on 2026-11-03; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.176.8` pin. A clean reconstruction from the pinned
+reference is an exact `0.176.11` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -29,9 +29,9 @@ initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
 
-## Changes from 0.161.0 to 0.176.8 and current adoption
+## Changes from 0.161.0 to 0.176.11 and current adoption
 
-82 upstream commits cover this update, twenty-five releases. No package export
+96 upstream commits cover this update, twenty-eight releases. No package export
 subpath was removed; `@jarenjs/validate/references` is new and unused here.
 Upstream CI now runs on Bun 1.4.4, the version Tangle pins.
 Every consumed package's dependency edges stay inside the 23-package closure.
@@ -47,7 +47,9 @@ update needs no Tangle source change beyond removing the two workarounds.
 | Object, array and tuple checks (`@jarenjs/validate`) | **Upstream speedup and one corrected answer; no Tangle answer moves.** A tuple of boolean and type-only positions, a leading object or array type, and type-only members and items are now tested by code, and `properties` beside `additionalProperties` is walked once. The default first-failure mode now asserts `required` beside a `properties` that names no member, as the collecting mode already did: `{ "properties": {}, "required": ["a"] }` no longer accepts `{}`. Every Tangle schema with an empty `properties` also has an empty `required`. A tuple check no longer reads elements past its positions or after its first failing one. The release gate passes unchanged. |
 | Regex formats and `multipleOf` (`@jarenjs/core`) | **Upstream speedup; answers unchanged here.** A `regex` format value that is not written as a literal is compiled once, and `multipleOf` on a very large or very small value is decided from its printed digits instead of raising ten to its exponent. Tangle schemas reach both only through ordinary validation, and the release gate passes unchanged. |
 | English type messages (`@jarenjs/validate`) | **Adopted unchanged.** A type error now reads `must be an object` or `must be an array` where it read `must be a object` and `must be a array`. No Tangle test or artifact asserts the old text; the stylesheet gate and authoring guide quote it as the reply from the incident that motivated the gate. |
-| SQLite driver cost (`@jarenjs/db`) | **Unchanged.** The driver's cost growth since 0.91.4 is still open upstream; no Tangle statement changed. |
+| SQLite statements and transactions (`@jarenjs/db`) | **Upstream speedup; no Tangle statement changed.** 0.176.10 builds a collection statement's SQL only when the statement is first prepared and each transaction's view as one frozen literal; 0.176.11 gives every transaction view the same lazy member getters, so a finished transaction no longer outlives its collections. Tangle's store, migrations and wire cache use the driver as before. |
+| Message catalogue (`@jarenjs/core/message`) | **Adopted.** `@tangleai/assistant` compiles its English catalogue and every language pack with `compileMessageCatalog`: flat keys, `{name}` templates, closures for counts, a missing key falling back to English and an unknown key refused when the catalogue is built. |
+| Run observation (`@jarenjs/app`) | **Used by the host example.** `examples/assistant-view.ts` feeds the view-only assistant from `createRunObservation`, guarding the attempt and the revision and starting over on a reset page; detaching never cancels the run. |
 | Program pen bundle (`@jarenjs/linq/expression`) | **Measured.** The standalone pen bundle measures 25,865 bytes with nine retained modules (25,473 on 0.161.0), within the 29,000-byte ceiling. Upstream keeps the capture-safety refusals in one module, because every capture needs them. |
 | Relational expressions, rule probes, workers and store opens (`@jarenjs/db`) | **Not used.** `sql.binary` keeps every `AND`/`OR` operand and refuses a third operand to any other operator; database rule probes lock rows on PostgreSQL and earlier rule programs are reported; a worker settles through a contended gate; an open verifies existing tables under a read. Tangle builds no `sql.binary` expression, installs no PostgreSQL rule program and uses no strict transaction mode. Its vector migration still receives the native `JD0023` refusal for a `dryRun` over a pending derive step. |
 
@@ -307,7 +309,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.176.8 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.176.11 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

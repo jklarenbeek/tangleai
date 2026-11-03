@@ -8,8 +8,8 @@
  */
 
 /** The section an assistant mounts into: the stylesheet's scope and the root of its rules. @param id */
-export function assistantRoot(id: string) {
-  return { match: '$', body: ['section', { class: 'tangle-assistant', 'data-assistant-instance': id }, { $apply: ['$.ui.assistant', 'assistant'] }] };
+export function assistantRoot(id: string, locale: { lang?: string, dir?: string } = {}) {
+  return { match: '$', body: ['section', { class: 'tangle-assistant', 'data-assistant-instance': id, ...locale }, { $apply: ['$.ui.assistant', 'assistant'] }] };
 }
 
 /**

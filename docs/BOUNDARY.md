@@ -52,6 +52,7 @@ revision checks as manual edits; hosts retain execution and lifecycle ownership.
 | consolidation lexical routing | `@jarenjs/core/search`: `compileLexical`, bounded postings/index/search and compatibility scoring, `reciprocalRankFusion` with code point id ties | one adapter in `@tangleai/core/lexical` owns NFKC word normalization, input-order lexical ties and one fusion vote per id per lane; consolidation preserves code-point ties through compatibility names, governed retrieval uses first appearance; source selection and exact-evidence expansion remain domain policy; frozen BM25 reference is benchmark-only |
 | web search | — | `@tangleai/search` (SearxNG) + `compose/searxng` |
 | configuration identity | `PROVIDERS`/`resolveEndpoint` (the only endpoint authority), probes, clients, budget/structured-output/toolbox, the replay cache keyed by the effective request; `applyMergePatch`, `canonicalSha256`, `compileJsonQuery`, `$query` validation, `jaren-emit` types, `deepFreeze`/`cloneJson`, `sameIdentity`, `diffContracts` | `@tangleai/config`: the profile registry, pure resolution, TCFG refusal vocabulary and the run-identity envelope; the host adapter projecting either the generated request or a NAMED profile, binding write-only secret slots, and deciding — as host policy, by provider and never by slot spelling — which registry slot this host can call configured; the identity repository beside runs/chats — a run identity is never a replay key (see CONFIGURATION.md) |
+| assistant surfaces | `@jarenjs/app` (`createApp`, `createRunObservation`), the `@jarenjs/core/message` catalogue contract and `@jarenjs/md` reply rendering, whose accessibility labels other than the footnotes heading are not yet configurable (the open upstream seam) | `@tangleai/assistant`: the controller and component that run the model in the page, and the view-only entry that renders a host's report of a run it holds elsewhere, all from one catalogue with English, Dutch, German, French, Spanish, Portuguese and Arabic packs |
 
 GMPL's prompt-pack `meta.pattern` accepts a validated identifier so HERA can own
 its role and control artifacts without adding a second parser or renderer. The
@@ -68,7 +69,7 @@ provide a k-hop graph policy. Tangle's graph lane uses those storage primitives,
 the existing vector kernels and structured output; its fixed-root expansion,
 claim provenance, active projections and answer policy remain Tangle-owned.
 
-Current Jaren 0.176.8 adoption: [integration audit](JARENJS_INTEGRATION.md).
+Current Jaren 0.176.11 adoption: [integration audit](JARENJS_INTEGRATION.md).
 Trading uses native indicators and returns from `@jarenjs/core/finance` and
 publication-time as-of operations from `@jarenjs/core/series`. ADX, CCI, VWAP,
 volume ratio and KDJ are native re-exports. `@tangleai/trading` owns point-in-time

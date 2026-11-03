@@ -1,6 +1,6 @@
 /* ---- the AI assistant slide-out (@tangleai/assistant) ---- */
 :where(.tangle-assistant) .ai-launch {
-  position: fixed; right: var(--space-5, 1.25rem); bottom: var(--space-5, 1.25rem); z-index: 150;
+  position: fixed; inset-inline-end: var(--space-5, 1.25rem); bottom: var(--space-5, 1.25rem); z-index: 150;
   min-height: 2.75rem; /* primary tap target (DESIGN §5) */
   border: 1px solid var(--accent, #3b82f6); border-radius: 999px;
   padding: var(--space-2, .5rem) var(--space-4, 1rem); font-size: 0.9rem; font-weight: 600;
@@ -10,7 +10,7 @@
 :where(.tangle-assistant) .ai-launch:hover { background: var(--accent-hover, #2563eb); border-color: var(--accent-hover, #2563eb); }
 :where(.tangle-assistant) .ai.open .ai-launch { display: none; }
 :where(.tangle-assistant) .ai-panel {
-  position: fixed; right: var(--space-5, 1.25rem); bottom: var(--space-5, 1.25rem); z-index: 150;
+  position: fixed; inset-inline-end: var(--space-5, 1.25rem); bottom: var(--space-5, 1.25rem); z-index: 150;
   display: flex; flex-direction: column; width: min(28rem, calc(100vw - 2 * var(--space-5, 1.25rem)));
   max-height: min(40rem, calc(100dvh - 2 * var(--space-5, 1.25rem)));
   background: var(--surface, #fff); border: 1px solid var(--border, #d6dae1); border-radius: var(--radius, .625rem);
@@ -20,7 +20,7 @@
   display: flex; align-items: center; gap: var(--space-2, .5rem);
   padding: var(--space-3, .75rem) var(--space-4, 1rem); border-bottom: 1px solid var(--border, #d6dae1);
 }
-:where(.tangle-assistant) .ai-title { font-weight: 700; margin-right: auto; }
+:where(.tangle-assistant) .ai-title { font-weight: 700; margin-inline-end: auto; }
 :where(.tangle-assistant) .ai-icon {
   border: 0; background: transparent; color: var(--muted, #596273); cursor: pointer;
   width: 2.75rem; height: 2.75rem; /* primary tap targets (DESIGN §5) */
@@ -47,11 +47,11 @@
 :where(.tangle-assistant) .ai-goal-head { display: flex; align-items: center; gap: var(--space-2, .5rem); }
 :where(.tangle-assistant) .ai-goal-label {
   color: var(--muted, #596273); font-size: 0.75rem; font-weight: 600;
-  letter-spacing: 0.04em; text-transform: uppercase; margin-right: auto;
+  letter-spacing: 0.04em; text-transform: uppercase; margin-inline-end: auto;
 }
 :where(.tangle-assistant) .ai-goal-text { margin: 0; font-size: 0.9rem; font-weight: 600; overflow-wrap: anywhere; }
 :where(.tangle-assistant) .ai-goal-progress {
-  margin: 0; padding-left: var(--space-5, 1.25rem);
+  margin: 0; padding-inline-start: var(--space-5, 1.25rem);
   color: var(--muted, #596273); font-size: 0.82rem;
 }
 :where(.tangle-assistant) .ai-goal-progress li { margin: var(--space-1, .25rem) 0; overflow-wrap: anywhere; }
@@ -67,7 +67,7 @@
   border-top: 1px dashed var(--border, #d6dae1); padding-top: var(--space-2, .5rem);
 }
 :where(.tangle-assistant) .ai-intro { color: var(--muted, #596273); font-size: 0.88rem; }
-:where(.tangle-assistant) .ai-intro ul { margin: var(--space-2, .5rem) 0 0; padding-left: var(--space-5, 1.25rem); }
+:where(.tangle-assistant) .ai-intro ul { margin: var(--space-2, .5rem) 0 0; padding-inline-start: var(--space-5, 1.25rem); }
 :where(.tangle-assistant) .ai-intro li { margin: var(--space-1, .25rem) 0; }
 :where(.tangle-assistant) .ai-msg { border-radius: var(--radius-sm, .5rem); padding: var(--space-2, .5rem) var(--space-3, .75rem); font-size: 0.9rem; }
 :where(.tangle-assistant) .ai-msg.user { background: var(--accent-soft, #eff6ff); color: var(--fg, #182230); align-self: flex-end; max-width: 85%; }
@@ -95,11 +95,11 @@
 :where(.tangle-assistant) .ai-send[disabled] { opacity: 0.6; cursor: default; }
 @media (max-width: 760px) {
   :where(.tangle-assistant) .ai-panel {
-    right: 0; bottom: 0; left: 0; width: 100vw;
+    inset-inline: 0; bottom: 0; width: 100vw;
     max-height: 85dvh; border-radius: var(--radius, .625rem) var(--radius, .625rem) 0 0;
     padding-bottom: env(safe-area-inset-bottom);
   }
-  :where(.tangle-assistant) .ai-launch { right: var(--space-4, 1rem); bottom: var(--space-4, 1rem); }
+  :where(.tangle-assistant) .ai-launch { inset-inline-end: var(--space-4, 1rem); bottom: var(--space-4, 1rem); }
 }
 /* small phones: the labeled pill is wide enough to sit on the hero CTA
    or the calculator plot at some fold positions — collapse it to a

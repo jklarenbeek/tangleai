@@ -1,5 +1,17 @@
 # @tangleai/assistant
 
+## 0.44.0
+
+### Minor Changes
+
+- 4dfc966: Render every sentence of the assistant panel from one message catalogue. `@tangleai/assistant/messages` exports the English catalogue and `createAssistantMessages`; `createAssistantController`, `mountAssistant` and `createAssistantWidget` accept a `messages` catalogue that merges over English and refuse an unknown key when it is built. Text another package writes is shown verbatim inside a catalogue message, explicit presentation options still take precedence, and the Markdown footnotes label comes from the catalogue. The panel's projection no longer reaches the model client. English output is unchanged except five counts of one, which now read singular. `@tangleai/assistant/messages/nl`, `/de`, `/fr`, `/es`, `/pt` and `/ar` export formal Dutch, German, French, Spanish, Brazilian Portuguese and Modern Standard Arabic catalogues with exactly the English keys and each language's plurals and digits; pass one as `messages`. Arabic phrases every count around a fixed count noun and keeps Latin digits. Words a language shares with English, setting examples, product names, text another package wrote and Jaren's Markdown labels stay as written. The panel and the view take `lang` and `dir` options for the assistant's root, and the stylesheet sets no physical side, so `dir: 'rtl'` lays the assistant out right to left. `@tangleai/assistant/view` mounts the panel for a host that runs the assistant elsewhere: `mountAssistantView` and `createAssistantViewWidget` render the host's report of its run (`status`, `runId`, `messages`, `pending`, `progress`, `links`, `notice`, `error`, `conversation`) with the panel's rules and catalogue, hand a start and a cancel to the host's transport and opening, closing and following a link to `onIntent`, refuse a malformed report with a `TypeError` naming its member, and never cancel a run when disposed; `update` replaces the report. Its static imports and its browser bundle contain no model, agent or context module.
+
+### Patch Changes
+
+- @tangleai/agents@0.44.0
+  - @tangleai/context@0.44.0
+  - @tangleai/models@0.44.0
+
 ## 0.43.1
 
 ### Patch Changes

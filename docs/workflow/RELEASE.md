@@ -38,7 +38,7 @@ The release commit follows the work-order commits and the final push includes
 them together. Authorization to close out when the campaign is complete covers
 this sequence; npm publication remains a separate manual author action.
 
-The current checkout consumes Jaren 0.176.8 as candidate artifacts: 23 tarballs
+The current checkout consumes Jaren 0.176.11 as candidate artifacts: 23 tarballs
 packed from the committed `vendor/jarenjs` source, which npm does not serve. The
 active `docs/migrations/jaren-ai/foundations.json` records each tarball's hashes,
 member inventory and dependency edges, so `npm ci --ignore-scripts` requires the

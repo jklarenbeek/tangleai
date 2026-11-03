@@ -87,8 +87,8 @@ export const assistantMessagesEn = {
   'view/status/cancelled': 'This run was cancelled.',
   'view/progress': ({ step, stage }: { step?: number, stage?: string }) => step === undefined ? stage ?? ''
     : stage ? `Step ${step} — ${stage}` : `Step ${step}`,
-  'view/start-failed': 'The run could not be started: {detail}',
-  'view/cancel-failed': 'The run could not be cancelled: {detail}',
+  'view/start-failed': (p: { detail?: string }) => p.detail ? `The run could not be started: ${p.detail}` : 'The run could not be started.',
+  'view/cancel-failed': (p: { detail?: string }) => p.detail ? `The run could not be cancelled: ${p.detail}` : 'The run could not be cancelled.',
 };
 
 const built = new WeakSet<object>();

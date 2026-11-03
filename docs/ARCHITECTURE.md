@@ -77,7 +77,10 @@ program JSON with phantom binding and terminal types, using the shared
 `@jarenjs/linq/authoring` primitives. Execution remains in `@tangleai/agents`.
 `@tangleai/jaren` connects models to Jaren grammars and the public shared
 Studio/Data/Flow editor operations. It owns no editor or execution engine.
-`@tangleai/assistant` supplies the reusable controller and visual component;
+`@tangleai/assistant` supplies the reusable controller and visual component, and a
+view-only entry for a host that runs the assistant on its server; all three render
+from one message catalogue with English, Dutch, German, French, Spanish, Portuguese
+and Arabic packs, and the panel mirrors for right-to-left languages.
 Pages supplies routing, templates, storage and actual worker bootstraps around
 the same complete public Jaren editors used by Jaren's own site. The Adventure
 experience is Pages-owned and retains optional structured NPC dialogue and
@@ -382,7 +385,7 @@ Nearby queries prove that nine contiguous native cells cover the requested
 radius, then refine their candidates by geodesic distance. A cell prefix never
 establishes proximity. The SQLite gazetteer adapter verifies its full immutable
 inventory and coordinate mirrors on reads and replays loads with zero writes.
-The [registered scale receipt](../benchmark/receipts/place-scale-2026-11-02b.json) retains
+The [registered scale receipt](../benchmark/receipts/place-scale-2026-11-03.json) retains
 the in-memory candidate sweep: both measured runtimes meet the target, so no
 derived bbox or R-tree is adopted. Full adapter validation and semantic
 retrieval are outside that timing claim.
