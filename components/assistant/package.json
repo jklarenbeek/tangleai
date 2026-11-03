@@ -11,6 +11,7 @@
     "./package.json": "./package.json",
     "./component": "./src/component.ts",
     "./messages": "./src/messages.ts",
+    "./messages/nl": "./src/messages/nl.ts",
     "./styles/assistant.css": "./styles/assistant.css"
   },
   "engines": {

@@ -1,6 +1,8 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { assistantMessagesEn, createAssistantMessages } from '@tangleai/assistant/messages';
+import { assistantMessagesEn, createAssistantMessages, type AssistantMessageKey } from '@tangleai/assistant/messages';
+import { nl } from '@tangleai/assistant/messages/nl';
+import { NL_COGNATES } from './visible-text.ts';
 import { createAssistantController } from '@tangleai/assistant';
 import { mountAssistant, createAssistantWidget } from '@tangleai/assistant/component';
 
@@ -47,4 +49,33 @@ it('counted messages read singular at one and as before at every other count', (
   };
   for (const [key, texts] of Object.entries(counted))
     assert.deepEqual([0, 1, 2].map(count => english[key as keyof typeof english]({ count })), texts, key);
+});
+
+it('the Dutch pack has exactly the English keys and differs from English except the pinned cognates', () => {
+  assert.deepEqual(Object.keys(nl).sort(), Object.keys(assistantMessagesEn).sort());
+  const english = createAssistantMessages(), dutch = createAssistantMessages(nl);
+  const same = (Object.keys(assistantMessagesEn) as AssistantMessageKey[]).filter(key =>
+    [0, 1, 2].some(count => dutch[key]({ count, detail: '‹detail›', tool: '‹tool›' }) === english[key]({ count, detail: '‹detail›', tool: '‹tool›' })));
+  assert.deepEqual(same.sort(), Object.keys(NL_COGNATES).sort());
+});
+
+it('every Dutch message uses the parameters its English message uses', () => {
+  const english = createAssistantMessages(), dutch = createAssistantMessages(nl);
+  for (const key of Object.keys(assistantMessagesEn) as AssistantMessageKey[]) {
+    const template = (english[key] as any).parameters;
+    if (template !== undefined && (dutch[key] as any).parameters !== undefined) assert.deepEqual((dutch[key] as any).parameters, template, key);
+    for (const count of [0, 1, 2, 7]) {
+      const params = { count, detail: '‹detail›', tool: '‹tool›' }, en = english[key](params), text = dutch[key](params);
+      assert.doesNotMatch(text, /[{}]|undefined|NaN/, key);
+      for (const value of [String(count), params.detail, params.tool]) if (en.includes(value)) assert.ok(text.includes(value), `${key} renders ${value}`);
+    }
+  }
+});
+
+it('Dutch counts take the Dutch plural and digits', () => {
+  const dutch = createAssistantMessages(nl);
+  assert.deepEqual([1, 2].map(count => dutch['ledger/memories']({ count })), ['1 onthouden feit', '2 onthouden feiten']);
+  assert.equal(dutch['activity/thinking-count']({ count: 1234 }), 'Aan het nadenken… (1.234 tekens aan redenering)');
+  assert.equal(dutch['ledger/archived']({ count: 1 }), '1 eerdere ronde gearchiveerd — de assistent kan die terughalen met recall.');
+  assert.deepEqual((dutch['activity/running'] as any).parameters, ['tool']);
 });

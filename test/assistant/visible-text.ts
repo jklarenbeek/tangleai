@@ -47,6 +47,17 @@ const MESSAGE = /⟦([^\s⟦⟧]+)(?: ([^⟦⟧]*))?⟧/g;
 const OPENED = /⟦([^\s⟦⟧]+)(?: [^⟦⟧]*)?$/, CLOSED = /^[^⟦⟧]*⟧/;
 /** Presentation options a host may pass; without them the catalogue supplies the text. */
 const DEFAULT_KEYS = ['launcher/label', 'launcher/title', 'panel/title', 'intro/text', 'settings/hint'];
+/** Keys whose Dutch is the English, each for a reason the review settled. */
+export const NL_COGNATES: Record<string, string> = {
+  'settings/provider': 'the loanword Dutch interfaces use for a model host',
+  'settings/model': 'the same word in Dutch',
+  'settings/api-key-example': 'a key prefix, not prose',
+  'settings/base-url-example': 'example addresses',
+  'settings/model-example': 'example model identifiers',
+  'provider/openrouter': 'a product name',
+  'provider/ollama': 'a product name',
+  'provider/lmstudio': 'a product name',
+};
 /** Labels Jaren's Markdown renderer writes into a reply. */
 const SUITE = [/^Page break$/, /^Permalink to (this section)?$/, /^Back to reference \d+(, occurrence \d+)?$/, /^Footnotes$/];
 
