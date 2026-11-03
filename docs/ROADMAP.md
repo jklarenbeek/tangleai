@@ -433,3 +433,29 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   does not authorize a default change. ARC-Bench remains unadopted until a
   licensed, checksummed slice and its independent evaluator are admitted;
   adapter availability establishes no external parity.
+
+## The gate
+
+- [ ] **A gate whose cost follows the change.** *Wanted:* a change gate that
+  runs what a change can reach, in minutes for a typical change and at most 30
+  minutes for one that touches every package, and a release gate of at most an
+  hour with a Jaren bump; neither grows when a benchmark is added that the
+  change does not touch. Today every change pays for the whole repository: the
+  suite is 595 files and 333 minutes of file time, and a full run at six
+  workers takes 61 minutes because the trading reproduction alone takes that
+  long in one file (the research one: 57). A release regenerates
+  every source-bound artifact (1 h 35 min) because each hashes the whole
+  `package.json` and `package-lock.json`, whose version and Jaren lines move
+  every release. [`scripts/test.ts`](../scripts/test.ts) starts the longest
+  recorded files first; the import-graph walk in
+  [`import-graph.test.ts`](../test/assistant/import-graph.test.ts) and the
+  artifact source manifests already name inputs; `dist/release/gate.json`
+  already lets closeout reuse a verified gate. *Constraint:* a skipped test
+  must never hide a change it would have caught. Selection over-approximates
+  (static imports plus declared inputs), a reproduction is skipped only on a
+  receipt for exactly the inputs it read, and timing receipts stay dated
+  measurements of named code. *Closes on:* measured change gates under 10
+  minutes for an assistant-only change and under 30 for a change to
+  `packages/core`, a version-only bump that regenerates no artifact, a second
+  `npm run check` on an unchanged tree that runs no reproduction, and a
+  measured release gate under an hour with a Jaren bump.
