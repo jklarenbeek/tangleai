@@ -33,7 +33,7 @@ import { createChatClient } from '@tangleai/models/client';
 const client = createChatClient({
   provider: 'openrouter',            // 'openrouter' | 'ollama' | 'lmstudio' | 'custom'
   apiKey: userKey,                   // omit for local runtimes
-  model: 'qwen/qwen3-4b',
+  model: 'anthropic/claude-haiku-5.5',
 });
 
 const { message } = await client.complete({

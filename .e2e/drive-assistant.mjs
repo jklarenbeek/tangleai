@@ -7,10 +7,11 @@
  * Serve dist first (`npm run pages:build; serve apps/pages/dist on 127.0.0.1:4715`).
  *
  * Usage (on a host with Playwright browser libraries):
- *   node .e2e/drive-assistant.mjs <runName> <prompt...>
+ *   node --env-file-if-exists=.env .e2e/drive-assistant.mjs <runName> <prompt...>
  * Separate sequential turns of one conversation with ' || '.
  *
- * Env: OPENROUTER_KEY, MODEL (default qwen/qwen3.6-35b-a3b),
+ * Env: OPENROUTER_AI_KEY (or OPENROUTER_KEY), TANGLE_AI_MODEL (or MODEL; no
+ *      default — the model is configuration, never code),
  *      VIEWPORT=mobile|desktop, BASE=http://127.0.0.1:4715
  *
  * Configures the assistant through localStorage, sends the prompt,
@@ -26,9 +27,10 @@ import fs from 'node:fs';
 const [runName = 'run', ...promptParts] = process.argv.slice(2);
 const prompt = promptParts.join(' ') || 'Write a questionare for people with mental health problems';
 const SCRIPTED = process.env.SCRIPTED === '1';
-const KEY = SCRIPTED ? 'fixture' : process.env.OPENROUTER_KEY;
-if (!KEY) throw new Error('Set OPENROUTER_KEY for an explicitly requested live run, or SCRIPTED=1 for the keyless probe.');
-const MODEL = process.env.MODEL ?? 'qwen/qwen3.6-35b-a3b';
+const KEY = SCRIPTED ? 'fixture' : process.env.OPENROUTER_AI_KEY ?? process.env.OPENROUTER_KEY;
+if (!KEY) throw new Error('Set OPENROUTER_AI_KEY for an explicitly requested live run, or SCRIPTED=1 for the keyless probe.');
+const MODEL = SCRIPTED ? 'scripted' : process.env.MODEL ?? process.env.TANGLE_AI_MODEL;
+if (!MODEL) throw new Error('Set TANGLE_AI_MODEL (see .env.example) for a live run.');
 const BASE = process.env.BASE ?? 'http://127.0.0.1:4715';
 const MOBILE = process.env.VIEWPORT === 'mobile';
 const OUT = process.env.DRIVE_OUTPUT ?? `/tmp/tangle-drive/${runName}`;

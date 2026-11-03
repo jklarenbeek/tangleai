@@ -162,15 +162,16 @@ test('save/load and the CSV admiralty-forms gag', async ({ page }) => {
 });
 
 // the DYNAMIC tier: with a real key, an NPC answers live and in-voice.
-// Skipped without OPENROUTER_AI_KEY so CI stays offline.
+// Skipped without OPENROUTER_AI_KEY so CI stays offline; the model is the
+// configured TANGLE_AI_MODEL, never one named here.
 test('dynamic tier — an NPC answers live when the player brings a key', async ({ page }) => {
-  const KEY = process.env.OPENROUTER_AI_KEY;
-  test.skip(!KEY, 'set OPENROUTER_AI_KEY to exercise the live AI tier');
+  const KEY = process.env.OPENROUTER_AI_KEY, MODEL = process.env.TANGLE_AI_MODEL;
+  test.skip(!KEY || !MODEL, 'set OPENROUTER_AI_KEY and TANGLE_AI_MODEL to exercise the live AI tier');
   test.setTimeout(60000);
   // seed the shared BYOK slot the assistant uses (localStorage 'tangle-ai')
-  await page.addInitScript((key) => {
-    window.localStorage.setItem('tangle-ai', JSON.stringify({ provider: 'openrouter', baseUrl: '', model: 'qwen/qwen3.6-27b', apiKey: key }));
-  }, KEY);
+  await page.addInitScript(([key, model]) => {
+    window.localStorage.setItem('tangle-ai', JSON.stringify({ provider: 'openrouter', baseUrl: '', model, apiKey: key }));
+  }, [KEY, MODEL]);
   await page.goto('/#/game');
   await page.getByRole('button', { name: /Set sail/ }).click();
   await expect(page.locator('.game-play')).toBeVisible();
