@@ -30,7 +30,7 @@ function target(specifier: string, from: string): string | null {
 }
 
 /** Runtime edges only, through workspace manifests, stopping at Jaren and Node. */
-function reach(entry: string) {
+function walk(entry: string) {
   const seen = new Set<string>(), tangle = new Set<string>(), jaren = new Set<string>(), pending = [entry];
   while (pending.length) {
     const file = pending.pop()!;
@@ -46,7 +46,11 @@ function reach(entry: string) {
       pending.push(next);
     }
   }
-  return { modules: seen.size, tangle: [...tangle].sort(), jaren: [...jaren].sort() };
+  return { files: [...seen], tangle: [...tangle].sort(), jaren: [...jaren].sort() };
+}
+function reach(entry: string) {
+  const { files, tangle, jaren } = walk(entry);
+  return { modules: files.length, tangle, jaren };
 }
 
 it('import specifiers separate runtime edges from type-only ones', async () => {
@@ -67,7 +71,7 @@ it('import specifiers separate runtime edges from type-only ones', async () => {
 
 it('the root and component entries reach the model, agent and context mechanisms', t => {
   const entries = Object.entries(assistant.exports).filter(([, path]) => path.endsWith('.ts'));
-  assert.deepEqual(entries.map(([name]) => name), [...WITH_MECHANISMS, './messages', './messages/nl']);
+  assert.deepEqual(entries.map(([name]) => name), [...WITH_MECHANISMS, ...VIEW_ONLY, './messages', './messages/nl']);
   for (const name of WITH_MECHANISMS) {
     const graph = reach(resolve(assistant.directory, assistant.exports[name]!));
     t.diagnostic(`${name}: ${graph.modules} workspace modules; ${graph.tangle.join(', ')}; ${graph.jaren.length} Jaren entries`);
@@ -93,9 +97,21 @@ it('a graph without Tangle imports reaches no Tangle package', () => {
 it('view-only assistant entries reach no model, agent or context module', t => {
   for (const name of VIEW_ONLY) {
     const path = assistant.exports[name];
-    if (!path) { t.diagnostic(`${name} not exported yet`); continue; }
+    assert.ok(path, `${name} is exported`);
     const graph = reach(resolve(assistant.directory, path));
-    t.diagnostic(`${name}: ${graph.modules} workspace modules; ${graph.jaren.length} Jaren entries`);
+    t.diagnostic(`${name}: ${graph.modules} workspace modules; ${graph.jaren.join(', ')}`);
     assert.deepEqual(graph.tangle.filter(reached => MECHANISMS.includes(reached)), [], name);
   }
+});
+
+it('the view reaches only the shared rules, projection, catalogue and mount modules, and Jaren entries it renders with', () => {
+  const graph = walk(resolve(assistant.directory, assistant.exports['./view']!));
+  const source = resolve(assistant.directory, 'src');
+  assert.deepEqual(graph.files.map(file => file.slice(source.length + 1)).sort(), ['messages.ts', 'mount.ts', 'state.ts', 'view.ts', 'viewmodel.ts', 'views.ts']);
+  assert.deepEqual(graph.tangle, []);
+  const allowed = /^@jarenjs\/(?:app|md\/component|md\/plugins|mermaid\/plugin|core\/.+)$/;
+  assert.deepEqual(graph.jaren.filter(specifier => !allowed.test(specifier)), []);
+  // the host owns the run: nothing in the view keeps time, polls or fetches
+  for (const file of graph.files)
+    assert.doesNotMatch(readFileSync(file, 'utf8'), /\b(?:setTimeout|setInterval|setImmediate|requestAnimationFrame|queueMicrotask|fetch)\s*\(|\bDate\.now\b|\bnew Date\b|\bperformance\./, file);
 });

@@ -15,6 +15,17 @@ const TEXT = {
 /** Stands in for a value the view wraps in its own element, so one sentence keeps its word order. */
 const VALUE = '\uE000';
 
+/** The sentences without parameters, as both surfaces read them. @param messages */
+export function assistantText(messages: AssistantMessages) {
+  return Object.fromEntries(Object.entries(TEXT).map(([name, key]) => [name, messages[key]()]));
+}
+/** User turns as text, assistant turns as Markdown. @param turns @param renderMarkdown */
+export function assistantTranscript(turns: { role: string, content: string }[], renderMarkdown: (source: string) => any) {
+  return turns.map(m => (m.role === 'user'
+    ? { role: 'user', text: m.content }
+    : { role: 'assistant', article: renderMarkdown(m.content) }));
+}
+
 /** @param ai @param renderMarkdown @param messages @param providers */
 export function assistantView(ai: any, renderMarkdown: (source: string) => any, messages: AssistantMessages,
   providers: readonly { value: string, label: string, local: boolean }[]) {
@@ -22,7 +33,7 @@ export function assistantView(ai: any, renderMarkdown: (source: string) => any, 
   const configured = isConfigured(s);
   const [before = '', after = ''] = messages['activity/running']({ tool: VALUE }).split(VALUE);
   return {
-    text: Object.fromEntries(Object.entries(TEXT).map(([name, key]) => [name, messages[key]()])),
+    text: assistantText(messages),
     open: ai.open,
     status: ai.status,
     activity: ai.activity,
@@ -52,12 +63,13 @@ export function assistantView(ai: any, renderMarkdown: (source: string) => any, 
       selected: p.value === s.provider,
     })),
     empty: ai.messages.length === 0,
-    messages: ai.messages.map((m: any) => (m.role === 'user'
-      ? { role: 'user', text: m.content }
-      : { role: 'assistant', article: renderMarkdown(m.content) })),
-    // the reply currently streaming in (plain text: it changes per token)
-    streaming: ai.status === 'streaming',
-    pending: ai.pending,
+    messages: assistantTranscript(ai.messages, renderMarkdown),
+    // a turn in flight: sending waits, the cancel control shows, and the
+    // reply streaming in is plain text (it changes per token)
+    busy: ai.status === 'streaming',
+    cancellable: ai.status === 'streaming',
+    cancelling: false,
+    pending: ai.status === 'streaming' ? ai.pending : '',
     activityLabel: { before, after },
     // the quiet-phase label: reasoning models think before they speak,
     // and watching the thinking grow beats a blind spinner

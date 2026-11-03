@@ -1,12 +1,15 @@
 /**
  * Every assistant panel state that renders text, reached through the mounted
- * component with injected settings, transcript, ledger and transport. Text a
- * host, a model or a store supplies is a sentinel `‹h:name›` (`‹h:error-…›` for
- * failures the assistant did not write), so the census can tell it apart.
+ * component with injected settings, transcript, ledger and transport — and
+ * every state of the view-only entry, reached through host reports and its
+ * transport. Text a host, a model or a store supplies is a sentinel `‹h:name›`
+ * (`‹h:error-…›` for failures the assistant did not write), so the census can
+ * tell it apart.
  */
 import { createLedger } from '@tangleai/context';
 import { mountAssistant } from '@tangleai/assistant/component';
-import { createStubHost } from './dom.stub.ts';
+import { mountAssistantView, type AssistantViewState } from '@tangleai/assistant/view';
+import { createStubHost, fire } from './dom.stub.ts';
 
 export const CONFIGURED = { provider: 'ollama', baseUrl: '', model: 'fixture', apiKey: '' };
 const UNCONFIGURED = { provider: 'openrouter', baseUrl: '', model: '', apiKey: '' };
@@ -158,6 +161,59 @@ const STATES: { name: string, render: () => Promise<Mounted> }[] = [
 ];
 /** Each state, rendered with the catalogue it is given or with the English default. */
 export const ASSISTANT_STATES = STATES.map(({ name, render }) => ({
+  name, render: async (messages?: object) => {
+    catalogue = messages;
+    try { return await render(); } finally { catalogue = undefined; }
+  },
+}));
+
+const find = (node: any, predicate: (node: any) => boolean): any => predicate(node) ? node : (node.childNodes ?? []).map((child: any) => find(child, predicate)).find(Boolean);
+const RUN: AssistantViewState = { status: 'running', runId: '‹h:run›', messages: [{ role: 'user', content: '‹h:question›' }] };
+const DONE: AssistantViewState = { status: 'succeeded', messages: [...RUN.messages, { role: 'assistant', content: '**‹h:answer›**' }] };
+const never = () => new Promise<never>(() => {});
+/** A view mounted open on a host report, with a transport that answers as scripted. */
+async function view(state: AssistantViewState, options: Record<string, any> = {}) {
+  const { container } = createStubHost();
+  const handle = mountAssistantView(container as any, {
+    state, open: true, schedule: fn => fn(), onError: error => { throw error; }, ...(catalogue ? { messages: catalogue } : {}), ...options,
+    transport: { start: options.start ?? (() => '‹h:run›'), cancel: options.cancel ?? (() => {}) },
+  });
+  await settle();
+  return { container, handle };
+}
+async function submitted(options: Record<string, any>) {
+  const mounted = await view({ status: 'idle', messages: [] }, options);
+  const area = find(mounted.container, node => node.tagName === 'textarea');
+  area.value = '‹h:question›'; fire(area, 'input');
+  fire(find(mounted.container, node => node.tagName === 'form'), 'submit'); await settle();
+  return mounted;
+}
+async function cancelled(cancel: () => Promise<void>) {
+  const mounted = await view(RUN, { cancel });
+  fire(find(mounted.container, node => node.tagName === 'button' && node.attributes.get('type') === 'button' && node.attributes.get('class') === 'btn small'), 'click'); await settle();
+  return mounted;
+}
+const VIEWS: { name: string, render: () => Promise<{ container: any, handle: { dispose(): unknown } }> }[] = [
+  { name: 'view: launcher closed', render: () => view({ status: 'idle', messages: [] }, { open: false }) },
+  { name: 'view: idle, empty', render: () => view({ status: 'idle', messages: [] }, { capabilities: tokens('capability', 2) }) },
+  { name: 'view: host presentation', render: () => view({ status: 'idle', messages: [] }, HOST_PRESENTATION) },
+  { name: 'view: starting', render: () => submitted({ start: never }) },
+  { name: 'view: start failed', render: () => submitted({ start: () => Promise.reject(new Error('‹h:error-start›')) }) },
+  { name: 'view: running', render: () => view(RUN) },
+  { name: 'view: running, no run id', render: () => view({ ...RUN, runId: null }) },
+  { name: 'view: running, step and stage', render: () => view({ ...RUN, progress: { step: 2, stage: '‹h:stage›' } }) },
+  { name: 'view: running, step', render: () => view({ ...RUN, progress: { step: 1 } }) },
+  { name: 'view: running, stage', render: () => view({ ...RUN, progress: { stage: '‹h:stage›' } }) },
+  { name: 'view: running, pending reply', render: () => view({ ...RUN, pending: '‹h:partial›' }) },
+  { name: 'view: cancelling', render: () => cancelled(never) },
+  { name: 'view: cancel failed', render: () => cancelled(() => Promise.reject(new Error('‹h:error-cancel›'))) },
+  { name: 'view: succeeded with links', render: () => view({ ...DONE, links: tokens('link', 2).map((label, i) => ({ id: `link-${i + 1}`, label })) }) },
+  { name: 'view: notice', render: () => view({ ...DONE, notice: '‹h:notice›' }) },
+  { name: 'view: failed', render: () => view({ ...RUN, status: 'failed', error: '‹h:error-run›' }) },
+  { name: 'view: cancelled', render: () => view({ ...RUN, status: 'cancelled' }) },
+];
+/** Each view state, rendered with the catalogue it is given or with the English default. */
+export const VIEW_STATES = VIEWS.map(({ name, render }) => ({
   name, render: async (messages?: object) => {
     catalogue = messages;
     try { return await render(); } finally { catalogue = undefined; }

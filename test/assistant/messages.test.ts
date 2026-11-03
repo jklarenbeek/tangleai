@@ -51,11 +51,14 @@ it('counted messages read singular at one and as before at every other count', (
     assert.deepEqual([0, 1, 2].map(count => english[key as keyof typeof english]({ count })), texts, key);
 });
 
+/** Every parameter some message reads, so no message renders empty in both languages. @param count */
+const parameters = (count: number) => ({ count, detail: '‹detail›', tool: '‹tool›', step: count, stage: '‹stage›' });
+
 it('the Dutch pack has exactly the English keys and differs from English except the pinned cognates', () => {
   assert.deepEqual(Object.keys(nl).sort(), Object.keys(assistantMessagesEn).sort());
   const english = createAssistantMessages(), dutch = createAssistantMessages(nl);
   const same = (Object.keys(assistantMessagesEn) as AssistantMessageKey[]).filter(key =>
-    [0, 1, 2].some(count => dutch[key]({ count, detail: '‹detail›', tool: '‹tool›' }) === english[key]({ count, detail: '‹detail›', tool: '‹tool›' })));
+    [0, 1, 2].some(count => dutch[key](parameters(count)) === english[key](parameters(count))));
   assert.deepEqual(same.sort(), Object.keys(NL_COGNATES).sort());
 });
 
@@ -65,9 +68,9 @@ it('every Dutch message uses the parameters its English message uses', () => {
     const template = (english[key] as any).parameters;
     if (template !== undefined && (dutch[key] as any).parameters !== undefined) assert.deepEqual((dutch[key] as any).parameters, template, key);
     for (const count of [0, 1, 2, 7]) {
-      const params = { count, detail: '‹detail›', tool: '‹tool›' }, en = english[key](params), text = dutch[key](params);
+      const params = parameters(count), en = english[key](params), text = dutch[key](params);
       assert.doesNotMatch(text, /[{}]|undefined|NaN/, key);
-      for (const value of [String(count), params.detail, params.tool]) if (en.includes(value)) assert.ok(text.includes(value), `${key} renders ${value}`);
+      for (const value of [String(count), params.detail, params.tool, params.stage]) if (en.includes(value)) assert.ok(text.includes(value), `${key} renders ${value}`);
     }
   }
 });

@@ -1,37 +1,23 @@
 /** The visual assistant owns one app, its request lifecycle and its DOM listeners. */
 import { createApp, formEventFields } from '@jarenjs/app';
-import { createMdComponent } from '@jarenjs/md/component';
-import { highlightPlugin } from '@jarenjs/md/plugins';
-import { mermaidPlugin } from '@jarenjs/mermaid/plugin';
 import { createLedger } from '@tangleai/context';
 import { createToolbox } from '@tangleai/agents';
 import { createAssistantState, createAssistantController, ASSISTANT_ACTIONS } from './index.ts';
-import { createAssistantRules } from './views.ts';
+import { assistantRoot, createAssistantRules } from './views.ts';
 import { assistantView } from './viewmodel.ts';
 import { PROVIDER_OPTIONS } from './settings.ts';
-import { createAssistantMessages, type AssistantMessages } from './messages.ts';
+import { createAssistantMessages } from './messages.ts';
+import { defaultPresentation, instanceId, keepFragments, presentation, replyMarkdown } from './mount.ts';
 
-const PRESENTATION = ['title', 'launchLabel', 'launchTitle', 'intro', 'capabilities', 'settingsHint'];
-/** Presentation options a host does not pass come from the catalogue. @param messages */
-const defaultPresentation = (messages: AssistantMessages) => ({
-  title: messages['panel/title'](), launchLabel: messages['launcher/label'](), launchTitle: messages['launcher/title'](),
-  intro: messages['intro/text'](), capabilities: [], settingsHint: messages['settings/hint'](),
-});
-let nextInstance = 0;
-/** @param value */
-function presentation(value: AssistantPresentation) {
-  return Object.fromEntries(Object.entries(value).filter(([key]) => PRESENTATION.includes(key)));
-}
 /** @param node @param [options] */
 export function mountAssistant(node: HTMLElement | null, options: AssistantOptions = {}) {
   const messages = createAssistantMessages(options.messages);
   let app: any, disposed = false, closing: any;
-  const id = `tangle-assistant-${++nextInstance}`;
+  const id = instanceId();
   let settings = options.settings ?? null, transcript = options.transcript ?? null;
   const aiStorage = options.aiStorage ?? { read: () => settings, write: (value: any) => { settings = structuredClone(value); } };
   const aiChat = options.aiChat ?? { read: () => transcript, write: (value: any) => { transcript = structuredClone(value); } };
-  const md = createMdComponent({ plugins: [highlightPlugin(), mermaidPlugin({ theme: 'host' })], headingIds: true, headingAnchors: true, footnotesLabel: messages['md/footnotes']() });
-  const renderMarkdown = options.renderMarkdown ?? (source => md.view(source, { slugPrefix: `user-content-${id}-` }));
+  const md = replyMarkdown(id, messages), renderMarkdown = options.renderMarkdown ?? md.render;
   const controller = createAssistantController({
     ...options, messages, aiStorage, aiChat,
     ledger: options.ledger ?? createLedger(), toolbox: options.toolbox ?? createToolbox(), getApp: () => app
@@ -41,14 +27,14 @@ export function mountAssistant(node: HTMLElement | null, options: AssistantOptio
     actions: { ...ASSISTANT_ACTIONS, 'assistant/presentation': { patch: [{ op: 'replace', path: '/presentation', value: '$payload' }] } },
     view: {
       $jslt: '0.1', modes: { assistant: { unmatched: 'error' } }, rules: [
-        { match: '$', body: ['section', { class: 'tangle-assistant', 'data-assistant-instance': id }, { $apply: ['$.ui.assistant', 'assistant'] }] },
+        assistantRoot(id),
         ...createAssistantRules(`${id}-models`),
       ]
     },
   }, {
     node, document: node?.ownerDocument, schedule: options.schedule, onError: options.onError,
     eventFields: formEventFields(), effects: controller.effects,
-    afterRender: () => { if (node?.querySelectorAll) md.hydrate(node); },
+    afterRender: () => md.hydrate(node),
     viewModel: (state: any) => ({
       ui: {
         assistant: {
@@ -58,18 +44,7 @@ export function mountAssistant(node: HTMLElement | null, options: AssistantOptio
       }
     }),
   });
-  // A Markdown fragment belongs to this component, not to its host's hash router.
-  function click(event: any) {
-    const anchor = event.target.closest?.('a[href^="#"]');
-    const href = anchor?.getAttribute('href');
-    if (!href || href.startsWith('#/')) return;
-    event.preventDefault();
-    let fragment; try { fragment = decodeURIComponent(href.slice(1)); } catch { return; }
-    for (const target of node?.querySelectorAll('[id]') ?? []) {
-      if (target.id === fragment) { target.scrollIntoView?.({ block: 'nearest' }); break; }
-    }
-  }
-  node?.addEventListener('click', click);
+  const detach = keepFragments(node);
   if (options.open) {
     controller.effects['ai-ensure-settings']({}, app.dispatch);
     controller.effects['ai-ledger-read']({}, app.dispatch);
@@ -85,7 +60,7 @@ export function mountAssistant(node: HTMLElement | null, options: AssistantOptio
     },
     dispose() {
       if (disposed) return closing;
-      disposed = true; node?.removeEventListener('click', click);
+      disposed = true; detach();
       closing = controller.dispose(); app.destroy(); return closing;
     },
   };

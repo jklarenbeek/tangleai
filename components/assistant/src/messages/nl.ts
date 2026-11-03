@@ -73,4 +73,15 @@ export const nl = {
   'note/transcript-not-saved': 'Het gesprek met de assistent kon niet worden opgeslagen.',
   'error/detail': 'Fout: {detail}',
   'md/footnotes': 'Voetnoten',
+  'view/status/idle': 'Klaar voor een nieuw verzoek.',
+  'view/status/starting': 'Verzoek wordt verstuurd…',
+  'view/status/running': 'Bezig…',
+  'view/status/cancelling': 'Verzoek wordt geannuleerd…',
+  'view/status/succeeded': 'De assistent heeft dit verzoek afgerond.',
+  'view/status/failed': 'De assistent kon dit verzoek niet afronden.',
+  'view/status/cancelled': 'Dit verzoek is geannuleerd.',
+  'view/progress': (p: { step?: number, stage?: string }) => p.step === undefined ? p.stage ?? ''
+    : p.stage ? `Stap ${number.format(p.step)} — ${p.stage}` : `Stap ${number.format(p.step)}`,
+  'view/start-failed': 'Het verzoek kon niet worden verstuurd: {detail}',
+  'view/cancel-failed': 'Het verzoek kon niet worden geannuleerd: {detail}',
 } satisfies Required<AssistantCatalogue>;

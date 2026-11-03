@@ -7,8 +7,81 @@
  * text because it changes per token.
  */
 
+/** The section an assistant mounts into: the stylesheet's scope and the root of its rules. @param id */
+export function assistantRoot(id: string) {
+  return { match: '$', body: ['section', { class: 'tangle-assistant', 'data-assistant-instance': id }, { $apply: ['$.ui.assistant', 'assistant'] }] };
+}
+
+/**
+ * The pieces the panel and the view both render, built per mount. They read
+ * flags each projection sets from its own state: `busy` (a request is in
+ * flight), `cancellable` and `cancelling` (the cancel control), `pending`
+ * (the reply streaming in).
+ */
+function sharedPieces() {
+  const title = ['span', { class: 'ai-title' }, '$.title'];
+  const close =
+    ['button', {
+      type: 'button', class: 'ai-icon', title: '$.text.closeTitle',
+      'aria-label': '$.text.closeLabel', on: { click: 'ai/toggle' },
+    }, '✕'];
+
+  const intro = ['div', { class: 'ai-intro' }, ['p', {}, '$.intro'], ['ul', {}, [{ $apply: '$.capabilities[*]' }]]];
+
+  // the reply currently streaming in (plain text: it changes per token)
+  const pending = { $if: ['$.pending', ['div', { class: 'ai-msg assistant' }, ['p', {}, '$.pending']]] };
+
+  const composer =
+    ['form', {
+      class: 'ai-composer',
+      on: { submit: { action: 'ai/send', preventDefault: true } }
+    },
+      ['textarea', {
+        class: 'editor', rows: 2, spellcheck: 'false',
+        placeholder: '$.text.composer', value: '$.draft',
+        on: { input: 'ai/draft' },
+      }],
+      ['button', {
+        type: 'submit', class: 'btn small ai-send',
+        disabled: { $if: ['$.busy', 'disabled', false] },
+      }, { $if: ['$.busy', '…', '$.text.send'] }],
+      {
+        $if: ['$.cancellable', ['button', {
+          type: 'button', class: 'btn small',
+          disabled: { $if: ['$.cancelling', 'disabled', false] }, on: { click: 'ai/cancel' },
+        }, '$.text.cancel']]
+      },
+    ];
+
+  const launcher = (panel: unknown) => ({
+    match: '$.ui.assistant', mode: 'assistant',
+    body: ['div', { class: { $if: ['$.open', 'ai open', 'ai'] } },
+      ['button', {
+        type: 'button', class: 'ai-launch', title: '$.launchTitle',
+        'aria-label': '$.launchTitle', on: { click: 'ai/toggle' },
+      }, '✦', ['span', { class: 'ai-launch-label' }, '$.launchLabel']],
+      { $if: ['$.open', panel] },
+    ],
+  });
+  const capability = { match: '$.ui.assistant.capabilities[*]', mode: 'assistant', body: ['li', {}, '$.text'] };
+  const transcript = [
+    {
+      match: "$.ui.assistant.messages[?@.role == 'user']", mode: 'assistant',
+      body: ['div', { class: 'ai-msg user' }, ['p', {}, '$.text']],
+    },
+    {
+      // the assistant reply is a ready-made @jarenjs/md vnode, spliced
+      // in verbatim (no dispatch into it)
+      match: "$.ui.assistant.messages[?@.role == 'assistant']", mode: 'assistant',
+      body: ['div', { class: 'ai-msg assistant' }, '$.article'],
+    },
+  ];
+  return { title, close, intro, pending, composer, launcher, capability, transcript };
+}
+
 /** One instance owns its datalist identifier and host copy; every sentence comes from the projection, only glyphs are written here. */
 export function createAssistantRules(modelListId: any) {
+  const { title, close, intro, pending, composer, launcher, capability, transcript } = sharedPieces();
   const settingsForm =
     ['form', {
       class: 'ai-settings',
@@ -65,30 +138,11 @@ export function createAssistantRules(modelListId: any) {
       { $if: ['$.settings.probe.fail', ['p', { class: 'ai-error' }, '$.settings.probe.detail']] },
     ];
 
-  const intro = ['div', { class: 'ai-intro' }, ['p', {}, '$.intro'], ['ul', {}, [{ $apply: '$.capabilities[*]' }]]];
-
   // unconfigured: no composer to type into yet — point at the settings
   // form above instead of presenting a chat that cannot send
   const setupIntro =
     ['div', { class: 'ai-intro' },
       ['p', {}, '$.text.setup'],
-    ];
-
-  const composer =
-    ['form', {
-      class: 'ai-composer',
-      on: { submit: { action: 'ai/send', preventDefault: true } }
-    },
-      ['textarea', {
-        class: 'editor', rows: 2, spellcheck: 'false',
-        placeholder: '$.text.composer', value: '$.draft',
-        on: { input: 'ai/draft' },
-      }],
-      ['button', {
-        type: 'submit', class: 'btn small ai-send',
-        disabled: { $if: [{ $eq: ['$.status', 'streaming'] }, 'disabled', false] },
-      }, { $if: [{ $eq: ['$.status', 'streaming'] }, '…', '$.text.send'] }],
-      { $if: ['$.streaming', ['button', { type: 'button', class: 'btn small', on: { click: 'ai/cancel' } }, '$.text.cancel']] },
     ];
 
   // The ledger surface: one objective that outlives the tab, what has
@@ -136,7 +190,7 @@ export function createAssistantRules(modelListId: any) {
   const panel =
     ['div', { class: 'ai-panel' },
       ['div', { class: 'ai-head' },
-        ['span', { class: 'ai-title' }, '$.title'],
+        title,
         ['button', {
           type: 'button', class: 'ai-icon', title: '$.text.settingsTitle',
           'aria-label': '$.text.settingsLabel', on: { click: 'ai/settings-toggle' },
@@ -145,20 +199,14 @@ export function createAssistantRules(modelListId: any) {
           type: 'button', class: 'ai-icon', title: '$.text.clearTitle',
           'aria-label': '$.text.clearLabel', on: { click: 'ai/clear' },
         }, '⌫'],
-        ['button', {
-          type: 'button', class: 'ai-icon', title: '$.text.closeTitle',
-          'aria-label': '$.text.closeLabel', on: { click: 'ai/toggle' },
-        }, '✕'],
+        close,
       ],
       { $if: ['$.showSettings', settingsForm] },
       { $if: ['$.configured', { $if: ['$.goal', goalPanel, goalForm] }] },
       ['div', { class: 'ai-log' },
         { $if: ['$.empty', { $if: ['$.configured', intro, setupIntro] }] },
         [{ $apply: '$.messages[*]' }],
-        {
-          $if: [{ $and: ['$.streaming', '$.pending'] },
-          ['div', { class: 'ai-msg assistant' }, ['p', {}, '$.pending']]]
-        },
+        pending,
         {
           $if: ['$.activity',
             ['p', { class: 'ai-activity' },
@@ -181,17 +229,8 @@ export function createAssistantRules(modelListId: any) {
     ];
 
   return [
-    {
-      match: '$.ui.assistant', mode: 'assistant',
-      body: ['div', { class: { $if: ['$.open', 'ai open', 'ai'] } },
-        ['button', {
-          type: 'button', class: 'ai-launch', title: '$.launchTitle',
-          'aria-label': '$.launchTitle', on: { click: 'ai/toggle' },
-        }, '✦', ['span', { class: 'ai-launch-label' }, '$.launchLabel']],
-        { $if: ['$.open', panel] },
-      ],
-    },
-    { match: '$.ui.assistant.capabilities[*]', mode: 'assistant', body: ['li', {}, '$.text'] },
+    launcher(panel),
+    capability,
     {
       match: '$.ui.assistant.providers[*]', mode: 'assistant',
       body: ['option', { value: '$.value', selected: '$.selected' }, '$.label'],
@@ -200,16 +239,7 @@ export function createAssistantRules(modelListId: any) {
       match: '$.ui.assistant.settings.probe.models[*]', mode: 'assistant',
       body: ['option', { value: '$.id' }],
     },
-    {
-      match: "$.ui.assistant.messages[?@.role == 'user']", mode: 'assistant',
-      body: ['div', { class: 'ai-msg user' }, ['p', {}, '$.text']],
-    },
-    {
-      // the assistant reply is a ready-made @jarenjs/md vnode, spliced
-      // in verbatim (no dispatch into it)
-      match: "$.ui.assistant.messages[?@.role == 'assistant']", mode: 'assistant',
-      body: ['div', { class: 'ai-msg assistant' }, '$.article'],
-    },
+    ...transcript,
     {
       // one recorded step towards the objective. The evidence is shown
       // beside the note, always: a progress log of unevidenced claims is
@@ -220,4 +250,42 @@ export function createAssistantRules(modelListId: any) {
     },
   ];
 
+}
+
+/**
+ * The view-only surface: the shared launcher, head, transcript, intro and
+ * composer around the run a host reports — its status, progress, links,
+ * notice and error — and a start or cancel the host refused. No settings
+ * form, no ledger.
+ */
+export function createAssistantViewRules() {
+  const { title, close, intro, pending, composer, launcher, capability, transcript } = sharedPieces();
+  const panel =
+    ['div', { class: 'ai-panel' },
+      ['div', { class: 'ai-head' }, title, close],
+      ['div', { class: 'ai-log' },
+        { $if: ['$.empty', intro] },
+        [{ $apply: '$.messages[*]' }],
+        pending,
+        { $if: ['$.statusLabel', ['p', { class: 'ai-status', role: 'status' }, '$.statusLabel']] },
+        { $if: ['$.progressLabel', ['p', { class: 'ai-activity' }, '$.progressLabel']] },
+        // a host's proposals and pages arrive as generic links; the view
+        // reports which one was chosen and navigates nowhere itself
+        { $if: ['$.hasLinks', ['div', { class: 'ai-links' }, [{ $apply: '$.links[*]' }]]] },
+        { $if: ['$.notice', ['p', { class: 'ai-notice' }, '$.notice']] },
+        { $if: ['$.error', ['p', { class: 'ai-error' }, '$.error']] },
+        { $if: ['$.startError', ['p', { class: 'ai-error' }, '$.startError']] },
+        { $if: ['$.cancelError', ['p', { class: 'ai-error' }, '$.cancelError']] },
+      ],
+      composer,
+    ];
+  return [
+    launcher(panel),
+    capability,
+    ...transcript,
+    {
+      match: '$.ui.assistant.links[*]', mode: 'assistant',
+      body: ['button', { type: 'button', class: 'btn small ai-link', on: { click: { action: 'view/link', with: { id: '$.id' } } } }, '$.label'],
+    },
+  ];
 }

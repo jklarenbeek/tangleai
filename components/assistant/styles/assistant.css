@@ -79,6 +79,14 @@
   color: var(--fail, #bd2525); background: var(--fail-soft, #fff0f0); border-radius: var(--radius-sm, .5rem);
   padding: var(--space-2, .5rem) var(--space-3, .75rem); font-size: 0.85rem; margin: 0;
 }
+/* the view-only entry: the host's run, the links it offers and its notices */
+:where(.tangle-assistant) .ai-status { color: var(--muted, #596273); font-size: 0.82rem; font-weight: 600; margin: 0; }
+:where(.tangle-assistant) .ai-links { display: flex; flex-wrap: wrap; gap: var(--space-2, .5rem); }
+:where(.tangle-assistant) .ai-link { min-height: 2.75rem; /* primary tap target (DESIGN §5) */ text-align: start; overflow-wrap: anywhere; }
+:where(.tangle-assistant) .ai-notice {
+  color: var(--fg, #182230); background: var(--accent-soft, #eff6ff); border-radius: var(--radius-sm, .5rem);
+  padding: var(--space-2, .5rem) var(--space-3, .75rem); font-size: 0.85rem; margin: 0;
+}
 :where(.tangle-assistant) .ai-composer {
   display: flex; gap: var(--space-2, .5rem); align-items: flex-end;
   padding: var(--space-3, .75rem) var(--space-4, 1rem); border-top: 1px solid var(--border, #d6dae1);

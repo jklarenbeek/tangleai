@@ -27,12 +27,18 @@ export function measureProgramBundle(directory: string) {
   return { schemaVersion:1, bun:execFileSync('bun',['--version'],{encoding:'utf8'}).trim(), bytes, retainedModules:inputs.length, excludedEngineBytes:0 };
 }
 const MECHANISM = /(?:@tangleai|packages)\/(models|agents|context)\//;
+/** The view entry's first measurement (525,428 B) with the program pen's headroom: about 14 %, rounded up to a whole thousand. */
+const VIEW_CEILING = 599000;
 /** Every parsed input counts for the assistant rows, so a mechanism module the bundler dropped is still reported. */
 export function measureAssistantBundles(directory: string) {
-  const entries = ['.', './component'].map(entry => {
+  const entries = ['.', './component', './view'].map(entry => {
     const specifier = '@tangleai/assistant' + entry.slice(1);
     const { bytes, inputs, forbidden } = measureEntryBundle({ directory, scope: 'all', forbidden: MECHANISM,
       source: `import * as entry from ${JSON.stringify(specifier)}; export { entry };\n` });
+    if (entry === './view') {
+      assert.deepEqual(forbidden, [], 'The view entry parsed a model, agent or context module');
+      assert.ok(bytes <= VIEW_CEILING, `The view entry bundle is ${bytes} bytes (ceiling ${VIEW_CEILING})`);
+    }
     return { entry, bytes, inputModules: inputs.length, mechanisms: [...new Set(forbidden.map(name => '@tangleai/' + MECHANISM.exec(name)![1]))].sort() };
   });
   return { schemaVersion:1, bun:execFileSync('bun',['--version'],{encoding:'utf8'}).trim(), scope:'all', entries };

@@ -78,6 +78,17 @@ export const assistantMessagesEn = {
   'note/transcript-not-saved': 'The assistant transcript could not be saved.',
   'error/detail': '{detail}',
   'md/footnotes': 'Footnotes',
+  'view/status/idle': 'Ready for a new run.',
+  'view/status/starting': 'Starting the run…',
+  'view/status/running': 'Working…',
+  'view/status/cancelling': 'Cancelling the run…',
+  'view/status/succeeded': 'The assistant finished this run.',
+  'view/status/failed': 'The assistant could not finish this run.',
+  'view/status/cancelled': 'This run was cancelled.',
+  'view/progress': ({ step, stage }: { step?: number, stage?: string }) => step === undefined ? stage ?? ''
+    : stage ? `Step ${step} — ${stage}` : `Step ${step}`,
+  'view/start-failed': 'The run could not be started: {detail}',
+  'view/cancel-failed': 'The run could not be cancelled: {detail}',
 };
 
 const built = new WeakSet<object>();
