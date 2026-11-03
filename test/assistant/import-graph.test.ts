@@ -9,6 +9,7 @@ import { importSpecifiers } from '../import-specifiers.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const MECHANISMS = ['@tangleai/agents', '@tangleai/context', '@tangleai/models'];
+const WITH_MECHANISMS = ['.', './component'];
 const VIEW_ONLY = ['./view'];
 const workspaces = new Map<string, { directory: string, exports: Record<string, string> }>();
 for (const group of ['packages', 'components']) for (const name of readdirSync(join(root, group))) {
@@ -64,13 +65,21 @@ it('import specifiers separate runtime edges from type-only ones', async () => {
   } finally { await rm(directory, { recursive: true, force: true }); }
 });
 
-it('every assistant script entry reaches the model, agent and context mechanisms today', t => {
+it('the root and component entries reach the model, agent and context mechanisms', t => {
   const entries = Object.entries(assistant.exports).filter(([, path]) => path.endsWith('.ts'));
-  assert.deepEqual(entries.map(([name]) => name), ['.', './component']);
-  for (const [name, path] of entries) {
-    const graph = reach(resolve(assistant.directory, path));
+  assert.deepEqual(entries.map(([name]) => name), [...WITH_MECHANISMS, './messages']);
+  for (const name of WITH_MECHANISMS) {
+    const graph = reach(resolve(assistant.directory, assistant.exports[name]!));
     t.diagnostic(`${name}: ${graph.modules} workspace modules; ${graph.tangle.join(', ')}; ${graph.jaren.length} Jaren entries`);
     assert.deepEqual(graph.tangle, MECHANISMS, name);
+  }
+});
+
+it('the message catalogue and the panel projection reach no Tangle package', t => {
+  for (const [name, path] of [['./messages', assistant.exports['./messages']!], ['projection', './src/viewmodel.ts']] as const) {
+    const graph = reach(resolve(assistant.directory, path));
+    t.diagnostic(`${name}: ${graph.modules} workspace modules; ${graph.jaren.join(', ')}`);
+    assert.deepEqual(graph.tangle, [], name);
   }
 });
 

@@ -8,33 +8,36 @@ import { createToolbox } from '@tangleai/agents';
 import { createAssistantState, createAssistantController, ASSISTANT_ACTIONS } from './index.ts';
 import { createAssistantRules } from './views.ts';
 import { assistantView } from './viewmodel.ts';
+import { PROVIDER_OPTIONS } from './settings.ts';
+import { createAssistantMessages, type AssistantMessages } from './messages.ts';
 
-const DEFAULT_PRESENTATION = {
-  title: 'Assistant', launchLabel: ' Assistant', launchTitle: 'Open assistant',
-  intro: 'Describe what you want to get done. The assistant can use the tools this host provides.',
-  capabilities: [],
-  settingsHint: 'Provider requests use your settings. This host controls local persistence.',
-};
+const PRESENTATION = ['title', 'launchLabel', 'launchTitle', 'intro', 'capabilities', 'settingsHint'];
+/** Presentation options a host does not pass come from the catalogue. @param messages */
+const defaultPresentation = (messages: AssistantMessages) => ({
+  title: messages['panel/title'](), launchLabel: messages['launcher/label'](), launchTitle: messages['launcher/title'](),
+  intro: messages['intro/text'](), capabilities: [], settingsHint: messages['settings/hint'](),
+});
 let nextInstance = 0;
 /** @param value */
 function presentation(value: AssistantPresentation) {
-  return Object.fromEntries(Object.entries(value).filter(([key]) => Object.hasOwn(DEFAULT_PRESENTATION, key)));
+  return Object.fromEntries(Object.entries(value).filter(([key]) => PRESENTATION.includes(key)));
 }
 /** @param node @param [options] */
 export function mountAssistant(node: HTMLElement | null, options: AssistantOptions = {}) {
+  const messages = createAssistantMessages(options.messages);
   let app: any, disposed = false, closing: any;
   const id = `tangle-assistant-${++nextInstance}`;
   let settings = options.settings ?? null, transcript = options.transcript ?? null;
   const aiStorage = options.aiStorage ?? { read: () => settings, write: (value: any) => { settings = structuredClone(value); } };
   const aiChat = options.aiChat ?? { read: () => transcript, write: (value: any) => { transcript = structuredClone(value); } };
-  const md = createMdComponent({ plugins: [highlightPlugin(), mermaidPlugin({ theme: 'host' })], headingIds: true, headingAnchors: true });
+  const md = createMdComponent({ plugins: [highlightPlugin(), mermaidPlugin({ theme: 'host' })], headingIds: true, headingAnchors: true, footnotesLabel: messages['md/footnotes']() });
   const renderMarkdown = options.renderMarkdown ?? (source => md.view(source, { slugPrefix: `user-content-${id}-` }));
   const controller = createAssistantController({
-    ...options, aiStorage, aiChat,
+    ...options, messages, aiStorage, aiChat,
     ledger: options.ledger ?? createLedger(), toolbox: options.toolbox ?? createToolbox(), getApp: () => app
   });
   app = createApp({
-    state: { ai: { ...createAssistantState(aiStorage.read(), aiChat.read()), open: options.open ?? false }, presentation: { ...DEFAULT_PRESENTATION, ...presentation(options) } },
+    state: { ai: { ...createAssistantState(aiStorage.read(), aiChat.read()), open: options.open ?? false }, presentation: { ...defaultPresentation(messages), ...presentation(options) } },
     actions: { ...ASSISTANT_ACTIONS, 'assistant/presentation': { patch: [{ op: 'replace', path: '/presentation', value: '$payload' }] } },
     view: {
       $jslt: '0.1', modes: { assistant: { unmatched: 'error' } }, rules: [
@@ -49,7 +52,7 @@ export function mountAssistant(node: HTMLElement | null, options: AssistantOptio
     viewModel: (state: any) => ({
       ui: {
         assistant: {
-          ...assistantView(state.ai, renderMarkdown), ...state.presentation,
+          ...assistantView(state.ai, renderMarkdown, messages, PROVIDER_OPTIONS), ...state.presentation,
           capabilities: state.presentation.capabilities.map((text: any) => ({ text }))
         }
       }

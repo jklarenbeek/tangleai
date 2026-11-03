@@ -10,6 +10,7 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json",
     "./component": "./src/component.ts",
+    "./messages": "./src/messages.ts",
     "./styles/assistant.css": "./styles/assistant.css"
   },
   "engines": {
@@ -22,6 +23,7 @@
     "@tangleai/models": "^0.43.1",
     "@tangleai/context": "^0.43.1",
     "@tangleai/agents": "^0.43.1",
+    "@jarenjs/core": "0.176.8",
     "@jarenjs/json": "0.176.8",
     "@jarenjs/app": "0.176.8",
     "@jarenjs/md": "0.176.8",

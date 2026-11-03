@@ -37,3 +37,10 @@ export function createAssistantState(aiSettings: any = null, aiChat: any = null)
     remembered: null,      // what the last refinement did, in one line
   };
 }
+
+export function isConfigured(s: any) {
+  if (s.model.trim() === '') return false;
+  if (s.provider === 'custom') return s.baseUrl.trim() !== '';
+  if (s.provider === 'openrouter') return s.apiKey.trim() !== '';
+  return true; // local runtimes (Ollama, LM Studio) need no key
+}

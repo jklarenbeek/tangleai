@@ -46,9 +46,11 @@ function ledgerView(view: { goal?: any, memories?: number, archived?: number, pe
 const progress = (count: number) => Array.from({ length: count }, (_, i) => ({ at: '2026-01-01T00:00:00.000Z', note: `‹h:note-${i + 1}›`, evidence: `‹h:evidence-${i + 1}›` }));
 const tokens = (name: string, count: number) => Array.from({ length: count }, (_, i) => `‹h:${name}-${i + 1}›`);
 
+/** The catalogue the state being rendered mounts with; the English default when unset. */
+let catalogue: object | undefined;
 async function mount(options: Record<string, any> = {}) {
   const { container } = createStubHost();
-  const handle = mountAssistant(container as any, { schedule: fn => fn(), onError: error => { throw error; }, ...options });
+  const handle = mountAssistant(container as any, { schedule: fn => fn(), onError: error => { throw error; }, ...(catalogue ? { messages: catalogue } : {}), ...options });
   await settle();
   return { container, handle };
 }
@@ -80,7 +82,7 @@ async function remember(mounted: Mounted) {
 }
 const streaming = async () => step(await mount({ settings: CONFIGURED, open: true, ledger: ledgerView() }), 'ai/user', '‹h:question›');
 
-export const ASSISTANT_STATES: { name: string, render: () => Promise<Mounted> }[] = [
+const STATES: { name: string, render: () => Promise<Mounted> }[] = [
   { name: 'launcher closed', render: () => mount() },
   { name: 'launcher open, unconfigured', render: () => mount({ open: true, ledger: ledgerView() }) },
   { name: 'unconfigured local provider', render: () => mount({ open: true, settings: { ...CONFIGURED, model: '' }, ledger: ledgerView() }) },
@@ -154,3 +156,10 @@ export const ASSISTANT_STATES: { name: string, render: () => Promise<Mounted> }[
     ] },
   }) },
 ];
+/** Each state, rendered with the catalogue it is given or with the English default. */
+export const ASSISTANT_STATES = STATES.map(({ name, render }) => ({
+  name, render: async (messages?: object) => {
+    catalogue = messages;
+    try { return await render(); } finally { catalogue = undefined; }
+  },
+}));

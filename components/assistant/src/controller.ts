@@ -3,6 +3,7 @@ import { createAgent, createRefiner } from '@tangleai/agents';
 import { createEnvironment } from '@tangleai/context';
 import { applyJSONPatch, compileJsonQuery } from '@jarenjs/json';
 import { isConfigured } from './settings.ts';
+import { createAssistantMessages, type AssistantCatalogue, type AssistantMessages } from './messages.ts';
 /** Chat turns sent back to the model per request (persisted transcripts can be long). */
 const HISTORY_WINDOW = 20;
 
@@ -61,8 +62,13 @@ export function createAssistantController(deps: {
   system?: string;
   headers?: Record<string, string>;
   onDispose?: () => any;
+  messages?: AssistantCatalogue | AssistantMessages;
 }) {
   let disposed = false, epoch = 0, closing: any;
+  const messages = createAssistantMessages(deps.messages);
+  /** Text another package wrote, shown verbatim inside the catalogue's frame. */
+  const detail = (text: unknown) => typeof text === 'string' ? messages['error/detail']({ detail: text }) : text;
+  const failed = (dispatch: any) => (err: any) => dispatch('ai/failed', detail(err?.message ?? String(err)));
 
   let turnAbort: AbortController | null = null;
   const lifetime = new AbortController();
@@ -106,7 +112,7 @@ export function createAssistantController(deps: {
       });
     }
     catch (err: any) {
-      dispatch('ai/failed', (err as Error).message);
+      dispatch('ai/failed', detail((err as Error).message));
       return null;
     }
   };
@@ -118,7 +124,7 @@ export function createAssistantController(deps: {
       const draft = state.ai.draft.trim();
       if (draft === '' || state.ai.status === 'streaming') return;
       if (!isConfigured(state.ai.settings)) {
-        dispatch('ai/failed', 'Add a provider, model and (for OpenRouter) an API key in settings first.');
+        dispatch('ai/failed', messages['note/send-unconfigured']());
         return;
       }
       const runEpoch = epoch;
@@ -184,14 +190,14 @@ export function createAssistantController(deps: {
           dispatch('ai/reply', result.message.content !== ''
             ? result.message.content
             : result.message.reasoning !== undefined
-              ? '*The model spent the whole turn reasoning without a final reply — send another message to continue.*'
-              : '*The model ended its turn without a reply — whatever it loaded is on screen; send another message to continue.*');
+              ? messages['note/reasoning-only']()
+              : messages['note/empty-reply']());
           // the archive grows during a turn, so the panel's count is read
           // after it: what the model can still reach is a fact about the
           // finished turn, not the one that started it
           readLedger(deps.ledger).then((view) => dispatch('ai/ledger', view), () => { });
         },
-        (err: any) => dispatch('ai/failed', err?.message ?? String(err)),
+        failed(dispatch),
       );
     },
 
@@ -199,8 +205,7 @@ export function createAssistantController(deps: {
     // (so a reloaded page shows the objective it was left with) and
     // after anything that writes.
     'ai-ledger-read': (props: any, dispatch: any) => {
-      readLedger(deps.ledger).then((view) => dispatch('ai/ledger', view),
-        (err: any) => dispatch('ai/failed', err?.message ?? String(err)));
+      readLedger(deps.ledger).then((view) => dispatch('ai/ledger', view), failed(dispatch));
     },
 
     // clearing the conversation clears what compaction archived FROM it:
@@ -216,8 +221,7 @@ export function createAssistantController(deps: {
           .filter((slot: any) => slot.kind === 'agent-round' || slot.kind === 'agent-round-index')
           .map((slot: any) => deps.ledger.deleteSlot(slot.name)))))
         .then(() => readLedger(deps.ledger))
-        .then((view: any) => dispatch('ai/ledger', view),
-          (err: any) => dispatch('ai/failed', err?.message ?? String(err)));
+        .then((view: any) => dispatch('ai/ledger', view), failed(dispatch));
     },
 
     'ai-goal-set': (props: any, dispatch: any) => {
@@ -225,13 +229,13 @@ export function createAssistantController(deps: {
       if (objective === '') return;
       deps.ledger.setGoal({ objective }).then((goal: any) => {
         if (goal?.error !== undefined) {
-          dispatch('ai/failed', goal.error);
+          dispatch('ai/failed', detail(goal.error));
           return;
         }
         // the draft is cleared by what comes back from the ledger, not by
         // the action: the objective on screen is the stored one
         return readLedger(deps.ledger).then((view) => dispatch('ai/goal-committed', view));
-      }, (err: any) => dispatch('ai/failed', err?.message ?? String(err)));
+      }, failed(dispatch));
     },
 
     // "clear" abandons the objective rather than deleting it: the ledger
@@ -240,8 +244,7 @@ export function createAssistantController(deps: {
     'ai-goal-clear': (props: any, dispatch: any) => {
       deps.ledger.setGoalStatus('abandoned')
         .then(() => readLedger(deps.ledger))
-        .then((view: any) => dispatch('ai/ledger', view),
-          (err: any) => dispatch('ai/failed', err?.message ?? String(err)));
+        .then((view: any) => dispatch('ai/ledger', view), failed(dispatch));
     },
 
     // the refinement button: the model proposes an RFC 6902 patch over
@@ -251,11 +254,11 @@ export function createAssistantController(deps: {
     'ai-remember': (props: any, dispatch: any) => {
       const state = deps.getApp().getState();
       if (lastRun === null) {
-        dispatch('ai/remembered', { note: 'Nothing to remember yet — send a message first.' });
+        dispatch('ai/remembered', { note: messages['note/remember-no-run']() });
         return;
       }
       if (!isConfigured(state.ai.settings)) {
-        dispatch('ai/remembered', { note: 'Add a provider, model and key in settings first.' });
+        dispatch('ai/remembered', { note: messages['note/remember-unconfigured']() });
         return;
       }
       const client = clientFor(state, dispatch);
@@ -270,21 +273,20 @@ export function createAssistantController(deps: {
           : 0;
         dispatch('ai/remembered', {
           note: outcome.ok !== true
-            ? `Nothing was stored — ${outcome.error}`
+            ? messages['note/remember-refused']({ detail: outcome.error })
             : written === 0
-              ? 'The assistant found nothing worth remembering from this session.'
-              : `Remembered ${written} evidenced item${written === 1 ? '' : 's'}.`,
+              ? messages['note/remember-nothing']()
+              : messages['note/remembered']({ count: written }),
         });
         return readLedger(deps.ledger).then((view) => dispatch('ai/ledger', view));
-      }, (err: any) => dispatch('ai/remembered', { note: err?.message ?? String(err) }));
+      }, (err: any) => dispatch('ai/remembered', { note: detail(err?.message ?? String(err)) }));
     },
 
     'ai-save-settings': async (_props: any, dispatch: any) => {
-      try {
-        if (await deps.aiStorage.write(deps.getApp().getState().ai.settings) === false)
-          throw new Error('Assistant settings could not be saved.');
-      }
-      catch (error: any) { dispatch('ai/settings-open', true); dispatch('ai/failed', error.message); }
+      let saved;
+      try { saved = await deps.aiStorage.write(deps.getApp().getState().ai.settings); }
+      catch (error: any) { dispatch('ai/settings-open', true); dispatch('ai/failed', detail(error.message)); return; }
+      if (saved === false) { dispatch('ai/settings-open', true); dispatch('ai/failed', messages['note/settings-not-saved']()); }
     },
 
     // the settings "Test connection" button: one /models probe with the
@@ -300,10 +302,10 @@ export function createAssistantController(deps: {
       }).then((result) => dispatch('ai/probe-result', result.ok
         ? {
           status: 'ok',
-          detail: `Connected — ${result.models.length} model${result.models.length === 1 ? '' : 's'} available.`,
+          detail: messages['settings/probe-connected']({ count: result.models.length }),
           models: result.models.slice(0, 100),
         }
-        : { status: 'fail', detail: result.error, models: [] }));
+        : { status: 'fail', detail: detail(result.error), models: [] }));
     },
 
     // opening the panel unconfigured lands you in settings — pinned
@@ -320,12 +322,11 @@ export function createAssistantController(deps: {
     // the visible messages through the injected store, so a reload
     // resumes the conversation
     'ai-persist': async (_props: any, dispatch: any) => {
-      const messages = deps.getApp().getState().ai.messages;
-      try {
-        if (await deps.aiChat.write({ messages: messages.slice(-SAVED_WINDOW) }) === false)
-          throw new Error('The assistant transcript could not be saved.');
-      }
-      catch (error: any) { dispatch('ai/failed', error.message); }
+      const transcript = deps.getApp().getState().ai.messages;
+      let saved;
+      try { saved = await deps.aiChat.write({ messages: transcript.slice(-SAVED_WINDOW) }); }
+      catch (error: any) { dispatch('ai/failed', detail(error.message)); return; }
+      if (saved === false) dispatch('ai/failed', messages['note/transcript-not-saved']());
     },
   };
   const effects = Object.fromEntries(Object.entries(rawEffects).map(([name, effect]) => [name, (props: any, dispatch: any) => {

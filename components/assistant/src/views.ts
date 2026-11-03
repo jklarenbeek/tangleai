@@ -7,7 +7,7 @@
  * text because it changes per token.
  */
 
-/** One instance owns its datalist identifier and host copy. */
+/** One instance owns its datalist identifier and host copy; every sentence comes from the projection, only glyphs are written here. */
 export function createAssistantRules(modelListId: any) {
   const settingsForm =
     ['form', {
@@ -17,7 +17,7 @@ export function createAssistantRules(modelListId: any) {
       ['p', { class: 'ai-hint' },
         '$.settingsHint'],
       ['label', { class: 'ai-field' },
-        ['span', {}, 'Provider'],
+        ['span', {}, '$.text.provider'],
         ['select', {
           class: 'select',
           on: { change: { action: 'ai/setting', with: { key: 'provider' } } },
@@ -26,40 +26,40 @@ export function createAssistantRules(modelListId: any) {
       {
         $if: ['$.settings.needsKey',
           ['label', { class: 'ai-field' },
-            ['span', {}, 'API key'],
+            ['span', {}, '$.text.apiKey'],
             ['input', {
               type: 'password', class: 'editor line', spellcheck: 'false',
-              autocomplete: 'off', placeholder: 'sk-…', value: '$.settings.apiKey',
+              autocomplete: 'off', placeholder: '$.text.apiKeyExample', value: '$.settings.apiKey',
               on: { input: { action: 'ai/setting', with: { key: 'apiKey' } } },
             }],
           ]]
       },
       ['label', { class: 'ai-field' },
-        ['span', {}, 'Base URL'],
+        ['span', {}, '$.text.baseUrl'],
         ['input', {
           type: 'text', class: 'editor line', spellcheck: 'false',
-          placeholder: 'http://localhost:11434 · https://…/v1',
+          placeholder: '$.text.baseUrlExample',
           value: '$.settings.baseUrl',
           on: { input: { action: 'ai/setting', with: { key: 'baseUrl' } } },
         }],
       ],
       ['label', { class: 'ai-field' },
-        ['span', {}, 'Model'],
+        ['span', {}, '$.text.model'],
         ['input', {
           type: 'text', class: 'editor line', spellcheck: 'false', list: modelListId,
-          placeholder: 'qwen/qwen3-4b · llama3.2 · …', value: '$.settings.model',
+          placeholder: '$.text.modelExample', value: '$.settings.model',
           on: { input: { action: 'ai/setting', with: { key: 'model' } } },
         }],
         // a successful probe fills this in: the input becomes a picker
         ['datalist', { id: modelListId }, [{ $apply: '$.settings.probe.models[*]' }]],
       ],
       ['div', { class: 'ai-settings-actions' },
-        ['button', { type: 'submit', class: 'btn small' }, 'Save'],
+        ['button', { type: 'submit', class: 'btn small' }, '$.text.save'],
         ['button', {
           type: 'button', class: 'btn small',
           disabled: { $if: ['$.settings.probe.busy', 'disabled', false] },
           on: { click: 'ai/probe' },
-        }, { $if: ['$.settings.probe.busy', 'Testing…', 'Test connection'] }],
+        }, { $if: ['$.settings.probe.busy', '$.text.testing', '$.text.test'] }],
       ],
       { $if: ['$.settings.probe.ok', ['p', { class: 'ai-hint' }, '$.settings.probe.detail']] },
       { $if: ['$.settings.probe.fail', ['p', { class: 'ai-error' }, '$.settings.probe.detail']] },
@@ -71,7 +71,7 @@ export function createAssistantRules(modelListId: any) {
   // form above instead of presenting a chat that cannot send
   const setupIntro =
     ['div', { class: 'ai-intro' },
-      ['p', {}, 'Pick a provider above, add a model (and a key for OpenRouter), then save — the chat opens right here. Nothing leaves your browser except the calls to the provider you choose.'],
+      ['p', {}, '$.text.setup'],
     ];
 
   const composer =
@@ -81,14 +81,14 @@ export function createAssistantRules(modelListId: any) {
     },
       ['textarea', {
         class: 'editor', rows: 2, spellcheck: 'false',
-        placeholder: 'Ask the assistant…', value: '$.draft',
+        placeholder: '$.text.composer', value: '$.draft',
         on: { input: 'ai/draft' },
       }],
       ['button', {
         type: 'submit', class: 'btn small ai-send',
         disabled: { $if: [{ $eq: ['$.status', 'streaming'] }, 'disabled', false] },
-      }, { $if: [{ $eq: ['$.status', 'streaming'] }, '…', 'Send'] }],
-      { $if: ['$.streaming', ['button', { type: 'button', class: 'btn small', on: { click: 'ai/cancel' } }, 'Cancel']] },
+      }, { $if: [{ $eq: ['$.status', 'streaming'] }, '…', '$.text.send'] }],
+      { $if: ['$.streaming', ['button', { type: 'button', class: 'btn small', on: { click: 'ai/cancel' } }, '$.text.cancel']] },
     ];
 
   // The ledger surface: one objective that outlives the tab, what has
@@ -102,32 +102,32 @@ export function createAssistantRules(modelListId: any) {
     },
       ['input', {
         type: 'text', class: 'editor line', spellcheck: 'false',
-        placeholder: 'Set an objective the assistant keeps across sessions…',
+        placeholder: '$.text.goalPlaceholder',
         value: '$.goalDraft',
         on: { input: 'ai/goal-draft' },
       }],
-      ['button', { type: 'submit', class: 'btn small' }, 'Set'],
+      ['button', { type: 'submit', class: 'btn small' }, '$.text.goalSet'],
     ];
 
   const goalPanel =
     ['div', { class: 'ai-goal' },
       ['div', { class: 'ai-goal-head' },
-        ['span', { class: 'ai-goal-label' }, 'Objective'],
+        ['span', { class: 'ai-goal-label' }, '$.text.objective'],
         ['button', {
-          type: 'button', class: 'ai-icon', title: 'Clear the objective',
-          'aria-label': 'Clear the objective', on: { click: 'ai/goal-clear' },
+          type: 'button', class: 'ai-icon', title: '$.text.goalClearTitle',
+          'aria-label': '$.text.goalClearLabel', on: { click: 'ai/goal-clear' },
         }, '✕'],
       ],
       ['p', { class: 'ai-goal-text' }, '$.goal.objective'],
       ['ul', { class: 'ai-goal-progress' }, [{ $apply: '$.goal.progress[*]' }]],
       { $if: ['$.goal.checkpointLabel', ['p', { class: 'ai-hint' }, '$.goal.checkpointLabel']] },
-      { $if: ['$.goal.more', ['p', { class: 'ai-hint' }, '…and ', '$.goal.more', ' earlier entries']] },
+      { $if: ['$.goal.more', ['p', { class: 'ai-hint' }, '$.goal.moreLabel']] },
       ['div', { class: 'ai-goal-actions' },
         ['button', {
           type: 'button', class: 'btn small',
           disabled: { $if: ['$.remembering', 'disabled', false] },
           on: { click: 'ai/remember' },
-        }, { $if: ['$.remembering', 'Remembering…', 'Remember this session'] }],
+        }, { $if: ['$.remembering', '$.text.remembering', '$.text.remember'] }],
         { $if: ['$.memories', ['span', { class: 'ai-hint' }, '$.memoryLabel']] },
       ],
       { $if: ['$.remembered', ['p', { class: 'ai-hint' }, '$.remembered']] },
@@ -138,16 +138,16 @@ export function createAssistantRules(modelListId: any) {
       ['div', { class: 'ai-head' },
         ['span', { class: 'ai-title' }, '$.title'],
         ['button', {
-          type: 'button', class: 'ai-icon', title: 'Settings',
-          'aria-label': 'Assistant settings', on: { click: 'ai/settings-toggle' },
+          type: 'button', class: 'ai-icon', title: '$.text.settingsTitle',
+          'aria-label': '$.text.settingsLabel', on: { click: 'ai/settings-toggle' },
         }, '⚙'],
         ['button', {
-          type: 'button', class: 'ai-icon', title: 'Clear the conversation',
-          'aria-label': 'Clear conversation', on: { click: 'ai/clear' },
+          type: 'button', class: 'ai-icon', title: '$.text.clearTitle',
+          'aria-label': '$.text.clearLabel', on: { click: 'ai/clear' },
         }, '⌫'],
         ['button', {
-          type: 'button', class: 'ai-icon', title: 'Close',
-          'aria-label': 'Close assistant', on: { click: 'ai/toggle' },
+          type: 'button', class: 'ai-icon', title: '$.text.closeTitle',
+          'aria-label': '$.text.closeLabel', on: { click: 'ai/toggle' },
         }, '✕'],
       ],
       { $if: ['$.showSettings', settingsForm] },
@@ -161,7 +161,9 @@ export function createAssistantRules(modelListId: any) {
         },
         {
           $if: ['$.activity',
-            ['p', { class: 'ai-activity' }, 'Running ', ['code', {}, '$.activity'], '…']]
+            ['p', { class: 'ai-activity' },
+              { $if: ['$.activityLabel.before', '$.activityLabel.before'] }, ['code', {}, '$.activity'],
+              { $if: ['$.activityLabel.after', '$.activityLabel.after'] }, '…']]
         },
         {
           $if: [{ $and: [{ $eq: ['$.status', 'streaming'] }, { $not: '$.pending' }, { $not: '$.activity' }] },

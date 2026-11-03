@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import ts from 'typescript';
 
 export type ImportKind = 'static' | 'dynamic' | 'type' | 'jsdoc';
+const parse = (file: string, source = readFileSync(file, 'utf8')) => ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
 
 /**
  * Every module specifier a TypeScript source names, in visit order with repeats,
@@ -13,7 +14,7 @@ export type ImportKind = 'static' | 'dynamic' | 'type' | 'jsdoc';
 export function importSpecifiers(file: string): { specifier: string, kind: ImportKind }[] {
   const source = readFileSync(file, 'utf8');
   const found: { specifier: string, kind: ImportKind }[] = [];
-  const parsed = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
+  const parsed = parse(file, source);
   const visit = (node: ts.Node) => {
     if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier))
       found.push({ specifier: node.moduleSpecifier.text, kind: node.importClause?.phaseModifier === ts.SyntaxKind.TypeKeyword ? 'type' : 'static' });
@@ -25,5 +26,16 @@ export function importSpecifiers(file: string): { specifier: string, kind: Impor
   };
   visit(parsed);
   for (const comment of source.matchAll(/\/\*\*[\s\S]*?\*\//g)) for (const match of comment[0].matchAll(/import\((['"])([^'"]+)\1\)/g)) found.push({ specifier: match[2]!, kind: 'jsdoc' });
+  return found;
+}
+
+/** The text of every string and template literal in a TypeScript source, in visit order; each template part is its own entry. */
+export function stringLiterals(file: string): string[] {
+  const found: string[] = [];
+  const visit = (node: ts.Node) => {
+    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node) || ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) found.push(node.text);
+    ts.forEachChild(node, visit);
+  };
+  visit(parse(file));
   return found;
 }
