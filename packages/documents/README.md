@@ -48,6 +48,17 @@ without importing the PDF dependency. The existing `./extract` entry consumes
 that same implementation and adds PDF extraction. Browser web retrieval uses
 the static subpath; installed Node and Bun retain the complete extractor.
 
+A PDF whose pages carry no text at all — a scan without a text layer — answers
+no elements and warns `image-only: N page(s) and no text …` rather than looking
+like an empty document. An `ocr: { version, read }` hook (`extractPdf(bytes,
+limits, { ocr })`, `extractDocument({ …, ocr })`, `createDocumentIngester({ …,
+ocr })`) reads each page without text instead: `read({ page, width, height, pdf
+})` receives the page number, its size in PDF points and the whole PDF — drawing
+the page is the host's — and answers the page's text or its `{ text, bbox? }`
+lines, which become elements in page order, with an `ocr:` warning naming the
+pages. The hook's `version` enters the ingester's extraction identity, so a
+document read with and without OCR never shares a version.
+
 `createDocumentIngester(...).prepare(input)` fetches, extracts, chunks and embeds
 without activating corpus evidence. It returns a prepared bundle, an unchanged
 source/version, or a serializable failure. Only an unchanged source's metadata

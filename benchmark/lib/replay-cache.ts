@@ -8,16 +8,17 @@
  * them, and is also the audit trail: every file holds the key it
  * answers (the whole canonical request) beside the value.
  *
- * The file name is the sha256 of the key — a fixed-width id for a key
- * that is a whole conversation long — and the key is kept inside the
- * file, so nothing is ever looked up by a hash alone. `--fresh` on an
- * instrument is an adapter that answers nothing while still remembering
- * what it buys. Delete the directory to start over.
+ * The store itself is the published `@tangleai/models/replay-file`
+ * adapter over `node:fs/promises`; this module fixes where the live tiers
+ * keep it. `--fresh` on an instrument is its `fresh` mode, which answers
+ * nothing while still remembering what it buys. Delete the directory to
+ * start over.
  */
 
-import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readdirSync } from 'node:fs';
+import * as files from 'node:fs/promises';
+
+import { createFileReplayCache as createReplayDirectory } from '@tangleai/models/replay-file';
 
 /** Where the live tiers remember, relative to the repository root. Gitignored. */
 export const REPLAY_CACHE_DIR = 'benchmark/cache/replay';
@@ -33,28 +34,11 @@ export function createFileReplayCache(dir: string, options: {
   size: () => number;
   dir: string;
 } {
-  const fresh = options.fresh === true;
-  /** @param key */
-  const fileOf = (key: string) => join(dir, `${createHash('sha256').update(key, 'utf8').digest('hex')}.json`);
+  const cache = createReplayDirectory({ dir, files, mode: options.fresh === true ? 'fresh' : 'record' });
   return {
     dir,
-    get(key: any) {
-      if (fresh) return undefined;
-      const path = fileOf(key);
-      if (!existsSync(path)) return undefined;
-      const entry = JSON.parse(readFileSync(path, 'utf8'));
-      // a file whose recorded key is not this key would be a hash
-      // collision; it is a miss, never someone else's answer
-      return entry.key === key ? entry.value : undefined;
-    },
-    set(key: any, value: any) {
-      mkdirSync(dir, { recursive: true });
-      const path = fileOf(key);
-      // written whole, then renamed: a run interrupted mid-write leaves
-      // no half file for the next run to read
-      writeFileSync(`${path}.tmp`, JSON.stringify({ key, value }));
-      renameSync(`${path}.tmp`, path);
-    },
+    get: cache.get,
+    set: cache.set,
     size() {
       return existsSync(dir) ? readdirSync(dir).filter((name) => name.endsWith('.json')).length : 0;
     },

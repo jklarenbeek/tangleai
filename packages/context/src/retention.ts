@@ -80,14 +80,37 @@ export function validateCheckpoint(checkpoint: any, goal: any) {
   return { valid: errors.length === 0, errors };
 }
 
-/** Complete goal context. No excerpting or silent clipping of evidence. */
-export function goalPrompt(goal: any) {
+/**
+ * The words of the goal prompt, so a host whose model works in another
+ * language composes it in that language. The English defaults are the
+ * prompt the ledger has always composed.
+ */
+export type GoalMessages = {
+  heading: string;
+  checkpoint: string;
+  progress: (count: number) => string;
+  entry: (entry: { at: unknown; note: unknown; evidence: unknown }) => string;
+};
+
+export const GOAL_MESSAGES: GoalMessages = Object.freeze({
+  heading: '## Your objective (persistent, across sessions)',
+  checkpoint: 'Validated checkpoint — this work is DONE, do not repeat it:',
+  progress: (count: number) => `Progress recorded so far (${count} entr${count === 1 ? 'y' : 'ies'}) — this work is DONE, do not repeat it:`,
+  entry: (entry: { at: unknown; note: unknown; evidence: unknown }) => `- [${entry.at}] ${entry.note} (evidence: ${entry.evidence})`,
+});
+
+/**
+ * Complete goal context. No excerpting or silent clipping of evidence.
+ * @param [messages] - words over the English defaults
+ */
+export function goalPrompt(goal: any, messages: Partial<GoalMessages> = {}) {
+  const words = { ...GOAL_MESSAGES, ...messages };
   const progress = Array.isArray(goal.progress) ? goal.progress : [];
-  const lines = ['## Your objective (persistent, across sessions)', goal.objective];
-  if (goal.checkpoint) lines.push('', 'Validated checkpoint — this work is DONE, do not repeat it:', JSON.stringify(goal.checkpoint));
+  const lines = [words.heading, goal.objective];
+  if (goal.checkpoint) lines.push('', words.checkpoint, JSON.stringify(goal.checkpoint));
   if (progress.length) {
-    lines.push('', `Progress recorded so far (${progress.length} entr${progress.length === 1 ? 'y' : 'ies'}) — this work is DONE, do not repeat it:`);
-    for (const entry of progress) lines.push(`- [${entry.at}] ${entry.note} (evidence: ${entry.evidence})`);
+    lines.push('', words.progress(progress.length));
+    for (const entry of progress) lines.push(words.entry(entry));
   }
   return lines.join('\n');
 }

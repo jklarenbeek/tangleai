@@ -48,6 +48,13 @@ are absent unless you ask for them. Progress is appended with evidence
 new agent built over the same storage reads what has already been tried rather than being
 told.
 
+The goal prompt's words are the host's: `createLedger({ messages: { goal } })` (and
+`goalPrompt(goal, messages)`) take a heading, the checkpoint and progress lines and an entry
+format over the English defaults (`GOAL_MESSAGES`), for a model that works in another
+language. The `recall` tool (`createRecallTool(ledger, { messages })`, `RECALL_MESSAGES`) and
+the environment tools (`environmentTools(environment, messages)`, `ENVIRONMENT_MESSAGES`)
+take theirs the same way; an agent passes them through from its own `messages`.
+
 Composition happens **in the request, never in the transcript**. `send` still returns the
 full, uncomposed history, so the transcript you persist and hand back next turn carries the
 immutable base prompt and the conversation — not yesterday's rendering of the goal. A goal

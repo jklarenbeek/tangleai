@@ -9,6 +9,7 @@ import * as assert from 'node:assert';
 
 import { createChatClient } from '@tangleai/models/client';
 import { createStructuredOutput } from '@tangleai/models/structured';
+import { AiError } from '@tangleai/models/errors';
 import { compileJsonQuery } from '@jarenjs/json/query';
 import querySchema from '@jarenjs/json/schemas/jaren-query.schema.json' with { type: 'json' };
 
@@ -185,5 +186,109 @@ describe('ai — structured output', function () {
     });
     const r = (await out.generate([{ role: 'user', content: 'x' }]) as any);
     assert.deepStrictEqual(r.value, { n: 4 });
+  });
+});
+
+/** A client object answering each scripted reply in turn and keeping every request. */
+function replies(...answers: any[]) {
+  const sent: any[] = [];
+  return {
+    sent,
+    client: {
+      endpoint: { provider: 'custom', structured: null },
+      complete: async (request: any) => {
+        sent.push(request);
+        const answer = answers[Math.min(sent.length - 1, answers.length - 1)];
+        return typeof answer === 'string' ? { message: { content: answer }, finishReason: 'stop', usage: { prompt_tokens: 10, completion_tokens: 2, total_tokens: 12 } } : answer;
+      },
+    },
+  };
+}
+
+describe('ai — structured output results', function () {
+  it('every failure is one record shape with a stage, a code and a path, beside the counts of every call', async function () {
+    const { client } = replies('not json', '{"name":"Ada"}');
+    const result = await createStructuredOutput({ client, schema: SCHEMA, maxRepairs: 1 }).generate([{ role: 'user', content: 'Ada' }]);
+    assert.strictEqual(result.ok, false);
+    assert.deepStrictEqual(result.errors![0], { instancePath: '', keyword: 'required', message: result.errors![0].message, stage: 'schema', code: 'required', path: '' });
+    assert.deepStrictEqual(result.calls.map((call) => call.outcome), ['parse', 'schema']);
+    assert.deepStrictEqual(result.usage, { prompt_tokens: 20, completion_tokens: 4, total_tokens: 24 });
+    assert.strictEqual(result.finishReason, 'stop');
+
+    const parse = await createStructuredOutput({ client: replies('nope').client, schema: SCHEMA, maxRepairs: 0 }).generate([]);
+    assert.deepStrictEqual({ ...parse.errors![0], message: '' }, { instancePath: '', keyword: 'parse', message: '', stage: 'parse', code: 'parse', path: '' });
+
+    const gate = await createStructuredOutput({
+      client: replies('{"name":"Ada","age":3}').client, schema: SCHEMA, maxRepairs: 0,
+      gate: () => ({ valid: false, errors: [{ code: 'JQ0002', docPath: '/age', message: 'too young' }] }),
+    }).generate([]);
+    assert.deepStrictEqual(gate.errors, [{ instancePath: '/age', keyword: 'JQ0002', message: 'too young', code: 'JQ0002', docPath: '/age', stage: 'gate', path: '/age' }]);
+  });
+
+  it('a reply cut off at the token limit, or one of reasoning only, is reported as truncated and never repaired', async function () {
+    const cut = replies({ message: { content: '{"name":"Ad' }, finishReason: 'length', usage: { prompt_tokens: 9, completion_tokens: 64, total_tokens: 73 } });
+    const result = await createStructuredOutput({ client: cut.client, schema: SCHEMA, maxRepairs: 2 }).generate([]);
+    assert.strictEqual(cut.sent.length, 1, 'no repair goes out with the same budget');
+    assert.strictEqual(result.ok, false);
+    assert.strictEqual(result.attempts, 1);
+    assert.deepStrictEqual([result.errors![0].stage, result.errors![0].code, result.finishReason], ['truncated', 'truncated', 'length']);
+    // a complete-looking value is still refused: a number cut short parses
+    const short = await createStructuredOutput({ client: replies({ message: { content: '{"name":"Ada","age":3}' }, finishReason: 'length' }).client, schema: SCHEMA }).generate([]);
+    assert.strictEqual(short.ok, false);
+    const thinking = replies({ message: { content: '', reasoning: 'Let me consider the schema…' }, finishReason: 'stop' });
+    const events: any[] = [];
+    const thought = await createStructuredOutput({ client: thinking.client, schema: SCHEMA, onAttempt: (event) => events.push(event) }).generate([]);
+    assert.strictEqual(thinking.sent.length, 1);
+    assert.match(thought.errors![0].message, /reasoning and no content/);
+    assert.deepStrictEqual(events.map((event) => [event.outcome, event.finishReason]), [['truncated', 'stop']]);
+  });
+
+  it('a passing gate hands back what it computed', async function () {
+    const single = await createStructuredOutput({
+      client: replies('{"name":"Ada","age":36}').client, schema: SCHEMA, gate: (value: any) => ({ valid: true, data: { decade: Math.floor(value.age / 10) } }),
+    }).generate([]);
+    assert.deepStrictEqual([single.ok, single.gateData], [true, { decade: 3 }]);
+    const many = await createStructuredOutput({
+      client: replies('{"name":"Ada","age":36}').client, schema: SCHEMA, gate: [() => true, () => ({ valid: true, data: 7 })],
+    }).generate([]);
+    assert.deepStrictEqual(many.gateData, [undefined, 7]);
+  });
+
+  it('the tier comes from the client unless the generator names one', async function () {
+    const { client, sent } = scriptedClient('openrouter', ['{"name":"Ada","age":36}']);
+    await createStructuredOutput({ client, schema: SCHEMA, tier: null }).generate([{ role: 'user', content: 'x' }]);
+    assert.strictEqual(sent[0].response_format, undefined);
+    assert.match(sent[0].messages[0].content, /validates against this JSON Schema/);
+    const stated = createChatClient({ provider: 'openrouter', model: 'm', structured: null, retry: { attempts: 1 },
+      fetch: async (_url: any, init: any) => { sent.push(JSON.parse(init.body)); return Response.json({ choices: [{ message: { content: '{"name":"Ada","age":36}' } }] }); } });
+    await createStructuredOutput({ client: stated, schema: SCHEMA }).generate([{ role: 'user', content: 'x' }]);
+    assert.strictEqual(sent[1].response_format, undefined, 'the client stated the model speaks no json_schema');
+  });
+
+  it('lenient parsing reads the JSON a reply wraps in prose; strict does not', async function () {
+    const prose = 'Sure — here it is: {"name":"Ada {the first}","age":36} Hope that helps.';
+    const lenient = await createStructuredOutput({ client: replies(prose).client, schema: SCHEMA, parse: 'lenient' }).generate([]);
+    assert.deepStrictEqual(lenient.value, { name: 'Ada {the first}', age: 36 });
+    const strict = await createStructuredOutput({ client: replies(prose).client, schema: SCHEMA, maxRepairs: 0 }).generate([]);
+    assert.strictEqual(strict.errors![0].stage, 'parse');
+  });
+
+  it('a generation deadline bounds every call and repair together, even over a client that ignores signals', async function () {
+    const hung = { endpoint: { provider: 'custom' }, complete: () => new Promise(() => { }) };
+    await assert.rejects(createStructuredOutput({ client: hung, schema: SCHEMA, deadlineMs: 20 }).generate([]),
+      (err: any) => err instanceof AiError && err.code === 'AI0004' && err.outcome === 'timeout' && err.deadlineMs === 20);
+    await assert.rejects(createStructuredOutput({ client: hung, schema: SCHEMA }).generate([], { deadlineMs: 0 }),
+      (err: any) => err instanceof AiError && err.code === 'AI0001');
+  });
+
+  it('bundle sends one self-contained schema and validates against the original', async function () {
+    const wrapper = { type: 'object', required: ['filter'], properties: { filter: { $ref: 'https://example.test/shared#/$defs/flag' } } };
+    const shared = { $id: 'https://example.test/shared', $defs: { flag: { type: 'boolean' } } };
+    const { client, sent } = scriptedClient('openrouter', ['{"filter":true}']);
+    const result = await createStructuredOutput({ client, schema: wrapper, refs: [shared], bundle: true }).generate([{ role: 'user', content: 'x' }]);
+    assert.strictEqual(result.ok, true);
+    const wire = sent[0].response_format.json_schema.schema;
+    assert.strictEqual(wire.properties.filter.$ref, '#/$defs/shared.flag');
+    assert.deepStrictEqual(wire.$defs, { 'shared.flag': { type: 'boolean' } }, 'an empty resource root nobody points at is left out');
   });
 });

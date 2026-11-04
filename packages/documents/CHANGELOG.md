@@ -1,5 +1,21 @@
 # @tangleai/documents
 
+## 0.45.0
+
+### Minor Changes
+
+- Report scanned PDFs and let a host read them. A PDF whose pages carry no text answers its empty elements with an `image-only` warning. An `ocr: { version, read }` hook on `extractPdf`, `extractDocument` and `createDocumentIngester` reads each page without text through the host's own OCR (`read({ page, width, height, pdf })` answers the page's text or `{ text, bbox? }` lines), whose text becomes elements in page order beside an `ocr` warning; the hook's `version` enters the ingester's extraction identity, so a document read with and without OCR never shares a version.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @tangleai/context@0.45.0
+  - @tangleai/models@0.45.0
+  - @tangleai/core@0.45.0
+
 ## 0.44.0
 
 ### Patch Changes

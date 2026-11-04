@@ -349,11 +349,11 @@
         }
       },
       "web": {
-        "reportId": "91b898aff77cab9637b1c30dc6b241f47b5657e3e55b4eccdd4848ce059f2f5b",
-        "registrationId": "bb40a960954ffed7fc44fe7e3aea0cd10c0ee014fe4adf15eba9d3264a7140d7",
-        "notRun": "no SearxNG endpoint was configured (--searx <base>)"
+        "reportId": "5033a17586bbfaac2df8540846efd9c3d48d0728c337bb96a5442da78d13b07e",
+        "registrationId": "7cf0c7f5d6e30cef90aadc1a3f520916230dc634117e31e179a05ca4fa12f9ed",
+        "notRun": null
       }
     }
   },
-  "reportId": "586c44d3b91a2d51dc3388a621c4ec59f6dcda5e7efa02bb5a40483c4499cb3e"
+  "reportId": "7a1138be6158d06cac12e9505892fa7da568f17230ed4a7018af2c33b1ac7747"
 }

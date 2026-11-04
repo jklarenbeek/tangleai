@@ -13,14 +13,43 @@
  * or a throwing tool comes back as `{ error }`, invalid input as
  * `{ error, errors, inputSchema }` plus a `hint` where the model sent
  * JSON-encoded text for a structured property — results the calling
- * model can read and recover from.
+ * model can read and recover from. Those words come from `messages`,
+ * English by default, so a host whose model works in another language
+ * gives them in that language.
+ *
+ * A tool runs as `execute(input, context)`: `context.signal` is the
+ * caller's abort signal (an agent passes its send's), and
+ * `context.context` whatever the host attached to the call. Jaren's
+ * contract tools read the same `signal`, so a stopped run stops them too.
  */
 
 import { JarenValidator } from '@jarenjs/validate';
 import { registerWebMcp } from '@jarenjs/contract/webmcp';
+import { contractTools, type ContractToolsOptions } from '@jarenjs/contract/project';
 
 import { checkOutcome } from '@jarenjs/core/check';
 import { invalidInput } from '@tangleai/models/check';
+import { AiError } from '@tangleai/models/errors';
+
+/** The words a toolbox answers a model with, when a call cannot run. */
+export type ToolboxMessages = {
+  unknownTool: (name: string) => string;
+  invalidInput: (name: string) => string;
+  /** For the properties that arrived as JSON text that does not parse. */
+  hint: (properties: string[]) => string;
+};
+
+export const TOOLBOX_MESSAGES: ToolboxMessages = Object.freeze({
+  unknownTool: (name: string) => `unknown tool '${name}'`,
+  invalidInput: (name: string) => `invalid input for ${name}`,
+  hint: (properties: string[]) => `${properties.map((k) => `'${k}'`).join(', ')} arrived as a JSON-encoded string that does not parse — pass a real JSON value, not quoted JSON text`,
+});
+
+/** What a tool's `execute` receives beside its input. */
+export type ToolContext = {
+  signal?: AbortSignal;
+  context?: unknown;
+};
 
 /** Whether a property schema asks for structure (object or array). */
 function wantsStructure(schema: any) {
@@ -72,24 +101,34 @@ function coerceStringArguments(inputSchema: any, input: any): any | null {
  */
 export function createToolbox(options: {
   validator?: any;
+  messages?: Partial<ToolboxMessages>;
 } = {}): {
-  add: (def: ToolDef) => void;
+  /** Register a tool; a name already registered throws unless `replace` says so. */
+  add: (def: ToolDef, options?: { replace?: boolean }) => void;
   list: () => {
     name: string;
     description: string;
     inputSchema: any;
   }[];
   toFunctionTools: () => any[];
-  execute: (name: string, args: any) => any;
+  execute: (name: string, args: any, context?: ToolContext) => any;
 } {
   const jaren = options.validator ?? new JarenValidator({ skipErrors: false, collectErrors: true });
+  const words = { ...TOOLBOX_MESSAGES, ...options.messages };
+  const localized = options.messages !== undefined;
 
   const tools: Map<string, ToolDef & {
     check: (input: any) => any;
   }> = new Map();
 
-  /** @param def */
-  function add(def: ToolDef) {
+  /**
+   * @param def
+   * @param [how] - `replace: true` replaces a tool of the same name; without it
+   *   a second registration is a mistake that would silently swap behaviour
+   */
+  function add(def: ToolDef, how: { replace?: boolean } = {}) {
+    if (tools.has(def.name) && how.replace !== true)
+      throw new AiError('AI0001', `a tool named '${def.name}' is already registered; pass { replace: true } to replace it`);
     tools.set(def.name, { ...def, check: jaren.compile(def.inputSchema) });
   }
 
@@ -114,9 +153,9 @@ export function createToolbox(options: {
    * with a `hint` added when a property wanting structure arrived as
    * unparseable JSON text.
    */
-  function execute(name: string, args: any) {
+  function execute(name: string, args: any, context: ToolContext = {}) {
     const tool = tools.get(name);
-    if (tool === undefined) return { error: `unknown tool '${name}'` };
+    if (tool === undefined) return { error: words.unknownTool(name) };
     let input = args ?? {};
     let outcome = checkOutcome(tool.check(input));
     if (!outcome.valid) {
@@ -132,13 +171,12 @@ export function createToolbox(options: {
     }
     if (!outcome.valid) {
       const stringly = stringStructureKeys(tool.inputSchema, input);
-      return invalidInput(name, outcome, tool.inputSchema,
-        stringly.length === 0 ? {} : {
-          hint: `${stringly.map((k) => `'${k}'`).join(', ')} arrived as a JSON-encoded string that does not parse — pass a real JSON value, not quoted JSON text`,
-        });
+      const rejected = invalidInput(name, outcome, tool.inputSchema,
+        stringly.length === 0 ? {} : { hint: words.hint(stringly) });
+      return localized ? { ...rejected, error: words.invalidInput(name) } : rejected;
     }
     try {
-      const value = tool.execute(input);
+      const value = tool.execute(input, context);
       return typeof value?.then === 'function'
         ? value.then((resolved: any) => resolved, (err: any) =>
           ({ error: err?.message ?? String(err) }))
@@ -167,12 +205,56 @@ export function registerModelContext(toolbox: ReturnType<typeof createToolbox>, 
   })), { ...options, ...(modelContext === undefined ? {} : { context: modelContext }), onError });
 }
 
+/**
+ * A toolbox of a contract's operations for a model, with the members the
+ * host owns kept out of the model's reach. `bind` names input members the
+ * host supplies — a value, or a function of the call's `context.context` —
+ * which are removed from every tool's `inputSchema` (so the model neither
+ * sees nor can send them) and injected on `execute`; `mapOutcome` turns an
+ * operation's outcome into what the model reads. `ops`, `audiences` and
+ * `name` are Jaren's `contractTools` options, which refuse two operations
+ * under one tool name; `toolbox` adds into an existing toolbox, where a name
+ * it already holds throws.
+ */
+export function toolboxFromContract(contract: any, client: any, options: Omit<ContractToolsOptions, never> & {
+  bind?: Record<string, unknown>;
+  mapOutcome?: (outcome: any, call: { name: string; input: any }) => any;
+  toolbox?: ReturnType<typeof createToolbox>;
+  messages?: Partial<ToolboxMessages>;
+} = {}): ReturnType<typeof createToolbox> {
+  const { bind = {}, mapOutcome, toolbox, messages, ...selection } = options;
+  const bound = Object.keys(bind);
+  const target = toolbox ?? createToolbox(messages === undefined ? {} : { messages });
+  for (const tool of contractTools(contract, client, selection)) {
+    const inputSchema = structuredClone(tool.inputSchema);
+    if (bound.length > 0 && inputSchema?.properties !== undefined) {
+      for (const member of bound) delete inputSchema.properties[member];
+      if (Array.isArray(inputSchema.required)) inputSchema.required = inputSchema.required.filter((member: string) => !bound.includes(member));
+    }
+    target.add({
+      name: tool.name,
+      description: tool.description,
+      inputSchema,
+      execute: async (input: any, context: ToolContext = {}) => {
+        const injected = Object.fromEntries(bound.map((member) => {
+          const value = bind[member];
+          return [member, typeof value === 'function' ? value(context.context) : value];
+        }));
+        const outcome = await tool.execute({ ...input, ...injected }, context);
+        return mapOutcome === undefined ? outcome : mapOutcome(outcome, { name: tool.name, input });
+      },
+    });
+  }
+  return target;
+}
+
 export type ToolDef = {
   name: string; description: string; /**
  * - JSON Schema for the arguments object
  */
   inputSchema: any; /**
- * - may return a value or a promise
+ * - may return a value or a promise; `context` carries the caller's signal
+ * and the host's call context
  */
-  execute: (input: any) => any;
+  execute: (input: any, context?: ToolContext) => any;
 };

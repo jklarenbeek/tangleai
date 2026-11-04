@@ -102,10 +102,13 @@ export async function withRetry<T>(policy: RetryPolicy, once: () => Promise<T>, 
 
 /**
  * The `AI0002` for a response that is not ok: the status, a short
- * excerpt of the body, and the provider's `Retry-After` in ms.
+ * excerpt of the body, and the provider's `Retry-After` in ms. A
+ * provider that echoes the request's credential in its error body does
+ * not get it into the message: `secret` (the client's key) is redacted
+ * before the excerpt is cut, so no prefix of it survives either.
  */
-export async function httpFailure(response: any, url: string): Promise<AiError> {
-  const excerpt = await readErrorExcerpt(response);
+export async function httpFailure(response: any, url: string, secret = ''): Promise<AiError> {
+  const excerpt = await readErrorExcerpt(response, secret);
   return new AiError('AI0002',
     `HTTP ${response.status} from ${url}${excerpt === '' ? '' : `: ${excerpt}`}`,
     { status: response.status, retryAfterMs: retryAfterMs(response) });
@@ -131,11 +134,12 @@ export function retryAfterMs(response: any): number | undefined {
 }
 
 /**
- * @returns a short excerpt of the error body
+ * @returns a short excerpt of the error body, `secret` redacted
  */
-async function readErrorExcerpt(response: any): Promise<string> {
+async function readErrorExcerpt(response: any, secret: string): Promise<string> {
   try {
-    const text = await response.text();
+    let text = await response.text();
+    if (secret !== '') text = text.split(secret).join('[redacted]');
     return text.length > 300 ? `${text.slice(0, 300)}…` : text;
   }
   catch {

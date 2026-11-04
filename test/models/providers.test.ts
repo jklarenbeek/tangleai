@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import * as assert from 'node:assert';
 
-import { PROVIDERS, resolveEndpoint, probeProvider } from '@tangleai/models/providers';
+import { PROVIDERS, resolveEndpoint, probeProvider, probePrices } from '@tangleai/models/providers';
 import { AiError } from '@tangleai/models/errors';
 
 describe('ai — provider endpoint resolution', function () {
@@ -42,6 +42,24 @@ describe('ai — provider endpoint resolution', function () {
     for (const baseUrl of ['https://x.test/v1?api-version=1', 'https://x.test/v1#frag']) {
       assert.throws(() => resolveEndpoint({ baseUrl }),
         (err) => err instanceof AiError && err.code === 'AI0001' && /query|fragment/.test(err.message),
+        baseUrl);
+    }
+  });
+
+  it('refuses credentials and non-HTTP schemes in a baseUrl with AI0001, quoting no secret', function () {
+    // fetch refuses a URL with credentials; kept, they became a retried
+    // network error that quoted them
+    for (const [baseUrl, reason] of [
+      ['https://user:sk-secret@x.test/v1', /credentials/],
+      ['https://sk-secret@x.test/v1', /credentials/],
+      ['ftp://x.test/v1', /http: or https:/],
+      ['file:///v1', /http: or https:/],
+      ['https://user:sk-secret@ x.test', /invalid baseUrl/],
+      ['https://x.test/v1?key=sk-secret', /query/],
+    ] as const) {
+      assert.throws(() => resolveEndpoint({ baseUrl }),
+        (err) => err instanceof AiError && err.code === 'AI0001' && reason.test(err.message)
+          && !err.message.includes('sk-secret'),
         baseUrl);
     }
   });
@@ -173,5 +191,25 @@ describe('ai — provider capability probes', function () {
     });
     assert.strictEqual(result.ok, false);
     assert.match((result as any).error, /within 20 ms/);
+  });
+});
+
+describe('ai — provider prices', function () {
+  it('reads per-token prices from the model listing and leaves out an entry without both', async function () {
+    const result = await probePrices({
+      provider: 'openrouter', apiKey: 'sk-x',
+      fetch: () => Promise.resolve(Response.json({ data: [
+        { id: 'anthropic/claude-haiku-5.5', pricing: { prompt: '0.0000001', completion: '0.0000005' } },
+        { id: 'free/model', pricing: { prompt: '0', completion: '0' } },
+        { id: 'half/model', pricing: { prompt: '0.1' } },
+        { id: 'local' },
+      ] })),
+    });
+    assert.deepStrictEqual(result, { ok: true, prices: {
+      'anthropic/claude-haiku-5.5': { prompt: 0.0000001, completion: 0.0000005 },
+      'free/model': { prompt: 0, completion: 0 },
+    } });
+    const refused = await probePrices({ provider: 'openrouter', fetch: () => Promise.resolve(new Response('no', { status: 401 })) });
+    assert.deepStrictEqual([refused.ok, (refused as any).status], [false, 401]);
   });
 });

@@ -7,10 +7,11 @@
     "lightrag-hybrid-no-original",
     "lightrag-hybrid"
   ],
-  "model": "z-ai/glm-5.3-flash",
+  "model": "anthropic/claude-haiku-5.5",
   "embedModel": "baai/bge-m3",
   "dims": 1024,
   "thinking": "default",
+  "structured": null,
   "gleaning": 1,
   "maxRepairs": 1,
   "coreferenceDecisionsPerSource": 64,

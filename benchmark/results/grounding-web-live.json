@@ -5,27 +5,104 @@
     "entry": "benchmark/grounding.ts"
   },
   "configIdentities": {
-    "identities": [],
-    "rows": []
+    "identities": [
+      {
+        "identityId": "5723347db59c2c07bc362d110b016f85eb78fbe4a43744b5b4ac6650796b8c4c",
+        "registryRevision": null,
+        "hostManifestRevision": "a21e39c099eaa3964fa9f89b0fefc9e2e7e77c18d1b4c292bcb92715af361eec",
+        "requested": {
+          "kind": "legacy",
+          "chat": {
+            "state": "configured",
+            "provider": "openrouter",
+            "baseUrl": null,
+            "model": "anthropic/claude-haiku-5.5",
+            "credentialSlot": "openrouter-primary"
+          },
+          "embed": {
+            "state": "configured",
+            "provider": "openrouter",
+            "baseUrl": null,
+            "model": "baai/bge-m3",
+            "credentialSlot": "openrouter-primary"
+          },
+          "components": {
+            "policy": null,
+            "ranker": null
+          },
+          "chatPrompt": null
+        },
+        "roles": {
+          "chat": {
+            "provider": "openrouter",
+            "base": "https://openrouter.ai/api/v1",
+            "model": "anthropic/claude-haiku-5.5",
+            "credentialSlot": "openrouter-primary",
+            "inference": {
+              "temperature": null,
+              "maxTokens": null,
+              "retry": null,
+              "reasoning": null
+            },
+            "prompt": null,
+            "responseSchema": null,
+            "tools": {
+              "requested": [],
+              "effective": []
+            },
+            "rateCard": null
+          }
+        },
+        "embedding": {
+          "provider": "openrouter",
+          "base": "https://openrouter.ai/api/v1",
+          "model": "baai/bge-m3",
+          "dims": 1024,
+          "credentialSlot": "openrouter-primary"
+        },
+        "components": {
+          "policy": null,
+          "ranker": null
+        },
+        "budget": {
+          "maxCalls": 200,
+          "maxTokens": null,
+          "maxMs": null,
+          "maxConcurrency": 4
+        }
+      }
+    ],
+    "rows": [
+      {
+        "rowId": "curated-rfc",
+        "identityStatus": "run",
+        "identityId": "5723347db59c2c07bc362d110b016f85eb78fbe4a43744b5b4ac6650796b8c4c"
+      },
+      {
+        "rowId": "searx-discovered",
+        "identityStatus": "run",
+        "identityId": "5723347db59c2c07bc362d110b016f85eb78fbe4a43744b5b4ac6650796b8c4c"
+      }
+    ]
   },
   "generated": {
-    "at": "2026-09-01T03:28:20.791Z",
-    "tier": "scripted",
-    "provider": "none",
-    "model": "none",
+    "at": "2026-11-04T14:50:23.302Z",
+    "tier": "paid",
+    "provider": "openrouter",
+    "model": "anthropic/claude-haiku-5.5",
     "embedder": {
-      "model": "none",
-      "dims": 0
+      "model": "baai/bge-m3",
+      "dims": 1024
     },
-    "keySource": null,
+    "keySource": "OPENROUTER_AI_KEY",
     "thinking": "default"
   },
   "baseline": {
-    "reportId": null,
-    "registrationId": null
+    "reportId": "c797a85141543cf3d5c04563d533e12170bc1b01960c3966060239dc971f2727",
+    "registrationId": "a604b2d67d36e7f2f485935fe290866a1fdde485b9b02e5c70ebf4e416f42292"
   },
   "registration": {
-    "registrationId": "bb40a960954ffed7fc44fe7e3aea0cd10c0ee014fe4adf15eba9d3264a7140d7",
+    "registrationId": "7cf0c7f5d6e30cef90aadc1a3f520916230dc634117e31e179a05ca4fa12f9ed",
     "questions": [
       {
         "key": "rfc-405-code",
@@ -59,7 +136,7 @@
       }
     ],
     "curatedUrl": "https://www.rfc-editor.org/rfc/rfc9110.html",
-    "searxBase": null,
+    "searxBase": "http://127.0.0.1:8888",
     "selection": {
       "maxPerQuery": 3,
       "policy": "the first distinct normalized HTTP(S) URLs in SearxNG result order after existing URL policy; no learned selector, no authority boost; snippets are never evidence"
@@ -75,7 +152,7 @@
     },
     "promptRevision": "357b25d553c62f28109410a99d18fec106c02cda487e6e89e84d068ce5dcc9ca",
     "maxRepairs": 1,
-    "concurrency": 1
+    "concurrency": 4
   },
   "source": {
     "files": [
@@ -123,13 +200,1636 @@
     "sha256": "e451e19ee710da189fae43680e15718f95b8e11ca6e9b86bc31a81ef391fb6cc"
   },
   "capture": {
-    "manifest": [],
-    "captures": 0,
+    "manifest": [
+      {
+        "kind": "searxng",
+        "method": "GET",
+        "url": "http://127.0.0.1:8888/search?format=json&q=According+to+RFC+9110%2C+is+the+DELETE+method+idempotent%3F",
+        "status": 200,
+        "bodySha256": "63a0fc0fc346edea70eeebf568e1fc3980c340fe3c4f2ce5427f5056e3376351",
+        "responseBytes": 17691,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "searxng",
+        "method": "GET",
+        "url": "http://127.0.0.1:8888/search?format=json&q=What+does+RFC+9110+say+a+304+%28Not+Modified%29+response+cannot+contain%3F",
+        "status": 200,
+        "bodySha256": "53765193ec6259f7b641b2a6450a6fb13496186f9dda2d758b3ff2093e781004",
+        "responseBytes": 33227,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "searxng",
+        "method": "GET",
+        "url": "http://127.0.0.1:8888/search?format=json&q=What+must+a+server+generate+in+a+405+%28Method+Not+Allowed%29+response%2C+per+RFC+9110%3F",
+        "status": 200,
+        "bodySha256": "74ab8a4f68a85941e53b8263d5d8649419cb0f193303a2ca2b09bc45e9e3fb7d",
+        "responseBytes": 33507,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "searxng",
+        "method": "GET",
+        "url": "http://127.0.0.1:8888/search?format=json&q=Which+header+field+carries+proactive+content+negotiation+preferences+for+media+types%2C+per+RFC+9110%3F",
+        "status": 200,
+        "bodySha256": "50fa679fcf563fcf1f4e6e9578c1464e55a160120f8395ab6e7e0e950ed11514",
+        "responseBytes": 33114,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "searxng",
+        "method": "GET",
+        "url": "http://127.0.0.1:8888/search?format=json&q=Which+HTTP+status+code+does+RFC+9110+define+for+Method+Not+Allowed%3F",
+        "status": 200,
+        "bodySha256": "50c22fbc96791fe8e3c896311ffdb2e5e60b90661afe9d9dc6bd79aa986638cf",
+        "responseBytes": 29624,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "searxng",
+        "method": "GET",
+        "url": "http://127.0.0.1:8888/search?format=json&q=Which+request+methods+does+RFC+9110+define+as+safe%3F",
+        "status": 200,
+        "bodySha256": "bdfc6ceffc87c3d11fca81d3e27fc7a26005b0069fca623e09a5ecd7acfdbaae",
+        "responseBytes": 30726,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://cloud.google.com/discover/idempotency",
+        "status": 200,
+        "bodySha256": "0ff2cc9262ce1eff66ece5dbbd6f9e2a7e8d15b04deeb61e0e14438e69c489b8",
+        "responseBytes": 2132789,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching",
+        "status": 200,
+        "bodySha256": "e2c2b7095ef4864405dde262f40d08fead79894ace64f9cf4eefeb44a363a5e8",
+        "responseBytes": 260853,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status",
+        "status": 200,
+        "bodySha256": "c40600cea486d28f13cb7b6b4dd09a7aa0db09bd992f67ccdd054d2ddca9e9cf",
+        "responseBytes": 234435,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/405",
+        "status": 200,
+        "bodySha256": "59a49e5269ceab5aeb75b4cfb2568c4565ed3278a6e82928767ec40f9084f44d",
+        "responseBytes": 209910,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://http.dev/content-negotiation",
+        "status": 200,
+        "bodySha256": "c45781d32b4166cd2e50d7c2bcfd1f71bd7b0424274ffa1225b1124562bb04e5",
+        "responseBytes": 74432,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://httpwg.org/specs/rfc9110.html",
+        "status": 200,
+        "bodySha256": "5313be9ca076b6470ca9e6fecc3c2deaecb1eb9f6d79cd53c51b3bd65f4fbac6",
+        "responseBytes": 915065,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://useaxentix.com/blog/http/what-is-405-method-not-allowed/",
+        "status": 200,
+        "bodySha256": "f28e837914e1a565a1e66003b7adb1c40fb615f48efa6a9a98d5e0bad9917cec",
+        "responseBytes": 59628,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://wso2.com/api-platform/learn/http-status-codes/",
+        "status": 403,
+        "bodySha256": "87b29af743d5b9cef90d62779934da06f60c3df6b6ea4e6ac7fb0268b73ad99b",
+        "responseBytes": 5733,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://www.alekseialeinikov.com/en/blog/topics/architecture/idempotency-in-practice-api-retries-2026",
+        "status": 200,
+        "bodySha256": "e7690f9070dca70193228c87bd2122278b73da38c42f7ad6356279548ba03095",
+        "responseBytes": 15283,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://www.clickminded.com/status-code-304/",
+        "status": 200,
+        "bodySha256": "d7aac1e7114fa79524ab53b62e36494d064aeddca358388fe7f8e57dcc0af96a",
+        "responseBytes": 75842,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://www.context.dev/glossary/http-errors/405",
+        "status": 200,
+        "bodySha256": "89b9f41d4a12f7c6480aafecb9a2bc778fdbbe31a2b2da1934e7752ffb7f52bf",
+        "responseBytes": 4939,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://www.restguide.info/content-negotiation",
+        "status": 200,
+        "bodySha256": "fa07ccb2c20e4bfb8f943c4ce4327ff18991eb1efcf461b77936690f365ef25c",
+        "responseBytes": 32006,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://www.restguide.info/rfc-9110",
+        "status": 200,
+        "bodySha256": "eccf2d691ff6c4f334cf03d755382987ca95896c2c68e2b845ebceb053eb834f",
+        "responseBytes": 29098,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://www.rfc-editor.org/info/rfc9110/",
+        "status": 200,
+        "bodySha256": "0b3e0ddd28d0724f5f992df22ee36ebdc6bbe70d45a302012db18dfe15e7914e",
+        "responseBytes": 4899386,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+        "status": 200,
+        "bodySha256": "d431760660ea44e130f6e919dab216df2d0b3a490567a98089267523368fe1e5",
+        "responseBytes": 1187554,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://www.sume.com/",
+        "status": 200,
+        "bodySha256": "89419f0a29e5a710f0b8e8cdfcb6ba12bde11dafa56e528adb70fea2a04acb4b",
+        "responseBytes": 846809,
+        "attempt": 1,
+        "failure": null
+      },
+      {
+        "kind": "document",
+        "method": "GET",
+        "url": "https://www.sume.com/guides/is-post-idempotent-http-methods",
+        "status": 308,
+        "bodySha256": "0b8778206cff7ac71dd50fbdd407f127180d9e0b1f9382d363ca162b02792133",
+        "responseBytes": 115,
+        "attempt": 1,
+        "failure": null
+      }
+    ],
+    "captures": 23,
     "replayHits": 0,
     "replayMisses": 0
   },
-  "selection": [],
-  "rows": [],
-  "notRun": "no SearxNG endpoint was configured (--searx <base>)",
-  "reportId": "91b898aff77cab9637b1c30dc6b241f47b5657e3e55b4eccdd4848ce059f2f5b"
+  "selection": [
+    {
+      "question": "rfc-405-code",
+      "query": "Which HTTP status code does RFC 9110 define for Method Not Allowed?",
+      "results": 32,
+      "resultsWithSnippets": 32,
+      "selected": [
+        {
+          "rank": 0,
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status"
+        },
+        {
+          "rank": 1,
+          "url": "https://useaxentix.com/blog/http/what-is-405-method-not-allowed/"
+        },
+        {
+          "rank": 2,
+          "url": "https://www.context.dev/glossary/http-errors/405"
+        }
+      ],
+      "refused": []
+    },
+    {
+      "question": "rfc-405-allow",
+      "query": "What must a server generate in a 405 (Method Not Allowed) response, per RFC 9110?",
+      "results": 35,
+      "resultsWithSnippets": 35,
+      "selected": [
+        {
+          "rank": 0,
+          "url": "https://useaxentix.com/blog/http/what-is-405-method-not-allowed/"
+        },
+        {
+          "rank": 1,
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/405"
+        },
+        {
+          "rank": 2,
+          "url": "https://www.context.dev/glossary/http-errors/405"
+        }
+      ],
+      "refused": []
+    },
+    {
+      "question": "rfc-safe-methods",
+      "query": "Which request methods does RFC 9110 define as safe?",
+      "results": 33,
+      "resultsWithSnippets": 33,
+      "selected": [
+        {
+          "rank": 0,
+          "url": "https://www.rfc-editor.org/info/rfc9110/"
+        },
+        {
+          "rank": 1,
+          "url": "https://www.restguide.info/rfc-9110"
+        },
+        {
+          "rank": 2,
+          "url": "https://www.alekseialeinikov.com/en/blog/topics/architecture/idempotency-in-practice-api-retries-2026"
+        }
+      ],
+      "refused": []
+    },
+    {
+      "question": "rfc-304-content",
+      "query": "What does RFC 9110 say a 304 (Not Modified) response cannot contain?",
+      "results": 37,
+      "resultsWithSnippets": 37,
+      "selected": [
+        {
+          "rank": 0,
+          "url": "https://www.clickminded.com/status-code-304/"
+        },
+        {
+          "rank": 1,
+          "url": "https://wso2.com/api-platform/learn/http-status-codes/"
+        },
+        {
+          "rank": 2,
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching"
+        }
+      ],
+      "refused": []
+    },
+    {
+      "question": "rfc-accept-header",
+      "query": "Which header field carries proactive content negotiation preferences for media types, per RFC 9110?",
+      "results": 36,
+      "resultsWithSnippets": 36,
+      "selected": [
+        {
+          "rank": 0,
+          "url": "https://http.dev/content-negotiation"
+        },
+        {
+          "rank": 1,
+          "url": "https://httpwg.org/specs/rfc9110.html"
+        },
+        {
+          "rank": 2,
+          "url": "https://www.restguide.info/content-negotiation"
+        }
+      ],
+      "refused": []
+    },
+    {
+      "question": "rfc-delete-idempotent",
+      "query": "According to RFC 9110, is the DELETE method idempotent?",
+      "results": 20,
+      "resultsWithSnippets": 20,
+      "selected": [
+        {
+          "rank": 0,
+          "url": "https://www.sume.com/guides/is-post-idempotent-http-methods"
+        },
+        {
+          "rank": 1,
+          "url": "https://cloud.google.com/discover/idempotency"
+        },
+        {
+          "rank": 2,
+          "url": "https://www.alekseialeinikov.com/en/blog/topics/architecture/idempotency-in-practice-api-retries-2026"
+        }
+      ],
+      "refused": []
+    }
+  ],
+  "rows": [
+    {
+      "key": "curated-rfc",
+      "questionSet": "447a0e22803f2e651700837691854c73764b86c060dc63f3249abef70a523708",
+      "questions": {
+        "planned": 6,
+        "answered": 6,
+        "unanswered": {
+          "wire": 0,
+          "budget": 0
+        },
+        "invalid": 0,
+        "results": [
+          {
+            "id": "rfc-405-code",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-3abd1467a9b7e41883387b80536371ec",
+                "chk-3a075ef3d31814e298d12be6b2672678"
+              ],
+              "supplied": [
+                "chk-3abd1467a9b7e41883387b80536371ec",
+                "chk-de5e4286ff22526f34285baca596a453",
+                "chk-a8b9cb4d543364b98c3779ca355436af",
+                "chk-3a075ef3d31814e298d12be6b2672678",
+                "chk-e507b28917d968bc0f21f4e09d1e1417"
+              ],
+              "blocks": 2,
+              "uniqueSupplied": 5,
+              "duplicateExpansions": 0,
+              "characters": 7938,
+              "estimatedTokens": 1985
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "RFC 9110 says an origin server that receives a recognized and implemented request method not allowed for the target resource SHOULD respond with the 405 (Method Not Allowed) status code.",
+                  "citations": [
+                    "chk-3a075ef3d31814e298d12be6b2672678"
+                  ]
+                }
+              ]
+            },
+            "rendered": "RFC 9110 says an origin server that receives a recognized and implemented request method not allowed for the target resource SHOULD respond with the 405 (Method Not Allowed) status code.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-3a075ef3d31814e298d12be6b2672678",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 1,
+              "unique": 1,
+              "resolvedUnique": 1,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 1,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.07692307692307693,
+            "tokens": 3438,
+            "ms": 1093.4725780000008,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-405-allow",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-3a075ef3d31814e298d12be6b2672678",
+                "chk-2bf764f9ea62b88cf98162845c12ca68"
+              ],
+              "supplied": [
+                "chk-a8b9cb4d543364b98c3779ca355436af",
+                "chk-3a075ef3d31814e298d12be6b2672678",
+                "chk-e507b28917d968bc0f21f4e09d1e1417",
+                "chk-8a9abc6af18c54eea01daca2ba37f372",
+                "chk-76525a3fd3ba161458ece06a1345f707",
+                "chk-2bf764f9ea62b88cf98162845c12ca68",
+                "chk-226fa2dbf98106cb7e91c78568428b15"
+              ],
+              "blocks": 2,
+              "uniqueSupplied": 7,
+              "duplicateExpansions": 0,
+              "characters": 11142,
+              "estimatedTokens": 2786
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "The origin server MUST generate an Allow header field in a 405 response containing a list of the target resource's currently supported methods.",
+                  "citations": [
+                    "chk-2bf764f9ea62b88cf98162845c12ca68"
+                  ]
+                }
+              ]
+            },
+            "rendered": "The origin server MUST generate an Allow header field in a 405 response containing a list of the target resource's currently supported methods.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-2bf764f9ea62b88cf98162845c12ca68",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 1,
+              "unique": 1,
+              "resolvedUnique": 1,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 1,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.6666666666666666,
+            "tokens": 4427,
+            "ms": 1099.0725149999926,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-safe-methods",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-e507b28917d968bc0f21f4e09d1e1417",
+                "chk-dfc86ad6f89276aec5b57dc841a121f6"
+              ],
+              "supplied": [
+                "chk-3a075ef3d31814e298d12be6b2672678",
+                "chk-a8b9cb4d543364b98c3779ca355436af",
+                "chk-e507b28917d968bc0f21f4e09d1e1417",
+                "chk-dfc86ad6f89276aec5b57dc841a121f6",
+                "chk-15df1bd08904ba394718847a8b14bebf"
+              ],
+              "blocks": 2,
+              "uniqueSupplied": 5,
+              "duplicateExpansions": 2,
+              "characters": 11145,
+              "estimatedTokens": 2787
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "RFC 9110 defines GET, HEAD, OPTIONS, and TRACE as safe request methods.",
+                  "citations": [
+                    "chk-e507b28917d968bc0f21f4e09d1e1417",
+                    "chk-dfc86ad6f89276aec5b57dc841a121f6"
+                  ]
+                }
+              ]
+            },
+            "rendered": "RFC 9110 defines GET, HEAD, OPTIONS, and TRACE as safe request methods.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-e507b28917d968bc0f21f4e09d1e1417",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c1",
+                "citation": "chk-dfc86ad6f89276aec5b57dc841a121f6",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 2,
+              "unique": 2,
+              "resolvedUnique": 2,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 2,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.5333333333333333,
+            "tokens": 4328,
+            "ms": 1352.4136230000004,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-304-content",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-4ccdd37534a4fc97f8abe6dbfe631b42",
+                "chk-2e2db69dc6d70ec89dc8d8a31c479183"
+              ],
+              "supplied": [
+                "chk-2b341aed9a462a385ddd26b708bcbd1d",
+                "chk-8218e909e3235a27acbb472fa3f52ba6",
+                "chk-4ccdd37534a4fc97f8abe6dbfe631b42",
+                "chk-7df564fefae29a18418558bbe36f9614",
+                "chk-ed54f2bdd6cbd51c08a8d72b20de4e63",
+                "chk-2e2db69dc6d70ec89dc8d8a31c479183",
+                "chk-454dd92e3cf6b67d45c8778d0f1b8b85"
+              ],
+              "blocks": 2,
+              "uniqueSupplied": 7,
+              "duplicateExpansions": 0,
+              "characters": 10774,
+              "estimatedTokens": 2694
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "A 304 (Not Modified) response cannot contain content.",
+                  "citations": [
+                    "chk-4ccdd37534a4fc97f8abe6dbfe631b42"
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "text": "A 304 (Not Modified) response cannot contain trailers.",
+                  "citations": [
+                    "chk-4ccdd37534a4fc97f8abe6dbfe631b42"
+                  ]
+                }
+              ]
+            },
+            "rendered": "A 304 (Not Modified) response cannot contain content.; A 304 (Not Modified) response cannot contain trailers.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-4ccdd37534a4fc97f8abe6dbfe631b42",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-4ccdd37534a4fc97f8abe6dbfe631b42",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 2,
+              "unique": 1,
+              "resolvedUnique": 1,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 2,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.25,
+            "tokens": 4691,
+            "ms": 2075.6968049999996,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-accept-header",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-4da3988384f3e61a53e68194fb59f338",
+                "chk-ec24f8562d659f36d10437502aca130b"
+              ],
+              "supplied": [
+                "chk-42c62ca3407bd6d4a8aa022dbbd6a5ee",
+                "chk-358dd1f6911ca6658910b879b2fe316c",
+                "chk-4da3988384f3e61a53e68194fb59f338",
+                "chk-7953eda5613b3b3f924d1d3c9047faa6",
+                "chk-ec24f8562d659f36d10437502aca130b",
+                "chk-231fd1011ab8222a9195472c362109d2"
+              ],
+              "blocks": 2,
+              "uniqueSupplied": 6,
+              "duplicateExpansions": 2,
+              "characters": 13453,
+              "estimatedTokens": 3364
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "The Accept request header field is used by user agents to engage in proactive negotiation and to specify their preferences regarding response media types.",
+                  "citations": [
+                    "chk-4da3988384f3e61a53e68194fb59f338"
+                  ]
+                }
+              ]
+            },
+            "rendered": "The Accept request header field is used by user agents to engage in proactive negotiation and to specify their preferences regarding response media types.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-4da3988384f3e61a53e68194fb59f338",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 1,
+              "unique": 1,
+              "resolvedUnique": 1,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 1,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.08695652173913045,
+            "tokens": 5249,
+            "ms": 1898.3736229999922,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-delete-idempotent",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-15df1bd08904ba394718847a8b14bebf",
+                "chk-e1902ae6dfcfda2ea3b6e49082b839d5"
+              ],
+              "supplied": [
+                "chk-dfc86ad6f89276aec5b57dc841a121f6",
+                "chk-e507b28917d968bc0f21f4e09d1e1417",
+                "chk-15df1bd08904ba394718847a8b14bebf",
+                "chk-ba18204664cd781ba1619bdb99d2e4c8",
+                "chk-7e1ed0c6fae939293f4a13d460b52522",
+                "chk-7e5ba430e3e19187596d44f1d4102ee0",
+                "chk-e1902ae6dfcfda2ea3b6e49082b839d5",
+                "chk-59bc8f19436612c60f94fc363f9f2f87"
+              ],
+              "blocks": 2,
+              "uniqueSupplied": 8,
+              "duplicateExpansions": 0,
+              "characters": 11873,
+              "estimatedTokens": 2969
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "According to RFC 9110, the DELETE method is idempotent.",
+                  "citations": [
+                    "chk-15df1bd08904ba394718847a8b14bebf"
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "text": "RFC 9110 states that, of the request methods it defines, PUT, DELETE, and safe request methods are idempotent.",
+                  "citations": [
+                    "chk-15df1bd08904ba394718847a8b14bebf"
+                  ]
+                }
+              ]
+            },
+            "rendered": "According to RFC 9110, the DELETE method is idempotent.; RFC 9110 states that, of the request methods it defines, PUT, DELETE, and safe request methods are idempotent.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-15df1bd08904ba394718847a8b14bebf",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-15df1bd08904ba394718847a8b14bebf",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 2,
+              "unique": 1,
+              "resolvedUnique": 1,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 2,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.21428571428571427,
+            "tokens": 4588,
+            "ms": 1862.4331979999988,
+            "replayed": 0,
+            "attempts": 1
+          }
+        ]
+      },
+      "answerF1": 0.3046942188246536,
+      "citations": {
+        "raw": 9,
+        "unique": 7,
+        "resolvedUnique": 7,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 9,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "supply": {
+        "candidates": 12,
+        "blocks": 12,
+        "uniqueSupplied": 38,
+        "duplicateExpansions": 4,
+        "characters": 66325,
+        "estimatedTokens": 16585
+      },
+      "corpus": {
+        "sources": 1,
+        "versions": 1,
+        "chunks": 319,
+        "elements": 1840,
+        "embeddingCalls": 10
+      },
+      "ingest": [
+        {
+          "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+          "outcome": "ingested",
+          "error": null
+        }
+      ],
+      "cost": {
+        "turns": 6,
+        "tokens": 26721,
+        "promptTokens": 25462,
+        "completionTokens": 1259,
+        "ms": 9381.462341999984,
+        "replayed": 0
+      },
+      "latency": {
+        "count": 6,
+        "medianMs": 1352.4136230000004,
+        "p95Ms": 2075.6968049999996
+      }
+    },
+    {
+      "key": "searx-discovered",
+      "questionSet": "447a0e22803f2e651700837691854c73764b86c060dc63f3249abef70a523708",
+      "questions": {
+        "planned": 6,
+        "answered": 6,
+        "unanswered": {
+          "wire": 0,
+          "budget": 0
+        },
+        "invalid": 0,
+        "results": [
+          {
+            "id": "rfc-405-code",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-7968c065251d84e0bafe79bf9c896129",
+                "chk-e174ae2343629cd2173d87dd66b4bbb0",
+                "chk-457618a2a7965a122adb1fe1c0eade69",
+                "chk-e50e30d9c548c677d19a87106f7b9b7b",
+                "chk-e8f8c0e4353d3e3d116ed249300e95b0",
+                "chk-df8a8d1abfa46c1552f26c2a7a3eca99"
+              ],
+              "supplied": [
+                "chk-e8f8c0e4353d3e3d116ed249300e95b0",
+                "chk-7968c065251d84e0bafe79bf9c896129",
+                "chk-0275d30ae57d44a1bbccca7e73a52e99",
+                "chk-e174ae2343629cd2173d87dd66b4bbb0",
+                "chk-360803f22b9275f763366bee567404c7",
+                "chk-457618a2a7965a122adb1fe1c0eade69",
+                "chk-583474b47beb2455e0bc33e9c1088169",
+                "chk-4420de3955b9c210db206fa4b3bb8d01",
+                "chk-e50e30d9c548c677d19a87106f7b9b7b",
+                "chk-ec3028dd9da284a0559a72287bb608dc",
+                "chk-df8a8d1abfa46c1552f26c2a7a3eca99",
+                "chk-38333dfa95997ced62153e9684140191"
+              ],
+              "blocks": 6,
+              "uniqueSupplied": 12,
+              "duplicateExpansions": 3,
+              "characters": 19271,
+              "estimatedTokens": 4818
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "RFC 9110 defines HTTP 405 as the Method Not Allowed status code.",
+                  "citations": [
+                    "chk-7968c065251d84e0bafe79bf9c896129",
+                    "chk-457618a2a7965a122adb1fe1c0eade69"
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "text": "Under RFC 9110, a 405 response indicates the request method is known by the origin server but not supported by the target resource.",
+                  "citations": [
+                    "chk-7968c065251d84e0bafe79bf9c896129"
+                  ]
+                }
+              ]
+            },
+            "rendered": "RFC 9110 defines HTTP 405 as the Method Not Allowed status code.; Under RFC 9110, a 405 response indicates the request method is known by the origin server but not supported by the target resource.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-7968c065251d84e0bafe79bf9c896129",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c1",
+                "citation": "chk-457618a2a7965a122adb1fe1c0eade69",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-7968c065251d84e0bafe79bf9c896129",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 3,
+              "unique": 2,
+              "resolvedUnique": 2,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 3,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.06451612903225806,
+            "tokens": 8065,
+            "ms": 2257.403119999988,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-405-allow",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-7968c065251d84e0bafe79bf9c896129",
+                "chk-457618a2a7965a122adb1fe1c0eade69",
+                "chk-e8f8c0e4353d3e3d116ed249300e95b0",
+                "chk-df8a8d1abfa46c1552f26c2a7a3eca99",
+                "chk-e174ae2343629cd2173d87dd66b4bbb0",
+                "chk-6b3b327d80f2f140b29eb6d3caf73578"
+              ],
+              "supplied": [
+                "chk-e8f8c0e4353d3e3d116ed249300e95b0",
+                "chk-7968c065251d84e0bafe79bf9c896129",
+                "chk-0275d30ae57d44a1bbccca7e73a52e99",
+                "chk-457618a2a7965a122adb1fe1c0eade69",
+                "chk-583474b47beb2455e0bc33e9c1088169",
+                "chk-df8a8d1abfa46c1552f26c2a7a3eca99",
+                "chk-38333dfa95997ced62153e9684140191",
+                "chk-e174ae2343629cd2173d87dd66b4bbb0",
+                "chk-360803f22b9275f763366bee567404c7",
+                "chk-5d98597dddb385c5235eb206400ece37",
+                "chk-6b3b327d80f2f140b29eb6d3caf73578",
+                "chk-7a1cd7a8b5fb8723d54108382b8f4e9a"
+              ],
+              "blocks": 6,
+              "uniqueSupplied": 12,
+              "duplicateExpansions": 2,
+              "characters": 18932,
+              "estimatedTokens": 4733
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "Per RFC 9110, the origin server MUST generate an Allow header field in a 405 response.",
+                  "citations": [
+                    "chk-e8f8c0e4353d3e3d116ed249300e95b0"
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "text": "The Allow header in a 405 response must contain a list of the target resource's currently supported methods.",
+                  "citations": [
+                    "chk-e8f8c0e4353d3e3d116ed249300e95b0"
+                  ]
+                }
+              ]
+            },
+            "rendered": "Per RFC 9110, the origin server MUST generate an Allow header field in a 405 response.; The Allow header in a 405 response must contain a list of the target resource's currently supported methods.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-e8f8c0e4353d3e3d116ed249300e95b0",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-e8f8c0e4353d3e3d116ed249300e95b0",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 2,
+              "unique": 1,
+              "resolvedUnique": 1,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 2,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.5,
+            "tokens": 7441,
+            "ms": 1345.5854720000061,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-safe-methods",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-e174ae2343629cd2173d87dd66b4bbb0",
+                "chk-18bd206e2560f5d6f79b2799215ce844",
+                "chk-7a1cd7a8b5fb8723d54108382b8f4e9a",
+                "chk-35c9c22cefcdfd69b847bd8d80be10bf",
+                "chk-7968c065251d84e0bafe79bf9c896129",
+                "chk-1a59cb948722b7694bd01e96c38b73c1"
+              ],
+              "supplied": [
+                "chk-e174ae2343629cd2173d87dd66b4bbb0",
+                "chk-360803f22b9275f763366bee567404c7",
+                "chk-ec3028dd9da284a0559a72287bb608dc",
+                "chk-18bd206e2560f5d6f79b2799215ce844",
+                "chk-5fc28b5807f6f718cc40df16674d8336",
+                "chk-6b3b327d80f2f140b29eb6d3caf73578",
+                "chk-5d98597dddb385c5235eb206400ece37",
+                "chk-7a1cd7a8b5fb8723d54108382b8f4e9a",
+                "chk-dfdb8959cb9eda41a48b6ecb0dccdac4",
+                "chk-f17ce19c90b07275643639cecb0aca6a",
+                "chk-491e332ab63911f110ccd402ce717467",
+                "chk-35c9c22cefcdfd69b847bd8d80be10bf",
+                "chk-1a59cb948722b7694bd01e96c38b73c1",
+                "chk-e8f8c0e4353d3e3d116ed249300e95b0",
+                "chk-7968c065251d84e0bafe79bf9c896129",
+                "chk-0275d30ae57d44a1bbccca7e73a52e99",
+                "chk-42525b1db2be1819c1c502fe21d8bea3"
+              ],
+              "blocks": 6,
+              "uniqueSupplied": 17,
+              "duplicateExpansions": 2,
+              "characters": 26891,
+              "estimatedTokens": 6723
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "RFC 9110 defines GET, HEAD, OPTIONS, and TRACE as safe request methods.",
+                  "citations": [
+                    "chk-7a1cd7a8b5fb8723d54108382b8f4e9a",
+                    "chk-35c9c22cefcdfd69b847bd8d80be10bf",
+                    "chk-18bd206e2560f5d6f79b2799215ce844"
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "text": "A safe method is one whose defined semantics are essentially read-only, so the client does not request or expect a state change on the origin server.",
+                  "citations": [
+                    "chk-7a1cd7a8b5fb8723d54108382b8f4e9a",
+                    "chk-35c9c22cefcdfd69b847bd8d80be10bf"
+                  ]
+                }
+              ]
+            },
+            "rendered": "RFC 9110 defines GET, HEAD, OPTIONS, and TRACE as safe request methods.; A safe method is one whose defined semantics are essentially read-only, so the client does not request or expect a state change on the origin server.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-7a1cd7a8b5fb8723d54108382b8f4e9a",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c1",
+                "citation": "chk-35c9c22cefcdfd69b847bd8d80be10bf",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c1",
+                "citation": "chk-18bd206e2560f5d6f79b2799215ce844",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-7a1cd7a8b5fb8723d54108382b8f4e9a",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-35c9c22cefcdfd69b847bd8d80be10bf",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 5,
+              "unique": 3,
+              "resolvedUnique": 3,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 5,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.21621621621621626,
+            "tokens": 10197,
+            "ms": 2912.819046999997,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-304-content",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-e50e30d9c548c677d19a87106f7b9b7b",
+                "chk-7968c065251d84e0bafe79bf9c896129",
+                "chk-93901908bb13e68c6b6bde9c0bfb1f28",
+                "chk-ce09a89a4c9ae52782ff59043555675a",
+                "chk-e174ae2343629cd2173d87dd66b4bbb0",
+                "chk-4ced63db03021719feb76bcf2b4040bc"
+              ],
+              "supplied": [
+                "chk-4420de3955b9c210db206fa4b3bb8d01",
+                "chk-e174ae2343629cd2173d87dd66b4bbb0",
+                "chk-e50e30d9c548c677d19a87106f7b9b7b",
+                "chk-ec3028dd9da284a0559a72287bb608dc",
+                "chk-e8f8c0e4353d3e3d116ed249300e95b0",
+                "chk-7968c065251d84e0bafe79bf9c896129",
+                "chk-0275d30ae57d44a1bbccca7e73a52e99",
+                "chk-6a9621d91ee09e4eb8cf0edd31a49e30",
+                "chk-687017a2758dd2f69210582617cf3eb8",
+                "chk-93901908bb13e68c6b6bde9c0bfb1f28",
+                "chk-15b2e305d60c9f2d48e1de6d68033c49",
+                "chk-667ac32740e989b6e7f9571aec10164b",
+                "chk-d0e32d2856443565a07cbe6ebd4b0907",
+                "chk-ce09a89a4c9ae52782ff59043555675a",
+                "chk-5615b04f82b723af3b3d65b2b381224c",
+                "chk-360803f22b9275f763366bee567404c7",
+                "chk-d765a4f45ce29456c81c775c6e0fa7b9",
+                "chk-4ced63db03021719feb76bcf2b4040bc",
+                "chk-1e0a1f136760748286859c76d913f6d7"
+              ],
+              "blocks": 6,
+              "uniqueSupplied": 19,
+              "duplicateExpansions": 1,
+              "characters": 28486,
+              "estimatedTokens": 7122
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "RFC 9110 states that a 304 (Not Modified) response cannot contain content.",
+                  "citations": [
+                    "chk-93901908bb13e68c6b6bde9c0bfb1f28",
+                    "chk-ce09a89a4c9ae52782ff59043555675a"
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "text": "RFC 9110 states that a 304 (Not Modified) response cannot contain trailers.",
+                  "citations": [
+                    "chk-93901908bb13e68c6b6bde9c0bfb1f28",
+                    "chk-ce09a89a4c9ae52782ff59043555675a"
+                  ]
+                }
+              ]
+            },
+            "rendered": "RFC 9110 states that a 304 (Not Modified) response cannot contain content.; RFC 9110 states that a 304 (Not Modified) response cannot contain trailers.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-93901908bb13e68c6b6bde9c0bfb1f28",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c1",
+                "citation": "chk-ce09a89a4c9ae52782ff59043555675a",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-93901908bb13e68c6b6bde9c0bfb1f28",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-ce09a89a4c9ae52782ff59043555675a",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 4,
+              "unique": 2,
+              "resolvedUnique": 2,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 4,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.18749999999999997,
+            "tokens": 10830,
+            "ms": 2770.763638999997,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-accept-header",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-e58a8324fedd9c19e8a021782e766536",
+                "chk-90baecae0b2dd13c877049c1d8b6a040",
+                "chk-462f822ecec2cbf1c5bc7ab5247a3b0c",
+                "chk-e9fd0f58b0f2747106614cfecca6cb07",
+                "chk-14dac75e626fd3d716589a7be9b02f67",
+                "chk-3f5f119e0a6b451e528989b41db87c91"
+              ],
+              "supplied": [
+                "chk-4be381845f99f52f82db0eddf48fc726",
+                "chk-e06975dc48f5514678509c34017b9c5e",
+                "chk-e58a8324fedd9c19e8a021782e766536",
+                "chk-e9fd0f58b0f2747106614cfecca6cb07",
+                "chk-f8a877fe5d3891fc22bde11085d872cc",
+                "chk-835d2cfdcbac271c064e43ff84b47270",
+                "chk-90baecae0b2dd13c877049c1d8b6a040",
+                "chk-8102843e27026a6274621e82ea1503b8",
+                "chk-14dac75e626fd3d716589a7be9b02f67",
+                "chk-462f822ecec2cbf1c5bc7ab5247a3b0c",
+                "chk-f8af640a54bdebadd0d77de5052c4cc1",
+                "chk-78ac7da111a959232841f6a871987333",
+                "chk-3f5f119e0a6b451e528989b41db87c91",
+                "chk-6fa550e4617bdb9a5a20d81b37244b13"
+              ],
+              "blocks": 6,
+              "uniqueSupplied": 14,
+              "duplicateExpansions": 7,
+              "characters": 33483,
+              "estimatedTokens": 8371
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "The Accept request header field carries a user agent's proactive content negotiation preferences for response media types.",
+                  "citations": [
+                    "chk-e58a8324fedd9c19e8a021782e766536",
+                    "chk-90baecae0b2dd13c877049c1d8b6a040"
+                  ]
+                }
+              ]
+            },
+            "rendered": "The Accept request header field carries a user agent's proactive content negotiation preferences for response media types.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-e58a8324fedd9c19e8a021782e766536",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c1",
+                "citation": "chk-90baecae0b2dd13c877049c1d8b6a040",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 2,
+              "unique": 2,
+              "resolvedUnique": 2,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 2,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.125,
+            "tokens": 11777,
+            "ms": 2391.384217999992,
+            "replayed": 0,
+            "attempts": 1
+          },
+          {
+            "id": "rfc-delete-idempotent",
+            "category": null,
+            "trace": {
+              "retrieved": [
+                "chk-d645062bf965705b1e45727fce75eae6",
+                "chk-ec3028dd9da284a0559a72287bb608dc",
+                "chk-18bd206e2560f5d6f79b2799215ce844",
+                "chk-2b53b2e1e5e582a7b286ad26b55315ac",
+                "chk-6f58c0a30b6384e26fcba14c558b1a4a",
+                "chk-42525b1db2be1819c1c502fe21d8bea3"
+              ],
+              "supplied": [
+                "chk-eb86ddf1244b9cb3f472cd88c6f4c2a2",
+                "chk-d645062bf965705b1e45727fce75eae6",
+                "chk-02eeb5704d6d8e429a0137c3dc83cf73",
+                "chk-e50e30d9c548c677d19a87106f7b9b7b",
+                "chk-e174ae2343629cd2173d87dd66b4bbb0",
+                "chk-ec3028dd9da284a0559a72287bb608dc",
+                "chk-18bd206e2560f5d6f79b2799215ce844",
+                "chk-5fc28b5807f6f718cc40df16674d8336",
+                "chk-68622eb15c0d86ba1ca6d7c56f76becc",
+                "chk-2b53b2e1e5e582a7b286ad26b55315ac",
+                "chk-b213b75ae0f2b5e378b48a015f90358d",
+                "chk-dfdb8959cb9eda41a48b6ecb0dccdac4",
+                "chk-7a1cd7a8b5fb8723d54108382b8f4e9a",
+                "chk-6f58c0a30b6384e26fcba14c558b1a4a",
+                "chk-ff1fa9c928457d5b54bb6bd95a43b1f9",
+                "chk-1a59cb948722b7694bd01e96c38b73c1",
+                "chk-35c9c22cefcdfd69b847bd8d80be10bf",
+                "chk-42525b1db2be1819c1c502fe21d8bea3",
+                "chk-c068aaade159ca1d6e8b773cf5e2e759"
+              ],
+              "blocks": 6,
+              "uniqueSupplied": 19,
+              "duplicateExpansions": 2,
+              "characters": 27580,
+              "estimatedTokens": 6895
+            },
+            "retrievedRecall": null,
+            "suppliedRecall": null,
+            "claims": null,
+            "abstention": null,
+            "citedRecall": null,
+            "status": "answered",
+            "answer": {
+              "disposition": "answer",
+              "claims": [
+                {
+                  "id": "c1",
+                  "text": "Yes, according to RFC 9110 the DELETE method is idempotent.",
+                  "citations": [
+                    "chk-6f58c0a30b6384e26fcba14c558b1a4a",
+                    "chk-42525b1db2be1819c1c502fe21d8bea3"
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "text": "RFC 9110 Section 9.2.2 states that PUT, DELETE, and the safe request methods are idempotent.",
+                  "citations": [
+                    "chk-6f58c0a30b6384e26fcba14c558b1a4a",
+                    "chk-42525b1db2be1819c1c502fe21d8bea3"
+                  ]
+                },
+                {
+                  "id": "c3",
+                  "text": "A request method is idempotent when the intended effect on the server of multiple identical requests with that method is the same as the effect of a single such request.",
+                  "citations": [
+                    "chk-6f58c0a30b6384e26fcba14c558b1a4a",
+                    "chk-42525b1db2be1819c1c502fe21d8bea3"
+                  ]
+                }
+              ]
+            },
+            "rendered": "Yes, according to RFC 9110 the DELETE method is idempotent.; RFC 9110 Section 9.2.2 states that PUT, DELETE, and the safe request methods are idempotent.; A request method is idempotent when the intended effect on the server of multiple identical requests with that method is the same as the effect of a single such request.",
+            "citations": [
+              {
+                "claimId": "c1",
+                "citation": "chk-6f58c0a30b6384e26fcba14c558b1a4a",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c1",
+                "citation": "chk-42525b1db2be1819c1c502fe21d8bea3",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-6f58c0a30b6384e26fcba14c558b1a4a",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c2",
+                "citation": "chk-42525b1db2be1819c1c502fe21d8bea3",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c3",
+                "citation": "chk-6f58c0a30b6384e26fcba14c558b1a4a",
+                "outcome": "resolved-not-supporting"
+              },
+              {
+                "claimId": "c3",
+                "citation": "chk-42525b1db2be1819c1c502fe21d8bea3",
+                "outcome": "resolved-not-supporting"
+              }
+            ],
+            "citationCounts": {
+              "raw": 6,
+              "unique": 2,
+              "resolvedUnique": 2,
+              "supportingUnique": 0,
+              "byOutcome": {
+                "supporting": 0,
+                "resolvedNotSupporting": 6,
+                "notSupplied": 0,
+                "inactiveVersion": 0,
+                "futureEvidence": 0,
+                "unknownEvidence": 0
+              }
+            },
+            "answerF1": 0.16,
+            "tokens": 10557,
+            "ms": 3505.6062139999995,
+            "replayed": 0,
+            "attempts": 1
+          }
+        ]
+      },
+      "answerF1": 0.20887205754141236,
+      "citations": {
+        "raw": 22,
+        "unique": 12,
+        "resolvedUnique": 12,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 22,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "supply": {
+        "candidates": 36,
+        "blocks": 36,
+        "uniqueSupplied": 93,
+        "duplicateExpansions": 17,
+        "characters": 154643,
+        "estimatedTokens": 38662
+      },
+      "corpus": {
+        "sources": 14,
+        "versions": 14,
+        "chunks": 768,
+        "elements": 5269,
+        "embeddingCalls": 34
+      },
+      "ingest": [
+        {
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://useaxentix.com/blog/http/what-is-405-method-not-allowed/",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://www.context.dev/glossary/http-errors/405",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/405",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://www.rfc-editor.org/info/rfc9110/",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://www.restguide.info/rfc-9110",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://www.alekseialeinikov.com/en/blog/topics/architecture/idempotency-in-practice-api-retries-2026",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://www.clickminded.com/status-code-304/",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://wso2.com/api-platform/learn/http-status-codes/",
+          "outcome": "failed",
+          "error": {
+            "code": "fetch-failed",
+            "message": "Document fetch returned HTTP 403"
+          }
+        },
+        {
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://http.dev/content-negotiation",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://httpwg.org/specs/rfc9110.html",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://www.restguide.info/content-negotiation",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://www.sume.com/guides/is-post-idempotent-http-methods",
+          "outcome": "ingested",
+          "error": null
+        },
+        {
+          "url": "https://cloud.google.com/discover/idempotency",
+          "outcome": "ingested",
+          "error": null
+        }
+      ],
+      "cost": {
+        "turns": 6,
+        "tokens": 58867,
+        "promptTokens": 56273,
+        "completionTokens": 2594,
+        "ms": 15183.56170999998,
+        "replayed": 0
+      },
+      "latency": {
+        "count": 6,
+        "medianMs": 2391.384217999992,
+        "p95Ms": 3505.6062139999995
+      }
+    }
+  ],
+  "notRun": null,
+  "reportId": "5033a17586bbfaac2df8540846efd9c3d48d0728c337bb96a5442da78d13b07e"
 }

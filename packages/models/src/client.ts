@@ -11,7 +11,7 @@
  */
 
 import { AiError } from './errors.ts';
-import { resolveEndpoint } from './providers.ts';
+import { PROVIDERS, resolveEndpoint } from './providers.ts';
 import { normalizeRetry, withRetry, isTransientFailure, httpFailure, transportFailure } from './retry.ts';
 import { createSseDecoder } from './sse.ts';
 import { normalizeCache, replayKey, verifyChatEntry, cloneJson, now } from './replay.ts';
@@ -161,6 +161,18 @@ function completionFromText(text: string): any {
  *     the URL or model; exactly one field is sent when a budget is set.
  *   - `reasoning` is the default thinking control for every request (see
  *     `ChatRequest.reasoning`); a per-request value overrides it.
+ *   - `structured` is the structured-output tier the model speaks —
+ *     `'json_schema'`, `'json'` or `null` — when it is not the preset's:
+ *     the tier belongs to the model, and one aggregator serves models of
+ *     every kind. `createStructuredOutput` reads it from `endpoint.structured`.
+ *   - `timeoutMs` bounds each attempt, the streamed body included; a
+ *     timed-out attempt is `AI0002` with `status` 0 and retries like a
+ *     network failure (unless output already reached the caller). There is
+ *     no default: a long answer on a local runtime legitimately takes time.
+ *   - `requestUsage` asks a streamed reply for its usage
+ *     (`stream_options: { include_usage: true }`), per client or per
+ *     request; off by default, because a server that does not know the
+ *     member may refuse it. It never enters the replay key.
  *   - `cache` is the replay seam: `{ get(key), set(key, value) }`, each
  *     sync or async. The client keys every request by its effective
  *     credential-free wire body after endpoint resolution and default
@@ -200,24 +212,33 @@ export function createChatClient(options: {
   };
   retry?: import('./retry.ts').RetryOptions;
   cache?: import('./replay.ts').ReplayCache;
+  structured?: 'json_schema' | 'json' | null;
+  timeoutMs?: number;
+  requestUsage?: boolean;
 } = {}): {
-  endpoint: {
-    provider: string;
-    base: string;
-    url: string;
-    headers: Record<string, string>;
-    model: string;
-  };
+  /** The credential-free identity: safe to log, to serialize and to copy. */
+  endpoint: ChatEndpoint;
+  /** Resolves a `ChatResult`; typed loosely so a host's own result types keep composing. */
   complete: (request: ChatRequest) => Promise<any>;
   /** Credential-free replay identity after applying the client's wire defaults; no I/O. */
   requestKey: (request: ChatRequest) => string;
 } {
-  const endpoint = resolveEndpoint(options);
+  // the headers carry the key, so they stay in this closure: nothing
+  // reachable from the returned object holds a credential
+  const { headers, ...resolved } = resolveEndpoint(options);
+  const secret = (options.apiKey ?? '').trim();
+  if (options.structured !== undefined && !['json_schema', 'json', null].includes(options.structured))
+    throw new AiError('AI0001', "structured must be 'json_schema', 'json' or null");
+  const structured = options.structured !== undefined ? options.structured : PROVIDERS[resolved.provider].structured;
+  const endpoint: ChatEndpoint = { ...resolved, hasKey: secret !== '', structured };
   const maxTokensField = options.maxTokensField ?? 'max_tokens';
   if (maxTokensField !== 'max_tokens' && maxTokensField !== 'max_completion_tokens')
     throw new AiError('AI0001', "maxTokensField must be 'max_tokens' or 'max_completion_tokens'");
   const fetchFn = options.fetch ?? ((url: any, init: any) => globalThis.fetch(url, init));
   const retry = normalizeRetry(options.retry);
+  const timeoutMs = options.timeoutMs;
+  if (timeoutMs !== undefined && !(Number.isFinite(timeoutMs) && timeoutMs > 0))
+    throw new AiError('AI0001', `timeoutMs must be a positive number, got ${String(timeoutMs)}`);
   const cache = normalizeCache(options.cache);
 
   /**
@@ -231,6 +252,10 @@ export function createChatClient(options: {
     const stream = request.stream ?? true;
 
     const body: any = { model, messages, stream };
+    // an OpenAI-compatible stream carries usage only when asked for it;
+    // opt-in, because a server that does not know the member may refuse it
+    if (stream === true && (request.requestUsage ?? options.requestUsage) === true)
+      body.stream_options = { include_usage: true };
     if (Array.isArray(tools) && tools.length > 0) body.tools = tools;
     if (toolChoice !== undefined) body.tool_choice = toolChoice;
     if (typeof request.temperature === 'number') body.temperature = request.temperature;
@@ -263,7 +288,9 @@ export function createChatClient(options: {
   }
 
   function requestKey(request: ChatRequest): string {
-    const { stream: _stream, ...keyed } = requestBody(request);
+    // a reply streamed or answered whole, with or without its usage
+    // chunk, is the same reply: neither member enters the key
+    const { stream: _stream, stream_options: _usage, ...keyed } = requestBody(request);
     return replayKey('chat', endpoint, keyed);
   }
 
@@ -275,7 +302,31 @@ export function createChatClient(options: {
   async function attemptOnce(request: ChatRequest, state: {
     delivered: boolean;
   }) {
-    const { signal, onDelta, onReasoning } = request;
+    // the attempt's own deadline rides beside the caller's signal; which
+    // of the two fired decides whether the failure is a retryable
+    // timeout or the caller's abort
+    if (timeoutMs === undefined) return exchange(request, state, request.signal);
+    const deadline = new AbortController();
+    const timer = setTimeout(() => deadline.abort(), timeoutMs);
+    const signal = request.signal === undefined ? deadline.signal : AbortSignal.any([request.signal, deadline.signal]);
+    try {
+      return await exchange(request, state, signal);
+    }
+    catch (err: any) {
+      if (deadline.signal.aborted && request.signal?.aborted !== true && !(err instanceof AiError))
+        throw new AiError('AI0002', `no answer from ${endpoint.url} within ${timeoutMs} ms`, { status: 0, cause: err });
+      throw err;
+    }
+    finally {
+      clearTimeout(timer);
+    }
+  }
+
+  /** The request and the whole reply, the stream read to its end, under `signal`. */
+  async function exchange(request: ChatRequest, state: {
+    delivered: boolean;
+  }, signal: AbortSignal | undefined) {
+    const { onDelta, onReasoning } = request;
     const body = requestBody(request);
     const stream = body.stream;
 
@@ -283,7 +334,7 @@ export function createChatClient(options: {
     try {
       response = await fetchFn(endpoint.url, {
         method: 'POST',
-        headers: endpoint.headers,
+        headers,
         body: JSON.stringify(body),
         signal,
       });
@@ -291,7 +342,7 @@ export function createChatClient(options: {
     catch (err: any) {
       throw transportFailure(err, endpoint.url);
     }
-    if (response.ok !== true) throw await httpFailure(response, endpoint.url);
+    if (response.ok !== true) throw await httpFailure(response, endpoint.url, secret);
     if (!stream) return completionFromText(await response.text());
 
     const decoder = createSseDecoder();
@@ -419,6 +470,40 @@ export function createChatClient(options: {
   return { endpoint, complete, requestKey };
 }
 
+/** One tool call of a reply, its arguments as the model wrote them. */
+export type ChatToolCall = { id: string; name: string; arguments: string };
+
+/**
+ * A normalized reply, streamed or whole: the message (`reasoning` only when
+ * the model emitted some), why it stopped, the provider's usage when it
+ * reported one, and `replayed` when the cache answered it.
+ */
+export type ChatResult = {
+  message: { role: string; content: string; toolCalls: ChatToolCall[] | null; reasoning?: string };
+  finishReason: string | null;
+  usage: any;
+  model: string | null;
+  replayed?: { ms: number };
+};
+
+/** What `createChatClient` returns. */
+export type ChatClient = ReturnType<typeof createChatClient>;
+
+/**
+ * What a chat client says about where it sends: the resolved provider,
+ * base and chat URL, the configured model, and whether a key is
+ * configured — never the key or the headers that carry it.
+ */
+export type ChatEndpoint = {
+  provider: string;
+  base: string;
+  url: string;
+  model: string;
+  hasKey: boolean;
+  /** The structured-output tier this client's model speaks: the client's `structured` option, else the preset's. */
+  structured: 'json_schema' | 'json' | null;
+};
+
 export type ChatRequest = { /**
  * - OpenAI wire-shape messages
  */
@@ -461,5 +546,8 @@ export type ChatRequest = { /**
  * - streamed reasoning
  * callback (reasoning models emit thinking before/instead of content)
  */
-  onReasoning?: (text: string) => void;
+  onReasoning?: (text: string) => void; /**
+ * - ask a streamed reply for its usage; overrides the client's `requestUsage`
+ */
+  requestUsage?: boolean;
 };

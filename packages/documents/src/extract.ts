@@ -1,8 +1,8 @@
 import { extractTextItems, getDocumentProxy, getMeta, type StructuredTextItem } from 'unpdf';
 import { DocumentError, type BoundingBox, type ElementRole, type ExtractedDocument } from './contracts.ts';
-import { cleanText, capElements, DEFAULT_EXTRACT_LIMITS, type ElementDraft, type ExtractLimits, type ExtractOptions } from './extract-common.ts';
+import { cleanText, capElements, DEFAULT_EXTRACT_LIMITS, type ElementDraft, type ExtractLimits, type ExtractOptions, type PdfOcr } from './extract-common.ts';
 import { extractStaticDocument } from './extract-static.ts';
-export { DEFAULT_EXTRACT_LIMITS, type ExtractLimits, type ExtractOptions } from './extract-common.ts';
+export { DEFAULT_EXTRACT_LIMITS, type ExtractLimits, type ExtractOptions, type PdfOcr } from './extract-common.ts';
 export { extractHtml, extractTextDocument, extractStaticDocument } from './extract-static.ts';
 
 interface PdfLine {
@@ -132,9 +132,32 @@ function repeatedMarginText(pages: PdfLine[][], heights: number[]): Set<string> 
   return new Set([...occurrences].filter(([, seen]) => seen.size >= threshold).map(([text]) => text));
 }
 
-export async function extractPdf(bytes: Uint8Array, options: Partial<ExtractLimits> = {}): Promise<ExtractedDocument> {
+/**
+ * The lines a host's OCR answered for one page: its text split into lines, or
+ * its lines; a line without a box gets a full-width band in reading order.
+ */
+function ocrLines(read: unknown, page: number, width: number, height: number): PdfLine[] {
+  const entries = typeof read === 'string' ? read.split('\n').map((text) => ({ text, bbox: undefined }))
+    : Array.isArray(read) && read.every((line) => typeof line?.text === 'string') ? read as Array<{ text: string; bbox?: BoundingBox }>
+      : null;
+  if (entries === null) throw new DocumentError('ocr-invalid', `the OCR answer for page ${page} is neither text nor lines of { text, bbox? }`);
+  const kept = entries.map((line) => ({ text: cleanText(line.text), bbox: line.bbox })).filter((line) => line.text !== '');
+  const band = height / Math.max(1, kept.length);
+  return kept.map((line, index) => ({
+    text: line.text, bbox: line.bbox ?? { x: 0, y: index * band, w: width, h: band }, page, fontSize: Number.NaN, fontFamily: 'ocr',
+  }));
+}
+
+/**
+ * Extract a PDF's text as elements. A document whose pages carry no text at
+ * all — a scan — warns `image-only`; given `ocr`, each page without text is
+ * read by the host's OCR instead, and an `ocr` warning names those pages.
+ */
+export async function extractPdf(bytes: Uint8Array, options: Partial<ExtractLimits> = {}, hooks: { ocr?: PdfOcr } = {}): Promise<ExtractedDocument> {
   const limits = { ...DEFAULT_EXTRACT_LIMITS, ...options };
   const warnings: string[] = [];
+  const original = hooks.ocr === undefined ? null : new Uint8Array(bytes);
+  const ocrPages: number[] = [];
   const data = new Uint8Array(bytes);
   const pdf = await getDocumentProxy(data);
   try {
@@ -152,10 +175,16 @@ export async function extractPdf(bytes: Uint8Array, options: Partial<ExtractLimi
       const viewport = page.getViewport({ scale: 1 });
       heights.push(viewport.height);
       widths.push(viewport.width);
-      pageLines.push(mergePdfTableRows(
+      let lines = mergePdfTableRows(
         groupPdfLines(extracted.items[pageIndex] ?? [], pageIndex + 1, viewport.height),
         viewport.width,
-      ));
+      );
+      if (hooks.ocr !== undefined && lines.every((line) => line.text.trim() === '')) {
+        const read = await hooks.ocr.read({ page: pageIndex + 1, width: viewport.width, height: viewport.height, pdf: new Uint8Array(original!) });
+        lines = ocrLines(read, pageIndex + 1, viewport.width, viewport.height);
+        ocrPages.push(pageIndex + 1);
+      }
+      pageLines.push(lines);
       page.cleanup();
     }
     const repeated = repeatedMarginText(pageLines, heights);
@@ -188,6 +217,10 @@ export async function extractPdf(bytes: Uint8Array, options: Partial<ExtractLimi
       };
     });
     elements = capElements(elements, limits, warnings);
+    if (ocrPages.length > 0)
+      warnings.push(`ocr: ${ocrPages.length} page(s) without text read by the host's OCR (${hooks.ocr!.version}): ${ocrPages.join(', ')}`);
+    if (pagesToRead > 0 && elements.length === 0)
+      warnings.push(`image-only: ${pagesToRead} page(s) and no text — probably a scan; an ocr hook can read it`);
     let title: string | null = elements.find((element) => element.role === 'heading')?.text ?? null;
     try {
       const meta = await getMeta(pdf);
@@ -203,6 +236,6 @@ export async function extractPdf(bytes: Uint8Array, options: Partial<ExtractLimi
 }
 
 export async function extractDocument(bytes: Uint8Array, options: ExtractOptions): Promise<ExtractedDocument> {
-  if (options.mimeType === 'application/pdf') return extractPdf(bytes, options.limits);
+  if (options.mimeType === 'application/pdf') return extractPdf(bytes, options.limits, options.ocr === undefined ? {} : { ocr: options.ocr });
   return extractStaticDocument(bytes, options);
 }

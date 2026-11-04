@@ -58,6 +58,30 @@ call answers `{ error, errors, inputSchema }` — up to eight validation errors 
 named `hint` when a property that wanted structure arrived as JSON text that does not
 parse, naming the offending properties.
 
+**A name is registered once.** `add` throws `AI0001` for a name the toolbox already holds;
+`add(def, { replace: true })` replaces it on purpose. **Tools receive the caller's context:**
+`execute(input, context)` gets `context.signal`, the caller's abort signal (an agent passes
+its send's, so a stopped run stops its tools), and `context.context`, whatever the host
+attached to the call. **The words are the host's:** `createToolbox({ messages })` replaces
+the unknown-tool, invalid-input and hint texts (`TOOLBOX_MESSAGES` are the English
+defaults).
+
+**A contract's operations, with the host's members kept out of the model's reach.**
+`toolboxFromContract(contract, client, { bind, mapOutcome, ops, audiences, name, toolbox })`
+builds the tools with Jaren's `contractTools` (which refuses two operations under one name)
+and registers them. `bind` names input members the host supplies — a value, or a function of
+the call's `context.context` — which leave every tool's `inputSchema` (the model neither
+sees nor can send them) and are injected when the tool runs; `mapOutcome(outcome, { name,
+input })` turns an outcome into what the model reads.
+
+```js
+const toolbox = toolboxFromContract(contract, client, {
+  bind: { runId: (context) => context.runId },          // never in the model's schema
+  mapOutcome: (outcome) => outcome.ok ? 'Voorstel aangemaakt.' : 'Mislukt.',
+});
+await agent.send(history, { toolContext: { runId }, signal });
+```
+
 ### The geo toolbox — spatial answers about data the model was given
 
 `createGeoToolbox` is a closed set of seven tools, each one call into `@jarenjs/core/geo`
@@ -111,6 +135,34 @@ The loop is bounded (`maxToolRounds`, default 5) and stops with a readable messa
 of spinning; oversized tool results are truncated (`maxToolResultChars`, default 8000) so
 a local model's context is respected. `send` never mutates the history it receives — it
 returns the complete new transcript, ready to persist and send back next turn.
+
+**The scaffolding is in the host's language.** `createAgent({ messages })` replaces any of
+the sentences the loop writes into a request or a result (`AgentMessages`; `AGENT_MESSAGES`
+are the English defaults, byte for byte the text the loop has always written): the resume
+turn, the tool-limit and budget stops, the tool errors, the retrieval headings and lines,
+the compaction synopses and archive index, the transcript pointer, and — through
+`messages.goal`, `messages.recall`, `messages.environment` and `messages.toolbox` — the goal
+prompt, the `recall` and environment tool texts and the agent's own toolboxes' errors. A
+ledger composes its goal in the host's words with `createLedger({ messages: { goal } })`.
+`recall` is listed only when the agent can compact (a ledger and a `historyBudget`), since
+without compaction no address is written for it to fetch; `recall: true` lists it with any
+ledger, `recall: false` never.
+
+**A stopped or failed call keeps its work.** `send(history, { signal, toolContext })` hands
+every tool the signal and `context.context` (`toolContext` on `createAgent` is the default).
+A model call that rejects — an abort, a transport failure — still counts as a turn, and the
+rejection carries `error.partial = { messages, steps, spent }`: the rounds already finished,
+for the next turn and for the audit.
+
+**Budgets that cannot be crossed.** Beside `turns`, `tokens` and `ms`, `budget.cost` bounds
+what a run may cost, priced by `prices(model)` (per-token `{ prompt, completion }` in one
+currency of the host's choosing; `probePrices` from `@tangleai/models/providers` reads
+OpenRouter's, in US dollars), and `spend()` reports `cost` when prices are given.
+`budget.reserve: true` refuses a call whose worst case could cross `tokens` or `cost` —
+its estimated prompt (`budget.estimate`, by default the request's UTF-8 bytes, which never
+under-counts) plus `maxOutputTokens`, the cap every request then carries as `maxTokens` — and
+books the provider's usage afterwards, or the worst case when none was reported. A scripted
+client with known usage can therefore never end a run over its budget.
 
 **Long sessions fit a small context — for questions about one thing at a time.** That
 qualification is load-bearing and the numbers below are why: compaction keeps a session

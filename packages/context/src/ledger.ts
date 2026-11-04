@@ -297,6 +297,8 @@ export function createLedger(options: {
   };
   checkpointReducer?: (goal: any) => any;
   artifacts?: import('./schemas/evidence.ts').ArtifactRecord[];
+  /** The goal prompt's words, over the English defaults (`GOAL_MESSAGES`). */
+  messages?: { goal?: Partial<import('./retention.ts').GoalMessages> };
 } = {}) {
   const storage: NonNullable<typeof options.storage> = options.storage ?? createMemoryStorage();
   for (const [limits, names] of [[options.archiveLimits, ['maxItems', 'maxBytes']],
@@ -648,7 +650,7 @@ export function createLedger(options: {
     }
     const fits = (candidate: any) => candidate.progress.length <= (limits.maxEntries ?? Infinity)
       && jsonBytes(candidate) <= (limits.maxBytes ?? Infinity)
-      && goalPrompt(candidate).length <= (limits.maxChars ?? Infinity);
+      && goalPrompt(candidate, options.messages?.goal).length <= (limits.maxChars ?? Infinity);
     if (!fits(next)) {
       let checkpoint;
       try { checkpoint = options.checkpointReducer ? options.checkpointReducer(JSON.parse(JSON.stringify(next))) : checkpointProgress(next); }
@@ -663,7 +665,7 @@ export function createLedger(options: {
       if (rejected) return rejected;
       if (!fits(compacted)) return {
         error: 'goal budget cannot preserve the objective and evidence; host action required',
-        code: 'GOAL_BUDGET', retention: { refused: true, bytes: jsonBytes(compacted), chars: goalPrompt(compacted).length, limits }
+        code: 'GOAL_BUDGET', retention: { refused: true, bytes: jsonBytes(compacted), chars: goalPrompt(compacted, options.messages?.goal).length, limits }
       };
       await view.set('ai/counters/progress', counter);
       return compacted;
@@ -678,7 +680,7 @@ export function createLedger(options: {
     if (!goal || goal.status !== 'active') return { text: '' };
     const rejected = validate('goal', goal);
     if (rejected) return rejected;
-    const text = goalPrompt(goal);
+    const text = goalPrompt(goal, options.messages?.goal);
     if (text.length > (options.goalLimits?.maxChars ?? Infinity))
       return { error: 'goal prompt exceeds its character budget; host action required', code: 'GOAL_BUDGET' };
     return { text };

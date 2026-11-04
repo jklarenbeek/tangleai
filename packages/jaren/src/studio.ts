@@ -60,7 +60,7 @@ export function createStudioAdapter(options: {
   } = {}): Promise<StudioProposal> {
     const before = editor.read();
     const result = await createStudioFileAuthor({ ...options, client: options.client }).author({ ...request, project: before.document }, hooks);
-    if (!('file' in result)) return { ok: false as const, ...result };
+    if (!('file' in result)) return { ...result, ok: false as const };
     const candidate = candidateFor(before.document, result.file);
     const checked = editor.validate(candidate);
     return { ...result, ...checked, ok: checked.valid, candidate, expectedRevision: before.revision };

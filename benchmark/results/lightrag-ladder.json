@@ -94,11 +94,11 @@
       },
       {
         "path": "benchmark/lib/lightrag.ts",
-        "sha256": "15e6cdd1b76daaf9cbdb69f73e145e0b9976f23f6c67f90a84bb3eed17b20d21"
+        "sha256": "5bf8822924750bde4076708992089de328a3f52392522be566e7f901ff38dcaa"
       },
       {
         "path": "benchmark/lib/lightrag.types.ts",
-        "sha256": "85563e12e29a292bcd4dbe5f7f138bd1a3d8b70db467eb62521c50273937a5b7"
+        "sha256": "d74919acfec47a5f0cbc9683796fb9ebb7916fcad8bf52d3d1b6ac8307268b13"
       },
       {
         "path": "benchmark/lib/source-manifest.ts",
@@ -118,7 +118,7 @@
       },
       {
         "path": "benchmark/schemas/lightrag.schema.json",
-        "sha256": "39addf431d8e4acc1a325440dd5dba681f97738741dfa3f946219e70059c4aaf"
+        "sha256": "34d400a4eddb4a536e53e17d8355950e0ddd90d86d7b041363be8e67cca3955d"
       },
       {
         "path": "packages/agents/src/recursive.ts",
@@ -126,7 +126,7 @@
       },
       {
         "path": "packages/context/src/ledger.ts",
-        "sha256": "e1f70b6e3c6c5e5d77272f42a8019d8e112616070ad8507cefc737e49eaeace9"
+        "sha256": "fbdd94f729d742cf403999251f1e07521386a4c1e1ed635d7700816a2333dd8a"
       },
       {
         "path": "packages/core/src/tokens.ts",
@@ -142,7 +142,7 @@
       },
       {
         "path": "packages/documents/src/ingest.ts",
-        "sha256": "a1d1ead8cbc500ea71169f664852d86d3ed1d2af2f65952d356ae2caa6044251"
+        "sha256": "008fb621776f94ad5bcf7639ca7d21c3e1307cc195ab5d08aa20b71c2c9beb28"
       },
       {
         "path": "packages/documents/src/retrieval.ts",
@@ -154,7 +154,7 @@
       },
       {
         "path": "packages/lightrag/package.json",
-        "sha256": "0fe7d4cbe73102a96a04d293eaf815453e253d572017b5cb3762b1d52c0d55dc"
+        "sha256": "7e5990e391afc9ccdd89b9e1a595401e14a48cdecfb5a03063b48a0cf2fe8a5e"
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
@@ -286,7 +286,7 @@
       },
       {
         "path": "packages/models/src/embed.ts",
-        "sha256": "1c1b8fb32687ecb9c73c566d99b4d1aa327e685eb68dd626111d8f3bbfa365d1"
+        "sha256": "eb4c29ec3c1349e35d394ecbc7eb91097dcccc48db951797a7f9e0fec540479c"
       },
       {
         "path": "packages/outcomes/src/errors.ts",
@@ -317,9 +317,9 @@
         "sha256": "031e226aae56e101353378f0f5aa7f0fbb2a0c1c6301afe3065c50465c04a5c3"
       }
     ],
-    "sha256": "56fc1340c686b5205277a6b2b994f0161e16eff9ccc457ae3dd8d81e5241cc38"
+    "sha256": "80ee001c735dc18320f064bc976ceb2e12cf4c32bf28dc4a6a5f82709a1de611"
   },
-  "at": "2026-11-03T13:13:33.168Z",
+  "at": "2026-11-04T20:26:20.393Z",
   "sizes": [
     100,
     1000,
@@ -340,9 +340,9 @@
       "embeddingCalls": 15,
       "embeddingTexts": 400,
       "budgetTokens": 2228,
-      "indexingMs": 762.9709130000001,
-      "promotionMs": 4250.933439,
-      "peakRssBytes": 529227776,
+      "indexingMs": 933.0694019999999,
+      "promotionMs": 5018.257266,
+      "peakRssBytes": 526778368,
       "corpusSha256": "838b264949d9a9aeb8b3300a25078cff2e1590f84d0c0ebce0d150a9b43160c2",
       "rowsRead": {
         "graph": 6603,
@@ -359,12 +359,12 @@
         "ratio": 1
       },
       "retrieval": {
-        "p50Ms": 19.52565400000003,
-        "p95Ms": 24.327588999999534,
+        "p50Ms": 26.434087999999974,
+        "p95Ms": 29.327438999999686,
         "samples": [
           {
             "questionId": "specific-equipment",
-            "ms": 21.130302999999913,
+            "ms": 23.880267000000458,
             "graphRows": 367,
             "documentRows": 104,
             "skipped": 0,
@@ -374,7 +374,7 @@
           },
           {
             "questionId": "specific-funding",
-            "ms": 24.327588999999534,
+            "ms": 27.521931000000222,
             "graphRows": 382,
             "documentRows": 104,
             "skipped": 0,
@@ -384,7 +384,7 @@
           },
           {
             "questionId": "specific-launch",
-            "ms": 19.252927999999883,
+            "ms": 21.729968000000554,
             "graphRows": 358,
             "documentRows": 104,
             "skipped": 0,
@@ -394,7 +394,7 @@
           },
           {
             "questionId": "specific-archive-host",
-            "ms": 19.52565400000003,
+            "ms": 23.386870000000272,
             "graphRows": 373,
             "documentRows": 104,
             "skipped": 0,
@@ -404,7 +404,7 @@
           },
           {
             "questionId": "specific-timber",
-            "ms": 19.8255479999998,
+            "ms": 28.040905999999268,
             "graphRows": 376,
             "documentRows": 104,
             "skipped": 0,
@@ -414,7 +414,7 @@
           },
           {
             "questionId": "specific-produce",
-            "ms": 22.309834000000592,
+            "ms": 26.96114800000032,
             "graphRows": 364,
             "documentRows": 104,
             "skipped": 0,
@@ -424,7 +424,7 @@
           },
           {
             "questionId": "abstract-training",
-            "ms": 19.585157999999865,
+            "ms": 27.102880999999797,
             "graphRows": 373,
             "documentRows": 104,
             "skipped": 0,
@@ -434,7 +434,7 @@
           },
           {
             "questionId": "abstract-grant-admin",
-            "ms": 19.11904400000003,
+            "ms": 26.434087999999974,
             "graphRows": 364,
             "documentRows": 104,
             "skipped": 0,
@@ -444,7 +444,7 @@
           },
           {
             "questionId": "abstract-cargo",
-            "ms": 18.48685000000023,
+            "ms": 27.7584710000001,
             "graphRows": 358,
             "documentRows": 104,
             "skipped": 0,
@@ -454,7 +454,7 @@
           },
           {
             "questionId": "abstract-festival-host",
-            "ms": 21.242816000000857,
+            "ms": 27.68970300000001,
             "graphRows": 361,
             "documentRows": 104,
             "skipped": 0,
@@ -464,7 +464,7 @@
           },
           {
             "questionId": "abstract-restoration",
-            "ms": 19.36865299999954,
+            "ms": 22.509358000000248,
             "graphRows": 364,
             "documentRows": 104,
             "skipped": 0,
@@ -474,7 +474,7 @@
           },
           {
             "questionId": "abstract-school-funding",
-            "ms": 19.75912999999946,
+            "ms": 29.327438999999686,
             "graphRows": 364,
             "documentRows": 104,
             "skipped": 0,
@@ -484,7 +484,7 @@
           },
           {
             "questionId": "hop-shelves",
-            "ms": 18.96462700000029,
+            "ms": 28.055022000000463,
             "graphRows": 361,
             "documentRows": 104,
             "skipped": 0,
@@ -494,7 +494,7 @@
           },
           {
             "questionId": "hop-launch",
-            "ms": 19.15186900000026,
+            "ms": 23.91716599999927,
             "graphRows": 358,
             "documentRows": 104,
             "skipped": 0,
@@ -504,7 +504,7 @@
           },
           {
             "questionId": "hop-archive-host",
-            "ms": 19.64815400000043,
+            "ms": 25.357254999999896,
             "graphRows": 373,
             "documentRows": 104,
             "skipped": 0,
@@ -514,7 +514,7 @@
           },
           {
             "questionId": "hop-timber",
-            "ms": 18.19365999999991,
+            "ms": 25.491594000000077,
             "graphRows": 376,
             "documentRows": 104,
             "skipped": 0,
@@ -524,7 +524,7 @@
           },
           {
             "questionId": "hop-grant-admin",
-            "ms": 17.68082399999912,
+            "ms": 20.683782000000065,
             "graphRows": 364,
             "documentRows": 104,
             "skipped": 0,
@@ -534,7 +534,7 @@
           },
           {
             "questionId": "hop-opening",
-            "ms": 19.64068099999986,
+            "ms": 26.693108999999822,
             "graphRows": 367,
             "documentRows": 104,
             "skipped": 0,
@@ -559,9 +559,9 @@
       "embeddingCalls": 127,
       "embeddingTexts": 4000,
       "budgetTokens": 22330,
-      "indexingMs": 8440.257104,
-      "promotionMs": 59856.485151,
-      "peakRssBytes": 1891651584,
+      "indexingMs": 9841.958547000002,
+      "promotionMs": 64688.602597000005,
+      "peakRssBytes": 2534760448,
       "corpusSha256": "fdc888f3036885d0f32a3c3d50505dd65b6926cebb1b7d8a0f5305e79c2351d6",
       "rowsRead": {
         "graph": 55446,
@@ -578,12 +578,12 @@
         "ratio": 1
       },
       "retrieval": {
-        "p50Ms": 175.18284699998912,
-        "p95Ms": 207.86025599999994,
+        "p50Ms": 185.8519360000064,
+        "p95Ms": 216.88869399999385,
         "samples": [
           {
             "questionId": "specific-equipment",
-            "ms": 180.56431699999666,
+            "ms": 181.2851010000013,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -593,7 +593,7 @@
           },
           {
             "questionId": "specific-funding",
-            "ms": 207.86025599999994,
+            "ms": 181.5210500000103,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -603,7 +603,7 @@
           },
           {
             "questionId": "specific-launch",
-            "ms": 187.81792400000268,
+            "ms": 191.58807399999932,
             "graphRows": 3079,
             "documentRows": 1004,
             "skipped": 0,
@@ -613,7 +613,7 @@
           },
           {
             "questionId": "specific-archive-host",
-            "ms": 202.21297399999457,
+            "ms": 196.62441199999012,
             "graphRows": 3079,
             "documentRows": 1004,
             "skipped": 0,
@@ -623,7 +623,7 @@
           },
           {
             "questionId": "specific-timber",
-            "ms": 188.20365100000345,
+            "ms": 216.88869399999385,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -633,7 +633,7 @@
           },
           {
             "questionId": "specific-produce",
-            "ms": 190.869034000003,
+            "ms": 197.9274860000005,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -643,7 +643,7 @@
           },
           {
             "questionId": "abstract-training",
-            "ms": 172.649253999989,
+            "ms": 182.778078000003,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -653,7 +653,7 @@
           },
           {
             "questionId": "abstract-grant-admin",
-            "ms": 176.7752049999981,
+            "ms": 180.70425100000284,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -663,7 +663,7 @@
           },
           {
             "questionId": "abstract-cargo",
-            "ms": 164.05443400000513,
+            "ms": 180.98222800000804,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -673,7 +673,7 @@
           },
           {
             "questionId": "abstract-festival-host",
-            "ms": 164.41865099999995,
+            "ms": 183.45613000000594,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -683,7 +683,7 @@
           },
           {
             "questionId": "abstract-restoration",
-            "ms": 160.15022599999793,
+            "ms": 180.23903500000597,
             "graphRows": 3079,
             "documentRows": 1004,
             "skipped": 0,
@@ -693,7 +693,7 @@
           },
           {
             "questionId": "abstract-school-funding",
-            "ms": 160.01669099999708,
+            "ms": 185.9289279999939,
             "graphRows": 3076,
             "documentRows": 1004,
             "skipped": 0,
@@ -703,7 +703,7 @@
           },
           {
             "questionId": "hop-shelves",
-            "ms": 168.01912599999923,
+            "ms": 187.53247099999862,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -713,7 +713,7 @@
           },
           {
             "questionId": "hop-launch",
-            "ms": 178.6898060000094,
+            "ms": 190.34501200000523,
             "graphRows": 3079,
             "documentRows": 1004,
             "skipped": 0,
@@ -723,7 +723,7 @@
           },
           {
             "questionId": "hop-archive-host",
-            "ms": 160.40765700000338,
+            "ms": 185.8519360000064,
             "graphRows": 3076,
             "documentRows": 1004,
             "skipped": 0,
@@ -733,7 +733,7 @@
           },
           {
             "questionId": "hop-timber",
-            "ms": 167.16944900000817,
+            "ms": 189.1582950000011,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -743,7 +743,7 @@
           },
           {
             "questionId": "hop-grant-admin",
-            "ms": 177.5799740000075,
+            "ms": 187.99298799999815,
             "graphRows": 3082,
             "documentRows": 1004,
             "skipped": 0,
@@ -753,7 +753,7 @@
           },
           {
             "questionId": "hop-opening",
-            "ms": 175.18284699998912,
+            "ms": 177.00109299999895,
             "graphRows": 3076,
             "documentRows": 1004,
             "skipped": 0,
@@ -778,9 +778,9 @@
       "embeddingCalls": 1251,
       "embeddingTexts": 40000,
       "budgetTokens": 223564,
-      "indexingMs": 298363.027296,
-      "promotionMs": 652665.834425,
-      "peakRssBytes": 8302551040,
+      "indexingMs": 332795.84766599996,
+      "promotionMs": 735467.870961,
+      "peakRssBytes": 8266571776,
       "corpusSha256": "103ca03b58669f3096ca4d6c9eed8c759c79b907e529221c745d711a009510b4",
       "rowsRead": {
         "graph": 541470,
@@ -797,12 +797,12 @@
         "ratio": 1
       },
       "retrieval": {
-        "p50Ms": 2504.17146400013,
-        "p95Ms": 2716.5955770001747,
+        "p50Ms": 2493.567420999985,
+        "p95Ms": 2784.337513000006,
         "samples": [
           {
             "questionId": "specific-equipment",
-            "ms": 2677.7032240000553,
+            "ms": 2405.8389220000245,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -812,7 +812,7 @@
           },
           {
             "questionId": "specific-funding",
-            "ms": 2403.4985070000403,
+            "ms": 2513.535487000132,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -822,7 +822,7 @@
           },
           {
             "questionId": "specific-launch",
-            "ms": 2400.850165000069,
+            "ms": 2455.122212999966,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -832,7 +832,7 @@
           },
           {
             "questionId": "specific-archive-host",
-            "ms": 2688.421256999951,
+            "ms": 2357.3657090000343,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -842,7 +842,7 @@
           },
           {
             "questionId": "specific-timber",
-            "ms": 2430.784878000035,
+            "ms": 2546.341754999943,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -852,7 +852,7 @@
           },
           {
             "questionId": "specific-produce",
-            "ms": 2477.8222090000054,
+            "ms": 2784.337513000006,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -862,7 +862,7 @@
           },
           {
             "questionId": "abstract-training",
-            "ms": 2679.651976000052,
+            "ms": 2231.305352000054,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -872,7 +872,7 @@
           },
           {
             "questionId": "abstract-grant-admin",
-            "ms": 2454.6934970000293,
+            "ms": 2217.830385000212,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -882,7 +882,7 @@
           },
           {
             "questionId": "abstract-cargo",
-            "ms": 2423.555085999891,
+            "ms": 2350.1395370000973,
             "graphRows": 30076,
             "documentRows": 10004,
             "skipped": 0,
@@ -892,7 +892,7 @@
           },
           {
             "questionId": "abstract-festival-host",
-            "ms": 2603.516059000045,
+            "ms": 2302.6433399999514,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -902,7 +902,7 @@
           },
           {
             "questionId": "abstract-restoration",
-            "ms": 2504.17146400013,
+            "ms": 2347.0129599999636,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -912,7 +912,7 @@
           },
           {
             "questionId": "abstract-school-funding",
-            "ms": 2507.4358670001384,
+            "ms": 2652.499718999956,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -922,7 +922,7 @@
           },
           {
             "questionId": "hop-shelves",
-            "ms": 2716.5955770001747,
+            "ms": 2624.2595540001057,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -932,7 +932,7 @@
           },
           {
             "questionId": "hop-launch",
-            "ms": 2553.121299999999,
+            "ms": 2610.8969060000964,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -942,7 +942,7 @@
           },
           {
             "questionId": "hop-archive-host",
-            "ms": 2493.575092999963,
+            "ms": 2657.7673369999975,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -952,7 +952,7 @@
           },
           {
             "questionId": "hop-timber",
-            "ms": 2677.4173679999076,
+            "ms": 2597.4715809999034,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -962,7 +962,7 @@
           },
           {
             "questionId": "hop-grant-admin",
-            "ms": 2503.256626000162,
+            "ms": 2548.4630609999876,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -972,7 +972,7 @@
           },
           {
             "questionId": "hop-opening",
-            "ms": 2638.285463999957,
+            "ms": 2493.567420999985,
             "graphRows": 30082,
             "documentRows": 10004,
             "skipped": 0,
@@ -991,14 +991,14 @@
     "arch": "x64",
     "cpu": "AMD Ryzen 9 5900HX with Radeon Graphics",
     "logicalCpus": 16,
-    "totalMemoryBytes": 33009922048,
+    "totalMemoryBytes": 33009242112,
     "runtime": "node 24.20.0; V8 heap limit 8791261184 bytes",
     "driver": "node:sqlite",
     "loadAverage": [
-      3.55,
-      2.65,
-      2.55
+      5.58,
+      5.04,
+      5.8
     ]
   },
-  "receiptId": "2ce95a25b545042e047c93571fd94aa665b21d07fe5e8c28200e4b059184895d"
+  "receiptId": "a06217fd35662237908d725707988626358cb19dfe9af62e755ef3bb0a753abb"
 }

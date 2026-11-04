@@ -1,5 +1,17 @@
 # @tangleai/pipeline
 
+## 0.45.0
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @tangleai/models@0.45.0
+  - @tangleai/core@0.45.0
+  - @tangleai/memory@0.45.0
+
 ## 0.44.0
 
 ### Patch Changes

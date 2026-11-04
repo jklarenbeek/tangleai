@@ -103,7 +103,7 @@ Tangle policy refuse to compare vectors from two models.
 | `@tangleai/forecast` | ordered forecasts, cutoff-audited evidence, guarded local revisions and outcome-gated promotion ([API](packages/forecast/README.md)); scripted claim gate is not demonstrated |
 | `@tangleai/grounding` | durable governed local/web retrieval, typed clarification and claim-level citations ([API](packages/grounding/README.md)); scripted ablations retain the experimental default |
 | `@tangleai/config` | the capability-profile registry and effective-run-identity contract: schema-generated types, a pure resolver (single-parent RFC 7396 inheritance, stable `TCFG1xxx` refusals), canonical content-addressed identities — every host resolves through it and every new result references the exact stack that ran ([docs/CONFIGURATION.md](docs/CONFIGURATION.md)) |
-| `@tangleai/search` | zero-dependency SearxNG JSON client; `compose/searxng/` holds the docker settings |
+| `@tangleai/search` | zero-dependency SearxNG JSON client; `docker compose -f compose/searxng.yml up -d` serves SearxNG on `http://127.0.0.1:8888` from the settings in `compose/searxng/` |
 | `@tangleai/documents` | static-first HTTP(S) fetching with URL/DNS/redirect/stream budgets, typed HTML/Markdown/PDF extraction, recursive/semantic/S2 chunkers, versioned corpus contracts, optional browser adapters, and identity-gated chunk retrieval |
 | `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite plus atomic outcome records/projection and transactional source/version/element/chunk activation, the run/event log, and the MAS host — eleven semantic collections, compare-and-swap activation, atomic node completion, and durable run segments over `@jarenjs/db`'s own job queue and flow checkpoints (never a queue or checkpoint twin) |
 | `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with `@tangleai/models`'s hash embedder (at a measured width) and the rule judge as injectable stand-ins |
@@ -538,12 +538,12 @@ packages. `npm run release:prepare` updates their versions, all private workspac
 versions and references, the lockfile, changelogs, and a checked release record
 **before** the release commit is pushed. Major release intent is refused while
 the project remains at major zero. The root, applications and benchmark stay
-private. Public libraries use compatible internal ranges; private consumers pin
-the suite exactly.
+private. Every workspace pins the others at the exact suite version, so an
+install never mixes two releases.
 
 ```sh
 npm run release:install-hook
-npm run changeset
+# write .changeset/<name>.md (see .changeset/README.md)
 npm run release:prepare
 npm run release:verify
 npm run release:closeout -- --message "Fix the affected behavior" --push

@@ -1,6 +1,6 @@
 # JarenJS host strategy benchmark
 
-Measured 2026-11-03 on linux/x64, JarenJS 0.176.11.
+Measured 2026-11-04 on linux/x64, JarenJS 0.179.0.
 Reproduce with `npm run benchmark:jaren`. Instrument:
 [benchmark/jaren-strategies.ts](../benchmark/jaren-strategies.ts).
 Raw reports: [Node](../benchmark/results/jaren-strategies-node.json),
@@ -14,8 +14,8 @@ The cursor reports row streaming. Payloads and unique timestamps are fixed.
 
 | Runtime | Previous p95 ms | Bounded p95 ms | p95 speedup | Host rows per read |
 |---|---:|---:|---:|---:|
-| node 24.20.0 | 13.173 | 7.063 | 1.87× | 5000 → 50 |
-| bun 1.4.4 | 14.845 | 8.259 | 1.80× | 5000 → 50 |
+| node 24.20.0 | 15.238 | 9.016 | 1.69× | 5000 → 50 |
+| bun 1.4.4 | 11.864 | 10.857 | 1.09× | 5000 → 50 |
 
 The main gain is bounded host materialization. SQLite may still scan and sort
 all rows: these are not visited-row counts or an index claim. Strategy order

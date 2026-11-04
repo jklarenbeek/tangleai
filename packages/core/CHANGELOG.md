@@ -1,5 +1,13 @@
 # @tangleai/core
 
+## 0.45.0
+
+### Patch Changes
+
+- Tooling: the Jaren bootstrap runs npm through the npm CLI that launched it, without a shell, so `npm run jaren:bootstrap` runs on Windows as on Linux. `compose/searxng.yml` serves SearxNG for the grounding web diagnostic; the web run keeps its model calls in the wire cache and its name resolutions beside its HTTP capture, `--web-replay` rebuilds a recorded run with zero network calls and fails unless its report identity is reproduced, and `--web-structured` sets the model's structured-output tier. The diagnostic ran on 2026-11-04 with Anthropic's Haiku 5.5 and replays byte for byte. The graph-retrieval live registration moves to Haiku 5.5 with every schema carried in the prompt. Every workspace now depends on the others at the exact suite version, so an install never mixes two Tangle releases. The interactive `changeset` command is gone with `@changesets/cli` and its 14 development packages: release intent is a hand-written `.changeset/<name>.md` file (see `.changeset/README.md`), and changelogs are written by `@changesets/changelog-git`, as before. Development audit findings in `launch-editor` and `shell-quote` are gone with it.
+- Updated dependencies
+  - @tangleai/context@0.45.0
+
 ## 0.44.0
 
 ### Patch Changes

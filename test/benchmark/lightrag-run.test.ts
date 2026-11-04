@@ -7,7 +7,8 @@ import {readAiEnv} from '../../benchmark/lib/ai-env.ts';
 import {planLightRagLive,lightRagAuthorization,lightRagNotRun,executeLightRagLive,validateLightRagLive,pairLightRagRows,createLightRagFetchGuard} from '../../benchmark/lib/lightrag-run.ts';
 import {planLightRagJudge,lightRagJudgeNotRun,executeLightRagJudge,validateLightRagJudge} from '../../benchmark/lib/lightrag-judge.ts';
 import {planLightRagParity} from '../../benchmark/lib/lightrag-parity.ts';
-const environment=(calls=200)=>readAiEnv({OPENROUTER_AI_KEY:'fixture-only-not-a-credential',TANGLE_AI_MODEL:'z-ai/glm-5.3-flash',TANGLE_AI_EMBEDDING_MODEL:'baai/bge-m3',TANGLE_AI_MAX_CALLS:String(calls)});
+import registration from '../../benchmark/fixtures/lightrag/live-registration.json' with {type:'json'};
+const environment=(calls=200)=>readAiEnv({OPENROUTER_AI_KEY:'fixture-only-not-a-credential',TANGLE_AI_MODEL:registration.model,TANGLE_AI_EMBEDDING_MODEL:registration.embedModel,TANGLE_AI_MAX_CALLS:String(calls)});
 const env=environment(1000000); // An injected test environment, never a workspace guard change.
 const embedder={...createHashEmbedder({dims:1024}),model:'baai/bge-m3'};
 function fakeClient(failGeneration=false){let calls=0;const client:LightRagChatClient={endpoint:{provider:env.provider,model:env.model},complete:async request=>{

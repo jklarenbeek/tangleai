@@ -435,8 +435,8 @@ export function createProgramRunner(options: {
   sequential?: boolean;
   subcall?: (name: string, prompt: string, signal?: AbortSignal, index?: number) => Promise<any>;
   account?: {
-    reserve: Function;
-    settle: Function;
+    reserve: () => void;
+    settle: (usage: any, text: string) => void;
     stop: () => string | null;
   };
 }): {

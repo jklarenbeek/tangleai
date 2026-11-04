@@ -1,4 +1,4 @@
-import { DocumentError, type DocumentElement } from './contracts.ts';
+import { DocumentError, type BoundingBox, type DocumentElement } from './contracts.ts';
 
 export type ElementDraft = Omit<DocumentElement, 'id' | 'sourceId' | 'versionId'>;
 
@@ -16,10 +16,24 @@ export const DEFAULT_EXTRACT_LIMITS: ExtractLimits = {
   allowPartial: false,
 };
 
+/**
+ * A host's OCR, for the PDF pages that carry no text. `version` names it: it
+ * enters the extraction identity, so a document read with and without OCR
+ * never shares a version. `read` receives the page number, its size in PDF
+ * points and the whole PDF — drawing the page is the host's, Tangle renders
+ * nothing — and answers the page's text, or its lines with optional boxes.
+ */
+export interface PdfOcr {
+  version: string;
+  read: (page: { page: number; width: number; height: number; pdf: Uint8Array }) =>
+    Promise<string | Array<{ text: string; bbox?: BoundingBox }>>;
+}
+
 export interface ExtractOptions {
   mimeType: string;
   url: string;
   limits?: Partial<ExtractLimits>;
+  ocr?: PdfOcr;
 }
 
 export function cleanText(value: string): string {

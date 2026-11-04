@@ -323,8 +323,9 @@ export function chatWireConfigured(chat: ChatSettings): boolean {
  * `reasoning` is the client's default thinking control, forwarded
  * verbatim (a benchmark turns thinking off for short-answer extraction,
  * the measured case in @tangleai/models's README; the chat engine leaves the
- * model's default). Throws when `chatWireConfigured` is false — check
- * first.
+ * model's default); `structured` sets the model's structured-output tier
+ * when it is not the provider's (see `createChatClient`). Throws when
+ * `chatWireConfigured` is false — check first.
  */
 export function chatClientFor(
   chat: ChatSettings,
@@ -333,6 +334,7 @@ export function chatClientFor(
     retry?: { attempts?: number, baseMs?: number, maxMs?: number };
     reasoning?: { effort?: 'none' | 'minimal' | 'low' | 'medium' | 'high', enabled?: boolean, exclude?: boolean, max_tokens?: number };
     cache?: AiReplayCache;
+    structured?: 'json_schema' | 'json' | null;
   } = {},
 ): ChatClient {
   if (!chatWireConfigured(chat)) throw new Error('no chat wire is configured');
@@ -345,6 +347,7 @@ export function chatClientFor(
     retry: options.retry,
     reasoning: options.reasoning,
     cache: options.cache,
+    ...(options.structured !== undefined ? { structured: options.structured } : {}),
     maxTokens: chat.maxTokens ?? undefined,
     maxTokensField: chat.maxTokensField,
   });

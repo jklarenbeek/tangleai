@@ -38,24 +38,27 @@ const GOLDEN_PATH = path.join(__dirname, 'fixtures', 'repair-records.golden.json
 
 /**
  * Drive coded errors through the repair path and return the records the
- * model would receive (the exhausted-repairs return carries them).
+ * model receives — read from the repair turn itself. The result's own
+ * records are those plus the uniform `stage`, `code` and `path`.
  */
 async function recordsFor(errs: Error[]): Promise<any[]> {
+  const sent: any[] = [];
   const client = {
     endpoint: { provider: 'openai-compatible' },
-    complete: async () => ({ message: { content: '{}' } }),
+    complete: async (request: any) => { sent.push(request); return { message: { content: '{}' } }; },
   };
   const structured = createStructuredOutput({
     client,
     schema: { type: 'object' },
     validator: () => ({ valid: false, errors: errs }),
-    maxRepairs: 0,
+    maxRepairs: 1,
   });
-  const outcome = (
-    await structured.generate([{ role: 'user', content: 'go' }]) as {
-      errors: any[];
-    });
-  return outcome.errors;
+  const outcome = await structured.generate([{ role: 'user', content: 'go' }]);
+  const repair = String(sent[1].messages.at(-1).content);
+  const received = JSON.parse(repair.slice(repair.indexOf(':\n') + 2));
+  assert.deepStrictEqual(outcome.errors, received.map((record: any) =>
+    ({ ...record, stage: 'schema', code: record.code ?? record.keyword, path: record.docPath ?? record.instancePath })));
+  return received;
 }
 
 /** One representative error per coded family, with realistic texts. */

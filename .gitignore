@@ -37,3 +37,6 @@ benchmark/cache/
 
 # Downloaded LongMemEval corpora are separate from the pinned source submodule.
 benchmark/data/longmemeval/
+
+# Editor state is each developer's own.
+.vscode/

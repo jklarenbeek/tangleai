@@ -634,6 +634,35 @@ function looksJson(text: any) {
   return head === '{' || head === '[';
 }
 
+/** The words of the environment tools a model reads. */
+export type EnvironmentMessages = {
+  slot: string;
+  prefix: string;
+  digest: string;
+  peek: string;
+  grep: string;
+  grepIn: string;
+  chunk: string;
+  stat: string;
+  read: string;
+};
+
+export const ENVIRONMENT_MESSAGES: EnvironmentMessages = Object.freeze({
+  slot: 'A slot name from digest or grep.',
+  prefix: 'Only slots whose name starts with this.',
+  digest: 'List what the environment holds: name, kind, size and one line of each slot.'
+    + ' Carries no content. Start here.',
+  peek: 'One slot: its metadata and the first characters of it.',
+  grep: 'Search the environment for a regular expression. Answers with the ADDRESSES'
+    + ' that matched, a window around each hit and the offset it is at — never the whole'
+    + ' slot. Pass a match\'s slot and offset to env_read to see the rest of it.',
+  grepIn: 'Restrict to slots whose name starts with this.',
+  chunk: 'Split a slot into addressable pieces so they can be worked on one at a time.',
+  stat: 'Counts and sizes for one slot or a whole family of them. Needs no reading.',
+  read: 'Return the text of a slot. Say how many characters you need; narrow with'
+    + ' grep first when the slot is large.',
+});
+
 /**
  * The environment as a toolbox definition list: the five operations plus
  * `read`, ready for `createToolbox().add(...)`.
@@ -646,25 +675,27 @@ function looksJson(text: any) {
  * numbers — because the tier this package targets gets a tool call right
  * in proportion to how few decisions it has to make.
  * @param environment - from {@link createEnvironment}
+ * @param [messages] - the tools' words over the English defaults
+ *   (`ENVIRONMENT_MESSAGES`), for a model that works in another language
  * @returns tool definitions
  */
-export function environmentTools(environment: any): any[] {
-  const slotArg = { type: 'string', minLength: 1, description: 'A slot name from digest or grep.' };
+export function environmentTools(environment: any, messages: Partial<EnvironmentMessages> = {}): any[] {
+  const words = { ...ENVIRONMENT_MESSAGES, ...messages };
+  const slotArg = { type: 'string', minLength: 1, description: words.slot };
   return [
     {
       name: 'env_digest',
-      description: 'List what the environment holds: name, kind, size and one line of each slot.'
-        + ' Carries no content. Start here.',
+      description: words.digest,
       inputSchema: {
         type: 'object',
-        properties: { prefix: { type: 'string', description: 'Only slots whose name starts with this.' } },
+        properties: { prefix: { type: 'string', description: words.prefix } },
         additionalProperties: false,
       },
       execute: ({ prefix }: { prefix?: any; }) => environment.digest({ prefix }),
     },
     {
       name: 'env_peek',
-      description: 'One slot: its metadata and the first characters of it.',
+      description: words.peek,
       inputSchema: {
         type: 'object',
         properties: { slot: slotArg, chars: { type: 'integer', minimum: 1 } },
@@ -675,14 +706,12 @@ export function environmentTools(environment: any): any[] {
     },
     {
       name: 'env_grep',
-      description: 'Search the environment for a regular expression. Answers with the ADDRESSES'
-        + ' that matched, a window around each hit and the offset it is at — never the whole'
-        + ' slot. Pass a match\'s slot and offset to env_read to see the rest of it.',
+      description: words.grep,
       inputSchema: {
         type: 'object',
         properties: {
           pattern: { type: 'string', minLength: 1 },
-          in: { type: 'string', description: 'Restrict to slots whose name starts with this.' },
+          in: { type: 'string', description: words.grepIn },
           limit: { type: 'integer', minimum: 1 },
         },
         required: ['pattern'],
@@ -692,7 +721,7 @@ export function environmentTools(environment: any): any[] {
     },
     {
       name: 'env_chunk',
-      description: 'Split a slot into addressable pieces so they can be worked on one at a time.',
+      description: words.chunk,
       inputSchema: {
         type: 'object',
         properties: {
@@ -707,7 +736,7 @@ export function environmentTools(environment: any): any[] {
     },
     {
       name: 'env_stat',
-      description: 'Counts and sizes for one slot or a whole family of them. Needs no reading.',
+      description: words.stat,
       inputSchema: {
         type: 'object',
         properties: { slot: { type: 'string' } },
@@ -717,8 +746,7 @@ export function environmentTools(environment: any): any[] {
     },
     {
       name: 'env_read',
-      description: 'Return the text of a slot. Say how many characters you need; narrow with'
-        + ' grep first when the slot is large.',
+      description: words.read,
       inputSchema: {
         type: 'object',
         properties: {

@@ -25,7 +25,23 @@ const read = <T>(path: string): T => JSON.parse(readFileSync(path, 'utf8'));
 const write = (path: string, value: unknown) => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, JSON.stringify(value, null, 2) + '\n'); };
 const command = (cmd: string, args: string[], cwd: string) => execFileSync(cmd, args, { cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
 const git = (cwd: string, ...args: string[]) => command('git', args, cwd).trim();
-const npm = (cwd: string, ...args: string[]) => command(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, cwd);
+/**
+ * How this script runs npm: the npm CLI script that launched the run
+ * (`npm_execpath`) under this Node, as the release scripts do — no shell on
+ * any platform, which Windows requires (Node refuses to spawn `npm.cmd`
+ * without one). Run directly rather than through `npm run`, POSIX falls back
+ * to the `npm` on PATH; Windows is told to run it through npm.
+ */
+export function npmInvocation(env: NodeJS.ProcessEnv = process.env, platform: NodeJS.Platform = process.platform, node = process.execPath): { file: string; prefix: string[] } {
+  const cli = env.npm_execpath;
+  if (cli !== undefined && /(?:^|[\\/])npm-cli\.[cm]?js$/.test(cli)) return { file: node, prefix: [cli] };
+  assert.ok(platform !== 'win32', 'On Windows run this through npm (npm run jaren:bootstrap): npm.cmd cannot be spawned without a shell');
+  return { file: 'npm', prefix: [] };
+}
+const npm = (cwd: string, ...args: string[]) => {
+  const { file, prefix } = npmInvocation();
+  return command(file, [...prefix, ...args], cwd);
+};
 const SECTIONS = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'] as const;
 const edges = (pkg: Record<string, unknown>) => Object.fromEntries(SECTIONS.filter(section => pkg[section] !== undefined).map(section => [section, pkg[section] as Record<string, string>]));
 const safePath = (path: string) => typeof path === 'string' && path.length > 0 && !path.includes('\\') && !path.includes(':') && path.split('/').every(part => part !== '' && part !== '.' && part !== '..');

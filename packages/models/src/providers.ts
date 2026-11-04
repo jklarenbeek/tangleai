@@ -8,12 +8,16 @@
  * covers the lot; the only per-provider knowledge needed is the base
  * URL convention, which lives here.
  *
- * No key ever leaves the caller's hands: resolution just turns
+ * No key ever leaves the caller's hands: resolution turns
  * `{ provider, baseUrl, apiKey, model }` into a base, the chat URL and
- * headers. The base is resolved ONCE and returned, so every sibling
- * endpoint of the family (`/models`, and whatever else hangs off the
- * same base) is composed from it — never re-derived from the chat URL
- * by string surgery.
+ * headers, and hands them back to whoever passed the key. A client keeps
+ * those headers in its closure and exposes only the credential-free
+ * identity `{ provider, base, url, model, hasKey }`, so a log line, an
+ * error report or a debugger dump of a client never carries the key. A
+ * base URL carrying credentials of its own is refused, never kept. The
+ * base is resolved ONCE and returned, so every sibling endpoint of the
+ * family (`/models`, and whatever else hangs off the same base) is
+ * composed from it — never re-derived from the chat URL by string surgery.
  */
 
 import { AiError } from './errors.ts';
@@ -148,29 +152,111 @@ export async function probeProvider(options: {
 }
 
 /**
+ * The per-token prices a provider's `/models` listing publishes —
+ * OpenRouter's `pricing.prompt` and `pricing.completion`, in US dollars per
+ * token — keyed by model id, for an agent's cost budget
+ * (`prices: (model) => result.prices[model]`). Never throws, like
+ * `probeProvider`; a provider that publishes no prices (every local runtime)
+ * answers an empty map, and an entry without both prices is left out.
+ * @param [options]
+ */
+export async function probePrices(options: {
+  provider?: string;
+  baseUrl?: string;
+  apiKey?: string;
+  headers?: Record<string, string>;
+  fetch?: typeof fetch;
+  timeoutMs?: number;
+} = {}): Promise<{
+  ok: true;
+  prices: Record<string, { prompt: number; completion: number }>;
+} | {
+  ok: false;
+  status?: number;
+  error: string;
+}> {
+  let endpoint: ReturnType<typeof resolveEndpoint>;
+  try {
+    endpoint = resolveEndpoint(options);
+  }
+  catch (err: any) {
+    return { ok: false as const, error: (err as Error).message };
+  }
+  const url = `${endpoint.base}/models`;
+  const fetchFn = options.fetch ?? ((u: any, init: any) => globalThis.fetch(u, init));
+  const timeoutMs = options.timeoutMs ?? 5000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetchFn(url, { method: 'GET', headers: endpoint.headers, signal: controller.signal });
+    if (response.ok !== true)
+      return { ok: false as const, status: response.status, error: `HTTP ${response.status} from ${url}` };
+    const payload = await response.json();
+    const prices: Record<string, { prompt: number; completion: number }> = {};
+    for (const entry of Array.isArray(payload?.data) ? payload.data : []) {
+      const prompt = Number(entry?.pricing?.prompt);
+      const completion = Number(entry?.pricing?.completion);
+      if (typeof entry?.id === 'string' && entry?.pricing?.prompt != null && entry?.pricing?.completion != null
+        && Number.isFinite(prompt) && Number.isFinite(completion) && prompt >= 0 && completion >= 0)
+        prices[entry.id] = { prompt, completion };
+    }
+    return { ok: true as const, prices };
+  }
+  catch (err: any) {
+    return {
+      ok: false as const,
+      error: controller.signal.aborted ? `no answer from ${url} within ${timeoutMs} ms` : (err as any)?.message ?? String(err),
+    };
+  }
+  finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
  * Forgiving base-URL normalization, on the parts of ONE parse: trailing
  * slashes and a pasted `/chat/completions` suffix (in any case) are
  * stripped from the path; local runtimes with a bare origin get their
- * `/v1` prefix. A query string or fragment is refused rather than
- * carried: this wire family composes endpoints by appending a path, and
- * `…?api-version=x/chat/completions` is a URL nobody meant.
+ * `/v1` prefix. Refused with `AI0001`, at construction rather than on
+ * the first call: a scheme other than `http:` or `https:`; a username or
+ * password, which `fetch` refuses to send and which would otherwise
+ * surface as a retried network error quoting them; and a query string
+ * or fragment, because this wire family composes endpoints by appending
+ * a path and `…?api-version=x/chat/completions` is a URL nobody meant.
+ * No refusal quotes the credentials.
  */
 function normalizeBaseUrl(raw: string, local: boolean): string {
 
+  const shown = quotable(raw);
   let url: URL;
   try {
     url = new URL(raw);
   }
   catch {
-    throw new AiError('AI0001', `invalid baseUrl '${raw}'`);
+    throw new AiError('AI0001', `invalid baseUrl '${shown}'`);
   }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:')
+    throw new AiError('AI0001', `baseUrl '${shown}' must be an http: or https: URL`);
+  if (url.username !== '' || url.password !== '')
+    throw new AiError('AI0001', `baseUrl '${shown}' must not carry credentials; pass the key as apiKey`);
   if (url.search !== '' || url.hash !== '')
-    throw new AiError('AI0001', `baseUrl '${raw}' must not carry a query string or fragment`);
+    throw new AiError('AI0001', `baseUrl '${shown}' must not carry a query string or fragment`);
   let path = url.pathname.replace(/\/+$/, '');
   if (/\/chat\/completions$/i.test(path))
     path = path.slice(0, -'/chat/completions'.length).replace(/\/+$/, '');
   if (local && path === '') path = '/v1';
-  // with no search and no hash, `href` is everything before the path —
-  // origin, plus any credentials the caller pasted — followed by the path
+  // with no credentials, no search and no hash, `href` is the origin
+  // followed by the path
   return url.href.slice(0, url.href.length - url.pathname.length) + path;
+}
+
+/**
+ * `raw` without its userinfo (`//user:password@` up to the last `@`
+ * before the path) and without the text of its query or fragment, which
+ * can carry a key too: what a refusal may quote of a URL the caller
+ * pasted. It works on text that does not parse as a URL, which is
+ * exactly when such text gets quoted.
+ */
+function quotable(raw: string): string {
+  return raw.replace(/^([^/?#]*\/\/)[^/?#]*@/, '$1').replace(/([?#])[\s\S]*$/, '$1…');
 }

@@ -91,7 +91,7 @@ export function validateManifests(root = ROOT, options: { lock?: boolean } = {})
       for (const [name, range] of Object.entries(manifest[section] ?? {})) {
         if (name.startsWith('@tangleai/')) {
           assert.ok(names.includes(name), `${dir}: dependency on an unknown/private workspace ${name}`);
-          const expected = manifest.private ? main.version : `^${main.version}`;
+          const expected = main.version;
           assert.equal(range, expected, `${dir || 'root'}: stale ${section}.${name}`);
         }
       }

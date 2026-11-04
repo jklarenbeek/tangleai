@@ -1,7 +1,19 @@
 # Release intent
 
-Run `npm run changeset` to record a change's impact and explanation. Choose a
-patch for a compatible fix or a minor for a new capability. During development,
+Record a change's impact and explanation in a file of its own,
+`.changeset/<short-name>.md`: front matter naming each affected public package
+and its impact, then the summary that becomes the changelog entry.
+
+```md
+---
+"@tangleai/models": minor
+"@tangleai/agents": patch
+---
+
+Say what changed for the people who install the packages, in the present tense.
+```
+
+Choose a patch for a compatible fix or a minor for a new capability. During development,
 breaking changes also use a minor and must include migration notes. Major release
 intent is refused while the suite remains at major zero.
 

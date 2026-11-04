@@ -1,24 +1,24 @@
 {
-  "jaren": "0.176.11",
-  "measuredAt": "2026-11-03",
+  "jaren": "0.179.0",
+  "measuredAt": "2026-11-04",
   "history": [
     {
       "runtime": "node",
       "version": "24.20.0",
       "rows": 5000,
       "limit": 50,
-      "previousP95Ms": 13.172917000000098,
-      "boundedP95Ms": 7.062803999999915,
-      "p95Speedup": 1.8651115052888707
+      "previousP95Ms": 15.237521999999899,
+      "boundedP95Ms": 9.01617999999985,
+      "p95Speedup": 1.6900197201032092
     },
     {
       "runtime": "bun",
       "version": "1.4.4",
       "rows": 5000,
       "limit": 50,
-      "previousP95Ms": 14.84517100000005,
-      "boundedP95Ms": 8.259096999999997,
-      "p95Speedup": 1.7974326975455133
+      "previousP95Ms": 11.863847000000078,
+      "boundedP95Ms": 10.85711399999991,
+      "p95Speedup": 1.0927256543497816
     }
   ],
   "mas": {

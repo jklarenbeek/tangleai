@@ -93,6 +93,28 @@ export function slotAddressesIn(text: string): string[] {
   return names;
 }
 
+/** The words of the `recall` tool a model reads, so a host can give them in its model's language. */
+export type RecallMessages = {
+  description: string;
+  slot: string;
+  evicted: (slot: string) => string;
+  unknown: (slot: string) => string;
+  hint: string;
+  hintIndex: (index: string) => string;
+};
+
+export const RECALL_MESSAGES: RecallMessages = Object.freeze({
+  description: 'Fetch an archived conversation round in full by its address. Earlier rounds'
+    + ' that did not fit the history budget were archived, not deleted: each synopsis line'
+    + ' carries its address as recall("name"), and the index address listed in the synopsis'
+    + ' header returns every address there is.',
+  slot: 'The address from a synopsis line, e.g. the name inside recall("…").',
+  evicted: (slot: string) => `slot '${slot}' was evicted`,
+  unknown: (slot: string) => `unknown slot '${slot}'`,
+  hint: 'use an address exactly as it appears inside recall("…") in the synopsis',
+  hintIndex: (index: string) => `${index} lists every address that exists`,
+});
+
 /**
  * The `recall` tool definition, bound to a ledger.
  *
@@ -115,25 +137,25 @@ export function createRecallTool(ledger: {
   readSlot: (name: string) => Promise<any>;
 }, options: {
   index?: string;
+  /** The tool's words, over the English defaults (`RECALL_MESSAGES`). */
+  messages?: Partial<RecallMessages>;
 } = {}): {
   name: string;
   description: string;
   inputSchema: any;
   execute: (input: any) => Promise<any>;
 } {
+  const words = { ...RECALL_MESSAGES, ...options.messages };
   return {
     name: RECALL_TOOL_NAME,
-    description: 'Fetch an archived conversation round in full by its address. Earlier rounds'
-      + ' that did not fit the history budget were archived, not deleted: each synopsis line'
-      + ' carries its address as recall("name"), and the index address listed in the synopsis'
-      + ' header returns every address there is.',
+    description: words.description,
     inputSchema: {
       type: 'object',
       properties: {
         slot: {
           type: 'string',
           minLength: 1,
-          description: 'The address from a synopsis line, e.g. the name inside recall("…").',
+          description: words.slot,
         },
       },
       required: ['slot'],
@@ -141,14 +163,12 @@ export function createRecallTool(ledger: {
     },
     execute: async ({ slot }: any) => {
       const content = await ledger.readSlot(slot);
-      if (content?.status === 'evicted') return { error: `slot '${slot}' was evicted`, ...content };
+      if (content?.status === 'evicted') return { error: words.evicted(slot), ...content };
       if (content === undefined || content === null) {
         return {
-          error: `unknown slot '${slot}'`,
+          error: words.unknown(slot),
           ...(options.index === undefined ? {} : { index: options.index }),
-          hint: options.index === undefined
-            ? 'use an address exactly as it appears inside recall("…") in the synopsis'
-            : `${slotRef(options.index)} lists every address that exists`,
+          hint: options.index === undefined ? words.hint : words.hintIndex(slotRef(options.index)),
         };
       }
       return { slot, size: String(content).length, content };

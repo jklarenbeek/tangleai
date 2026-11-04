@@ -27,12 +27,104 @@
  * accumulating yesterday's.
  */
 
-import { goalPrompt } from '@tangleai/context/retention';
+import { goalPrompt, type GoalMessages } from '@tangleai/context/retention';
 import { AiError } from '@tangleai/models/errors';
-import { createToolbox } from './toolbox.ts';
-import { slotAddressesIn, RECALL_TOOL_NAME, createRecallTool, roundSlotName, indexSlotName, slotAddress, slotRef } from '@tangleai/context/recall';
-import { environmentTools } from '@tangleai/context/environment';
+import { createToolbox, type ToolboxMessages, type ToolContext } from './toolbox.ts';
+import { slotAddressesIn, RECALL_TOOL_NAME, createRecallTool, roundSlotName, indexSlotName, slotAddress, slotRef, type RecallMessages } from '@tangleai/context/recall';
+import { environmentTools, type EnvironmentMessages } from '@tangleai/context/environment';
 import { excerpt, truncate, sizeOf } from '@jarenjs/core/chunk';
+
+/**
+ * Every sentence the loop writes into a request or a result, so a host
+ * whose model works in another language composes the scaffolding in that
+ * language. A host passes any subset (`createAgent({ messages })`); the
+ * rest stay English. The defaults are the text the loop has always
+ * written, byte for byte — replay keys and recorded requests stay valid.
+ */
+export type AgentMessages = {
+  /** The user turn `resume` sends. */
+  resume: string;
+  /** The final message after `maxToolRounds` rounds without an answer. */
+  toolLimit: (rounds: number) => string;
+  /** The final message when a budget is spent; `remaining` has a `left` and `limit` of `null` for an unbounded dimension. */
+  budget: (stop: {
+    dimension: string;
+    spent: number;
+    limit: number;
+    remaining: Array<{ dimension: string; left: number | null; limit: number | null }>;
+  }) => string;
+  /** The tool result when the agent has no tools. */
+  noTools: string;
+  /** The tool result for arguments that are not JSON. */
+  invalidArguments: (reason: string) => string;
+  /** Headings and lines of the retrieved memories and skills. */
+  memories: string;
+  skills: string;
+  memory: (memory: any) => string;
+  skill: (skill: any) => string;
+  /** The synopsis header when a history budget cut rounds without a ledger. */
+  compacted: string;
+  /** The synopsis header when the cut rounds were archived; `index` is `slot("…")`. */
+  archived: (count: number, index: string) => string;
+  /** The first line of an archive index. */
+  archiveIndex: (count: number) => string;
+  /** One synopsis line for a tool call, and for a plain turn. */
+  call: (name: string, args: string, result: string) => string;
+  turn: (role: string, content: string) => string;
+  /** The pointer a windowed request carries in place of the conversation. */
+  transcript: (pointer: { slot: string; messages: number; characters: number; rounds: number }) => string;
+  /** The goal prompt's words, when the ledger composes none of its own. */
+  goal: Partial<GoalMessages>;
+  /** The `recall` tool's words. */
+  recall: Partial<RecallMessages>;
+  /** The environment tools' words. */
+  environment: Partial<EnvironmentMessages>;
+  /** The words of the agent's own toolboxes (`recall`, the environment). */
+  toolbox: Partial<ToolboxMessages>;
+};
+
+/** One retrieved memory, as a prompt line. */
+const memoryLine = (memory: any) => `- ${excerpt(memory.text, PROMPT_LINE_CHARS)}`
+  + `${(memory.tags ?? []).length > 0 ? ` [${memory.tags.join(', ')}]` : ''}`
+  + ` (evidence: ${excerpt(typeof memory.evidence === 'string' ? memory.evidence : JSON.stringify(memory.evidence), PROMPT_LINE_CHARS)})`;
+
+/** One retrieved skill, as a prompt line. */
+const skillLine = (skill: any) => `- ${skill.name} — when ${excerpt(skill.when, PROMPT_LINE_CHARS)}:`
+  + ` ${excerpt(skill.instructions, PROMPT_LINE_CHARS)}`
+  + `${(skill.tools ?? []).length > 0 ? ` (tools: ${skill.tools.join(', ')})` : ''}`;
+
+export const AGENT_MESSAGES: AgentMessages = Object.freeze({
+  resume: 'Continue working on the objective in your instructions. The progress'
+    + ' recorded there is what has already been done — do not repeat it. Take the next step,'
+    + ' and say what you did.',
+  toolLimit: (rounds: number) => `Stopped after ${rounds} tool rounds without a final answer — the tool work so far has been applied; send another message to continue.`,
+  budget: ({ dimension, spent, limit, remaining }: { dimension: string; spent: number; limit: number; remaining: Array<{ dimension: string; left: number | null; limit: number | null }> }) =>
+    `Stopped: the ${dimension} budget is spent (${spent} of ${limit}).`
+    + ` Remaining — ${remaining.map((entry) => (entry.limit === null ? `${entry.dimension}: no limit` : `${entry.dimension}: ${entry.left} of ${entry.limit} left`)).join(', ')}. The work so far has been applied and recorded;`
+    + ' raise the budget or start a new run to continue.',
+  noTools: 'no tools are available',
+  invalidArguments: (reason: string) => `tool arguments are not valid JSON: ${reason}`,
+  memories: 'What you have learned so far',
+  skills: 'Skills you can reuse',
+  memory: memoryLine,
+  skill: skillLine,
+  compacted: '[Earlier context was compacted to fit the history budget. What happened:]',
+  archived: (count: number, index: string) => `[Earlier context was compacted. ${count} round(s) are ARCHIVED, `
+    + `not lost: ${index} lists every address; recall(name) returns`
+    + ' one in full. What happened:]',
+  archiveIndex: (count: number) => `${count} archived round(s) — recall(name) returns one in full.`,
+  call: (name: string, args: string, result: string) => `- called ${name}(${args}) → ${result}`,
+  turn: (role: string, content: string) => `- ${role}: ${content}`,
+  transcript: ({ slot, messages, characters, rounds }: { slot: string; messages: number; characters: number; rounds: number }) =>
+    `[The whole conversation is in the environment as slot "${slot}"`
+    + ` (${messages} messages, ${characters} characters). Nothing was dropped:`
+    + ` env_grep finds the round you need and env_read returns it. This request carries the`
+    + ` last ${rounds} round(s).]`,
+  goal: {},
+  recall: {},
+  environment: {},
+  toolbox: {},
+});
 
 /**
  *   - `historyBudget` caps the request history in CHARACTERS (tokens
@@ -80,14 +172,38 @@ import { excerpt, truncate, sizeOf } from '@jarenjs/core/chunk';
  *   no budget to exceed when the history is addressed instead of resent.
  *   Both together is legal and redundant; neither changes the other's
  *   behaviour.
+ *   - `messages` (`AgentMessages`) replaces any of the sentences the loop
+ *   writes — the resume turn, the stop messages, the synopses, the
+ *   retrieval headings, the transcript pointer, the tool errors and the
+ *   `recall`, environment and goal texts — for a model that works in
+ *   another language. The rest stay English.
+ *   - `recall` decides whether the `recall` tool is listed. By default it
+ *   is listed only when the agent can compact (a ledger and a
+ *   `historyBudget`): without compaction no address is ever written, so
+ *   the tool would only take room in every request. `true` lists it with
+ *   any ledger, `false` never.
+ *   - `toolContext` is handed to every tool call as `context.context`,
+ *   beside `context.signal`, the send's abort signal; a send's own
+ *   `hooks.toolContext` overrides it.
+ *   - `budget.cost` bounds what the run may cost, priced by `prices(model)`
+ *   (per-token `{ prompt, completion }`, in any one currency;
+ *   `probePrices` reads OpenRouter's). `budget.reserve` makes `tokens` and
+ *   `cost` refuse a call whose worst case could cross them: the request's
+ *   estimated prompt tokens (`budget.estimate`, by default its UTF-8 bytes,
+ *   which never under-counts) plus `maxOutputTokens`, which every request
+ *   then carries as its `maxTokens`. After a call the provider's usage is
+ *   booked, or the worst case when none is reported.
+ *   - A model call that rejects still counts as a turn, and the rejection
+ *   carries the work so far as `error.partial = { messages, steps, spent }`.
  */
 export function createAgent(options: {
   client: {
     complete: (request: any) => Promise<any>;
+    endpoint?: { provider?: string; model?: string };
   };
   toolbox?: {
     toFunctionTools: () => any[];
-    execute: (name: string, args: any) => any;
+    execute: (name: string, args: any, context?: ToolContext) => any;
   } | null;
   system?: string;
   maxToolRounds?: number;
@@ -98,12 +214,18 @@ export function createAgent(options: {
     turns?: number;
     tokens?: number;
     ms?: number;
+    cost?: number;
+    reserve?: boolean;
+    estimate?: (request: { messages: any[]; tools: any[] }) => number;
     spent?: {
       turns?: number;
       tokens?: number;
       ms?: number;
+      cost?: number;
     };
   };
+  prices?: (model: string | undefined) => { prompt: number; completion: number } | null | undefined;
+  maxOutputTokens?: number;
   retrieval?: {
     memories?: {
       tags?: string[];
@@ -123,6 +245,9 @@ export function createAgent(options: {
     window?: number;
   };
   compaction?: (droppedRounds: any[][], addresses?: any[]) => string;
+  messages?: Partial<AgentMessages>;
+  recall?: boolean;
+  toolContext?: unknown;
 }): {
   send: (history: any[], hooks?: AgentHooks) => Promise<{
     message: any;
@@ -140,6 +265,7 @@ export function createAgent(options: {
     turns: number;
     tokens: number;
     ms: number;
+    cost?: number;
   };
 } {
   const client = options.client;
@@ -165,7 +291,18 @@ export function createAgent(options: {
   // kept separately from the effective writer: the ledger path treats a
   // HOST writer differently from the built-in one (see `compactToLedger`)
   const hostCompaction = options.compaction ?? null;
-  const compaction = hostCompaction ?? synopsize;
+  const words: AgentMessages = { ...AGENT_MESSAGES, ...options.messages };
+  const compaction = hostCompaction ?? ((dropped: any[][]) => synopsize(dropped, words));
+  const listsRecall = options.recall ?? historyBudget !== undefined;
+  const prices = options.prices ?? null;
+  const maxOutputTokens = options.maxOutputTokens;
+  if (maxOutputTokens !== undefined && !(Number.isSafeInteger(maxOutputTokens) && maxOutputTokens > 0))
+    throw new AiError('AI0001', `maxOutputTokens must be a positive integer, got ${String(maxOutputTokens)}`);
+  if (budget?.reserve === true && maxOutputTokens === undefined)
+    throw new AiError('AI0001', 'a reserving budget needs maxOutputTokens: the worst case of a call is its prompt plus its output cap');
+  if (budget?.cost !== undefined && prices === null)
+    throw new AiError('AI0001', 'a cost budget needs prices(model)');
+  const estimate = budget?.estimate ?? utf8Tokens;
 
   if (ledger !== null && typeof ledger.putSlot !== 'function') {
     throw new AiError('AI0001',
@@ -173,11 +310,12 @@ export function createAgent(options: {
   }
   // one recall tool per agent, and only with a ledger — a toolbox is
   // built here rather than in the loop so its schema compiles once
-  const recallBox = ledger === null ? null : recallToolbox(ledger);
+  const recallBox = ledger === null ? null : recallToolbox(ledger, words);
   // the environment's operations, as tools, compiled once for the same
   // reason. The model reaches the corpus through exactly the calls a
   // harness makes — one implementation, in `environment.ts`.
-  const envBox = environment === null ? null : toolboxOf(environmentTools(environment));
+  const envBox = environment === null ? null
+    : toolboxOf(environmentTools(environment, words.environment), words.toolbox);
 
   // what this agent has spent, across every `send` it has served. The
   // counters live on the agent and not on a call, because a budget that
@@ -186,13 +324,25 @@ export function createAgent(options: {
     turns: budget?.spent?.turns ?? 0,
     tokens: budget?.spent?.tokens ?? 0,
     ms: budget?.spent?.ms ?? 0,
+    cost: budget?.spent?.cost ?? 0,
   };
   /** Wall-clock start of the first model call, or null before it. */
   let startedAt: any = null;
   const elapsed = () => spent.ms + (startedAt === null ? 0 : clock() - startedAt);
 
   /** What this agent has spent so far — the seed for a resumed budget. */
-  const spend = () => ({ turns: spent.turns, tokens: spent.tokens, ms: elapsed() });
+  const spend = () => ({
+    turns: spent.turns, tokens: spent.tokens, ms: elapsed(),
+    ...(prices === null ? {} : { cost: spent.cost }),
+  });
+
+  /** The price of `usage` for `model`, or of the worst case when the provider reported none. */
+  const costOf = (model: string | undefined, prompt: number, completion: number) => {
+    const price = prices?.(model);
+    if (price === null || price === undefined) return 0;
+    return prompt * price.prompt + completion * price.completion;
+  };
+  const modelOf = (completion: any) => completion?.model ?? client.endpoint?.model;
 
   /**
    * The budget dimension that is spent, or null. Checked BEFORE every
@@ -200,18 +350,21 @@ export function createAgent(options: {
    * `maxToolRounds`'s posture, applied to the three quantities a run is
    * actually bounded by.
    */
-  function budgetStop(): {
+  function budgetStop(worst: { tokens: number; cost: number } | null = null): {
     reason: string;
     content: string;
   } | null {
     if (budget === null) return null;
-    const spentNow = spend();
-    for (const dimension of BUDGET_DIMENSIONS) {
+    const spentNow = { ...spend(), cost: spent.cost };
+    for (const dimension of dimensionsOf(budget)) {
       const limit = budget[dimension];
-      if (typeof limit === 'number' && spentNow[dimension] >= limit) {
+      if (typeof limit !== 'number') continue;
+      // a reserving budget refuses the call whose worst case could cross it
+      const ahead = worst === null || (dimension !== 'tokens' && dimension !== 'cost') ? 0 : worst[dimension];
+      if (spentNow[dimension] >= limit || (ahead > 0 && spentNow[dimension] + ahead > limit)) {
         return {
           reason: `budget-${dimension}`,
-          content: budgetMessage(dimension, budget, spentNow),
+          content: budgetMessage(dimension, budget, spentNow, words),
         };
       }
     }
@@ -242,17 +395,17 @@ export function createAgent(options: {
           if (composed.error) throw new AiError('AI0001', composed.error);
           sections.push(composed.text);
         }
-        else sections.push(goalPrompt(goal));
+        else sections.push(goalPrompt(goal, words.goal));
       }
     }
     if (retrieval !== null) {
       if (retrieval.memories !== undefined && typeof ledger.recall === 'function') {
-        sections.push(...listSection('What you have learned so far',
-          await retrieved(ledger.recall(retrieval.memories), 'memories'), memoryLine));
+        sections.push(...listSection(words.memories,
+          await retrieved(ledger.recall(retrieval.memories), 'memories'), words.memory));
       }
       if (retrieval.skills !== undefined && typeof ledger.recallSkills === 'function') {
-        sections.push(...listSection('Skills you can reuse',
-          await retrieved(ledger.recallSkills(retrieval.skills), 'skills'), skillLine));
+        sections.push(...listSection(words.skills,
+          await retrieved(ledger.recallSkills(retrieval.skills), 'skills'), words.skill));
       }
     }
     if (sections.length === 0) return null;
@@ -266,11 +419,11 @@ export function createAgent(options: {
    * quietly grow it a tool that outlives the agent.
    * @param recalling - whether this agent listed `recall`
    */
-  async function dispatch(name: string, args: any, listed: any) {
-    if (listed.recalling && name === RECALL_TOOL_NAME) return recallBox!.box.execute(name, args);
-    if (listed.env.has(name)) return envBox!.execute(name, args);
-    if (toolbox === null) return { error: 'no tools are available' };
-    return toolbox.execute(name, args);
+  async function dispatch(name: string, args: any, listed: any, context: ToolContext) {
+    if (listed.recalling && name === RECALL_TOOL_NAME) return recallBox!.box.execute(name, args, context);
+    if (listed.env.has(name)) return envBox!.execute(name, args, context);
+    if (toolbox === null) return { error: words.noTools };
+    return toolbox.execute(name, args, context);
   }
 
   /**
@@ -283,7 +436,7 @@ export function createAgent(options: {
     const hostTools = toolbox !== null ? toolbox.toFunctionTools() : [];
     // a host that registered its own `recall` keeps it: two definitions
     // of one function name is not a wire-legal request
-    const recalling = recallBox !== null
+    const recalling = recallBox !== null && listsRecall
       && !hostTools.some((tool: any) => tool?.function?.name === RECALL_TOOL_NAME);
     const named = new Set(hostTools.map((tool: any) => tool?.function?.name));
     // same rule as `recall`: a host that registered its own tool of that
@@ -303,6 +456,10 @@ export function createAgent(options: {
     ];
 
     const steps: any[] = [];
+    const toolContext: ToolContext = {
+      signal: hooks.signal,
+      context: hooks.toolContext !== undefined ? hooks.toolContext : options.toolContext,
+    };
     // the goal and the retrieved state, composed onto whatever base
     // prompt this conversation carries — into the REQUEST, never into
     // `messages`, so the transcript the host persists never accumulates
@@ -326,26 +483,63 @@ export function createAgent(options: {
       // left for compaction to cut.
       const windowed = transcript === null
         ? request
-        : await windowThroughEnvironment(request, transcript, environment);
+        : await windowThroughEnvironment(request, transcript, environment, words);
       const sent = historyBudget === undefined
         ? windowed
         : ledger === null
           ? compactMessages(windowed, historyBudget, compaction)
           : await compactToLedger(windowed, historyBudget, hostCompaction,
-            ledger, recallBox!.options);
+            ledger, recallBox!.options, words);
+      // a reserving budget prices the call before it is made: the prompt
+      // as sent, plus the output cap every request then carries
+      const promptEstimate = budget?.reserve === true ? estimate({ messages: sent, tools }) : 0;
+      if (budget?.reserve === true) {
+        const reserved = budgetStop({
+          tokens: promptEstimate + maxOutputTokens!,
+          cost: costOf(client.endpoint?.model, promptEstimate, maxOutputTokens!),
+        });
+        if (reserved !== null) {
+          const message = { role: 'assistant', content: reserved.content };
+          messages.push(message);
+          return { message, messages, steps, stopReason: reserved.reason };
+        }
+      }
       if (startedAt === null) startedAt = clock();
-      const completion = await client.complete({
-        messages: sent,
-        tools: tools.length > 0 ? tools : undefined,
-        onDelta: hooks.onDelta,
-        onReasoning: hooks.onReasoning,
-        signal: hooks.signal,
-      });
+      let completion: any;
+      try {
+        completion = await client.complete({
+          messages: sent,
+          tools: tools.length > 0 ? tools : undefined,
+          ...(maxOutputTokens === undefined ? {} : { maxTokens: maxOutputTokens }),
+          onDelta: hooks.onDelta,
+          onReasoning: hooks.onReasoning,
+          signal: hooks.signal,
+        });
+      }
+      catch (error: any) {
+        // a rejected call was still a model call, and the rounds already
+        // finished are the host's evidence: both travel with the rejection
+        spent.turns += 1;
+        if (error !== null && typeof error === 'object' && Object.isExtensible(error))
+          error.partial = { messages: [...messages], steps: [...steps], spent: spend() };
+        throw error;
+      }
       spent.turns += 1;
       // reported usage is always counted (it is free and it is the truth);
       // the character estimate is only paid for when a token budget
-      // depends on it
-      spent.tokens += tokensOf(sent, completion, budget?.tokens !== undefined);
+      // depends on it — and a reserving budget books the worst case it
+      // reserved when the provider reports nothing
+      const reported = reportedUsage(completion);
+      spent.tokens += reported === null && budget?.reserve === true
+        ? promptEstimate + maxOutputTokens!
+        : tokensOf(sent, completion, budget?.tokens !== undefined);
+      if (prices !== null) {
+        spent.cost += reported !== null
+          ? costOf(modelOf(completion), reported.prompt, reported.completion)
+          : budget?.reserve === true
+            ? costOf(modelOf(completion), promptEstimate, maxOutputTokens!)
+            : costOf(modelOf(completion), tokensOf(sent, { message: { content: '' } }, true), Math.ceil(String(completion?.message?.content ?? '').length / TOKEN_CHARS));
+      }
       const reply = completion.message;
 
       if (reply.toolCalls === null || reply.toolCalls === undefined
@@ -365,7 +559,7 @@ export function createAgent(options: {
           role: 'assistant',
           content: reply.content !== ''
             ? reply.content
-            : `Stopped after ${maxToolRounds} tool rounds without a final answer — the tool work so far has been applied; send another message to continue.`,
+            : words.toolLimit(maxToolRounds),
         };
         messages.push(message);
         return { message, messages, steps, stopReason: 'tool-limit' };
@@ -383,10 +577,10 @@ export function createAgent(options: {
 
       for (const call of reply.toolCalls) {
         hooks.onToolCall?.({ name: call.name, arguments: call.arguments });
-        const parsed = parseArguments(call.arguments);
+        const parsed = parseArguments(call.arguments, words);
         const result = parsed.error !== undefined
           ? parsed
-          : await dispatch(call.name, parsed.value, listed);
+          : await dispatch(call.name, parsed.value, listed, toolContext);
         hooks.onToolResult?.({ name: call.name, result });
         steps.push({ name: call.name, arguments: call.arguments, result });
         messages.push({
@@ -421,21 +615,16 @@ export function createAgent(options: {
       throw new AiError('AI0001',
         'resume() needs an active goal — call ledger.setGoal() first');
     }
-    return send([...history, { role: 'user', content: RESUME_TURN }], hooks);
+    return send([...history, { role: 'user', content: words.resume }], hooks);
   }
 
   return { send, resume, spend };
 }
 
-/** The user turn `resume` sends. */
-const RESUME_TURN = 'Continue working on the objective in your instructions. The progress'
-  + ' recorded there is what has already been done — do not repeat it. Take the next step,'
-  + ' and say what you did.';
-
 /**
  * @param text - the model's argument string
  */
-function parseArguments(text: string): {
+function parseArguments(text: string, words: AgentMessages): {
   value?: any;
   error?: string;
 } {
@@ -444,7 +633,7 @@ function parseArguments(text: string): {
     return { value: JSON.parse(text) };
   }
   catch (err: any) {
-    return { error: `tool arguments are not valid JSON: ${(err as Error).message}` };
+    return { error: words.invalidArguments((err as Error).message) };
   }
 }
 
@@ -470,16 +659,6 @@ function composeRequest(messages: any[], composed: string | null): any[] {
   }
   return [{ role: 'system', content: composed }, ...messages];
 }
-
-/** One retrieved memory, as a prompt line. */
-const memoryLine = (memory: any) => `- ${excerpt(memory.text, PROMPT_LINE_CHARS)}`
-  + `${(memory.tags ?? []).length > 0 ? ` [${memory.tags.join(', ')}]` : ''}`
-  + ` (evidence: ${excerpt(typeof memory.evidence === 'string' ? memory.evidence : JSON.stringify(memory.evidence), PROMPT_LINE_CHARS)})`;
-
-/** One retrieved skill, as a prompt line. */
-const skillLine = (skill: any) => `- ${skill.name} — when ${excerpt(skill.when, PROMPT_LINE_CHARS)}:`
-  + ` ${excerpt(skill.instructions, PROMPT_LINE_CHARS)}`
-  + `${(skill.tools ?? []).length > 0 ? ` (tools: ${skill.tools.join(', ')})` : ''}`;
 
 /**
  * A retrieved section, or nothing at all when the retrieval came back
@@ -518,8 +697,8 @@ const TRANSCRIPT_WINDOW = 2;
 /**
  * A toolbox holding one set of definitions, compiled once.
  */
-function toolboxOf(definitions: any[]) {
-  const box = createToolbox();
+function toolboxOf(definitions: any[], messages: Partial<ToolboxMessages>) {
+  const box = createToolbox(Object.keys(messages).length === 0 ? {} : { messages });
   for (const definition of definitions) box.add(definition);
   return box;
 }
@@ -561,7 +740,7 @@ export function transcriptText(messages: any[]): string {
 async function windowThroughEnvironment(messages: any[], transcript: {
   slot: string;
   window: number;
-}, environment: any): Promise<any[]> {
+}, environment: any, words: AgentMessages): Promise<any[]> {
   const written = await environment.put(transcript.slot, transcriptText(messages),
     { kind: 'transcript', count: messages.length });
 
@@ -578,10 +757,7 @@ async function windowThroughEnvironment(messages: any[], transcript: {
 
   const pointer = {
     role: 'assistant',
-    content: `[The whole conversation is in the environment as slot "${transcript.slot}"`
-      + ` (${messages.length} messages, ${written?.size ?? 0} characters). Nothing was dropped:`
-      + ` env_grep finds the round you need and env_read returns it. This request carries the`
-      + ` last ${units.length - cut} round(s).]`,
+    content: words.transcript({ slot: transcript.slot, messages: messages.length, characters: written?.size ?? 0, rounds: units.length - cut }),
   };
   return [
     ...pinnedSystem,
@@ -597,6 +773,29 @@ async function windowThroughEnvironment(messages: any[], transcript: {
 
 /** The dimensions a run is bounded by, in the order they are checked. */
 const BUDGET_DIMENSIONS = (['turns', 'tokens', 'ms'] as const);
+
+/** The dimensions of one budget: the three always, and `cost` when it bounds one. */
+const dimensionsOf = (budget: any): Array<'turns' | 'tokens' | 'ms' | 'cost'> =>
+  budget.cost === undefined ? [...BUDGET_DIMENSIONS] : [...BUDGET_DIMENSIONS, 'cost'];
+
+/** The usage a provider reported for one call, or null when it reported none. */
+function reportedUsage(completion: any): { prompt: number; completion: number } | null {
+  const usage = completion?.usage;
+  const prompt = Number.isFinite(usage?.prompt_tokens) ? usage.prompt_tokens : 0;
+  const reply = Number.isFinite(usage?.completion_tokens) ? usage.completion_tokens : 0;
+  if (prompt + reply > 0) return { prompt, completion: reply };
+  return Number.isFinite(usage?.total_tokens) && usage.total_tokens > 0 ? { prompt: usage.total_tokens, completion: 0 } : null;
+}
+
+/**
+ * The default prompt estimate of a reserving budget: the request's UTF-8
+ * bytes. A byte-level tokenizer never makes more tokens than bytes, so the
+ * reservation cannot under-count; a host that accepts a tighter estimate
+ * passes its own.
+ */
+function utf8Tokens(request: { messages: any[]; tools: any[] }): number {
+  return new TextEncoder().encode(JSON.stringify(request.messages) + JSON.stringify(request.tools)).length;
+}
 
 /**
  * Characters per token when a provider reports no usage. Crude and
@@ -637,13 +836,12 @@ function budgetMessage(dimension: string, budget: any, spent: {
   turns: number;
   tokens: number;
   ms: number;
-}): string {
-  const remaining = BUDGET_DIMENSIONS.map((name) => (typeof budget[name] === 'number'
-    ? `${name}: ${Math.max(0, budget[name] - spent[name as keyof typeof spent])} of ${budget[name]} left`
-    : `${name}: no limit`));
-  return `Stopped: the ${dimension} budget is spent (${spent[dimension as keyof typeof spent]} of ${budget[dimension]}).`
-    + ` Remaining — ${remaining.join(', ')}. The work so far has been applied and recorded;`
-    + ' raise the budget or start a new run to continue.';
+  cost: number;
+}, words: AgentMessages): string {
+  const remaining = dimensionsOf(budget).map((name) => (typeof budget[name] === 'number'
+    ? { dimension: name, left: Math.max(0, budget[name] - spent[name]), limit: budget[name] }
+    : { dimension: name, left: null, limit: null }));
+  return words.budget({ dimension, spent: spent[dimension as keyof typeof spent], limit: budget[dimension], remaining });
 }
 
 //#endregion
@@ -694,15 +892,15 @@ function roundUnits(messages: any[]): any[][] {
  * turn. Both writers share it, so the addressed synopsis says exactly
  * what the plain one says plus the address.
  */
-function unitLines(unit: any[]): string[] {
+function unitLines(unit: any[], words: AgentMessages): string[] {
   const head = unit[0];
   if (head.role === 'assistant' && Array.isArray(head.tool_calls)) {
     return head.tool_calls.map((call: any) => {
       const reply = unit.find((m: any) => m.role === 'tool' && m.tool_call_id === call.id);
-      return `- called ${call.function?.name}(${excerpt(call.function?.arguments, 60)}) → ${excerpt(reply?.content, 60)}`;
+      return words.call(call.function?.name, excerpt(call.function?.arguments, 60), excerpt(reply?.content, 60));
     });
   }
-  return [`- ${head.role}: ${excerpt(head.content, 60)}`];
+  return [words.turn(head.role, excerpt(head.content, 60))];
 }
 
 /**
@@ -713,9 +911,9 @@ function unitLines(unit: any[]): string[] {
  * With no ledger this is the whole story and the excerpt is the only
  * copy — which is what `ledger` exists to fix; see `synopsizeAddressed`.
  */
-function synopsize(dropped: any[][]): string {
-  const lines = ['[Earlier context was compacted to fit the history budget. What happened:]'];
-  for (const unit of dropped) lines.push(...unitLines(unit));
+function synopsize(dropped: any[][], words: AgentMessages): string {
+  const lines = [words.compacted];
+  for (const unit of dropped) lines.push(...unitLines(unit, words));
   return lines.join('\n');
 }
 
@@ -863,7 +1061,7 @@ function compactMessages(messages: any[], budget: number, compaction: (droppedRo
  * because the tail selection needs the exact synopsis size before it can
  * decide what to drop, and the synopsis needs the addresses.
  */
-function planArchive(dropped: any[][]): {
+function planArchive(dropped: any[][], words: AgentMessages): {
   entries: any[];
   index: any;
 } {
@@ -875,9 +1073,9 @@ function planArchive(dropped: any[][]): {
   // synopsis lines use: one address syntax, so following the index needs
   // no second reading rule — from a model or from anything auditing what
   // a request can still reach
-  const lines = [`${entries.length} archived round(s) — recall(name) returns one in full.`];
+  const lines = [words.archiveIndex(entries.length)];
   entries.forEach((entry, i) => lines.push(
-    `${slotAddress(entry.name, entry.size)} ${unitLines(dropped[i])[0]?.slice(2) ?? ''}`));
+    `${slotAddress(entry.name, entry.size)} ${unitLines(dropped[i], words)[0]?.slice(2) ?? ''}`));
   const text = lines.join('\n');
   return {
     entries,
@@ -895,17 +1093,15 @@ function planArchive(dropped: any[][]): {
 function synopsizeAddressed(dropped: any[][], archive: {
   entries: any[];
   index: any;
-}, hostWriter: ((droppedRounds: any[][], addresses: any[]) => string) | null): string {
-  const header = `[Earlier context was compacted. ${dropped.length} round(s) are ARCHIVED, `
-    + `not lost: ${slotRef(archive.index.name)} lists every address; recall(name) returns`
-    + ' one in full. What happened:]';
+}, hostWriter: ((droppedRounds: any[][], addresses: any[]) => string) | null, words: AgentMessages): string {
+  const header = words.archived(dropped.length, slotRef(archive.index.name));
   if (hostWriter !== null) {
     return `${header}\n${hostWriter(dropped, archive.entries.map(
       ({ name, size, kind }: any) => ({ name, size, kind })))}`;
   }
   const lines = [header];
   dropped.forEach((unit, i) => {
-    const own = unitLines(unit);
+    const own = unitLines(unit, words);
     const address = slotAddress(archive.entries[i].name, archive.entries[i].size);
     // a round the plain writer has nothing to say about still gets its
     // address — the whole promise is that no round leaves unaddressed,
@@ -985,23 +1181,23 @@ async function writeArchive(ledger: any, archive: {
  */
 async function compactToLedger(messages: any[], budget: number, hostWriter: ((droppedRounds: any[][], addresses: any[]) => string) | null, ledger: any, recallOptions: {
   index?: string;
-}): Promise<any[]> {
+}, words: AgentMessages): Promise<any[]> {
   const ceiling = Math.max(SYNOPSIS_RESERVE, Math.floor(budget / SYNOPSIS_SHARE));
   const reserveFor = (dropped: any) => Math.min(ceiling, sizeOf({
     role: 'assistant',
-    content: synopsizeAddressed(dropped, planArchive(dropped),
-      hostWriter === null ? null : () => synopsize(dropped)),
+    content: synopsizeAddressed(dropped, planArchive(dropped, words),
+      hostWriter === null ? null : () => synopsize(dropped, words), words),
   }));
   const plan = planCompaction(messages, budget, reserveFor);
   if (plan === null) return messages;
 
-  const archive = planArchive(plan.dropped);
+  const archive = planArchive(plan.dropped, words);
   const retained = [...plan.pins, ...plan.tail];
   await writeArchive(ledger, archive, JSON.stringify(retained),
     slotAddressesIn(retained.map((message: any) => message.content ?? '').join('\n')));
   recallOptions.index = archive.index.name;
 
-  const content = synopsizeAddressed(plan.dropped, archive, hostWriter);
+  const content = synopsizeAddressed(plan.dropped, archive, hostWriter, words);
   return assemble(plan, content, budget,
     Math.max(SYNOPSIS_FLOOR, content.indexOf('\n') + 1 || content.length));
 }
@@ -1013,13 +1209,13 @@ async function compactToLedger(messages: any[], budget: number, hostWriter: ((dr
  * registry. `options` is read at call time, so each compaction can point
  * an unknown-address rejection at the index it just wrote.
  */
-function recallToolbox(ledger: any) {
+function recallToolbox(ledger: any, words: AgentMessages) {
 
   const options: {
     index?: string;
   } = {};
-  const box = createToolbox();
-  box.add(createRecallTool(ledger, options));
+  const box = createToolbox(Object.keys(words.toolbox).length === 0 ? {} : { messages: words.toolbox });
+  box.add(createRecallTool(ledger, Object.assign(options, { messages: words.recall })));
   return { box, options };
 }
 
@@ -1031,5 +1227,8 @@ export type AgentHooks = { /**
   onDelta?: (text: string) => void; /**
  * - streamed thinking
  */
-  onReasoning?: (text: string) => void; onToolCall?: (call: { name: string; arguments: string; }) => void; onToolResult?: (step: { name: string; result: any; }) => void; signal?: AbortSignal;
+  onReasoning?: (text: string) => void; onToolCall?: (call: { name: string; arguments: string; }) => void; onToolResult?: (step: { name: string; result: any; }) => void; signal?: AbortSignal; /**
+ * - handed to every tool of this send as `context.context`; overrides the agent's `toolContext`
+ */
+  toolContext?: unknown;
 };

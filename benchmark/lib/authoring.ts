@@ -94,9 +94,12 @@ export async function measureAuthoring(options: {
       maxRepairs: options.maxRepairs ?? 0,
       onAttempt(event: { attempt: number; outcome: string; errors: any[]; }) {
         const row = rows.at(-1);
-        row.codes = event.errors.map((error: any) => error.code).filter(Boolean);
-        row.outcome = event.outcome === 'gate' && row.codes.some((code: any) => /^(AI02|JQ)/.test(code))
-          ? 'compile' : event.outcome;
+        // the evidence keeps its own vocabulary: a reply that is not JSON, or
+        // one cut off, failed the schema, and the codes are the gates' own
+        row.codes = event.errors.filter((error: any) => error.stage === 'gate').map((error: any) => error.code).filter(Boolean);
+        const outcome = event.outcome === 'parse' || event.outcome === 'truncated' ? 'schema' : event.outcome;
+        row.outcome = outcome === 'gate' && row.codes.some((code: any) => /^(AI02|JQ)/.test(code))
+          ? 'compile' : outcome;
       },
     }).generate(options.messages, { signal: options.signal });
     if (result.value !== undefined) {

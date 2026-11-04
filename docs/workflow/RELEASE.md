@@ -70,14 +70,16 @@ it does not authorize or perform a Git release. npm publication remains a
 separate manual author action.
 
 1. Finish the change and update its documentation and relevant measurements.
-2. Run `npm run changeset` and record the reason plus patch or minor impact.
+2. Write a `.changeset/<name>.md` file recording the reason plus patch or minor
+   impact (front matter `"@tangleai/<pkg>": patch|minor`, then the summary; see
+   `.changeset/README.md`).
    Compatible fixes use patch. Features use minor. Breaking development changes
    use minor with migration notes. A major changeset is refused. Multiple records
    combine into one release at their highest impact.
 3. Run `npm run release:prepare`. Changesets calculates public versions and
    changelogs. The wrapper synchronizes the root, private versions, every internal
-   reference and the lockfile. Public libraries use `^<suite version>`; private
-   consumers use the exact suite version.
+   reference and the lockfile. Every workspace, public or private, depends on the
+   others at the exact suite version, so one install never mixes two releases.
 4. Review the generated change. If fixes are needed before committing, apply them
    and run `npm run release:prepare -- --refresh`. This refreshes the reviewed
    input fingerprint without advancing the version again. New changesets require

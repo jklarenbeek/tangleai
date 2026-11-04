@@ -22,7 +22,7 @@ import {
   type DocumentVersion,
   type FetchMode,
 } from './contracts.ts';
-import { DEFAULT_EXTRACT_LIMITS, extractDocument, extractHtml, type ExtractLimits } from './extract.ts';
+import { DEFAULT_EXTRACT_LIMITS, extractDocument, extractHtml, type ExtractLimits, type PdfOcr } from './extract.ts';
 import { SafeStaticFetcher } from './fetch.ts';
 import { normalizeUrl } from './url-policy.ts';
 
@@ -63,6 +63,8 @@ export interface DocumentIngesterOptions {
   browser?: BrowserFetcher;
   now?: () => string;
   embedBatchSize?: number;
+  /** OCR for PDF pages without text; its `version` enters every version's extraction identity. */
+  ocr?: PdfOcr;
 }
 
 function hash(value: string | Uint8Array): string {
@@ -115,6 +117,10 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
   const browser = options.browser ?? new UnavailableBrowserFetcher();
   const now = options.now ?? ((): string => new Date().toISOString());
   const batchSize = Math.max(1, options.embedBatchSize ?? 32);
+  if (options.ocr !== undefined && (typeof options.ocr.version !== 'string' || options.ocr.version === '' || typeof options.ocr.read !== 'function'))
+    throw new TypeError('ocr needs a non-empty version and a read function');
+  // a document read with OCR is a different extraction of the same bytes
+  const extractionVersion = options.ocr === undefined ? EXTRACTION_VERSION : `${EXTRACTION_VERSION}+ocr:${options.ocr.version}`;
 
   return {
     async prepare(input) {
@@ -150,7 +156,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
         ...(chunker.parentTokens === undefined ? {} : { parentTokens: chunker.parentTokens }) };
       const priorVersion = existing?.activeVersionId === undefined ? undefined : await store.getVersion(existing.activeVersionId);
       const identityFor = (content: string, dims: number): PreparedDocumentIdentity => preparedIdentityOf({ contentHash: content,
-        extractionVersion: EXTRACTION_VERSION, chunkerVersion: chunker.version, chunkerConfig, embeddedBy: { model: embedder.model, dims } });
+        extractionVersion, chunkerVersion: chunker.version, chunkerConfig, embeddedBy: { model: embedder.model, dims } });
       const compatible = (active: DocumentVersion | undefined): active is DocumentVersion => active !== undefined
         && equalsJson(preparedIdentityOf(active), identityFor(active.contentHash, embedder.dims ?? active.embeddedBy.dims));
 
@@ -181,7 +187,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
         progress(now, input.onProgress, 'extract', 'start');
         const extractionStarted = performance.now();
         const limits = { ...DEFAULT_EXTRACT_LIMITS, ...input.extractLimits };
-        let extracted = await extractDocument(bytes, { mimeType, url: finalUrl, limits });
+        let extracted = await extractDocument(bytes, { mimeType, url: finalUrl, limits, ...(options.ocr === undefined ? {} : { ocr: options.ocr }) });
         if (mimeType === 'text/html' && input.allowBrowser === true) {
           const rawHtml = new TextDecoder().decode(bytes);
           if (likelyDynamicShell(rawHtml, usefulChars(extracted.elements), limits.minUsefulChars)) {
@@ -306,7 +312,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
           id: provisionalVersionId,
           sourceId: id,
           contentHash,
-          extractionVersion: EXTRACTION_VERSION,
+          extractionVersion,
           chunkerVersion: chunker.version,
           chunkerConfig,
           embeddedBy,

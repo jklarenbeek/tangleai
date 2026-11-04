@@ -271,19 +271,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Grounding and retrieval
 
-- [ ] **The web discovery row, run live.** *Wanted:* the one unmeasured member
-  of the grounding instrument — the dated SearxNG-discovered versus directly
-  curated comparison over the six registered RFC 9110 questions, run against a
-  real endpoint. Everything else shipped and is measured: the flat document
-  baseline is a validated paired result
-  (`docs/GROUNDING_BENCHMARK.md`, handoff
-  `benchmark/results/grounding-handoff.json`), and the web instrument itself is
-  proven — capture and replay are byte-identical with zero network calls, the
-  selection rule is registered, and the current record is a stated not-run.
-  *Constraint:* the row needs an operator-confirmed SearxNG endpoint
-  (`compose/searxng/`) and its own separate authorization; it is a dated
-  diagnostic and can never enter the flat gate's denominator. *Closes on:* one
-  authorized `--web-live` run whose report replays byte-identically.
 - [ ] **Live qualification of governed dual retrieval (PriHA / DRAG).** The
   [scripted mechanism and ablations](PRIHA_BENCHMARK.md) ship, but the full
   treatment does not pass its paired improvement gate. Measure live quality and
@@ -375,12 +362,12 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   Markdown stylesheet sets physical sides (list indents, the quote rule, table
   alignment, the copy button), so a right-to-left reply does not mirror.
   *Wanted:* those labels from the catalogue and a direction-neutral Markdown
-  stylesheet. *Constraint:* both belong to Jaren's renderer, which today
-  accepts only a footnotes label; the assistant does not rewrite its output.
-  *Stands on:* `@jarenjs/md` component options and stylesheet, the
-  `@jarenjs/core/message` catalogue. *Closes on:* the per-language render
-  check finding no Markdown label in any pack's residual, and the Markdown
-  stylesheet setting no physical side.
+  stylesheet. *Stands on:* Jaren's renderer now takes the labels
+  (`labels`, `labelsFromCatalog` and `mdMessagesEn` in `@jarenjs/md`) and its
+  locale packs carry them, so the labels are the assistant's to pass; the
+  stylesheet's physical sides remain Jaren's. *Closes on:* the per-language
+  render check finding no Markdown label in any pack's residual, and the
+  Markdown stylesheet setting no physical side.
 
 - [ ] **The desktop app and the Pages site in every language.** Tangle is used
   globally and must allow at least English, Dutch, German, French, Spanish,
@@ -393,6 +380,27 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   assistant's packs and its key-sentinel census. *Closes on:* a key-sentinel
   render of their pinned screens finding no literal outside a catalogue, and a
   render in each language finding no English beyond named owners.
+
+- [ ] **A host's own database, review inbox and document authoring (ShopOps's
+  later campaigns).** *Wanted:* the MAS store and the run log running on a
+  host-supplied `@jarenjs/db` Store and inside a host transaction, over a
+  published model fragment of Tangle's collections, with the run log in an
+  entry whose closure is small; a capability declaration (contract documents,
+  context reads, proposal kinds with review policy, a prompt pack), a proposal
+  envelope and a headless review inbox with a view-only, catalogued rendering
+  that also lists MAS interaction pauses; and a formula author (the `$formula`
+  grammar, profile, compile gate and repair loop) with revision-checked
+  propose/accept adapters for app, view, form and flow documents outside
+  Studio. *Constraint:* the inbox is the interaction inbox the staged-authoring
+  entry names and the review UI the outcomes entry leaves open — one surface,
+  not three; the store split must not fork the store's own conformance.
+  *Stands on:* `createRunLog`'s `RunLogStore`, `TANGLE_DB_MODEL`, the
+  assistant's view-only entry and catalogues, `createGrammarAuthor`.
+  *Closes on:* MAS and the run log running on a host-owned SQLite Store
+  without opening another; a host declaring two capabilities and rendering
+  their proposals and pauses in one inbox with no model client in the browser;
+  a generated formula compiling and evaluating against sample rows, and a
+  proposed app version refused on a stale revision.
 
 ## The loop that runs the workflows
 

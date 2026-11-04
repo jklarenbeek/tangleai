@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/models",
-  "version": "0.44.0",
+  "version": "0.45.0",
   "description": "Injected model clients, provider adapters, embeddings, replay, routing and structured generation.",
   "license": "MIT",
   "type": "module",
@@ -18,6 +18,8 @@
     "./routing": "./src/routing.ts",
     "./grammar": "./src/grammar.ts",
     "./replay": "./src/replay.ts",
+    "./replay-file": "./src/replay-file.ts",
+    "./testing": "./src/testing.ts",
     "./package.json": "./package.json"
   },
   "engines": {
@@ -25,8 +27,8 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.176.11",
-    "@jarenjs/validate": "0.176.11"
+    "@jarenjs/core": "0.179.0",
+    "@jarenjs/validate": "0.179.0"
   },
   "private": false,
   "files": [

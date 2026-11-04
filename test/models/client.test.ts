@@ -1,5 +1,6 @@
 import { describe, it } from 'node:test';
 import * as assert from 'node:assert';
+import { inspect } from 'node:util';
 
 import { createChatClient, createStreamAccumulator } from '@tangleai/models/client';
 import { AiError } from '@tangleai/models/errors';
@@ -239,6 +240,48 @@ describe('ai — the chat client', function () {
     await assert.rejects(client.complete({ messages: [{ role: 'user', content: 'q' }] }),
       (err) => err instanceof AiError && err.code === 'AI0003' && err.attempts === 3);
     assert.strictEqual(n, 3, 'a 200 that carried nothing is retried like a no-choices reply');
+  });
+
+  it('the client object carries no credential: its endpoint, its JSON and its inspection leave the key out', async function () {
+    let sent: any = null;
+    const client = createChatClient({
+      provider: 'openrouter', apiKey: 'sk-or-secret-value', model: 'm', headers: { 'x-title': 'fixture' },
+      fetch: async (_url: any, init: any) => {
+        sent = init;
+        return Response.json({ choices: [{ message: { content: 'ok' }, finish_reason: 'stop' }] });
+      },
+    });
+    assert.deepStrictEqual(client.endpoint, {
+      provider: 'openrouter', base: 'https://openrouter.ai/api/v1',
+      url: 'https://openrouter.ai/api/v1/chat/completions', model: 'm', hasKey: true, structured: 'json_schema',
+    });
+    for (const text of [JSON.stringify(client), inspect(client, { showHidden: true, depth: null })])
+      assert.ok(!text.includes('sk-or-secret-value'), text);
+    await client.complete({ messages: [{ role: 'user', content: 'x' }], stream: false });
+    assert.strictEqual(new Headers(sent.headers).get('authorization'), 'Bearer sk-or-secret-value');
+    assert.strictEqual(new Headers(sent.headers).get('x-title'), 'fixture');
+    assert.strictEqual(createChatClient({ provider: 'ollama', model: 'm' }).endpoint.hasKey, false);
+  });
+
+  it('the structured-output tier is the preset\'s unless the client states the model\'s own', function () {
+    assert.strictEqual(createChatClient({ provider: 'ollama', model: 'm' }).endpoint.structured, 'json');
+    assert.strictEqual(createChatClient({ provider: 'custom', baseUrl: 'https://x.test/v1', model: 'm' }).endpoint.structured, null);
+    assert.strictEqual(createChatClient({ provider: 'openrouter', model: 'm', structured: null }).endpoint.structured, null);
+    assert.strictEqual(createChatClient({ provider: 'custom', baseUrl: 'https://api.openai.com/v1', model: 'm', structured: 'json_schema' })
+      .endpoint.structured, 'json_schema');
+    assert.throws(() => createChatClient({ provider: 'openrouter', model: 'm', structured: 'xml' as any }),
+      (err) => err instanceof AiError && err.code === 'AI0001');
+  });
+
+  it('an error body that echoes the key does not carry it into the AI0002 message', async function () {
+    const client = createChatClient({
+      provider: 'openrouter', apiKey: 'sk-or-secret-value', model: 'm', retry: { attempts: 1 },
+      fetch: () => Promise.resolve(new Response(
+        `{"error":"key sk-or-secret-value is not valid","pad":"${'x'.repeat(240)}sk-or-secret-value"}`, { status: 401 })),
+    });
+    await assert.rejects(client.complete({ messages: [{ role: 'user', content: 'x' }] }),
+      (err) => err instanceof AiError && err.code === 'AI0002' && /key \[redacted\] is not valid/.test(err.message)
+        && !err.message.includes('sk-or'));
   });
 
   it('HTTP errors throw AI0002 with a body excerpt', async function () {
@@ -768,5 +811,44 @@ describe('ai — the stream accumulator', function () {
     const result = acc.result();
     assert.strictEqual(result.message.content, 'whole');
     assert.strictEqual(result.finishReason, 'stop');
+  });
+});
+
+describe('ai — the chat client\'s deadline and streamed usage', function () {
+  it('timeoutMs bounds each attempt as a retryable AI0002 with status 0, and the caller\'s abort stays the caller\'s', async function () {
+    let attempts = 0;
+    const hang = (_url: any, init: any) => { attempts++; return new Promise<Response>((_resolve, reject) => init.signal.addEventListener('abort', () => reject(init.signal.reason))); };
+    const client = createChatClient({ provider: 'openrouter', model: 'm', timeoutMs: 15, fetch: hang as any, retry: { attempts: 2, sleep: async () => { } } });
+    await assert.rejects(client.complete({ messages: [{ role: 'user', content: 'x' }] }),
+      (err) => err instanceof AiError && err.code === 'AI0002' && err.status === 0 && /within 15 ms/.test(err.message) && err.attempts === 2);
+    assert.strictEqual(attempts, 2, 'a timed-out attempt retries like a network failure');
+    const reason = new Error('stopped by the caller');
+    const controller = new AbortController();
+    const pending = createChatClient({ provider: 'openrouter', model: 'm', timeoutMs: 10_000, fetch: hang as any }).complete({ messages: [{ role: 'user', content: 'x' }], signal: controller.signal });
+    controller.abort(reason);
+    await assert.rejects(pending, (err) => err === reason);
+    assert.throws(() => createChatClient({ provider: 'openrouter', model: 'm', timeoutMs: 0 }), (err) => err instanceof AiError && err.code === 'AI0001');
+  });
+
+  it('requestUsage asks a stream for its usage without changing the replay key', async function () {
+    const bodies: any[] = [];
+    const usage = { prompt_tokens: 5, completion_tokens: 1, total_tokens: 6 };
+    const fetchImpl = async (_url: any, init: any) => {
+      const body = JSON.parse(init.body);
+      bodies.push(body);
+      if (body.stream === false) return Response.json({ choices: [{ message: { content: 'hi' }, finish_reason: 'stop' }], usage });
+      return new Response(sseBody([delta({ content: 'hi' }, 'stop'), ...(body.stream_options?.include_usage ? [{ choices: [], usage }] : [])]));
+    };
+    const plain = createChatClient({ provider: 'openrouter', model: 'm', fetch: fetchImpl as any });
+    const asking = createChatClient({ provider: 'openrouter', model: 'm', fetch: fetchImpl as any, requestUsage: true });
+    const messages = [{ role: 'user', content: 'x' }];
+    assert.strictEqual((await plain.complete({ messages })).usage, null);
+    assert.deepStrictEqual((await asking.complete({ messages })).usage, usage);
+    assert.deepStrictEqual((await plain.complete({ messages, requestUsage: true })).usage, usage, 'per request too');
+    assert.strictEqual(bodies[0].stream_options, undefined);
+    assert.deepStrictEqual(bodies[1].stream_options, { include_usage: true });
+    await asking.complete({ messages, stream: false });
+    assert.strictEqual(bodies[3].stream_options, undefined, 'only a stream is asked');
+    assert.strictEqual(asking.requestKey({ messages }), plain.requestKey({ messages }));
   });
 });

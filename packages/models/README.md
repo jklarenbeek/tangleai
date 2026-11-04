@@ -20,9 +20,11 @@ exports and emitted npm JavaScript share one implementation.
 - `@tangleai/models/routing`
 - `@tangleai/models/grammar`
 - `@tangleai/models/replay`
+- `@tangleai/models/replay-file`
+- `@tangleai/models/testing`
 - `@tangleai/models/package.json`
 
-See [ownership and verification](../../docs/JAREN_AI_MIGRATION.md) for source
+See [ownership and verification](https://github.com/jklarenbeek/tangleai/blob/main/docs/JAREN_AI_MIGRATION.md) for source
 provenance, installation mode, unchanged serialized identities and qualification.
 
 ## The client
@@ -45,11 +47,23 @@ const { message } = await client.complete({
 Base URLs are forgiving: `http://localhost:11434` becomes `http://localhost:11434/v1`, a
 pasted `…/chat/completions` suffix is stripped (in any case), and a query string or
 fragment is refused with `AI0001` rather than spliced into the middle of every endpoint.
+So is a scheme other than `http:` or `https:`, and so is a username or password in the URL
+(`fetch` refuses to send one; the key belongs in `apiKey`) — at construction, never as a
+retried network error, and no refusal quotes the credentials or the query.
 The resolved base is `endpoint.base`; `/chat/completions` and `/models` are both composed
 from it, never re-derived from one another. `fetch` is injectable
 (`createChatClient({ fetch: myFetch })`) so the client runs identically in the browser, in
 Node, and in tests against a scripted stub. Failures carry stable codes: `AI0001` (caller
-error), `AI0002` (HTTP error status), `AI0003` (malformed payload).
+error), `AI0002` (HTTP error status, or `status` 0 when no response arrived), `AI0003`
+(malformed payload), and the routed client's own `AI0004` (deadline), `AI0005` (token
+ceiling) and `AI0006` (account stop), each with a machine-readable `outcome`.
+
+**A client never shows its key.** `client.endpoint` is the credential-free identity
+`{ provider, base, url, model, hasKey }`; the key and every header stay inside the client,
+so logging, serializing or inspecting a client — or a routed client over it — never prints
+them. A provider error body that echoes the key has it replaced by `[redacted]` in the
+`AI0002` message. (`resolveEndpoint` still returns the headers, key included, to the caller
+that passed the key.)
 
 **Token limits are configurable.** `maxTokens` sets the client's default budget;
 `complete({ maxTokens })` overrides its amount for one call. The client option
@@ -57,6 +71,9 @@ error), `AI0002` (HTTP error status), `AI0003` (malformed payload).
 compatible providers, or `'max_completion_tokens'` for OpenAI Chat Completions.
 The client sends exactly one of these fields when a budget is set, and neither
 when it is unset. Selection is explicit, independent of the URL and model.
+Unset is not "no limit": a provider substitutes the model's whole context window,
+and OpenRouter, which reserves the worst case against a balance, then refuses the
+request with HTTP 402 naming the number it wanted. Send a budget.
 
 ```js
 import { createChatClient } from '@tangleai/models/client';
@@ -68,6 +85,7 @@ const client = createChatClient({
   model: process.env.OPENAI_MODEL,
   maxTokens: 3000,
   maxTokensField: 'max_completion_tokens',
+  structured: 'json_schema',                // OpenAI's models speak constrained decoding
 });
 const reply = await client.complete({
   messages: [{ role: 'user', content: 'Say hi.' }],
@@ -79,7 +97,13 @@ OpenAI's `max_completion_tokens` bounds visible output **and reasoning tokens**;
 3,000 is their combined budget, not a promise of 3,000 visible tokens. OpenAI
 documents `max_tokens` as deprecated and incompatible with o-series models.
 Both parameters belong to Chat Completions; the Responses API is a different
-endpoint. No OpenAI SDK is needed for this client. Other options still depend on
+endpoint. No OpenAI SDK is needed for this client. `custom` assumes nothing about
+structured output (`structured: null`, the schema travels in the prompt); a client
+that knows its model's tier states it with `structured: 'json_schema' | 'json' | null`,
+which `client.endpoint.structured` reports and `createStructuredOutput` uses — the
+tier belongs to the model, and one aggregator serves models of every kind (through
+OpenRouter, Anthropic's models refuse a schema with `oneOf`, so they take `null`).
+Other options still depend on
 the selected model: `temperature` is omitted unless supplied, and `reasoning`
 is a provider-specific passthrough, not a translation to OpenAI's
 `reasoning_effort`. See the [OpenAI Chat Completions reference](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create).
@@ -93,6 +117,13 @@ never retries once `onDelta` or `onReasoning` has received output, and an abort 
 backoff immediately, preserving the signal's exact cancellation reason. The final
 transport `AI0002` reports `status`, `attempts`, and `retryAfterMs`; an exhausted
 malformed reply reports `AI0003` with `attempts`.
+
+**Deadlines and streamed usage.** `timeoutMs` bounds each attempt, the streamed body
+included: a timed-out attempt is `AI0002` with `status` 0 and retries like a network
+failure. There is no default. An OpenAI-compatible stream reports usage only when asked:
+`requestUsage: true` (per client, or per request) sends
+`stream_options: { include_usage: true }`. It is off by default, because a server that
+does not know the member may refuse it, and it never enters the replay key.
 
 **Reasoning models are first-class.** Thinking streamed as `delta.reasoning` (or
 `reasoning_details`) reaches the caller through `onReasoning`, and the final message
@@ -154,6 +185,30 @@ replay.replayed;                                           // { ms: <the purchas
 provider's `/models` listing with exactly the auth a chat call would use and never throws:
 `{ ok: true, models }` or `{ ok: false, status?, error }` — the contract a settings UI
 wants for a "Test connection" button and a model picker.
+
+## Routing
+
+`createRoutedClient({ client, selectModel?, limits?, onRoute?, account? }, { purpose,
+grammar?, depth? })` wraps a chat client for model-only calls (a tool-bearing request is
+refused). `selectModel(context)` answers a route `{ client, identity }` or ordered
+fallbacks; without it the wrapped client is the one route. `limits` bound each route:
+`deadlineMs` its wall time, `outputTokens` the reply's completion tokens (also sent as the
+request's `maxTokens`) and `reasoningTokens` its reasoning. A deadline is `AI0004`
+(`outcome: 'timeout'`, `deadlineMs`), a reply over a ceiling `AI0005` (`'token-limit'`,
+with its `usage` and `limit` — it was bought), an account stop `AI0006` (`'budget'`); a
+timed-out or over-ceiling route falls through to the next, and a caller's own abort rejects
+with the caller's reason. `onRoute` receives one `ModelRouteEvent` per route tried —
+identity, fallback index, outcome, ms, usage, finish reason, schema bytes, error code — and
+`account` is the host's shared budget (`ModelAccount`: `stop()` answers a reason or nothing,
+`remaining()` may cap the deadline, `reserve()` runs before a route and
+`settle(usage, text)` after it). The purpose is any name but `embedding`;
+`MODEL_PURPOSES` lists Tangle's own. A route's deadline bounds one call; to bound a whole
+structured generation, repairs included, use its `deadlineMs`.
+
+`createGrammarAuthor({ client, grammar, profile, schema, refs?, compile, gate?,
+maxRepairs?, … })` authors one of the closed Jaren grammars (`query`, `jslt`, `app`, `fsm`,
+`dag`, `statechart`, `workflow`, `model`) through a routed `author` client: the LLM profile
+constrains decoding, and the full grammar and the injected compiler gate every reply.
 
 
 ## Embeddings
@@ -252,11 +307,17 @@ fetch; temporal preparation does not discover credentials. See the
 import { createStructuredOutput } from '@tangleai/models/structured';
 import schema from '@jarenjs/json/schemas/jaren-query.llm-profile.schema.json' with { type: 'json' };
 
-const out = createStructuredOutput({ client, schema, name: 'jaren_query' });
+const out = createStructuredOutput({ client, schema, name: 'jaren_query', strict: false });
 const result = await out.generate([{ role: 'user', content: 'books over €10' }]);
-if ('value' in result) compileJsonQuery(result.value);   // validated, ready to compile
-else console.log(result.errors);                          // instancePath'd, model-readable
+if (result.ok) compileJsonQuery(result.value);            // validated, ready to compile
+else console.log(result.errors);                          // { stage, code, path, message }
 ```
+
+`strict` (default `true`) asks a `json_schema` provider for OpenAI's strict mode, whose
+subset every object closes with `additionalProperties: false` and lists every property as
+required. The Jaren LLM profiles stay outside it (open objects, optional members,
+`minProperties`), so pass `strict: false` for them, as `createGrammarAuthor` does; strict is
+safe for a schema written to that subset.
 
 One call, every provider tier: where the provider speaks
 `response_format: json_schema` the schema constrains decoding; where it only has JSON
@@ -266,3 +327,73 @@ parsed (accidental code fences stripped) and **validated locally** by `@jarenjs/
 the model with the instancePath'd errors for a bounded number of repairs (`maxRepairs`,
 default 1). The query/JSLT grammars ship LLM-profile twins built for exactly this
 (see `@jarenjs/json`'s README).
+
+**The result.** `generate` answers `{ ok: true, value, … }` or `{ ok: false, errors, … }`,
+both with `raw` (the last reply), `attempts`, `finishReason`, `usage` (summed over the
+attempts that reported it) and `calls` (each attempt's outcome, finish reason and usage).
+Every error is one record at every stage: `stage` (`parse`, `schema`, `gate` or
+`truncated`), `code` (always present — `parse`, `truncated`, the validator's keyword or the
+gate's code), `path` (always present, `''` for the whole value) and `message`, beside the
+`instancePath`, `keyword` and `docPath` the repair prompt carries unchanged. `onAttempt`
+receives the same records with each attempt's finish reason and usage.
+
+**Truncation is reported, not repaired.** A reply cut off at the token limit
+(`finishReason: 'length'`), or one that carries reasoning and no content, stops the loop as
+`truncated` — a repair would go out with the same budget and a longer context, and be cut
+off again. Raise the output budget instead.
+
+**Gates and their data.** `gate` adds checks after the schema; `checkCompile(compile, {
+fallbackCode })` from `@jarenjs/core/check` turns any throwing compile into one. A passing
+gate may answer `{ valid: true, data }`, and what it computed comes back as `gateData`.
+
+**What reaches the provider.** `refs` resolve `$ref`s for local validation only; the
+provider receives `schema` as given. `bundle: true` sends `bundleSchema(schema, refs)`
+instead — one self-contained document whose every reference points into its own `$defs` —
+and `bundleSchema` is exported for a host that builds its own requests. `tier` overrides the
+client's structured-output tier for one generator.
+
+**Bounds and parsing.** `deadlineMs` (per generator, or per `generate` call) bounds a whole
+generation, repairs included, even over a client that ignores signals: past it, `generate`
+rejects with `AI0004`. `parse: 'lenient'` reads the first JSON object or array inside a reply
+that wraps it in prose; the default accepts only JSON, a fence around it allowed.
+
+## Testing without a network
+
+`createScriptedFetch(script, { mode? })` from `@tangleai/models/testing` is a `fetch` for
+keyless tests: each request takes the next step — a reply's text; a reply object
+(`content`, `finishReason`, `usage`, `toolCalls`, `reasoning`, `model`); an HTTP answer
+`{ status, body?, headers? }`; an `Error`, rejected like a network failure; or `'hang'`,
+which never answers and rejects with the signal's reason on abort. A reply is answered as
+the request asked, a stream or one document (`mode` forces either), and every request is
+kept in `calls` with its parsed body.
+
+```js
+import { createScriptedFetch } from '@tangleai/models/testing';
+
+const { fetch, calls } = createScriptedFetch([
+  '{"$eq":["$.group","@kruiden"]}',                 // a reply
+  { content: '{"a":', finishReason: 'length' },     // a truncated reply
+  { status: 429 },                                  // an HTTP failure
+  new TypeError('network'),                         // a network failure
+  'hang',                                           // never answers; honours abort
+]);
+const client = createChatClient({ provider: 'openrouter', model: 'm', fetch });
+```
+
+## A replay directory
+
+`createFileReplayCache({ dir, files, mode? })` from `@tangleai/models/replay-file` is the
+`cache` seam over a directory: one JSON file per reply, named by the SHA-256 of the key with
+the key kept inside (a file whose key differs is a miss), written whole and then renamed.
+`files` is the injected file system — `node:fs/promises` has every member it needs.
+`mode: 'record'` (default) answers what it holds and remembers what is bought, `'fresh'`
+answers nothing and still remembers, and `'replay'` fails a request it does not hold with
+`AI0001` and never writes: commit the directory, and an offline evaluation cannot buy.
+
+```js
+import * as files from 'node:fs/promises';
+import { createFileReplayCache } from '@tangleai/models/replay-file';
+
+const cache = createFileReplayCache({ dir: 'test/recordings', files, mode: 'replay' });
+const client = createChatClient({ provider: 'openrouter', model: 'm', cache });
+```

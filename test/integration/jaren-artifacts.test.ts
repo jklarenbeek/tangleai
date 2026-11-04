@@ -98,3 +98,12 @@ test('a wrong gitlink or checked-out source pin is refused even when archives ex
   git(source,'-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','--quiet','-m','Wrong source');
   assert.throws(() => verifyPin(root,manifest), /pin/i);
 }));
+
+test('the bootstrap runs npm through the npm that launched it, never a shell, so Windows can run it', () => {
+  const cli = '/opt/npm/lib/node_modules/npm/bin/npm-cli.js';
+  assert.deepEqual(foundations.npmInvocation({ npm_execpath: cli }, 'win32', 'C:\\node\\node.exe'), { file: 'C:\\node\\node.exe', prefix: [cli] });
+  assert.deepEqual(foundations.npmInvocation({ npm_execpath: 'C:\\npm\\bin\\npm-cli.js' }, 'win32', 'node.exe'), { file: 'node.exe', prefix: ['C:\\npm\\bin\\npm-cli.js'] });
+  assert.deepEqual(foundations.npmInvocation({}, 'linux', '/usr/bin/node'), { file: 'npm', prefix: [] });
+  assert.deepEqual(foundations.npmInvocation({ npm_execpath: '/usr/lib/node_modules/pnpm/bin/pnpm.cjs' }, 'linux'), { file: 'npm', prefix: [] }, 'another package manager is not npm');
+  assert.throws(() => foundations.npmInvocation({}, 'win32'), /run this through npm/);
+});

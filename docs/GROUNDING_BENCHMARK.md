@@ -86,7 +86,16 @@ Product decision recorded on this attempt: **adopt-claim-citations** — every r
 
 ## The optional web diagnostic — dated, separate from the flat gate, never an input to the product decision
 
-**Not run** — no SearxNG endpoint was configured (--searx <base>). The stated absence is the record; the flat baseline above is unaffected.
+- report `5033a17586bbfaac2df8540846efd9c3d48d0728c337bb96a5442da78d13b07e` · registration `7cf0c7f5d6e30cef90aadc1a3f520916230dc634117e31e179a05ca4fa12f9ed` · paid attempt, 2026-11-04T14:50:23.302Z
+- linked flat baseline: report `c797a85141543cf3d5c04563d533e12170bc1b01960c3966060239dc971f2727`
+- captures: 23 recorded, 0 replayed, 0 replay misses; only manifests and byte hashes leave the gitignored cache
+
+| row | answered | answer F1 | cite resolve | sources/chunks | prompt chars | calls | tokens | p50/p95 ms |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| curated-rfc | 6/6 | 0.305 | 1.000 | 1/319 | 66325 | 6 | 26721 | 1352/2076 |
+| searx-discovered | 6/6 | 0.209 | 1.000 | 14/768 | 154643 | 6 | 58867 | 2391/3506 |
+
+Search snippets are discovery output and appear in no evidence block; no oracle exists on the open web, so a resolvable citation is at most `resolved-not-supporting` here and the material-claim score deliberately does not exist.
 
 ## Reproduction
 

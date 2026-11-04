@@ -17,7 +17,9 @@ export function synchronizeVersions(root: string, version: string) {
     pkg.version = version;
     for (const section of SECTIONS) {
       for (const name of Object.keys(pkg[section] ?? {})) {
-        if (names.includes(name)) pkg[section]![name] = pkg.private ? version : `^${version}`;
+        // one release group, one version: a consumer installing two Tangle
+        // packages can never resolve them to different releases
+        if (names.includes(name)) pkg[section]![name] = version;
       }
     }
     writeJson(file, pkg);
@@ -71,7 +73,7 @@ export async function prepare(root = ROOT, options: { initial?: boolean; refresh
     console.log(`${record.version} is already prepared; no second bump.`);
     return;
   }
-  assert.ok(plan.changesets.length > 0, 'Record release intent with npm run changeset before preparing');
+  assert.ok(plan.changesets.length > 0, 'Record release intent in a .changeset/<name>.md file before preparing');
   assert.ok(!plan.changesets.some(c => c.releases.some(r => r.type === 'major')), 'Major releases are disabled. During 0.x, record breaking development changes as minor with migration notes.');
   let version = plan.releases[0]?.newVersion;
   assert.ok(version, 'No public package release was selected');

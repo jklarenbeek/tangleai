@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "a292d57391be677cac8199618e8c0c88beb983b6",
+    "head": "7b3b83186817ed4ee679e377eb418f4cfabd9c96",
     "clean": false,
     "files": [
       {
@@ -25,7 +25,7 @@
       },
       {
         "path": "apps/desktop/src/settings.ts",
-        "sha256": "8cab02b6ca8e8ff481ef4a3a57c92c7376f8d4b7eb792b7b9838a0814569f6f8"
+        "sha256": "e6a2ba17597177d1c9e5ec3dd5af474f71431319d8e7427d56b73c52895ec664"
       },
       {
         "path": "benchmark/config-conformance.ts",
@@ -120,113 +120,113 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "e636b79b0a1d964934bdd7324bb2f5440dd0ada09b84b00619788171e883bca0"
+    "sha256": "63f1a8bda1dfba0398cfceb310737d65d4bd62e04cf2ff306ff047554ef7cd37"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.176.11"
+        "version": "0.179.0"
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.44.0"
+        "version": "0.45.0"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.44.0"
+        "version": "0.45.0"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.44.0"
+        "version": "0.45.0"
       }
     ]
   },
@@ -344,7 +344,7 @@
     ],
     "desktopContract": {
       "operations": 53,
-      "revision": "a6fb4e6364382e1184c793bef4b9d56cd8bc61a19fe8d194804f6266096a9ee8"
+      "revision": "56bcfcd3071fa8d2c022c24ebfc788b68b8b30046149ebe9bda6f5733e045c67"
     },
     "summary": {
       "hostInputs": 2,
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "e2eab832da74496418154d79f779668d5231e23aad050fde1fe82324b60f6b07"
+  "reportId": "e5b4bfb4c5e72166f5ba552f80c0531592eb315c51356c287a18ba6f98ef67ae"
 }

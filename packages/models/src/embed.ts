@@ -103,6 +103,7 @@ export function createEmbeddingClient(options: EmbeddingClientOptions = {}): Omi
   provider: string;
 } {
   const endpoint = resolveEndpoint(options);
+  const secret = (options.apiKey ?? '').trim();
   const model = endpoint.model;
   if (typeof model !== 'string' || model === '')
     throw new AiError('AI0001', 'createEmbeddingClient needs a model — it is half of every vector\'s identity');
@@ -144,7 +145,7 @@ export function createEmbeddingClient(options: EmbeddingClientOptions = {}): Omi
         body: JSON.stringify({ model, input: texts }),
         signal: requestSignal,
       });
-      if (response.ok !== true) throw await httpFailure(response, url);
+      if (response.ok !== true) throw await httpFailure(response, url, secret);
       text = await response.text();
     }
     catch (err: any) {
