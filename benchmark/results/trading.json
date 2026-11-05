@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "7b3b83186817ed4ee679e377eb418f4cfabd9c96",
+    "head": "263fc37707bd57931a075d1ad773143e72c2c1e2",
     "clean": false,
     "files": [
       {
@@ -211,15 +211,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "bf7a54e4aa16529c07198c75fe0425c06c8d8633b9a83bc537429c0c62ac6d41"
+        "sha256": "f4bc9611e9c0e471d215a6192333884565a625f342f2f28d0d47d1f969a1b7b7"
       },
       {
         "path": "package.json",
-        "sha256": "b7e2537527cbfa3773086e281c5d690674baa5336cb55c2e41a8958646b10075"
+        "sha256": "1963dee722f7336d725ec1c37c362970fca363860e66c0101daefe08f1bb25ec"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "b5040db1806906ffb269cda248a704ec6df0c4015e66bb0a3a546a6a545fcea7"
+        "sha256": "1333f2f90ee9a7fbbf448ae6be8155064ad5e19150882e82f412c4431e34f83d"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -263,7 +263,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "af99e9b733d2bdb9d417c455da69fbc18c0951e050eea1096d6aeb6e08cbe72a"
+        "sha256": "1b07a88ca45dcc9bbfc3e9b5e19629b9bbc0e600e14f2a76f0d7b16e33a728bf"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -299,7 +299,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "42086a036875b0293edb46fd40e4472f9cd6a77d1204c8f62c33f64de2fb3c24"
+        "sha256": "41ab4e05e5831bf20881b8bd61703ef9f0b1d8c1deb9759505e481a41c35b9f0"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -355,7 +355,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "53edb30bbfbce7f00496c3bfa83fc8ab2f3a59f66da088aaf96e9cba60be8274"
+        "sha256": "327320ac093eda3c86f1670be1fb03a31191846df3556de3b3d8d54f3cc4fbf0"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -435,7 +435,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "6f508e43d8e8308d0626f9b3b76518f1a18df4e921b40508b2eb266b2ff8ac13"
+        "sha256": "077773d933f9f06b0fb3c9279f2c034e58a9cf8b6b71c8cd03b2567af7bb1e3b"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -551,7 +551,7 @@
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "e549b6851a3ee7e86732d7dfa9e2be20e348eb3aed67049d2091268cd313fc58"
+        "sha256": "2396a2e680d595c80ba86e0250901b3a7f551887b35e80cbeaba5cc98bd61a65"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -679,7 +679,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "1124d130711284478998339b41f859ab5e0efafbe583c0aeb1b8cf4a92cd512a"
+        "sha256": "a7e7023580f31fde1950fd8f7d0d0c413ff9ba2025cbf184555c891499e1b434"
       },
       {
         "path": "packages/models/src/bundle.ts",
@@ -747,7 +747,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "4b9ea9c1798c2c561fdf911a37666c659c3df2f556ee64edfadce53e74d67f62"
+        "sha256": "9c4ffe7593f31cc821231a48a13c45e5fbbad96f8221a78a42ccca27b303037f"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -835,7 +835,7 @@
       },
       {
         "path": "packages/store/src/grounding-clarification.ts",
-        "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
+        "sha256": "211309bea7329e48701237eb7301a3b34ee6cecbc71bd502528634b67ddca22d"
       },
       {
         "path": "packages/store/src/grounding-host.ts",
@@ -879,11 +879,11 @@
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
-        "sha256": "63f72606024de256c7bf042d0e3410a2bbbdeceafa3f198d7122dec05d02232f"
+        "sha256": "7f72c5ec36248db46135cc99c31d3d3af69976bea97c91e011e738328ea0e5e1"
       },
       {
         "path": "packages/store/src/mas-segment-driver.ts",
-        "sha256": "a78b777c6f1df7bbe6ed28bb693a4660eede67ea884da3e915488c114c998f30"
+        "sha256": "3329ffa129a3531cdbab969be8b8695a7a0f86070632ea1ada050f6ca4e59f93"
       },
       {
         "path": "packages/store/src/mas-store.ts",
@@ -955,7 +955,7 @@
       },
       {
         "path": "packages/trading/package.json",
-        "sha256": "feb2093c3b35e5039678d4ac9da24359d7312a26547002bfc61d0d97e06bf278"
+        "sha256": "661f4cc41c2e276f75970d8251528080a5ea428410a13e9cc8909445ba4545cf"
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
@@ -1286,11 +1286,11 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "717872e4f1bf8c7e65c725a0cfd7cdd581380968c21b01e0a78c9e3b17447a01"
+    "sha256": "c83d0bd1afb6a60ac02e683ef05419f2414d429ab2913966dadcdb6566defdd8"
   },
   "suite": {
-    "tangle": "0.45.0",
-    "jaren": "0.179.0"
+    "tangle": "0.45.1",
+    "jaren": "0.183.1"
   },
   "fixture": {
     "id": "trading-synthetic-v1",
@@ -26087,5 +26087,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "4fbbc096ee48be569eb7f7e5f57607652d97d10374bd7b55e095dc16941a9b71"
+  "reportId": "572ecb26417520409f67a3ca8b78211b510c07db16ae4f0c44ba344505d9cba8"
 }

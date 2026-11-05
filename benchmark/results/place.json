@@ -19756,7 +19756,7 @@
     "decision": "sweep",
     "targetMet": true,
     "targetP95Ms": 50,
-    "receiptSha256": "89848d473f91a0c0c44b2390bd859038934be56d09df845d5b4d13d781ce3694",
+    "receiptSha256": "f76eff54072c8148d613cd6aecf68cafde1b6ce63cad19f4a0402798bac09fa5",
     "measured": {
       "sweep": [
         "node",
@@ -19850,7 +19850,7 @@
     ]
   },
   "source": {
-    "head": "7b3b83186817ed4ee679e377eb418f4cfabd9c96",
+    "head": "263fc37707bd57931a075d1ad773143e72c2c1e2",
     "clean": false,
     "files": [
       {
@@ -19935,7 +19935,7 @@
       },
       {
         "path": "benchmark/lib/place-scale-receipt.ts",
-        "sha256": "0a8ed5e2ee53b77110b082e757012ceaea436d567f296f21fc158eac4967b97f"
+        "sha256": "3a17ea8f55deb2c51419d13c9c561326a4ff4adb263d891897fd2dba8303bd5c"
       },
       {
         "path": "benchmark/lib/place-scale.ts",
@@ -19966,8 +19966,8 @@
         "sha256": "c19dde3be171b9195456241e7a2db88ffade0322cc3f67dbf0ac372cd40c96e7"
       },
       {
-        "path": "benchmark/receipts/place-scale-2026-11-04.json",
-        "sha256": "223300c94bccef4fc9e1be26dca7a4c343c35e3b474dc3776391c9db4e59282e"
+        "path": "benchmark/receipts/place-scale-2026-11-05.json",
+        "sha256": "0e401790bb0726d26ef31cd4b4ee3fba59cee3885c6969814f04d31b9bc41569"
       },
       {
         "path": "benchmark/schemas/place.schema.json",
@@ -19979,15 +19979,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "bf7a54e4aa16529c07198c75fe0425c06c8d8633b9a83bc537429c0c62ac6d41"
+        "sha256": "f4bc9611e9c0e471d215a6192333884565a625f342f2f28d0d47d1f969a1b7b7"
       },
       {
         "path": "package.json",
-        "sha256": "b7e2537527cbfa3773086e281c5d690674baa5336cb55c2e41a8958646b10075"
+        "sha256": "1963dee722f7336d725ec1c37c362970fca363860e66c0101daefe08f1bb25ec"
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "53edb30bbfbce7f00496c3bfa83fc8ab2f3a59f66da088aaf96e9cba60be8274"
+        "sha256": "327320ac093eda3c86f1670be1fb03a31191846df3556de3b3d8d54f3cc4fbf0"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -20063,7 +20063,7 @@
       },
       {
         "path": "packages/jaren/package.json",
-        "sha256": "e8034ed82a832c60fe468510073b1b584508104b1bf1246475542b9d36e59946"
+        "sha256": "6fbdabcc540984e48c7bd119bfad34c523ae0a558e6358aeab5cd1d11ddb2321"
       },
       {
         "path": "packages/jaren/src/data.ts",
@@ -20099,7 +20099,7 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "394b88c004d8e17d2854f292776092f7a66f174553eca53049062d7f87ef097e"
+        "sha256": "34095c4cc540d8289d41223e44a3969a708ff65b505664c41f7592e45a933ac2"
       },
       {
         "path": "packages/memory/schemas/policy.contract.json",
@@ -20319,7 +20319,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "1124d130711284478998339b41f859ab5e0efafbe583c0aeb1b8cf4a92cd512a"
+        "sha256": "a7e7023580f31fde1950fd8f7d0d0c413ff9ba2025cbf184555c891499e1b434"
       },
       {
         "path": "packages/models/src/bundle.ts",
@@ -20387,7 +20387,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "4b9ea9c1798c2c561fdf911a37666c659c3df2f556ee64edfadce53e74d67f62"
+        "sha256": "9c4ffe7593f31cc821231a48a13c45e5fbbad96f8221a78a42ccca27b303037f"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -20475,7 +20475,7 @@
       },
       {
         "path": "packages/store/src/grounding-clarification.ts",
-        "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
+        "sha256": "211309bea7329e48701237eb7301a3b34ee6cecbc71bd502528634b67ddca22d"
       },
       {
         "path": "packages/store/src/grounding-host.ts",
@@ -20519,11 +20519,11 @@
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
-        "sha256": "63f72606024de256c7bf042d0e3410a2bbbdeceafa3f198d7122dec05d02232f"
+        "sha256": "7f72c5ec36248db46135cc99c31d3d3af69976bea97c91e011e738328ea0e5e1"
       },
       {
         "path": "packages/store/src/mas-segment-driver.ts",
-        "sha256": "a78b777c6f1df7bbe6ed28bb693a4660eede67ea884da3e915488c114c998f30"
+        "sha256": "3329ffa129a3531cdbab969be8b8695a7a0f86070632ea1ada050f6ca4e59f93"
       },
       {
         "path": "packages/store/src/mas-store.ts",
@@ -20594,9 +20594,9 @@
         "sha256": "f391ac3537f46ab2f62fde45660b6458586e5f0e46f2fa283c8bac6e8f561edf"
       }
     ],
-    "sha256": "95bc7a19be29456285a396cd8f4fc07ebf90a9fc7e5079529c4080f21002a2b6"
+    "sha256": "c44ea5d0fc07c1a44b0a7eb237cfab86ba4ee61484c6b99e80125a3ad2fcd890"
   },
   "liveRequests": 0,
   "default": "off",
-  "sha256": "e71ddf6683d056292e5d3ed8a69af4e83f149a347fce1b6400438a602ace9c64"
+  "sha256": "9f605df2eb3202634df3f1b89088230399a675ef9167a454d339f433f1b769c3"
 }

@@ -134,15 +134,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "bf7a54e4aa16529c07198c75fe0425c06c8d8633b9a83bc537429c0c62ac6d41"
+        "sha256": "f4bc9611e9c0e471d215a6192333884565a625f342f2f28d0d47d1f969a1b7b7"
       },
       {
         "path": "package.json",
-        "sha256": "b7e2537527cbfa3773086e281c5d690674baa5336cb55c2e41a8958646b10075"
+        "sha256": "1963dee722f7336d725ec1c37c362970fca363860e66c0101daefe08f1bb25ec"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "b5040db1806906ffb269cda248a704ec6df0c4015e66bb0a3a546a6a545fcea7"
+        "sha256": "1333f2f90ee9a7fbbf448ae6be8155064ad5e19150882e82f412c4431e34f83d"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -186,7 +186,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "42086a036875b0293edb46fd40e4472f9cd6a77d1204c8f62c33f64de2fb3c24"
+        "sha256": "41ab4e05e5831bf20881b8bd61703ef9f0b1d8c1deb9759505e481a41c35b9f0"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -242,7 +242,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "53edb30bbfbce7f00496c3bfa83fc8ab2f3a59f66da088aaf96e9cba60be8274"
+        "sha256": "327320ac093eda3c86f1670be1fb03a31191846df3556de3b3d8d54f3cc4fbf0"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -318,7 +318,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "f7ab17a848e3bf34133b487da630b128bf76bad08deb22a6aa91c012fa41c61c"
+        "sha256": "8f6ede3ce66fe220f5a0c5c63ab59e870c269b0f7d857acfb7fa67145e725216"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -374,7 +374,7 @@
       },
       {
         "path": "packages/lightrag/package.json",
-        "sha256": "7e5990e391afc9ccdd89b9e1a595401e14a48cdecfb5a03063b48a0cf2fe8a5e"
+        "sha256": "dfbed1dbc0af1be8d6f534540491aee9e5bb4cfa90fe6f3684eebc70afdd253c"
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
@@ -506,7 +506,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "1124d130711284478998339b41f859ab5e0efafbe583c0aeb1b8cf4a92cd512a"
+        "sha256": "a7e7023580f31fde1950fd8f7d0d0c413ff9ba2025cbf184555c891499e1b434"
       },
       {
         "path": "packages/models/src/bundle.ts",
@@ -574,7 +574,7 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "40ff3ff2cae0b66b3716e2d7ac064290c45e7d67c52acba700bdd717d154dbab"
+        "sha256": "f6b8fc2674115bc64273afca0ce400f45d22938d7c381fd520d7d5d8174d67c7"
       },
       {
         "path": "packages/outcomes/schemas/direction-delta.schema.json",
@@ -706,7 +706,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "4b9ea9c1798c2c561fdf911a37666c659c3df2f556ee64edfadce53e74d67f62"
+        "sha256": "9c4ffe7593f31cc821231a48a13c45e5fbbad96f8221a78a42ccca27b303037f"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -794,7 +794,7 @@
       },
       {
         "path": "packages/store/src/grounding-clarification.ts",
-        "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
+        "sha256": "211309bea7329e48701237eb7301a3b34ee6cecbc71bd502528634b67ddca22d"
       },
       {
         "path": "packages/store/src/grounding-host.ts",
@@ -838,11 +838,11 @@
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
-        "sha256": "63f72606024de256c7bf042d0e3410a2bbbdeceafa3f198d7122dec05d02232f"
+        "sha256": "7f72c5ec36248db46135cc99c31d3d3af69976bea97c91e011e738328ea0e5e1"
       },
       {
         "path": "packages/store/src/mas-segment-driver.ts",
-        "sha256": "a78b777c6f1df7bbe6ed28bb693a4660eede67ea884da3e915488c114c998f30"
+        "sha256": "3329ffa129a3531cdbab969be8b8695a7a0f86070632ea1ada050f6ca4e59f93"
       },
       {
         "path": "packages/store/src/mas-store.ts",
@@ -909,7 +909,7 @@
         "sha256": "18a4d4b871a813d91db94ecfc7db308ab5588ae89af5a3786f36469d778da94a"
       }
     ],
-    "sha256": "6dc3c015cc07990231e33b7db1e4f3cd74fa434d8a5f57e63f73a3b986dab94c"
+    "sha256": "9fcaf653bd47e80b47808a6f7154ce28f33ead09a579bf4966226bd96c053466"
   },
   "controls": {
     "golden": {
@@ -3010,5 +3010,5 @@
   ],
   "physicalRequests": 0,
   "nativeQualification": "parity-passed",
-  "reportId": "f30dd88490ca7659d9822e0cc414f407f179b0753104ef6cab6d91d41c74a619"
+  "reportId": "7b93feb37591698f2204d227c75af7c37b4dd3fa16e2744c235a9ab42a63939b"
 }

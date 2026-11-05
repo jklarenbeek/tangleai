@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.45.1",
+  "baseVersion": "0.45.0",
+  "baseCommit": "263fc37707bd57931a075d1ad773143e72c2c1e2",
+  "preparationCommit": "263fc37707bd57931a075d1ad773143e72c2c1e2",
+  "initial": false,
+  "inputHash": "575e9efcc5900edf698fafa762d8b62fd4b9b907303421ee26ba8dfac944ba97",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Move every package onto the Jaren 0.183.1 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its job worker refuses `start()` until its `stop()` has resolved, and a settling call is idempotent only over its own attempt's row in the state it writes: a completion behind the attempt's own cancellation is reported cancelled, and a failure behind the attempt's own completion is refused. A MAS segment completes its job in the transaction that records its outcome, so a host error raised after that commit would have reached the host as Jaren's `JD2065` refusal; `createMasSegmentDriver` and `createGroundingClarificationHost` now read the job store's fence refusals as Jaren's worker does, as a lost settlement, and still rethrow the host's own error, leaving the completed job and run as they are. The grounding host already creates a fresh worker for every segment and awaits its stop. Jaren refuses a captured expression that reads a method's own function members, a misspelt run store page option and a `sql.call` option named like the call's own name or arguments, where each answered wrong before; Tangle passes none of them. Its play option switches bring the source their new choice runs, its Mermaid pie draws `showData`, and a column upgrade's default link is named past the ids the migration history holds. No Tangle interface changes.\n\nTooling: the Jaren bootstrap reconstructs the recorded tarballs on Windows. npm there packs a declared bin without the executable bit git records, because NTFS has none to keep; the bootstrap restores the bit on the files git records as executable and rewrites only an archive whose header changed, so a Linux pack keeps npm's bytes and the recorded SHA-256 still decides. It reads the tarballs in Node instead of running `tar`, so cmd.exe, PowerShell and Git Bash reconstruct the same bytes. The README notes `core.longpaths` for a deep clone path on Windows, and the integration documents name the current foundation.",
+      "id": "jaren-foundation"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.45.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.45.1"
+    }
+  ]
+}

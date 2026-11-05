@@ -248,10 +248,10 @@ export async function driveExperiment(
       const run = await masStore.getRun(RUN_ID);
       const terminal = run?.status === 'completed' || run?.status === 'failed';
       // Both of these die with the semantic work already committed and
-      // only the job left to close — the cheapest crash there is, and the
-      // one a resumed run must not pay for twice.
+      // the job closed in the same transaction — the cheapest crash there
+      // is, and the one a resumed run must not pay for twice.
       if (terminal && fires('after-terminal')) throw new Error('crash after the terminal commit');
-      if (fires('after-segment')) throw new Error('crash after the segment settled, before its job closed');
+      if (fires('after-segment')) throw new Error('crash after the segment settled');
     },
     owner: 'durable-run',
   });
@@ -324,7 +324,13 @@ export async function driveExperiment(
         }
         catch (error) {
           failures += 1;
-          await jobs.fail(job.lease, error);
+          // A crash after the segment completed in its own transaction:
+          // the job is already settled by this attempt, and the store's
+          // fence says so (JD2065) — a lost settlement, as the suite
+          // worker records it, never a second failure.
+          await jobs.fail(job.lease, error).catch((refusal: { code?: unknown }) => {
+            if (!['JD2065', 'JD2066', 'JD2067'].includes(String(refusal?.code))) throw refusal;
+          });
           // Past every backoff, deterministically. Nothing sleeps.
           fixture.clock.value += 300_000;
         }

@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.176.11**, tag `v0.176.11`, source commit
-`080ec4a1944ffb47404d6413784d78d225c66bac`. Upstream `main` and the tag agreed
-when checked on 2026-11-03; npm still served 0.91.4. Runtime imports therefore
+Tangle consumes **Jaren 0.183.1**, tag `v0.183.1`, source commit
+`57c391225865f006f1baa4cb721505f39a5cbab6`. Upstream `main` and the tag agreed
+when checked on 2026-11-05; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.176.11` pin. A clean reconstruction from the pinned
+reference is an exact `0.183.1` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,25 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.176.11 to 0.183.1 and current adoption
+
+39 upstream commits cover this update, ten releases. No consumed package added
+or removed an export subpath, and every dependency edge stays inside the
+23-package closure. The update needs one Tangle source change, in how the
+native segment driver and the grounding clarification host record a failed
+segment (the job-worker row below); with it the full suite passes on 0.183.1.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Markdown ids and accessible names (`@jarenjs/md`, `@jarenjs/locales`) | **Adopted unchanged; labels not passed yet.** 0.177.1 keeps every heading id apart from its page's footnote ids and from the ids of reused blocks under any `slugPrefix`; the assistant's mount and the Pages playground render with a `slugPrefix` and take the fix as shipped. 0.177.0 lets md name its page breaks, heading permalinks and footnote back-references in the reader's language, and 0.178.0 gives every locale pack those names, with `labelsFromCatalog` turning a pack into md's options. The assistant does not pass `labels` yet; the roadmap's Markdown-labels entry states what remains. |
+| Reference fragments (`@jarenjs/contract`) | **Upstream fix; not reached here.** 0.178.1 percent-decodes a reference's fragment into another document once, as the validator does, so an escaped percent sign in a member name compiles. No Tangle contract or schema writes a percent escape in a `$ref`. |
+| Number text in forms (`@jarenjs/app`) | **Adopted unchanged; measured.** 0.179.0 reads number text in the flow inspector, the play page and the unit converter as the standard number action does, through the expression it now exports as `FORM_NUMBER_VALUE`. Tangle does not import it; the assistant's `./component` and `./view` bundles each grew 428 bytes with it, to 759,494 and 529,983 bytes, the view within its 599,000-byte ceiling. |
+| Play option switches and the Mermaid pie (`@jarenjs/play`, `@jarenjs/charts`) | **Adopted unchanged.** 0.180.0 lets a play option switch bring the source its new choice runs, and the pie renderer draws Mermaid's `showData` through a `legendText` option. The Pages site ships both as built. |
+| Job workers (`@jarenjs/db`) | **Tangle fix.** 0.181.0 refuses a worker's `start()` until its `stop()` has resolved, so the stopping loops cannot run on beside the new ones. 0.182.0 keeps a settling call idempotent over its own attempt's row only in the state it writes: a completion behind the attempt's own cancellation is reported cancelled, and a failure behind the attempt's own completion is refused (`JD2065`). A MAS segment completes its job in the transaction that records its outcome, and the native segment driver and the grounding clarification host settle a claimed segment themselves, so a host error raised after that commit reached the host as `JD2065` instead of its own error. Both now read the three fence refusals (`JD2065`, `JD2066`, `JD2067`) as Jaren's worker does, as a lost settlement, and rethrow the host's error; the completed job and run are unchanged. The MAS segment and experiential training workers settle through Jaren's worker as before. |
+| Captured expressions, run store pages and `sql.call` (`@jarenjs/linq`, `@jarenjs/db`) | **Upstream refusals; none reached here.** 0.183.0 refuses a method's own function members read in a captured expression (`r.day.length` embedded the method's arity), a misspelt run store page option, and a `sql.call` option named like the call's own name or arguments, where each answered wrong before. Tangle passes no page option and no `sql.call` option. The program pen bundle measures 26,000 bytes with nine retained modules (25,865 on 0.176.11), within the 29,000-byte ceiling. |
+| Column upgrade links (`@jarenjs/db`) | **Upstream fix; not reached here.** 0.183.1 names a column upgrade's default link past the ids the migration history holds, so a later release's upgrade of the same model is a link of its own. Tangle plans no column upgrade. |
+| Reconstruction on Windows (Tangle's bootstrap) | **Tangle fix.** npm on Windows packs a declared bin without the executable bit git records, so `@jarenjs/contract`, `@jarenjs/db` and `@jarenjs/emit` packed different headers there. The bootstrap now sets the bit on the files git records as executable and rewrites only an archive whose header changed; a Linux pack keeps npm's bytes, and the recorded SHA-256 still decides. It reads the tarballs in Node rather than through `tar`, which Git Bash resolves to a GNU tar that reads `C:\…` as a remote host. |
 
 ## Changes from 0.161.0 to 0.176.11 and current adoption
 
@@ -309,7 +328,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.176.11 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.183.1 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

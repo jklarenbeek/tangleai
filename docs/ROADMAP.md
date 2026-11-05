@@ -1,6 +1,6 @@
 # 📅 Tangle Roadmap
 
-The current substrate is [JarenJS 0.176.11](JARENJS_INTEGRATION.md): atomic
+The current substrate is [JarenJS 0.183.1](JARENJS_INTEGRATION.md): atomic
 ledger storage, retention options, verified DAG checkpoints, bounded history
 reads, scheduled document transport and supervised Node SQLite execution are
 available. Native relational migrations and revision-aware collection drag are
@@ -381,8 +381,7 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   render of their pinned screens finding no literal outside a catalogue, and a
   render in each language finding no English beyond named owners.
 
-- [ ] **A host's own database, review inbox and document authoring (ShopOps's
-  later campaigns).** *Wanted:* the MAS store and the run log running on a
+- [ ] **A host's own database, review inbox and document authoring.** *Wanted:* the MAS store and the run log running on a
   host-supplied `@jarenjs/db` Store and inside a host transaction, over a
   published model fragment of Tangle's collections, with the run log in an
   entry whose closure is small; a capability declaration (contract documents,

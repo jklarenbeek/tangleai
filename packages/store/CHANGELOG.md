@@ -1,5 +1,29 @@
 # @tangleai/store
 
+## 0.45.1
+
+### Patch Changes
+
+- Move every package onto the Jaren 0.183.1 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its job worker refuses `start()` until its `stop()` has resolved, and a settling call is idempotent only over its own attempt's row in the state it writes: a completion behind the attempt's own cancellation is reported cancelled, and a failure behind the attempt's own completion is refused. A MAS segment completes its job in the transaction that records its outcome, so a host error raised after that commit would have reached the host as Jaren's `JD2065` refusal; `createMasSegmentDriver` and `createGroundingClarificationHost` now read the job store's fence refusals as Jaren's worker does, as a lost settlement, and still rethrow the host's own error, leaving the completed job and run as they are. The grounding host already creates a fresh worker for every segment and awaits its stop. Jaren refuses a captured expression that reads a method's own function members, a misspelt run store page option and a `sql.call` option named like the call's own name or arguments, where each answered wrong before; Tangle passes none of them. Its play option switches bring the source their new choice runs, its Mermaid pie draws `showData`, and a column upgrade's default link is named past the ids the migration history holds. No Tangle interface changes.
+
+  Tooling: the Jaren bootstrap reconstructs the recorded tarballs on Windows. npm there packs a declared bin without the executable bit git records, because NTFS has none to keep; the bootstrap restores the bit on the files git records as executable and rewrites only an archive whose header changed, so a Linux pack keeps npm's bytes and the recorded SHA-256 still decides. It reads the tarballs in Node instead of running `tar`, so cmd.exe, PowerShell and Git Bash reconstruct the same bytes. The README notes `core.longpaths` for a deep clone path on Windows, and the integration documents name the current foundation.
+- Updated dependencies
+  - @tangleai/core@0.45.1
+  - @tangleai/documents@0.45.1
+  - @tangleai/evolve@0.45.1
+  - @tangleai/grounding@0.45.1
+  - @tangleai/lightrag@0.45.1
+  - @tangleai/memory@0.45.1
+  - @tangleai/outcomes@0.45.1
+  - @tangleai/experiential@0.45.1
+  - @tangleai/forecast@0.45.1
+  - @tangleai/hera@0.45.1
+  - @tangleai/research@0.45.1
+  - @tangleai/trace2skill@0.45.1
+  - @tangleai/config@0.45.1
+  - @tangleai/mas@0.45.1
+  - @tangleai/trading@0.45.1
+
 ## 0.45.0
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 /** Drive one native queued segment without creating a second scheduler or timer. */
 import { segmentJobIdOf, type MasRun, type MasStore, type MasSegmentHost } from '@tangleai/mas';
-import { enqueueMasSegment, createMasSegmentHandlers } from './mas-jobs.ts';
+import { enqueueMasSegment, createMasSegmentHandlers, failClaimedSegment } from './mas-jobs.ts';
 import type { TangleDb } from './db.ts';
 
 export function createMasSegmentDriver(db: TangleDb, store: MasStore, options: { owner: string; leaseMs: number }) {
@@ -18,7 +18,7 @@ export function createMasSegmentDriver(db: TangleDb, store: MasStore, options: {
       try {
         const result = await handlers[kind](job.payload, { job, checkpoints: jobs.checkpointsFor(job), signal });
         await jobs.complete(job.lease, result ?? null); return true;
-      } catch (cause) { await jobs.fail(job.lease, cause); throw cause; }
+      } catch (cause) { await failClaimedSegment(jobs, job.lease, cause); throw cause; }
     },
   };
 }

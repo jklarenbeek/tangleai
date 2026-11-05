@@ -6,6 +6,7 @@ import { cpSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, re
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gunzipSync, gzipSync } from 'node:zlib';
 
 export const ROOT = fileURLToPath(new URL('../', import.meta.url));
 export const ARTIFACT_MANIFEST = 'docs/migrations/jaren-ai/foundations.json';
@@ -42,6 +43,79 @@ const npm = (cwd: string, ...args: string[]) => {
   const { file, prefix } = npmInvocation();
   return command(file, [...prefix, ...args], cwd);
 };
+/** One regular file of an npm tarball: its path, mode, header offset and bytes. */
+export interface TarEntry { name: string; mode: number; offset: number; content: Buffer }
+const field = (block: Buffer, start: number, length: number) => block.toString('latin1', start, start + length).replace(/\0[\s\S]*$/, '');
+const octal = (block: Buffer, start: number, length: number) => {
+  const text = field(block, start, length).trim();
+  assert.match(text, /^[0-7]+$/, 'Unreadable tar header number');
+  return parseInt(text, 8);
+};
+const checksum = (block: Buffer) => block.reduce((sum, byte, index) => sum + (index >= 148 && index < 156 ? 0x20 : byte), 0);
+/**
+ * The files of an uncompressed npm tarball, read in Node rather than by a `tar`
+ * binary, so the shell does not matter (Git Bash puts GNU tar first, which reads
+ * `C:\…` as a remote host). npm packs regular files as plain ustar headers;
+ * anything else — a link, a pax or GNU long-name header, a ustar prefix, a bad
+ * checksum — is refused, never guessed at.
+ */
+export function tarEntries(tar: Buffer): TarEntry[] {
+  const entries: TarEntry[] = [];
+  for (let offset = 0; ; ) {
+    assert.ok(offset + 512 <= tar.length, 'Truncated tarball');
+    const block = tar.subarray(offset, offset + 512);
+    if (block.every(byte => byte === 0)) return entries;
+    assert.equal(checksum(block), octal(block, 148, 8), 'Tar header checksum mismatch');
+    assert.equal(field(block, 257, 6), 'ustar', 'Not a ustar tarball');
+    const type = block[156]!;
+    assert.ok(type === 0x30 || type === 0, `Unsupported tar entry type '${String.fromCharCode(type)}'`);
+    assert.equal(field(block, 345, 155), '', 'Unsupported ustar path prefix');
+    const size = octal(block, 124, 12);
+    assert.ok(offset + 512 + size <= tar.length, 'Truncated tarball');
+    entries.push({ name: field(block, 0, 100), mode: octal(block, 100, 8), offset, content: tar.subarray(offset + 512, offset + 512 + size) });
+    offset += 512 + Math.ceil(size / 512) * 512;
+  }
+}
+/**
+ * The files of one package that Linux packs executable: those git records as
+ * `100755`, and the declared bins npm marks executable when it can. The modes
+ * come from the index, which keeps them where the filesystem cannot (NTFS).
+ */
+export function executablesOf(source: string, directory: string): Set<string> {
+  const found = new Set<string>();
+  for (const line of command('git', ['ls-files', '--stage', '-z', '--', directory], source).split('\0').filter(Boolean)) {
+    const match = /^(\d{6}) [0-9a-f]+ \d\t(.+)$/s.exec(line);
+    assert.ok(match, `Unreadable index entry: ${line}`);
+    if (match[1] === '100755') found.add(match[2]!.slice(directory.length + 1));
+  }
+  const bin = read<{ bin?: string | Record<string, string> }>(resolve(source, directory, 'package.json')).bin;
+  for (const path of typeof bin === 'string' ? [bin] : Object.values(bin ?? {})) found.add(path.replace(/^\.\//, ''));
+  return found;
+}
+/**
+ * npm writes each file's filesystem mode. On Windows the executable bit git
+ * records has nowhere to live and npm 11 does not restore it for a bin, so the
+ * same source packs a different header there. Set the bit on `executables`, and
+ * only when a header changed rewrite the archive as npm writes it (gzip level 9
+ * with the portable "unknown OS" byte); otherwise npm's bytes are kept as they
+ * are. The recorded SHA-256 still decides: a mode this rule cannot know fails
+ * the comparison.
+ */
+export function normalizeModes(tgz: Buffer, executables: Set<string>): Buffer {
+  const tar = Buffer.from(gunzipSync(tgz));
+  let changed = false;
+  for (const entry of tarEntries(tar)) {
+    if (!executables.has(entry.name.replace(/^package\//, '')) || (entry.mode & 0o111) === 0o111) continue;
+    const block = tar.subarray(entry.offset, entry.offset + 512);
+    block.write((entry.mode | 0o111).toString(8).padStart(6, '0') + ' \0', 100, 'latin1');
+    block.write(checksum(block).toString(8).padStart(6, '0') + ' \0', 148, 'latin1');
+    changed = true;
+  }
+  if (!changed) return tgz;
+  const bytes = gzipSync(tar, { level: 9 });
+  bytes[9] = 0xff;
+  return bytes;
+}
 const SECTIONS = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'] as const;
 const edges = (pkg: Record<string, unknown>) => Object.fromEntries(SECTIONS.filter(section => pkg[section] !== undefined).map(section => [section, pkg[section] as Record<string, string>]));
 const safePath = (path: string) => typeof path === 'string' && path.length > 0 && !path.includes('\\') && !path.includes(':') && path.split('/').every(part => part !== '' && part !== '.' && part !== '..');
@@ -156,14 +230,15 @@ function pack(source: string, root: string): FoundationArtifact[] {
     if (!entry.isDirectory() || !existsSync(resolve(source, directory, 'package.json'))) continue;
     const pkg = read<{ name: string; version: string; private?: boolean }>(resolve(source, directory, 'package.json'));
     if (pkg.private) continue;
-    const [packed] = JSON.parse(npm(resolve(source, directory), 'pack', '--json', '--ignore-scripts', '--pack-destination', resolve(root, 'dist/jaren'))) as Array<{ filename: string; integrity: string; files: Array<{path: string}> }>;
-    const path = resolve(root, 'dist/jaren', packed!.filename), extracted = mkdtempSync(resolve(tmpdir(), 'tangle-foundation-unpack-'));
-    try {
-      command('tar', ['-xf', path, '-C', extracted], root);
-      packages.push({ name: pkg.name, version: pkg.version, directory, filename: packed!.filename,
-        sha256: hash(readFileSync(path)), integrity: packed!.integrity, edges:edges(pkg),
-        files: Object.fromEntries(packed!.files.map(f => [f.path, hash(readFileSync(resolve(extracted, 'package', f.path)))])) });
-    } finally { rmSync(extracted, { recursive: true, force: true }); }
+    const [packed] = JSON.parse(npm(resolve(source, directory), 'pack', '--json', '--ignore-scripts', '--pack-destination', resolve(root, 'dist/jaren'))) as Array<{ filename: string; files: Array<{path: string}> }>;
+    const path = resolve(root, 'dist/jaren', packed!.filename), written = readFileSync(path);
+    const bytes = normalizeModes(written, executablesOf(source, directory));
+    if (bytes !== written) writeFileSync(path, bytes);
+    const contents = new Map(tarEntries(gunzipSync(bytes)).map(entry => [entry.name, entry.content]));
+    assert.deepEqual([...contents.keys()].sort(), packed!.files.map(f => `package/${f.path}`).sort(), `${pkg.name}: packed members differ from npm's file list`);
+    packages.push({ name: pkg.name, version: pkg.version, directory, filename: packed!.filename,
+      sha256: hash(bytes), integrity: 'sha512-' + createHash('sha512').update(bytes).digest('base64'), edges:edges(pkg),
+      files: Object.fromEntries(packed!.files.map(f => [f.path, hash(contents.get(`package/${f.path}`)!)])) });
   }
   return packages.sort((a, b) => a.name.localeCompare(b.name));
 }

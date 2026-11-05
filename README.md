@@ -60,6 +60,12 @@ npm run benchmark:locomo:census
 npm run documents:live-smoke
 ```
 
+On Windows, run the bootstrap as `npm run jaren:bootstrap`, from cmd.exe,
+PowerShell or Git Bash: it starts npm through the npm that launched it, without a
+shell. A clone path longer than about 140 characters needs
+`git clone -c core.longpaths=true`, because the longest committed path is 119
+characters.
+
 The skeleton ingests evidenced observations and runs them through the
 policy chain — novelty gate → contradiction resolution → crystallization →
 outcome learning → embedding-ranked recall — then mirrors the surviving
@@ -493,9 +499,9 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-Tangle consumes 23 AI-free Jaren **0.176.11** packages as candidate tarballs
+Tangle consumes 23 AI-free Jaren **0.183.1** packages as candidate tarballs
 packed from the source submodule at `vendor/jarenjs`, which pins
-`080ec4a1944ffb47404d6413784d78d225c66bac` (tag `v0.176.11`); npm does not serve
+`57c391225865f006f1baa4cb721505f39a5cbab6` (tag `v0.183.1`); npm does not serve
 that release. Run `node scripts/jaren-artifacts.ts --bootstrap` before
 `npm ci --ignore-scripts`: it rebuilds the tarballs from the pinned source and
 refuses any byte that differs from the

@@ -264,6 +264,25 @@ export function createMasSegmentHandlers(masStore: MasStore, options: Pick<MasWo
   return handlers;
 }
 
+type SegmentJobs = NonNullable<TangleDb['jobs']>;
+/** The fence refusals by which the job store says an attempt does not hold its job; the suite worker records them as a lost settlement. */
+const LOST_SETTLEMENT = new Set(['JD2065', 'JD2066', 'JD2067']);
+
+/**
+ * Record a claimed segment's failure as the suite worker does. A fence
+ * refusal is not a second error: the attempt settled the job itself (its
+ * segment completed in its own transaction, then threw) or no longer holds
+ * it, so the caller still rethrows the handler's own error. Any other
+ * refusal of the failure write is thrown.
+ */
+export async function failClaimedSegment(jobs: SegmentJobs, lease: Parameters<SegmentJobs['fail']>[0], cause: unknown): Promise<void> {
+  try { await jobs.fail(lease, cause); }
+  catch (refusal) {
+    const code = (refusal as { code?: unknown } | null)?.code;
+    if (typeof code !== 'string' || !LOST_SETTLEMENT.has(code)) throw refusal;
+  }
+}
+
 export function createMasSegmentWorker(db: TangleDb, masStore: MasStore, options: MasWorkerOptions): MasWorker {
   const jobs = db.jobs;
   if (jobs === undefined) throw new TypeError('createMasSegmentWorker: the store was opened without { jobs }');

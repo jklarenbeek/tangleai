@@ -3,7 +3,7 @@ import type { GroundingClarificationHost } from '@tangleai/grounding';
 import { masJobKindOf, segmentJobIdOf, type MasRuntimeObserver } from '@tangleai/mas';
 import type { TangleDb } from './db.ts';
 import { createMasStore } from './mas-store.ts';
-import { createMasSegmentHandlers, enqueueMasSegment, ensurePendingMasSegments } from './mas-jobs.ts';
+import { createMasSegmentHandlers, enqueueMasSegment, ensurePendingMasSegments, failClaimedSegment } from './mas-jobs.ts';
 export function createGroundingClarificationHost(db: TangleDb, options: {
     now: () => string; deadlineFor: (afterMs: number) => string; observer?: MasRuntimeObserver;
 }): GroundingClarificationHost {
@@ -29,6 +29,6 @@ export function createGroundingClarificationHost(db: TangleDb, options: {
             if (job.id !== segmentJobIdOf(runId, run.segment)) throw Error('The claimed grounding segment belongs to another run.');
             const result = await handlers[kind]!(job.payload, { job, checkpoints: jobs.checkpointsFor(job), signal: new AbortController().signal });
             await jobs.complete(job.lease, result ?? null);
-        } catch (cause) { await jobs.fail(job.lease, cause); throw cause; }
+        } catch (cause) { await failClaimedSegment(jobs, job.lease, cause); throw cause; }
     } };
 }

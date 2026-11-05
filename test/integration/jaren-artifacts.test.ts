@@ -2,9 +2,10 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
+import { gunzipSync, gzipSync } from 'node:zlib';
 import * as foundations from '../../scripts/jaren-artifacts.ts';
 
 const hash = (value: string | Uint8Array) => createHash('sha256').update(value).digest('hex');
@@ -106,4 +107,65 @@ test('the bootstrap runs npm through the npm that launched it, never a shell, so
   assert.deepEqual(foundations.npmInvocation({}, 'linux', '/usr/bin/node'), { file: 'npm', prefix: [] });
   assert.deepEqual(foundations.npmInvocation({ npm_execpath: '/usr/lib/node_modules/pnpm/bin/pnpm.cjs' }, 'linux'), { file: 'npm', prefix: [] }, 'another package manager is not npm');
   assert.throws(() => foundations.npmInvocation({}, 'win32'), /run this through npm/);
+});
+
+const recorded = () => {
+  const manifest = foundations.readFoundationArtifacts()!;
+  return manifest.packages.filter(pkg => existsSync(foundations.artifactPath(foundations.ROOT, pkg))).map(pkg => ({ pkg, bytes: readFileSync(foundations.artifactPath(foundations.ROOT, pkg)) }));
+};
+/** A ustar block with its checksum, as npm's tar writes one. */
+const header = (name: string, size: number, type = '0') => {
+  const block = Buffer.alloc(512);
+  block.write(name, 0, 'latin1'); block.write('000644 \0', 100, 'latin1'); block.write(size.toString(8).padStart(11, '0') + ' ', 124, 'latin1');
+  block.write(type, 156, 'latin1'); block.write('ustar\u000000', 257, 'latin1');
+  block.fill(0x20, 148, 156);
+  block.write(block.reduce((sum, byte) => sum + byte, 0).toString(8).padStart(6, '0') + ' \0', 148, 'latin1');
+  return block;
+};
+const archive = (...blocks: Buffer[]) => Buffer.concat([...blocks, Buffer.alloc(1024)]);
+
+test('the Node tar reader answers every recorded file digest of the qualified foundation', () => {
+  const archives = recorded();
+  for (const { pkg, bytes } of archives) {
+    const entries = foundations.tarEntries(gunzipSync(bytes));
+    assert.deepEqual(entries.map(entry => entry.name).sort(), Object.keys(pkg.files).map(file => `package/${file}`).sort(), pkg.name);
+    for (const entry of entries) assert.equal(hash(entry.content), pkg.files[entry.name.slice('package/'.length)], `${pkg.name}: ${entry.name}`);
+  }
+});
+
+test('a Windows pack, which loses the executable bit git records, is restored to the recorded bytes', () => {
+  const vendor = resolve(foundations.ROOT, 'vendor/jarenjs');
+  let restored = 0;
+  for (const { pkg, bytes } of recorded()) {
+    const tar = Buffer.from(gunzipSync(bytes));
+    const executables = new Set(foundations.tarEntries(tar).filter(entry => entry.mode & 0o111).map(entry => entry.name.slice('package/'.length)));
+    if (existsSync(resolve(vendor, 'package.json')))
+      assert.deepEqual([...foundations.executablesOf(vendor, pkg.directory)].sort(), [...executables].sort(), `${pkg.name}: the index names the executables Linux packs`);
+    assert.equal(foundations.normalizeModes(bytes, executables), bytes, `${pkg.name}: a Linux pack keeps npm's bytes`);
+    if (executables.size === 0) continue;
+    // NTFS keeps no executable bit, so npm on Windows writes 0644 for these
+    for (const entry of foundations.tarEntries(tar)) {
+      const block = tar.subarray(entry.offset, entry.offset + 512);
+      block.write((entry.mode & ~0o111).toString(8).padStart(6, '0') + ' \0', 100, 'latin1');
+      block.fill(0x20, 148, 156);
+      block.write(block.reduce((sum, byte) => sum + byte, 0).toString(8).padStart(6, '0') + ' \0', 148, 'latin1');
+    }
+    const windows = gzipSync(tar, { level: 9 }); windows[9] = 0xff;
+    assert.notEqual(hash(windows), pkg.sha256, `${pkg.name}: the Windows pack differs before normalizing`);
+    const normalized = foundations.normalizeModes(windows, executables);
+    assert.equal(hash(normalized), pkg.sha256, `${pkg.name}: normalized bytes`);
+    assert.equal('sha512-' + createHash('sha512').update(normalized).digest('base64'), pkg.integrity);
+    restored++;
+  }
+  if (recorded().length > 0) assert.ok(restored > 0, 'the qualified foundation ships executable bins');
+});
+
+test('the tar reader refuses what npm never packs instead of guessing', () => {
+  const content = Buffer.alloc(512, 0x61);
+  assert.equal(foundations.tarEntries(archive(header('package/a.js', 3), content)).length, 1);
+  assert.throws(() => foundations.tarEntries(archive(header('package/link', 0, '2'))), /entry type '2'/);
+  assert.throws(() => foundations.tarEntries(archive(header('PaxHeader', 0, 'x'))), /entry type 'x'/);
+  const tampered = header('package/a.js', 3); tampered[0] = 0x71;
+  assert.throws(() => foundations.tarEntries(archive(tampered, content)), /checksum/);
+  assert.throws(() => foundations.tarEntries(header('package/a.js', 3)), /Truncated/);
 });

@@ -7,7 +7,7 @@
  * `createHttpTransport` starts and cancels runs over HTTP. Stopping a feed,
  * like disposing the view, never cancels the run.
  *
- * The summary is the shape a server such as ShopOps's answers on
+ * The summary is the shape a host's run server answers on
  * `GET {base}/runs/:id`: `{ status, stage, steps, answer, proposals, usage,
  * stopReason, error }`.
  */

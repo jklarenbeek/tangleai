@@ -14,12 +14,14 @@
  *   1. before the intent was written — nothing is recorded
  *   2. after the intent was written — the record and its job exist, the
  *      flow never saved
- *   3. after the segment settled — the run parked, its job never closed
+ *   3. after the segment settled — the run parked and its job closed in
+ *      the same transaction; only the attempt's own bookkeeping died
  *   4. after the effect RAN, before its wait was answered — the expensive
  *      window, and the whole reason the plan id is semantic
  *   5. after the wait was answered — the resume segment was never enqueued
  *   6. after the resume segment was enqueued — nobody claimed it
- *   7. after the terminal commit — the run is done, its job is not closed
+ *   7. after the terminal commit — the run is done and its job closed
+ *      with it
  *
  * Convergence means the SAME answer, not merely a terminal one: the same
  * decision, the same leg census, the same recorded outcome, the same
@@ -138,9 +140,10 @@ describe('the crash matrix — one answer, whatever died', () => {
     assertConverged(driven, 'after-prepare:measure-candidate');
   });
 
-  it('3. crash after the segment settled, before its job closed: the reclaim restores', async () => {
-    // The flow finished and the run parked; only the job is open. The
-    // reclaim must reach the same place without executing a region again.
+  it('3. crash after the segment settled: the next pass continues without executing a region again', async () => {
+    // The flow finished, the run parked and the job closed with it; the
+    // failure write is refused as this attempt's own settlement. The next
+    // pass must reach the same place without executing a region again.
     const driven = await matrixCase('after-segment');
     assert.equal(driven.failures, 1);
     assertConverged(driven, 'after-segment');
@@ -183,9 +186,9 @@ describe('the crash matrix — one answer, whatever died', () => {
     assertConverged(driven, 'before-resume');
   });
 
-  it('7. crash after the terminal commit: the reclaim closes without executing a region', async () => {
-    // Everything is decided and recorded; only the job is open. The
-    // reclaim must not record a second outcome — which is the assertion
+  it('7. crash after the terminal commit: nothing executes a region or records again', async () => {
+    // Everything is decided and recorded, the job included. Nothing may
+    // record a second outcome — which is the assertion
     // `recorded.length === 1` makes inside `assertConverged`.
     const driven = await matrixCase('after-terminal');
     assert.equal(driven.failures, 1);
