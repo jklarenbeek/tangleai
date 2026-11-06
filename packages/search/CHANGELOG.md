@@ -1,5 +1,12 @@
 # @tangleai/search
 
+## 0.45.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/core@0.45.2
+
 ## 0.45.1
 
 ### Patch Changes

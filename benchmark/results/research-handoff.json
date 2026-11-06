@@ -2,12 +2,12 @@
   "benchmark": "research-handoff",
   "query": "queries/research/core-baseline.json",
   "queryRevision": "4c96b66306c930c70d44500fd32aa6b7e3398a833e6ebea6a9f3350bfc9738bf",
-  "reportId": "74c8084dd00fd954de683d2e748a6587c7f2e4328a6ab7bce0bcd4dcae7d00c2",
+  "reportId": "ac8cb2055ce8fe956d91e4566493b6935940a33cc5136dc14dc0ab3e9dcc54f3",
   "handoff": {
     "decision": "conformant",
     "fixture": {
       "id": "research-computational-v1",
-      "revision": "c48410c929e5d9b4750ebcdbdaf85761b6a5c678d457954f98fe4aca82ef0671",
+      "revision": "b557c3247a62df36b71a3a654b1b9affa84eeb9219d01ba0e5de3b94c3f00e00",
       "topics": [
         "kmeans-seeding",
         "lexical-ranking",
@@ -109,7 +109,7 @@
       "Synthesis",
       "WorkspaceManifest"
     ],
-    "reportId": "74c8084dd00fd954de683d2e748a6587c7f2e4328a6ab7bce0bcd4dcae7d00c2",
+    "reportId": "ac8cb2055ce8fe956d91e4566493b6935940a33cc5136dc14dc0ab3e9dcc54f3",
     "rows": [
       {
         "cost": {
@@ -241,5 +241,5 @@
       }
     ]
   },
-  "artifactId": "becde1c40d3991f204d92f6541c4a91e5906c9c64d8d4e2ec3645ddfa55ed9b6"
+  "artifactId": "21b851ec72a55e88b62e69aa6ef5adcd159af3a2e1df15d86a16aa50c86f19e4"
 }

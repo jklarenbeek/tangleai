@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "version": "0.45.2",
+  "baseVersion": "0.45.1",
+  "baseCommit": "1be3aecdff15ecc2b37382ddad3fa3966587d422",
+  "preparationCommit": "1be3aecdff15ecc2b37382ddad3fa3966587d422",
+  "initial": false,
+  "inputHash": "588a6ee19e3e72461654903200933f04acc3a79ce0e2b2989f089d748942093a",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        }
+      ],
+      "summary": "Move every package onto the Jaren 0.184.2 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its validator reads an array element holding `undefined`, or a hole, as present in both modes, so no `type`, `enum` or `const` admits it, `contains` no longer counts it as a match and a `$query` fails it with `JQ2011`; before, only a lone `type` item schema refused it, and only when validation stopped at the first failure. A one-keyword `required` item schema now counts only an item's own members in both modes. No Tangle test reached either change, and no Tangle interface changes.",
+      "id": "jaren-0184-2-foundation"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.45.2"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.45.2"
+    }
+  ]
+}

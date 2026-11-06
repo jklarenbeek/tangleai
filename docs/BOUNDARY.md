@@ -69,7 +69,7 @@ provide a k-hop graph policy. Tangle's graph lane uses those storage primitives,
 the existing vector kernels and structured output; its fixed-root expansion,
 claim provenance, active projections and answer policy remain Tangle-owned.
 
-Current Jaren 0.183.1 adoption: [integration audit](JARENJS_INTEGRATION.md).
+Current Jaren 0.184.2 adoption: [integration audit](JARENJS_INTEGRATION.md).
 Trading uses native indicators and returns from `@jarenjs/core/finance` and
 publication-time as-of operations from `@jarenjs/core/series`. ADX, CCI, VWAP,
 volume ratio and KDJ are native re-exports. `@tangleai/trading` owns point-in-time

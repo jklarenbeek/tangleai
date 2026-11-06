@@ -385,7 +385,7 @@ Nearby queries prove that nine contiguous native cells cover the requested
 radius, then refine their candidates by geodesic distance. A cell prefix never
 establishes proximity. The SQLite gazetteer adapter verifies its full immutable
 inventory and coordinate mirrors on reads and replays loads with zero writes.
-The [registered scale receipt](../benchmark/receipts/place-scale-2026-11-05.json) retains
+The [registered scale receipt](../benchmark/receipts/place-scale-2026-11-06.json) retains
 the in-memory candidate sweep: both measured runtimes meet the target, so no
 derived bbox or R-tree is adopted. Full adapter validation and semantic
 retrieval are outside that timing claim.

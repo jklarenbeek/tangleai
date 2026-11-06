@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.183.1**, tag `v0.183.1`, source commit
-`57c391225865f006f1baa4cb721505f39a5cbab6`. Upstream `main` and the tag agreed
-when checked on 2026-11-05; npm still served 0.91.4. Runtime imports therefore
+Tangle consumes **Jaren 0.184.2**, tag `v0.184.2`, source commit
+`72b2cf306efa15304809a79e8066befdc6d506da`. Upstream `main` and the tag agreed
+when checked on 2026-11-06; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.183.1` pin. A clean reconstruction from the pinned
+reference is an exact `0.184.2` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,21 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.183.1 to 0.184.2 and current adoption
+
+12 upstream commits cover this update, three releases, and only
+`@jarenjs/validate` changed source. No consumed package added or removed an
+export subpath, and every dependency edge stays inside the 23-package closure.
+The update needs no Tangle source change: the full suite fails only the
+artifact-freshness checks a dependency move always fails before regeneration,
+the same tests as on 0.183.1.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Array elements holding `undefined` (`@jarenjs/validate`) | **Adopted unchanged; measured.** 0.184.0 reads an array element holding `undefined`, or a hole, as present in both modes, as `JSON.stringify([undefined])` sends `[null]`: no `type`, `enum` or `const` admits it, the combinators test it, `contains` no longer counts it as a match, and a `$query` fails it with `JQ2011`. Before, only a lone `type` item schema refused it, and only when validation stopped at the first failure. No Tangle test reached the new refusal. The assistant's `.` and `./component` bundles each grew 266 bytes with it, to 438,329 and 759,760 bytes; `./view` stays at 529,983 bytes and the program pen at 26,000. |
+| Own members under a `required` item schema (`@jarenjs/validate`) | **Upstream fix; not reached here.** 0.184.1 counts only an item's own members under a one-keyword `required` item schema in both modes, as `required` does everywhere, so `[Object.create({ a: 1 })]` fails `{ items: { required: ['a'] } }`. No Tangle schema declares a one-keyword `required` item schema. |
+| Benchmark figures (upstream site) | **No code change.** 0.184.2 publishes upstream's re-measured benchmark suites. Tangle measures its own Jaren benchmark in [JARENJS_BENCHMARK.md](JARENJS_BENCHMARK.md). |
 
 ## Changes from 0.176.11 to 0.183.1 and current adoption
 
@@ -328,7 +343,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.183.1 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.184.2 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

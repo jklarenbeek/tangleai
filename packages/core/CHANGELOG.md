@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.45.2
+
+### Patch Changes
+
+- Move every package onto the Jaren 0.184.2 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its validator reads an array element holding `undefined`, or a hole, as present in both modes, so no `type`, `enum` or `const` admits it, `contains` no longer counts it as a match and a `$query` fails it with `JQ2011`; before, only a lone `type` item schema refused it, and only when validation stopped at the first failure. A one-keyword `required` item schema now counts only an item's own members in both modes. No Tangle test reached either change, and no Tangle interface changes.
+- @tangleai/context@0.45.2
+
 ## 0.45.1
 
 ### Patch Changes
