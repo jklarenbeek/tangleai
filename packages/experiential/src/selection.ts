@@ -1,6 +1,6 @@
 /** Stable exclusions and independent review precede every training-data selection. */
 import { deepFreeze } from '@jarenjs/core/object';
-import { canonicalizeJson, canonicalSha256 } from '@jarenjs/json/canonical';
+import { canonicalSha256, cloneJson } from '@jarenjs/json/canonical';
 import { experientialSchema, validateExperientialShape } from './schema.ts';
 import { checkExperientialRecord } from './identity.ts';
 import { refuseExperiential, type ExperientialResult } from './errors.ts';
@@ -36,7 +36,7 @@ export async function sealExperientialSelectionPolicy(input: Omit<ExperientialSe
 
 export async function planExperientialSelection(rawInput: ExperientialSelectionInput): Promise<ExperientialResult<ExperientialSelectionPlan>> {
   let input: ExperientialSelectionInput;
-  try { input = JSON.parse(canonicalizeJson(rawInput)); }
+  try { input = cloneJson(rawInput); }
   catch { return refuseExperiential('TEXP1001', '', 'Selection accepts finite JSON inputs.'); }
   if (!Array.isArray(input?.experiences) || !Array.isArray(input?.assessments) || !Array.isArray(input?.approvals))
     return refuseExperiential('TEXP1001', '', 'Selection requires bounded experience, assessment and approval arrays.');

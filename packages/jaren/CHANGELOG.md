@@ -1,5 +1,15 @@
 # @tangleai/jaren
 
+## 0.46.0
+
+### Patch Changes
+
+- Build on Jaren 0.188.0. Its validator keeps the text a schema's `errorMessage` wrote in every locale, a `$msgid` fallback included, and a validation error's `toJSON` carries that mark; `diffContracts` reports fewer false and more real breaking changes; `@jarenjs/db` reads a PostgreSQL `jsonb` null as SQL NULL and names unguarded number columns in `introspect()`. Every exact `@jarenjs/*` pin moves from 0.184.2 to 0.188.0, and the candidate tarballs are recaptured from the tagged source with an empty patch. Local copies of canonical cloning and RFC 6901 token escaping are replaced by `@jarenjs/json`'s `cloneJson` and pointer helpers, with identical output.
+- Updated dependencies
+  - @tangleai/agents@0.46.0
+  - @tangleai/context@0.46.0
+  - @tangleai/models@0.46.0
+
 ## 0.45.2
 
 ### Patch Changes

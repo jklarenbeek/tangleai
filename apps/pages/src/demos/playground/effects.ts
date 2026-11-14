@@ -1,5 +1,5 @@
 import { encodeShare } from '@jarenjs/app';
-import { loadExample, loadDataset, blankSession, sessionOf, sessionFilename, sessionDocument, sessionFromDocument, sessionToLoaded } from './play.ts';
+import { loadExample, loadDataset, blankSession, switchPlayOption, sessionOf, sessionFilename, sessionDocument, sessionFromDocument, sessionToLoaded } from './play.ts';
 const SHARE_TOKEN_LIMIT = 8000;
 /** @param app @param playStore @param env */
 export function playEffects(app: any, playStore: any, env: any) {
@@ -11,6 +11,9 @@ export function playEffects(app: any, playStore: any, env: any) {
     'play-dataset': (props: any, dispatch: any) => {
       const data = loadDataset(app.getState().play.exampleId, props.index);
       if (data !== null) dispatch('play/dataset-set', { index: props.index, data });
+    },
+    'play-option': (props: any, dispatch: any) => {
+      dispatch('play/option-set', switchPlayOption(app.getState().play, props.key, props.value));
     },
     'play-new': (props: any, dispatch: any) => {
       dispatch('play/loaded-session', { ...blankSession(app.getState().play.engine), name: '' });

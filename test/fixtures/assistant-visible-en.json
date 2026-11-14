@@ -6191,6 +6191,168 @@
         "where": "button.btn.small.ai-send",
         "class": "owned"
       }
+    ],
+    "reply with an untitled heading and a footnote cited twice": [
+      {
+        "text": "Open assistant",
+        "where": "button.ai-launch@title",
+        "class": "default"
+      },
+      {
+        "text": "Open assistant",
+        "where": "button.ai-launch@aria-label",
+        "class": "default"
+      },
+      {
+        "text": "✦",
+        "where": "button.ai-launch",
+        "class": "glyph"
+      },
+      {
+        "text": " Assistant",
+        "where": "span.ai-launch-label",
+        "class": "default"
+      },
+      {
+        "text": "Assistant",
+        "where": "span.ai-title",
+        "class": "default"
+      },
+      {
+        "text": "Settings",
+        "where": "button.ai-icon@title",
+        "class": "owned"
+      },
+      {
+        "text": "Assistant settings",
+        "where": "button.ai-icon@aria-label",
+        "class": "owned"
+      },
+      {
+        "text": "⚙",
+        "where": "button.ai-icon",
+        "class": "glyph"
+      },
+      {
+        "text": "Clear the conversation",
+        "where": "button.ai-icon@title",
+        "class": "owned"
+      },
+      {
+        "text": "Clear conversation",
+        "where": "button.ai-icon@aria-label",
+        "class": "owned"
+      },
+      {
+        "text": "⌫",
+        "where": "button.ai-icon",
+        "class": "glyph"
+      },
+      {
+        "text": "Close",
+        "where": "button.ai-icon@title",
+        "class": "owned"
+      },
+      {
+        "text": "Close assistant",
+        "where": "button.ai-icon@aria-label",
+        "class": "owned"
+      },
+      {
+        "text": "✕",
+        "where": "button.ai-icon",
+        "class": "glyph"
+      },
+      {
+        "text": "Set an objective the assistant keeps across sessions…",
+        "where": "input.editor.line@placeholder",
+        "class": "owned"
+      },
+      {
+        "text": "Set",
+        "where": "button.btn.small",
+        "class": "owned"
+      },
+      {
+        "text": "‹h:question›",
+        "where": "p",
+        "class": "host"
+      },
+      {
+        "text": "Permalink to this section",
+        "where": "a.md-anchor@aria-label",
+        "class": "owned"
+      },
+      {
+        "text": "#",
+        "where": "a.md-anchor",
+        "class": "glyph"
+      },
+      {
+        "text": "‹h:first›",
+        "where": "p",
+        "class": "host"
+      },
+      {
+        "text": "1",
+        "where": "a",
+        "class": "glyph"
+      },
+      {
+        "text": " ‹h:second›",
+        "where": "p",
+        "class": "host"
+      },
+      {
+        "text": "1",
+        "where": "a",
+        "class": "glyph"
+      },
+      {
+        "text": "Footnotes",
+        "where": "section.footnotes@aria-label",
+        "class": "owned"
+      },
+      {
+        "text": "‹h:footnote›",
+        "where": "p",
+        "class": "host"
+      },
+      {
+        "text": "Back to reference 1",
+        "where": "a.footnote-backref@aria-label",
+        "class": "owned"
+      },
+      {
+        "text": "↩",
+        "where": "a.footnote-backref",
+        "class": "glyph"
+      },
+      {
+        "text": "Back to reference 1, occurrence 2",
+        "where": "a.footnote-backref@aria-label",
+        "class": "owned"
+      },
+      {
+        "text": "↩",
+        "where": "a.footnote-backref",
+        "class": "glyph"
+      },
+      {
+        "text": "2",
+        "where": "sup",
+        "class": "glyph"
+      },
+      {
+        "text": "Ask the assistant…",
+        "where": "textarea.editor@placeholder",
+        "class": "owned"
+      },
+      {
+        "text": "Send",
+        "where": "button.btn.small.ai-send",
+        "class": "owned"
+      }
     ]
   },
   "deltas": [

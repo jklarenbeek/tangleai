@@ -1,5 +1,5 @@
 /** Resolve configuration once; keep each run's serving choice immutable. */
-import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { cloneJson } from '@jarenjs/json/canonical';
 import { deepFreeze } from '@jarenjs/core/object';
 import { resolveProfile, type Issue, type ResolveInput, type RunIdentity } from '@tangleai/config';
 import type { createChatClient } from '@tangleai/models';
@@ -26,7 +26,7 @@ export interface ExperientialInferenceBinding {
 
 function capture(input: ExperientialInferenceInput): ExperientialResult<ExperientialInferenceInput> {
   try {
-    const value = JSON.parse(canonicalizeJson(input));
+    const value = cloneJson(input);
     if (!value || typeof value !== 'object' || Array.isArray(value)) throw new TypeError('Expected an input object.');
     return { ok: true, value };
   }

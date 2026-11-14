@@ -1,13 +1,13 @@
 /** Inspection views omit secrets and payload locations while retaining record addresses. */
 import { deepFreeze } from '@jarenjs/core/object';
-import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { cloneJson } from '@jarenjs/json/canonical';
 import { EXPERIENTIAL_SECRET_MEMBER } from './privacy.ts';
 
 const hidden = new Set(['storageUri', 'logRefs', 'metricsRef', 'logBody', 'logBodies', 'logs', 'body', 'rawBody']);
 const omit = (key: string, event: boolean) => EXPERIENTIAL_SECRET_MEMBER.test(key) || hidden.has(key) || event && key === 'detail';
 
 export function redactExperientialView(value: unknown): unknown {
-  const captured: unknown = JSON.parse(canonicalizeJson(value));
+  const captured: unknown = cloneJson(value);
   function walk(value: unknown): unknown {
     if (Array.isArray(value)) return value.map(walk);
     if (!value || typeof value !== 'object') return value;

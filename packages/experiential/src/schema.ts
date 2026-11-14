@@ -1,6 +1,6 @@
 /** One closed schema owner; a valid shape confers no lifecycle authority. */
 import { deepFreeze } from '@jarenjs/core/object';
-import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { cloneJson } from '@jarenjs/json/canonical';
 import { formatJSONPointer } from '@jarenjs/json/pointer';
 import { JarenValidator } from '@jarenjs/validate';
 import schema from '../schemas/experiential.schema.json' with { type: 'json' };
@@ -93,7 +93,7 @@ export function validateExperientialRecord<K extends ExperientialRecordKind>(kin
 /** Closed auxiliary contracts use the same validator and scalar checks as records. */
 export function validateExperientialShape<T>(name: keyof typeof experientialSchema.$defs, value: unknown): ExperientialResult<T> {
   let document: unknown;
-  try { document = JSON.parse(canonicalizeJson(value)); }
+  try { document = cloneJson(value); }
   catch { return refuseExperiential('TEXP1001', '', 'Only finite JSON data is accepted.'); }
   let validate = validators.get(name);
   if (!validate) {

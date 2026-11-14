@@ -11,7 +11,7 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 const MECHANISMS = ['@tangleai/agents', '@tangleai/context', '@tangleai/models'];
 const WITH_MECHANISMS = ['.', './component'];
 const VIEW_ONLY = ['./view'];
-const PACKS = ['./messages/ar', './messages/de', './messages/es', './messages/fr', './messages/nl', './messages/pt'];
+const PACKS = ['./messages/ar', './messages/de', './messages/es', './messages/fr', './messages/ja', './messages/ko', './messages/nl', './messages/pt', './messages/ru', './messages/tr', './messages/zh-tw'];
 const workspaces = new Map<string, { directory: string, exports: Record<string, string> }>();
 for (const group of ['packages', 'components']) for (const name of readdirSync(join(root, group))) {
   const path = join(root, group, name, 'package.json');

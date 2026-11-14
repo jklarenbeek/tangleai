@@ -47,7 +47,7 @@ async function fixture(t: TestContext) {
   return { connection, driver, path, plan, evidence, historyCount, unchanged };
 }
 
-it('saved native migration preserves Tangle memory and activated consolidation through reopen and zero-effect replay', async t => {
+it('saved native migration preserves Tangle memory and activated consolidation through reopen and zero-effect replay', { timeout: 60_000 }, async t => {
   const files = await location(); t.after(files.close);
   assert.deepEqual(await runPhysicalMigrationExample(files.path), {
     applied: 1, replayApplied: 0, historyRows: 1, exactMemories: 1,

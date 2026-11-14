@@ -1,9 +1,9 @@
-import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
+import { canonicalSha256, cloneJson } from '@jarenjs/json/canonical';
 import { deepFreeze } from '@jarenjs/core/object';
 import type { ArtifactAdmission, InputManifest, StageAttemptKey } from './contracts.gen.ts';
 
 /** Snapshot finite JSON through the native canonical owner before an asynchronous seam. */
-export function immutableResearchJson<T>(value: T): T { return deepFreeze(JSON.parse(canonicalizeJson(value))) as T; }
+export function immutableResearchJson<T>(value: T): T { return deepFreeze(cloneJson(value)) as T; }
 export function researchRevisionOf(value: unknown): Promise<string> { return canonicalSha256(immutableResearchJson(value)); }
 
 /** Copy the exact view before yielding; no surrounding buffer bytes enter identity. */

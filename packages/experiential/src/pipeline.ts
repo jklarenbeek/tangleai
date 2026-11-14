@@ -1,7 +1,7 @@
 /** Seven checkpointed tasks; the injected native job runner owns retries and scheduling. */
 import { deepFreeze, equalsJson } from '@jarenjs/core/object';
 import { backoffDelay, createAttemptBudget } from '@jarenjs/core/retry';
-import { canonicalizeJson, canonicalSha256 } from '@jarenjs/json/canonical';
+import { canonicalSha256, canonicalizeJson, cloneJson } from '@jarenjs/json/canonical';
 import { checkTrainingCapabilities, validateTrainingSpec, verifyArtifactReceipt, type TrainingBackend,
   type VerifyArtifactReceiptOptions, type BackendResult } from './backend.ts';
 import { checkExperientialRecord, sealExperientialRecord } from './identity.ts';
@@ -33,7 +33,7 @@ export async function planExperientialTraining(options: { dataset: ExperientialD
   recordedAt: string }): Promise<ExperientialResult<ExperientialTrainingPlan>> {
   // Snapshot all caller-owned records before the first asynchronous digest.
   let o: typeof options;
-  try { o = JSON.parse(canonicalizeJson(options)); }
+  try { o = cloneJson(options); }
   catch { return refuseExperiential('TEXP1001', '', 'Training planning requires finite JSON inputs.'); }
   if (!o || typeof o !== 'object' || Array.isArray(o)) return refuseExperiential('TEXP1001', '', 'Training planning requires a configuration object.');
   const spec = validateTrainingSpec(o.spec); if (!spec.ok) return spec;

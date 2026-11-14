@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/assistant",
-  "version": "0.45.2",
+  "version": "0.46.0",
   "description": "Reusable assistant state, streaming lifecycle and optional Jaren visual component.",
   "license": "MIT",
   "type": "module",
@@ -16,8 +16,13 @@
     "./messages/de": "./src/messages/de.ts",
     "./messages/es": "./src/messages/es.ts",
     "./messages/fr": "./src/messages/fr.ts",
+    "./messages/ja": "./src/messages/ja.ts",
+    "./messages/ko": "./src/messages/ko.ts",
     "./messages/nl": "./src/messages/nl.ts",
     "./messages/pt": "./src/messages/pt.ts",
+    "./messages/ru": "./src/messages/ru.ts",
+    "./messages/tr": "./src/messages/tr.ts",
+    "./messages/zh-tw": "./src/messages/zh-tw.ts",
     "./styles/assistant.css": "./styles/assistant.css"
   },
   "engines": {
@@ -27,14 +32,14 @@
     "**/*.css"
   ],
   "dependencies": {
-    "@tangleai/models": "0.45.2",
-    "@tangleai/context": "0.45.2",
-    "@tangleai/agents": "0.45.2",
-    "@jarenjs/core": "0.184.2",
-    "@jarenjs/json": "0.184.2",
-    "@jarenjs/app": "0.184.2",
-    "@jarenjs/md": "0.184.2",
-    "@jarenjs/mermaid": "0.184.2"
+    "@tangleai/models": "0.46.0",
+    "@tangleai/context": "0.46.0",
+    "@tangleai/agents": "0.46.0",
+    "@jarenjs/core": "0.188.0",
+    "@jarenjs/json": "0.188.0",
+    "@jarenjs/app": "0.188.0",
+    "@jarenjs/md": "0.188.0",
+    "@jarenjs/mermaid": "0.188.0"
   },
   "private": false,
   "files": [

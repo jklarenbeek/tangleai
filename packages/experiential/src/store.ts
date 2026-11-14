@@ -1,5 +1,5 @@
 /** Domain checks and accounting surround the one injected atomic persistence seam. */
-import { canonicalizeJson, canonicalSha256 } from '@jarenjs/json/canonical';
+import { canonicalSha256, canonicalizeJson, cloneJson } from '@jarenjs/json/canonical';
 import { equalsJson } from '@jarenjs/core/object';
 import { checkExperientialRecord, experientialHeadKey, sealExperientialRecord } from './identity.ts';
 import { experientialIssue, experientialNativeCause, type ExperientialIssueCode, type ExperientialResult } from './errors.ts';
@@ -25,7 +25,7 @@ class Refusal extends Error {
 }
 function refuse(code: ExperientialIssueCode, path: string, detail: string): never { throw new Refusal([experientialIssue(code, path, detail)]); }
 function checked<T>(result: ExperientialResult<T>): T { if (!result.ok) throw new Refusal(result.issues); return result.value; }
-const snapshot = <T>(value: T): T => JSON.parse(canonicalizeJson(value)) as T;
+const snapshot = <T>(value: T): T => cloneJson(value) as T;
 const order = (values: readonly string[]) => [...values].sort();
 const stateTable = { experience: 'experiences', trainingRun: 'training_runs', artifact: 'artifacts' } as const;
 export interface ExperientialStoreOptions { now: () => string }

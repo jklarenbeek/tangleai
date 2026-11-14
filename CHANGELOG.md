@@ -1,5 +1,11 @@
 # Tangle releases
 
+## 0.46.0
+
+Ship an assistant pack for every language `@jarenjs/locales` ships. `@tangleai/assistant/messages/ja`, `/ko`, `/ru`, `/tr` and `/zh-tw` export formal Japanese, Korean, Russian, Turkish and Traditional Chinese (Taiwan) catalogues with exactly the English keys, under the names Jaren's packs use (`zhTW` from `/messages/zh-tw`), so a host passes the assistant pack and the Jaren pack of one language side by side. Russian agrees the words around a count with its one, few and many forms; Japanese, Korean and Chinese count with counters; Turkish keeps the noun singular after a number. The catalogue gains `md/page-break`, `md/permalink`, `md/permalink-section`, `md/backref` and `md/backref-occurrence`, and a reply's page breaks, heading permalinks and footnote back-references are named from them, in each pack with the wording of the same language's Jaren pack; English output is unchanged. The Pages game's validation-language switch offers all eleven Jaren packs.
+
+Build on Jaren 0.188.0. Its validator keeps the text a schema's `errorMessage` wrote in every locale, a `$msgid` fallback included, and a validation error's `toJSON` carries that mark; `diffContracts` reports fewer false and more real breaking changes; `@jarenjs/db` reads a PostgreSQL `jsonb` null as SQL NULL and names unguarded number columns in `introspect()`. Every exact `@jarenjs/*` pin moves from 0.184.2 to 0.188.0, and the candidate tarballs are recaptured from the tagged source with an empty patch. Local copies of canonical cloning and RFC 6901 token escaping are replaced by `@jarenjs/json`'s `cloneJson` and pointer helpers, with identical output.
+
 ## 0.45.2
 
 Move every package onto the Jaren 0.184.2 foundation, still consumed as candidate tarballs rebuilt byte for byte from the pinned source because npm does not serve that release. Its validator reads an array element holding `undefined`, or a hole, as present in both modes, so no `type`, `enum` or `const` admits it, `contains` no longer counts it as a match and a `$query` fails it with `JQ2011`; before, only a lone `type` item schema refused it, and only when validation stopped at the first failure. A one-keyword `required` item schema now counts only an item's own members in both modes. No Tangle test reached either change, and no Tangle interface changes.

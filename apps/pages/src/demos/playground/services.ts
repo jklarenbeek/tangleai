@@ -8,7 +8,7 @@ import { operatorRegistry, runQuery, runJslt } from './engines.ts';
 import { runValidation } from './validator.ts';
 import { STUDIO_TEMPLATES } from './appTemplates.ts';
 export { operatorRegistry, runQuery, runJslt } from './engines.ts';
-export { runValidation, localizeErrors, formViewFor } from './validator.ts';
+export { runValidation, localizeErrors, formViewFor, formLabelsFor, referencedSchemas } from './validator.ts';
 export { chartRenderer } from './charts.ts';
 export { formatJson } from './format.ts';
 export const md = createMdComponent({ plugins: [highlightPlugin(), mermaidPlugin({ theme: 'host' })], headingIds: true });

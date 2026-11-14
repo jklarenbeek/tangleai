@@ -1,5 +1,5 @@
 /** Stable deployment registration and threshold-only rollback advice. */
-import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { cloneJson } from '@jarenjs/json/canonical';
 import { deepFreeze } from '@jarenjs/core/object';
 import { checkExperientialRecord, sealExperientialRecord, experientialBaseDigest } from './identity.ts';
 import { validateExperientialShape } from './schema.ts';
@@ -20,7 +20,7 @@ export interface ExperientialDeploymentInput {
 
 export async function createExperientialDeployment(input: ExperientialDeploymentInput): Promise<ExperientialResult<ExperientialDeployment>> {
   let captured: ExperientialDeploymentInput;
-  try { captured = JSON.parse(canonicalizeJson(input)); }
+  try { captured = cloneJson(input); }
   catch { return refuseExperiential('TEXP1001', '', 'Deployment registration requires finite JSON data.'); }
   const base = await checkExperientialRecord('artifact', captured?.baseArtifact);
   if (!base.ok) return base;

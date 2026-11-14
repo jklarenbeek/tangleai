@@ -1,6 +1,6 @@
 # 📅 Tangle Roadmap
 
-The current substrate is [JarenJS 0.184.2](JARENJS_INTEGRATION.md): atomic
+The current substrate is [JarenJS 0.188.0](JARENJS_INTEGRATION.md): atomic
 ledger storage, retention options, verified DAG checkpoints, bounded history
 reads, scheduled document transport and supervised Node SQLite execution are
 available. Native relational migrations and revision-aware collection drag are
@@ -352,34 +352,31 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   did; no benchmark claim reaches a surface before the matrix above has put a
   number behind it. *Closes on:* n/a — surface work, held to the content rule.
 
-- [ ] **Markdown labels and direction in a translated assistant reply.**
+- [ ] **Markdown direction in a translated assistant reply.**
   `@tangleai/assistant` renders every sentence of its panel and its view-only
-  entry from one message catalogue with English, Dutch, German, French,
-  Spanish, Portuguese and Arabic packs, and a render of every pinned state in
-  each pack shows no assistant-owned English; its own stylesheet sets no
-  physical side. A rendered reply still has three English labels (the heading
-  permalink, the page break and the footnote back-reference), and Jaren's
-  Markdown stylesheet sets physical sides (list indents, the quote rule, table
-  alignment, the copy button), so a right-to-left reply does not mirror.
-  *Wanted:* those labels from the catalogue and a direction-neutral Markdown
-  stylesheet. *Stands on:* Jaren's renderer now takes the labels
-  (`labels`, `labelsFromCatalog` and `mdMessagesEn` in `@jarenjs/md`) and its
-  locale packs carry them, so the labels are the assistant's to pass; the
-  stylesheet's physical sides remain Jaren's. *Closes on:* the per-language
-  render check finding no Markdown label in any pack's residual, and the
+  entry, and the accessible names Jaren's Markdown renderer writes into a
+  reply, from one message catalogue with English and a pack for each of the
+  eleven languages `@jarenjs/locales` ships; a render of every pinned state in
+  each pack shows no assistant-owned English, and its own stylesheet sets no
+  physical side. Jaren's Markdown stylesheet still sets physical sides (list
+  indents, the quote rule, table alignment, the copy button), so a
+  right-to-left reply does not mirror. *Wanted:* a direction-neutral Markdown
+  stylesheet. *Stands on:* the stylesheet is Jaren's. *Closes on:* the
   Markdown stylesheet setting no physical side.
 
 - [ ] **The desktop app and the Pages site in every language.** Tangle is used
-  globally and must allow at least English, Dutch, German, French, Spanish,
-  Portuguese and Arabic. The assistant does; the desktop app and the Pages
-  site write their visible English as literals outside any catalogue, and
-  their stylesheets assume left-to-right. *Wanted:* their visible text from
-  catalogues with the same seven packs, and layouts that mirror for
-  right-to-left. *Constraint:* the formal register the assistant uses; no
-  English left beyond named owners. *Stands on:* `@jarenjs/core/message`, the
-  assistant's packs and its key-sentinel census. *Closes on:* a key-sentinel
-  render of their pinned screens finding no literal outside a catalogue, and a
-  render in each language finding no English beyond named owners.
+  globally and must allow English and every language `@jarenjs/locales` ships:
+  Dutch, German, French, Spanish, Portuguese, Arabic, Japanese, Korean,
+  Russian, Turkish and Traditional Chinese. The assistant does; the desktop app
+  and the Pages site write their visible English as literals outside any
+  catalogue, and their stylesheets assume left-to-right. *Wanted:* their
+  visible text from catalogues with the same eleven packs, and layouts that
+  mirror for right-to-left. *Constraint:* the formal register the assistant
+  uses; no English left beyond named owners. *Stands on:*
+  `@jarenjs/core/message`, the assistant's packs and its key-sentinel census.
+  *Closes on:* a key-sentinel render of their pinned screens finding no literal
+  outside a catalogue, and a render in each language finding no English beyond
+  named owners.
 
 - [ ] **A host's own database, review inbox and document authoring.** *Wanted:* the MAS store and the run log running on a
   host-supplied `@jarenjs/db` Store and inside a host transaction, over a
@@ -400,6 +397,56 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   their proposals and pauses in one inbox with no model client in the browser;
   a generated formula compiling and evaluating against sample rows, and a
   proposed app version refused on a stale revision.
+
+## Reuse of the suite
+
+- [ ] **JSON equality and copies by meaning.** *Wanted:* `equalsJson` from
+  `@jarenjs/core/object` where Tangle compares `JSON.stringify` texts (agents'
+  refinement `sameJson`, the context ledger, the Pages storage transfer), and
+  one copy rule in place of about twelve `JSON.parse(JSON.stringify(value))`
+  round-trips (models replay, memory store, context ledger and evidence,
+  grounding workflow, gmpl specialisation). *Constraint:* the meanings differ.
+  `equalsJson` ignores member order and tells `{ a: undefined }` from `{}`. A
+  reordered goal is then no longer an `AI0104` refusal, and the ledger's
+  "exact" comparisons may rely on order. Neither Jaren `cloneJson` matches the
+  round-trip: core's keeps `undefined` and copies a Date as `{}`, and
+  canonical's refuses both and sorts members. Trace2skill's `identity.ts`
+  claims to refuse non-JSON, functions and non-finite numbers, but its
+  round-trip silently drops or converts them. The canonical copy would refuse
+  them, but it reorders members its schemas are built from, so its emitted
+  artifacts may change. *Closes on:* per site, a decision on member order and
+  `undefined`, and the trace2skill refusal tested, with the artifacts
+  regenerated.
+- [ ] **A strict structured-output profile.** *Wanted:* `deriveStrictProfile`
+  from `@jarenjs/validate/strict-profile` for structured output, which sends
+  `strict: true` with any schema. The profile derives a schema the provider's
+  strict mode accepts and maps answers back. *Constraint:* providers accept
+  different strict subsets, and a mapped answer must still validate against
+  the original schema. *Closes on:* the live tier's strict refusals counted
+  before and after, per pinned model.
+- [ ] **Schema references in model bundles.** *Wanted:* `indexSchemaResources`
+  and `resolveSchemaReference` from `@jarenjs/validate/references` in place of
+  the hand-written resolution in `packages/models/src/bundle.ts`, which refuses
+  anchors. *Constraint:* the bundle's hoisted names are part of what a recorded
+  request contains. *Closes on:* the bundle tests passing with anchors admitted and the recorded
+  requests unchanged.
+- [ ] **The desktop settings form from its schema.** *Wanted:* the desktop
+  settings inputs generated from `SETTINGS_SCHEMA` through `buildFormModel`,
+  `createFormView` and `createFormActions`, as the Pages forms are, in place of
+  hand-built inputs. *Constraint:* the settings pane has its own layout,
+  secret fields and per-field help, which the generated form must carry.
+  *Closes on:* the desktop settings tests and a visual check in every locale.
+- [ ] **The Pages playground without a port.** *Wanted:* the playground built
+  from what `@jarenjs/play`, `@jarenjs/app` and `@jarenjs/forms` export,
+  rather than as a TypeScript port of the upstream site's boundaries.
+  *Constraint:* the port drifts. 0.188.0 found it four fixes behind the
+  upstream site: the option switch, number text, referenced schemas and input
+  guards. Its compiled locale catalogues are duplicated beside the game's, its
+  draft label reads `$schema` by substring rather than through
+  `detectSchemaDraft`, and it passes Play's renderers and validator on every
+  call rather than at `createPlayComponent`. *Closes on:* the Pages revamp
+  hosting Play with no copied site boundary, the playground tests passing
+  unchanged.
 
 ## The loop that runs the workflows
 

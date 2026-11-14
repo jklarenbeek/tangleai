@@ -1,4 +1,5 @@
 /** Host transitions for the public Play component. */
+import { FORM_NUMBER_VALUE } from '@jarenjs/app';
 export const PLAY_ACTIONS = {
   'play/example': { effects: [{ run: 'play-load', with: { id: '$payload' } }] },
   'play/loaded': {
@@ -9,6 +10,9 @@ export const PLAY_ACTIONS = {
       { op: 'replace', path: '/play/datasetIndex', value: '$payload.datasetIndex' },
       { op: 'replace', path: '/play/data', value: '$payload.data' },
       { op: 'replace', path: '/play/config', value: '$payload.config' },
+      // the reader's message language stays; only an example made to show
+      // one language (it names a locale) sets it
+      { op: 'replace', path: '/play/locale', value: { $if: ['$payload.config.locale', '$payload.config.locale', '$.play.locale'] } },
       { op: 'replace', path: '/play/result', value: null },
       // an example REPLACES the session's content, so it can no longer be
       // the saved record: unbind, or the next Save would overwrite that
@@ -35,8 +39,21 @@ export const PLAY_ACTIONS = {
   'play/data': {
     patch: [{ op: 'add', path: { $concat: ['/play/data/', '$payload.key'] }, value: '$event.value' }],
   },
-  'play/option': {
-    patch: [{ op: 'add', path: { $concat: ['/play/config/', '$payload.key'] }, value: '$event.value' }],
+  // a live mode select (patch mode, chart format, kernel): the engine says
+  // what the switch does to the source (a definition converted, a kernel's
+  // own example loaded), then the run loop re-runs
+  'play/option': { effects: [{ run: 'play-option', with: { key: '$payload.key', value: '$event.value' } }] },
+  'play/option-set': {
+    patch: [
+      { op: 'replace', path: '/play/config', value: '$payload.config' },
+      { op: 'replace', path: '/play/source', value: '$payload.source' },
+      { op: 'replace', path: '/play/data', value: '$payload.data' },
+      { op: 'replace', path: '/play/exampleId', value: '$payload.exampleId' },
+      { op: 'replace', path: '/play/datasetIndex', value: '$payload.datasetIndex' },
+      { op: 'replace', path: '/play/dataView', value: '$payload.dataView' },
+      { op: 'replace', path: '/play/dataValue', value: '$payload.dataValue' },
+      { op: 'replace', path: '/play/locale', value: '$payload.locale' },
+    ],
   },
   'play/dataset': { effects: [{ run: 'play-dataset', with: { index: '$payload' } }] },
   'play/dataset-set': {
@@ -80,6 +97,9 @@ export const PLAY_ACTIONS = {
       // a loaded record binds; a blank or SHARED session does not (a share
       // link is not a local record, so its first Save must ask for a name)
       { op: 'replace', path: '/play/savedName', value: { $default: ['$payload.savedName', null] } },
+      // the reader's message language wins over the one a session carries;
+      // before any choice, the session's language becomes the reader's
+      { op: 'replace', path: '/play/locale', value: { $if: ['$.play.locale', '$.play.locale', { $default: ['$payload.config.locale', null] }] } },
       { op: 'replace', path: '/play/datasetIndex', value: 0 },
       { op: 'replace', path: '/play/result', value: null },
       { op: 'replace', path: '/play/panel', value: null },
@@ -100,7 +120,7 @@ export const PLAY_ACTIONS = {
   'play/data-mirror': { patch: [{ op: 'add', path: '/play/data/data', value: '$payload' }] },
   'play/f-input': { patch: [{ op: { $if: [{ $or: ['$payload.element', { $eq: ['$payload.pointer', ''] }] }, 'replace', 'add'] }, path: { $concat: ['/play/dataValue', '$payload.pointer'] }, value: '$event.value' }] },
   'play/f-check': { patch: [{ op: { $if: [{ $or: ['$payload.element', { $eq: ['$payload.pointer', ''] }] }, 'replace', 'add'] }, path: { $concat: ['/play/dataValue', '$payload.pointer'] }, value: '$event.checked' }] },
-  'play/f-number': { patch: [{ op: { $if: [{ $or: ['$payload.element', { $eq: ['$payload.pointer', ''] }] }, 'replace', 'add'] }, path: { $concat: ['/play/dataValue', '$payload.pointer'] }, value: { $if: [{ $ne: ['$event.value', ''] }, { $number: '$event.value' }, null] } }] },
+  'play/f-number': { patch: [{ op: { $if: [{ $or: ['$payload.element', { $eq: ['$payload.pointer', ''] }] }, 'replace', 'add'] }, path: { $concat: ['/play/dataValue', '$payload.pointer'] }, value: FORM_NUMBER_VALUE }] },
   'play/f-json': { patch: [{ op: { $if: [{ $or: ['$payload.element', { $eq: ['$payload.pointer', ''] }] }, 'replace', 'add'] }, path: { $concat: ['/play/dataValue', '$payload.pointer'] }, value: '$event.formJsonValue' }] },
   'play/f-add': { patch: [{ op: 'add', path: { $concat: ['/play/dataValue', '$payload.pointer', '/-'] }, value: '$payload.value' }] },
   'play/f-remove': { patch: [{ op: 'remove', path: { $concat: ['/play/dataValue', '$payload.pointer'] } }] }

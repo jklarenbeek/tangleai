@@ -42,8 +42,15 @@ export function presentation(value: object) {
 }
 
 /** Replies render through one Markdown component per mount, their heading ids prefixed with the instance. @param id @param messages */
+/** The accessible names Jaren's Markdown renderer writes, each under the catalogue key a Jaren locale pack gives it. */
+const MD_LABELS = {
+  pageBreak: 'md/page-break', permalink: 'md/permalink', permalinkSection: 'md/permalink-section',
+  backref: 'md/backref', backrefOccurrence: 'md/backref-occurrence',
+} as const;
+
 export function replyMarkdown(id: string, messages: AssistantMessages) {
-  const md = createMdComponent({ plugins: [highlightPlugin(), mermaidPlugin({ theme: 'host' })], headingIds: true, headingAnchors: true, footnotesLabel: messages['md/footnotes']() });
+  const labels = Object.fromEntries(Object.entries(MD_LABELS).map(([name, key]) => [name, messages[key]]));
+  const md = createMdComponent({ plugins: [highlightPlugin(), mermaidPlugin({ theme: 'host' })], headingIds: true, headingAnchors: true, footnotesLabel: messages['md/footnotes'](), labels });
   return {
     render: (source: string) => md.view(source, { slugPrefix: `user-content-${id}-` }),
     hydrate: (node: any) => { if (node?.querySelectorAll) md.hydrate(node); },

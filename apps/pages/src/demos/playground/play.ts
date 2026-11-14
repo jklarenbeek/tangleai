@@ -5,6 +5,7 @@
  * work in the query/jslt engines. Ephemeral (no document, unlike the studio).
  */
 import { createSplitterWidget } from '@jarenjs/app';
+import { isJsonObject } from '@jarenjs/core/object';
 import { createPlayComponent } from '@jarenjs/play/component';
 import { toMarkdown } from '@jarenjs/md';
 import { createMdx } from '@jarenjs/md/mdx';
@@ -135,7 +136,25 @@ export const PLAY_START = Object.freeze({
   // is the structured buffer the form edits, mirrored back to the data text
   dataView: 'json', // 'json' | 'form'
   dataValue: null,  // the parsed data the form binds to (validate + form only)
+  // the message language the reader chose (the Messages select), kept
+  // across examples, New and opened sessions; null until one is chosen
+  locale: null,
 });
+
+/**
+ * The play slice as the engines and the panes read it: the reader's
+ * message language (`slice.locale`) is the locale of every engine that
+ * offers the option, whatever the loaded example or session carried.
+ * @param slice - the `state.play` slice
+ * @returns the slice, its config carrying the chosen locale
+ */
+export function withPlayLocale(slice: any) {
+  const locale = slice.locale;
+  if (typeof locale !== 'string' || slice.config?.locale === locale) return slice;
+  const engine = Object.hasOwn(playComponent.engines, slice.engine) ? playComponent.engines[slice.engine] : undefined;
+  if (!(engine?.optionPanes ?? []).some((pane: any) => pane.key === 'locale')) return slice;
+  return { ...slice, config: { ...(slice.config ?? {}), locale } };
+}
 
 /**
  * A play SESSION as a saveable/shareable document: the engine, its source and
@@ -144,6 +163,8 @@ export const PLAY_START = Object.freeze({
  * @param slice - the `state.play` slice
  */
 export function sessionOf(slice: any) {
+  // a session carries the language on screen, the chosen one included
+  slice = withPlayLocale(slice);
   return {
     engine: slice.engine,
     exampleId: slice.exampleId ?? null,
@@ -163,9 +184,9 @@ export function sessionToLoaded(session: any) {
   return {
     engine: typeof s.engine === 'string' ? s.engine : PLAY_START.engine,
     exampleId: typeof s.exampleId === 'string' ? s.exampleId : null,
-    source: s.source && typeof s.source === 'object' ? s.source : {},
-    data: s.data && typeof s.data === 'object' ? s.data : {},
-    config: s.config && typeof s.config === 'object' ? s.config : {},
+    source: isJsonObject(s.source) ? s.source : {},
+    data: isJsonObject(s.data) ? s.data : {},
+    config: isJsonObject(s.config) ? s.config : {},
   };
 }
 
@@ -198,7 +219,7 @@ export function sessionFromDocument(text: string): {
   let parsed;
   try { parsed = JSON.parse(String(text ?? '')); }
   catch { return null; }
-  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
+  if (!isJsonObject(parsed)) return null;
   const wrapped = parsed.session && typeof parsed.session === 'object';
   const session = wrapped ? parsed.session : parsed;
   // a document that names no engine is not a session — refuse it rather
@@ -240,8 +261,8 @@ export function legacyExperimentToSession(engine: string, inputs: any): any | nu
       config: {},
     };
   }
+  if (!Object.hasOwn(playComponent.engines, engine)) return null;
   const descriptor = playComponent.engines[engine];
-  if (descriptor === undefined) return null;
 
   const source: Record<string, string> = {};
 
@@ -269,13 +290,14 @@ export function createPlaySplitterWidget() {
 /** Host-injected JSON Schema validator for the `validate` engine (the hybrid
  * seam): reuse the site's cached `runValidation`, then localize the errors to
  * the chosen locale — so @jarenjs/validate + the locale packs stay in the host. */
-function validateRunner(schemaText: any, data: any, locale: any) {
-  const report = runValidation(schemaText, data);
+function validateRunner(schemaText: any, data: any, locale: any, schemas: any[] = []) {
+  const report = runValidation(schemaText, data, schemas);
   return { ...report, errors: localizeErrors(report.errors, locale) };
 }
 
 /** Run the active engine over the current source + data (operators, option config, visual renderers, the validator). */
 export function runPlay(slice: any) {
+  slice = withPlayLocale(slice);
   return playComponent.runExample(slice.engine, slice.source, slice.data,
     { operators: operatorRegistry, config: slice.config, renderers, validate: validateRunner });
 }
@@ -307,6 +329,26 @@ export function deepLinkExample(params: {
     && examples.some((e) => e.id === params.example)) return params.example;
   if (params.engine === undefined) return null;
   return examples.find((e) => e.engine === params.engine)?.id ?? null;
+}
+
+/**
+ * The play slice a switch of one option pane leaves: the new config, and
+ * the source and data that fit it (`switchOption`). When the switch loads
+ * another example, the session follows it there, and the structured form
+ * buffer — the old data's — goes, as it does when an example is picked.
+ */
+export function switchPlayOption(slice: any, key: string, value: string) {
+  const next = playComponent.switchOption(slice.engine, key, value, slice);
+  const followed = next.example !== undefined;
+  return {
+    config: next.config, source: next.source, data: next.data,
+    exampleId: followed ? next.example : slice.exampleId,
+    datasetIndex: followed ? 0 : slice.datasetIndex,
+    dataView: followed ? 'json' : slice.dataView,
+    dataValue: followed ? null : slice.dataValue,
+    // choosing a message language makes it the reader's, for every later load
+    locale: key === 'locale' ? value : (slice.locale ?? null),
+  };
 }
 
 /** The data of one dataset (by index) of an example, or null. */

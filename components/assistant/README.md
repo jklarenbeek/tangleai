@@ -114,9 +114,14 @@ Every sentence the panel and the view show comes from one catalogue. Pass
 `messages` to `mountAssistant`, `mountAssistantView`, either widget or
 `createAssistantController`. `@tangleai/assistant/messages` exports the English
 catalogue `assistantMessagesEn` and `createAssistantMessages`; `/messages/nl`,
-`/messages/de`, `/messages/fr`, `/messages/es`, `/messages/pt` and
-`/messages/ar` export formal Dutch, German, French, Spanish, Brazilian
-Portuguese and Modern Standard Arabic packs with exactly the English keys. A
+`/messages/de`, `/messages/fr`, `/messages/es`, `/messages/pt`, `/messages/ar`,
+`/messages/ja`, `/messages/ko`, `/messages/ru`, `/messages/tr` and
+`/messages/zh-tw` export formal Dutch, German, French, Spanish, Brazilian
+Portuguese, Modern Standard Arabic, Japanese, Korean, Russian, Turkish and
+Traditional Chinese (Taiwan) packs with exactly the English keys: the eleven
+languages `@jarenjs/locales` ships, under the same names (`zhTW` from
+`/messages/zh-tw`), so a host passes the assistant pack and the Jaren pack of
+one language side by side. A
 host catalogue merges over English: a key it leaves out renders English, and an
 unknown key throws when the catalogue is built. Presentation options take
 precedence over the catalogue. Changing language means mounting with another
@@ -125,7 +130,9 @@ default system instruction and the cancelled-tool result are written to the
 model, never shown, and stay English; a host sets `system` in its own language.
 
 Counts follow each language's plural rules and digits; Arabic phrases every
-count around a fixed count noun and keeps Latin digits. Both mounts take `lang`
+count around a fixed count noun and keeps Latin digits, Russian agrees the
+words around a count with its one, few and many forms, and Japanese, Korean
+and Chinese count with counters. Both mounts take `lang`
 and `dir` (`ltr`, `rtl` or `auto`) and write them on the assistant's root;
 without them the page's language and direction apply. The stylesheet sets no
 physical side, so with `dir: 'rtl'` the launcher and the panel sit at the left
@@ -133,10 +140,14 @@ edge and the panel's own layout mirrors. A Markdown reply keeps the sides
 Jaren's Markdown stylesheet sets (list indents, the quote rule, table
 alignment) until that stylesheet is direction-neutral.
 
+The accessible names Jaren's Markdown renderer writes into a reply (the
+footnotes heading, page breaks, heading permalinks and footnote
+back-references) come from the catalogue's `md/*` keys, the keys and wording of
+the same language's `@jarenjs/locales` pack; `test/assistant/messages.test.ts`
+fails when one reads differently from Jaren's.
+
 What a translated render still shows in English, by owner: product names and
-the setting examples, as written; text another package wrote, such as a
-provider error, shown verbatim inside the catalogue's error frame; and Jaren's
-Markdown accessibility labels for heading permalinks, page breaks and footnote
-back-references, which its renderer writes (only the footnotes heading is
-configurable). `test/assistant/census.test.ts` renders every pinned state in
-every pack and fails on any other English.
+the setting examples, as written, and text another package wrote, such as a
+provider error, shown verbatim inside the catalogue's error frame.
+`test/assistant/census.test.ts` renders every pinned state in every pack and
+fails on any other English.

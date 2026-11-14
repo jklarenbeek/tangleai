@@ -1,9 +1,9 @@
-import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
+import { canonicalSha256, cloneJson } from '@jarenjs/json/canonical';
 import { deepFreeze } from '@jarenjs/core/object';
 import { foldEntityName, foldThemes } from './normalize.ts';
 /** Validate JSON before cloning, preserving immutability across injected seams. */
 export function immutableLightRagJson<T>(value: T): T {
-    return deepFreeze(JSON.parse(canonicalizeJson(value))) as T;
+    return deepFreeze(cloneJson(value)) as T;
 }
 export const lightragRevisionOf = (value: unknown): Promise<string> => canonicalSha256(value);
 /** Membership belongs to the projection; it cannot participate in its own claim hash. */

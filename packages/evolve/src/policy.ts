@@ -26,6 +26,7 @@
 import { evolveIssue, type EvolveIssue } from './errors.ts';
 import { operationPath, patchBytes, type ProposalOperation } from './proposal.ts';
 import type { EvolveRepository, EvolveBudgets } from './contracts.gen.ts';
+import { encodeJSONPointerSegment } from '@jarenjs/json/pointer';
 
 export type FileMap = Record<string, string>;
 
@@ -74,7 +75,7 @@ export function compileSurfacePolicy(input: SurfacePolicyInput): SurfacePolicy {
   const generated = [...input.generated];
   const budgets = input.budgets;
 
-  const pointerFor = (path: string): string => '/files/' + path.replaceAll('~', '~0').replaceAll('/', '~1');
+  const pointerFor = (path: string): string => '/files/' + encodeJSONPointerSegment(path);
 
   function check(previous: FileMap, next: FileMap, status?: SurfaceStatus): EvolveIssue[] {
     const issues: EvolveIssue[] = [];

@@ -4,7 +4,7 @@ import { openHttpClient, type Outcome } from '@jarenjs/contract/client';
 import { createBoundedCache } from '@jarenjs/core/cache';
 import { deepFreeze } from '@jarenjs/core/object';
 import { createAttemptBudget, parseRetryAfter } from '@jarenjs/core/retry';
-import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { cloneJson } from '@jarenjs/json/canonical';
 import { readBoundedResponseBytes } from '@tangleai/documents/fetch';
 import document from '../schemas/training-service.contract.json' with { type: 'json' };
 import { checkTrainingCapabilities, trainingSpecDigest, validateTrainingSpec, verifyArtifactReceipt,
@@ -263,5 +263,5 @@ export function createHttpTrainingBackend(options: HttpTrainingBackendOptions): 
   }
   return { ok: true, value: Object.freeze({ identity: deepFreeze({ id: 'tangle-training-service:' + base, version: '1', kind: 'http' }),
     capabilities, submit, bindJob, inspect: (id: string) => observe(id, false), cancel: (id: string) => observe(id, true), materialize, readBytes,
-    stats: () => deepFreeze(JSON.parse(canonicalizeJson(stats)) as HttpTrainingStats) }) };
+    stats: () => deepFreeze(cloneJson(stats) as HttpTrainingStats) }) };
 }

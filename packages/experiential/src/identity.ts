@@ -1,5 +1,5 @@
 /** Stable content addresses; observation metadata is retained beside identity. */
-import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
+import { canonicalSha256, cloneJson } from '@jarenjs/json/canonical';
 import { validateExperientialRecord, type ExperientialRecordKind, type ExperientialRecordMap } from './schema.ts';
 import { refuseExperiential, type ExperientialResult } from './errors.ts';
 import type { ExperientialEvaluationRegistration } from './contracts.gen.ts';
@@ -82,7 +82,7 @@ export async function checkExperientialRecord<K extends ExperientialRecordKind>(
 /** Snapshot before awaiting a digest; identities never read later caller mutations. */
 export async function sealExperientialRecord<K extends ExperientialRecordKind>(kind: K, input: Omit<ExperientialRecordMap[K], 'id'>): Promise<ExperientialResult<ExperientialRecordMap[K]>> {
   let body: Record<string, unknown>;
-  try { body = JSON.parse(canonicalizeJson(input)); }
+  try { body = cloneJson(input); }
   catch { return refuseExperiential('TEXP1001', '', 'Only finite JSON data is accepted.'); }
   if (body === null || typeof body !== 'object' || Array.isArray(body) || Object.hasOwn(body, 'id'))
     return refuseExperiential('TEXP1001', '/id', 'The record owner supplies the content identity.');

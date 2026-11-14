@@ -9,6 +9,11 @@ import { fr } from '@tangleai/assistant/messages/fr';
 import { es } from '@tangleai/assistant/messages/es';
 import { pt } from '@tangleai/assistant/messages/pt';
 import { ar } from '@tangleai/assistant/messages/ar';
+import { ja } from '@tangleai/assistant/messages/ja';
+import { ko } from '@tangleai/assistant/messages/ko';
+import { ru } from '@tangleai/assistant/messages/ru';
+import { tr } from '@tangleai/assistant/messages/tr';
+import { zhTW } from '@tangleai/assistant/messages/zh-tw';
 import { createAssistantRules, createAssistantViewRules } from '../../components/assistant/src/views.ts';
 import { stringLiterals } from '../import-specifiers.ts';
 import { ASSISTANT_STATES, VIEW_STATES } from './state-matrix.ts';
@@ -24,12 +29,6 @@ const FOREIGN: Record<string, string> = {
   "AI0001: unknown provider 'unknown' (openrouter, ollama, lmstudio, custom)": '@tangleai/models provider resolution',
   'the model did not produce an applicable refinement': '@tangleai/agents refinement outcome',
 };
-/** What every translated render keeps in English because Jaren's Markdown renderer writes it (state: where: text). */
-const SUITE_LABELS = [
-  'reply with heading, page break and footnote: a.md-anchor@aria-label: Permalink to ‹h:heading›',
-  'reply with heading, page break and footnote: div.md-page-break@aria-label: Page break',
-  'reply with heading, page break and footnote: a.footnote-backref@aria-label: Back to reference 1',
-];
 /** The controller's only prose outside the catalogue: it is written to the model, never shown. */
 const MODEL_FACING = ['The assistant turn was cancelled.', 'Help the user complete their task using the available tools.'];
 /** The view's refusals of a malformed host report or transport: thrown to the caller as a `TypeError`, never rendered. */
@@ -99,8 +98,11 @@ it('text another package writes is shown inside a message and named with its own
   assert.deepEqual([...new Set(details.filter(text => text !== ''))].sort(), Object.keys(FOREIGN).sort());
 });
 
-const PACKS = { nl, de, fr, es, pt, ar };
-const LANGUAGES = { nl: 'Dutch', de: 'German', fr: 'French', es: 'Spanish', pt: 'Portuguese', ar: 'Arabic' };
+const PACKS = { nl, de, fr, es, pt, ar, ja, ko, ru, tr, zhTW };
+const LANGUAGES = {
+  nl: 'Dutch', de: 'German', fr: 'French', es: 'Spanish', pt: 'Portuguese', ar: 'Arabic',
+  ja: 'Japanese', ko: 'Korean', ru: 'Russian', tr: 'Turkish', zhTW: 'Traditional Chinese',
+};
 let englishRender: ReturnType<typeof both> | undefined;
 
 for (const [lang, pack] of Object.entries(PACKS) as [keyof typeof PACKS, object][]) {
@@ -128,7 +130,7 @@ for (const [lang, pack] of Object.entries(PACKS) as [keyof typeof PACKS, object]
       }
     }
     assert.deepEqual(left, []);
-    assert.deepEqual(suite, SUITE_LABELS);
+    assert.deepEqual(suite, [], 'the Markdown labels come from the catalogue');
     assert.deepEqual([...foreign.keys()].sort(), [...new Set(Object.values(FOREIGN))].sort());
     assert.deepEqual([...cognate.keys()].sort(), [...cognates].sort());
     // the tool name sits where the language puts it: the split keeps the sentence's own order

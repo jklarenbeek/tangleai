@@ -57,7 +57,7 @@ const AS_WRITTEN: Record<string, string> = {
   'provider/lmstudio': 'a product name',
 };
 /** Keys whose text in each pack is the English, each for a reason the review settled. */
-export const COGNATES: Record<'nl' | 'de' | 'fr' | 'es' | 'pt' | 'ar', Record<string, string>> = {
+export const COGNATES: Record<'nl' | 'de' | 'fr' | 'es' | 'pt' | 'ar' | 'ja' | 'ko' | 'ru' | 'tr' | 'zhTW', Record<string, string>> = {
   nl: {
     'settings/provider': 'the loanword Dutch interfaces use for a model host',
     'settings/model': 'the same word in Dutch',
@@ -68,6 +68,11 @@ export const COGNATES: Record<'nl' | 'de' | 'fr' | 'es' | 'pt' | 'ar', Record<st
   es: AS_WRITTEN,
   pt: AS_WRITTEN,
   ar: AS_WRITTEN,
+  ja: AS_WRITTEN,
+  ko: AS_WRITTEN,
+  ru: AS_WRITTEN,
+  tr: { 'settings/model': 'the same word in Turkish', ...AS_WRITTEN },
+  zhTW: AS_WRITTEN,
 };
 export const NL_COGNATES = COGNATES.nl;
 /** Labels Jaren's Markdown renderer writes into a reply. */

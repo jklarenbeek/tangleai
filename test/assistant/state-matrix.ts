@@ -158,6 +158,12 @@ const STATES: { name: string, render: () => Promise<Mounted> }[] = [
       { role: 'assistant', content: '## ‹h:heading›\n\n‹h:paragraph›[^1]\n\n<!-- pagebreak -->\n\n‹h:after›\n\n[^1]: ‹h:footnote›\n' },
     ] },
   }) },
+  { name: 'reply with an untitled heading and a footnote cited twice', render: () => mount({
+    settings: CONFIGURED, open: true, ledger: ledgerView(), transcript: { messages: [
+      { role: 'user', content: '‹h:question›' },
+      { role: 'assistant', content: '##\n\n‹h:first›[^1] ‹h:second›[^1]\n\n[^1]: ‹h:footnote›\n' },
+    ] },
+  }) },
 ];
 /** Each state, rendered with the catalogue it is given or with the English default. */
 export const ASSISTANT_STATES = STATES.map(({ name, render }) => ({

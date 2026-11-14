@@ -10,7 +10,7 @@ import * as assert from 'node:assert';
 
 import { renderToString } from '@jarenjs/view';
 import { mountGame as createGameHost } from '../../apps/pages/src/demos/game/mount.ts';
-import { createGameRuntime } from '../../apps/pages/src/demos/game/runtime.ts';
+import { createGameRuntime, GAME_LOCALES } from '../../apps/pages/src/demos/game/runtime.ts';
 import {
   PUZZLES, ITEMS, SCENERY, CHARACTERS, DIALOGUE,
 } from '../../apps/pages/src/demos/game/gameContent.ts';
@@ -214,6 +214,14 @@ describe('website — the adventure game', function () {
     assert.strictEqual(app.getState().game.locale, 'nl');
     // re-derives buildFormViewModel with the compiled Dutch catalog
     assert.match(renderToString(app.getVnode()), /Pirate name/);
+  });
+
+  it('the locale switch offers English and every pack @jarenjs/locales ships', function () {
+    assert.deepStrictEqual(GAME_LOCALES.map((l) => l.id), ['en', 'nl', 'de', 'fr', 'es', 'pt', 'ar', 'ja', 'ko', 'ru', 'tr', 'zh-tw']);
+    const app = mountGame();
+    app.dispatch('game/locale', 'zh-tw');
+    assert.strictEqual(app.getState().game.locale, 'zh-tw');
+    assert.match(renderToString(app.getVnode()), />ZH-TW</);
   });
 
   it('the dynamic tier degrades gracefully without a key', function () {

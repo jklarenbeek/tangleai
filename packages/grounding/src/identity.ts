@@ -1,8 +1,8 @@
 /** Stable JSON identities; callers provide observations explicitly, never a clock. */
-import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
+import { canonicalSha256, cloneJson } from '@jarenjs/json/canonical';
 import { deepFreeze } from '@jarenjs/core/object';
 export function immutableGroundingJson<T>(value: T): T {
-    return deepFreeze(JSON.parse(canonicalizeJson(value))) as T;
+    return deepFreeze(cloneJson(value)) as T;
 }
 export function groundingRevisionOf(value: unknown): Promise<string> { return canonicalSha256(value); }
 export function profileRevisionOf(document: { revision: string }): Promise<string> {

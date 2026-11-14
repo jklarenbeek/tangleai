@@ -6,6 +6,7 @@ import { immutableTradingJson } from './identity.ts';
 import { tradingRefuse } from './errors.ts';
 import type { TradingOutcome } from './errors.ts';
 import type { TradingRecord } from './contracts.gen.ts';
+import { encodeJSONPointerSegment } from '@jarenjs/json/pointer';
 
 export const tradingSchema = immutableTradingJson(schema);
 export type TradingSchemaName = keyof typeof schema.$defs;
@@ -44,7 +45,7 @@ export function validateTradingShape<T>(name: TradingSchemaName, input: unknown)
     const result = validate(value);
     if (!result.valid) {
       const error = result.errors?.[0], missing = error?.params?.missingProperty;
-      const path = (error?.instancePath ?? '') + (missing === undefined ? '' : '/' + missing.replaceAll('~', '~0').replaceAll('/', '~1'));
+      const path = (error?.instancePath ?? '') + (missing === undefined ? '' : '/' + encodeJSONPointerSegment(missing));
       return tradingRefuse('TTRD1001', path, error?.message ?? `Invalid ${name}`);
     }
     return { valid: true, value: value as T };

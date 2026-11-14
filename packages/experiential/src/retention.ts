@@ -1,6 +1,6 @@
 /** Archival retains every record and source address; checked dependencies veto disposal. */
 import { deepFreeze, equalsJson } from '@jarenjs/core/object';
-import { canonicalizeJson, canonicalSha256 } from '@jarenjs/json/canonical';
+import { canonicalSha256, cloneJson } from '@jarenjs/json/canonical';
 import { checkExperientialRecord, sealExperientialRecord } from './identity.ts';
 import { validateExperientialShape } from './schema.ts';
 import { resolveExperientialLineage } from './lineage.ts';
@@ -39,7 +39,7 @@ const need = <T>(result: ExperientialResult<T>): T => {
 
 export async function planExperientialRetention(raw: ExperientialRetentionInput): Promise<ExperientialResult<ExperientialRetentionPlan>> {
   let input: ExperientialRetentionInput;
-  try { input = JSON.parse(canonicalizeJson(raw)); }
+  try { input = cloneJson(raw); }
   catch { return refuseExperiential('TEXP1001', '', 'Retention requires finite JSON inputs.'); }
   try {
     if (!input || !equalsJson(Object.keys(input).sort(), ['artifacts', 'deployment', 'episodeIds', 'lineage', 'now', 'policy'])

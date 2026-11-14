@@ -14,6 +14,7 @@
 
 import { refuseOne, ok, type EvolveOutcome } from './errors.ts';
 import { evolveRevision } from './identity.ts';
+import { decodeJSONPointerSegment } from '@jarenjs/json/pointer';
 
 export type PatchOp = 'add' | 'replace' | 'remove';
 
@@ -64,7 +65,7 @@ const SEGMENT = /^\/files\/[^/]+$/;
 
 /** RFC 6901: `~1` is `/` and `~0` is `~`, decoded in that order. */
 export function decodePointerSegment(segment: string): string {
-  return segment.replaceAll('~1', '/').replaceAll('~0', '~');
+  return decodeJSONPointerSegment(segment);
 }
 
 /** The repository-relative path an operation addresses. */

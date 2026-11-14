@@ -499,9 +499,9 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-Tangle consumes 23 AI-free Jaren **0.184.2** packages as candidate tarballs
+Tangle consumes 23 AI-free Jaren **0.188.0** packages as candidate tarballs
 packed from the source submodule at `vendor/jarenjs`, which pins
-`72b2cf306efa15304809a79e8066befdc6d506da` (tag `v0.184.2`); npm does not serve
+`3df3bed4ec0270b77ab852b1e7b94c2ff24f8ce4` (tag `v0.188.0`); npm does not serve
 that release. Run `node scripts/jaren-artifacts.ts --bootstrap` before
 `npm ci --ignore-scripts`: it rebuilds the tarballs from the pinned source and
 refuses any byte that differs from the

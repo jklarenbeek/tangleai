@@ -14,6 +14,7 @@ import { renderMermaid } from '@jarenjs/mermaid';
 import { researchPage } from '../research-page.ts';
 import { compileChart } from '@jarenjs/charts';
 import { createMdComponent } from '@jarenjs/md/component';
+import { encodeJSONPointerSegment } from '@jarenjs/json/pointer';
 
 const md = createMdComponent({ headingIds: false });
 
@@ -919,7 +920,7 @@ function groundedPage(state: any): any {
       reply.question ? ['div', { class: 'grounding-clarification' },
         reply.question.fields.map((field: any) => ['label', { key: field.id }, field.text,
           ['input', { class: 'grounding-answer', value: g.answers[field.id] ?? '', maxLength: 4000,
-            on: { input: on('grounding/field', field.id.replace(/~/g, '~0').replace(/\//g, '~1'), ['value']) } }]]),
+            on: { input: on('grounding/field', encodeJSONPointerSegment(field.id), ['value']) } }]]),
         ['button', { class: 'grounding-reply', disabled: g.busy || reply.question.fields.some((field: any) => !g.answers[field.id]?.trim()) ? true : null,
           on: { click: on('grounding/reply') } }, 'Continue session']] : null,
       reply.answer ? ['div', { class: 'grounding-answer-text' }, md.view(reply.answer.text),

@@ -2,8 +2,8 @@
 import { createApp, createDocStore, createFormView, formEventFields } from '@jarenjs/app';
 import { PLAY_ACTIONS } from './actions.ts';
 import { playEffects } from './effects.ts';
-import { PLAY_START, playComponent, runPlay, sessionToLoaded, createPlaySplitterWidget } from './play.ts';
-import { formViewFor } from './services.ts';
+import { PLAY_START, playComponent, runPlay, sessionToLoaded, createPlaySplitterWidget, withPlayLocale } from './play.ts';
+import { formViewFor, formLabelsFor, referencedSchemas } from './services.ts';
 const CHROME = new Set(['result', 'panel', 'deep', 'deepPick', 'mobilePane', 'name', 'savedName', 'names', 'shared', 'ratio']);
 /** @param node @param [options] */
 export function mountPlay(node: HTMLElement | null, options: any = {}) {
@@ -19,7 +19,10 @@ export function mountPlay(node: HTMLElement | null, options: any = {}) {
       $jslt: '0.1', modes: playComponent.modes, rules: [
         { match: '$', body: { $apply: ['$.ui.play', 'play'] } }, ...playComponent.rules,
         ...createFormView({
-          root: '$.ui.play.dataForm', actions: {
+          root: '$.ui.play.dataForm',
+          // the chrome follows the Messages language while the form is open
+          labelsPath: '$.ui.play.formLabels',
+          actions: {
             input: 'play/f-input', check: 'play/f-check', number: 'play/f-number', json: 'play/f-json', add: 'play/f-add', remove: 'play/f-remove',
           }
         }).map((rule: any) => ({ ...rule, mode: 'play' })),
@@ -28,15 +31,20 @@ export function mountPlay(node: HTMLElement | null, options: any = {}) {
   }, {
     node, document: node?.ownerDocument, schedule: options.schedule, onError: options.onError,
     eventFields: formEventFields(), effects, widgets: { 'play-splitter': createPlaySplitterWidget() },
-    viewModel: (state: any) => ({
-      ui: {
-        play: {
-          ...playComponent.viewModel(state),
-          ...(state.play.engine === 'validate' && state.play.dataView === 'form'
-            ? { dataForm: formViewFor(state.play.source?.schema ?? '', state.play.dataValue) } : {})
+    viewModel: (state: any) => {
+      // the panes read the reader's message language, as the run does
+      const play = withPlayLocale(state.play);
+      return {
+        ui: {
+          play: {
+            ...playComponent.viewModel({ ...state, play }),
+            // the form's field errors and chrome speak the language of its alerts
+            ...(play.engine === 'validate' && play.dataView === 'form'
+              ? { dataForm: formViewFor(play.source?.schema ?? '', play.dataValue, referencedSchemas(play.source?.schemas), play.config?.locale), formLabels: formLabelsFor(play.config?.locale) } : {})
+          }
         }
-      }
-    }),
+      };
+    },
   });
   function run() {
     if (disposed) return { ok: false as const, error: 'The playground is disposed.' };

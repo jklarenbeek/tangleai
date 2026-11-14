@@ -2,7 +2,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { createDagJobRunner, type JobWorker, type JobWorkerOptions } from '@jarenjs/db';
 import { equalsJson } from '@jarenjs/core/object';
-import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { cloneJson } from '@jarenjs/json/canonical';
 import { checkExperientialRecord, EXPERIENTIAL_TRAINING_DAG, experientialTrainingJobKind,
   experientialTrainingRevision, createExperientialTrainingTasks, type ExperientialTrainingContext,
   type ExperientialTrainingPlan } from '@tangleai/experiential';
@@ -24,7 +24,7 @@ export interface ExperientialTrainingRunnerOptions extends Omit<ExperientialTrai
 /** Native caller-supplied-id enqueue preserves one job; the retained input must agree. */
 export async function enqueueExperientialTraining(db: TangleDb, requested: ExperientialTrainingPlan): Promise<string> {
   if (!db.jobs) throw new TypeError('Training enqueue requires a database opened with jobs.');
-  const plan = JSON.parse(canonicalizeJson(requested)) as ExperientialTrainingPlan;
+  const plan = cloneJson(requested) as ExperientialTrainingPlan;
   const checked = await checkExperientialRecord('trainingRun', plan.run);
   if (!checked.ok || !plan.run.spec || !plan.run.progress || plan.run.state !== 'queued'
     || plan.idempotencyKey !== plan.run.idempotencyKey || plan.pipelineRevision !== plan.run.pipelineRevision

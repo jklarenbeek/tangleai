@@ -1,7 +1,7 @@
 /** Assign complete source families before rendering any training example. */
 import { deepFreeze, equalsJson } from '@jarenjs/core/object';
 import { mulberry32, drawDistinct } from '@jarenjs/core/random';
-import { canonicalizeJson, canonicalSha256 } from '@jarenjs/json/canonical';
+import { canonicalSha256, canonicalizeJson, cloneJson } from '@jarenjs/json/canonical';
 import { compileJtltStylesheet } from '@jarenjs/json/jtlt';
 import defaultTemplate from '../templates/experience-example.jtlt.json' with { type: 'json' };
 import { checkExperientialRecord, sealExperientialRecord } from './identity.ts';
@@ -46,8 +46,8 @@ export function experientialDatasetManifest(dataset: Omit<ExperientialDataset, '
 export async function planExperientialDataset(selection: ExperientialSelectionPlan, options: ExperientialDatasetOptions): Promise<ExperientialResult<ExperientialDatasetPlan>> {
   let plan: ExperientialSelectionPlan, template: unknown, external: ExperientialEvaluationReferences;
   try {
-    plan = JSON.parse(canonicalizeJson(selection)); template = JSON.parse(canonicalizeJson(options.template));
-    external = JSON.parse(canonicalizeJson(options.evaluationReferences ?? { compositionalHoldout: [], replay: [] }));
+    plan = cloneJson(selection); template = cloneJson(options.template);
+    external = cloneJson(options.evaluationReferences ?? { compositionalHoldout: [], replay: [] });
   } catch { return failure('', 'Dataset inputs must be finite JSON.'); }
   if (!plan || !Array.isArray(plan.selected) || !Array.isArray(plan.assessments) || !Array.isArray(plan.cohort)
     || !Array.isArray(plan.reviews) || !Array.isArray(plan.excluded) || !Array.isArray(plan.quarantined))
@@ -131,8 +131,8 @@ export async function planExperientialDataset(selection: ExperientialSelectionPl
 export async function checkExperientialDataset(dataset: ExperientialDataset, experiences: readonly ExperientialExperience[],
   assessments: readonly ExperientialAssessment[], grouping: ExperientialGrouping = { experiences: [...experiences], assessments: [...assessments] }): Promise<ExperientialResult<ExperientialDataset>> {
   try {
-    experiences = JSON.parse(canonicalizeJson(experiences)); assessments = JSON.parse(canonicalizeJson(assessments));
-    grouping = JSON.parse(canonicalizeJson(grouping));
+    experiences = cloneJson(experiences); assessments = cloneJson(assessments);
+    grouping = cloneJson(grouping);
   } catch { return failure('/selection', 'Retained dataset bindings must be finite JSON.'); }
   const checked = await checkExperientialRecord('dataset', dataset);
   if (!checked.ok) return checked;
@@ -182,7 +182,7 @@ export async function checkExperientialDataset(dataset: ExperientialDataset, exp
 export async function renderExperientialExamples(plan: ExperientialDatasetPlan, template: unknown,
   variables: readonly ExperientialExampleVariables[]): Promise<ExperientialResult<{ train: ExperientialRenderedExample[]; validation: ExperientialRenderedExample[] }>> {
   let stable: ExperientialDatasetPlan, sheet: unknown, supplied: ExperientialExampleVariables[];
-  try { stable = JSON.parse(canonicalizeJson(plan)); sheet = JSON.parse(canonicalizeJson(template)); supplied = JSON.parse(canonicalizeJson(variables)); }
+  try { stable = cloneJson(plan); sheet = cloneJson(template); supplied = cloneJson(variables); }
   catch { return failure('', 'Rendering accepts only immutable JSON inputs.'); }
   if (!stable || !Array.isArray(stable.experiences) || !Array.isArray(stable.assessments) || !stable.grouping || !Array.isArray(supplied))
     return failure('', 'A complete dataset plan and bounded example variables are required.');

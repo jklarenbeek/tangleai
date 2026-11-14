@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "version": "0.46.0",
+  "baseVersion": "0.45.2",
+  "baseCommit": "3854a94690f18634709e30a52358cf5b7549a404",
+  "preparationCommit": "3854a94690f18634709e30a52358cf5b7549a404",
+  "initial": false,
+  "inputHash": "125e67e89c7eb808f9ee2caf74ed2bdc911a3e078b192f8496b53522f39754dd",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/assistant",
+          "type": "minor"
+        }
+      ],
+      "summary": "Ship an assistant pack for every language `@jarenjs/locales` ships. `@tangleai/assistant/messages/ja`, `/ko`, `/ru`, `/tr` and `/zh-tw` export formal Japanese, Korean, Russian, Turkish and Traditional Chinese (Taiwan) catalogues with exactly the English keys, under the names Jaren's packs use (`zhTW` from `/messages/zh-tw`), so a host passes the assistant pack and the Jaren pack of one language side by side. Russian agrees the words around a count with its one, few and many forms; Japanese, Korean and Chinese count with counters; Turkish keeps the noun singular after a number. The catalogue gains `md/page-break`, `md/permalink`, `md/permalink-section`, `md/backref` and `md/backref-occurrence`, and a reply's page breaks, heading permalinks and footnote back-references are named from them, in each pack with the wording of the same language's Jaren pack; English output is unchanged. The Pages game's validation-language switch offers all eleven Jaren packs.",
+      "id": "assistant-jaren-languages"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        }
+      ],
+      "summary": "Build on Jaren 0.188.0. Its validator keeps the text a schema's `errorMessage` wrote in every locale, a `$msgid` fallback included, and a validation error's `toJSON` carries that mark; `diffContracts` reports fewer false and more real breaking changes; `@jarenjs/db` reads a PostgreSQL `jsonb` null as SQL NULL and names unguarded number columns in `introspect()`. Every exact `@jarenjs/*` pin moves from 0.184.2 to 0.188.0, and the candidate tarballs are recaptured from the tagged source with an empty patch. Local copies of canonical cloning and RFC 6901 token escaping are replaced by `@jarenjs/json`'s `cloneJson` and pointer helpers, with identical output.",
+      "id": "jaren-foundation-0-188-0"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.46.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.46.0"
+    }
+  ]
+}

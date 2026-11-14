@@ -14,7 +14,7 @@ import { createChatClient, createStructuredOutput } from '@tangleai/models';
 import { createFormActions } from '@jarenjs/app';
 import { buildFormModel, buildFormViewModel } from '@jarenjs/forms';
 import { compileMessageCatalog } from '@jarenjs/validate';
-import { nl, de, fr, es } from '@jarenjs/locales';
+import { ar, de, es, fr, ja, ko, nl, pt, ru, tr, zhTW } from '@jarenjs/locales';
 import { stringifyCsv } from '@jarenjs/josl/csv';
 import { stringifyJsonx, parseJsonx } from '@jarenjs/josl/jsonx';
 import { sceneApp } from './gameFsms.ts';
@@ -39,12 +39,14 @@ export const NAME_FORM_ACTIONS = {
   input: 'game/f-input', check: 'game/f-check', number: 'game/f-number',
   json: 'game/f-json', add: 'game/f-add', remove: 'game/f-remove',
 };
-export const GAME_LOCALES = [
-  { id: 'en', label: 'EN' }, { id: 'nl', label: 'NL' },
-  { id: 'de', label: 'DE' }, { id: 'fr', label: 'FR' }, { id: 'es', label: 'ES' },
-];
-// compiled forms catalogs per locale; 'en' uses the built-in default (undefined)
-const CATALOGS = { nl: compileMessageCatalog(nl), de: compileMessageCatalog(de), fr: compileMessageCatalog(fr), es: compileMessageCatalog(es) };
+// compiled forms catalogs per locale, every pack @jarenjs/locales ships; 'en' uses the built-in default (undefined)
+const CATALOGS = {
+  nl: compileMessageCatalog(nl), de: compileMessageCatalog(de), fr: compileMessageCatalog(fr), es: compileMessageCatalog(es),
+  pt: compileMessageCatalog(pt), ar: compileMessageCatalog(ar), ja: compileMessageCatalog(ja), ko: compileMessageCatalog(ko),
+  ru: compileMessageCatalog(ru), tr: compileMessageCatalog(tr), 'zh-tw': compileMessageCatalog(zhTW),
+};
+// derived from CATALOGS, so a pack cannot lack a button nor a button a pack
+export const GAME_LOCALES = ['en', ...Object.keys(CATALOGS)].map((id) => ({ id, label: id.toUpperCase() }));
 
 const scene = sceneApp();   // { slice: { current }, actions: { 'scene/go-*' } }
 

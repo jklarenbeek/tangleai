@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.184.2**, tag `v0.184.2`, source commit
-`72b2cf306efa15304809a79e8066befdc6d506da`. Upstream `main` and the tag agreed
-when checked on 2026-11-06; npm still served 0.91.4. Runtime imports therefore
+Tangle consumes **Jaren 0.188.0**, tag `v0.188.0`, source commit
+`3df3bed4ec0270b77ab852b1e7b94c2ff24f8ce4`. Upstream `main` and the tag agreed
+when checked on 2026-11-14; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.184.2` pin. A clean reconstruction from the pinned
+reference is an exact `0.188.0` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,31 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.184.2 to 0.188.0 and current adoption
+
+38 upstream commits cover this update, nine releases. No consumed package added
+or removed an export subpath, and every dependency edge stays inside the
+23-package closure. The packages themselves need no Tangle source change; Tangle also replaces local copies of two `@jarenjs/json` helpers. Two
+recorded identities move with the installed versions, as on every move: the
+research lifecycle fixture's MAS executable revision and the evolve
+experiment's report. Both are regenerated, and their decisions are unchanged.
+The Pages playground, a port of the upstream site, takes the site's own
+0.188.0 fixes. The measured benchmark artifacts still record 0.184.2 until the
+next full regeneration; their freshness tests are the only failures.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Text a schema wrote, in every locale (`@jarenjs/validate`) | **Adopted; ported to the Pages playground.** 0.188.0 marks a `$msgid` spec's inline `message` as `inlineMessage: 'fallback'`, which `localizeErrors` re-renders only through that msgid, and an error's `toJSON` now carries the mark. Before, a translation fell back to the stock keyword message, which overwrote the author's text. The playground copied the upstream site's own localizer, which re-rendered every error with a msgid. Its reports now keep the mark, and it localizes copies through validate's `localizeErrors`, so an `errorMessage` stays as written in every language. No Tangle package localizes validation errors. |
+| Form chrome in the reader's language (`@jarenjs/app`, `@jarenjs/forms`) | **Adopted in the Pages playground.** 0.188.0 adds `createFormView`'s `labelsPath`, read at render time, so a form's add and remove buttons and its JSON hint follow a language that changes while the form is open. The playground puts `formChromeLabels` of the chosen pack there, and its generated form's field errors use the same pack, as the upstream site's do. |
+| Play message language (`@jarenjs/play`) | **Adopted in the Pages playground.** The stock validate examples no longer carry `locale: 'en'`. The playground now keeps the reader's choice as its own preference, as the upstream site does. A chosen language survives another example, New and an opened session, a session the reader opens before choosing one sets it, and a saved session records the language on screen. |
+| Play host seams (`@jarenjs/play`, `@jarenjs/app`, `@jarenjs/core`) | **Adopted in the Pages playground.** The port had drifted from the upstream site in four places. Its option select now switches through `switchOption`, so a patch mode, chart format or kernel switch runs the source its choice needs. Its number field reads through `FORM_NUMBER_VALUE`. Its validate runner registers the referenced schemas Play passes since 0.124 and reports a broken one at its pane. Its session, engine-name and externals inputs are guarded with `isJsonObject` and `Object.hasOwn`. |
+| Canonical copies and pointer tokens (`@jarenjs/json`) | **Adopted in place of local code.** Twenty-six `JSON.parse(canonicalizeJson(value))` copies in experiential, gmpl, grounding, hera, lightrag, research, store and trading are `cloneJson` from `@jarenjs/json/canonical`, whose body is that expression. Evolve, grounding, trading and the desktop views escape and decode RFC 6901 tokens through `encodeJSONPointerSegment` and `decodeJSONPointerSegment`, in the normative order. Evolve's exported `decodePointerSegment` keeps its name. Models keeps its own decoder, because it does not depend on `@jarenjs/json`. |
+| Semantic cache and UTF-8 length (`@jarenjs/core`) | **Considered; kept local.** `createSemanticCache(limit, undefined, { ordered: true })` matches the MAS schema cache's member order, remembered refusals and eviction, but a lookup of a 40-member schema took about 29 µs against 5.5 µs for the current `JSON.stringify` key, on a path every node attempt takes. `utf8ByteLength` agrees with `TextEncoder` on every string, lone surrogates included, but measures a non-string as 0 bytes. Several byte bounds read untrusted input, so the swap would let a non-string pass a bound it is now measured against. |
+| Contract diffs (`@jarenjs/contract`) | **Adopted unchanged.** 0.186.0 decides more empty member schemas, conditionals and unions, and reads `$ref` targets in their own draft, so fewer false and more real breaking changes are reported. The desktop contract gate's frozen, widened and narrowed cases read as before. |
+| PostgreSQL storage (`@jarenjs/db`) | **Upstream fix; not reached here.** 0.187.0 to 0.187.3 read a `jsonb` member's JSON null as SQL NULL, so a unique index stores two nulls as SQLite does. New tables get the new DDL, and older ones open until `planColumnUpgrade` rebuilds them. They also read container-first unions back in `introspect()`, compare numeric keys by their double's interval, and name number columns no CHECK keeps from a NaN. Tangle's stores open SQLite only. |
+| Validator speed and locale wording (`@jarenjs/validate`, `@jarenjs/locales`) | **Adopted unchanged.** 0.186.1 tests a leading `type: 'string'` and a lone `uniqueItems` faster with no answer change, and 0.188.0 stops naming `$replace` in `query/replace-empty-match` in all eleven packs. The assistant's `.` and `./component` bundles each grew 572 bytes, to 439,138 and 760,805 bytes; `./view` stays at 530,456 and the program pen at 26,000. |
+| Benchmark method (upstream site) | **No code change.** 0.185.0 and 0.185.1 time every suite by a settled method with first-call tables, and refresh benchmark-only dependencies, none of which is in Tangle's lock. Tangle measures its own Jaren benchmark in [JARENJS_BENCHMARK.md](JARENJS_BENCHMARK.md). |
 
 ## Changes from 0.183.1 to 0.184.2 and current adoption
 
@@ -54,10 +79,10 @@ segment (the job-worker row below); with it the full suite passes on 0.183.1.
 
 | Surface | Tangle use and boundary |
 |---|---|
-| Markdown ids and accessible names (`@jarenjs/md`, `@jarenjs/locales`) | **Adopted unchanged; labels not passed yet.** 0.177.1 keeps every heading id apart from its page's footnote ids and from the ids of reused blocks under any `slugPrefix`; the assistant's mount and the Pages playground render with a `slugPrefix` and take the fix as shipped. 0.177.0 lets md name its page breaks, heading permalinks and footnote back-references in the reader's language, and 0.178.0 gives every locale pack those names, with `labelsFromCatalog` turning a pack into md's options. The assistant does not pass `labels` yet; the roadmap's Markdown-labels entry states what remains. |
+| Markdown ids and accessible names (`@jarenjs/md`, `@jarenjs/locales`) | **Adopted unchanged.** 0.177.1 keeps every heading id apart from its page's footnote ids and from the ids of reused blocks under any `slugPrefix`; the assistant's mount and the Pages playground render with a `slugPrefix` and take the fix as shipped. 0.177.0 lets md name its page breaks, heading permalinks and footnote back-references in the reader's language, and 0.178.0 gives every locale pack those names, with `labelsFromCatalog` turning a pack into md's options. The assistant passes `labels` from its catalogue: every assistant pack carries the `md/*` keys in the wording of the same language's Jaren pack, which a test compares, so a reply names its labels in the reader's language. The Markdown stylesheet's physical sides remain; the roadmap's Markdown-direction entry states them. |
 | Reference fragments (`@jarenjs/contract`) | **Upstream fix; not reached here.** 0.178.1 percent-decodes a reference's fragment into another document once, as the validator does, so an escaped percent sign in a member name compiles. No Tangle contract or schema writes a percent escape in a `$ref`. |
-| Number text in forms (`@jarenjs/app`) | **Adopted unchanged; measured.** 0.179.0 reads number text in the flow inspector, the play page and the unit converter as the standard number action does, through the expression it now exports as `FORM_NUMBER_VALUE`. Tangle does not import it; the assistant's `./component` and `./view` bundles each grew 428 bytes with it, to 759,494 and 529,983 bytes, the view within its 599,000-byte ceiling. |
-| Play option switches and the Mermaid pie (`@jarenjs/play`, `@jarenjs/charts`) | **Adopted unchanged.** 0.180.0 lets a play option switch bring the source its new choice runs, and the pie renderer draws Mermaid's `showData` through a `legendText` option. The Pages site ships both as built. |
+| Number text in forms (`@jarenjs/app`) | **Adopted unchanged; measured.** 0.179.0 reads number text in the flow inspector, the play page and the unit converter as the standard number action does, through the expression it now exports as `FORM_NUMBER_VALUE`. Until 0.188.0 Tangle did not import it, and the Pages playground's own number expression refused `.5`, `-.5` and `01`; its number field now reads through `FORM_NUMBER_VALUE`. The assistant's `./component` and `./view` bundles each grew 428 bytes with it, to 759,494 and 529,983 bytes, the view within its 599,000-byte ceiling. |
+| Play option switches and the Mermaid pie (`@jarenjs/play`, `@jarenjs/charts`) | **Adopted unchanged.** 0.180.0 lets a play option switch bring the source its new choice runs, and the pie renderer draws Mermaid's `showData` through a `legendText` option. The Pages site ships the pie as built. Until 0.188.0 the playground's option select changed only the config, so a switched patch mode, chart format or kernel ran the old source; it now switches through `switchOption`. |
 | Job workers (`@jarenjs/db`) | **Tangle fix.** 0.181.0 refuses a worker's `start()` until its `stop()` has resolved, so the stopping loops cannot run on beside the new ones. 0.182.0 keeps a settling call idempotent over its own attempt's row only in the state it writes: a completion behind the attempt's own cancellation is reported cancelled, and a failure behind the attempt's own completion is refused (`JD2065`). A MAS segment completes its job in the transaction that records its outcome, and the native segment driver and the grounding clarification host settle a claimed segment themselves, so a host error raised after that commit reached the host as `JD2065` instead of its own error. Both now read the three fence refusals (`JD2065`, `JD2066`, `JD2067`) as Jaren's worker does, as a lost settlement, and rethrow the host's error; the completed job and run are unchanged. The MAS segment and experiential training workers settle through Jaren's worker as before. |
 | Captured expressions, run store pages and `sql.call` (`@jarenjs/linq`, `@jarenjs/db`) | **Upstream refusals; none reached here.** 0.183.0 refuses a method's own function members read in a captured expression (`r.day.length` embedded the method's arity), a misspelt run store page option, and a `sql.call` option named like the call's own name or arguments, where each answered wrong before. Tangle passes no page option and no `sql.call` option. The program pen bundle measures 26,000 bytes with nine retained modules (25,865 on 0.176.11), within the 29,000-byte ceiling. |
 | Column upgrade links (`@jarenjs/db`) | **Upstream fix; not reached here.** 0.183.1 names a column upgrade's default link past the ids the migration history holds, so a later release's upgrade of the same model is a link of its own. Tangle plans no column upgrade. |
@@ -343,7 +368,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.184.2 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.188.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

@@ -9,6 +9,7 @@ import { loadGroundingProfile, evaluateProfileRules } from './profile.ts';
 import { validateGroundingShape } from './schema.ts';
 import { planSessionTransition, type SessionCommand } from './session.ts';
 import { triageDecisionErrors } from './intent.ts';
+import { encodeJSONPointerSegment } from '@jarenjs/json/pointer';
 
 export interface GroundingTables {
     profiles: GroundingProfile; manifests: CorpusManifest; sessions: GroundingSession; intents: ClarifiedIntent;
@@ -54,7 +55,7 @@ export interface GroundingStore {
 const schemaNames = { profiles: 'groundingProfile', manifests: 'corpusManifest', sessions: 'groundingSession', intents: 'clarifiedIntent', plans: 'queryPlan', evidence: 'evidenceCandidate', web_runs: 'webRetrievalRun', conflicts: 'evidenceConflict', answers: 'groundedAnswer' } as const;
 const profileKey = (id: string, revision: string) => JSON.stringify([id, revision]);
 const manifestKey = (sourceId: string, versionId: string) => JSON.stringify([sourceId, versionId]);
-const pointer = (field: string) => field.replaceAll('~', '~0').replaceAll('/', '~1');
+const pointer = (field: string) => encodeJSONPointerSegment(field);
 function checkContext(profile: GroundingProfile, fields: Record<string, string>, path = '/userContext') {
     for (const field of Object.keys(fields)) {
         if (!profile.userContext.collectable.includes(field)) groundingReject('TGRD1004', `${path}/${pointer(field)}`, 'The profile does not permit collecting this user field.');
