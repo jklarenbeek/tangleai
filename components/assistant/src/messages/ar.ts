@@ -30,7 +30,7 @@ export const ar = {
   'settings/base-url': 'عنوان URL الأساسي',
   'settings/base-url-example': 'http://localhost:11434 · https://…/v1',
   'settings/model': 'النموذج',
-  'settings/model-example': 'qwen/qwen3-4b · llama3.2 · …',
+  'settings/model-example': 'anthropic/claude-haiku-5.5 · qwen/qwen3.8-27b · …',
   'settings/save': 'حفظ',
   'settings/test': 'اختبار الاتصال',
   'settings/testing': 'جارٍ الاختبار…',

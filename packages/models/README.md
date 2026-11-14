@@ -174,7 +174,7 @@ reaches.
 
 ```js
 const store = new Map();
-const client = createChatClient({ provider: 'ollama', model: 'qwen3:4b',
+const client = createChatClient({ provider: 'ollama', model: 'qwen3.8:27b',
   cache: { get: (key) => store.get(key), set: (key, value) => { store.set(key, value); } } });
 const bought = await client.complete({ messages });        // one wire call, remembered
 const replay = await client.complete({ messages });        // zero wire calls

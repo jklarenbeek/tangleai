@@ -1,0 +1,115 @@
+/* The Pages desktop's own applications: the Assistant window and Settings.
+   Every colour is a theme token, so both follow the person's appearance. */
+
+/* ── the assistant, filling its window instead of sliding out ──────────── */
+.tos-content:has(> .tos-assistant-host) { display: flex; flex-direction: column; overflow: hidden; }
+.tos-assistant-host { flex: 1; min-block-size: 0; display: flex; }
+.tos-assistant-host > .tangle-assistant { flex: 1; min-block-size: 0; display: flex; }
+.tos-assistant-host .ai { flex: 1; min-block-size: 0; display: flex; }
+.tos-assistant-host .ai-launch { display: none !important; }
+.tos-assistant-host .ai-panel {
+  position: static !important; inset: auto !important; z-index: auto;
+  flex: 1; inline-size: auto !important; max-block-size: none !important; min-block-size: 0;
+  border: 0 !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 !important;
+  background: var(--surface);
+}
+/* the window's own title bar closes; the panel's close button would only hide it */
+.tos-assistant-host .ai-head > .ai-icon:last-child { display: none; }
+.tos-assistant-host .ai-log { flex: 1; min-block-size: 0; overflow: auto; }
+.tos-assistant-footer { display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 6px 10px 8px 14px; border-block-start: 1px solid var(--border); background: var(--surface); }
+.tos-model-switch { flex: 1; min-inline-size: 0; max-inline-size: 70%; min-block-size: 28px; padding: 2px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--fg); font: 12px var(--mono); }
+.tos-link { border: 0; padding: 0; background: none; color: var(--accent); font: inherit; font-size: 12px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── settings ───────────────────────────────────────────────────────────── */
+.tos-settings { display: grid; grid-template-columns: 180px 1fr; block-size: 100%; font-size: 14px; }
+.tos-content:has(> .tos-settings) { overflow: hidden; }
+.tos-settings-nav { display: grid; align-content: start; gap: 2px; padding: 14px 10px; border-inline-end: 1px solid var(--border); background: var(--bg); }
+.tos-settings-nav button {
+  text-align: start; padding: 8px 12px; border: 0; border-radius: var(--radius-sm);
+  background: transparent; color: var(--fg); font: inherit; cursor: pointer;
+}
+.tos-settings-nav button:hover { background: var(--accent-soft); }
+.tos-settings-nav button.is-current { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.tos-settings-pane { padding: 20px 24px 28px; display: grid; align-content: start; gap: 14px; min-inline-size: 0; min-block-size: 0; overflow: auto; }
+.tos-settings-pane h2 { margin: 0; font-size: 18px; letter-spacing: -.01em; }
+.tos-settings-pane .tos-muted { margin: 0; font-size: 12.5px; line-height: 1.5; }
+.tos-field { display: grid; gap: 6px; }
+.tos-field > span, .tos-field > label, .tos-choices legend { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.tos-row { display: flex; gap: 8px; align-items: center; }
+.tos-row > input { flex: 1; min-inline-size: 0; }
+.tos-wrap { flex-wrap: wrap; }
+.tos-settings input[type="password"], .tos-settings input[type="text"], .tos-settings input[type="url"], .tos-settings input[type="search"], .tos-settings select {
+  inline-size: 100%; min-block-size: 36px; padding: 6px 10px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg); color: var(--fg); font: inherit;
+}
+.tos-settings input[type="password"], .tos-settings code { font-family: var(--mono); }
+.tos-settings input:focus-visible, .tos-settings select:focus-visible, .tos-settings button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tos-btn {
+  min-block-size: 34px; padding: 6px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--fg); font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap;
+}
+.tos-btn:hover { background: var(--accent-soft); }
+.tos-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.tos-btn.primary:hover { filter: brightness(1.06); }
+.tos-btn.danger { color: var(--fail); border-color: color-mix(in srgb, var(--fail) 45%, transparent); }
+.tos-btn.danger:hover { background: var(--fail-soft); }
+.tos-check { display: flex; gap: 8px; align-items: center; font-size: 13px; cursor: pointer; }
+.tos-check input { accent-color: var(--accent); }
+.tos-settings-status { margin: 0; min-block-size: 1.2em; font-size: 13px; color: var(--muted); }
+.tos-settings-status[data-tone="ok"] { color: var(--ok); }
+.tos-settings-status[data-tone="fail"] { color: var(--fail); }
+.tos-note { margin: 0; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--accent-soft); font-size: 12.5px; line-height: 1.5; }
+.tos-chosen { margin: 0; font-size: 13px; }
+.tos-chosen code { padding: 2px 6px; border-radius: 6px; background: var(--code-bg); color: var(--code-fg); }
+.tos-chip {
+  padding: 5px 10px; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); color: var(--fg); font: 12.5px var(--mono); cursor: pointer;
+}
+.tos-chip:hover { border-color: var(--accent); color: var(--accent); }
+.tos-models { display: grid; gap: 4px; max-block-size: 300px; overflow: auto; padding: 2px; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.tos-models:empty { display: none; }
+.tos-model {
+  display: grid; gap: 2px; text-align: start; padding: 8px 10px; border: 0; border-radius: 6px;
+  background: transparent; color: var(--fg); font: inherit; cursor: pointer;
+}
+.tos-model:hover { background: var(--accent-soft); }
+.tos-model.is-chosen { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.tos-model-name { font-weight: 600; font-size: 13px; display: flex; gap: 6px; align-items: center; }
+.tos-model code { font-size: 11.5px; color: var(--muted); }
+.tos-model .tos-muted { font-size: 11.5px; }
+.tos-badge-soft { padding: 1px 6px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); font-size: 10.5px; font-weight: 600; }
+.tos-choices { margin: 0; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.tos-choices legend { margin-block-end: 8px; padding: 0; }
+.tos-choice {
+  display: flex; gap: 8px; align-items: center; padding: 7px 12px 7px 8px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;
+}
+.tos-choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.tos-choice input { accent-color: var(--accent); margin: 0; }
+.tos-swatch { inline-size: 22px; block-size: 22px; border-radius: 6px; border: 1px solid var(--border); }
+.tos-facts { margin: 0; padding-inline-start: 18px; display: grid; gap: 8px; font-size: 13px; line-height: 1.5; }
+
+@media (max-width: 560px) {
+  .tos-settings { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .tos-settings-nav { grid-auto-flow: column; overflow-x: auto; border-inline-end: 0; border-block-end: 1px solid var(--border); }
+}
+/* an unconfigured assistant shows its own settings form above the log: scroll the panel rather than crush the log */
+.tos-assistant-host .ai-panel { overflow: auto !important; }
+.tos-assistant-host .ai-log { min-block-size: 140px; }
+
+/* several providers and starred models */
+.tos-settings h3 { margin: 10px 0 0; font-size: 14px; }
+.tos-table { inline-size: 100%; border-collapse: collapse; font-size: 13px; }
+.tos-table th { text-align: start; font-size: 12px; color: var(--muted); font-weight: 600; padding: 6px 8px; border-block-end: 1px solid var(--border); }
+.tos-table td { padding: 7px 8px; border-block-end: 1px solid var(--border); }
+.tos-table tr.is-active td { background: var(--accent-soft); }
+.tos-table td .tos-badge-soft { margin-inline-start: 6px; }
+.tos-chip.is-chosen { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.tos-chip-provider { margin-inline-start: 6px; font-family: var(--font); font-size: 11px; color: var(--muted); }
+.tos-model-row { display: flex; align-items: stretch; gap: 2px; }
+.tos-model-row > .tos-model { flex: 1; min-inline-size: 0; }
+.tos-star { flex: none; inline-size: 36px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 17px; cursor: pointer; }
+.tos-star:hover { background: var(--accent-soft); color: var(--accent); }
+.tos-star.is-on { color: var(--warn); }
+.tos-badge-soft.is-muted { background: var(--accent-soft); color: var(--muted); }

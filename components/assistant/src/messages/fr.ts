@@ -29,7 +29,7 @@ export const fr = {
   'settings/base-url': 'URL de base',
   'settings/base-url-example': 'http://localhost:11434 · https://…/v1',
   'settings/model': 'Modèle',
-  'settings/model-example': 'qwen/qwen3-4b · llama3.2 · …',
+  'settings/model-example': 'anthropic/claude-haiku-5.5 · qwen/qwen3.8-27b · …',
   'settings/save': 'Enregistrer',
   'settings/test': 'Tester la connexion',
   'settings/testing': 'Test en cours…',

@@ -398,6 +398,34 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   a generated formula compiling and evaluating against sample rows, and a
   proposed app version refused on a stale revision.
 
+- [ ] **A browser operating system for Tangle suites.** Applications built on
+  Jaren and Tangle each run their own cockpit, so a person working across
+  several of them switches tabs, signs in per product, and has no assistant
+  that can act across them; nothing lets a person or the assistant build a
+  small module of their own beside them. *Wanted:* `@tangleai/os`, a browser
+  desktop where a module is a JSON manifest plus the `@jarenjs/contract`
+  operations it serves and needs, and the OS gives it a window, one theme and
+  language, a launcher entry, mail to the person and to other modules, and one
+  assistant that sees every granted contract as tools; modules, themes,
+  backgrounds and screensavers that a person or the assistant designs are
+  documents run by Jaren's engines; the Pages site becomes its first host and
+  an application suite joins as another by importing the package.
+  *Constraint:* authored artifacts are documents, never script in the shell's
+  origin; a module authored from a document runs in a sandboxed frame and
+  never sees a key; contracts are the only bus; the mail is the one review and
+  interaction inbox the entry above names; every visible sentence comes from
+  the twelve catalogues, and layouts mirror for right-to-left. *Stands on:*
+  `@jarenjs/app`, `@jarenjs/contract/port`, `@jarenjs/studio`, `@jarenjs/db`
+  over SQLite-wasm, the assistant, `toolboxFromContract`, and Tangle's program
+  recursion. Measured 2026-11-14: the configured model wrote no working app
+  document from a bare instruction (0 of 10; five passed the Studio gate), and
+  29 of 33 over three trials with a grammar crib and one working example,
+  judged by behaviour against a declared interface; a sandboxed frame booted Jaren's runtime in 29 ms and answered a
+  contract call in 4.6 ms. *Closes on:* a neutral application on its own
+  origin joining the desktop through the packed package with a window, the
+  theme, mail and assistant tools; and the published rate at which the
+  assistant turns a plain request into a module that passes a behaviour gate.
+
 ## Reuse of the suite
 
 - [ ] **JSON equality and copies by meaning.** *Wanted:* `equalsJson` from

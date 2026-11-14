@@ -1,7 +1,7 @@
 export const DEFAULT_AI_SETTINGS = {
   provider: 'openrouter',  // 'openrouter' | 'ollama' | 'lmstudio' | 'custom'
   baseUrl: '',             // required for 'custom'; overrides the preset otherwise
-  model: '',               // e.g. 'qwen/qwen3-4b' or a local model name
+  model: '',               // e.g. 'anthropic/claude-haiku-5.5' or 'qwen/qwen3.8-27b'
   apiKey: '',              // bring your own; local runtimes need none
 };
 /** @param [aiSettings] @param [aiChat] */

@@ -24,7 +24,10 @@ for (const pkg of artifacts.packages) {
     const name = pkg.name + (key === '.' ? '' : key.slice(1));
     const json = typeof target === 'string' && target.endsWith('.json');
     if (typeof target === 'string' && target.endsWith('.css')) {
-      assert.match(await readFile(new URL(import.meta.resolve(name)), 'utf8'), /tangle-assistant/);
+      // every stylesheet carries its own scope, so it cannot restyle a host page
+      const scope = { '@tangleai/assistant/styles/assistant.css': /tangle-assistant/, '@tangleai/os/styles/os.css': /\.tos\b/, '@tangleai/os/styles/module.css': /#module\b/ }[name];
+      assert.ok(scope, `${name}: no scope is declared for this stylesheet`);
+      assert.match(await readFile(new URL(import.meta.resolve(name)), 'utf8'), scope);
       exportsChecked++; continue;
     }
     const mod = await import(name, json ? { with: { type: 'json' } } : undefined);

@@ -854,7 +854,7 @@ function settingsPage(state: any): any {
       ['h3', {}, 'Chat model'],
       select('provider', 'settings/chat-provider', draft.chat.provider, [null, 'ollama', 'lmstudio', 'openrouter', 'custom']),
       field('base url', 'settings/chat-baseurl', draft.chat.baseUrl, 'http://localhost:11434'),
-      field('model', 'settings/chat-model', draft.chat.model, 'qwen3:4b'),
+      field('model', 'settings/chat-model', draft.chat.model, 'qwen3.8:27b'),
       field('completion token limit', 'settings/chat-max-tokens', draft.chat.maxTokens ?? null, 'provider default'),
       select('token limit field', 'settings/chat-max-field', draft.chat.maxTokensField ?? 'max_tokens', ['max_tokens', 'max_completion_tokens']),
       secretField('api key', 'settings/chat-apikey', 'settings/clear-chat-key', state.settings.draft?.slots?.chatKey === true, state.settings.clear.chatKey, state.settings.saveCount),

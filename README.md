@@ -471,7 +471,11 @@ unchanged content is not embedded again. Configure SearxNG discovery, experiment
 or a dynamic-page renderer in Settings. Results are recorded in
 [docs/DOCUMENT_BENCHMARK.md](docs/DOCUMENT_BENCHMARK.md).
 The opt-in live smoke uses the OpenRouter chat/embedding models configured in `.env`;
-offline CI never requires those credentials.
+offline CI never requires those credentials. Tangle's model paths exchange Jaren
+JSON documents, and only a few models write them reliably:
+`anthropic/claude-haiku-5.5`, and Qwen 3.7 27B or larger, such as
+`qwen/qwen3.8-27b`. Other models are not supported for these paths. Tables
+measured on other models record what ran at the time.
 
 **`apps/scraper`** — the optional isolated Playwright renderer. It is not required by the
 desktop and is intended to run in the `ubuntu-playwright` distrobox or another sandboxed

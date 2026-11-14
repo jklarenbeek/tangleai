@@ -41,7 +41,7 @@ test('the assistant opens as an on-screen sheet, gated on configuration', async 
   // anywhere else on the page whose label merely contains the word would
   // otherwise make this locator ambiguous)
   await page.locator('.ai-settings select').selectOption('ollama');
-  await page.getByPlaceholder('qwen/qwen3-4b · llama3.2 · …').fill('qwen3:4b');
+  await page.getByPlaceholder('anthropic/claude-haiku-5.5 · qwen/qwen3.8-27b · …').fill('qwen3.8:27b');
   await expect(page.getByRole('button', { name: 'Test connection' })).toBeVisible();
   await page.getByRole('button', { name: 'Save', exact: true }).tap();
   await expect(page.locator('.ai-composer')).toBeVisible();
@@ -51,7 +51,7 @@ test('the assistant opens as an on-screen sheet, gated on configuration', async 
 test('the transcript persists across a reload and clear wipes it', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('tangle-ai',
-      JSON.stringify({ provider: 'ollama', baseUrl: '', model: 'qwen3:4b', apiKey: '' }));
+      JSON.stringify({ provider: 'ollama', baseUrl: '', model: 'qwen3.8:27b', apiKey: '' }));
     localStorage.setItem('tangle-ai-chat', JSON.stringify({
       messages: [
         { role: 'user', content: 'hello there' },
@@ -79,7 +79,7 @@ test('the objective survives a reload, in a real browser store', async ({ page }
   // and reading a goal never calls a model.
   await page.addInitScript(() => {
     localStorage.setItem('tangle-ai',
-      JSON.stringify({ provider: 'ollama', baseUrl: '', model: 'qwen3:4b', apiKey: '' }));
+      JSON.stringify({ provider: 'ollama', baseUrl: '', model: 'qwen3.8:27b', apiKey: '' }));
   });
   await page.goto('/');
   await page.locator('.ai-launch').tap();

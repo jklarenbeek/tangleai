@@ -30,7 +30,7 @@ export const ko = {
   'settings/base-url': '기본 URL',
   'settings/base-url-example': 'http://localhost:11434 · https://…/v1',
   'settings/model': '모델',
-  'settings/model-example': 'qwen/qwen3-4b · llama3.2 · …',
+  'settings/model-example': 'anthropic/claude-haiku-5.5 · qwen/qwen3.8-27b · …',
   'settings/save': '저장',
   'settings/test': '연결 테스트',
   'settings/testing': '테스트하는 중…',

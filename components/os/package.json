@@ -1,0 +1,57 @@
+{
+  "name": "@tangleai/os",
+  "version": "0.47.0",
+  "description": "A browser operating system for Tangle suites: modules as JSON manifests and contracts, one desktop, one assistant.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json",
+    "./shell": "./src/shell.ts",
+    "./module": "./src/module.ts",
+    "./module-host": "./src/module-host.ts",
+    "./schemas/module": "./schemas/module.schema.json",
+    "./styles/os.css": "./styles/os.css",
+    "./styles/module.css": "./styles/module.css"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "./src/module-host.ts"
+  ],
+  "dependencies": {
+    "@tangleai/agents": "0.47.0",
+    "@jarenjs/core": "0.188.0",
+    "@jarenjs/json": "0.188.0",
+    "@jarenjs/validate": "0.188.0",
+    "@jarenjs/contract": "0.188.0",
+    "@jarenjs/app": "0.188.0"
+  },
+  "private": false,
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "schemas/**/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "styles/**/*.css"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "components/os"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
+  }
+}

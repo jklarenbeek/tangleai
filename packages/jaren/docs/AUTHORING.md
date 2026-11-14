@@ -50,6 +50,12 @@ stylesheet, an `@jarenjs/app` document or an `@jarenjs/flow` machine. `@jarenjs/
 
 ### What holds up on a cheap model (field notes)
 
+Supported models for authoring today: `anthropic/claude-haiku-5.5`, and Qwen
+3.7 27B or larger, such as `qwen/qwen3.8-27b`. Other models do not write these
+JSON documents reliably. The notes below record an earlier run on Qwen 3.6. On
+Anthropic models, send app documents in JSON mode, not as a `json_schema`
+response format: the provider refuses the app profile as an output schema.
+
 Measured driving `qwen3.6-35b-a3b` (orchestration) and `qwen3.6-27b` (coding) through
 OpenRouter on a real, complex task — designing a Kubernetes self-management state machine
 and its remediation scripts. The pattern that *reliably* gets a valid, useful program out

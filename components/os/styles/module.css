@@ -1,0 +1,51 @@
+/* @tangleai/os — the base every framed module starts from: the desktop's
+   tokens (pushed by the shell), its typography and its controls. A module's
+   own `styles` come after this sheet and may override any of it. */
+
+:root { color-scheme: light dark; }
+html, body { margin: 0; block-size: 100%; }
+body {
+  font-family: var(--font, system-ui, sans-serif);
+  font-size: 14px; line-height: 1.5;
+  color: var(--fg, #1b1d24);
+  background: var(--surface, #fff);
+  -webkit-font-smoothing: antialiased;
+}
+#module { padding: 18px 20px 24px; }
+h1, h2, h3 { line-height: 1.25; margin-block: 0 .6em; letter-spacing: -.01em; }
+h1 { font-size: 22px; } h2 { font-size: 18px; } h3 { font-size: 15px; }
+p { margin-block: 0 .8em; }
+a { color: var(--accent, #5b5bd6); }
+ul, ol { padding-inline-start: 1.3em; }
+code, pre { font-family: var(--mono, monospace); background: var(--code-bg, #f1f2f6); color: var(--code-fg, inherit); border-radius: var(--radius-sm, 8px); }
+code { padding: .1em .35em; } pre { padding: 12px 14px; overflow: auto; }
+hr { border: 0; border-block-start: 1px solid var(--border, #ddd); margin-block: 16px; }
+
+input, select, textarea, button { font: inherit; color: inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea {
+  padding: 8px 11px;
+  border: 1px solid var(--border, #ccc);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--bg, #f4f5f8);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent, #5b5bd6); box-shadow: 0 0 0 3px var(--accent-soft, rgba(91, 91, 214, .15)); }
+button {
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--accent, #5b5bd6);
+  color: var(--accent-fg, #fff);
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+button:hover { filter: brightness(1.06); }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: .5; cursor: default; }
+button.secondary, button[type="button"]:not(.primary) { background: var(--accent-soft, rgba(91, 91, 214, .12)); color: var(--fg, inherit); }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--accent, #5b5bd6); inline-size: 16px; block-size: 16px; }
+table { border-collapse: collapse; inline-size: 100%; }
+th, td { text-align: start; padding: 8px 10px; border-block-end: 1px solid var(--border, #e5e5e5); }
+th { color: var(--muted, #666); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+label { display: inline-flex; align-items: center; gap: 8px; }

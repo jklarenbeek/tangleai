@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Catalogue</title>
+  <style>
+    body { margin: 0; padding: 18px 20px; font-family: var(--font, system-ui); color: var(--fg, #111); background: var(--surface, #fff); }
+    h1 { font-size: 20px; margin: 0 0 12px; color: var(--accent, #333); }
+    table { border-collapse: collapse; inline-size: 100%; }
+    td { padding: 8px 10px; border-block-end: 1px solid var(--border, #ddd); }
+    button { margin-block-start: 14px; padding: 8px 14px; border: 0; border-radius: var(--radius-sm, 8px); background: var(--accent, #333); color: var(--accent-fg, #fff); font: inherit; cursor: pointer; }
+    #status { color: var(--muted, #666); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>Catalogue</h1>
+  <p id="status">Waiting for a desktop…</p>
+  <table><tbody id="rows"></tbody></table>
+  <button id="mail" type="button">Mail stock warnings</button>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

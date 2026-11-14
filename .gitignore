@@ -40,3 +40,4 @@ benchmark/data/longmemeval/
 
 # Editor state is each developer's own.
 .vscode/
+.playwright-mcp/

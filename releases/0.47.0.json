@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "version": "0.47.0",
+  "baseVersion": "0.46.0",
+  "baseCommit": "9e05eb11007b75cdf7f934f0fd37c15f2b71021f",
+  "preparationCommit": "9e05eb11007b75cdf7f934f0fd37c15f2b71021f",
+  "initial": false,
+  "inputHash": "4ec45a64c33e3c81876be5b1a025fad83853e9fc351039a9dd21a68c887676d9",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add `@tangleai/os`, a browser operating system for applications built on Jaren and Tangle. A module is a JSON manifest plus the contract operations it serves and needs; the desktop hosts it as a shipped component, as a jaren-app document in a sandboxed opaque-origin frame, or as an application's own page on its own origin that joins with `connectToOs` from `@tangleai/os/module`. The kernel installs modules in shipped, suite and user layers with RFC 6902 patches, keeps a journal with undo and a recovery boot, routes every call between modules as a contract operation under grants into a ledger, carries mail, and lists every granted operation as an assistant tool. The assistant's model placeholder and the documentation now name only the models that write Jaren's JSON documents reliably: `anthropic/claude-haiku-5.5`, and Qwen 3.7 27B or larger. The desktop has context menus on its background, title bars and dock, minimized windows now actually hide, and `mountDesktop` takes `themeFor` and `onSchemeSwitch` so a host's own colours survive the dock's light/dark switch. The Pages desktop ships an Assistant window and a Settings app: provider, OpenRouter key (kept in this browser, optionally for the tab only), region, a model picker over OpenRouter's catalogue, appearance, and forgetting what the browser keeps.",
+      "id": "os-browser-desktop"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.47.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.47.0"
+    }
+  ]
+}

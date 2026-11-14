@@ -13,6 +13,7 @@
     "packages/linq",
     "packages/jaren",
     "components/assistant",
+    "components/os",
     "packages/core",
     "packages/config",
     "packages/mas",

@@ -28,7 +28,7 @@ export const ja = {
   'settings/base-url': 'ベース URL',
   'settings/base-url-example': 'http://localhost:11434 · https://…/v1',
   'settings/model': 'モデル',
-  'settings/model-example': 'qwen/qwen3-4b · llama3.2 · …',
+  'settings/model-example': 'anthropic/claude-haiku-5.5 · qwen/qwen3.8-27b · …',
   'settings/save': '保存',
   'settings/test': '接続をテスト',
   'settings/testing': 'テストしています…',

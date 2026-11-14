@@ -39,6 +39,16 @@ if (!built.success) {
 }
 await writeFile(join(dist, 'app.js'), await built.outputs[0].text());
 
+// the desktop: its page entry, and the document module host as a CLASSIC
+// script — a sandboxed (opaque-origin) frame cannot load a module script
+// from a server that sends no CORS headers
+const os = await Bun.build({ entrypoints: [join(here, 'src', 'os', 'main.ts')], target: 'browser', format: 'esm' });
+if (!os.success) throw new Error(os.logs.join('\n'));
+await writeFile(join(dist, 'os.js'), await os.outputs[0].text());
+const moduleHost = await Bun.build({ entrypoints: [join(repo, 'components', 'os', 'src', 'module-host.ts')], target: 'browser', format: 'iife' });
+if (!moduleHost.success) throw new Error(moduleHost.logs.join('\n'));
+await writeFile(join(dist, 'os-module-host.js'), await moduleHost.outputs[0].text());
+
 for (const name of ['data-worker', 'project-worker']) {
   const worker = await Bun.build({ entrypoints: [join(here, 'src/demos/playground', `${name}.ts`)], target: 'browser', format: 'esm' });
   if (!worker.success) throw new Error(worker.logs.join('\n'));
@@ -48,6 +58,8 @@ for (const asset of ['sqlite3.wasm', 'sqlite3-opfs-async-proxy.js'])
   await cp(join(repo, 'node_modules/@sqlite.org/sqlite-wasm/dist', asset), join(dist, asset));
 
 await cp(join(here, 'static'), dist, { recursive: true });
+await cp(join(repo, 'components/os/styles/os.css'), join(dist, 'os.css'));
+await cp(join(repo, 'components/os/styles/module.css'), join(dist, 'os-module.css'));
 
 const vendor = [
   'node_modules/@jarenjs/mermaid/styles/mermaid.css',
@@ -80,3 +92,8 @@ await writeFile(join(dist, 'build.json'), JSON.stringify({
 }, null, 2) + '\n');
 
 console.log(`pages built → ${dist}`);
+// what the desktop's About shows beside the release identity (build.json is
+// compared exactly by the live-site check, so it carries nothing extra)
+await writeFile(join(dist, 'os-build.json'), JSON.stringify({
+  jaren: JSON.parse(await readFile(join(repo, 'node_modules/@jarenjs/app/package.json'), 'utf8')).version,
+}, null, 2) + '\n');

@@ -37,7 +37,7 @@ export const ru = {
   'settings/base-url': 'Базовый URL',
   'settings/base-url-example': 'http://localhost:11434 · https://…/v1',
   'settings/model': 'Модель',
-  'settings/model-example': 'qwen/qwen3-4b · llama3.2 · …',
+  'settings/model-example': 'anthropic/claude-haiku-5.5 · qwen/qwen3.8-27b · …',
   'settings/save': 'Сохранить',
   'settings/test': 'Проверить подключение',
   'settings/testing': 'Проверка…',
