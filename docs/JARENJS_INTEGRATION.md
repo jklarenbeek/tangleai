@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.188.0**, tag `v0.188.0`, source commit
-`3df3bed4ec0270b77ab852b1e7b94c2ff24f8ce4`. Upstream `main` and the tag agreed
-when checked on 2026-11-14; npm still served 0.91.4. Runtime imports therefore
+Tangle consumes **Jaren 0.193.1**, tag `v0.193.1`, source commit
+`ab3ccf0ee8557b82a3d03b05c4f551b9b12c222c`. Upstream `main` and the tag agreed
+when checked on 2026-11-15; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.188.0` pin. A clean reconstruction from the pinned
+reference is an exact `0.193.1` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,26 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.188.0 to 0.193.1 and current adoption
+
+22 upstream commits cover this update, six releases. One export subpath was
+added (`@jarenjs/locales/names`, the language names); every dependency edge
+stays inside the 23-package closure. Several releases answer Tangle's own
+requests, and Tangle adopts them. The research lifecycle fixture and the evolve
+report move with the installed versions, as on every move, and their decisions
+are unchanged. The measured benchmark artifacts keep their recorded versions
+until the next full regeneration; their freshness tests are the only failures.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Content hashing (`@jarenjs/core/string` `sha256Hex`) | **Adopted.** 0.192.0 hashes text as UTF-8 and bytes exactly as viewed. The nine local SHA-256 helpers in agents, experiential, forecast, gmpl, grounding, lightrag, models, research and trace2skill keep their names and delegate to it; the digests are identical, so no recorded identity moves. `documents` keeps Node's synchronous `createHash`. |
+| Remembered keys of frozen trees (`@jarenjs/core/cache`) | **Adopted in MAS.** 0.192.0 remembers the semantic key of a wholly frozen tree, so the embedded-schema cache is now `createSemanticCache(512, undefined, { ordered: true })`: 0.31 µs per lookup on a frozen 40-member schema, against 22.8 µs for the former `JSON.stringify` key. Member order, a remembered refusal, an unkeyable value computed afresh and eviction at 512 are unchanged. |
+| Byte length of text (`@jarenjs/core/string` `utf8ByteLength`) | **Not swapped yet.** 0.192.0 refuses a non-string instead of measuring it as 0 bytes, which removes the reason Tangle kept `TextEncoder`; swapping the byte bounds is a reuse want on the roadmap. |
+| The authoring profile and gate (`@jarenjs/studio`, `@jarenjs/json`) | **Adopted.** 0.193.0 types every node of the authoring profile, refuses an element written as an object (`JS0004`), and names an unknown operator with the nearest known one. One Tangle test fixture rendered a `{tag, children}` object, which had always rendered nothing, and is fixed. Anthropic models still refuse the profile as an output schema, because they require every object to be closed and an app document's state is open; Tangle's Studio author therefore sends an open profile in the prompt (JSON mode) to an Anthropic model (`profileTier`), with the full gate unchanged. |
+| Markdown permalink quotes (`@jarenjs/locales` ja, zh-TW) | **Adopted.** The assistant's Japanese and Traditional Chinese packs use Jaren's new 「…」 wording; a test compares them. |
+| Studios, components and the site in the reader's language; right-to-left stylesheets | **Available, not yet used.** 0.189.0–0.193.0 localize the studios, the components they show and the site shell, and keep code left to right in an Arabic page. The Tangle OS passes the reader's language to them in its language stage. |
+| A guard against untranslated text (0.193.1) | **No Tangle change.** 0.193.1 writes down which text is English by design (`@jarenjs/locales` README) and guards every rendering module against a new untranslated string. The Tangle OS shell's key census follows the same rule; its language stage extends it to every OS application. |
 
 ## Changes from 0.184.2 to 0.188.0 and current adoption
 
@@ -368,7 +388,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.188.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.193.1 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

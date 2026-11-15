@@ -1,5 +1,6 @@
 /** Exact committed responses, with no replay miss fallback or network/DNS access. */
 import { canonicalSha256 } from '@jarenjs/json/canonical';
+import { sha256Hex } from '@jarenjs/core/string';
 import { captureKeyOf, CAPTURED_HEADERS, type CaptureKind } from '@tangleai/core/http-capture';
 import { DocumentError } from '@tangleai/documents/contracts';
 import type { AddressLookup } from '@tangleai/documents/url-policy';
@@ -15,8 +16,7 @@ export interface WebReplayRecord {
     headers: readonly (readonly [string, string])[]; bytes: Uint8Array; sha256: string;
 }
 export async function webBytesSha256(bytes: Uint8Array): Promise<string> {
-    const digest = await crypto.subtle.digest('SHA-256', new Uint8Array(bytes).buffer);
-    return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+    return sha256Hex(bytes);
 }
 export async function createReplayWebTransport(records: readonly WebReplayRecord[], options: { searxBase: string }) {
     const base = new URL(options.searxBase), searchPath = base.pathname.replace(/\/+$/, '') + '/search';

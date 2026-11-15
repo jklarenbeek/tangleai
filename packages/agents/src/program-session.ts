@@ -1,6 +1,7 @@
 /** Verified, opt-in reuse. Retrieval proposes; the host and current compiler decide. */
 import { createProgramAuthor, createProgramRunner, programGate } from './program.ts';
 import { checkOutcome } from '@jarenjs/core/check';
+import { sha256Hex } from '@jarenjs/core/string';
 
 /** The fixture frontier requires an outcome checker; hosts must remeasure other embedders. */
 export const DEFAULT_REUSE_THRESHOLD = 0.9;
@@ -8,9 +9,7 @@ export const DEFAULT_REUSE_THRESHOLD = 0.9;
 /** Hash the exact question; case and whitespace may be meaningful inside record keys.
  * @param question */
 export async function questionFingerprint(question: string) {
-  const bytes = new TextEncoder().encode(question);
-  const hash = await globalThis.crypto.subtle.digest('SHA-256', bytes);
-  return Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join('');
+  return sha256Hex(question);
 }
 
 /** Compose author and runner with one fresh fallback and append-only failure evidence.

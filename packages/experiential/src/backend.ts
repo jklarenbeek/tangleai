@@ -5,6 +5,7 @@ import { validateExperientialShape } from './schema.ts';
 import { experientialNativeCause, refuseExperiential, type ExperientialResult } from './errors.ts';
 import type { ArtifactReceipt, BackendJob, BackendJobState, ExperientialRuntime,
   ExperientialTrainingRunBackendIdentity, TrainingCapabilities, TrainingSpec } from './contracts.gen.ts';
+import { sha256Hex } from '@jarenjs/core/string';
 
 export type BackendResult<T> = ExperientialResult<T>;
 export interface TrainingBackend {
@@ -40,9 +41,7 @@ export function checkTrainingCapabilities(spec: TrainingSpec, value: unknown): B
 export async function experientialArtifactChecksum(bytes: Uint8Array): Promise<string> {
   if (!ArrayBuffer.isView(bytes) || Object.prototype.toString.call(bytes) !== '[object Uint8Array]')
     throw new TypeError('Artifact hashing requires a Uint8Array view.');
-  const snapshot = new Uint8Array(bytes);
-  const digest = await crypto.subtle.digest('SHA-256', snapshot);
-  return [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, '0')).join('');
+  return sha256Hex(bytes);
 }
 
 export interface VerifyArtifactReceiptOptions {

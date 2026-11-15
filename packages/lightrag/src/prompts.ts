@@ -1,5 +1,6 @@
 /** Static TOML instructions and one canonical JSON block; the suite owns parsing. */
 import { parseToml } from '@jarenjs/josl';
+import { sha256Hex } from '@jarenjs/core/string';
 import { canonicalSha256, canonicalizeJson } from '@jarenjs/json/canonical';
 import { equalsJson } from '@jarenjs/core/object';
 import { validateLightRagShape, lightRagSchemaOf, lightRagSchema, type LightRagRecords } from './schema.ts';
@@ -18,8 +19,7 @@ async function schemaRevision(role: LightRagPromptArtifact['role']): Promise<str
     return canonicalSha256(LIGHTRAG_PROMPT_SHAPES[role].map(name=>lightRagSchemaOf(name)));
 }
 async function textDigest(source: string): Promise<string> {
-    const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(source));
-    return [...new Uint8Array(bytes)].map(value=>value.toString(16).padStart(2,'0')).join('');
+    return sha256Hex(source);
 }
 export async function compileLightRagPromptPack(source: string): Promise<LightRagOutcome<LightRagPromptArtifact>> {
     try {

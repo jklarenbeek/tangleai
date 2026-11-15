@@ -24,6 +24,7 @@
 
 import { AiError } from './errors.ts';
 import type { ReplayCache } from './replay.ts';
+import { sha256Hex } from '@jarenjs/core/string';
 
 /** The file operations the adapter needs; `node:fs/promises` has them all. */
 export type ReplayFiles = {
@@ -37,8 +38,7 @@ export type ReplayFiles = {
 const missing = (error: unknown) => (error as { code?: unknown })?.code === 'ENOENT';
 
 async function sha256(text: string): Promise<string> {
-  const digest = await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+  return sha256Hex(text);
 }
 
 /**

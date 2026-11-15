@@ -17,11 +17,34 @@ const PROFILES = {
   state: {}, data: {}, contract: { type: 'object' },
 };
 
+/** Whether a schema has an object that admits members it does not name. */
+export function hasOpenObject(schema: any): boolean {
+  if (schema === null || typeof schema !== 'object') return false;
+  if (Array.isArray(schema)) return schema.some(hasOpenObject);
+  const types = Array.isArray(schema.type) ? schema.type : [schema.type];
+  if (types.includes('object') && schema.additionalProperties !== false) return true;
+  return Object.values(schema).some(hasOpenObject);
+}
+
+/**
+ * The tier a Studio profile can travel in. Anthropic models refuse an output
+ * schema with an object that is not closed (`additionalProperties: false`),
+ * and an app, state or data document is open by nature, so for them the
+ * profile travels in the prompt (JSON mode) and the full grammar gate checks
+ * the reply. Other providers keep their own tier.
+ */
+export function profileTier(profile: any, client: any): 'json' | undefined {
+  const model = String(client?.endpoint?.model ?? '');
+  return /(^|\/)(anthropic|claude)/i.test(model) && hasOpenObject(profile) ? 'json' : undefined;
+}
+
 /** @param options */
 export function createStudioFileAuthor(options: {
   client: any;
   operators?: any;
   maxRepairs?: number;
+  /** The structured-output tier; by default JSON mode where the provider refuses an open profile (see `profileTier`). */
+  tier?: 'json_schema' | 'json' | null;
 }) {
   return {
     /** @param request
@@ -58,9 +81,11 @@ export function createStudioFileAuthor(options: {
           };
         }
       };
+      const tier = options.tier !== undefined ? options.tier : profileTier(profile, options.client);
       const generator = createStructuredOutput({
         client: options.client, schema: profile,
-        name: `studio_${kind}`, strict: false, validator: check, maxRepairs: options.maxRepairs ?? 2
+        name: `studio_${kind}`, strict: false, validator: check, maxRepairs: options.maxRepairs ?? 2,
+        ...(tier !== undefined ? { tier } : {}),
       });
       const result = await generator.generate([
         { role: 'system', content: `Author exactly one ${kind} file named ${request.name}. Return its JSON value only. Do not return a project envelope. Files available: ${JSON.stringify(request.project.files.map((f: any) => ({ name: f.name, kind: f.kind })))}.${original?.imports ? ` Imported members are supplied by ${JSON.stringify(original.imports)}; omit these members from your output.` : ''}` },

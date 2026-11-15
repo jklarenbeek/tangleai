@@ -14,6 +14,7 @@
 
 import { JarenValidator } from '@jarenjs/validate';
 import { cloneJson, deepFreeze } from '@jarenjs/core/object';
+import { createSemanticCache } from '@jarenjs/core/cache';
 
 import masWorkflowSchema from '../schemas/mas-workflow.schema.json' with { type: 'json' };
 import masRegistrySchema from '../schemas/mas-registry.schema.json' with { type: 'json' };
@@ -42,8 +43,14 @@ const workflowValidator = compile(masWorkflowSchema as object);
 const registryValidator = compile(masRegistrySchema as object);
 const templateValidator = compile(masTemplateSchema as object);
 const runtimeRecordValidators = new Map<string, (value: unknown) => { valid: boolean, errors?: ValidatorError[] }>();
-const EMBEDDED_VALIDATOR_LIMIT = 512;
-const embeddedValidators = new Map<string, ((value: unknown) => { valid: boolean, errors?: ValidatorError[] }) | null>();
+/**
+ * Compiled embedded schemas by their ordered semantic identity: member order
+ * counts, a refusal (`null`) is remembered, an unkeyable value is compiled
+ * afresh and never kept, and the least recently used of 512 is evicted. The
+ * schemas come from deep-frozen documents, whose key Jaren remembers, so a
+ * lookup costs well under a microsecond.
+ */
+const embeddedValidators = createSemanticCache<((value: unknown) => { valid: boolean, errors?: ValidatorError[] }) | null>(512, undefined, { ordered: true });
 
 /** Every shape refusal is TMAS1001 at the validator's own pointer. */
 function shapeIssues(errors: ValidatorError[] | undefined): MasIssue[] {
@@ -109,20 +116,8 @@ export function validateRuntimeRecord(kind: string, value: unknown): MasValidate
 export function compileEmbeddedSchema(schema: unknown): ((value: unknown) => { valid: boolean, errors?: ValidatorError[] }) | null {
   // The same port and state schemas recur on every node attempt of every
   // run, and compiling one is the runtime's dearest step, so each distinct
-  // schema text compiles once. A refusal is remembered too.
-  let key: string | undefined;
-  try { key = JSON.stringify(schema); } catch { key = undefined; }
-  if (typeof key !== 'string') return compileOrNull(schema);
-  if (embeddedValidators.has(key)) {
-    const cached = embeddedValidators.get(key)!;
-    embeddedValidators.delete(key);
-    embeddedValidators.set(key, cached);
-    return cached;
-  }
-  const compiled = compileOrNull(schema);
-  if (embeddedValidators.size >= EMBEDDED_VALIDATOR_LIMIT) embeddedValidators.delete(embeddedValidators.keys().next().value!);
-  embeddedValidators.set(key, compiled);
-  return compiled;
+  // schema compiles once. A refusal is remembered too.
+  return embeddedValidators.getOrCreate(schema, () => compileOrNull(schema));
 }
 
 function compileOrNull(schema: unknown) {

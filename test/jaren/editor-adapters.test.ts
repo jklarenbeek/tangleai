@@ -40,7 +40,7 @@ function project(t: any) {
   const editor = createProjectController({ getApp: () => app, host, debounceMs: 0 });
   const document = {
     project: '0.1', files: [
-      { name: 'app', kind: 'app', text: '{"view":[{"match":"$","body":{"tag":"p","children":["$.n"]}}]}', imports: { state: 'state' } },
+      { name: 'app', kind: 'app', text: '{"view":[{"match":"$","body":["p",{},"$.n"]}]}', imports: { state: 'state' } },
       { name: 'state', kind: 'state', text: '{"n":1}' },
     ], active: 'app', layout: { autorun: false }
   };

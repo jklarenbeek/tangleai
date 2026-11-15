@@ -107,7 +107,7 @@ import grammar from '@jarenjs/json/schemas/jaren-query.schema.json' with { type:
 const author = createStylesheetAuthor({
   client, createStructuredOutput,
   compile: compileJsltStylesheet,   // the engine, INJECTED — never imported here
-  schema: authoring,                // 3,491 chars: the document shape, body open
+  schema: authoring,                // 3,633 chars: the document shape, body open
   canonical,                        // the full grammar, as a local check after decoding
   grammar,                          // the operator vocabulary, for the prompt
   models: host.authoringModels,   // ordered host configuration
@@ -124,7 +124,7 @@ Four changes, each one answering something that was measured rather than suspect
 **1. Narrow the response format; move the vocabulary to the prompt.**
 [`jaren-jslt.authoring.schema.json`](https://github.com/jklarenbeek/jarenjs/blob/3491513e164dc30e429c84e709bd738841f4df16/packages/json/schemas/jaren-jslt.authoring.schema.json) is
 the canonical grammar cut at the one `$ref` that pulls in the whole expression language —
-**24,555 → 3,491 characters**, the document shape intact and the body open. The cut is
+**24,555 → 3,633 characters**, the document shape intact and the body open (every node typed since Jaren 0.193.0, for providers that require a type). The cut is
 where all the growth is, so the authoring profile has not moved a byte while the grammar
 it is cut from has grown by nearly a third. It is mechanically derived and the artifact test
 asserts the committed file *is* the derivation.

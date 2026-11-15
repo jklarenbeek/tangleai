@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "version": "0.48.1",
+  "baseVersion": "0.48.0",
+  "baseCommit": "fe6368f4441e15317d3e95af43c2b57f4ea16201",
+  "preparationCommit": "fe6368f4441e15317d3e95af43c2b57f4ea16201",
+  "initial": false,
+  "inputHash": "0a628072df6ce31b23f5a4f0f2ba36232eee58422e0bf841adf406f5d4dadc77",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Build on Jaren 0.193.1. Its `sha256Hex` replaces the nine local SHA-256 helpers, each keeping its name, with identical digests. MAS caches compiled embedded schemas with Jaren's semantic cache, which now remembers the key of a frozen tree: 0.31 µs per lookup against 22.8 µs before. The Studio authoring gate now refuses an element written as an object and names an unknown operator with the nearest known one. The Studio file author sends an open profile in the prompt to an Anthropic model, which refuses an output schema with an open object, so the Pages Studio assistant no longer fails with HTTP 400 on the default model. The assistant's Japanese and Traditional Chinese packs use Jaren's 「…」 permalink wording.",
+      "id": "jaren-foundation-0-193-1"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.48.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.48.1"
+    }
+  ]
+}

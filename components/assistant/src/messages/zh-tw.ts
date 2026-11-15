@@ -73,7 +73,7 @@ export const zhTW = {
   'error/detail': '錯誤：{detail}',
   'md/footnotes': '註腳',
   'md/page-break': '分頁符號',
-  'md/permalink': '"{text}" 的永久連結',
+  'md/permalink': '「{text}」的永久連結',
   'md/permalink-section': '此章節的永久連結',
   'md/backref': '返回參照 {number}',
   'md/backref-occurrence': '返回參照 {number}（第 {occurrence} 次）',

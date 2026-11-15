@@ -10,6 +10,7 @@
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { deepFreeze } from '@jarenjs/core/object';
 import { trace2SkillRefuse, type Trace2SkillOutcome } from './errors.ts';
+import { sha256Hex } from '@jarenjs/core/string';
 
 /** Code-point order, because these names become hash inputs. */
 export const byPath = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
@@ -17,15 +18,10 @@ export const byPath = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 
 /** Fresh, stable JSON property order; non-JSON, function and non-finite values refuse. */
 export function immutableJson<T>(value: T): T { return deepFreeze(JSON.parse(JSON.stringify(value))) as T; }
 
-const HEX = Array.from({ length: 256 }, (_, byte) => byte.toString(16).padStart(2, '0'));
 
 /** Exact byte receipt of one file, including whitespace and line endings. */
 export async function skillFileDigest(bytes: Uint8Array | string): Promise<string> {
-  const buffer = typeof bytes === 'string' ? new TextEncoder().encode(bytes) : bytes;
-  const digest = await crypto.subtle.digest('SHA-256', buffer as unknown as ArrayBuffer);
-  let hex = '';
-  for (const byte of new Uint8Array(digest)) hex += HEX[byte];
-  return hex;
+  return sha256Hex(bytes);
 }
 
 export interface BundleIdentity {

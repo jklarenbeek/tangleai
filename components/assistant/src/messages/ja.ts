@@ -72,7 +72,7 @@ export const ja = {
   'error/detail': 'エラー: {detail}',
   'md/footnotes': '脚注',
   'md/page-break': '改ページ',
-  'md/permalink': '"{text}" へのパーマリンク',
+  'md/permalink': '「{text}」へのパーマリンク',
   'md/permalink-section': 'このセクションへのパーマリンク',
   'md/backref': '参照 {number} に戻る',
   'md/backref-occurrence': '参照 {number} に戻る（{occurrence} 回目）',

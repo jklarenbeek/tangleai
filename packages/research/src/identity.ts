@@ -1,6 +1,7 @@
 import { canonicalSha256, cloneJson } from '@jarenjs/json/canonical';
 import { deepFreeze } from '@jarenjs/core/object';
 import type { ArtifactAdmission, InputManifest, StageAttemptKey } from './contracts.gen.ts';
+import { sha256Hex } from '@jarenjs/core/string';
 
 /** Snapshot finite JSON through the native canonical owner before an asynchronous seam. */
 export function immutableResearchJson<T>(value: T): T { return deepFreeze(cloneJson(value)) as T; }
@@ -13,9 +14,7 @@ export function copyResearchBytes(bytes: Uint8Array): Uint8Array<ArrayBuffer> {
   return new Uint8Array(bytes);
 }
 export async function researchArtifactIdOf(bytes: Uint8Array): Promise<string> {
-  const snapshot = copyResearchBytes(bytes);
-  const digest = await crypto.subtle.digest('SHA-256', snapshot);
-  return 'art-' + [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, '0')).join('');
+  return 'art-' + await sha256Hex(copyResearchBytes(bytes));
 }
 export function inputManifestHashOf(manifest: InputManifest): Promise<string> { return researchRevisionOf(manifest); }
 export async function stageAttemptIdOf(key: StageAttemptKey): Promise<string> {

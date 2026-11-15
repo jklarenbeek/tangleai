@@ -135,8 +135,13 @@ describe('ai — the authoring profile', function () {
     // the expression grammar is what left
     for (const gone of ['expression', 'flworPhrase', 'binaryOperatorPhrase', 'objectExpression'])
       assert.ok(!defs.includes(gone), `${gone} is not in the authoring profile`);
-    assert.deepStrictEqual(Object.keys(authoringSchema.$defs.queryDocument), ['description'],
+    // typed for providers that need a type on every node, and still open:
+    // the type admits every JSON value, so the body constrains nothing
+    const body = authoringSchema.$defs.queryDocument;
+    assert.deepStrictEqual(Object.keys(body).filter(key => key !== 'type'), ['description'],
       'the body is open: a description and no constraint');
+    assert.deepStrictEqual([...(body.type ?? ['array', 'boolean', 'null', 'number', 'object', 'string'])].sort(),
+      ['array', 'boolean', 'null', 'number', 'object', 'string'], 'its type admits every JSON value');
   });
 
   it('accepts every document the canonical grammar accepts', function () {

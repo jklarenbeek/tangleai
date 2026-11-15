@@ -2,7 +2,7 @@
 import { resolveProjectFile, writeProjectArtifact } from '@jarenjs/studio';
 import { applyJSONPatch } from '@jarenjs/json/patch';
 import { createStudioFileAuthor } from './studio-file.ts';
-export { createStudioFileAuthor, AUTHORABLE_KINDS } from './studio-file.ts';
+export { createStudioFileAuthor, AUTHORABLE_KINDS, hasOpenObject, profileTier } from './studio-file.ts';
 
 /** @param options
  * @returns */
