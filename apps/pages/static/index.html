@@ -1,19 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tangle AI — memory that earns its keep</title>
-  <meta name="description" content="Self-improving memory and retrieval for agents, built on the jarenjs suite. The pipeline is a document; this page runs it in your browser.">
+  <title>Tangle OS</title>
+  <meta name="description" content="Tangle OS: applications built on Jaren and an assistant that uses them, on one desktop in your browser.">
+  <link rel="stylesheet" href="./os.css">
   <link rel="stylesheet" href="./vendor.css">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./os-apps.css">
+  <link rel="stylesheet" href="./os-surfaces.css">
+  <style>html, body { margin: 0; block-size: 100%; overflow: hidden; } #desktop { block-size: 100vh; block-size: 100dvh; }</style>
 </head>
 <body>
-  <nav class="demo-nav" aria-label="Tangle pages"><a href="#/">Tangle</a><a href="#/project">Studio</a><a href="#/play">Playground</a><a href="#/flow">Flow</a><a href="#/data">Data</a><a href="#/game">Adventure</a><a href="./os.html">OS</a></nav>
-  <div id="app"><noscript>Tangle AI — the live demo needs JavaScript; the README does not: https://github.com/jklarenbeek/tangleai</noscript></div>
-  <main id="demos" hidden></main>
-  <details class="demo-transfer"><summary>Move browser data</summary><p>Export selected data, or import a file into empty slots. Close other Tangle tabs first. Settings and credentials are excluded.</p><div id="data-transfer-controls"></div></details>
-  <div id="assistant"></div>
-  <script type="module" src="./app.js"></script>
+  <main id="desktop"><noscript>Tangle OS needs JavaScript. The source and guide are at https://github.com/jklarenbeek/tangleai</noscript></main>
+  <script type="module" src="./os.js"></script>
 </body>
 </html>

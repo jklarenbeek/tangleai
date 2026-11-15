@@ -13,7 +13,7 @@ import { test, expect } from './playwright.mjs';
 test.use({ viewport: { width: 375, height: 812 }, hasTouch: true });
 
 test('the assistant opens as an on-screen sheet, gated on configuration', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/classic.html');
   const launch = page.locator('.ai-launch');
   await expect(launch).toBeVisible();
   const launchBox = await launch.boundingBox();
@@ -59,7 +59,7 @@ test('the transcript persists across a reload and clear wipes it', async ({ page
       ],
     }));
   });
-  await page.goto('/');
+  await page.goto('/classic.html');
   await page.locator('.ai-launch').tap();
 
   // the restored transcript renders, assistant turns through @jarenjs/md
@@ -81,7 +81,7 @@ test('the objective survives a reload, in a real browser store', async ({ page }
     localStorage.setItem('tangle-ai',
       JSON.stringify({ provider: 'ollama', baseUrl: '', model: 'qwen3.8:27b', apiKey: '' }));
   });
-  await page.goto('/');
+  await page.goto('/classic.html');
   await page.locator('.ai-launch').tap();
 
   await page.getByPlaceholder('Set an objective the assistant keeps across sessions…')
@@ -114,7 +114,7 @@ test('the flow authoring tools register on the WebMCP surface', async ({ page })
   });
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
-  await page.goto('/');
+  await page.goto('/classic.html');
   await page.waitForFunction(() => /** @type {any} */ (window).__mcpTools.length > 0);
 
   const names = await page.evaluate(() =>

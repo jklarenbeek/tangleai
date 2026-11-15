@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/os",
-  "version": "0.47.0",
+  "version": "0.48.0",
   "description": "A browser operating system for Tangle suites: modules as JSON manifests and contracts, one desktop, one assistant.",
   "license": "MIT",
   "type": "module",
@@ -24,7 +24,7 @@
     "./src/module-host.ts"
   ],
   "dependencies": {
-    "@tangleai/agents": "0.47.0",
+    "@tangleai/agents": "0.48.0",
     "@jarenjs/core": "0.188.0",
     "@jarenjs/json": "0.188.0",
     "@jarenjs/validate": "0.188.0",

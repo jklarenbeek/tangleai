@@ -46,7 +46,7 @@ test.beforeEach(async ({ page }) => {
 const READY = { timeout: 30_000 };
 
 async function gotoData(page) {
-  await page.goto('/#/data');
+  await page.goto('/classic.html#/data');
   await expect(page.locator('h1', { hasText: 'Data' })).toBeVisible();
   // the store finishes opening: the status leaves 'boot'
   await expect(page.locator('.data-status .data-vfs')).not.toHaveText('—', READY);
@@ -171,7 +171,7 @@ test('a second tab is refused the pool, becomes a live client, and closing it re
   // the SECOND tab opens the same site: OPFS exclusivity refuses it the
   // pool, so it downgrades to a CLIENT over the BroadcastChannel
   const client = await context.newPage();
-  await client.goto('/#/data');
+  await client.goto('/classic.html#/data');
   await expect(client.locator('.data-status .data-topology'))
     .toHaveText('client', READY);
   await expect(client.locator('.data-refusal')).toContainText('JD2061');
@@ -282,7 +282,7 @@ test.describe('a busy owner remains the owner', () => {
       });
       await owner.waitForFunction(() => globalThis.studioBusy === true);
       const client = await context.newPage();
-      await client.goto('/#/data');
+      await client.goto('/classic.html#/data');
       await expect(client.locator('.data-topology')).toHaveText('client', READY);
       await expect(client.locator('.data-rows')).toContainText('important', READY);
       await expect(client.locator('.data-refusal')).not.toContainText('OPFS is unavailable');
@@ -305,7 +305,7 @@ test('two client tabs sharing the owner channel never cross-settle', async ({ br
 
   const openClient = async () => {
     const page = await context.newPage();
-    await page.goto('/#/data');
+    await page.goto('/classic.html#/data');
     await expect(page.locator('.data-status .data-topology')).toHaveText('client', READY);
     return page;
   };
@@ -376,7 +376,7 @@ test.describe('the boot is terminal: a failed stage is named and a retry starts 
     const errors = [];
     page.on('pageerror', (error) => errors.push(String(error)));
     await page.route(WORKER, (route) => route.abort());
-    await page.goto('/#/data');
+    await page.goto('/classic.html#/data');
     await expect(page.locator('h1', { hasText: 'Data' })).toBeVisible();
     const failure = page.locator('.data-boot-error');
     await expect(failure).toBeVisible(READY);
@@ -401,7 +401,7 @@ test.describe('the boot is terminal: a failed stage is named and a retry starts 
     // (and the page's load event waits on it in Firefox, so the navigation
     // is awaited only to the document, not to load)
     await page.route(WORKER, () => {});
-    await page.goto('/#/data', { waitUntil: 'domcontentloaded' });
+    await page.goto('/classic.html#/data', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('h1', { hasText: 'Data' })).toBeVisible();
     const failure = page.locator('.data-boot-error');
     await expect(failure).toBeVisible(READY);

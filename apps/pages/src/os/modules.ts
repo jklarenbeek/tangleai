@@ -1,14 +1,31 @@
 /**
- * The modules the Pages desktop ships with: three shipped components (the
- * Assistant, Settings and About) and one document module (a to-do list, run in
- * a sandboxed frame, that reaches the desktop only through its granted `os`
- * effect).
+ * The modules the Pages desktop ships with: Welcome, the Assistant, the work
+ * applications (Studio, Playground, Flow, Data), the memory loop, the
+ * adventure, Settings, moving browser data and About as shipped components,
+ * and one document module (a to-do list, run in a sandboxed frame, that
+ * reaches the desktop only through its granted `os` effect).
  */
 import type { Kernel, ModuleManifest } from '@tangleai/os';
 import type { ShippedMount } from '@tangleai/os/shell';
 import { assistantMount } from './assistant-app.ts';
 import { settingsMount } from './settings-app.ts';
 import type { Preferences } from './preferences.ts';
+import { welcomeMount } from './welcome-app.ts';
+import { loopMount } from './loop-app.ts';
+
+const t = (en: string, nl: string, de: string, fr: string, es: string, pt: string, ar: string, ja: string, ko: string, ru: string, tr: string, zhTW: string) =>
+  ({ en, nl, de, fr, es, pt, ar, ja, ko, ru, tr, 'zh-TW': zhTW });
+const app = (id: string, title: ReturnType<typeof t>, glyph: string, hue: number, window: ModuleManifest['window'], category: ModuleManifest['category'] = 'development'): ModuleManifest =>
+  ({ $module: '0.1', id, version: '1.0.0', category, title, icon: { glyph, hue }, host: { kind: 'shipped', mount: id }, window: { singleton: true, ...window } });
+
+export const WELCOME = app('welcome', t('Welcome', 'Welkom', 'Willkommen', 'Bienvenue', 'Bienvenida', 'Boas-vindas', 'مرحبًا', 'ようこそ', '환영합니다', 'Добро пожаловать', 'Hoş geldiniz', '歡迎'), 'welcome', 178, { width: 780, height: 700, minWidth: 360, minHeight: 360 }, 'system');
+export const STUDIO = app('studio', t('Studio', 'Studio', 'Studio', 'Studio', 'Estudio', 'Estúdio', 'الاستوديو', 'スタジオ', '스튜디오', 'Студия', 'Stüdyo', '工作室'), 'studio', 200, { width: 1180, height: 760, minWidth: 520, minHeight: 420 });
+export const PLAYGROUND = app('playground', t('Playground', 'Speeltuin', 'Spielwiese', 'Bac à sable', 'Área de pruebas', 'Área de testes', 'ساحة التجربة', 'プレイグラウンド', '플레이그라운드', 'Песочница', 'Deneme alanı', '遊樂場'), 'playground', 320, { width: 1180, height: 760, minWidth: 520, minHeight: 420 });
+export const FLOW = app('flow', t('Flow', 'Flow', 'Flow', 'Flow', 'Flujo', 'Fluxo', 'التدفق', 'フロー', '플로', 'Поток', 'Akış', '流程'), 'flow', 260, { width: 1100, height: 720, minWidth: 520, minHeight: 420 });
+export const DATA = app('data', t('Data', 'Data', 'Daten', 'Données', 'Datos', 'Dados', 'البيانات', 'データ', '데이터', 'Данные', 'Veri', '資料'), 'data', 30, { width: 1100, height: 720, minWidth: 520, minHeight: 420 });
+export const LOOP = app('loop', t('Memory loop', 'Geheugenlus', 'Gedächtnisschleife', 'Boucle de mémoire', 'Bucle de memoria', 'Ciclo de memória', 'حلقة الذاكرة', 'メモリーループ', '메모리 루프', 'Цикл памяти', 'Bellek döngüsü', '記憶迴圈'), 'loop', 178, { width: 820, height: 700, minWidth: 380, minHeight: 360 }, 'productivity');
+export const ADVENTURE = app('adventure', t('Adventure', 'Avontuur', 'Abenteuer', 'Aventure', 'Aventura', 'Aventura', 'المغامرة', 'アドベンチャー', '어드벤처', 'Приключение', 'Macera', '冒險'), 'adventure', 12, { width: 980, height: 720, minWidth: 420, minHeight: 420 }, 'play');
+export const TRANSFER = app('transfer', t('Move data', 'Gegevens verplaatsen', 'Daten übertragen', 'Déplacer les données', 'Mover datos', 'Mover dados', 'نقل البيانات', 'データの移動', '데이터 이동', 'Перенос данных', 'Verileri taşı', '移動資料'), 'transfer', 160, { width: 560, height: 360, minWidth: 360, minHeight: 240 }, 'system');
 
 export const ASSISTANT: ModuleManifest = {
   $module: '0.1', id: 'assistant', version: '1.0.0', category: 'system',
@@ -23,7 +40,7 @@ export const SETTINGS: ModuleManifest = {
   title: { en: 'Settings', nl: 'Instellingen', de: 'Einstellungen', fr: 'Réglages', es: 'Ajustes', pt: 'Definições', ar: 'الإعدادات', ja: '設定', ko: '설정', ru: 'Настройки', tr: 'Ayarlar', 'zh-TW': '設定' },
   icon: { glyph: 'gear', hue: 215 },
   host: { kind: 'shipped', mount: 'settings' },
-  window: { width: 720, height: 560, minWidth: 380, minHeight: 360, singleton: true },
+  window: { width: 860, height: 680, minWidth: 380, minHeight: 360, singleton: true },
 };
 
 export const ABOUT: ModuleManifest = {
@@ -103,12 +120,15 @@ export const TODO: ModuleManifest = {
   },
 };
 
-export const builtinModules = (): ModuleManifest[] => [ASSISTANT, ABOUT, TODO, SETTINGS];
+export const builtinModules = (): ModuleManifest[] => [WELCOME, ASSISTANT, STUDIO, PLAYGROUND, FLOW, DATA, LOOP, ADVENTURE, TODO, SETTINGS, TRANSFER, ABOUT];
 
 /** The shipped components this desktop registers. */
-export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel, prefs: Preferences, open: (id: string) => void }): Record<string, ShippedMount> {
+export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel, prefs: Preferences, open: (id: string) => void, surfaces: { mounts: Record<string, ShippedMount>, toolbox: any, system: string } }): Record<string, ShippedMount> {
   return {
-    assistant: assistantMount(host.kernel, host.prefs, () => host.open('settings')),
+    ...host.surfaces.mounts,
+    welcome: welcomeMount(host.open),
+    loop: loopMount,
+    assistant: assistantMount(host.kernel, host.prefs, () => host.open('settings'), { toolbox: host.surfaces.toolbox, system: host.surfaces.system }),
     settings: settingsMount(host.prefs),
     about(node, context) {
       const doc = node.ownerDocument;

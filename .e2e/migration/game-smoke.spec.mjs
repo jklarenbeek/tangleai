@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('the adventure boots, plays, and navigates via the flow engine', async ({ page }) => {
-  await page.goto('/#/game');
+  await page.goto('/classic.html#/game');
 
   // title card
   await expect(page.getByText('Name your pirate')).toBeVisible();
@@ -72,7 +72,7 @@ test('the adventure is winnable — no soft-lock: brine the biscuits, plate the 
   const inventory = page.locator('.game-inv');
   const armed = (name) => expect(page.locator('.game-verb.on')).toHaveText(name);
 
-  await page.goto('/#/game');
+  await page.goto('/classic.html#/game');
   await page.getByRole('button', { name: /Set sail/ }).click();
   await expect(page.locator('.game-play')).toBeVisible();
 
@@ -97,7 +97,7 @@ test('the adventure is winnable — no soft-lock: brine the biscuits, plate the 
 });
 
 test('the name form validates, and the error localizes (forms + locales)', async ({ page }) => {
-  await page.goto('/#/game');
+  await page.goto('/classic.html#/game');
   const field = page.locator('.game-name input').first();
   await field.fill('Yo');   // too short (minLength 3)
   await expect(page.locator('.game-name')).toContainText(/at least 3 characters/i);
@@ -113,7 +113,7 @@ test('the name form validates, and the error localizes (forms + locales)', async
 });
 
 test('the insult sword-fight — learn the retorts, then win', async ({ page }) => {
-  await page.goto('/#/game');
+  await page.goto('/classic.html#/game');
   await page.getByRole('button', { name: /Set sail/ }).click();
   await expect(page.locator('.game-play')).toBeVisible();
   // to the lighthouse (wharf → diner → Periscope Peak), each room asserted
@@ -139,7 +139,7 @@ test('the insult sword-fight — learn the retorts, then win', async ({ page }) 
 });
 
 test('save/load and the CSV admiralty-forms gag', async ({ page }) => {
-  await page.goto('/#/game');
+  await page.goto('/classic.html#/game');
   await page.getByRole('button', { name: /Set sail/ }).click();
   await expect(page.locator('.game-play')).toBeVisible();
   // save writes a JSONX slot
@@ -172,7 +172,7 @@ test('dynamic tier — an NPC answers live when the player brings a key', async 
   await page.addInitScript(([key, model]) => {
     window.localStorage.setItem('tangle-ai', JSON.stringify({ provider: 'openrouter', baseUrl: '', model, apiKey: key }));
   }, [KEY, MODEL]);
-  await page.goto('/#/game');
+  await page.goto('/classic.html#/game');
   await page.getByRole('button', { name: /Set sail/ }).click();
   await expect(page.locator('.game-play')).toBeVisible();
   await page.getByRole('button', { name: 'Talk to', exact: true }).click();

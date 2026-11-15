@@ -1,7 +1,7 @@
 import { test, expect } from './playwright.mjs';
 import { readFile } from 'node:fs/promises';
 test('explicit old-origin export imports once and a second import makes no writes', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/classic.html');
   await page.evaluate(() => {
     localStorage.setItem('jaren-ai', JSON.stringify({ apiKey: 'never-export-this-fixture-key', model: 'not-exported' }));
     localStorage.setItem('jaren-ai-chat', JSON.stringify({ messages: [{ role: 'assistant', content: '**Transferred** transcript' }] }));

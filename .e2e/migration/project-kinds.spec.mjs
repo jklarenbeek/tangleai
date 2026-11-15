@@ -3,7 +3,7 @@ import { encodeShare } from '@jarenjs/app';
 import { projectTemplate } from '../../apps/pages/src/demos/playground/projectTemplates.ts';
 
 test.beforeEach(async ({ page }) => { await page.emulateMedia({ reducedMotion: 'reduce' }); });
-const open = (page, id) => page.goto(`/#/project?s=${encodeShare({ e: 'project', i: { project: projectTemplate(id) } })}`);
+const open = (page, id) => page.goto(`/classic.html#/project?s=${encodeShare({ e: 'project', i: { project: projectTemplate(id) } })}`);
 const problems = (page) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));

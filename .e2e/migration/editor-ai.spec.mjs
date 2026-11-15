@@ -10,7 +10,7 @@ async function api(page) {
   await page.evaluate(async () => { window.hostApi = await import('/host-fixture.js'); });
 }
 test('Data proposals preserve dirty edits, publish buffers without recreating storage and release workers on route exit', async ({ page }) => {
-  await page.goto('/#/data'); await api(page);
+  await page.goto('/classic.html#/data'); await api(page);
   await expect(page.locator('.data-vfs')).not.toHaveText('—', { timeout: 30000 });
   expect(await page.evaluate(() => window.tanglePages.data().ready)).toMatchObject({ ok: true });
   await page.evaluate(() => {
@@ -44,7 +44,7 @@ test('Data proposals preserve dirty edits, publish buffers without recreating st
   await page.evaluate(() => window.tanglePages.dispose()); await expect.poll(() => page.workers().length).toBe(0);
 });
 test('Flow AI and manual edits use one history and compiler; stale proposals retain human work', async ({ page }) => {
-  await page.goto('/#/flow'); await api(page);
+  await page.goto('/classic.html#/flow'); await api(page);
   await page.locator('article', { hasText: 'Blank machine' }).locator('button').click();
   await page.evaluate(() => {
     const editor = window.tanglePages.flow(); window.flowBefore = editor.read();
@@ -70,7 +70,7 @@ test('the Pages authoring tool runs a scripted provider through the real project
     requests.push(route.request().postDataJSON());
     return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: JSON.stringify({ title: 'Authored in Tangle', note: 'scripted result' }) } }] }) });
   });
-  await page.goto('/#/project?s=' + encodeShare({ e: 'project', i: { project: projectTemplate('split-app') } }));
+  await page.goto('/classic.html#/project?s=' + encodeShare({ e: 'project', i: { project: projectTemplate('split-app') } }));
   await expect(page.locator('.js-stage-mount h1')).toHaveText('Hello from the studio');
   const result = await page.evaluate(() => window.tanglePages.toolbox.execute('jaren_project_author', { name: 'app.state', prompt: 'Set the title to Authored in Tangle.' }));
   expect(result.ok, JSON.stringify(result)).toBe(true); expect(requests.length).toBe(1);
@@ -79,7 +79,7 @@ test('the Pages authoring tool runs a scripted provider through the real project
 });
 
 test('Studio tool state patches preserve local input and structural patches replace the stage', async ({ page }) => {
-  await page.goto('/#/project');
+  await page.goto('/classic.html#/project');
   const initial = await page.evaluate(async () => {
     const doc = { state: { label: 'first' }, view: [{ match: '$', body: ['div', {}, ['input', { id: 'local-draft' }], ['p', { id: 'published-label' }, '$.label']] }] };
     return tanglePages.toolbox.execute('jaren_studio_write', { doc });

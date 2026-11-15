@@ -7,8 +7,12 @@
  */
 import { PROVIDERS, probeProvider } from '@tangleai/models/providers';
 import type { ShippedMount } from '@tangleai/os/shell';
+import { THEME_KITS, composeTheme, patternBackground } from '@tangleai/os';
+
+/** The wallpaper patterns, by what they look like. */
+const PATTERN_NAMES: Record<string, string> = { weave: 'Threads', contours: 'Contours', halftone: 'Halftone', sunprint: 'Sun print', moire: 'Moiré' };
 import {
-  ACCENTS, PROVIDER_KINDS, RECOMMENDED_MODELS, VENICE_BASE, WALLPAPERS, toAiSettings,
+  ACCENT_SWATCHES, PROVIDER_KINDS, RECOMMENDED_MODELS, VENICE_BASE, cleanCustom, toAiSettings,
   type Preferences, type ProviderKind, type Scheme,
 } from './preferences.ts';
 
@@ -331,20 +335,91 @@ export function settingsMount(prefs: Preferences): ShippedMount {
     // ── appearance ─────────────────────────────────────────────────────────
     function renderAppearance() {
       const desk = prefs.desktop();
-      const radios = <T extends string>(name: string, legend: string, options: [T, string][], value: T, onPick: (v: T) => void, swatch?: (v: T) => string) =>
-        h('fieldset', { class: 'tos-choices' }, h('legend', {}, legend),
-          ...options.map(([v, label]) => {
-            const input = h('input', { type: 'radio', name, value: v, checked: v === value, onchange: () => onPick(v) });
-            return h('label', { class: 'tos-choice' }, input, swatch ? h('span', { class: 'tos-swatch', style: `background:${swatch(v)}`, 'aria-hidden': 'true' }) : null, h('span', {}, label));
-          }));
       const scheme = prefs.effectiveScheme();
+      const custom = desk.custom;
+      // a click redraws this section (its marks move); a drag does not, so a slider keeps the pointer
+      const redraw = () => show('appearance');
+      const setCustom = (patch: Record<string, unknown>, again = true) => { prefs.writeDesktop({ custom: cleanCustom({ ...prefs.desktop().custom, ...patch }) }); if (again) redraw(); };
+      const composed = composeTheme(desk.kit, scheme, custom);
+      const preview = (kitId: string, extra: Record<string, unknown> = {}) => {
+        const background = patternBackground(composeTheme(kitId, scheme, { ...extra, density: 0.8 }).tokens) ?? 'none';
+        return h('span', { class: 'tos-preview', style: `background:${background}`, 'aria-hidden': 'true' });
+      };
+      const choices = <T extends string>(name: string, legend: string, options: [T, string][], value: T, onPick: (v: T) => void) =>
+        h('fieldset', { class: 'tos-choices' }, h('legend', {}, legend),
+          ...options.map(([v, label]) => h('label', { class: 'tos-choice' },
+            h('input', { type: 'radio', name, value: v, checked: v === value, onchange: () => onPick(v) }), h('span', {}, label))));
+      const slider = (label: string, min: number, max: number, step: number, value: number, onInput: (v: number) => void) => {
+        const input = h('input', { type: 'range', min: String(min), max: String(max), step: String(step), value: String(value) }) as HTMLInputElement;
+        input.addEventListener('input', () => onInput(Number(input.value)));
+        return h('label', { class: 'tos-field tos-slider' }, h('span', {}, label), input);
+      };
+
+      // the kits, each previewed with its own wallpaper in the current scheme
+      const gallery = h('div', { class: 'tos-kits', role: 'radiogroup', 'aria-label': 'Theme' },
+        ...THEME_KITS.map(kit => h('button', {
+          type: 'button', role: 'radio', class: 'tos-kit', 'aria-checked': String(kit.id === desk.kit), 'data-kit': kit.id,
+          onclick: () => { prefs.writeDesktop({ kit: kit.id, custom: {} }); redraw(); },
+        }, preview(kit.id), h('span', { class: 'tos-kit-name' }, kit.name), h('span', { class: 'tos-kit-text' }, kit.description))));
+
+      const accentPicker = h('input', { type: 'color', value: custom.accent ?? composed.tokens['--accent'].slice(0, 7), 'aria-label': 'Accent colour' }) as HTMLInputElement;
+      accentPicker.addEventListener('input', () => setCustom({ accent: accentPicker.value }, false));
+      const knotPicker = h('input', { type: 'color', value: custom.knot ?? composed.tokens['--os-knot'], 'aria-label': 'Knot colour' }) as HTMLInputElement;
+      knotPicker.addEventListener('input', () => setCustom({ knot: knotPicker.value }, false));
+      const accents = h('div', { class: 'tos-field' }, h('span', {}, 'Accent'),
+        h('div', { class: 'tos-swatches' },
+          ...ACCENT_SWATCHES.map(colour => h('button', { type: 'button', class: 'tos-swatch-btn', style: `--swatch:${colour}`, 'aria-label': colour, 'aria-pressed': String(custom.accent === colour), onclick: () => setCustom({ accent: colour }) })),
+          accentPicker,
+          custom.accent && h('button', { type: 'button', class: 'tos-link', onclick: () => setCustom({ accent: undefined }) }, 'Use the theme\'s own')));
+      const knot = h('div', { class: 'tos-field' }, h('span', {}, 'Highlights'), h('div', { class: 'tos-swatches' }, knotPicker,
+        custom.knot && h('button', { type: 'button', class: 'tos-link', onclick: () => setCustom({ knot: undefined }) }, 'Use the theme\'s own')));
+
+      const pattern = custom.pattern ?? THEME_KITS.find(k => k.id === desk.kit)!.pattern;
+      const patterns = h('div', { class: 'tos-field' }, h('span', {}, 'Wallpaper'),
+        h('div', { class: 'tos-patterns', role: 'radiogroup', 'aria-label': 'Wallpaper pattern' },
+          ...Object.entries(PATTERN_NAMES).map(([id, label]) => h('button', {
+            type: 'button', role: 'radio', class: 'tos-pattern', 'aria-checked': String(id === pattern),
+            onclick: () => setCustom({ pattern: id }),
+          }, preview(desk.kit, { ...custom, pattern: id }), h('span', {}, label)))),
+        h('div', { class: 'tos-row' },
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => setCustom({ seed: Math.floor(Math.random() * 2 ** 31) }) }, 'Shuffle the pattern'),
+          h('span', { class: 'tos-muted' }, `Pattern number ${custom.seed ?? 7}`)));
+      const shape = THEME_KITS.find(k => k.id === desk.kit)!.shape;
+
+      // a theme is a document: it can leave this browser as text and come back
+      const status = h('p', { class: 'tos-muted', role: 'status' });
+      const exportTheme = () => {
+        const text = JSON.stringify({ $tangletheme: '0.1', kit: desk.kit, custom, scheme: desk.scheme }, null, 2);
+        const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+        const link = h('a', { href: url, download: `tangle-theme-${desk.kit}.json` }); doc.body.append(link); link.click(); link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 0);
+        status.textContent = 'Theme exported.';
+      };
+      const file = h('input', { type: 'file', accept: '.json,application/json', hidden: true }) as HTMLInputElement;
+      file.addEventListener('change', async () => {
+        try {
+          const value = JSON.parse(await file.files![0].text());
+          if (value?.$tangletheme !== '0.1' || !THEME_KITS.some(k => k.id === value.kit)) throw new Error('This file is not a Tangle theme.');
+          prefs.writeDesktop({ kit: value.kit, custom: cleanCustom(value.custom), ...(['system', 'light', 'dark'].includes(value.scheme) ? { scheme: value.scheme } : {}) });
+          redraw();
+        } catch (error: any) { status.textContent = `The theme was not imported: ${error?.message ?? error}`; }
+      });
+
       put(
         h('h2', {}, 'Appearance'),
-        radios<Scheme>('tos-scheme', 'Theme', [['system', 'Follow the system'], ['light', 'Light'], ['dark', 'Dark']], desk.scheme, (v) => prefs.writeDesktop({ scheme: v })),
-        radios('tos-accent', 'Accent colour', Object.entries(ACCENTS).map(([id, a]) => [id, a.label] as [string, string]), desk.accent, (v) => prefs.writeDesktop({ accent: v }),
-          (v) => `hsl(${ACCENTS[v].hue} ${scheme === 'dark' ? '90% 76%' : '58% 50%'})`),
-        radios('tos-wallpaper', 'Wallpaper', Object.entries(WALLPAPERS).map(([id, w]) => [id, w.label] as [string, string]), desk.wallpaper, (v) => prefs.writeDesktop({ wallpaper: v }),
-          (v) => WALLPAPERS[v][scheme]),
+        choices<Scheme>('tos-scheme', 'Mode', [['system', 'Follow the system'], ['light', 'Light'], ['dark', 'Dark']], desk.scheme, (v) => { prefs.writeDesktop({ scheme: v }); redraw(); }),
+        h('h3', {}, 'Theme'), gallery,
+        h('h3', {}, 'Make it yours'),
+        accents, knot, patterns,
+        slider('Pattern density', 0.3, 2, 0.1, custom.density ?? 1, (v) => setCustom({ density: v }, false)),
+        slider('Glass', 0, 1, 0.05, custom.glass ?? shape.glass, (v) => setCustom({ glass: v }, false)),
+        choices('tos-corners', 'Corners', [['sharp', 'Sharp'], ['soft', 'Soft'], ['round', 'Round']], custom.corners ?? shape.corners, (v) => setCustom({ corners: v })),
+        choices('tos-spacing', 'Spacing', [['compact', 'Compact'], ['comfortable', 'Comfortable']], custom.spacing ?? shape.spacing, (v) => setCustom({ spacing: v })),
+        h('div', { class: 'tos-row' },
+          h('button', { type: 'button', class: 'tos-btn', onclick: exportTheme }, 'Export theme'),
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => file.click() }, 'Import theme'),
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => { prefs.writeDesktop({ custom: {} }); redraw(); } }, 'Reset to the theme')),
+        file, status,
       );
     }
 

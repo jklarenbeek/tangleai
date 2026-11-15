@@ -9,7 +9,7 @@ test.beforeAll(() => {
 });
 const bootPage = async (page, noLocks = false, singleWriter = false) => {
   await page.route('**/ledger-fixture.js*', (route) => route.fulfill({ contentType: 'text/javascript', headers: { 'cache-control': 'no-store' }, body: bundle }));
-  await page.goto('/');
+  await page.goto('/classic.html');
   return page.evaluate(async ({ noLocks, singleWriter }) => {
     const api = await import(`/ledger-fixture.js?instance=${Date.now()}-${Math.random()}`);
     const slot = { key: 'ledger-lifecycle-test', reliable: true,

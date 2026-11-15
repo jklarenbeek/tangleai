@@ -14,7 +14,7 @@ const fail = async (msg) => {
 };
 page.on('pageerror', (e) => void fail(`pageerror: ${e.message}`));
 
-await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
+await page.goto(base + '/classic.html', { waitUntil: 'domcontentloaded' });
 await page.waitForSelector('.hero h1', { timeout: 8000 }).catch(() => fail('hero missing'));
 await page.waitForSelector('.dag svg', { timeout: 8000 }).catch(() => fail('dag svg missing'));
 

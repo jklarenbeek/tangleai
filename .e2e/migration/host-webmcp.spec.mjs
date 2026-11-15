@@ -5,7 +5,7 @@ let bundle;
 test.beforeAll(() => { bundle = execFileSync('bun', ['build', fileURLToPath(new URL('./host-fixture.ts', import.meta.url)), '--target=browser'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }); });
 async function boot(page) {
   await page.route('**/host-fixture.js', route => route.fulfill({ contentType: 'text/javascript', body: bundle }));
-  await page.goto('/');
+  await page.goto('/classic.html');
   await page.evaluate(async () => { await window.tanglePages.dispose(); window.hostApi = await import('/host-fixture.js'); });
 }
 test('the real host qualifies both roots, methods, receivers, overrides, discovery and ownership', async ({ page }) => {
@@ -104,7 +104,7 @@ test('partial failure, pending disposal and late installation never leave active
   }
 });
 test('native availability is measured separately from injected compatibility', async ({ page, browser, browserName }, info) => {
-  await page.goto('/');
+  await page.goto('/classic.html');
   const probe = await page.evaluate(async () => {
     const describe = root => { try { const value = root.modelContext; return { present: Boolean(value), registerTool: typeof value?.registerTool, provideContext: typeof value?.provideContext }; } catch (e) { return { error: String(e) }; } };
     return { document: describe(document), navigator: describe(navigator), registration: await window.tanglePages.webmcp.ready, secure: isSecureContext, origin: location.origin };

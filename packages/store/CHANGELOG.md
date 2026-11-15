@@ -1,5 +1,30 @@
 # @tangleai/store
 
+## 0.48.0
+
+### Minor Changes
+
+- Make Tangle OS the Pages site. Studio, Playground, Flow, Data, the adventure, the memory loop and moving browser data are desktop applications now, beside Welcome, the assistant, Settings and the to-do module; the assistant uses the work applications' authoring tools, and a former page link opens its application. `@tangleai/os` adds theme kits (`THEME_KITS`, `composeTheme`): each is one JSON document with light and dark palettes, a procedural wallpaper and a shape, and a person's changes (accent, highlight, pattern, seed, density, glass, corners, spacing) compose into an ordinary theme document that can be exported and imported. Five procedural wallpapers (`PATTERNS`, `patternBackground`: woven threads, contours, a two-ink halftone, a sun print and moiré tides) are drawn deterministically from a seed in the theme's own colours. Windows are laid out above the dock.
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/core@0.48.0
+  - @tangleai/config@0.48.0
+  - @tangleai/mas@0.48.0
+  - @tangleai/documents@0.48.0
+  - @tangleai/memory@0.48.0
+  - @tangleai/outcomes@0.48.0
+  - @tangleai/trace2skill@0.48.0
+  - @tangleai/evolve@0.48.0
+  - @tangleai/hera@0.48.0
+  - @tangleai/forecast@0.48.0
+  - @tangleai/grounding@0.48.0
+  - @tangleai/lightrag@0.48.0
+  - @tangleai/trading@0.48.0
+  - @tangleai/research@0.48.0
+  - @tangleai/experiential@0.48.0
+
 ## 0.47.0
 
 ### Minor Changes

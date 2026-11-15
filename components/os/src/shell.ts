@@ -8,6 +8,7 @@ import { openPortClient } from '@jarenjs/contract/port';
 import { localized, type ModuleManifest } from './manifest.ts';
 import { CONNECT, FOCUS, HELLO, KEY, PROTOCOL, systemContracts, type ConnectMessage } from './contracts.ts';
 import { DEFAULT_THEMES, checkTheme, type ThemeDocument } from './theme.ts';
+import { patternBackground } from './wallpaper.ts';
 import { createOsMessages, type OsCatalogue } from './messages.ts';
 import { applyTheme, applyLocale } from './module.ts';
 import {
@@ -99,6 +100,9 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     if (problems.length) throw new Error(`the theme is refused: ${problems.join('; ')}`);
     theme = next;
     applyTheme(node, { tokens: next.tokens, scheme: next.scheme });
+    // a procedural wallpaper is drawn from the theme's colours and seed; any other value is CSS
+    const tk = next.tokens;
+    wallpaper.style.background = patternBackground(tk) ?? '';
     for (const m of mounted.values()) m.moduleClient?.invoke('module.theme', { tokens: next.tokens, scheme: next.scheme });
     renderDock();
   }
@@ -527,9 +531,12 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     for (const [id, entry] of mounted) if (entry.frame === active && desktop.focus !== id) setDesktop(focusWindow(desktop, id));
   }, 0);
   win.addEventListener('blur', onBlur);
-  const observer = typeof win.ResizeObserver === 'function' ? new win.ResizeObserver(() => setDesktop(setViewport(desktop, { w: node.clientWidth, h: node.clientHeight }))) : null;
+  // windows live in the window layer, which stops above the dock: lay them out in its area
+  const area = () => ({ w: layer.clientWidth || node.clientWidth, h: layer.clientHeight || node.clientHeight });
+  const observer = typeof win.ResizeObserver === 'function' ? new win.ResizeObserver(() => setDesktop(setViewport(desktop, area()))) : null;
   observer?.observe(node);
 
+  desktop = setViewport(desktop, area());
   applyShellTheme(theme);
   applyShellLocale(locale);
 

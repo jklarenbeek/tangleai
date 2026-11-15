@@ -21,15 +21,17 @@ const SYSTEM = [
  * The kernel's grants change as windows open and close, so the toolbox is
  * asked again at each turn instead of being fixed when the window opens.
  */
-function liveToolbox(kernel: Kernel) {
+function liveToolbox(kernel: Kernel, extra?: any) {
+  const own = (name: string) => !!extra?.list().some((tool: any) => tool.name === name);
   return {
-    list: () => kernel.tools().list(),
-    toFunctionTools: () => kernel.tools().toFunctionTools(),
-    execute: (name: string, args: unknown, context?: unknown) => kernel.tools().execute(name, args, context as any),
+    list: () => [...kernel.tools().list(), ...(extra?.list() ?? [])],
+    toFunctionTools: () => [...kernel.tools().toFunctionTools(), ...(extra?.toFunctionTools() ?? [])],
+    execute: (name: string, args: unknown, context?: unknown) => own(name) ? extra.execute(name, args, context) : kernel.tools().execute(name, args, context as any),
   };
 }
 
-export function assistantMount(kernel: Kernel, prefs: Preferences, openSettings: () => void): ShippedMount {
+/** `extra`: the work applications' authoring tools and their instructions, beside the kernel's contract tools. */
+export function assistantMount(kernel: Kernel, prefs: Preferences, openSettings: () => void, extra?: { toolbox: any, system: string }): ShippedMount {
   return (node, context) => {
     const doc = node.ownerDocument;
     const host = doc.createElement('div');
@@ -52,7 +54,7 @@ export function assistantMount(kernel: Kernel, prefs: Preferences, openSettings:
         intro: 'Ask about anything on this desktop. The assistant can use every application that is open and has granted it access.',
         capabilities: ['Search and read what open applications serve', 'Answer with the application it used', 'Keep the conversation in this browser'],
         settingsHint: 'Your key stays in this browser and is sent only to its own provider. Settings has every provider, the model list and your starred models.',
-        aiStorage, aiChat: prefs.chat, toolbox: liveToolbox(kernel), system: SYSTEM,
+        aiStorage, aiChat: prefs.chat, toolbox: liveToolbox(kernel, extra?.toolbox), system: extra ? `${SYSTEM}\n\n${extra.system}` : SYSTEM,
         lang: context.locale, dir: context.dir,
         onError: (error) => console.error(error),
       });

@@ -49,7 +49,7 @@
 
 .tos-titlebar {
   display: flex; align-items: center; gap: 10px;
-  min-block-size: 42px;
+  min-block-size: var(--os-titlebar-height, 42px);
   padding-inline: 14px 8px;
   background: var(--os-titlebar);
   border-block-end: 1px solid var(--border);
@@ -109,8 +109,8 @@
 .tos-dock-item {
   position: relative;
   display: grid; place-items: center;
-  inline-size: 46px; block-size: 46px;
-  border: 0; border-radius: 13px;
+  inline-size: var(--os-dock-size, 46px); block-size: var(--os-dock-size, 46px);
+  border: 0; border-radius: calc(var(--os-radius-window, 14px) - 2px);
   background: transparent; color: var(--fg);
   cursor: pointer;
   transition: transform 160ms cubic-bezier(.2, .9, .3, 1.4), background 160ms ease;
@@ -190,7 +190,7 @@
   --hue: 245;
   display: inline-block; inline-size: 24px; block-size: 24px;
   border-radius: 7px;
-  background: linear-gradient(145deg, hsl(var(--hue) 80% 66%), hsl(calc(var(--hue) + 28) 72% 52%));
+  background: linear-gradient(150deg, hsl(var(--hue) 52% 60%), hsl(calc(var(--hue) + 22) 48% 44%));
   -webkit-mask: var(--glyph) center / 72% no-repeat, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: var(--glyph) center / 72% no-repeat exclude, linear-gradient(#000 0 0);

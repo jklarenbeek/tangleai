@@ -13,7 +13,7 @@ test('scripted structured NPC dialogue, failure and route disposal preserve keyl
       return Promise.resolve(reply());
     };
   });
-  await page.goto('/#/game');
+  await page.goto('/classic.html#/game');
   await page.getByRole('button', { name: /Set sail/ }).click();
   await page.getByRole('button', { name: 'Talk to', exact: true }).click();
   await page.getByRole('button', { name: /Gullbert/ }).click();

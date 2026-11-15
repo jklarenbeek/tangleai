@@ -69,7 +69,7 @@ await page.addInitScript(([key, model, scripted]) => {
   }));
 }, [KEY, MODEL, SCRIPTED]);
 
-await page.goto(BASE + '/');
+await page.goto(BASE + '/classic.html');
 await page.locator('.ai-launch').click();
 
 // '||' separates sequential turns in one conversation

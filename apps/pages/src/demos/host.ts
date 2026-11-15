@@ -20,8 +20,11 @@ const labels = { project: 'Studio', play: 'Playground', flow: 'Flow', data: 'Dat
 /** @param options */
 export function mountPageHost(options: {
   root: HTMLElement;
-  assistantNode: HTMLElement;
+  /** Without one, no assistant is mounted: a host (the OS) supplies its own and uses `toolbox`. */
+  assistantNode?: HTMLElement;
   landingNode?: HTMLElement;
+  /** Windowed: each surface is attached into a window by the host instead of shown by route. */
+  windowed?: boolean;
   [key: string]: any;
 }) {
   let appliedToken: any = null;
@@ -36,11 +39,13 @@ export function mountPageHost(options: {
   const element = (tag: any, parent: any, text?: string) => { const node = document.createElement(tag); if (text) node.textContent = text; parent.appendChild(node); return node; };
   for (const [key, label] of Object.entries(labels)) {
     const section = element('section', options.root); section.setAttribute('data-demo-route', key); section.hidden = true;
-    element('h1', section, label);
+    if (!options.windowed) element('h1', section, label);
     const host = element('div', section); host.className = `demo-editor demo-${key}`;
     panes[key] = { section, host };
   }
   const common = { schedule: options.schedule, onError: options.onError };
+  /** The model settings: the mounted assistant's, or the host's own. */
+  const settingsOf = () => assistant ? assistant.read().settings : options.settings?.() ?? {};
   const dataRuntime = () => createProjectDataRuntime({ createWorker: options.projectWorker });
   const ensure = (key: any) => {
     if (disposed) throw new Error('The Tangle host is disposed.');
@@ -77,7 +82,7 @@ export function mountPageHost(options: {
     }
     if (key === 'game') editors[key] = mountGame(host, {
       ...common, state: snapshots.game,
-      settings: () => assistant.read().settings, aiFetch: options.aiFetch, saveSlot: options.gameSave, download: options.download
+      settings: () => settingsOf(), aiFetch: options.aiFetch, saveSlot: options.gameSave, download: options.download
     });
     return editors[key];
   };
@@ -86,12 +91,15 @@ export function mountPageHost(options: {
     const url = new URL(hash.startsWith('#') ? hash.slice(1) : hash, 'https://tangle.invalid');
     let next = url.pathname.slice(1) || 'home'; if (next === 'studio') next = 'project';
     if (!(next in labels) && next !== 'home') next = 'home';
-    if (page !== next && page === 'data' && editors.data) void editors.data.setActive(false);
-    if (page !== next && page === 'game' && editors.game) {
+    if (!options.windowed && page !== next && page === 'data' && editors.data) void editors.data.setActive(false);
+    if (!options.windowed && page !== next && page === 'game' && editors.game) {
       snapshots[page] = editors[page].read(); editors[page].dispose(); delete editors[page];
     }
-    page = next; options.root.hidden = page === 'home'; if (options.landingNode) options.landingNode.hidden = page !== 'home';
-    for (const [key, pane] of Object.entries(panes)) pane.section.hidden = key !== page;
+    page = next;
+    if (!options.windowed) {
+      options.root.hidden = page === 'home'; if (options.landingNode) options.landingNode.hidden = page !== 'home';
+      for (const [key, pane] of Object.entries(panes)) pane.section.hidden = key !== page;
+    }
     const token = url.searchParams.get('s');
     let initialShared = false;
     if (page === 'project' && !editors.project && token && token !== appliedToken) {
@@ -152,11 +160,11 @@ export function mountPageHost(options: {
   }
   const toolbox = createPageToolbox({
     project: () => ensure('project'), play: () => ensure('play'), flow: () => ensure('flow'), data: () => ensure('data'),
-    navigate, page: () => page, writeFlow, settings: () => assistant.read().settings, aiFetch: options.aiFetch, signal: lifetime.signal,
-    requestSignal: () => AbortSignal.any([lifetime.signal, assistant.controller.signal]),
+    navigate, page: () => page, writeFlow, settings: () => settingsOf(), aiFetch: options.aiFetch, signal: lifetime.signal,
+    requestSignal: () => AbortSignal.any([lifetime.signal, assistant?.controller.signal ?? options.requestSignal?.() ?? lifetime.signal]),
     save, load, share, saved: () => ({ experiments: Object.entries(docStore.all()).map(([name, e]) => ({ name, engine: e.engine, savedAt: e.savedAt })), playSessions: playStore.names() }),
   });
-  assistant = mountAssistant(options.assistantNode, {
+  assistant = options.assistantNode && mountAssistant(options.assistantNode, {
     ...common, title: 'Tangle assistant', launchTitle: 'Open the Tangle assistant',
     intro: 'Ask me to validate a schema or run any playground engine — I drive the playground for you, all in your browser.',
     capabilities: ['Validate a schema or run a playground engine.', 'Author a project file and inspect its result.', 'Edit a workflow or data query.'],
@@ -186,7 +194,22 @@ export function mountPageHost(options: {
   button('Delete saved', () => { const name = savedSelect.value; if (!name) return { error: 'Choose a saved project.' }; docStore.remove(name); updateSaved(); return { ok: true as const }; });
   listen(savedSelect, 'change', () => { if (savedSelect.value) void load(savedSelect.value).then((r: any) => { status.textContent = r.ok ? 'Project opened' : r.error ?? 'Project refused'; }); });
   setRoute(options.hash ?? '#/');
+  /** Windowed hosts: put one surface into a node (a window) and start it; detach keeps its work. */
+  function attach(key: string, node: HTMLElement) {
+    const pane = panes[key]; if (!pane) throw new Error(`no surface '${key}'`);
+    pane.section.hidden = false; node.appendChild(pane.section);
+    const editor = ensure(key); page = key;
+    if (key === 'data') void editor.setActive(true);
+    return editor;
+  }
+  function detach(key: string) {
+    const pane = panes[key]; if (!pane) return;
+    pane.section.hidden = true; options.root.appendChild(pane.section);
+    if (key === 'data' && editors.data) void editors.data.setActive(false);
+    if (key === 'game' && editors.game) { snapshots.game = editors.game.read(); editors.game.dispose(); delete editors.game; }
+  }
   return {
+    attach, detach,
     toolbox, assistant, ledger, ledgerStorage, slots, navigate, setRoute, page: () => page,
     project: () => ensure('project'), play: () => ensure('play'), flow: () => ensure('flow'), data: () => ensure('data'), game: () => ensure('game'), writeFlow,
     save, load, share, refreshWebMcp, get webmcp() { return binding; },
@@ -194,7 +217,7 @@ export function mountPageHost(options: {
       if (disposed) return closing; disposed = true; bindingEpoch++; lifetime.abort();
       for (const remove of removals) remove(); for (const editor of Object.values(editors)) editor.dispose();
       while (options.root.firstChild) options.root.removeChild(options.root.firstChild);
-      closing = Promise.all([assistant.dispose(), binding.dispose()]).then(() => { }); return closing;
+      closing = Promise.all([assistant?.dispose(), binding.dispose()]).then(() => { }); return closing;
     },
   };
 }

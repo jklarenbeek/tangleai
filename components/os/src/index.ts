@@ -16,7 +16,11 @@ export {
   emptyDesktop, openWindow, focusWindow, closeWindow, moveWindow, resizeWindow, toggleMaximize, minimizeWindow, setTitle, setViewport, stacked, fit,
 } from './windows.ts';
 export type { Desktop, WindowState, WindowRequest, Rect } from './windows.ts';
-export { DEFAULT_THEMES, checkTheme } from './theme.ts';
+export { DEFAULT_THEMES, AURORA, checkTheme } from './theme.ts';
+export { weaveSvg, weaveBackground, PATTERNS, patternBackground } from './wallpaper.ts';
+export { THEME_KITS, composeTheme } from './themes.ts';
+export type { ThemeKit, ThemeCustom, Corners, Spacing } from './themes.ts';
+export type { WeaveOptions, PatternOptions } from './wallpaper.ts';
 export type { ThemeDocument } from './theme.ts';
 export { osMessagesEn, createOsMessages, format } from './messages.ts';
 export type { OsMessageKey, OsCatalogue } from './messages.ts';

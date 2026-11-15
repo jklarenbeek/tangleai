@@ -11,7 +11,7 @@ test.beforeAll(() => { bundle = execFileSync('bun', ['build', fileURLToPath(new 
 for (const dir of ['ltr', 'rtl']) {
   test(`a ${dir} view puts its launcher and panel at the inline end`, async ({ page }) => {
     await page.route('**/host-fixture.js', route => route.fulfill({ contentType: 'text/javascript', body: bundle }));
-    await page.goto('/');
+    await page.goto('/classic.html');
     await page.evaluate(async () => { await window.tanglePages.dispose(); window.hostApi = await import('/host-fixture.js'); });
     await page.addStyleTag({ content: css });
     await page.evaluate(dir => {

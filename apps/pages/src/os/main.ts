@@ -8,6 +8,7 @@ import { createKernel, validateManifest, type ModuleManifest } from '@tangleai/o
 import { mountDesktop } from '@tangleai/os/shell';
 import { builtinModules, shippedMounts } from './modules.ts';
 import { createPreferences } from './preferences.ts';
+import { createSurfaces } from './surfaces.ts';
 
 type SuiteDocument = { $suite: '0.1', id: string, title?: { en: string }, modules: ModuleManifest[] };
 
@@ -25,9 +26,12 @@ const build = () => (buildInfo ??= Promise.all([json('./build.json'), json('./os
 
 const prefs = createPreferences(window);
 const node = document.getElementById('desktop')!;
+// the work surfaces (Studio, Playground, Flow, Data, the adventure) share one
+// composition; their tools join the assistant, and their links open windows
+const surfaces = createSurfaces(window, { settings: () => prefs.ai(), open: (id) => { desktop.open(id); } });
 const desktop = mountDesktop(node, {
   kernel,
-  shipped: shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); } }),
+  shipped: shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces }),
   documentHost: './os-module.html',
   theme: prefs.theme(prefs.effectiveScheme()),
   themeFor: (scheme) => prefs.theme(scheme),
@@ -62,5 +66,14 @@ async function joinSuite(url: string) {
 
 const suites = Promise.all(new URLSearchParams(location.search).getAll('suite').map(url => joinSuite(url).catch((error) => { console.error(error); return [{ ok: false, error: String(error) }]; })));
 
+// arriving: a former page link opens its application; otherwise Welcome greets
+const arrival = location.hash.replace(/^#/, '');
+const welcomed = (() => { try { return localStorage.getItem('tangle-os-welcomed') === '1'; } catch { return false; } })();
+if (!(arrival.startsWith('/') && surfaces.follow(location.hash)) && !location.hash.includes('recovery') && !welcomed) {
+  desktop.open('welcome');
+  try { localStorage.setItem('tangle-os-welcomed', '1'); } catch { /* Welcome greets again next time */ }
+}
+window.addEventListener('hashchange', () => { surfaces.follow(location.hash); });
+
 // for scripted checks and the browser tests
-(window as any).tangleOs = { kernel, desktop, suites };
+(window as any).tangleOs = { kernel, desktop, suites, surfaces };

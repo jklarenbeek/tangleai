@@ -18,11 +18,12 @@
  * cannot read this storage, and a key leaves the browser only in the
  * Authorization header of a request to its own provider.
  */
-import { DEFAULT_THEMES, checkTheme, type ThemeDocument } from '@tangleai/os';
+import { THEME_KITS, composeTheme, type ThemeCustom, type ThemeDocument } from '@tangleai/os';
 
 export type AiSettings = { provider: string, baseUrl: string, model: string, apiKey: string };
 export type Scheme = 'system' | 'light' | 'dark';
-export type DesktopPreferences = { scheme: Scheme, accent: string, wallpaper: string, rememberKey: boolean };
+/** The desktop's look: a theme kit and what the person changed on it, plus the scheme. */
+export type DesktopPreferences = { scheme: Scheme, kit: string, custom: ThemeCustom, rememberKey: boolean };
 export type ProviderKind = 'openrouter' | 'venice' | 'ollama' | 'lmstudio' | 'custom';
 export type Connection = { apiKey: string, baseUrl: string, model: string };
 export type Favourite = { kind: ProviderKind, model: string };
@@ -64,39 +65,27 @@ export function kindOf(s: Pick<AiSettings, 'provider' | 'baseUrl'>): ProviderKin
   return isKind(s.provider) ? s.provider : 'openrouter';
 }
 
-const DEFAULT_PREFS: DesktopPreferences = { scheme: 'system', accent: 'indigo', wallpaper: 'aurora', rememberKey: true };
+const DEFAULT_PREFS: DesktopPreferences = { scheme: 'system', kit: 'loom', custom: {}, rememberKey: true };
 
-/** Accent presets: one hue, derived for both schemes so contrast holds in each. */
-export const ACCENTS: Record<string, { label: string, hue: number }> = {
-  indigo: { label: 'Indigo', hue: 240 }, blue: { label: 'Blue', hue: 212 }, teal: { label: 'Teal', hue: 178 },
-  green: { label: 'Green', hue: 145 }, amber: { label: 'Amber', hue: 36 }, rose: { label: 'Rose', hue: 345 },
-  violet: { label: 'Violet', hue: 275 },
-};
+/** Accent colours offered beside the colour picker. */
+export const ACCENT_SWATCHES = ['#0d8a83', '#2f6f5e', '#c81e64', '#1f5fa8', '#1f7a99', '#7c3aed', '#b45309', '#334155'];
 
-/** Wallpaper presets: gradients only, so a theme never loads anything. */
-export const WALLPAPERS: Record<string, { label: string, light: string, dark: string }> = {
-  aurora: { label: 'Aurora', light: DEFAULT_THEMES.light.tokens['--os-desktop'], dark: DEFAULT_THEMES.dark.tokens['--os-desktop'] },
-  ocean: {
-    label: 'Ocean',
-    light: 'radial-gradient(120% 90% at 80% 0%, #bfe6ff 0%, #d9eefc 40%, #eef6fb 75%, #f7fbfd 100%)',
-    dark: 'radial-gradient(120% 90% at 80% 0%, #0f3b57 0%, #0c2638 45%, #0a1824 75%, #070f17 100%)',
-  },
-  sunset: {
-    label: 'Sunset',
-    light: 'linear-gradient(160deg, #ffd8b8 0%, #ffc6cf 45%, #e9c9f2 100%)',
-    dark: 'linear-gradient(160deg, #4a2232 0%, #2f1a35 50%, #171126 100%)',
-  },
-  forest: {
-    label: 'Forest',
-    light: 'radial-gradient(110% 90% at 20% 100%, #cdebd3 0%, #e3f2e2 45%, #f3f7ee 100%)',
-    dark: 'radial-gradient(110% 90% at 20% 100%, #163a2a 0%, #10261d 50%, #0a1511 100%)',
-  },
-  graphite: {
-    label: 'Graphite',
-    light: 'linear-gradient(180deg, #e9ebef 0%, #d9dce3 100%)',
-    dark: 'linear-gradient(180deg, #23262e 0%, #14161b 100%)',
-  },
-};
+const CORNERS = ['sharp', 'soft', 'round'], SPACINGS = ['compact', 'comfortable'];
+const hex = (v: unknown) => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v) ? v : undefined;
+/** Keep only well-formed changes: a stored or imported theme can carry nothing else. */
+export function cleanCustom(raw: any): ThemeCustom {
+  const c: ThemeCustom = {};
+  if (!raw || typeof raw !== 'object') return c;
+  if (hex(raw.accent)) c.accent = raw.accent;
+  if (hex(raw.knot)) c.knot = raw.knot;
+  if (typeof raw.pattern === 'string' && /^[a-z]{2,20}$/.test(raw.pattern)) c.pattern = raw.pattern;
+  if (Number.isInteger(raw.seed) && raw.seed >= 0 && raw.seed < 2 ** 31) c.seed = raw.seed;
+  if (typeof raw.density === 'number' && raw.density >= 0.3 && raw.density <= 2) c.density = raw.density;
+  if (typeof raw.glass === 'number' && raw.glass >= 0 && raw.glass <= 1) c.glass = raw.glass;
+  if (CORNERS.includes(raw.corners)) c.corners = raw.corners;
+  if (SPACINGS.includes(raw.spacing)) c.spacing = raw.spacing;
+  return c;
+}
 
 function readJson(storage: Storage | undefined, key: string): any {
   try { return JSON.parse(storage?.getItem(key) ?? 'null'); } catch { return null; }
@@ -119,8 +108,8 @@ export function createPreferences(win: Window) {
     const raw = readJson(local, OS_SLOT) ?? {};
     return {
       scheme: raw.scheme === 'light' || raw.scheme === 'dark' ? raw.scheme : 'system',
-      accent: raw.accent in ACCENTS ? raw.accent : DEFAULT_PREFS.accent,
-      wallpaper: raw.wallpaper in WALLPAPERS ? raw.wallpaper : DEFAULT_PREFS.wallpaper,
+      kit: THEME_KITS.some(k => k.id === raw.kit) ? raw.kit : DEFAULT_PREFS.kit,
+      custom: cleanCustom(raw.custom),
       rememberKey: raw.rememberKey !== false,
     };
   }
@@ -237,18 +226,9 @@ export function createPreferences(win: Window) {
     return win.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
-  /** The person's theme for a scheme: the built-in tokens with their accent and wallpaper. */
+  /** The person's theme for a scheme: their kit with their changes. */
   function theme(scheme: 'light' | 'dark', prefs = desktop()): ThemeDocument {
-    const base = DEFAULT_THEMES[scheme];
-    const hue = ACCENTS[prefs.accent]?.hue ?? ACCENTS.indigo.hue;
-    const wallpaper = WALLPAPERS[prefs.wallpaper] ?? WALLPAPERS.aurora;
-    const accent = scheme === 'dark'
-      ? { '--accent': `hsl(${hue} 90% 76%)`, '--accent-fg': '#0f1117', '--accent-soft': `hsla(${hue}, 90%, 76%, 0.16)`, '--accent-hover': `hsl(${hue} 90% 82%)` }
-      : { '--accent': `hsl(${hue} 58% 50%)`, '--accent-fg': '#ffffff', '--accent-soft': `hsla(${hue}, 58%, 50%, 0.12)`, '--accent-hover': `hsl(${hue} 58% 44%)` };
-    const themed: ThemeDocument = prefs.accent === 'indigo' && prefs.wallpaper === 'aurora'
-      ? base
-      : { ...base, name: `${base.name} · ${ACCENTS[prefs.accent]?.label ?? ''} · ${wallpaper.label}`, tokens: { ...base.tokens, ...(prefs.accent === 'indigo' ? {} : accent), '--os-desktop': wallpaper[scheme] } };
-    return checkTheme(themed).length ? base : themed;
+    return composeTheme(prefs.kit, scheme, prefs.custom);
   }
 
   return {

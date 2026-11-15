@@ -25,8 +25,10 @@ test.beforeAll(async ({}, info) => {
 test.afterAll(() => server?.kill());
 
 async function desktop(page) {
-  await page.goto(`/os.html?suite=${encodeURIComponent(suiteUrl)}`);
-  await page.waitForFunction(() => window.tangleOs?.kernel.modules().length === 5);
+  // a returning visitor: Welcome greets only on a first visit
+  await page.addInitScript(() => localStorage.setItem('tangle-os-welcomed', '1'));
+  await page.goto(`/?suite=${encodeURIComponent(suiteUrl)}`);
+  await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'catalogue'));
   await page.evaluate(() => ['about', 'todo', 'catalogue'].map(id => window.tangleOs.desktop.open(id)));
   await page.waitForFunction(() => window.tangleOs.kernel.providers().some(p => p.contract === 'records'));
 }
@@ -34,7 +36,7 @@ async function desktop(page) {
 test('three host kinds join one desktop and talk only through contracts', async ({ page }) => {
   await desktop(page);
   await expect(page.locator('.tos-window')).toHaveCount(3);
-  await expect(page.locator('.tos-dock-item[data-module]')).toHaveCount(5);
+  await expect(page.locator('.tos-dock-item[data-module]')).toHaveCount(await page.evaluate(() => window.tangleOs.kernel.modules().length));
 
   const found = await page.evaluate(() => window.tangleOs.kernel.call('shell', 'records', 'records.search', { query: 'oak' }));
   expect(found).toEqual({ ok: true, value: [{ id: 'r1', name: 'Oak table', stock: 4 }] });
@@ -175,9 +177,11 @@ test('a right click opens the shell\'s menu on the desktop, a title bar and a do
   await page.evaluate(() => { for (const w of window.tangleOs.desktop.state().windows) window.tangleOs.desktop.minimize(w.id); });
   await page.mouse.click(300, 200, { button: 'right' });
   await expect(menu).toHaveAttribute('aria-label', 'Menu for Desktop');
-  await expect(menu.getByRole('menuitem')).toHaveText(['Assistant', 'About Tangle OS', 'To do', 'Settings', 'Catalogue', 'Show the desktop', 'Show all windows', 'Close all windows', 'Mail', /Switch to the (light|dark) theme/]);
+  const titles = await page.evaluate(() => window.tangleOs.kernel.modules().map(m => m.title.en));
+  await expect(menu.getByRole('menuitem')).toHaveText([...titles, 'Show the desktop', 'Show all windows', 'Close all windows', 'Mail', /Switch to the (light|dark) theme/]);
   await expect(menu.getByRole('menuitem', { name: 'Show the desktop' })).toBeDisabled();
-  for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowDown');
+  // from the first application, past the rest and the disabled item
+  for (let i = 0; i < titles.length; i++) await page.keyboard.press('ArrowDown');
   await expect(menu.getByRole('menuitem', { name: 'Show all windows' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('.tos-window:visible')).toHaveCount(4);
@@ -281,7 +285,7 @@ test('the OpenRouter key: entered in Settings, remembered, sent only to OpenRout
 
   // remembered across a reload; "remember" off keeps it for this tab only; forget removes it
   await page.reload();
-  await page.waitForFunction(() => window.tangleOs?.kernel.modules().length === 5);
+  await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'catalogue'));
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('tangle-ai')).apiKey)).toBe(KEY);
   await page.evaluate(() => window.tangleOs.desktop.open('settings'));
   await settings.locator('[data-section="providers"]').click();
@@ -289,7 +293,7 @@ test('the OpenRouter key: entered in Settings, remembered, sent only to OpenRout
   await settings.locator('#tos-remember').uncheck();
   expect(await page.evaluate(() => [JSON.parse(localStorage.getItem('tangle-ai')).apiKey, localStorage.getItem('tangle-os-providers').includes('sk-or-v1'), JSON.parse(sessionStorage.getItem('tangle-os-session-keys')).openrouter])).toEqual(['', false, KEY]);
   await page.reload();
-  await page.waitForFunction(() => window.tangleOs?.kernel.modules().length === 5);
+  await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'catalogue'));
   await page.evaluate(() => window.tangleOs.desktop.open('settings'));
   await settings.locator('[data-section="providers"]').click();
   await expect(settings.locator('#tos-key')).toHaveValue(KEY);
@@ -297,22 +301,30 @@ test('the OpenRouter key: entered in Settings, remembered, sent only to OpenRout
   expect(await page.evaluate(() => [JSON.parse(localStorage.getItem('tangle-ai')).apiKey, JSON.parse(sessionStorage.getItem('tangle-os-session-keys') ?? '{}').openrouter ?? null, JSON.parse(sessionStorage.getItem('tangle-os-session-keys') ?? '{}').venice])).toEqual(['', null, 'venice-test-key']);
 });
 
-test('appearance: the theme, accent and wallpaper apply at once, survive a reload, and the dock switch keeps them', async ({ page }) => {
+test('appearance: a theme kit, an accent and a pattern apply at once, survive a reload, and the dock switch keeps them', async ({ page }) => {
   await desktop(page);
   await page.evaluate(() => window.tangleOs.desktop.open('settings'));
   const settings = page.locator('.tos-window[data-module="settings"]');
   await settings.locator('[data-section="appearance"]').click();
   await settings.locator('input[name="tos-scheme"][value="light"]').check();
-  await settings.locator('input[name="tos-accent"][value="teal"]').check();
-  await settings.locator('input[name="tos-wallpaper"][value="forest"]').check();
   const token = (name) => page.evaluate((name) => getComputedStyle(document.getElementById('desktop')).getPropertyValue(name).trim(), name);
-  expect(await token('--accent')).toBe('hsl(178 58% 50%)');
-  expect(await token('--os-desktop')).toContain('#cdebd3');
+  const wallpaper = () => page.evaluate(() => document.querySelector('.tos-wallpaper').style.background);
+  await settings.locator('.tos-kit[data-kit="topograph"]').click();
+  expect(await token('--os-desktop')).toBe('contours');
+  expect(await token('--accent')).toBe('#2f6f5e');
+  expect(await wallpaper()).toContain('data:image/svg+xml');
+  await settings.locator('.tos-swatch-btn[aria-label="#c81e64"]').click();
+  expect(await token('--accent')).toBe('#c81e64');
+  await settings.locator('.tos-pattern', { hasText: 'Moiré' }).click();
+  expect(await token('--os-desktop')).toBe('moire');
+  const light = await wallpaper();
   await page.locator('.tos-dock-theme').click();
-  expect(await token('--accent')).toBe('hsl(178 90% 76%)');
-  expect(await token('--os-desktop')).toContain('#163a2a');
+  expect(await token('--accent')).toBe('#c81e64');
+  expect(await token('--os-desktop')).toBe('moire');
+  expect(await wallpaper()).not.toBe(light);
   await expect(settings.locator('input[name="tos-scheme"][value="dark"]')).toBeChecked();
   await page.reload();
-  await page.waitForFunction(() => window.tangleOs?.kernel.modules().length === 5);
-  expect(await token('--accent')).toBe('hsl(178 90% 76%)');
+  await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'catalogue'));
+  expect(await token('--accent')).toBe('#c81e64');
+  expect(await token('--os-desktop')).toBe('moire');
 });

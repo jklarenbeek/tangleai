@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 test('build a machine by clicking, name the event, run it live', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
-  await page.goto('/');
+  await page.goto('/classic.html');
   await page.evaluate(() => { window.location.hash = '#/flow'; });
 
   // start from the blank seed
@@ -65,7 +65,7 @@ test('build a machine by clicking, name the event, run it live', async ({ page }
 test('the dataflow seed runs: nodes settle, the output appears, abort works', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
-  await page.goto('/');
+  await page.goto('/classic.html');
   await page.evaluate(() => { window.location.hash = '#/flow'; });
 
   await page.locator('article', { hasText: 'Enrich & report' }).locator('button').click();
@@ -86,7 +86,7 @@ test('the dataflow seed runs: nodes settle, the output appears, abort works', as
 test('the ported Libero Coke machine loads as a graph and drives live', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
-  await page.goto('/');
+  await page.goto('/classic.html');
   await page.evaluate(() => { window.location.hash = '#/flow'; });
 
   await page.locator('article', { hasText: 'Coke machine' }).locator('button').click();
