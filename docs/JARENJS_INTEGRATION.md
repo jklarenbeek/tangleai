@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.201.0**, tag `v0.201.0`, source commit
-`6a3f2b6c3bd85e5f9ff157e35ccb80b50968e4a3`. Upstream `main` and the tag agreed
+Tangle consumes **Jaren 0.201.2**, tag `v0.201.2`, source commit
+`af5e9f549c287d86f02a802d1fd81d95ebb1467d`. Upstream `main` and the tag agreed
 when checked on 2026-11-15; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.201.0` pin. A clean reconstruction from the pinned
+reference is an exact `0.201.2` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,17 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.201.0 to 0.201.2 and current adoption
+
+Two patch releases of defect fixes and declarations. The database refuses a
+replaced file's identity, counts a bare collection natively, closes every
+unread unfinished upload and plans a keyword's presence change as a draft
+step; booleans order as the engine orders them; the calendar refuses misspelt
+rule parts; and the validator, typed handlers, typed store and body reads
+declare what they return. No export changed. Tangle's calendar rules are
+standard, its sources typecheck against the new declarations unchanged, and no
+Tangle surface relied on the refused inputs.
 
 ## Changes from 0.200.0 to 0.201.0 and current adoption
 
@@ -436,7 +447,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.201.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.201.2 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

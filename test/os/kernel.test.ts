@@ -8,6 +8,7 @@ import assert from 'node:assert/strict';
 import { createKernel, validateManifest, systemContracts } from '@tangleai/os';
 import { openPortClient, servePort } from '@jarenjs/contract/port';
 import { compileContract } from '@jarenjs/contract';
+import * as toolbox from '@tangleai/agents/toolbox';
 
 const RECORDS = {
   $contract: '0.1', id: 'records',
@@ -164,20 +165,24 @@ describe('the contract bus', () => {
 
   it('lists every granted operation as an assistant tool, routed through the ledger', async () => {
     assert.equal(createKernel().allowed('assistant', 'records', 'records.search'), false, 'the assistant is granted nothing by default');
-    const kernel = createKernel({ assistantGrants: 'all' });
+    const kernel = createKernel({ assistantGrants: 'all', tools: toolbox });
     kernel.install(manifest('records-app', { provides: [RECORDS] }), 'suite');
     const channel = provider(kernel);
     try {
-      const toolbox = kernel.tools();
-      const names = toolbox.list().map((t: any) => t.name).sort();
+      const tools = kernel.tools();
+      const names = tools.list().map((t: any) => t.name).sort();
       assert.deepEqual(names, ['records__records_get', 'records__records_search']);
-      const result = await toolbox.execute('records__records_search', { query: 'oak' });
+      const result = await tools.execute('records__records_search', { query: 'oak' });
       assert.ok(JSON.stringify(result).includes('Oak table'), JSON.stringify(result));
       assert.equal(kernel.ledger().at(-1)!.caller, 'assistant');
-      const narrowed = createKernel({ assistantGrants: ['records.records.get'] });
+      const narrowed = createKernel({ assistantGrants: ['records.records.get'], tools: toolbox });
       narrowed.install(manifest('records-app', { provides: [RECORDS] }), 'suite');
       const second = provider(narrowed);
       assert.deepEqual(narrowed.tools().list().map((t: any) => t.name), ['records__records_get']);
+      // the same grants as plain data, for an application with its own agent runtime
+      assert.deepEqual(narrowed.operations().map(o => [o.tool, o.contract, o.op, o.kind]), [['records__records_get', 'records', 'records.get', 'read']]);
+      assert.deepEqual(createKernel().operations(), [], 'nothing granted, nothing listed');
+      assert.throws(() => createKernel().tools(), /OS0301/, 'a desktop without a tool builder says so');
       second.port1.close(); second.port2.close();
     } finally { channel.port1.close(); channel.port2.close(); }
   });

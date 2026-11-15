@@ -60,6 +60,9 @@ for (const asset of ['sqlite3.wasm', 'sqlite3-opfs-async-proxy.js'])
 await cp(join(here, 'static'), dist, { recursive: true });
 await cp(join(repo, 'components/os/styles/os.css'), join(dist, 'os.css'));
 await cp(join(repo, 'components/os/styles/module.css'), join(dist, 'os-module.css'));
+// the desktop package as released, for applications that join by URL: the
+// one-file module side, the tarball and its manifest
+await cp(join(repo, 'releases/os'), join(dist, 'os'), { recursive: true });
 
 const vendor = [
   'node_modules/@jarenjs/mermaid/styles/mermaid.css',

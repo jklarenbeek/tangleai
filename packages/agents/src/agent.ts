@@ -28,7 +28,7 @@
  */
 
 import { goalPrompt, type GoalMessages } from '@tangleai/context/retention';
-import { AiError } from '@tangleai/models/errors';
+import { AiError, countOption } from '@tangleai/models/errors';
 import { createToolbox, type ToolboxMessages, type ToolContext } from './toolbox.ts';
 import { slotAddressesIn, RECALL_TOOL_NAME, createRecallTool, roundSlotName, indexSlotName, slotAddress, slotRef, type RecallMessages } from '@tangleai/context/recall';
 import { environmentTools, type EnvironmentMessages } from '@tangleai/context/environment';
@@ -271,7 +271,7 @@ export function createAgent(options: {
   const client = options.client;
   const toolbox = options.toolbox ?? null;
   const system = options.system ?? '';
-  const maxToolRounds = options.maxToolRounds ?? 5;
+  const maxToolRounds = countOption(options.maxToolRounds, 5, 'maxToolRounds');
   const maxToolResultChars = options.maxToolResultChars ?? 8000;
   const historyBudget = options.historyBudget;
   const ledger = options.ledger ?? null;
@@ -298,6 +298,15 @@ export function createAgent(options: {
   const maxOutputTokens = options.maxOutputTokens;
   if (maxOutputTokens !== undefined && !(Number.isSafeInteger(maxOutputTokens) && maxOutputTokens > 0))
     throw new AiError('AI0001', `maxOutputTokens must be a positive integer, got ${String(maxOutputTokens)}`);
+  // a budget limit that is not a number would never be reached: the run would be unbounded
+  if (budget) {
+    countOption(budget.turns, 0, 'budget.turns');
+    for (const key of ['tokens', 'ms', 'cost'] as const) {
+      const limit = budget[key];
+      if (limit !== undefined && !(typeof limit === 'number' && Number.isFinite(limit) && limit >= 0))
+        throw new AiError('AI0001', `budget.${key} must be a finite number of at least 0, got ${String(limit)}`);
+    }
+  }
   if (budget?.reserve === true && maxOutputTokens === undefined)
     throw new AiError('AI0001', 'a reserving budget needs maxOutputTokens: the worst case of a call is its prompt plus its output cap');
   if (budget?.cost !== undefined && prices === null)

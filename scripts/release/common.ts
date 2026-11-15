@@ -123,6 +123,8 @@ export function inputHash(root = ROOT) {
   const entries: Array<[string, string, string]> = [];
   for (const path of paths) {
     if (/^releases\/[^/]+\.json$/.test(path)) continue;
+    // the desktop package's tracked tarball and module file are built from these inputs
+    if (path.startsWith('releases/os/')) continue;
     const absolute = resolve(root, path);
     if (!existsSync(absolute)) continue;
     const stat = lstatSync(absolute);

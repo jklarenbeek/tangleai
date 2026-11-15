@@ -7,6 +7,7 @@ import { resolve } from 'node:path';
 import vm from 'node:vm';
 import ts from 'typescript';
 import { ROOT, config, npm, readJson, writeJson, inputHash, integrity, sha256, isMain } from './common.ts';
+import { checkOsArtifacts, copyOsArtifacts } from './os-artifacts.ts';
 import { jsonDeclarationAttributes, type Artifacts } from './build.ts';
 import { readFoundationArtifacts, verifyFoundationArtifacts } from '../jaren-artifacts.ts';
 import { checkProgramBundle } from '../check-program-bundle.ts';
@@ -27,7 +28,32 @@ export function readArtifacts(root = ROOT) {
   }
   return artifacts;
 }
+/**
+ * An application that pulled this repository in as a submodule: it installs
+ * the tracked desktop tarball and the Jaren foundation, nothing else of Tangle,
+ * and joins a desktop through the package and through the one-file module side.
+ */
+export function testOsConsumer(root = ROOT) {
+  checkOsArtifacts(root);
+  const cfg = config(root);
+  const foundations = readFoundationArtifacts(root);
+  assert.ok(foundations, 'The desktop consumer installs the candidate Jaren tarballs; bootstrap them first');
+  const directory = mkdtempSync(resolve(tmpdir(), 'tangle-os-consumer-'));
+  try {
+    mkdirSync(resolve(directory, 'os'));
+    copyOsArtifacts(resolve(directory, 'os'), root);
+    const manifest = readJson<{ package: { file: string } }>(resolve(directory, 'os/manifest.json'));
+    const dependencies: Record<string, string> = { '@tangleai/os': `file:./os/${manifest.package.file}` };
+    for (const pkg of foundations.packages) dependencies[pkg.name] = `file:${resolve(root, 'dist/jaren', pkg.filename)}`;
+    writeJson(resolve(directory, 'package.json'), { name: 'tangle-os-consumer', version: '0.0.0', private: true, type: 'module', dependencies });
+    npm(['install', '--ignore-scripts', '--no-audit', '--no-fund', '--registry', cfg.registry], { root, cwd: directory });
+    cpSync(resolve(root, 'test/release/fixtures/os-consumer.mjs'), resolve(directory, 'os-consumer.mjs'));
+    for (const command of [process.execPath, 'bun']) execFileSync(command, ['os-consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+  } finally { rmSync(directory, { recursive: true, force: true, maxRetries: 8, retryDelay: 50 }); }
+}
+
 export async function testConsumers(root = ROOT, options: { registry?: boolean; runtimeOnly?: boolean } = {}) {
+  if (!options.registry) testOsConsumer(root);
   const artifacts = readArtifacts(root);
   const cfg = config(root);
   const bun = execFileSync('bun', ['--version'], { encoding: 'utf8' }).trim();

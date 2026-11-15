@@ -51,8 +51,15 @@ kernel.install(manifest, 'shipped');           // or 'suite' or 'user'
 kernel.patch('notes', [{ op: 'replace', path: '/title/en', value: 'Notes' }]);
 kernel.undo();                                 // the person's last change
 await kernel.call('labels', 'records', 'records.search', { query: 'oak' });
-kernel.tools();                                // every granted operation as an assistant tool
+kernel.operations();                           // every granted operation, as plain data
 ```
+
+`kernel.operations(caller)` lists what a caller may call as plain data (tool
+name, contract, operation, kind, description, schemas), so an application with
+its own agent runtime offers them as tools and calls back through
+`kernel.call`. `kernel.tools(caller)` builds model tools with the host's tool
+builder: `createKernel({ tools })`, where Tangle's `@tangleai/agents/toolbox`
+fits as it is. The package itself depends on Jaren alone.
 
 - **Layers.** A suite or a person changes a shipped module with an RFC 6902
   patch in a layer above it; the shipped document is never written. Every
@@ -95,6 +102,51 @@ The application lists its modules in a suite document the desktop reads:
     "host": { "kind": "origin", "url": "https://records.example/app" },
     "provides": [ { "$contract": "0.1", "id": "records", "operations": { … } } ] }] }
 ```
+
+## Using the desktop from another repository
+
+Every release keeps the package in this repository, so an application that
+pulls it in as a git submodule needs no registry and no build of its own:
+
+| File | What it is |
+|---|---|
+| `releases/os/tangleai-os-<version>.tgz` | The npm tarball the release build packed. It depends only on `@jarenjs/*` at the version the manifest names. |
+| `releases/os/tangle-os-module.js` | The module side (`connectToOs`, `applyTheme`, `applyLocale`) as one self-contained ES module for the browser, for a page on any foundation or none. |
+| `releases/os/manifest.json` | The version, the handshake protocol, each file's size, SHA-256 and integrity, and the Jaren foundation (version and commit). |
+
+A release proves these files equal a fresh build, and installs the tarball
+alone (with the Jaren tarballs, nothing else of Tangle) to join a desktop under
+Node and Bun, through the package and through the single file.
+
+```jsonc
+// package.json of an application with this repository at vendor/tangleai
+"dependencies": {
+  "@tangleai/os": "file:vendor/tangleai/releases/os/tangleai-os-0.49.0.tgz"
+}
+```
+
+A page that only joins a desktop can skip the install and import the single
+file, from the submodule or from the desktop's own site, which serves the same
+files under `os/`:
+
+```ts
+import { connectToOs } from './vendor/tangleai/releases/os/tangle-os-module.js';
+```
+
+The handshake names its protocol (`manifest.json` → `protocol`); a desktop and a
+module that speak different protocols do not connect.
+
+**A desktop on https, an application on the person's machine.** A desktop
+served over https can install and frame an application on `http://127.0.0.1`.
+Measured 2026-11-15 against the published desktop with a neutral application on
+loopback: Firefox 151 joins with no prompt (suite read, framed, first call
+answered in 259 ms); Chromium 149 refuses until the person allows the site to
+reach their local network, then joins in 279 ms. The application's server must
+let the desktop's origin read its suite document (CORS) and frame its page
+(`Content-Security-Policy: frame-ancestors <desktop origin>`). Every project
+page of one GitHub Pages account shares one origin, so an application that
+allows a Pages desktop allows all of them; an application can also host the
+desktop itself, since the shell is part of this package.
 
 ## Measured
 

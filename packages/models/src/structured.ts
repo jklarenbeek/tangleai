@@ -16,7 +16,7 @@
 import { JarenValidator } from '@jarenjs/validate';
 import { checkOutcome } from '@jarenjs/core/check';
 import { bundleSchema } from './bundle.ts';
-import { AiError } from './errors.ts';
+import { AiError, countOption } from './errors.ts';
 import { PROVIDERS } from './providers.ts';
 
 export { bundleSchema };
@@ -287,7 +287,7 @@ export function createStructuredOutput<T = any>(options: {
   if (options.parse !== undefined && options.parse !== 'strict' && options.parse !== 'lenient')
     throw new TypeError("parse must be 'strict' or 'lenient'");
   const name = options.name ?? 'result';
-  const maxRepairs = options.maxRepairs ?? 1;
+  const maxRepairs = countOption(options.maxRepairs, 1, 'maxRepairs');
   // Non-streaming stays the DEFAULT, and the reason is a behaviour change
   // rather than a preference: a caller reading `raw` or counting attempts
   // gets the same answer either way, but a caller that passed a client
@@ -426,7 +426,7 @@ export function createStructuredOutput<T = any>(options: {
     finally {
       clearTimeout(timer);
     }
-    return { ok: false, errors, raw, attempts: 1 + maxRepairs, finishReason, usage, calls };
+    return { ok: false, errors, raw, attempts: calls.length, finishReason, usage, calls };
   }
 
   return { generate };

@@ -10,7 +10,6 @@ import { compileContract } from '@jarenjs/contract';
 import { servePort } from '@jarenjs/contract/port';
 import { openPortClient } from '@jarenjs/contract/port';
 import { openLocalClient } from '@jarenjs/contract/local';
-import { toolboxFromContract, createToolbox } from '@tangleai/agents/toolbox';
 import { validateManifest, type ModuleManifest, type ManifestIssue } from './manifest.ts';
 import { systemContracts } from './contracts.ts';
 
@@ -27,6 +26,18 @@ export type ContractClient = { invoke: (op: string, input: unknown, ctx?: unknow
 /** A served contract: what `servePort` returns. */
 export type ServedContract = { close?: () => void };
 type Provider = { module: string, owner: string, contract: any, client: ContractClient };
+/** One operation a caller may call, as plain data: what any agent stack needs to offer it as a tool. */
+export type GrantedOperation = { tool: string, contract: string, op: string, kind: string, doc?: string, input?: unknown, output?: unknown };
+/**
+ * The host's tool builder, so the kernel names no agent runtime: Tangle's
+ * `@tangleai/agents/toolbox` fits as it is (`createKernel({ tools: toolbox })`).
+ */
+export type ToolBuilder = {
+  createToolbox: () => any,
+  toolboxFromContract: (contract: any, client: { invoke: (op: string, input: unknown) => Promise<unknown> }, options: { toolbox: any, ops: string[], name: (op: string) => string }) => unknown,
+};
+/** A tool's name: `<contract>__<operation>` with every character outside [A-Za-z0-9_-] as `_`, at most 64. */
+export const toolName = (contract: string, op: string) => `${contract}__${op.replace(/[^A-Za-z0-9_-]/g, '_')}`.slice(0, 64);
 
 /** Callers the kernel trusts as the person's own hand: the shell's chrome. */
 const TRUSTED = new Set(['shell']);
@@ -38,7 +49,7 @@ const scopeOf = (contract: string, op: string) => [`${contract}.${op}`, `${contr
  * `assistantGrants`: what the assistant may call — `'all'`, or scopes
  * (`contract.op`, `contract.*`). Nothing by default: a host decides.
  */
-export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[] } = {}) {
+export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[], tools?: ToolBuilder } = {}) {
   const now = options.now ?? (() => Date.now());
   const recovery = options.recovery === true;
   const entries = new Map<string, Entry>();
@@ -266,18 +277,35 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     },
 
     /**
+     * Every served operation `caller` may call, as plain data (tool name,
+     * contract, operation, kind, description, input and output schemas): an
+     * application with its own agent runtime offers these as tools and calls
+     * back through `call`, so grants and the ledger still apply.
+     */
+    operations(caller = 'assistant'): GrantedOperation[] {
+      const out: GrantedOperation[] = [];
+      for (const [id, list] of providers) {
+        const ops = list.at(-1)!.contract.doc?.operations ?? {};
+        for (const [op, spec] of Object.entries<any>(ops)) if (kernel.allowed(caller, id, op))
+          out.push({ tool: toolName(id, op), contract: id, op, kind: spec?.kind ?? 'read', ...(spec?.doc ? { doc: spec.doc } : {}), ...(spec?.input ? { input: spec.input } : {}), ...(spec?.output ? { output: spec.output } : {}) });
+      }
+      return out;
+    },
+
+    /**
      * The assistant's tools: every served contract the assistant may call, as
-     * model tools, each routed through `call` so grants and the ledger apply.
-     * Names are `<contract>__<operation>` with dots as underscores.
+     * model tools built by the host's tool builder, each routed through `call`
+     * so grants and the ledger apply. Names are {@link toolName}.
      */
     tools(caller = 'assistant') {
-      const toolbox = createToolbox();
+      if (!options.tools) throw new Error('OS0301: this desktop was created without a tool builder (createKernel({ tools }))');
+      const toolbox = options.tools.createToolbox();
       for (const [id, list] of providers) {
         const provider = list.at(-1)!;
         const ops = Object.keys(provider.contract.doc?.operations ?? {}).filter(op => kernel.allowed(caller, id, op));
         if (ops.length === 0) continue;
         const client = { invoke: (op: string, input: unknown) => kernel.call(caller, id, op, input) };
-        toolboxFromContract(provider.contract, client, { toolbox, ops, name: (op: string) => `${id}__${op.replace(/[^A-Za-z0-9_-]/g, '_')}`.slice(0, 64) } as any);
+        options.tools.toolboxFromContract(provider.contract, client, { toolbox, ops, name: (op: string) => toolName(id, op) });
       }
       return toolbox;
     },

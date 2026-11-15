@@ -1,0 +1,49 @@
+{
+  "$osRelease": "0.1",
+  "version": "0.49.0",
+  "protocol": 1,
+  "package": {
+    "name": "@tangleai/os",
+    "file": "tangleai-os-0.49.0.tgz",
+    "size": 46487,
+    "sha256": "35031143ebb5d068f391debba0862c4cc174fe76eaf816c97fdc740f115180ec",
+    "integrity": "sha512-P1Y59JbW+yka0svDhhwgO+KyjRfS3r1k7N2Ol9VFwhz6K4aOUKbFM+P/ZYQNkWWQsRct7GNzdJ0vXoL/9bth3w==",
+    "dependencies": {
+      "@jarenjs/core": "0.201.2",
+      "@jarenjs/json": "0.201.2",
+      "@jarenjs/validate": "0.201.2",
+      "@jarenjs/contract": "0.201.2",
+      "@jarenjs/app": "0.201.2"
+    },
+    "exports": [
+      ".",
+      "./package.json",
+      "./shell",
+      "./module",
+      "./module-host",
+      "./schemas/module",
+      "./styles/os.css",
+      "./styles/module.css"
+    ]
+  },
+  "module": {
+    "file": "tangle-os-module.js",
+    "size": 452502,
+    "sha256": "14069c590d4b9d846d944497ba445e4ac1d886af3b2d33f7e5e0d8197dc58ff2",
+    "format": "esm",
+    "target": "browser",
+    "exports": [
+      "applyLocale",
+      "applyTheme",
+      "connectToOs"
+    ]
+  },
+  "foundation": {
+    "name": "jarenjs",
+    "version": "0.201.2",
+    "commit": "af5e9f549c287d86f02a802d1fd81d95ebb1467d"
+  },
+  "toolchain": {
+    "bun": "1.4.4"
+  }
+}

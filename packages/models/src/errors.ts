@@ -76,3 +76,16 @@ export class AiError extends CodedError {
     }
   }
 }
+
+/**
+ * A count a caller sets (repairs, tries, rounds): a whole number of at least
+ * `min`, or `fallback` when absent. Anything else is `AI0001` before any call,
+ * because a NaN or an Infinity here would make the loop it bounds unbounded.
+ * @param name - the option, as the caller wrote it
+ */
+export function countOption(value: unknown, fallback: number, name: string, min = 0): number {
+  if (value === undefined) return fallback;
+  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < min)
+    throw new AiError('AI0001', `${name} must be a whole number of at least ${min}, got ${String(value)}`);
+  return value;
+}

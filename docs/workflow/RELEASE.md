@@ -38,7 +38,7 @@ The release commit follows the work-order commits and the final push includes
 them together. Authorization to close out when the campaign is complete covers
 this sequence; npm publication remains a separate manual author action.
 
-The current checkout consumes Jaren 0.201.0 as candidate artifacts: 23 tarballs
+The current checkout consumes Jaren 0.201.2 as candidate artifacts: 23 tarballs
 packed from the committed `vendor/jarenjs` source, which npm does not serve. The
 active `docs/migrations/jaren-ai/foundations.json` records each tarball's hashes,
 member inventory and dependency edges, so `npm ci --ignore-scripts` requires the
@@ -157,6 +157,16 @@ license and changelog. Every package-owned Markdown guide must appear in npm's
 actual archive inventory; a missing guide fails the build. Installed temporal
 consumers also read the guide linked by the memory README. Workspace manifests continue to serve TypeScript during
 development. Their lifecycle guards refuse direct source publication.
+
+`release:build` also writes the desktop package into the tree:
+`releases/os/tangleai-os-<version>.tgz`, the one-file module side
+`releases/os/tangle-os-module.js` and `releases/os/manifest.json`. Applications
+that pull this repository in as a submodule depend on those files without a
+registry. They are built from the release inputs, so the input hash leaves
+them out; commit them with the release. `release:test` first proves they equal
+a fresh build (`node scripts/release/os-artifacts.ts --check` after a build),
+then installs the desktop tarball with only the Jaren tarballs and joins a
+desktop under Node and Bun, through the package and through the single file.
 
 `release:test` installs the tarballs in a temporary external project. It exercises
 all declared exports in Node and Bun, schema imports, cited memory validation,

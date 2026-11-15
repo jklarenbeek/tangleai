@@ -12,7 +12,7 @@
  * the `retry` option each client documents.
  */
 
-import { AiError } from './errors.ts';
+import { AiError, countOption } from './errors.ts';
 import { backoffDelay, parseRetryAfter, sleep as defaultSleep, abortError } from '@jarenjs/core/retry';
 export { abortError };
 
@@ -24,7 +24,8 @@ export { abortError };
  */
 export function normalizeRetry(retry: RetryOptions | undefined): RetryPolicy {
   return {
-    attempts: Math.max(1, retry?.attempts ?? 3),
+    // 0 has always meant one try, as 1 does
+    attempts: Math.max(1, countOption(retry?.attempts, 3, 'retry.attempts')),
     baseMs: retry?.baseMs ?? 500,
     maxMs: retry?.maxMs ?? 8000,
     random: retry?.random ?? Math.random,

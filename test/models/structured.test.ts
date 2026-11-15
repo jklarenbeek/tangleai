@@ -292,3 +292,31 @@ describe('ai — structured output results', function () {
     assert.deepStrictEqual(wire.$defs, { 'shared.flag': { type: 'boolean' } }, 'an empty resource root nobody points at is left out');
   });
 });
+
+describe('repair and retry counts are whole numbers, checked before any call', () => {
+  const BAD = [-1, NaN, 0.5, 1.5, Infinity, 2 ** 53, '2' as any];
+  it('refuses a maxRepairs that would make the repair loop empty, fractional or unbounded', async () => {
+    for (const maxRepairs of BAD) {
+      const { client, sent } = scriptedClient('openrouter', ['not json']);
+      assert.throws(() => createStructuredOutput({ client, schema: SCHEMA, maxRepairs }),
+        (error: any) => error instanceof AiError && error.code === 'AI0001' && /maxRepairs/.test(error.message), String(maxRepairs));
+      assert.equal(sent.length, 0, `${String(maxRepairs)}: no call was made`);
+    }
+  });
+  it('makes exactly 1 + maxRepairs calls for a valid count and reports the calls it made', async () => {
+    for (const maxRepairs of [0, 1, 2]) {
+      const { client, sent } = scriptedClient('openrouter', ['not json']);
+      const result = await createStructuredOutput({ client, schema: SCHEMA, maxRepairs }).generate([{ role: 'user', content: 'x' }]);
+      assert.equal(result.ok, false);
+      assert.equal(sent.length, 1 + maxRepairs);
+      assert.equal((result as any).attempts, 1 + maxRepairs);
+      assert.ok((result as any).errors.length > 0, 'a failure always names its errors');
+    }
+  });
+  it('refuses retry attempts that are not a whole number, and keeps 0 as one try', () => {
+    for (const attempts of [-1, NaN, 2.5, Infinity])
+      assert.throws(() => createChatClient({ provider: 'openrouter', model: 'm', retry: { attempts }, fetch: async () => new Response('{}') }),
+        (error: any) => error instanceof AiError && error.code === 'AI0001' && /retry\.attempts/.test(error.message), String(attempts));
+    assert.doesNotThrow(() => createChatClient({ provider: 'openrouter', model: 'm', retry: { attempts: 0 }, fetch: async () => new Response('{}') }));
+  });
+});

@@ -159,3 +159,23 @@ describe('ai — run budgets', function () {
     assert.strictEqual(agent.spend().tokens, 0, 'no usage reported and no budget: nothing estimated');
   });
 });
+
+describe('limits that would never be reached are refused', () => {
+  it('refuses NaN, negative, fractional and infinite rounds and budgets before any call', () => {
+    const client = loopingClient();
+    const cases: any[] = [
+      { maxToolRounds: NaN }, { maxToolRounds: -1 }, { maxToolRounds: 2.5 }, { maxToolRounds: Infinity },
+      { budget: { turns: NaN } }, { budget: { turns: 1.5 } }, { budget: { turns: -2 } },
+      { budget: { tokens: NaN } }, { budget: { ms: Infinity } }, { budget: { tokens: -1 } },
+    ];
+    for (const extra of cases)
+      assert.throws(() => createAgent({ client, toolbox: tickBox(), ...extra }), (error: any) => error.code === 'AI0001', JSON.stringify(extra, (_, v) => typeof v === 'number' && !Number.isFinite(v) ? String(v) : v));
+    assert.equal(client.requests.length, 0);
+  });
+  it('still stops a looping run at a valid limit', async () => {
+    const client = loopingClient();
+    const agent = createAgent({ client, toolbox: tickBox(), maxToolRounds: 2 });
+    await agent.send([{ role: 'user', content: 'go' }]);
+    assert.ok(client.requests.length <= 3, `stopped after ${client.requests.length} calls`);
+  });
+});

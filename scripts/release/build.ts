@@ -4,6 +4,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from
 import { resolve, basename } from 'node:path';
 import ts from 'typescript';
 import { ROOT, config, readJson, writeJson, npm, inputHash, integrity, git, isMain, type Manifest } from './common.ts';
+import { writeOsArtifacts } from './os-artifacts.ts';
 
 export interface Artifact {
   name: string; version: string; filename: string; integrity: string;
@@ -122,4 +123,7 @@ export async function buildPackages(root = ROOT) {
 if (isMain(import.meta.url)) {
   assert.equal(process.argv.length, 2, 'Unknown build argument');
   await buildPackages();
+  // the desktop package also lives in the tree, for applications that pull
+  // this repository in as a submodule
+  writeOsArtifacts();
 }
