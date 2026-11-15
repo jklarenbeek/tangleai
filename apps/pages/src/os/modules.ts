@@ -12,6 +12,7 @@ import { settingsMount } from './settings-app.ts';
 import type { Preferences } from './preferences.ts';
 import { welcomeMount } from './welcome-app.ts';
 import { loopMount } from './loop-app.ts';
+import { calendarMount, CALENDAR_CONTRACT } from './calendar-app.ts';
 
 const t = (en: string, nl: string, de: string, fr: string, es: string, pt: string, ar: string, ja: string, ko: string, ru: string, tr: string, zhTW: string) =>
   ({ en, nl, de, fr, es, pt, ar, ja, ko, ru, tr, 'zh-TW': zhTW });
@@ -19,6 +20,10 @@ const app = (id: string, title: ReturnType<typeof t>, glyph: string, hue: number
   ({ $module: '0.1', id, version: '1.0.0', category, title, icon: { glyph, hue }, host: { kind: 'shipped', mount: id }, window: { singleton: true, ...window } });
 
 export const WELCOME = app('welcome', t('Welcome', 'Welkom', 'Willkommen', 'Bienvenue', 'Bienvenida', 'Boas-vindas', 'مرحبًا', 'ようこそ', '환영합니다', 'Добро пожаловать', 'Hoş geldiniz', '歡迎'), 'welcome', 178, { width: 780, height: 700, minWidth: 360, minHeight: 360 }, 'system');
+export const CALENDAR: ModuleManifest = {
+  ...app('calendar', t('Calendar', 'Agenda', 'Kalender', 'Calendrier', 'Calendario', 'Calendário', 'التقويم', 'カレンダー', '캘린더', 'Календарь', 'Takvim', '行事曆'), 'calendar', 350, { width: 1060, height: 720, minWidth: 560, minHeight: 440 }, 'productivity'),
+  provides: [CALENDAR_CONTRACT as any],
+};
 export const STUDIO = app('studio', t('Studio', 'Studio', 'Studio', 'Studio', 'Estudio', 'Estúdio', 'الاستوديو', 'スタジオ', '스튜디오', 'Студия', 'Stüdyo', '工作室'), 'studio', 200, { width: 1180, height: 760, minWidth: 520, minHeight: 420 });
 export const PLAYGROUND = app('playground', t('Playground', 'Speeltuin', 'Spielwiese', 'Bac à sable', 'Área de pruebas', 'Área de testes', 'ساحة التجربة', 'プレイグラウンド', '플레이그라운드', 'Песочница', 'Deneme alanı', '遊樂場'), 'playground', 320, { width: 1180, height: 760, minWidth: 520, minHeight: 420 });
 export const FLOW = app('flow', t('Flow', 'Flow', 'Flow', 'Flow', 'Flujo', 'Fluxo', 'التدفق', 'フロー', '플로', 'Поток', 'Akış', '流程'), 'flow', 260, { width: 1100, height: 720, minWidth: 520, minHeight: 420 });
@@ -120,13 +125,14 @@ export const TODO: ModuleManifest = {
   },
 };
 
-export const builtinModules = (): ModuleManifest[] => [WELCOME, ASSISTANT, STUDIO, PLAYGROUND, FLOW, DATA, LOOP, ADVENTURE, TODO, SETTINGS, TRANSFER, ABOUT];
+export const builtinModules = (): ModuleManifest[] => [WELCOME, ASSISTANT, CALENDAR, STUDIO, PLAYGROUND, FLOW, DATA, LOOP, ADVENTURE, TODO, SETTINGS, TRANSFER, ABOUT];
 
 /** The shipped components this desktop registers. */
 export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel, prefs: Preferences, open: (id: string) => void, surfaces: { mounts: Record<string, ShippedMount>, toolbox: any, system: string } }): Record<string, ShippedMount> {
   return {
     ...host.surfaces.mounts,
     welcome: welcomeMount(host.open),
+    calendar: calendarMount(),
     loop: loopMount,
     assistant: assistantMount(host.kernel, host.prefs, () => host.open('settings'), { toolbox: host.surfaces.toolbox, system: host.surfaces.system }),
     settings: settingsMount(host.prefs),

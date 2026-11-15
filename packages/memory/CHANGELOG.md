@@ -1,5 +1,16 @@
 # @tangleai/memory
 
+## 0.48.2
+
+### Patch Changes
+
+- Build on Jaren 0.199.0, whose calendar (`@jarenjs/core/calendar`), iCalendar writer (`@jarenjs/josl/ical`) and calendar-scheduled database jobs arrive in these releases. The Pages desktop gains a Calendar built on them: a month view, a day panel and an editor, recurring events with skipped days, "find a time" over the person's working hours that never offers unknown time, an iCalendar export, and a `calendar` contract (agenda, add, free) that the assistant and other applications use as tools.
+- Updated dependencies
+  - @tangleai/models@0.48.2
+  - @tangleai/context@0.48.2
+  - @tangleai/jaren@0.48.2
+  - @tangleai/core@0.48.2
+
 ## 0.48.1
 
 ### Patch Changes

@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.193.1**, tag `v0.193.1`, source commit
-`ab3ccf0ee8557b82a3d03b05c4f551b9b12c222c`. Upstream `main` and the tag agreed
-when checked on 2026-11-15; npm still served 0.91.4. Runtime imports therefore
+Tangle consumes **Jaren 0.199.0**, tag `v0.199.0`, source commit
+`4959d454f238b942fa4207adedbb6b9a4086bf57`. Upstream `main` and the tag agreed
+when checked on 2026-11-15 (0.200.0, adding monthly and yearly recurrence, was still in its release check); npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.193.1` pin. A clean reconstruction from the pinned
+reference is an exact `0.199.0` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,25 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.193.1 to 0.199.0 and current adoption
+
+The six releases add a calendar to `@jarenjs/core` (`./calendar`): local times
+classified and resolved under a named policy, five temporal value kinds as
+frozen JSON, daily and weekly recurrence with recurrence sets and weekly
+patterns under explicit limits, prioritized availability layers that never
+count unknown time as free, and slot search. `@jarenjs/josl/ical` writes
+events, series and free/busy spans as iCalendar; `@jarenjs/db/schedules` runs
+recurring jobs from a calendar series on SQLite and PostgreSQL alike. No
+consumed package removed an export, and every dependency edge stays inside the
+23-package closure.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Calendar values, recurrence, series and availability (`@jarenjs/core/calendar`) | **Adopted in the Pages desktop.** The Calendar application keeps events as a JSON document with floating wall-clock times, expands their recurrence and skipped days through `defineSeries` and `expandSeries`, and finds free time with `evaluateAvailability` over the person's working hours and `findAvailableSlots`. It asks the engine which repeat rules it expands, so monthly and yearly rules appear when the engine adds them (0.200.0). |
+| iCalendar writing (`@jarenjs/josl/ical`) | **Adopted.** The Calendar exports its events and series with `stringifyIcal`, rules and skipped days included. |
+| Zones from the host (`@jarenjs/locales/intl-zones`) | **Adopted.** Availability places floating times through `createIntlZoneProvider` in the reader's own zone. |
+| Recurring database jobs (`@jarenjs/db/schedules`) | **Not reached.** Tangle's scheduled document fetching keeps its own schedule; moving it onto calendar series is a want for the desktop's job runner. |
 
 ## Changes from 0.188.0 to 0.193.1 and current adoption
 
@@ -388,7 +407,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.193.1 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.199.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

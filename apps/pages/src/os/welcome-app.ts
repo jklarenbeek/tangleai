@@ -6,6 +6,7 @@ import type { ShippedMount } from '@tangleai/os/shell';
 
 const APPS: [string, string, string][] = [
   ['assistant', 'Assistant', 'Ask in plain words; it uses the applications on this desktop to answer.'],
+  ['calendar', 'Calendar', 'Plan your weeks, repeat what recurs, and find a free hour in your working day.'],
   ['studio', 'Studio', 'Build a Jaren application from documents, and run it as you type.'],
   ['playground', 'Playground', 'Try every Jaren engine: queries, schemas, stylesheets, charts and more.'],
   ['flow', 'Flow', 'Draw a state machine or a pipeline, then run it step by step.'],
