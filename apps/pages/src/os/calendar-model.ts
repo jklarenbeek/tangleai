@@ -46,6 +46,14 @@ export function supportedRepeats(): Repeat[] {
   });
 }
 
+/** What a repeat skips: a monthly date some months lack, or 29 February outside leap years. */
+export function repeatHint(repeat: Repeat, date: string): string {
+  const day = Number(date.slice(8, 10)), monthOfYear = date.slice(5, 7);
+  if (repeat === 'monthly' && day >= 29) return `Months without a ${day}${day === 31 ? 'st' : 'th'} are skipped.`;
+  if (repeat === 'yearly' && monthOfYear === '02' && day === 29) return 'Repeats only in leap years.';
+  return '';
+}
+
 /** Check and normalise an event a person, the assistant or another module proposes. */
 export function checkEvent(input: Partial<CalendarEvent>): { ok: true, event: CalendarEvent } | { ok: false, error: string } {
   const title = String(input.title ?? '').trim().slice(0, 200);

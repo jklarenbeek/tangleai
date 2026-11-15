@@ -3,7 +3,8 @@ import { createApp, createDocStore, createFormView, formEventFields } from '@jar
 import { PLAY_ACTIONS } from './actions.ts';
 import { playEffects } from './effects.ts';
 import { PLAY_START, playComponent, runPlay, sessionToLoaded, createPlaySplitterWidget, withPlayLocale } from './play.ts';
-import { formViewFor, formLabelsFor, referencedSchemas } from './services.ts';
+import { playCatalogs, playValidator } from './validator.ts';
+import { playDataForm, PLAY_FORM_VIEW } from '@jarenjs/play/host';
 const CHROME = new Set(['result', 'panel', 'deep', 'deepPick', 'mobilePane', 'name', 'savedName', 'names', 'shared', 'ratio']);
 /** @param node @param [options] */
 export function mountPlay(node: HTMLElement | null, options: any = {}) {
@@ -18,14 +19,8 @@ export function mountPlay(node: HTMLElement | null, options: any = {}) {
     view: {
       $jslt: '0.1', modes: playComponent.modes, rules: [
         { match: '$', body: { $apply: ['$.ui.play', 'play'] } }, ...playComponent.rules,
-        ...createFormView({
-          root: '$.ui.play.dataForm',
-          // the chrome follows the Messages language while the form is open
-          labelsPath: '$.ui.play.formLabels',
-          actions: {
-            input: 'play/f-input', check: 'play/f-check', number: 'play/f-number', json: 'play/f-json', add: 'play/f-add', remove: 'play/f-remove',
-          }
-        }).map((rule: any) => ({ ...rule, mode: 'play' })),
+        // the generated form, its chrome in the language the slice runs in
+        ...createFormView(PLAY_FORM_VIEW).map((rule: any) => ({ ...rule, mode: 'play' })),
       ]
     },
   }, {
@@ -37,10 +32,10 @@ export function mountPlay(node: HTMLElement | null, options: any = {}) {
       return {
         ui: {
           play: {
-            ...playComponent.viewModel({ ...state, play }),
+            // Play's own words in the reader's language, English until its pack is there
+            ...playComponent.viewModel({ ...state, play }, { messages: playCatalogs.catalogFor(state.play.locale) }),
             // the form's field errors and chrome speak the language of its alerts
-            ...(play.engine === 'validate' && play.dataView === 'form'
-              ? { dataForm: formViewFor(play.source?.schema ?? '', play.dataValue, referencedSchemas(play.source?.schemas), play.config?.locale), formLabels: formLabelsFor(play.config?.locale) } : {})
+            ...(playDataForm(playValidator, play) ?? {})
           }
         }
       };

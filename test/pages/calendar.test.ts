@@ -2,11 +2,12 @@
  * The desktop Calendar's model, headless: recurring events expand through
  * Jaren's calendar engine, a skipped day stays skipped, proposed events are
  * checked before they are kept, free time never falls outside the working
- * hours or on an event, and the calendar exports as iCalendar.
+ * hours or on an event, monthly and yearly series skip the dates a month or
+ * year lacks rather than moving them, and the calendar exports as iCalendar.
  */
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { checkEvent, emptyCalendar, exportIcal, freeSlots, occurrences, seed, supportedRepeats, type CalendarDocument } from '../../apps/pages/src/os/calendar-model.ts';
+import { checkEvent, emptyCalendar, exportIcal, freeSlots, occurrences, repeatHint, seed, supportedRepeats, type CalendarDocument } from '../../apps/pages/src/os/calendar-model.ts';
 
 const withEvents = (...inputs: any[]): CalendarDocument => ({ ...emptyCalendar(), events: inputs.map(i => { const r = checkEvent(i); assert.ok(r.ok, JSON.stringify(r)); return (r as any).event; }) });
 
@@ -58,5 +59,20 @@ describe('the calendar model', () => {
     const first = seed(emptyCalendar(), '2026-11-18');
     assert.equal(first.events.length, 2);
     assert.equal(seed({ ...first, events: [] }, '2026-11-18').events.length, 0);
+  });
+  it('repeats monthly and yearly, skipping the dates a month or year lacks', () => {
+    assert.deepEqual(supportedRepeats(), ['none', 'daily', 'weekdays', 'weekly', 'monthly', 'yearly']);
+    const doc = withEvents(
+      { uid: 'rent', title: 'Rent', date: '2027-01-31', start: '09:00', end: '09:30', repeat: 'monthly' },
+      { uid: 'leap', title: 'Leap', date: '2028-02-29', allDay: true, repeat: 'yearly' },
+    );
+    assert.deepEqual(occurrences(doc, '2027-01-01', '2027-08-01').map(o => o.date), ['2027-01-31', '2027-03-31', '2027-05-31', '2027-07-31']);
+    assert.deepEqual(occurrences(doc, '2028-01-01', '2037-01-01').filter(o => o.uid === 'leap').map(o => o.date), ['2028-02-29', '2032-02-29', '2036-02-29']);
+    assert.equal(repeatHint('monthly', '2027-01-31'), 'Months without a 31st are skipped.');
+    assert.equal(repeatHint('monthly', '2027-01-29'), 'Months without a 29th are skipped.');
+    assert.equal(repeatHint('monthly', '2027-01-28'), '');
+    assert.equal(repeatHint('yearly', '2028-02-29'), 'Repeats only in leap years.');
+    assert.equal(repeatHint('weekly', '2027-01-31'), '');
+    assert.match(exportIcal(doc), /RRULE:FREQ=MONTHLY/);
   });
 });

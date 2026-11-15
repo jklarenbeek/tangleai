@@ -6,7 +6,7 @@
  */
 import type { ShippedMount } from '@tangleai/os/shell';
 import {
-  COLOURS, WEEKDAYS, addDays, checkEvent, emptyCalendar, exportIcal, freeSlots, isoDate, occurrences, parseDate, seed, supportedRepeats,
+  COLOURS, WEEKDAYS, addDays, checkEvent, emptyCalendar, exportIcal, freeSlots, isoDate, occurrences, parseDate, repeatHint, seed, supportedRepeats,
   type CalendarDocument, type CalendarEvent, type Occurrence, type Repeat,
 } from './calendar-model.ts';
 
@@ -173,6 +173,10 @@ export function calendarMount(): ShippedMount {
       const syncTimes = () => { times.hidden = allDay.checked; };
       allDay.addEventListener('change', syncTimes); syncTimes();
       const repeat = h('select', { class: 'cal-input', 'aria-label': 'Repeat' }, ...repeats.map(r => h('option', { value: r, selected: r === (e.repeat ?? 'none') }, REPEAT_LABEL[r]))) as HTMLSelectElement;
+      // the calendar never moves a date a month or year lacks; say so before it surprises
+      const hint = h('p', { class: 'cal-hint', 'aria-live': 'polite' });
+      const syncHint = () => { hint.textContent = repeatHint(repeat.value as Repeat, date.value); };
+      repeat.addEventListener('change', syncHint); date.addEventListener('input', syncHint); syncHint();
       let colour = e.colour ?? 'teal';
       const swatches = h('div', { class: 'cal-swatches', role: 'radiogroup', 'aria-label': 'Colour' },
         ...COLOURS.map(c => h('button', { type: 'button', role: 'radio', class: `cal-swatch c-${c}`, 'aria-label': c, 'aria-checked': String(c === colour), onclick: (ev: Event) => {
@@ -189,7 +193,7 @@ export function calendarMount(): ShippedMount {
         h('h2', { class: 'cal-side-title' }, isNew ? 'New event' : 'Edit event'),
         title, date,
         h('label', { class: 'cal-check' }, allDay, h('span', {}, 'All day')),
-        times, repeat, swatches, notes, status,
+        times, repeat, hint, swatches, notes, status,
         h('div', { class: 'cal-row cal-form-actions' },
           h('button', { type: 'submit', class: 'cal-primary' }, 'Save'),
           h('button', { type: 'button', class: 'cal-ghost', onclick: () => { editing = null; render(); } }, 'Cancel'),

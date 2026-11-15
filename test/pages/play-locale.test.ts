@@ -1,7 +1,9 @@
 /**
  * The Pages playground keeps the reader's message language and the schema
- * author's own error text, as Jaren's site does since 0.188.0: a language
- * chosen once survives loading another example, New and an opened session;
+ * author's own error text, as Jaren's play host kit does: only the reader
+ * sets the language, and a choice survives loading another example, New
+ * and an opened session; a session carries no language, so it opens in its
+ * reader's; an example made to show one language shows it for its own run;
  * the text a schema's `errorMessage` wrote stays as written in every
  * locale; and the generated form's chrome follows the language.
  */
@@ -63,21 +65,39 @@ describe('the playground message language', () => {
 
       play.replace({ engine: 'validate', source: { schema: SCHEMA }, data: { data: '{"age": 7}' }, config: { locale: 'fr' } }, 'opened');
       assert.equal(play.read().locale, 'de', "the reader's choice wins over the session's");
-      assert.equal(sessionOf(play.read()).config.locale, 'de', 'a saved session carries the language on screen');
+      assert.equal(withPlayLocale(play.read()).config.locale, 'de');
+      assert.equal(sessionOf(play.read()).config.locale, undefined, 'a saved session carries no language');
     } finally { play.dispose(); }
   });
 
-  it("adopts an opened session's language before the reader chose one", () => {
+  it("opens a session in its reader's language, never the one it was saved in", () => {
     const play = mount();
     try {
       play.replace({ engine: 'validate', source: { schema: SCHEMA }, data: { data: '{}' }, config: { locale: 'nl' } }, 'opened');
-      assert.equal(play.read().locale, 'nl');
+      assert.equal(play.read().locale, null, 'an opened session sets no language');
+      assert.equal(withPlayLocale(play.read()).config.locale, 'en');
+    } finally { play.dispose(); }
+  });
+
+  it('shows an example made for one language in it, and leaves the reader\'s language alone', () => {
+    const play = mount();
+    try {
+      choose(play, 'de');
+      play.dispatch('play/example', 'validate-locale-fr');
+      assert.equal(play.read().locale, 'de', "the reader's language is still theirs");
+      assert.equal(withPlayLocale(play.read()).config.locale, 'fr', 'the example runs in its own language');
+      play.dispatch('play/example', 'validate-invalid');
+      assert.equal(withPlayLocale(play.read()).config.locale, 'de', 'the next example runs in the reader\'s again');
+      play.dispatch('play/example', 'validate-locale-fr');
+      choose(play, 'ja');
+      assert.equal(play.read().locale, 'ja');
+      assert.equal(withPlayLocale(play.read()).config.locale, 'ja', "the reader's choice replaces the example's language");
     } finally { play.dispose(); }
   });
 
   it("names the form's buttons and JSON hint in the chosen language", () => {
-    assert.equal(formLabelsFor('de').addItem, 'Element hinzufügen');
-    assert.equal(formLabelsFor().addItem, 'Add item');
-    assert.equal(formLabelsFor('xx').addItem, 'Add item', 'an unknown locale falls back to English');
+    assert.equal(formLabelsFor('de')?.addItem, 'Element hinzufügen');
+    assert.equal(formLabelsFor()?.addItem, 'Add item');
+    assert.equal(formLabelsFor('xx')?.addItem, 'Add item', 'an unknown locale falls back to English');
   });
 });

@@ -1,227 +1,46 @@
 /**
- * The validator boundary: the one place the playground touches
- * compiled artifacts. Everything returned is plain JSON, fit for the
- * app state; compiled validators and form models live in module-local
- * memo caches keyed by schema text and its referenced schemas.
+ * The validator boundary: the one place the playground touches compiled
+ * artifacts. It is Jaren's play host kit (`@jarenjs/play/host`), composed
+ * with the format sets, the form functions and every language pack, so the
+ * playground, the Studio and the project host share one runner and one set
+ * of catalogs. Everything returned is plain JSON, fit for the app state.
  */
 
-import { JarenValidator, localizeErrors as localizeValidationErrors, compileMessageCatalog } from '@jarenjs/validate';
+import { createPlayCatalogs, createPlayValidator, localizePlayErrors, PLAY_LOCALES } from '@jarenjs/play/host';
 import { stringFormats, numberFormats, dateTimeFormats, jsonFormats } from '@jarenjs/formats';
 import { buildFormModel, buildFormViewModel, formChromeLabels } from '@jarenjs/forms';
 import { ar, de, es, fr, ja, ko, nl, pt, ru, tr, zhTW } from '@jarenjs/locales';
 
-import { isJsonObject } from '@jarenjs/core/object';
-import { now } from './format.ts';
-
-/** Friendly draft name from a schema's $schema declaration. */
-export function detectDraftName(schema: any) {
-  const url = (schema !== null && typeof schema === 'object' && schema.$schema) || '';
-  if (url.includes('2020-12')) return '2020-12';
-  if (url.includes('2019-09')) return '2019-09';
-  if (url.includes('draft-07')) return 'draft-07';
-  if (url.includes('draft-06')) return 'draft-06';
-  return 'draft-07 (default)';
-}
+export { detectDraftName, referencedSchemas } from '@jarenjs/play/host';
 
 /**
- * @param schemas referenced documents, registered so the compiled
- *   schema can `$ref` them by `$id`
+ * Every language pack, loaded up front: the site is one bundle, so the
+ * Messages switch answers at once rather than waiting on a chunk.
  */
-function createInstance(schemas: any[]) {
-  // a fresh validator per compile keeps schema registrations from
-  // colliding between edits
-  const instance = new JarenValidator({ skipErrors: false, collectErrors: true, formatAssertion: true })
-    .addFormats(stringFormats)
-    .addFormats(numberFormats)
-    .addFormats(dateTimeFormats)
-    .addFormats(jsonFormats);
-  for (const schema of schemas) instance.addSchema(schema);
-  return instance;
-}
+const PACKS = { nl, fr, es, pt, de, ja, ko, 'zh-tw': zhTW, ru, tr, ar };
 
-/**
- * The referenced-schemas pane's text as the list the form registers: the
- * array's members that are objects with a non-empty string `$id`, or none
- * when the pane is empty or unreadable (the run reports that pane's fault;
- * the form just goes without).
- */
-export function referencedSchemas(text: unknown): any[] {
-  let parsed;
-  try { parsed = JSON.parse(typeof text === 'string' && text.trim() !== '' ? text : '[]'); }
-  catch { return []; }
-  return Array.isArray(parsed)
-    ? parsed.filter((doc) => isJsonObject(doc) && typeof doc.$id === 'string' && doc.$id !== '')
-    : [];
-}
+/** The compiled catalogs of every language the switcher offers. */
+export const playCatalogs = createPlayCatalogs();
+for (const [code, pack] of Object.entries(PACKS)) playCatalogs.add(code, pack);
 
-/** The `$id` a `$ref` names: the reference without an empty trailing fragment. */
-const bareId = (id: string) => (id.endsWith('#') ? id.slice(0, -1) : id);
+/** The runner: a fresh validator per compile, the last compile kept hot for the run, the form and its chrome. */
+export const playValidator = createPlayValidator({
+  catalogs: playCatalogs,
+  formats: [stringFormats, numberFormats, dateTimeFormats, jsonFormats],
+  forms: { buildFormModel, buildFormViewModel, formChromeLabels },
+});
 
-/**
- * The schema with every `$ref` that names a referenced document replaced by
- * that document, for the form generator (which reads the schema tree and
- * resolves no reference). A reference that would enter a document already
- * being inlined (a cycle) is left as it is.
- */
-function inlineReferences(node: any, byId: Map<string, any>, open: Set<string>): any {
-  if (Array.isArray(node)) return node.map((item) => inlineReferences(item, byId, open));
-  if (node === null || typeof node !== 'object') return node;
-  const target = typeof node.$ref === 'string' ? bareId(node.$ref) : undefined;
-  if (target !== undefined && byId.has(target) && !open.has(target)) {
-    const { $ref: _reference, ...siblings } = node;
-    const { $id: _name, $schema: _draft, ...document } = byId.get(target);
-    const nested = new Set(open).add(target);
-    return { ...inlineReferences(document, byId, nested), ...inlineReferences(siblings, byId, nested) };
-  }
-  const copy: any = {};
-  for (const [key, value] of Object.entries(node)) copy[key] = inlineReferences(value, byId, open);
-  return copy;
-}
+/** The switcher's locale codes, in display order: English, then every pack. */
+export const LOCALES: readonly string[] = PLAY_LOCALES;
 
-/**
- * The compiled state of ONE (schema text, referenced documents) pair, kept
- * hot: the run and the generated form compile through {@link compiled}, so
- * the same pair never compiles twice in a row.
- */
-let hot: { schemaText: string, listKey: string, entry: any } | null = null;
+/** Compile (cached) and validate, the errors in English as the validator wrote them. */
+export const runValidation = (schemaText: any, data: any, schemas: any[] = []): any => playValidator.run(schemaText, data, schemas);
 
-/**
- * The cached compile of `schemaText` with `schemas` registered. The
- * referenced documents are part of what was compiled, so editing only one
- * of them must not answer from the previous compile; a pair compares on
- * both parts, never on a joined key.
- */
-function compiled(schemaText: any, schemas: any[] = []) {
-  const listKey = JSON.stringify(schemas);
-  if (hot !== null && hot.schemaText === schemaText && hot.listKey === listKey) return hot.entry;
-  const entry: any = { validate: null, formModel: null, schemaError: null, schemaPane: null, compileMs: null, draft: null };
-  let schema;
-  try {
-    schema = JSON.parse(schemaText);
-  }
-  catch (err: any) {
-    entry.schemaError = `Invalid JSON: ${(err as Error).message}`;
-  }
-  if (entry.schemaError === null) {
-    entry.draft = detectDraftName(schema);
-    try {
-      const instance = createInstance(schemas);
-      // a referenced document compiles lazily when a reference reaches it:
-      // compile each one now so a broken document is reported with its
-      // position, whether or not the main schema uses it
-      for (let i = 0; i < schemas.length; i++) {
-        try { instance.compile(schemas[i]); }
-        catch (err: any) {
-          entry.schemaPane = 'schemas';
-          throw new Error(`schemas[${i}] (${schemas[i].$id}): ${(err as Error).message}`, { cause: err });
-        }
-      }
-      const start = now();
-      entry.validate = instance.compile(schema);
-      entry.compileMs = now() - start;
-    }
-    catch (err: any) {
-      entry.schemaError = (err as Error).message;
-    }
-    try {
-      const byId = new Map(schemas.map((doc) => [bareId(doc.$id), doc]));
-      entry.formModel = buildFormModel(byId.size === 0 ? schema : inlineReferences(schema, byId, new Set()));
-    }
-    catch {
-      entry.formModel = null; // schemas the form generator cannot walk
-    }
-  }
-  hot = { schemaText, listKey, entry };
-  return entry;
-}
-
-/**
- * Compile (cached) and validate: the wire() subscriber calls this on
- * every schema/data change and dispatches the JSON result.
- * @returns `{ schemaError, draft, compileMs, validateMs, valid, errors }`
- */
-export function runValidation(schemaText: any, data: any, schemas: any[] = []): any {
-  const entry = compiled(schemaText, schemas);
-  if (entry.validate === null) {
-    return {
-      schemaError: entry.schemaError, schemaPane: entry.schemaPane, draft: entry.draft,
-      compileMs: null, validateMs: null, valid: null, errors: [],
-    };
-  }
-  const start = now();
-  // with collectErrors the compiled validator returns { valid, errors }
-  const outcome = entry.validate(data);
-  const validateMs = now() - start;
-  const valid = typeof outcome === 'object' && outcome !== null ? outcome.valid : outcome === true;
-  const raw = typeof outcome === 'object' && outcome !== null ? outcome.errors ?? [] : [];
-  return {
-    schemaError: null,
-    draft: entry.draft,
-    compileMs: entry.compileMs,
-    validateMs,
-    valid,
-    errors: raw.map((e: any) => ({
-      instancePath: e.instancePath ?? '',
-      keyword: e.keyword ?? '',
-      msgid: e.msgid,
-      params: e.params,
-      message: e.message ?? '',
-      // the text the schema wrote stays as written in every locale
-      ...(e.inlineMessage === undefined ? {} : { inlineMessage: e.inlineMessage }),
-    })),
-  };
-}
-
-/** The generated form's render tree for the current schema + data, its field errors in `locale`. */
-export function formViewFor(schemaText: any, data: any, schemas: any[] = [], locale: string = 'en') {
-  const entry = compiled(schemaText, schemas);
-  if (entry.formModel === null) return null;
-  const catalog = CATALOGS[locale as keyof typeof CATALOGS];
-  try {
-    return buildFormViewModel(entry.formModel, data, catalog === undefined ? { validateFields: true } : { validateFields: true, catalog });
-  }
-  catch {
-    return null;
-  }
-}
-
-/** The locale packs the switcher offers, compiled once ('en' is the built-in). */
-const CATALOGS = {
-  nl: compileMessageCatalog(nl),
-  fr: compileMessageCatalog(fr),
-  es: compileMessageCatalog(es),
-  pt: compileMessageCatalog(pt),
-  de: compileMessageCatalog(de),
-  ja: compileMessageCatalog(ja),
-  ko: compileMessageCatalog(ko),
-  'zh-tw': compileMessageCatalog(zhTW),
-  ru: compileMessageCatalog(ru),
-  tr: compileMessageCatalog(tr),
-  ar: compileMessageCatalog(ar),
-};
-
-/**
- * The switcher's locale codes, in display order: the built-in English
- * first, then every compiled pack in `CATALOGS` order.
- *
- * Derived rather than listed, so a pack added above cannot end up without
- * a button, and a button cannot end up without a pack.
- */
-export const LOCALES = ['en', ...Object.keys(CATALOGS)];
-
-/**
- * Report-time localization: raw errors carry msgid + params; text
- * renders per locale without re-validating.
- */
-export function localizeErrors(errors: any, locale: any) {
-  const catalog = CATALOGS[locale as keyof typeof CATALOGS];
-  if (catalog === undefined) return errors;
-  // validate's own localizer, over copies (the report is cached per run):
-  // it keeps the text a schema wrote, as the error's `inlineMessage` says
-  return localizeValidationErrors(errors.map((error: any) => ({ ...error })), catalog);
-}
+/** The generated form's render tree for the schema and data, its field errors in `locale`. */
+export const formViewFor = (schemaText: any, data: any, schemas: any[] = [], locale: string = 'en') => playValidator.formView(schemaText, data, schemas, locale);
 
 /** The generated form's chrome (the array buttons' names and the JSON hint) in `locale`, English when no pack has it. */
-export function formLabelsFor(locale?: string) {
-  return formChromeLabels(CATALOGS[(locale ?? 'en') as keyof typeof CATALOGS]);
-}
+export const formLabelsFor = (locale?: string) => playValidator.formLabels(locale);
+
+/** Report-time localization over copies; the text a schema wrote stays as written. */
+export const localizeErrors = (errors: any, locale: any) => localizePlayErrors(errors, playCatalogs.catalogFor(locale));

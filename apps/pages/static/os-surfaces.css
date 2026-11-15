@@ -205,6 +205,8 @@
 .cal-swatch[aria-checked="true"] { box-shadow: 0 0 0 2px var(--chip); }
 .cal-error { margin: 0; color: var(--fail); font-size: 12.5px; min-block-size: 0; }
 .cal-error:empty { display: none; }
+.cal-hint { margin: -4px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+.cal-hint:empty { display: none; }
 .cal-form-actions { margin-block-start: 4px; }
 
 @media (max-width: 760px) {

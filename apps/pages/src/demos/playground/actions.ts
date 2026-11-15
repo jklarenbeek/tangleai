@@ -1,5 +1,6 @@
 /** Host transitions for the public Play component. */
 import { FORM_NUMBER_VALUE } from '@jarenjs/app';
+import { playFormActions } from '@jarenjs/play/host';
 export const PLAY_ACTIONS = {
   'play/example': { effects: [{ run: 'play-load', with: { id: '$payload' } }] },
   'play/loaded': {
@@ -10,9 +11,9 @@ export const PLAY_ACTIONS = {
       { op: 'replace', path: '/play/datasetIndex', value: '$payload.datasetIndex' },
       { op: 'replace', path: '/play/data', value: '$payload.data' },
       { op: 'replace', path: '/play/config', value: '$payload.config' },
-      // the reader's message language stays; only an example made to show
-      // one language (it names a locale) sets it
-      { op: 'replace', path: '/play/locale', value: { $if: ['$payload.config.locale', '$payload.config.locale', '$.play.locale'] } },
+      // the reader's message language stays; an example made to show one
+      // language shows it for its own run, until another load or a choice
+      { op: 'replace', path: '/play/exampleLocale', value: { $default: ['$payload.exampleLocale', null] } },
       { op: 'replace', path: '/play/result', value: null },
       // an example REPLACES the session's content, so it can no longer be
       // the saved record: unbind, or the next Save would overwrite that
@@ -53,6 +54,7 @@ export const PLAY_ACTIONS = {
       { op: 'replace', path: '/play/dataView', value: '$payload.dataView' },
       { op: 'replace', path: '/play/dataValue', value: '$payload.dataValue' },
       { op: 'replace', path: '/play/locale', value: '$payload.locale' },
+      { op: 'replace', path: '/play/exampleLocale', value: '$payload.exampleLocale' },
     ],
   },
   'play/dataset': { effects: [{ run: 'play-dataset', with: { index: '$payload' } }] },
@@ -97,9 +99,8 @@ export const PLAY_ACTIONS = {
       // a loaded record binds; a blank or SHARED session does not (a share
       // link is not a local record, so its first Save must ask for a name)
       { op: 'replace', path: '/play/savedName', value: { $default: ['$payload.savedName', null] } },
-      // the reader's message language wins over the one a session carries;
-      // before any choice, the session's language becomes the reader's
-      { op: 'replace', path: '/play/locale', value: { $if: ['$.play.locale', '$.play.locale', { $default: ['$payload.config.locale', null] }] } },
+      // a session carries no language: it renders in its reader's
+      { op: 'replace', path: '/play/exampleLocale', value: null },
       { op: 'replace', path: '/play/datasetIndex', value: 0 },
       { op: 'replace', path: '/play/result', value: null },
       { op: 'replace', path: '/play/panel', value: null },
@@ -118,10 +119,7 @@ export const PLAY_ACTIONS = {
     ]
   },
   'play/data-mirror': { patch: [{ op: 'add', path: '/play/data/data', value: '$payload' }] },
-  'play/f-input': { patch: [{ op: { $if: [{ $or: ['$payload.element', { $eq: ['$payload.pointer', ''] }] }, 'replace', 'add'] }, path: { $concat: ['/play/dataValue', '$payload.pointer'] }, value: '$event.value' }] },
-  'play/f-check': { patch: [{ op: { $if: [{ $or: ['$payload.element', { $eq: ['$payload.pointer', ''] }] }, 'replace', 'add'] }, path: { $concat: ['/play/dataValue', '$payload.pointer'] }, value: '$event.checked' }] },
-  'play/f-number': { patch: [{ op: { $if: [{ $or: ['$payload.element', { $eq: ['$payload.pointer', ''] }] }, 'replace', 'add'] }, path: { $concat: ['/play/dataValue', '$payload.pointer'] }, value: FORM_NUMBER_VALUE }] },
-  'play/f-json': { patch: [{ op: { $if: [{ $or: ['$payload.element', { $eq: ['$payload.pointer', ''] }] }, 'replace', 'add'] }, path: { $concat: ['/play/dataValue', '$payload.pointer'] }, value: '$event.formJsonValue' }] },
-  'play/f-add': { patch: [{ op: 'add', path: { $concat: ['/play/dataValue', '$payload.pointer', '/-'] }, value: '$payload.value' }] },
-  'play/f-remove': { patch: [{ op: 'remove', path: { $concat: ['/play/dataValue', '$payload.pointer'] } }] }
+  // the six form actions under play-scoped names, number text read by the
+  // standard number rule
+  ...playFormActions({ numberValue: FORM_NUMBER_VALUE }),
 };

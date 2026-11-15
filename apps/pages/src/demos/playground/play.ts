@@ -3,10 +3,18 @@
  * playground: pick an engine + an example, edit the source or the data, and
  * it runs live — the registered operator packs threaded in so `$mean`/`$npv`
  * work in the query/jslt engines. Ephemeral (no document, unlike the studio).
+ * The slice, its sessions and the reader-language rules are Jaren's play host
+ * kit (`@jarenjs/play/host`); this file adds the site's renderers and links.
  */
 import { createSplitterWidget } from '@jarenjs/app';
-import { isJsonObject } from '@jarenjs/core/object';
 import { createPlayComponent } from '@jarenjs/play/component';
+import {
+  PLAY_START as KIT_START, withPlayLocale as kitWithPlayLocale, runPlay as kitRunPlay, switchPlayOption as kitSwitchPlayOption,
+} from '@jarenjs/play/host';
+export {
+  loadExample, loadDataset, deepLinkExample, sessionOf, sessionToLoaded, sessionDocument, sessionFromDocument,
+  sessionFilename, blankSession,
+} from '@jarenjs/play/host';
 import { toMarkdown } from '@jarenjs/md';
 import { createMdx } from '@jarenjs/md/mdx';
 import { compileJsonQuery } from '@jarenjs/json';
@@ -14,7 +22,7 @@ import { operatorRegistry } from './services.ts';
 import { md, mdArticle, UNTRUSTED } from './services.ts';
 import { mermaid } from './services.ts';
 import { chartRenderer } from './services.ts';
-import { runValidation, localizeErrors } from './services.ts';
+import { playCatalogs, playValidator } from './validator.ts';
 import { formatJson } from './services.ts';
 
 /** The component, with the site's math/finance/stats packs mounted. */
@@ -104,142 +112,33 @@ const renderers = {
   charts: (source: any, config: any) => chartRenderer(source, config),
 };
 
-/** The initial slice: the first example, loaded and ready to run. */
-const first = playComponent.examples[0];
-export const PLAY_START = Object.freeze({
-  engine: first.engine,
-  exampleId: first.id,
-  source: { ...first.source },
-  datasetIndex: 0,
-  // source-only engines (josl/csv) carry no datasets — guard the seed
-  data: { ...(first.datasets[0]?.data ?? {}) },
-  config: { ...(first.config ?? {}) },
-  result: null,
-  panel: null, // the active result panel (tab) id; null → the first panel
-  // the drill-deeper depth toggle: deep panels stay hidden until asked for;
-  // a fresh example/session load resets both (calm by default)
-  deep: false,     // the depth toggle — true reveals the deep panels
-  deepPick: null,  // the active DEEP panel id; null → the first deep panel
-  // the phone layout: which single pane shows (examples | editor | result)
-  mobilePane: 'editor',
-  // the IDE half: a play SESSION is a saveable document
-  name: '',        // the session TITLE (the header input, freely edited)
-  // the store record this session is bound to, or null when it has never
-  // been saved. Save overwrites THIS; Save As writes the title as a new
-  // record and rebinds — which is the whole difference between them.
-  savedName: null,
-  names: [],       // the saved session names (seeded from the play doc-store)
-  shared: null,    // the last Share status line (or null)
-  ratio: 0.5,      // the editors|result split (the shared splitter widget)
-  // the generated-form half: the validate engine's data pane can
-  // toggle between the JSON textarea and a schema-generated form; `dataValue`
-  // is the structured buffer the form edits, mirrored back to the data text
-  dataView: 'json', // 'json' | 'form'
-  dataValue: null,  // the parsed data the form binds to (validate + form only)
-  // the message language the reader chose (the Messages select), kept
-  // across examples, New and opened sessions; null until one is chosen
-  locale: null,
-});
-
 /**
- * The play slice as the engines and the panes read it: the reader's
- * message language (`slice.locale`) is the locale of every engine that
- * offers the option, whatever the loaded example or session carried.
- * @param slice - the `state.play` slice
- * @returns the slice, its config carrying the chosen locale
+ * The initial slice: the kit's (the first example, loaded and ready to run)
+ * plus the reader's message language, null until they choose one on the
+ * Messages pane. Only the reader sets it; an example made to show one
+ * language shows it for its own run (`exampleLocale`).
  */
-export function withPlayLocale(slice: any) {
-  const locale = slice.locale;
-  if (typeof locale !== 'string' || slice.config?.locale === locale) return slice;
-  const engine = Object.hasOwn(playComponent.engines, slice.engine) ? playComponent.engines[slice.engine] : undefined;
-  if (!(engine?.optionPanes ?? []).some((pane: any) => pane.key === 'locale')) return slice;
-  return { ...slice, config: { ...(slice.config ?? {}), locale } };
+export const PLAY_START = Object.freeze({ ...KIT_START, locale: null as string | null });
+
+/** The play slice as the engines and the panes read it, in the reader's language. */
+export const withPlayLocale = (slice: any) => kitWithPlayLocale(slice, slice.locale ?? null);
+
+/** Run the active engine in the reader's language, with the site's operators, renderers and validator. */
+export function runPlay(slice: any) {
+  return kitRunPlay(playComponent, slice, {
+    lang: slice.locale ?? null, catalogs: playCatalogs,
+    operators: operatorRegistry, renderers, validate: playValidator.validate,
+  });
 }
 
 /**
- * A play SESSION as a saveable/shareable document: the engine, its source and
- * data panes, the option config, and the originating example id. This is what
- * `createDocStore` persists and `encodeShare` turns into a `#/play?s=` link.
- * @param slice - the `state.play` slice
+ * The slice fields a switch of one option pane leaves (the kit's
+ * `switchPlayOption`); choosing on the `locale` pane makes that language the
+ * reader's, kept across examples, New and opened sessions.
  */
-export function sessionOf(slice: any) {
-  // a session carries the language on screen, the chosen one included
-  slice = withPlayLocale(slice);
-  return {
-    engine: slice.engine,
-    exampleId: slice.exampleId ?? null,
-    source: { ...(slice.source ?? {}) },
-    data: { ...(slice.data ?? {}) },
-    config: { ...(slice.config ?? {}) },
-  };
-}
-
-/**
- * A session document → the `play/loaded-session` payload (a fresh run seeds
- * from it). A blank/foreign session is coerced to safe defaults so a bad
- * share token never crashes the surface.
- */
-export function sessionToLoaded(session: any) {
-  const s = session && typeof session === 'object' ? session : {};
-  return {
-    engine: typeof s.engine === 'string' ? s.engine : PLAY_START.engine,
-    exampleId: typeof s.exampleId === 'string' ? s.exampleId : null,
-    source: isJsonObject(s.source) ? s.source : {},
-    data: isJsonObject(s.data) ? s.data : {},
-    config: isJsonObject(s.config) ? s.config : {},
-  };
-}
-
-/** The version of the exported session envelope. */
-const PLAY_DOC = '0.1';
-
-/**
- * A session as a FILE: the saveable document plus its title, in a small
- * self-describing envelope. This is the way a session leaves the browser
- * when it is too big for a share link — the case the share refusal points
- * at — so it has to be something the import side can read back.
- * @param slice - the `state.play` slice
- */
-export function sessionDocument(slice: any) {
-  return { $play: PLAY_DOC, name: (slice.name ?? '').trim(), session: sessionOf(slice) };
-}
-
-/**
- * A file's text → `{ name, session }`, or null when it is not a play
- * document at all. Liberal on purpose: the envelope is what Download
- * writes, but a BARE session (what a share token decodes to, and what a
- * hand-written file is likely to be) loads too. Every field still goes
- * through `sessionToLoaded`, so a foreign or malicious shape lands as
- * safe defaults rather than reaching the engines.
- */
-export function sessionFromDocument(text: string): {
-  name: string;
-  session: any;
-} | null {
-  let parsed;
-  try { parsed = JSON.parse(String(text ?? '')); }
-  catch { return null; }
-  if (!isJsonObject(parsed)) return null;
-  const wrapped = parsed.session && typeof parsed.session === 'object';
-  const session = wrapped ? parsed.session : parsed;
-  // a document that names no engine is not a session — refuse it rather
-  // than silently opening the default one under the file's name
-  if (typeof session.engine !== 'string') return null;
-  const name = wrapped && typeof parsed.name === 'string' ? parsed.name : '';
-  return { name, session: sessionToLoaded(session) };
-}
-
-/** A filename for an exported session: its title, or a stable fallback. */
-export function sessionFilename(slice: any) {
-  const title = (slice.name ?? '').trim()
-    .replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, '-').toLowerCase();
-  return `${title === '' ? 'jaren-play-session' : title}.play.json`;
-}
-
-/** A blank session of the given engine (New): empty panes, default config. */
-export function blankSession(engineId: any) {
-  const engine = playComponent.engineIds().includes(engineId) ? engineId : PLAY_START.engine;
-  return { engine, exampleId: null, source: {}, data: {}, config: {} };
+export function switchPlayOption(slice: any, key: string, value: string) {
+  const { lang, ...next } = kitSwitchPlayOption(slice, key, value);
+  return { ...next, locale: lang ?? slice.locale ?? null };
 }
 
 /**
@@ -285,75 +184,4 @@ export function createPlaySplitterWidget() {
   return createSplitterWidget({
     grid: '.jplay', rail: '.jplay-rail', cssVar: '--jplay-ratio', action: 'play/layout-ratio',
   });
-}
-
-/** Host-injected JSON Schema validator for the `validate` engine (the hybrid
- * seam): reuse the site's cached `runValidation`, then localize the errors to
- * the chosen locale — so @jarenjs/validate + the locale packs stay in the host. */
-function validateRunner(schemaText: any, data: any, locale: any, schemas: any[] = []) {
-  const report = runValidation(schemaText, data, schemas);
-  return { ...report, errors: localizeErrors(report.errors, locale) };
-}
-
-/** Run the active engine over the current source + data (operators, option config, visual renderers, the validator). */
-export function runPlay(slice: any) {
-  slice = withPlayLocale(slice);
-  return playComponent.runExample(slice.engine, slice.source, slice.data,
-    { operators: operatorRegistry, config: slice.config, renderers, validate: validateRunner });
-}
-
-/** Load an example's source + first dataset (+ option config) into a slice-ready payload. */
-export function loadExample(exampleId: any) {
-  const ex = playComponent.examples.find((e) => e.id === exampleId);
-  if (ex === undefined) return null;
-  return {
-    engine: ex.engine, exampleId: ex.id,
-    source: { ...ex.source }, datasetIndex: 0,
-    data: { ...(ex.datasets[0]?.data ?? {}) },
-    config: { ...(ex.config ?? {}) },
-  };
-}
-
-/**
- * The example a deep link asks for: an exact `example` id wins, otherwise
- * the first example of `engine`. Returns the example id, or null when
- * neither names anything the library holds — a stale or hand-typed link
- * then leaves the seeded session alone instead of blanking it.
- */
-export function deepLinkExample(params: {
-  engine?: string;
-  example?: string;
-}): string | null {
-  const examples = playComponent.examples;
-  if (params.example !== undefined
-    && examples.some((e) => e.id === params.example)) return params.example;
-  if (params.engine === undefined) return null;
-  return examples.find((e) => e.engine === params.engine)?.id ?? null;
-}
-
-/**
- * The play slice a switch of one option pane leaves: the new config, and
- * the source and data that fit it (`switchOption`). When the switch loads
- * another example, the session follows it there, and the structured form
- * buffer — the old data's — goes, as it does when an example is picked.
- */
-export function switchPlayOption(slice: any, key: string, value: string) {
-  const next = playComponent.switchOption(slice.engine, key, value, slice);
-  const followed = next.example !== undefined;
-  return {
-    config: next.config, source: next.source, data: next.data,
-    exampleId: followed ? next.example : slice.exampleId,
-    datasetIndex: followed ? 0 : slice.datasetIndex,
-    dataView: followed ? 'json' : slice.dataView,
-    dataValue: followed ? null : slice.dataValue,
-    // choosing a message language makes it the reader's, for every later load
-    locale: key === 'locale' ? value : (slice.locale ?? null),
-  };
-}
-
-/** The data of one dataset (by index) of an example, or null. */
-export function loadDataset(exampleId: any, index: any) {
-  const ex = playComponent.examples.find((e) => e.id === exampleId);
-  const ds = ex?.datasets?.[index];
-  return ds ? { ...ds.data } : null;
 }

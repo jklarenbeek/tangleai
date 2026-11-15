@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.199.0**, tag `v0.199.0`, source commit
-`4959d454f238b942fa4207adedbb6b9a4086bf57`. Upstream `main` and the tag agreed
-when checked on 2026-11-15 (0.200.0, adding monthly and yearly recurrence, was still in its release check); npm still served 0.91.4. Runtime imports therefore
+Tangle consumes **Jaren 0.201.0**, tag `v0.201.0`, source commit
+`6a3f2b6c3bd85e5f9ff157e35ccb80b50968e4a3`. Upstream `main` and the tag agreed
+when checked on 2026-11-15; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.199.0` pin. A clean reconstruction from the pinned
+reference is an exact `0.201.0` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,35 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.200.0 to 0.201.0 and current adoption
+
+One release, answering Tangle's request for a Play host kit. `@jarenjs/play`
+gains the export `@jarenjs/play/host`: the JSON Schema runner for the
+`validate` seam (`createPlayValidator`, referenced schemas, localization over
+copies, the generated form), the language catalogs and their lazy loading
+(`createPlayCatalogs`, `createPackRequester`), the play slice and its
+reader-language rules (`PLAY_START`, `withPlayLocale`, `runPlay`,
+`switchPlayOption`), the session file, and the form's actions
+(`playFormActions`, `PLAY_FORM_VIEW`). Jaren's own site playground is built
+on it. No other export changed.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Play host kit (`@jarenjs/play/host`) | **Adopted in the Pages playground.** The port of the site's boundaries is gone: the validator is the kit's runner over the format sets, the form functions and every language pack, shared with the Studio and the project host; the slice, sessions, examples, option switch and form actions are the kit's. Pages keeps only its own renderers, operators, links from the retired playground and the splitter. With the kit comes its language rule: only the reader sets the language, a saved or shared session carries none and opens in its reader's, and an example made to show one language shows it for its own run. |
+
+## Changes from 0.199.0 to 0.200.0 and current adoption
+
+One release. The calendar's recurrence now expands MONTHLY and YEARLY rules
+with every BY part RFC 5545 allows, checked against the standard's examples
+and an independent implementation. A date a month or year lacks is skipped,
+never clamped or moved: a monthly series from 31 January meets 31 March next,
+and a yearly one from 29 February only leap years. SECONDLY, MINUTELY and
+HOURLY stay refused by name (`JY0020`). No export changed.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Monthly and yearly recurrence (`@jarenjs/core/calendar`) | **Adopted in the Pages desktop.** The Calendar's repeat choice offers "Every month" and "Every year" because the engine now compiles them, with no change to its model. The editor says when a series will skip: on the 29th to 31st of a month, and on 29 February. The iCalendar export carries the rules unchanged. |
 
 ## Changes from 0.193.1 to 0.199.0 and current adoption
 
@@ -407,7 +436,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.199.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.201.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

@@ -1,7 +1,8 @@
 /**
  * The desktop Calendar in a real browser: an event made in the editor shows in
  * the month and the day, a repeating one fills the weeks, one day of it can be
- * skipped, "find a time" offers free hours, the assistant books through the
+ * skipped, a monthly series says which months it skips, "find a time" offers
+ * free hours, the assistant books through the
  * `calendar` contract, and the calendar downloads as iCalendar.
  */
 import { test, expect } from './playwright.mjs';
@@ -70,4 +71,18 @@ test('the calendar downloads as iCalendar', async ({ page }) => {
   expect(text).toContain('BEGIN:VCALENDAR');
   expect(text).toContain('SUMMARY:Weekly review');
   expect(text).toContain('RRULE:FREQ=WEEKLY');
+});
+
+test('a monthly series on the 31st says which months it skips', async ({ page }) => {
+  const cal = await calendar(page);
+  await cal.getByRole('button', { name: 'New event' }).click();
+  await cal.getByLabel('Title').fill('Rent');
+  await cal.getByLabel('Date').fill('2027-01-31');
+  const hint = cal.locator('.cal-hint');
+  await expect(hint).toBeHidden();
+  await cal.getByLabel('Repeat').selectOption('monthly');
+  await expect(hint).toHaveText('Months without a 31st are skipped.');
+  await cal.locator('.cal-editor').getByRole('button', { name: 'Save' }).click();
+  const march = await page.evaluate(() => window.tangleOs.kernel.call('assistant', 'calendar', 'calendar.agenda', { from: '2027-02-01', days: 59 }));
+  expect(march.value.map(e => e.date)).toEqual(['2027-03-31']);
 });

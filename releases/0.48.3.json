@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "version": "0.48.3",
+  "baseVersion": "0.48.2",
+  "baseCommit": "898b2189320b32f013f200263bfaec80ffaf865d",
+  "preparationCommit": "898b2189320b32f013f200263bfaec80ffaf865d",
+  "initial": false,
+  "inputHash": "30d105e42bf5aa087c75d61f08cac018e4f6e9c6e72848c234a3736d83d9acd3",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Build on Jaren 0.201.0. Its calendar repeats monthly and yearly by the iCalendar standard, so the desktop Calendar now offers \"Every month\" and \"Every year\", and its editor says when a series skips a date that a month or year lacks. The Pages playground is now built on Jaren's play host kit instead of a copy of Jaren's site: a saved or shared session no longer carries a message language and opens in its reader's, and an example made to show one language shows it for its own run.",
+      "id": "jaren-foundation-0-201-0"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.48.3"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.48.3"
+    }
+  ]
+}
