@@ -1,5 +1,19 @@
 # @tangleai/forecast
 
+## 0.49.2
+
+### Patch Changes
+
+- Build on Jaren 0.207.0, whose assignment scoring covers one resource on one local civil day through an injected zone.
+- Updated dependencies
+  - @tangleai/models@0.49.2
+  - @tangleai/context@0.49.2
+  - @tangleai/agents@0.49.2
+  - @tangleai/mas@0.49.2
+  - @tangleai/documents@0.49.2
+  - @tangleai/search@0.49.2
+  - @tangleai/outcomes@0.49.2
+
 ## 0.49.1
 
 ### Patch Changes
