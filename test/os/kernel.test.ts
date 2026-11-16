@@ -222,3 +222,54 @@ describe('the contract bus', () => {
     assert.equal(!gone.ok && gone.error.code, 'OS0102');
   });
 });
+
+describe('settings', () => {
+  const DOC = { kind: 'document', app: { $app: '0.1', state: {}, view: [] } };
+  const FORM = { kind: 'form', schema: { type: 'object', additionalProperties: false, properties: { greeting: { type: 'string', maxLength: 20 }, count: { type: 'integer', minimum: 0, maximum: 9 } } } };
+
+  it('fits each kind to its host, keeps a page on the application\'s own origin, and refuses a secret', () => {
+    const ok = (m: object) => validateManifest(m).ok;
+    const code = (m: object) => { const v = validateManifest(m); return v.ok ? null : v.issues.map(i => i.code); };
+    assert.equal(ok(manifest('a', { settings: { kind: 'mount', mount: 'a-settings' } })), true);
+    assert.equal(ok({ ...manifest('b'), host: { kind: 'origin', url: 'https://suite.example/app' }, settings: { kind: 'page', url: 'https://suite.example/settings' } }), true);
+    assert.equal(ok({ ...manifest('c'), host: DOC, settings: FORM }), true);
+    assert.deepEqual(code(manifest('d', { settings: { kind: 'page', url: 'https://suite.example/settings' } })), ['OS0004'], 'a shipped module has a mount, not a page');
+    assert.deepEqual(code({ ...manifest('e'), host: { kind: 'origin', url: 'https://suite.example/app' }, settings: { kind: 'page', url: 'https://elsewhere.example/settings' } }), ['OS0004'], 'never another site in the desktop\'s chrome');
+    assert.deepEqual(code({ ...manifest('f'), host: DOC, settings: { kind: 'form', schema: { type: 'object', properties: { key: { type: 'string', writeOnly: true } } } } }), ['OS0004']);
+    assert.deepEqual(code({ ...manifest('g'), host: DOC, settings: { kind: 'form', schema: { type: 'object', properties: { pin: { type: 'string', format: 'password' } } } } }), ['OS0004']);
+    assert.deepEqual([...new Set(code(manifest('h', { settings: { type: 'object' } })))], ['OS0001'], 'a bare schema is not a settings declaration');
+  });
+
+  it('keeps a form module\'s values through the host\'s store, checked against its schema', () => {
+    const written: [string, unknown][] = [];
+    const kernel = createKernel({ settings: { read: () => undefined, write: (module, values) => { written.push([module, values]); } } });
+    kernel.install({ ...manifest('notes'), host: DOC, settings: FORM }, 'suite');
+    kernel.install(manifest('shop', { settings: { kind: 'mount', mount: 'shop-settings' } }), 'suite');
+    const events: string[] = [];
+    kernel.subscribe(e => { if (e.kind === 'settings') events.push(e.module!); });
+    assert.deepEqual(kernel.setSettings('notes', { greeting: 'Hi', count: 3 }), { ok: true, value: { greeting: 'Hi', count: 3 } });
+    assert.deepEqual(written, [['notes', { greeting: 'Hi', count: 3 }]]);
+    assert.deepEqual(events, ['notes']);
+    const refused = kernel.setSettings('notes', { count: 99 });
+    assert.equal(!refused.ok && refused.error.code, 'OS0106');
+    assert.equal(written.length, 1, 'refused values are not kept');
+    const own = kernel.setSettings('shop', { anything: true });
+    assert.equal(!own.ok && own.error.code, 'OS0105', 'an application with its own settings keeps them');
+    assert.deepEqual(kernel.settings('shop'), {});
+  });
+
+  it('serves a module its own values and opens its own section, over its own port', async () => {
+    const kernel = createKernel();
+    kernel.install({ ...manifest('notes'), host: DOC, settings: FORM }, 'suite');
+    kernel.setSettings('notes', { greeting: 'Hello' });
+    let opened = 0;
+    const channel = new MessageChannel();
+    kernel.serveModule('notes', channel.port1, { openSettings: () => { opened++; } }); channel.port1.start();
+    const client: any = openPortClient(systemContracts().os, { channel: channel.port2, timeoutMs: 5000 }); channel.port2.start();
+    try {
+      assert.deepEqual((await client.invoke('settings.get', {})).value, { values: { greeting: 'Hello' } });
+      await client.invoke('settings.open', {});
+      assert.equal(opened, 1);
+    } finally { channel.port1.close(); channel.port2.close(); }
+  });
+});

@@ -11,6 +11,7 @@ import { servePort } from '@jarenjs/contract/port';
 import { openPortClient } from '@jarenjs/contract/port';
 import { openLocalClient } from '@jarenjs/contract/local';
 import { validateManifest, type ModuleManifest, type ManifestIssue } from './manifest.ts';
+import { JarenValidator } from '@jarenjs/validate';
 import { systemContracts } from './contracts.ts';
 
 export type Layer = 'shipped' | 'suite' | 'user';
@@ -18,7 +19,13 @@ export type JournalEntry = { seq: number, at: number, layer: Layer, module: stri
 export type LedgerEntry = { seq: number, at: number, caller: string, contract: string, op: string, ok: boolean, code?: string, ms: number };
 export type MailEnvelope = { id: string, at: number, from: string, to: string, subject: string, body?: string, data?: unknown, read: boolean };
 export type Outcome = { ok: true, value: unknown } | { ok: false, error: { code: string, message: string } };
-export type KernelEvent = { kind: 'modules' | 'mail' | 'ledger' | 'providers' | 'title', module?: string, title?: string };
+export type KernelEvent = { kind: 'modules' | 'mail' | 'ledger' | 'providers' | 'title' | 'settings', module?: string, title?: string };
+/**
+ * Where the desktop keeps the values of a `form` module's settings (a module
+ * with no server of its own). A host passes its own storage; the default keeps
+ * them for the page's lifetime. Never secrets: a form refuses them.
+ */
+export type SettingsStore = { read(module: string): unknown, write(module: string, values: unknown): void };
 
 type Entry = { base: ModuleManifest, layer: Layer, overlays: { layer: Layer, patch: unknown[] }[] };
 /** Any contract client: an object with `invoke`, as every Jaren binding returns. */
@@ -49,7 +56,7 @@ const scopeOf = (contract: string, op: string) => [`${contract}.${op}`, `${contr
  * `assistantGrants`: what the assistant may call — `'all'`, or scopes
  * (`contract.op`, `contract.*`). Nothing by default: a host decides.
  */
-export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[], tools?: ToolBuilder } = {}) {
+export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[], tools?: ToolBuilder, settings?: SettingsStore } = {}) {
   const now = options.now ?? (() => Date.now());
   const recovery = options.recovery === true;
   const entries = new Map<string, Entry>();
@@ -61,6 +68,17 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   const mail: MailEnvelope[] = [];
   const listeners = new Set<(event: KernelEvent) => void>();
   let seq = 0, mailSeq = 0;
+  const kept = new Map<string, unknown>();
+  const store: SettingsStore = options.settings ?? { read: (module) => kept.get(module), write: (module, values) => { kept.set(module, values); } };
+  const checkers = new Map<string, { key: string, check: (value: unknown) => any }>();
+  /** The compiled schema of a form module's settings, compiled again only when its manifest changes it. */
+  function checker(module: string, schema: Record<string, unknown>) {
+    const key = JSON.stringify(schema), known = checkers.get(module);
+    if (known?.key === key) return known.check;
+    const check = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' }).compile(schema) as any;
+    checkers.set(module, { key, check });
+    return check;
+  }
 
   const emit = (event: KernelEvent) => { for (const listener of listeners) listener(event); };
   const record = (entry: Omit<JournalEntry, 'seq' | 'at'>) => journal.push({ seq: ++seq, at: now(), ...entry });
@@ -186,6 +204,33 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     grant(caller: string, scope: string) { const set = grants.get(caller) ?? new Set<string>(); set.add(scope); grants.set(caller, set); emit({ kind: 'modules', module: caller }); },
     revoke(caller: string, scope: string) { grants.get(caller)?.delete(scope); emit({ kind: 'modules', module: caller }); },
     grants(): Record<string, string[]> { return Object.fromEntries([...grants].map(([k, v]) => [k, [...v].sort()])); },
+    /** A `form` module's settings as the person set them (`{}` until they do); `{}` for a module that keeps its own. */
+    settings(module: string): unknown {
+      const manifest = kernel.effective(module);
+      if (manifest?.settings?.kind !== 'form') return {};
+      return cloneJson(store.read(module) ?? {});
+    },
+
+    /**
+     * The person sets a `form` module's settings in the desktop's Settings:
+     * checked against the module's schema, kept, and reported (`settings`).
+     * Refused for a module that keeps its own (`OS0105`) or values its schema
+     * refuses (`OS0106`).
+     */
+    setSettings(module: string, values: unknown): Outcome {
+      const manifest = kernel.effective(module);
+      if (manifest?.settings?.kind !== 'form') return refusal('OS0105', `'${module}' keeps its own settings`);
+      const outcome = checker(module, manifest.settings.schema)(values);
+      const valid = typeof outcome === 'object' && outcome !== null ? outcome.valid : outcome === true;
+      if (!valid) {
+        const first = (outcome?.errors ?? [])[0];
+        return refusal('OS0106', `the settings of '${module}' are refused${first ? `: ${first.instancePath || '/'} ${first.message ?? ''}`.trimEnd() : ''}`);
+      }
+      store.write(module, cloneJson(values));
+      emit({ kind: 'settings', module });
+      return { ok: true, value: cloneJson(values) };
+    },
+
     allowed(caller: string, contract: string, op: string): boolean {
       if (TRUSTED.has(caller)) return true;
       if (caller === 'assistant' && options.assistantGrants === 'all') return true;
@@ -257,12 +302,14 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
      * Serve `tangle_os` to one module over its own port. The module's id is
      * bound here, by the port it was handed, never taken from its input.
      */
-    serveModule(module: string, port: any, hooks: { setTitle?: (title: string) => void } = {}): ServedContract {
+    serveModule(module: string, port: any, hooks: { setTitle?: (title: string) => void, openSettings?: () => void } = {}): ServedContract {
       const { os } = systemContracts();
       return servePort(os, {
         'os.call': async ({ contract, op, input }: any) => kernel.call(module, contract, op, input ?? {}),
         'mail.send': ({ to, subject, body, data }: any) => ({ id: kernel.sendMail(module, { to, subject, body, data }).id }),
         'window.title': ({ title }: any) => { hooks.setTitle?.(title); emit({ kind: 'title', module, title }); return {}; },
+        'settings.get': () => ({ values: kernel.settings(module) }),
+        'settings.open': () => { hooks.openSettings?.(); return {}; },
       }, { channel: port }) as ServedContract;
     },
 

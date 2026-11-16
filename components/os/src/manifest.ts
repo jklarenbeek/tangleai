@@ -30,8 +30,13 @@ export type ModuleManifest = {
   requires?: { contract: string, operations?: string[] }[];
   styles?: string;
   window?: { width?: number, height?: number, minWidth?: number, minHeight?: number, singleton?: boolean, resizable?: boolean };
-  settings?: Record<string, unknown>;
+  settings?: ModuleSettings;
 };
+/** Where a module's settings live in the desktop's Settings (see the schema's `settings`). */
+export type ModuleSettings = { title?: LocalizedText, keywords?: string[] } & (
+  | { kind: 'mount', mount: string }
+  | { kind: 'page', url: string }
+  | { kind: 'form', schema: Record<string, unknown> });
 
 export type ManifestIssue = { code: string, path: string, message: string };
 export type ManifestVerdict = { ok: true, manifest: ModuleManifest } | { ok: false, issues: ManifestIssue[] };
@@ -51,7 +56,8 @@ function shape() {
  * Validate a module manifest. Returns a frozen copy on success, so a caller
  * holding the input cannot change an installed module behind the kernel's
  * back; refusals carry a JSON pointer and a code (`OS0001` shape, `OS0002`
- * host kind, `OS0003` duplicate contract).
+ * host kind, `OS0003` duplicate contract, `OS0004` settings that do not fit
+ * the module).
  */
 export function validateManifest(value: unknown): ManifestVerdict {
   const issues: ManifestIssue[] = [];
@@ -72,6 +78,18 @@ export function validateManifest(value: unknown): ManifestVerdict {
       if (!seen.has(key)) { seen.add(key); issues.push({ code: 'OS0001', path, message }); }
     }
     return { ok: false, issues: issues.slice(0, 16) };
+  }
+  const settings = (value as ModuleManifest).settings, kind = (value as ModuleManifest).host.kind;
+  if (settings) {
+    const fits = { mount: 'shipped', page: 'origin', form: 'document' } as const;
+    if (fits[settings.kind] !== kind) issues.push({ code: 'OS0004', path: '/settings/kind', message: `'${settings.kind}' settings belong to a ${fits[settings.kind]} module, not a ${kind} one` });
+    else if (settings.kind === 'page') {
+      // a settings page comes from the application's own origin, never another site in the desktop's chrome
+      let same = false;
+      try { same = new URL(settings.url).origin === new URL((value as any).host.url).origin; } catch { same = false; }
+      if (!same) issues.push({ code: 'OS0004', path: '/settings/url', message: "a settings page must be on the application's own origin" });
+    } else if (settings.kind === 'form' && /"writeOnly"\s*:\s*true|"format"\s*:\s*"password"/.test(JSON.stringify(settings.schema)))
+      issues.push({ code: 'OS0004', path: '/settings/schema', message: 'the desktop keeps no secret: a form has no writeOnly or password member' });
   }
   const ids = new Set<string>();
   for (const [index, contract] of ((value as ModuleManifest).provides ?? []).entries()) {

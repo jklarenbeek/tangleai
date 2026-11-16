@@ -45,6 +45,18 @@ export const OS_CONTRACT = {
       input: { type: 'object', additionalProperties: false, required: ['title'], properties: { title: { type: 'string', maxLength: 200 } } },
       output: { type: 'object' },
     },
+    'settings.get': {
+      kind: 'read',
+      doc: 'This module\'s settings as the person set them in the desktop\'s Settings (a form module\'s values; empty for one that keeps its own).',
+      input: { type: 'object', additionalProperties: false, properties: {} },
+      output: { type: 'object', properties: { values: json } },
+    },
+    'settings.open': {
+      kind: 'command',
+      doc: 'Open the desktop\'s Settings at this module\'s own section.',
+      input: { type: 'object', additionalProperties: false, properties: {} },
+      output: { type: 'object' },
+    },
   },
 } as const;
 
@@ -65,6 +77,12 @@ export const MODULE_CONTRACT = {
       kind: 'command',
       doc: 'The person\'s language and writing direction.',
       input: { type: 'object', additionalProperties: false, required: ['locale', 'dir'], properties: { locale: { type: 'string', maxLength: 16 }, dir: { enum: ['ltr', 'rtl'] } } },
+      output: { type: 'object' },
+    },
+    'module.settings': {
+      kind: 'command',
+      doc: 'The module\'s settings changed in the desktop\'s Settings: its new values.',
+      input: { type: 'object', additionalProperties: false, properties: { values: json } },
       output: { type: 'object' },
     },
     'module.context': {

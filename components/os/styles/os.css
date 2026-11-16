@@ -231,6 +231,30 @@
 .tos-about dt { color: var(--muted); }
 .tos-about dd { margin: 0; font-family: var(--mono); }
 
+/* ── Settings ──────────────────────────────────────────────────────── */
+.tos-settings { display: grid; grid-template-columns: minmax(170px, 210px) 1fr; block-size: 100%; font-size: 14px; }
+.tos-content:has(> .tos-settings) { overflow: hidden; }
+.tos-settings-side { display: grid; grid-template-rows: auto 1fr; gap: 10px; padding: 14px 10px; border-inline-end: 1px solid var(--border); background: var(--bg); min-block-size: 0; }
+.tos-settings-search { inline-size: 100%; box-sizing: border-box; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm, 8px); background: var(--surface); color: var(--fg); font: inherit; }
+.tos-settings-search:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tos-settings-nav { display: grid; align-content: start; gap: 2px; overflow: auto; }
+.tos-settings-nav button {
+  display: flex; align-items: center; gap: 8px;
+  text-align: start; padding: 8px 12px; border: 0; border-radius: var(--radius-sm, 8px);
+  background: transparent; color: var(--fg); font: inherit; cursor: pointer;
+}
+.tos-settings-nav button:hover { background: var(--accent-soft); }
+.tos-settings-nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.tos-settings-nav button.is-current { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.tos-settings-nav .tos-glyph { inline-size: 18px; block-size: 18px; border-radius: 5px; flex: none; }
+.tos-settings-group { margin: 12px 12px 4px; font-size: 12px; font-weight: 600; color: var(--muted); }
+.tos-settings-pane { position: relative; padding: 20px 24px 28px; display: grid; align-content: start; gap: 14px; min-inline-size: 0; min-block-size: 0; overflow: auto; }
+.tos-settings-pane:has(> .tos-settings-frame) { padding: 0; align-content: stretch; }
+.tos-settings-frame { inline-size: 100%; block-size: 100%; border: 0; }
+.tos-settings-status { margin: 0; font-size: 12.5px; color: var(--muted); }
+.tos-settings-status[data-tone="fail"] { color: var(--fail); }
+@container (max-width: 560px) { .tos-settings { grid-template-columns: 1fr; grid-template-rows: auto 1fr; } .tos-settings-side { border-inline-end: 0; border-block-end: 1px solid var(--border); } .tos-settings-nav { grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; } }
+
 /* ── a module that did not answer ───────────────────────────────────── */
 .tos-notice { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; padding: 24px; text-align: center; background: var(--os-window-bg); }
 .tos-notice p { margin: 0; max-inline-size: 36ch; color: var(--muted); line-height: 1.5; }

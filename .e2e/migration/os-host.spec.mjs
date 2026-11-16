@@ -23,7 +23,9 @@ test.beforeAll(async () => {
   const bun = process.env.BUN ?? 'bun';
   execFileSync(bun, ['build', join(repo, 'test/fixtures/os-host/main.ts'), '--target=browser', '--format=esm', `--outfile=${join(out, 'main.js')}`], { stdio: 'inherit' });
   execFileSync(bun, ['build', join(repo, 'test/fixtures/os-host/echo.ts'), '--target=browser', '--format=esm', `--outfile=${join(out, 'echo.js')}`], { stdio: 'inherit' });
-  for (const page of ['index.html', 'echo.html', 'silent.html']) copyFileSync(join(repo, 'test/fixtures/os-host', page), join(out, page));
+  for (const page of ['index.html', 'echo.html', 'silent.html', 'old.html']) copyFileSync(join(repo, 'test/fixtures/os-host', page), join(out, page));
+  // an application on an earlier release joins with that release's one-file module side, from git
+  writeFileSync(join(out, 'old-module.js'), execFileSync('git', ['show', 'v0.49.2:releases/os/tangle-os-module.js'], { cwd: repo, maxBuffer: 8 << 20 }));
   // the host ships the stylesheet the way a production build does: minified
   execFileSync(bun, ['build', join(repo, 'components/os/styles/os.css'), '--minify', `--outfile=${join(out, 'os.css')}`], { stdio: 'inherit' });
   minified = readFileSync(join(out, 'os.css'), 'utf8');
@@ -175,4 +177,58 @@ test('a framed application that reloads connects again on fresh ports', async ({
   await page.locator('.tos-window[data-module="echo-app"] iframe').evaluate(frame => { frame.src = frame.src; });
   await expect.poll(async () => page.evaluate(() => window.harness.events.filter(e => e.module === 'echo-app' && e.type === 'ready').length)).toBe(2);
   expect(await say()).toEqual({ text: 'hi', loaded: 2 });
+});
+
+const settingsWindow = (page) => page.locator('.tos-window[data-module="settings"]');
+
+test("every application's settings are found in one place: from Settings, the window menu and the application itself", async ({ page }) => {
+  await host(page, 'modules=2&framed=1&settings=1', { width: 1280, height: 800 });
+  await page.evaluate(() => window.harness.desktop.openSettings());
+  const settings = settingsWindow(page);
+  const nav = settings.locator('.tos-settings-nav');
+  await expect(nav.locator('button')).toHaveText(['General', 'Screen 1', 'Echo', 'Notes']);
+  await expect(nav.locator('.tos-settings-group')).toHaveText('Applications');
+  await settings.getByRole('searchbox', { name: 'Search settings' }).fill('labels');
+  await expect(nav.locator('button')).toHaveText(['Screen 1']);
+  await settings.getByRole('searchbox', { name: 'Search settings' }).fill('');
+  // the window menu offers Settings for an application that declares them
+  await page.evaluate(() => { window.harness.desktop.close(window.harness.desktop.state().windows.find(w => w.module === 'settings').id); window.harness.desktop.open('screen-1'); });
+  await page.locator('.tos-window[data-module="screen-1"] .tos-titlebar').click({ button: 'right' });
+  await page.getByRole('menuitem', { name: 'Settings' }).click();
+  await expect(settings.locator('.tos-settings-pane h2.screen-settings')).toHaveText('Screen 1 settings');
+  await expect(settings.locator('[data-section="module:screen-1"]')).toHaveAttribute('aria-current', 'page');
+  // and the application opens its own section itself, with no grant
+  await settings.locator('[data-section="general"]').click();
+  await page.evaluate(() => window.harness.contexts['screen-1'].openSettings());
+  await expect(settings.locator('[data-section="module:screen-1"]')).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('.tos-window[data-module="settings"]')).toHaveCount(1, 'one Settings window, not one per application');
+});
+
+test("an application's settings page joins from its own origin without taking the application's contract", async ({ page }) => {
+  await host(page, 'modules=1&framed=1&settings=1', { width: 1280, height: 800 });
+  await page.evaluate(() => window.harness.desktop.openSettings('echo-app'));
+  const frame = settingsWindow(page).frameLocator('iframe.tos-settings-frame');
+  await expect(frame.locator('body')).toHaveAttribute('data-joined', 'yes');
+  const outcome = await page.evaluate(() => window.harness.kernel.call('shell', 'echo', 'echo.say', { text: 'hi' }));
+  expect(outcome.ok).toBe(false);
+  expect(outcome.error.code).toBe('OS0102');
+});
+
+test("a document module's settings are a form whose values the desktop keeps, checked against its schema", async ({ page }) => {
+  await host(page, 'modules=1&settings=1', { width: 1280, height: 800 });
+  await page.evaluate(() => window.harness.desktop.openSettings('notes-doc'));
+  const settings = settingsWindow(page);
+  await settings.getByLabel('Greeting').fill('Good morning');
+  await expect.poll(() => page.evaluate(() => window.harness.kernel.settings('notes-doc'))).toEqual({ greeting: 'Good morning' });
+  await expect(settings.locator('.tos-settings-status')).toHaveText('Saved.');
+  await settings.getByLabel('Count').fill('99');
+  await expect(settings.locator('.tos-settings-status')).toContainText('Not saved');
+  expect(await page.evaluate(() => window.harness.kernel.settings('notes-doc'))).toEqual({ greeting: 'Good morning' });
+});
+
+test('an application built on the 0.49.2 release still joins this desktop and serves its contract', async ({ page }) => {
+  await host(page, 'modules=1&framed=1&settings=1', { width: 1280, height: 800 });
+  await page.evaluate(() => window.harness.desktop.open('old-echo'));
+  await expect.poll(() => page.evaluate(async () => (await window.harness.kernel.call('shell', 'echo_old', 'echo.say', { text: 'hi' })).value ?? null)).toEqual({ text: 'hi', from: '0.49.2' });
+  expect(await page.evaluate(() => window.harness.events.filter(e => e.module === 'old-echo').map(e => e.type))).toContain('ready');
 });

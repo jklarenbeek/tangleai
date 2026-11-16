@@ -6,7 +6,7 @@
  * provider.
  */
 import { PROVIDERS, probeProvider } from '@tangleai/models/providers';
-import type { ShippedMount } from '@tangleai/os/shell';
+import type { SettingsSection } from '@tangleai/os/settings';
 import { THEME_KITS, composeTheme, patternBackground } from '@tangleai/os';
 
 /** The wallpaper patterns, by what they look like. */
@@ -75,7 +75,26 @@ async function veniceModels(signal: AbortSignal): Promise<ModelRow[]> {
 const money = (perMillion?: number) => perMillion === undefined ? '' : perMillion === 0 ? 'free' : `$${perMillion.toFixed(perMillion < 10 ? 2 : 0)}`;
 const tokens = (n?: number) => n === undefined ? '' : n >= 1_000_000 ? `${Math.round(n / 100_000) / 10}M` : `${Math.round(n / 1000)}k`;
 
-export function settingsMount(prefs: Preferences): ShippedMount {
+type SectionId = 'providers' | 'model' | 'appearance' | 'privacy';
+const keyReady = (prefs: Preferences) => { const k = prefs.active(); return !PROVIDER_KINDS[k].needsKey || prefs.connection(k).apiKey !== ''; };
+
+/**
+ * The site's own sections of the desktop's Settings (`@tangleai/os/settings`):
+ * providers and keys, models, appearance, privacy. Each draws into the pane
+ * Settings gives it and redraws itself when its preferences change.
+ */
+export function settingsSections(prefs: Preferences): SettingsSection[] {
+  return [
+    { id: 'providers', title: { en: 'Providers' }, keywords: ['key', 'api key', 'openrouter', 'anthropic', 'endpoint', 'provider'], mount: sectionMount(prefs, 'providers') },
+    { id: 'model', title: { en: 'Models' }, keywords: ['model', 'assistant', 'haiku', 'qwen'], mount: sectionMount(prefs, 'model') },
+    { id: 'appearance', title: { en: 'Appearance' }, keywords: ['theme', 'dark', 'light', 'wallpaper', 'colour', 'color', 'accent', 'kit'], mount: sectionMount(prefs, 'appearance') },
+    { id: 'privacy', title: { en: 'Privacy and data' }, keywords: ['privacy', 'forget', 'storage', 'data', 'reset'], mount: sectionMount(prefs, 'privacy') },
+  ];
+}
+/** Settings opens on the models once a provider is ready, on the providers before. */
+export const initialSection = (prefs: Preferences): SectionId => keyReady(prefs) ? 'model' : 'providers';
+
+function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount'] {
   return (node) => {
     const doc = node.ownerDocument;
     const win = doc.defaultView!;
@@ -94,31 +113,16 @@ export function settingsMount(prefs: Preferences): ShippedMount {
       return el;
     };
 
-    const root = h('div', { class: 'tos-settings' });
-    const nav = h('nav', { class: 'tos-settings-nav', 'aria-label': 'Settings sections' });
-    const pane = h('div', { class: 'tos-settings-pane' });
+    // Settings gives this section its pane; the section owns everything in it
+    const pane = node;
     /** Append to the pane, skipping the `false` a conditional row leaves. */
     const put = (...items: Child[]) => { for (const item of items) if (item !== null && item !== undefined && item !== false) pane.append(item); };
-    root.append(nav, pane);
-    node.append(root);
-
-    const sections = [
-      { id: 'providers', label: 'Providers', render: renderProviders },
-      { id: 'model', label: 'Models', render: renderModel },
-      { id: 'appearance', label: 'Appearance', render: renderAppearance },
-      { id: 'privacy', label: 'Privacy and data', render: renderPrivacy },
-    ];
-    const ready = () => { const k = prefs.active(); return !PROVIDER_KINDS[k].needsKey || prefs.connection(k).apiKey !== ''; };
-    let current = ready() ? 'model' : 'providers';
-
-    function show(id: string) {
-      current = id;
-      nav.replaceChildren(...sections.map(s => h('button', {
-        type: 'button', class: s.id === id ? 'is-current' : '', 'aria-current': s.id === id ? 'page' : undefined,
-        'data-section': s.id, onclick: () => show(s.id),
-      }, s.label)));
+    const current: SectionId = id;
+    const renders: Record<SectionId, () => void> = { providers: () => renderProviders(), model: () => renderModel(), appearance: () => renderAppearance(), privacy: () => renderPrivacy() };
+    /** Every change this section makes redraws this section. */
+    function show(_section: SectionId) {
       pane.replaceChildren();
-      sections.find(s => s.id === id)!.render();
+      renders[current]();
     }
 
     // ── providers ──────────────────────────────────────────────────────────
@@ -454,6 +458,6 @@ export function settingsMount(prefs: Preferences): ShippedMount {
       if (source === 'reset' || (what === 'desktop' ? current === 'appearance' : current === 'providers' || current === 'model')) show(current);
     });
     show(current);
-    return () => { unsubscribe(); lifetime.abort(); root.remove(); };
+    return () => { unsubscribe(); lifetime.abort(); pane.replaceChildren(); };
   };
 }

@@ -7,9 +7,9 @@
  * `@tangleai/os/module-host` once as a classic script for document modules.
  */
 export { MODULE_MANIFEST_SCHEMA, validateManifest, localized } from './manifest.ts';
-export type { ModuleManifest, ModuleHost, ContractDocument, LocalizedText, ManifestIssue, ManifestVerdict } from './manifest.ts';
+export type { ModuleManifest, ModuleHost, ModuleSettings, ContractDocument, LocalizedText, ManifestIssue, ManifestVerdict } from './manifest.ts';
 export { createKernel, toolName } from './kernel.ts';
-export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder } from './kernel.ts';
+export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore } from './kernel.ts';
 export { OS_CONTRACT, MODULE_CONTRACT, systemContracts, CONNECT, HELLO, KEY, FOCUS, PROTOCOL } from './contracts.ts';
 export type { ConnectMessage } from './contracts.ts';
 export {

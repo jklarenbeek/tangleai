@@ -8,11 +8,12 @@
 import type { Kernel, ModuleManifest } from '@tangleai/os';
 import type { ShippedMount } from '@tangleai/os/shell';
 import { assistantMount } from './assistant-app.ts';
-import { settingsMount } from './settings-app.ts';
+import { settingsSections, initialSection } from './settings-app.ts';
+import { settingsModule, SETTINGS_CONTRACT } from '@tangleai/os/settings';
 import type { Preferences } from './preferences.ts';
 import { welcomeMount } from './welcome-app.ts';
 import { loopMount } from './loop-app.ts';
-import { calendarMount, CALENDAR_CONTRACT } from './calendar-app.ts';
+import { calendarMount, calendarSettingsMount, CALENDAR_CONTRACT } from './calendar-app.ts';
 
 const t = (en: string, nl: string, de: string, fr: string, es: string, pt: string, ar: string, ja: string, ko: string, ru: string, tr: string, zhTW: string) =>
   ({ en, nl, de, fr, es, pt, ar, ja, ko, ru, tr, 'zh-TW': zhTW });
@@ -23,6 +24,8 @@ export const WELCOME = app('welcome', t('Welcome', 'Welkom', 'Willkommen', 'Bien
 export const CALENDAR: ModuleManifest = {
   ...app('calendar', t('Calendar', 'Agenda', 'Kalender', 'Calendrier', 'Calendario', 'Calendário', 'التقويم', 'カレンダー', '캘린더', 'Календарь', 'Takvim', '行事曆'), 'calendar', 350, { width: 1060, height: 720, minWidth: 560, minHeight: 440 }, 'productivity'),
   provides: [CALENDAR_CONTRACT as any],
+  // its working hours live in the desktop's Settings, beside every other application's
+  settings: { kind: 'mount', mount: 'calendar-settings', title: { en: 'Calendar' }, keywords: ['working hours', 'hours', 'agenda', 'find a time'] },
 };
 export const STUDIO = app('studio', t('Studio', 'Studio', 'Studio', 'Studio', 'Estudio', 'Estúdio', 'الاستوديو', 'スタジオ', '스튜디오', 'Студия', 'Stüdyo', '工作室'), 'studio', 200, { width: 1180, height: 760, minWidth: 520, minHeight: 420 });
 export const PLAYGROUND = app('playground', t('Playground', 'Speeltuin', 'Spielwiese', 'Bac à sable', 'Área de pruebas', 'Área de testes', 'ساحة التجربة', 'プレイグラウンド', '플레이그라운드', 'Песочница', 'Deneme alanı', '遊樂場'), 'playground', 320, { width: 1180, height: 760, minWidth: 520, minHeight: 420 });
@@ -45,6 +48,8 @@ export const SETTINGS: ModuleManifest = {
   title: { en: 'Settings', nl: 'Instellingen', de: 'Einstellungen', fr: 'Réglages', es: 'Ajustes', pt: 'Definições', ar: 'الإعدادات', ja: '設定', ko: '설정', ru: 'Настройки', tr: 'Ayarlar', 'zh-TW': '設定' },
   icon: { glyph: 'gear', hue: 215 },
   host: { kind: 'shipped', mount: 'settings' },
+  // the desktop's Settings (`@tangleai/os/settings`): shows a section when asked
+  provides: [SETTINGS_CONTRACT as any],
   window: { width: 860, height: 680, minWidth: 380, minHeight: 360, singleton: true },
 };
 
@@ -129,13 +134,13 @@ export const builtinModules = (): ModuleManifest[] => [WELCOME, ASSISTANT, CALEN
 
 /** The shipped components this desktop registers. */
 export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel, prefs: Preferences, open: (id: string) => void, surfaces: { mounts: Record<string, ShippedMount>, toolbox: any, system: string } }): Record<string, ShippedMount> {
-  return {
+  const mounts: Record<string, ShippedMount> = {
     ...host.surfaces.mounts,
     welcome: welcomeMount(host.open),
     calendar: calendarMount(),
+    'calendar-settings': calendarSettingsMount(),
     loop: loopMount,
     assistant: assistantMount(host.kernel, host.prefs, () => host.open('settings'), { toolbox: host.surfaces.toolbox, system: host.surfaces.system }),
-    settings: settingsMount(host.prefs),
     about(node, context) {
       const doc = node.ownerDocument;
       const article = doc.createElement('article');
@@ -160,4 +165,7 @@ export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel,
       return () => { live = false; article.remove(); };
     },
   };
+  // the desktop's Settings: the site's own sections, then every application's
+  mounts.settings = settingsModule({ kernel: host.kernel, shipped: mounts, sections: settingsSections(host.prefs), initial: () => initialSection(host.prefs) }).mount;
+  return mounts;
 }

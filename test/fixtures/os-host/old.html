@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Old echo</title></head>
+<body><p>Old echo</p>
+<script type="module">
+  // the module side as released in 0.49.2 (old-module.js is that release's tangle-os-module.js)
+  import { connectToOs } from './old-module.js';
+  const ECHO_OLD = { $contract: '0.1', id: 'echo_old', operations: { 'echo.say': { kind: 'read', input: { type: 'object', properties: { text: { type: 'string' } } }, output: { type: 'object' } } } };
+  connectToOs({ origins: 'parent', serve: [{ contract: ECHO_OLD, handlers: { 'echo.say': ({ text }) => ({ text, from: '0.49.2' }) } }] }).then(() => { document.body.dataset.joined = 'yes'; });
+</script></body></html>

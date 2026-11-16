@@ -24,6 +24,14 @@ export const osMessagesEn = {
   'menu/show-desktop': 'Show the desktop',
   'menu/show-windows': 'Show all windows',
   'menu/close-all': 'Close all windows',
+  'menu/settings': 'Settings',
+  'settings/search': 'Search settings',
+  'settings/sections': 'Settings sections',
+  'settings/applications': 'Applications',
+  'settings/no-match': 'No setting matches.',
+  'settings/empty': 'There is nothing to set yet.',
+  'settings/saved': 'Saved.',
+  'settings/refused': 'Not saved: {detail}',
 } as const;
 
 export type OsMessageKey = keyof typeof osMessagesEn;

@@ -30,6 +30,10 @@ export type ShippedContext = {
   readonly visible: boolean;
   /** Called when the window is hidden or shown again, so a module can pause what only matters on screen. */
   onVisibility(listener: (visible: boolean) => void): () => void;
+  /** The desktop's theme now: tokens and scheme. */
+  readonly theme: { tokens: Record<string, string>, scheme?: 'light' | 'dark' };
+  /** Open the desktop's Settings at this module's own section. */
+  openSettings(): void;
 };
 /**
  * What happened to a window, with its state after it: a host that subscribes
@@ -79,6 +83,8 @@ export type DesktopOptions = {
    * for it; a module that answers later still connects.
    */
   connectTimeoutMs?: number;
+  /** The module that is the desktop's Settings (`settings` by default, as `@tangleai/os/settings` installs it). */
+  settings?: string;
   /** Defaults to the node's owner window. */
   window?: Window;
   onError?: (error: unknown) => void;
@@ -233,7 +239,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       notice?.remove(); notice = null; entry.el.classList.remove('is-failed');
       const os = new MessageChannel(), control = new MessageChannel();
       const provided = (manifest.provides ?? []).map(contract => ({ contract, channel: new MessageChannel() }));
-      entry.served = kernel.serveModule(manifest.id, os.port1, { setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)) });
+      entry.served = kernel.serveModule(manifest.id, os.port1, { setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)), openSettings: () => openSettings(manifest.id) });
       os.port1.start();
       const moduleClient = openPortClient(systemContracts().module, { channel: control.port1, timeoutMs: 10_000 });
       control.port1.start();
@@ -269,6 +275,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       const dispose = mount(entry.content, {
         module: manifest, window: w.id, locale: locale.locale, dir: locale.dir,
         get visible() { return seen.visible; },
+        get theme() { return { tokens: { ...theme.tokens }, scheme: theme.scheme }; },
+        openSettings: () => openSettings(manifest.id),
         onVisibility: (listener) => { seen.listeners.add(listener); return () => { seen.listeners.delete(listener); }; },
         call: (contract, op, input) => kernel.call(manifest.id, contract, op, input),
         sendMail: (envelope) => { kernel.sendMail(manifest.id, envelope); },
@@ -383,6 +391,18 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       lifecycle('failed', created.id);
     }
     return created.id;
+  }
+
+  /**
+   * Open the desktop's Settings, at a module's own section when one is
+   * named: the one place every application's settings are found.
+   */
+  function openSettings(moduleId?: string) {
+    const settingsId = options.settings ?? 'settings';
+    if (!kernel.effective(settingsId)) { report(new Error(`no Settings module '${settingsId}' is installed`)); return; }
+    const running = desktop.windows.find(w => w.module === settingsId);
+    if (running) setDesktop(focusWindow(desktop, running.id)); else open(settingsId);
+    if (moduleId) kernel.call('shell', 'tangle_os_settings', 'settings.show', { section: `module:${moduleId}` }).then(outcome => { if (!outcome.ok) report(new Error(outcome.error.message)); });
   }
 
   function close(id: string) {
@@ -502,6 +522,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       { label: t('window/minimize'), run: () => setDesktop(minimizeWindow(desktop, id)) },
       { label: w.maximized ? t('window/restore') : t('window/maximize'), run: () => setDesktop(toggleMaximize(desktop, id)) },
       ...(singleton(w.module) ? [] : ['separator' as const, { label: t('menu/new-window'), run: () => { open(w.module); } }]),
+      ...(kernel.effective(w.module)?.settings ? ['separator' as const, { label: t('menu/settings'), run: () => openSettings(w.module) }] : []),
       'separator',
       { label: t('window/close'), run: () => close(id) },
     ];
@@ -515,6 +536,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     const entries: MenuEntry[] = running.map(w => ({ label: w.title, glyph: appGlyph(manifest), run: () => setDesktop(focusWindow(desktop, w.id)) }));
     if (running.length === 0) entries.push({ label: t('dock/open', { title }), run: () => { open(moduleId); } });
     else if (!singleton(moduleId)) entries.push('separator', { label: t('menu/new-window'), run: () => { open(moduleId); } });
+    if (manifest.settings) entries.push('separator', { label: t('menu/settings'), run: () => openSettings(moduleId) });
     if (running.length) entries.push('separator', { label: running.length === 1 ? t('window/close') : t('menu/close-all'), run: () => { for (const w of windowsOf(moduleId)) close(w.id); } });
     return entries;
   }
@@ -660,6 +682,12 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   const unsubscribe = kernel.subscribe((event) => {
     if (event.kind === 'mail') { renderDock(); renderMail(); }
     if (event.kind === 'modules') renderDock();
+    // a form module's windows hear their new settings; one that predates them may refuse, which is fine
+    if (event.kind === 'settings' && event.module) {
+      const values = kernel.settings(event.module);
+      for (const [id, m] of mounted) if (desktop.windows.find(w => w.id === id)?.module === event.module)
+        m.moduleClient?.invoke('module.settings', { values }).catch(() => {});
+    }
   });
   const onKey = (event: MessageEvent) => {
     const type = (event.data as any)?.type;
@@ -695,6 +723,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     maximize: (id: string) => setDesktop(toggleMaximize(desktop, id)),
     move: (id: string, x: number, y: number) => setDesktop(moveWindow(desktop, id, x, y)),
     state: (): Desktop => JSON.parse(JSON.stringify(desktop)),
+    /** Open the desktop's Settings, at a module's own section when one is named. */
+    openSettings,
     /** Every window change, as it happens; returns the unsubscribe. */
     subscribe(listener: (event: DesktopEvent) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     setTheme: applyShellTheme,

@@ -21,16 +21,6 @@
 .tos-link { border: 0; padding: 0; background: none; color: var(--accent); font: inherit; font-size: 12px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 
 /* ── settings ───────────────────────────────────────────────────────────── */
-.tos-settings { display: grid; grid-template-columns: 180px 1fr; block-size: 100%; font-size: 14px; }
-.tos-content:has(> .tos-settings) { overflow: hidden; }
-.tos-settings-nav { display: grid; align-content: start; gap: 2px; padding: 14px 10px; border-inline-end: 1px solid var(--border); background: var(--bg); }
-.tos-settings-nav button {
-  text-align: start; padding: 8px 12px; border: 0; border-radius: var(--radius-sm);
-  background: transparent; color: var(--fg); font: inherit; cursor: pointer;
-}
-.tos-settings-nav button:hover { background: var(--accent-soft); }
-.tos-settings-nav button.is-current { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-.tos-settings-pane { padding: 20px 24px 28px; display: grid; align-content: start; gap: 14px; min-inline-size: 0; min-block-size: 0; overflow: auto; }
 .tos-settings-pane h2 { margin: 0; font-size: 18px; letter-spacing: -.01em; }
 .tos-settings-pane .tos-muted { margin: 0; font-size: 12.5px; line-height: 1.5; }
 .tos-field { display: grid; gap: 6px; }

@@ -19,6 +19,8 @@ export type ConnectOptions = {
   /** Called with token values after they are applied to the document root. */
   onTheme?: (theme: { tokens: Record<string, string>, scheme?: 'light' | 'dark' }) => void;
   onLocale?: (locale: { locale: string, dir: 'ltr' | 'rtl' }) => void;
+  /** Called when the person changes this module's settings in the desktop's Settings (a `form` module's values). */
+  onSettings?: (values: unknown) => void;
   /** A compact description of what the page shows now, for the assistant. */
   context?: () => unknown;
   /** The window that sends the ports; the page's parent by default. */
@@ -52,6 +54,10 @@ export type OsConnection = {
   call(contract: string, op: string, input?: unknown): Promise<any>;
   sendMail(envelope: { to?: string, subject: string, body?: string, data?: unknown }): Promise<any>;
   setTitle(title: string): Promise<any>;
+  /** This module's settings as the person set them in the desktop's Settings (a `form` module's values). */
+  settings(): Promise<unknown>;
+  /** Open the desktop's Settings at this module's own section: the one place the person finds every application's settings. */
+  openSettings(): Promise<void>;
   close(): void;
 };
 
@@ -102,6 +108,7 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
         'module.theme': (theme: any) => { applyTheme(root, theme); options.onTheme?.(theme); return {}; },
         'module.locale': (locale: any) => { applyLocale(root, locale); options.onLocale?.(locale); return {}; },
         'module.context': () => (options.context?.() ?? {}) as object,
+        'module.settings': ({ values }: any) => { options.onSettings?.(values); return {}; },
       }, { channel: named.get('module') });
       disposers.push(() => (moduleServer as any)?.close?.());
       named.get('module')?.start?.();
@@ -133,6 +140,12 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
         call: (contract, op, input = {}) => client.invoke('os.call', { contract, op, input }),
         sendMail: (envelope) => client.invoke('mail.send', envelope),
         setTitle: (title) => client.invoke('window.title', { title }),
+        settings: async () => {
+          const outcome: any = await client.invoke('settings.get', {});
+          if (outcome?.ok === false) throw Object.assign(new Error(outcome.error?.message ?? 'settings.get failed'), { code: outcome.error?.code });
+          return (outcome?.ok === true ? outcome.value : outcome)?.values ?? {};
+        },
+        openSettings: async () => { await client.invoke('settings.open', {}); },
         close() { for (const dispose of disposers) dispose(); (client as any).close?.(); for (const port of ports) port.close?.(); },
       });
     };

@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "version": "0.51.0",
+  "baseVersion": "0.50.0",
+  "baseCommit": "c2a24bbfd3e8da92a77fa0d52a830aa625914d38",
+  "preparationCommit": "c2a24bbfd3e8da92a77fa0d52a830aa625914d38",
+  "initial": false,
+  "inputHash": "134ea32ce0c24bb57c9a7e46ea01565846091f44e1eb8b4ecdea8eb63e0a2e68",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "The desktop has one Settings for every application. `@tangleai/os/settings` is a Settings module a host installs with its own sections first and then one per application whose manifest declares `settings`: `mount` (a shipped module's own settings screen), `page` (an origin application's settings page, framed from its own origin and given no contract ports) or `form` (a document module's JSON Schema, whose values the desktop keeps through `createKernel({ settings })`, checked against the schema and never a secret). Applications keep their own values; the desktop is where the person finds them, with a search, from the window and dock menus, and from the application itself (`openSettings()` over its own port, no grant needed). The Pages desktop's Settings is this module, and the Calendar's working hours are a section of it.",
+      "id": "settings-in-one-place"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.51.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.51.0"
+    }
+  ]
+}

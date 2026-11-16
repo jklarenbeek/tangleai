@@ -235,8 +235,61 @@ export function calendarMount(): ShippedMount {
       'calendar.free': ({ minutes, days }: any) => freeSlots(cal, { minutes, days }).map(s => ({ start: new Date(s.start).toISOString(), end: new Date(s.end).toISOString() })),
     });
 
+    // working hours set in the desktop's Settings show here at once
+    const onHours = () => { cal = read(); slots = null; render(); };
+    win.addEventListener(CHANGED, onHours);
     render();
-    return () => root.remove();
+    return () => { win.removeEventListener(CHANGED, onHours); root.remove(); };
+  };
+}
+
+/** The event the Calendar's settings send when they change its document. */
+const CHANGED = 'tangle-calendar-changed';
+
+/**
+ * The Calendar's section in the desktop's Settings: the working hours that
+ * "find a time" searches within. It writes the same document the Calendar
+ * keeps, and an open Calendar window redraws from it.
+ */
+export function calendarSettingsMount(): ShippedMount {
+  return (node) => {
+    const doc = node.ownerDocument, win = doc.defaultView!;
+    const read = (): CalendarDocument => { try { const v = JSON.parse(win.localStorage.getItem(SLOT) ?? 'null'); return v?.$calendar === '0.1' ? v : emptyCalendar(); } catch { return emptyCalendar(); } };
+    const el = <K extends keyof HTMLElementTagNameMap>(tag: K, props: Record<string, string> = {}, text?: string) => {
+      const e = doc.createElement(tag); for (const [k, v] of Object.entries(props)) e.setAttribute(k, v); if (text) e.textContent = text; return e;
+    };
+    const status = el('p', { class: 'tos-settings-status', role: 'status' });
+    const save = (change: (hours: CalendarDocument['hours']) => CalendarDocument['hours'] | string) => {
+      const cal = read(), next = change({ ...cal.hours, days: [...cal.hours.days] });
+      if (typeof next === 'string') { status.textContent = next; status.dataset.tone = 'fail'; return; }
+      try { win.localStorage.setItem(SLOT, JSON.stringify({ ...cal, hours: next })); } catch { /* kept for this session */ }
+      win.dispatchEvent(new Event(CHANGED));
+      status.textContent = 'Saved.'; status.dataset.tone = 'ok';
+    };
+    const hours = read().hours;
+    const heading = el('h2', {}, 'Working hours');
+    const lead = el('p', { class: 'tos-muted' }, '"Find a time" offers free time only within these hours, and never time no hours cover.');
+    const days = el('fieldset', { class: 'tos-choices' });
+    days.append(el('legend', {}, 'Days'));
+    const names = new Intl.DateTimeFormat(doc.documentElement.lang || 'en', { weekday: 'long' });
+    WEEKDAYS.forEach((day, i) => {
+      const label = el('label', { class: 'tos-check' });
+      const box = el('input', { type: 'checkbox', name: 'day', value: day }) as HTMLInputElement;
+      box.checked = hours.days.includes(day);
+      box.addEventListener('change', () => save(h => ({ ...h, days: WEEKDAYS.filter(d => d === day ? box.checked : h.days.includes(d)) })));
+      label.append(box, names.format(new Date(2026, 0, 5 + i)));
+      days.append(label);
+    });
+    const time = (labelText: string, value: string, key: 'start' | 'end') => {
+      const label = el('label', { class: 'tos-field' }); const span = el('span', {}, labelText);
+      const input = el('input', { type: 'time', value, 'aria-label': labelText }) as HTMLInputElement;
+      input.addEventListener('change', () => save(h => { const next = { ...h, [key]: input.value }; return next.end > next.start ? next : 'The day must end after it starts.'; }));
+      label.append(span, input); return label;
+    };
+    const times = el('div', { class: 'tos-row' });
+    times.append(time('Starts', hours.start, 'start'), time('Ends', hours.end, 'end'));
+    node.append(heading, lead, days, times, status);
+    return () => { heading.remove(); lead.remove(); days.remove(); times.remove(); status.remove(); };
   };
 }
 

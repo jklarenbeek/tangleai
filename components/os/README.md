@@ -98,6 +98,43 @@ manifest's `minWidth` and `minHeight` when the person resizes it, and opens
 wholly on the desktop, sized to it. Motion stops under
 `prefers-reduced-motion`.
 
+## Settings: one place for every application
+
+`@tangleai/os/settings` is the desktop's Settings. It is the one place a
+person finds the settings of the desktop and of every application on it, so
+an application declares its settings rather than building a screen of its own.
+
+```ts
+import { settingsModule } from '@tangleai/os/settings';
+const settings = settingsModule({ kernel, shipped, sections: [{ id: 'general', title: { en: 'General' }, mount: (node) => drawGeneral(node) }] });
+kernel.install(settings.manifest, 'shipped');
+shipped.settings = settings.mount;                    // the host's own sections first, then each application's
+```
+
+An application's manifest says where its settings live:
+
+| `settings.kind` | For | The person sees | Who keeps the values |
+|---|---|---|---|
+| `mount` | a `shipped` module | the host's settings screen (`shipped[mount]`) in the Settings pane | the application |
+| `page` | an `origin` module | the application's settings page, framed from its own origin (refused otherwise, `OS0004`), joined for theme and language but given no contract ports | the application |
+| `form` | a `document` module | a form from the module's JSON Schema, saved as the person types, checked against the schema | the desktop, through `createKernel({ settings })`; never a secret (`OS0004`) |
+
+```json
+"settings": { "kind": "page", "url": "https://records.example/settings", "keywords": ["printer", "labels"] }
+```
+
+An application's values stay where it keeps them today (its server, its
+tenant, its database): the desktop is where the person finds them, not a
+second store. Only a document module, with no server of its own, has the
+desktop keep its values (`kernel.settings`, `kernel.setSettings`, and
+`onSettings` on the module side when they change).
+
+The person reaches an application's section three ways: in Settings itself
+(with a search over titles and `keywords`), from the window and dock menus,
+and from the application, which opens its own section over its own port with
+no grant (`connection.openSettings()` from a framed page, `context.openSettings()`
+in a shipped one). `desktop.openSettings(moduleId?)` opens it from the host.
+
 ## The kernel
 
 ```ts
