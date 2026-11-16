@@ -56,7 +56,7 @@ function fresh(root: string): Map<string, Buffer> {
   const manifest: OsManifest = {
     $osRelease: '0.1', version, protocol: PROTOCOL,
     package: { name: '@tangleai/os', file: os.filename, size: tarball.length, sha256: sha256(tarball), integrity: os.integrity, dependencies, exports: Object.keys(os.exports) },
-    module: { file: MODULE_FILE, size: module.length, sha256: sha256(module), format: 'esm', target: 'browser', exports: ['applyLocale', 'applyTheme', 'connectToOs'] },
+    module: { file: MODULE_FILE, size: module.length, sha256: sha256(module), format: 'esm', target: 'browser', exports: ['OsConnectError', 'applyLocale', 'applyTheme', 'connectToOs'] },
     foundation: { name: 'jarenjs', version: foundation.version, commit: foundation.commit },
     toolchain: { bun: cfg.bun },
   };

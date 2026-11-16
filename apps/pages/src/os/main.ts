@@ -34,6 +34,8 @@ const desktop = mountDesktop(node, {
   kernel,
   shipped: shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces }),
   documentHost: './os-module.html',
+  // a phone gets one maximized window at a time
+  compact: { below: 720 },
   theme: prefs.theme(prefs.effectiveScheme()),
   themeFor: (scheme) => prefs.theme(scheme),
   // the dock's switch is an explicit choice: it stops following the system

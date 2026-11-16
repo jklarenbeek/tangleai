@@ -3,6 +3,8 @@
    right-to-left desktop mirrors. */
 
 .tos {
+  /* the dock's tiles size themselves from the desktop's width */
+  container-type: inline-size;
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -33,15 +35,16 @@
   display: grid;
   grid-template-rows: auto 1fr;
   background: var(--os-window-bg);
-  backdrop-filter: var(--os-glass);
   -webkit-backdrop-filter: var(--os-glass);
+  backdrop-filter: var(--os-glass);
   border: 1px solid var(--border);
   border-radius: var(--os-radius-window);
   box-shadow: var(--os-shadow);
   overflow: hidden;
   transition: box-shadow 200ms ease, opacity 200ms ease, transform 200ms ease;
-  animation: tos-open 220ms cubic-bezier(.2, .9, .3, 1.2);
 }
+/* once, when the window opens: not again when it is shown or restored */
+.tos-window.is-opening { animation: tos-open 220ms cubic-bezier(.2, .9, .3, 1.2); }
 .tos-window.is-focused { box-shadow: var(--os-shadow-focus); }
 .tos-window:not(.is-focused) .tos-titlebar { opacity: .82; }
 .tos-window.is-maximized { border-radius: 0; border: 0; }
@@ -98,9 +101,14 @@
   translate: -50% 0;
   display: flex; align-items: center; gap: 6px;
   padding: 8px;
+  /* never wider than the desktop: the tiles shrink to fit, then the dock scrolls */
+  max-inline-size: calc(100% - 16px);
+  overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
   background: var(--os-dock-bg);
-  backdrop-filter: var(--os-glass);
   -webkit-backdrop-filter: var(--os-glass);
+  backdrop-filter: var(--os-glass);
   border: 1px solid var(--border);
   border-radius: 20px;
   box-shadow: var(--os-shadow);
@@ -109,7 +117,9 @@
 .tos-dock-item {
   position: relative;
   display: grid; place-items: center;
-  inline-size: var(--os-dock-size, 46px); block-size: var(--os-dock-size, 46px);
+  --tos-tile: clamp(32px, calc((100cqi - 96px) / var(--tos-dock-count, 12) - 6px), var(--os-dock-size, 46px));
+  flex: none;
+  inline-size: var(--tos-tile); block-size: var(--tos-tile);
   border: 0; border-radius: calc(var(--os-radius-window, 14px) - 2px);
   background: transparent; color: var(--fg);
   cursor: pointer;
@@ -122,7 +132,12 @@
   inline-size: 5px; block-size: 5px; border-radius: 50%;
   background: var(--accent);
 }
-.tos-dock-separator { inline-size: 1px; block-size: 30px; margin-inline: 4px; background: var(--border); }
+.tos-dock::-webkit-scrollbar { display: none; }
+.tos-dock-separator { flex: none; inline-size: 1px; block-size: 30px; margin-inline: 4px; background: var(--border); }
+.tos-dock-brand { flex: none; display: grid; place-items: center; block-size: var(--os-dock-size, 46px); max-inline-size: 120px; padding-inline: 4px 8px; overflow: hidden; }
+.tos-dock-brand > img { max-block-size: 70%; max-inline-size: 100%; object-fit: contain; }
+/* a compact desktop (a phone): every window is maximized, so it offers no maximize */
+.tos.is-compact .tos-maximize { display: none; }
 .tos-badge {
   position: absolute; inset-block-start: 2px; inset-inline-end: 2px;
   min-inline-size: 18px; block-size: 18px; padding-inline: 5px;
@@ -139,8 +154,8 @@
   overflow: auto;
   padding: 16px;
   background: var(--os-window-bg);
-  backdrop-filter: var(--os-glass);
   -webkit-backdrop-filter: var(--os-glass);
+  backdrop-filter: var(--os-glass);
   border: 1px solid var(--border);
   border-radius: var(--os-radius-window);
   box-shadow: var(--os-shadow-focus);
@@ -160,8 +175,8 @@
   display: grid; gap: 1px;
   padding: 5px;
   background: var(--os-window-bg);
-  backdrop-filter: var(--os-glass);
   -webkit-backdrop-filter: var(--os-glass);
+  backdrop-filter: var(--os-glass);
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: var(--os-shadow-focus);
@@ -197,7 +212,7 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35);
 }
 .tos-titlebar .tos-glyph { inline-size: 18px; block-size: 18px; border-radius: 5px; }
-.tos-dock .tos-glyph { inline-size: 34px; block-size: 34px; border-radius: 10px; }
+.tos-dock .tos-glyph { inline-size: calc(var(--tos-tile, 46px) * .74); block-size: calc(var(--tos-tile, 46px) * .74); border-radius: calc(var(--tos-tile, 46px) * .22); }
 .tos-glyph[data-glyph="app"]   { --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='4' y='4' width='7' height='7' rx='2'/%3E%3Crect x='13' y='4' width='7' height='7' rx='2'/%3E%3Crect x='4' y='13' width='7' height='7' rx='2'/%3E%3Crect x='13' y='13' width='7' height='7' rx='2'/%3E%3C/svg%3E"); }
 .tos-glyph[data-glyph="mail"]  { --hue: 205; --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 6h18v12H3z M3 7l9 6 9-6' fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E"); }
 .tos-glyph[data-glyph="sun"]   { --hue: 38;  --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='4.5'/%3E%3Cpath d='M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
@@ -215,3 +230,14 @@
 .tos-about dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 0; font-size: 13px; }
 .tos-about dt { color: var(--muted); }
 .tos-about dd { margin: 0; font-family: var(--mono); }
+
+/* ── a module that did not answer ───────────────────────────────────── */
+.tos-notice { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; padding: 24px; text-align: center; background: var(--os-window-bg); }
+.tos-notice p { margin: 0; max-inline-size: 36ch; color: var(--muted); line-height: 1.5; }
+.tos-notice button { padding: 8px 16px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-fg, #fff); font: inherit; cursor: pointer; }
+.tos-notice button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── reduced motion ────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .tos-window, .tos-dock-item, .tos-menu { animation: none !important; transition: none !important; }
+}

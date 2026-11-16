@@ -1,9 +1,14 @@
 /**
- * Run every `test/**\/*.test.ts` file through `node:test`'s `run()`, the longest
+ * Run the release suite through `node:test`'s `run()`: every `test/**\/*.test.ts`
+ * file except the long-running set ({@link LONG}: the committed measurements'
+ * reproduction and the crash-recovery qualification), which `--long` runs on
+ * its own and `--all` adds. Files run the longest
  * recorded file first so a long file never starts late and bounds the run, on
  * as many workers as the machine leaves room for: four at least, six at most.
  * (`node --test` sorts the files it is given, so the order needs the API.)
- * Files with no recorded time start first. `TANGLE_TEST_CONCURRENCY` or
+ * Files with no recorded time start first. A long-running file goes stale when
+ * the source it measured moves, so it is a separate, non-blocking check, not a
+ * release criterion. `TANGLE_TEST_CONCURRENCY` or
  * `--test-concurrency=N` sets the worker count, `TANGLE_TEST_ORDER=alpha`
  * restores the plain glob order, and `TANGLE_TEST_RECORD=1` on a full run
  * rewrites `scripts/test-durations.json` with each file's time, module-level
@@ -21,9 +26,13 @@ import * as reporters from 'node:test/reporters';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const RECORD = fileURLToPath(new URL('test-durations.json', import.meta.url));
+/** The long-running set: reproducing committed measurements, and qualifying crash recovery. */
+export const LONG = ['test/benchmark/**/*.test.ts', 'test/trading/recovery.test.ts'];
 const FLAGS = ['test-reporter', 'test-reporter-destination', 'test-name-pattern', 'test-skip-pattern', 'test-concurrency'];
 const flags = new Map(FLAGS.map(name => [name, [] as string[]])), patterns: string[] = [];
+let scope: 'release' | 'long' | 'all' = 'release';
 for (const arg of process.argv.slice(2)) {
+  if (arg === '--long' || arg === '--all') { scope = arg === '--long' ? 'long' : 'all'; continue; }
   const flag = /^--([a-z-]+)=(.*)$/s.exec(arg);
   if (flag && flags.has(flag[1])) flags.get(flag[1])!.push(flag[2]);
   else {
@@ -33,14 +42,17 @@ for (const arg of process.argv.slice(2)) {
 }
 const given = (name: string) => flags.get(name)!.length ? flags.get(name) : undefined;
 
-const all = [...new Set(patterns.length ? patterns.flatMap(pattern => globSync(pattern)) : globSync('test/**/*.test.ts'))].sort();
+const long = new Set(LONG.flatMap(pattern => globSync(pattern)));
+const everything = globSync('test/**/*.test.ts');
+const all = [...new Set(patterns.length ? patterns.flatMap(pattern => globSync(pattern))
+  : scope === 'long' ? [...long] : scope === 'all' ? everything : everything.filter(file => !long.has(file)))].sort();
 assert.ok(all.length, `No test file matches ${patterns.join(' ')}`);
 const recorded = new Map(Object.entries(JSON.parse(readFileSync(RECORD, 'utf8')).seconds as Record<string, number>));
 const files = process.env.TANGLE_TEST_ORDER === 'alpha' ? all
   : [...all.filter(file => !recorded.has(file)), ...all.filter(file => recorded.has(file)).sort((a, b) => recorded.get(b)! - recorded.get(a)!)];
 const record = process.env.TANGLE_TEST_RECORD === '1';
-assert.ok(!record || (!patterns.length && !given('test-name-pattern') && !given('test-skip-pattern') && process.env.TANGLE_TEST_ORDER !== 'alpha'),
-  'TANGLE_TEST_RECORD=1 records only a full run in the recorded order');
+assert.ok(!record || (scope === 'all' && !patterns.length && !given('test-name-pattern') && !given('test-skip-pattern') && process.env.TANGLE_TEST_ORDER !== 'alpha'),
+  'TANGLE_TEST_RECORD=1 records only a full run (--all) in the recorded order');
 const requested = Number(flags.get('test-concurrency')!.at(-1) ?? process.env.TANGLE_TEST_CONCURRENCY);
 const concurrency = Number.isSafeInteger(requested) && requested > 0 ? requested : Math.max(4, Math.min(6, availableParallelism() - 2));
 

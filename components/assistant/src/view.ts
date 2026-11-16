@@ -106,6 +106,8 @@ function checkState(value: unknown): Required<AssistantViewState> {
 const reason = (error: unknown) => (error instanceof Error ? error.message : typeof error === 'string' ? error : '').trim();
 const ACTIONS = {
   'ai/toggle': { patch: [{ op: 'replace', path: '/local/open', value: { $not: '$.local.open' } }], effects: [{ run: 'view-toggled' }] },
+  // the host opening or closing the panel (a shortcut, a window): no intent echoes back
+  'view/set-open': { patch: [{ op: 'replace', path: '/local/open', value: '$payload' }] },
   'ai/draft': { patch: [{ op: 'replace', path: '/local/draft', value: '$event.value' }] },
   'ai/send': { effects: [{ run: 'view-start' }] },
   'ai/cancel': { effects: [{ run: 'view-cancel' }] },
@@ -149,7 +151,10 @@ export function mountAssistantView(node: HTMLElement | null, options: AssistantV
   if (typeof transport?.start !== 'function' || typeof transport.cancel !== 'function')
     throw new TypeError('assistant view: transport must have start and cancel functions');
   const host = checkState(options.state), locale = rootLocale(options);
-  const id = instanceId(), md = replyMarkdown(id, messages), renderMarkdown = options.renderMarkdown ?? md.render;
+  // the view's own Markdown is built only when the host renders no replies itself
+  const id = instanceId();
+  let md: ReturnType<typeof replyMarkdown> | null = null;
+  const renderMarkdown = options.renderMarkdown ?? ((source: string) => (md ??= replyMarkdown(id, messages)).render(source));
   // the person leaving is not a cancellation: disposal aborts a start in
   // flight and never cancels the host's run
   const lifetime = new AbortController();
@@ -201,7 +206,7 @@ export function mountAssistantView(node: HTMLElement | null, options: AssistantV
   }, {
     node, document: node?.ownerDocument, schedule: options.schedule, onError: options.onError,
     eventFields: formEventFields(), effects,
-    afterRender: () => md.hydrate(node),
+    afterRender: () => md?.hydrate(node),
     viewModel: (state: any) => ({ ui: { assistant: project(state, messages, renderMarkdown) } }),
   });
   const detach = keepFragments(node);
@@ -220,6 +225,10 @@ export function mountAssistantView(node: HTMLElement | null, options: AssistantV
       const cancelError = next.status === 'running' && next.runId === cancelled ? local.cancelError : null;
       app.dispatch('view/host', { host: next, cancelError, starting, draft });
     },
+    /** Open, close or toggle the panel from the host, without remounting. */
+    open() { if (!disposed) app.dispatch('view/set-open', true); },
+    close() { if (!disposed) app.dispatch('view/set-open', false); },
+    toggle() { if (!disposed) app.dispatch('view/set-open', !app.getState().local.open); },
     read: (): AssistantViewSnapshot => {
       const { host, local } = app.getState();
       return structuredClone({ state: host, ...local });

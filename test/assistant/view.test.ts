@@ -261,3 +261,22 @@ it('a report is read once and kept apart from the host and the transport', t => 
   const unknown = mounted(t, { lang: '' });
   assert.equal(find(unknown.container, (n: any) => n.tagName === 'section').attributes.get('lang'), '', 'an empty lang is HTML\'s unknown language');
 });
+
+it('the host opens, closes and toggles the panel without remounting, and no intent echoes back', t => {
+  const view = mounted(t, { open: false });
+  assert.equal(view.handle.read().open, false);
+  view.handle.open();
+  assert.equal(view.handle.read().open, true);
+  view.handle.toggle();
+  assert.equal(view.handle.read().open, false);
+  view.handle.toggle(); view.handle.close();
+  assert.equal(view.handle.read().open, false);
+  assert.deepEqual(view.intents, [], 'the host knows what it asked for');
+});
+
+it('renders replies with the host\'s Markdown alone when it brings its own', t => {
+  const rendered: string[] = [];
+  const view = mounted(t, { state: { status: 'succeeded', messages: [{ role: 'user', content: 'Hi' }, { role: 'assistant', content: '**Done**' }] }, renderMarkdown: (source: string) => { rendered.push(source); return ['p', {}, `host:${source}`]; } });
+  assert.ok(serialize(view.container).includes('host:**Done**'), serialize(view.container).slice(0, 300));
+  assert.ok(rendered.includes('**Done**'));
+});

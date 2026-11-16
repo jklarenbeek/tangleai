@@ -42,6 +42,62 @@ sign-in, and the desktop sees only its contracts.
 - `@tangleai/os/schemas/module`, `@tangleai/os/styles/os.css`,
   `@tangleai/os/styles/module.css`.
 
+## Hosting the desktop in your own page
+
+An application can be the desktop: its page mounts the shell over its own
+screens, each a `shipped` module.
+
+```ts
+import { createKernel } from '@tangleai/os';
+import { mountDesktop } from '@tangleai/os/shell';
+const desktop = mountDesktop(node, {
+  kernel, shipped,
+  compact: { below: 760 },                          // a phone: one maximized window at a time
+  tray: { mail: false, brand: { label: 'Example shop', src: '/logo.svg' } },
+});
+desktop.subscribe((event) => save(event));           // opened, focused, minimized, restored, maximized, moved, resized, retitled, closed, ready, failed
+```
+
+- **Compact.** Below `compact.below` pixels every window opens maximized,
+  only the focused one is shown and windows offer no maximize; above it the
+  windows the desktop maximized get their places back. At any width the dock
+  stays on the desktop: its tiles shrink to fit, then it scrolls sideways,
+  every tile reachable by pointer and keyboard.
+- **Tray.** The mail tile and the light/dark switch are on by default
+  (`tray.mail`, `tray.theme`); mail still reaches `kernel.mail()` without its
+  tile. `tray.brand` puts a mark at the dock's start, an image (`src`) or a
+  node the host renders, with an accessible name; it is not a module and
+  takes no keyboard stop.
+- **Events.** `desktop.subscribe(listener)` reports every window change with
+  the window's state after it, so a host that subscribes before the first
+  `open` can rebuild `state()` from the events alone (to reopen windows after
+  a reload, or to know which window is focused). `restored` is a window
+  leaving minimized or maximized.
+- **Lifecycle.** `ready` reports a module running in its window (a framed
+  one once it has connected, and again after its page reloads, on fresh
+  ports); `failed` one that could not start or did not answer within
+  `connectTimeoutMs` (15 s by default). A window whose module did not answer
+  says so and offers to try again, and the shell holds no port or listener
+  for it meanwhile.
+- **Visibility.** A shipped module's context carries `visible` and
+  `onVisibility(listener)`: a window is visible when it is not minimized and,
+  on a compact desktop, focused; a module pauses its polling while hidden.
+- **Glyphs.** A manifest's `icon.glyph` names a mask the shell draws in the
+  module's hue, in the dock, the title bar and the menus. The shell ships
+  `app`, `mail`, `sun`, `moon`, `info`, `check`, `records`, `spark` and `gear`;
+  a host adds its own with one rule, which is supported API:
+
+  ```css
+  .tos-glyph[data-glyph="tag"] { --glyph: url("data:image/svg+xml,…"); }
+  ```
+
+  The SVG is a mask: its shape counts, not its colours.
+
+A window is a labelled `region` of the desktop, not a dialog; it keeps its
+manifest's `minWidth` and `minHeight` when the person resizes it, and opens
+wholly on the desktop, sized to it. Motion stops under
+`prefers-reduced-motion`.
+
 ## The kernel
 
 ```ts
@@ -92,6 +148,17 @@ const desktop = await connectToOs({
 });
 await desktop.sendMail({ subject: '3 items out of stock' });
 ```
+
+- **Bounded.** `connectTimeoutMs` bounds the wait for a desktop's answer and
+  `signal` abandons it; either refuses with an `OsConnectError` (`OS0401` no
+  answer in time, `OS0403` abandoned) and leaves no listener behind. A page
+  that is not framed at all is refused at once (`OS0402`), so the same page
+  runs on its own too. `timeoutMs` bounds each call once connected.
+- **Presentation.** By default the desktop's theme tokens, colour scheme,
+  language and direction land on the page's root. `presentation: 'none'`
+  keeps the application's own look (it still hears `onTheme` and `onLocale`,
+  and a press in the page still raises its window); `presentation: { root }`
+  puts them on an element of the page's own.
 
 The application lists its modules in a suite document the desktop reads:
 

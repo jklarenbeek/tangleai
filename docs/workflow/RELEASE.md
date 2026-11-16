@@ -38,7 +38,7 @@ The release commit follows the work-order commits and the final push includes
 them together. Authorization to close out when the campaign is complete covers
 this sequence; npm publication remains a separate manual author action.
 
-The current checkout consumes Jaren 0.207.0 as candidate artifacts: 23 tarballs
+The current checkout consumes Jaren 0.212.0 as candidate artifacts: 23 tarballs
 packed from the committed `vendor/jarenjs` source, which npm does not serve. The
 active `docs/migrations/jaren-ai/foundations.json` records each tarball's hashes,
 member inventory and dependency edges, so `npm ci --ignore-scripts` requires the
@@ -149,8 +149,19 @@ Ordinary releases must use the version computed from their Changesets records.
 
 ## Verify the published distribution
 
-`npm run release:verify` runs the full source gate, release-record checks, package
-build, packed consumers and Pages build. `release:build` emits ESM JavaScript and
+`npm run release:verify` runs the source gate with the release suite, release-record
+checks, package build, packed consumers and Pages build.
+
+**The release suite and the long-running set.** `npm test` runs every test file
+except the long-running set: `test/benchmark/**`, which reproduces committed
+measurements, and `test/trading/recovery.test.ts`, which qualifies crash
+recovery. A measurement records the source it measured, so it goes stale
+whenever that source moves (every Jaren pin and version bump) until the long
+regeneration measures it again; it reports evidence, it does not decide a
+release. `npm run test:long` runs that set alone and `npm run test:all` runs
+both; CI runs it as the `long-running` job, which never blocks `release-ready`.
+Read its failures before a regeneration: a stale receipt names its source,
+anything else is a defect. `release:build` emits ESM JavaScript and
 TypeScript declarations into a staging directory, preserves public subpaths,
 copies JSON schemas and compiled content artifacts, and creates the configured tarballs with package documentation,
 license and changelog. Every package-owned Markdown guide must appear in npm's

@@ -12,7 +12,7 @@ import { patternBackground } from './wallpaper.ts';
 import { createOsMessages, type OsCatalogue } from './messages.ts';
 import { applyTheme, applyLocale } from './module.ts';
 import {
-  closeWindow, emptyDesktop, focusWindow, minimizeWindow, moveWindow, openWindow, resizeWindow, setTitle, setViewport, stacked, toggleMaximize,
+  closeWindow, emptyDesktop, focusWindow, isVisible, minimizeWindow, moveWindow, openWindow, resizeDesktop, resizeWindow, setTitle, stacked, toggleMaximize,
   type Desktop, type WindowState,
 } from './windows.ts';
 import type { Kernel } from './kernel.ts';
@@ -26,6 +26,21 @@ export type ShippedContext = {
   provide(contract: unknown, handlers: Record<string, (input: any) => unknown>): void;
   locale: string;
   dir: 'ltr' | 'rtl';
+  /** Whether the window is on screen: not minimized, and on a compact desktop the focused one. */
+  readonly visible: boolean;
+  /** Called when the window is hidden or shown again, so a module can pause what only matters on screen. */
+  onVisibility(listener: (visible: boolean) => void): () => void;
+};
+/**
+ * What happened to a window, with its state after it: a host that subscribes
+ * before the first `open` can rebuild `state().windows` and `focus` from these
+ * alone. `restored` is a window leaving minimized or maximized.
+ */
+export type DesktopEvent = {
+  type: 'opened' | 'closed' | 'focused' | 'minimized' | 'restored' | 'maximized' | 'moved' | 'resized' | 'retitled'
+    /** The module is running in it (a framed one has connected, again after it reloads); `failed`: it could not start, or did not answer in time. */
+    | 'ready' | 'failed',
+  window: string, module: string, state: WindowState,
 };
 /** A shipped component: mounts into a window's content node and returns its disposer. */
 export type ShippedMount = (node: HTMLElement, context: ShippedContext) => (() => void) | void;
@@ -46,12 +61,30 @@ export type DesktopOptions = {
   locale?: string;
   dir?: 'ltr' | 'rtl';
   messages?: Partial<OsCatalogue>;
+  /**
+   * A desktop narrower than `below` pixels is compact (a phone): every
+   * window opens maximized and only the focused one is shown. The dock never
+   * leaves the desktop at any width: its tiles shrink to fit, then it scrolls.
+   */
+  compact?: { below: number };
+  /**
+   * What the dock carries after the modules: the mail tile and the light/dark
+   * switch (both by default), and a brand mark at its start, which is not a
+   * module and takes no keyboard stop.
+   */
+  tray?: { mail?: boolean, theme?: boolean, brand?: { label: string, src?: string, node?: HTMLElement } };
+  /**
+   * How long a framed module has to say hello (15 s by default). Past it the
+   * window says so and offers to try again, and the shell holds nothing open
+   * for it; a module that answers later still connects.
+   */
+  connectTimeoutMs?: number;
   /** Defaults to the node's owner window. */
   window?: Window;
   onError?: (error: unknown) => void;
 };
 
-type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[] };
+type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean };
 
 const svg = (path: string) => `<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path d="${path}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 const ICON = { close: svg('M4 4l8 8M12 4l-8 8'), minimize: svg('M4 8h8'), maximize: svg('M4.5 4.5h7v7h-7z'), restore: svg('M6 4h6v6M4 6h6v6H4z') };
@@ -92,7 +125,54 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   const mailPanel = doc.createElement('section'); mailPanel.className = 'tos-mail'; mailPanel.hidden = true; mailPanel.setAttribute('aria-label', t('mail/title'));
   node.replaceChildren(wallpaper, layer, shield, mailPanel, dock);
 
-  const setDesktop = (next: Desktop) => { desktop = next; render(); };
+  // ── events ────────────────────────────────────────────────────────────────
+  const listeners = new Set<(event: DesktopEvent) => void>();
+  const visibility = new Map<string, { visible: boolean, listeners: Set<(visible: boolean) => void> }>();
+  const copy = (w: WindowState): WindowState => JSON.parse(JSON.stringify(w));
+  function changes(prev: Desktop, next: Desktop): DesktopEvent[] {
+    const out: DesktopEvent[] = [];
+    const push = (type: DesktopEvent['type'], w: WindowState) => out.push({ type, window: w.id, module: w.module, state: copy(w) });
+    const before = new Map(prev.windows.map(w => [w.id, w]));
+    for (const w of next.windows) {
+      const was = before.get(w.id);
+      if (!was) { push('opened', w); continue; }
+      if (!was.minimized && w.minimized) push('minimized', w);
+      else if (was.minimized && !w.minimized) push('restored', w);
+      if (!was.maximized && w.maximized) push('maximized', w);
+      else if (was.maximized && !w.maximized) push('restored', w);
+      else {
+        if (was.rect.x !== w.rect.x || was.rect.y !== w.rect.y) push('moved', w);
+        if (was.rect.w !== w.rect.w || was.rect.h !== w.rect.h) push('resized', w);
+      }
+      if (was.title !== w.title) push('retitled', w);
+    }
+    for (const was of prev.windows) if (!next.windows.some(w => w.id === was.id)) push('closed', was);
+    const focused = next.focus !== prev.focus || next.windows.find(w => w.id === next.focus)?.z !== prev.windows.find(w => w.id === next.focus)?.z
+      ? next.windows.find(w => w.id === next.focus) : undefined;
+    if (focused) push('focused', focused);
+    return out;
+  }
+  /** Every change of the desktop goes through here: it renders, tells modules what is on screen, and reports. */
+  function setDesktop(next: Desktop) {
+    const prev = desktop;
+    desktop = next;
+    render();
+    for (const [id, entry] of visibility) {
+      const w = desktop.windows.find(x => x.id === id);
+      const visible = w ? isVisible(desktop, w) : false;
+      if (visible === entry.visible) continue;
+      entry.visible = visible;
+      for (const listener of [...entry.listeners]) { try { listener(visible); } catch (error) { report(error); } }
+    }
+    if (listeners.size) for (const event of changes(prev, next)) tell(event);
+  }
+  function tell(event: DesktopEvent) { for (const listener of [...listeners]) { try { listener(event); } catch (error) { report(error); } } }
+  /** A module's lifecycle in its window, reported beside the window changes. */
+  function lifecycle(type: 'ready' | 'failed', id: string) {
+    const w = desktop.windows.find(x => x.id === id);
+    if (w) tell({ type, window: w.id, module: w.module, state: copy(w) });
+  }
+  const resized = (d: Desktop, viewport: Desktop['viewport']) => resizeDesktop(d, viewport, options.compact !== undefined && viewport.w < options.compact.below);
 
   // ── theme and language ────────────────────────────────────────────────────
   function applyShellTheme(next: ThemeDocument) {
@@ -117,13 +197,43 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   function connectFrame(w: WindowState, manifest: ModuleManifest, frame: HTMLIFrameElement, entry: Mounted) {
     const targetOrigin = manifest.host.kind === 'origin' ? new URL(manifest.host.url).origin : '*';
     const expected = manifest.host.kind === 'origin' ? targetOrigin : 'null';
+    let deadline: any, notice: HTMLElement | null = null;
+    /** Close what an earlier connection of this window held. */
+    const release = () => {
+      kernel.withdraw(manifest.id, w.id);
+      try { entry.served?.close?.(); } catch (error) { report(error); }
+      for (const port of entry.ports) port.close();
+      entry.ports = []; entry.served = undefined; entry.moduleClient = undefined; entry.connected = false;
+    };
+    const unanswered = () => {
+      if (entry.connected) return;
+      release();
+      entry.el.classList.remove('is-loading'); entry.el.classList.add('is-failed');
+      notice?.remove();
+      notice = doc.createElement('div'); notice.className = 'tos-notice'; notice.setAttribute('role', 'alert');
+      const text = doc.createElement('p'); text.textContent = t('window/unanswered', { title: localized(manifest.title, locale.locale) });
+      const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = t('window/retry');
+      retry.addEventListener('click', () => {
+        notice?.remove(); notice = null;
+        entry.el.classList.remove('is-failed'); entry.el.classList.add('is-loading');
+        arm();
+        frame.src = frame.src;
+      });
+      notice.append(text, retry);
+      entry.content.append(notice);
+      lifecycle('failed', w.id);
+    };
+    const arm = () => { win.clearTimeout(deadline); deadline = win.setTimeout(unanswered, options.connectTimeoutMs ?? 15_000); };
     const onHello = (event: MessageEvent) => {
       if (event.source !== frame.contentWindow || (event.data as any)?.type !== HELLO) return;
       if (event.origin !== expected) { report(new Error(`${manifest.id}: a frame of origin ${event.origin} answered for ${expected}`)); return; }
-      win.removeEventListener('message', onHello);
+      win.clearTimeout(deadline);
+      // a frame that reloaded says hello again: it starts over on fresh ports
+      if (entry.connected || entry.ports.length) release();
+      notice?.remove(); notice = null; entry.el.classList.remove('is-failed');
       const os = new MessageChannel(), control = new MessageChannel();
       const provided = (manifest.provides ?? []).map(contract => ({ contract, channel: new MessageChannel() }));
-      kernel.serveModule(manifest.id, os.port1, { setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)) });
+      entry.served = kernel.serveModule(manifest.id, os.port1, { setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)) });
       os.port1.start();
       const moduleClient = openPortClient(systemContracts().module, { channel: control.port1, timeoutMs: 10_000 });
       control.port1.start();
@@ -140,10 +250,13 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         ...(manifest.host.kind === 'document' ? { document: { app: manifest.host.app, ...(manifest.styles ? { styles: manifest.styles } : {}) } } : {}),
       };
       frame.contentWindow!.postMessage(message, targetOrigin, [os.port2, control.port2, ...provided.map(p => p.channel.port2)]);
+      entry.connected = true;
       entry.el.classList.remove('is-loading');
+      lifecycle('ready', w.id);
     };
     win.addEventListener('message', onHello);
-    return () => win.removeEventListener('message', onHello);
+    arm();
+    return () => { win.clearTimeout(deadline); win.removeEventListener('message', onHello); };
   }
 
   function mountModule(w: WindowState, manifest: ModuleManifest, entry: Mounted) {
@@ -151,15 +264,20 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     if (host.kind === 'shipped') {
       const mount = options.shipped?.[host.mount];
       if (!mount) throw new Error(`no shipped component '${host.mount}'`);
+      const seen = { visible: isVisible(desktop, w), listeners: new Set<(visible: boolean) => void>() };
+      visibility.set(w.id, seen);
       const dispose = mount(entry.content, {
         module: manifest, window: w.id, locale: locale.locale, dir: locale.dir,
+        get visible() { return seen.visible; },
+        onVisibility: (listener) => { seen.listeners.add(listener); return () => { seen.listeners.delete(listener); }; },
         call: (contract, op, input) => kernel.call(manifest.id, contract, op, input),
         sendMail: (envelope) => { kernel.sendMail(manifest.id, envelope); },
         setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)),
         provide: (contract, handlers) => kernel.provideLocal(manifest.id, contract, handlers, w.id),
       });
       entry.el.classList.remove('is-loading');
-      return () => { dispose?.(); kernel.withdraw(manifest.id, w.id); };
+      lifecycle('ready', w.id);
+      return () => { visibility.delete(w.id); dispose?.(); kernel.withdraw(manifest.id, w.id); };
     }
     const frame = doc.createElement('iframe');
     frame.className = 'tos-frame';
@@ -180,16 +298,19 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     frame.addEventListener('focus', () => { if (desktop.focus !== w.id) setDesktop(focusWindow(desktop, w.id)); });
     const stop = connectFrame(w, manifest, frame, entry);
     entry.content.append(frame);
-    return () => { stop(); kernel.withdraw(manifest.id, w.id); for (const port of entry.ports) port.close(); frame.remove(); };
+    return () => { stop(); kernel.withdraw(manifest.id, w.id); try { entry.served?.close?.(); } catch { /* closing */ } for (const port of entry.ports) port.close(); frame.remove(); };
   }
 
   // ── windows ───────────────────────────────────────────────────────────────
   function createWindowElement(w: WindowState, manifest: ModuleManifest): Mounted {
     const el = doc.createElement('section');
-    el.className = 'tos-window is-loading';
+    // the opening animation plays once, not again when the window is shown or restored
+    el.className = 'tos-window is-loading is-opening';
+    el.addEventListener('animationend', (event) => { if (event.target === el) el.classList.remove('is-opening'); });
     el.dataset.window = w.id;
     el.dataset.module = w.module;
-    el.setAttribute('role', 'dialog');
+    // a window is a labelled region of the desktop, not a modal dialog
+    el.setAttribute('role', 'region');
     el.setAttribute('aria-label', w.title);
     const bar = doc.createElement('header'); bar.className = 'tos-titlebar';
     const title = doc.createElement('h2'); title.className = 'tos-title';
@@ -246,19 +367,21 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     if (!manifest) { report(new Error(`no module '${moduleId}'`)); return null; }
     const before = new Set(desktop.windows.map(w => w.id));
     const title = localized(manifest.title, locale.locale);
-    desktop = openWindow(desktop, { module: moduleId, title, ...manifest.window });
-    const created = desktop.windows.find(w => !before.has(w.id));
-    if (!created) { render(); return desktop.focus; }
+    const next = openWindow(desktop, { module: moduleId, title, ...manifest.window });
+    const created = next.windows.find(w => !before.has(w.id));
+    if (!created) { setDesktop(next); return desktop.focus; }
     const entry = createWindowElement(created, manifest);
     mounted.set(created.id, entry);
     layer.append(entry.el);
+    // the window is on the desktop before its module mounts, so the module may retitle it at once
+    setDesktop(next);
     try { entry.dispose = mountModule(created, manifest, entry); }
     catch (error: any) {
       entry.el.classList.remove('is-loading');
       entry.content.textContent = t('window/failed', { title, detail: String(error?.message ?? error) });
       report(error);
+      lifecycle('failed', created.id);
     }
-    render();
     return created.id;
   }
 
@@ -269,6 +392,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   }
 
   function render() {
+    node.classList.toggle('is-compact', desktop.compact === true);
     for (const w of stacked(desktop)) {
       const entry = mounted.get(w.id);
       if (!entry) continue;
@@ -279,7 +403,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       el.style.width = `${w.rect.w}px`;
       el.style.height = `${w.rect.h}px`;
       el.style.zIndex = String(w.z);
-      el.hidden = w.minimized;
+      el.hidden = !isVisible(desktop, w);
       el.classList.toggle('is-focused', desktop.focus === w.id);
       el.classList.toggle('is-maximized', w.maximized);
       el.setAttribute('aria-label', w.title);
@@ -293,7 +417,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   // ── dock and mail ─────────────────────────────────────────────────────────
   let dockSignature = '';
   function renderDock(force = false) {
-    const signature = JSON.stringify([kernel.modules().map(m => [m.id, localized(m.title, locale.locale), m.icon]), [...new Set(desktop.windows.map(w => w.module))].sort(), kernel.mail().filter(m => !m.read).length, theme.scheme, locale]);
+    const signature = JSON.stringify([kernel.modules().map(m => [m.id, localized(m.title, locale.locale), m.icon]), [...new Set(desktop.windows.map(w => w.module))].sort(), kernel.mail().filter(m => !m.read).length, theme.scheme, locale, desktop.focus]);
     if (!force && signature === dockSignature) return;
     dockSignature = signature;
     const items = kernel.modules().map(manifest => {
@@ -324,8 +448,31 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     themeButton.setAttribute('aria-label', label); themeButton.title = label;
     themeButton.innerHTML = `<span class="tos-glyph" data-glyph="${theme.scheme === 'dark' ? 'sun' : 'moon'}"></span>`;
     themeButton.addEventListener('click', toggleScheme);
+    const tray = [...(options.tray?.mail === false ? [] : [mailButton]), ...(options.tray?.theme === false ? [] : [themeButton])];
     const separator = doc.createElement('span'); separator.className = 'tos-dock-separator'; separator.setAttribute('aria-hidden', 'true');
-    dock.replaceChildren(...items, separator, mailButton, themeButton);
+    const brand = brandMark();
+    // the tiles shrink with the count before the dock overflows
+    dock.style.setProperty('--tos-dock-count', String(items.length + tray.length));
+    // a keyboard user stays on the tile they were on when the dock redraws
+    const active = doc.activeElement as HTMLElement | null;
+    const had = active && dock.contains(active) ? (active.dataset.module ? `[data-module="${active.dataset.module}"]` : active.classList.contains('tos-dock-mail') ? '.tos-dock-mail' : active.classList.contains('tos-dock-theme') ? '.tos-dock-theme' : null) : null;
+    dock.replaceChildren(...(brand ? [brand] : []), ...items, ...(tray.length ? [separator, ...tray] : []));
+    if (had) dock.querySelector<HTMLElement>(had)?.focus({ preventScroll: true });
+  }
+
+  let brandNode: HTMLElement | null = null;
+  function brandMark(): HTMLElement | null {
+    const brand = options.tray?.brand;
+    if (!brand) return null;
+    if (brandNode) return brandNode;
+    const mark = doc.createElement('span');
+    mark.className = 'tos-dock-brand';
+    mark.setAttribute('role', 'img');
+    mark.setAttribute('aria-label', brand.label);
+    mark.title = brand.label;
+    if (brand.node) mark.append(brand.node);
+    else if (brand.src) { const img = doc.createElement('img'); img.src = brand.src; img.alt = ''; mark.append(img); }
+    return (brandNode = mark);
   }
 
   function toggleMail() { mailPanel.hidden = !mailPanel.hidden; renderMail(); }
@@ -384,14 +531,14 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       { label: t('menu/show-windows'), disabled: hidden.length === 0, run: () => setDesktop(stacked(desktop).filter(w => w.minimized).reduce((d, w) => focusWindow(d, w.id), desktop)) },
       { label: t('menu/close-all'), disabled: desktop.windows.length === 0, run: () => { for (const w of [...desktop.windows]) close(w.id); } },
       'separator',
-      { label: t('mail/title'), run: toggleMail },
-      { label: theme.scheme === 'dark' ? t('tray/theme-light') : t('tray/theme-dark'), run: toggleScheme },
+      ...(options.tray?.mail === false ? [] : [{ label: t('mail/title'), run: toggleMail }]),
+      ...(options.tray?.theme === false ? [] : [{ label: theme.scheme === 'dark' ? t('tray/theme-light') : t('tray/theme-dark'), run: toggleScheme }]),
     ];
   }
 
   /** What a right click on this element offers, or null for the browser's own menu. */
   function menuFor(target: HTMLElement): { title: string, entries: MenuEntry[] } | null {
-    if (target.closest('.tos-content, .tos-mail')) return null;
+    if (target.closest('.tos-content, .tos-mail, .tos-dock-brand')) return null;
     const windowEl = target.closest<HTMLElement>('.tos-window');
     if (windowEl?.dataset.window) {
       const w = desktop.windows.find(x => x.id === windowEl.dataset.window);
@@ -533,10 +680,10 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   win.addEventListener('blur', onBlur);
   // windows live in the window layer, which stops above the dock: lay them out in its area
   const area = () => ({ w: layer.clientWidth || node.clientWidth, h: layer.clientHeight || node.clientHeight });
-  const observer = typeof win.ResizeObserver === 'function' ? new win.ResizeObserver(() => setDesktop(setViewport(desktop, area()))) : null;
+  const observer = typeof win.ResizeObserver === 'function' ? new win.ResizeObserver(() => setDesktop(resized(desktop, area()))) : null;
   observer?.observe(node);
 
-  desktop = setViewport(desktop, area());
+  desktop = resized(desktop, area());
   applyShellTheme(theme);
   applyShellLocale(locale);
 
@@ -548,6 +695,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     maximize: (id: string) => setDesktop(toggleMaximize(desktop, id)),
     move: (id: string, x: number, y: number) => setDesktop(moveWindow(desktop, id, x, y)),
     state: (): Desktop => JSON.parse(JSON.stringify(desktop)),
+    /** Every window change, as it happens; returns the unsubscribe. */
+    subscribe(listener: (event: DesktopEvent) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     setTheme: applyShellTheme,
     setLocale: applyShellLocale,
     theme: () => theme,
@@ -558,7 +707,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       closeMenu(); node.removeEventListener('contextmenu', onContextMenu); doc.removeEventListener('pointerdown', onOutside, true);
       win.removeEventListener('blur', onMenuBlur); win.removeEventListener('resize', onMenuBlur);
       for (const id of [...mounted.keys()]) close(id);
-      node.replaceChildren(); node.classList.remove('tos');
+      listeners.clear(); visibility.clear();
+      node.replaceChildren(); node.classList.remove('tos', 'is-compact');
     },
   };
 }

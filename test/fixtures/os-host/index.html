@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Host desktop</title>
+  <link rel="stylesheet" href="./os.css">
+  <style>
+    html, body { margin: 0; block-size: 100%; }
+    #desktop { position: fixed; inset: 0; min-block-size: 0; }
+    /* a host glyph, as the README documents it */
+    .tos-glyph[data-glyph="tag"] { --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 3h9l9 9-9 9-9-9z'/%3E%3C/svg%3E"); }
+  </style>
+</head>
+<body>
+  <div id="desktop"></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

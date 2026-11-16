@@ -6,10 +6,10 @@
  */
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { connectToOs } from '@tangleai/os/module';
+import { connectToOs, OsConnectError } from '@tangleai/os/module';
 import {
   CONNECT, HELLO, PROTOCOL, createKernel, systemContracts, checkTheme, DEFAULT_THEMES,
-  emptyDesktop, openWindow, focusWindow, closeWindow, moveWindow, resizeWindow, toggleMaximize, minimizeWindow, setViewport, stacked,
+  emptyDesktop, openWindow, focusWindow, closeWindow, moveWindow, resizeWindow, toggleMaximize, minimizeWindow, setViewport, resizeDesktop, isVisible, stacked,
 } from '@tangleai/os';
 import { openPortClient } from '@jarenjs/contract/port';
 
@@ -80,6 +80,49 @@ describe('joining a desktop from a framed page', () => {
   });
 });
 
+describe('a connection that never happens', () => {
+  it('refuses an unanswered handshake at its deadline and stops listening', async () => {
+    const page = framedPage();
+    const started = Date.now();
+    await assert.rejects(connectToOs({ origins: ['https://desk.example'], host: page.host, connectTimeoutMs: 1 }), (error: any) => error instanceof OsConnectError && error.code === 'OS0401');
+    assert.ok(Date.now() - started < 1000);
+    assert.equal(page.listeners.size, 0, 'no listener is left behind');
+  });
+  it('refuses an abandoned handshake, before or while it waits, and stops listening', async () => {
+    const page = framedPage(), controller = new AbortController();
+    const pending = connectToOs({ origins: ['https://desk.example'], host: page.host, signal: controller.signal });
+    assert.equal(page.listeners.size, 1);
+    controller.abort(new Error('the person left'));
+    await assert.rejects(pending, (error: any) => error.code === 'OS0403' && error.cause?.message === 'the person left');
+    assert.equal(page.listeners.size, 0);
+    await assert.rejects(connectToOs({ origins: ['https://desk.example'], host: framedPage().host, signal: AbortSignal.abort() }), (error: any) => error.code === 'OS0403');
+  });
+  it('refuses at once when the page is not framed by a desktop', async () => {
+    const top: any = { addEventListener() { throw new Error('never listens'); }, removeEventListener() {} };
+    top.parent = top;
+    await assert.rejects(connectToOs({ origins: ['https://desk.example'], host: top }), (error: any) => error.code === 'OS0402');
+  });
+  it("keeps the application's own look when it asks to, and still hears the theme and language", async () => {
+    for (const presentation of ['none', 'own'] as const) {
+      const page = framedPage(), heard: any[] = [];
+      const own = { style: { setProperty: () => heard.push('own-style'), colorScheme: '' }, dataset: {} as any, setAttribute: () => heard.push('own-attr') };
+      const kernel = createKernel();
+      kernel.install({ $module: '0.1', id: 'records-app', version: '1.0.0', title: { en: 'Records' }, host: { kind: 'origin', url: 'https://records.example/app' } }, 'suite');
+      const joined = connectToOs({ origins: ['https://desk.example'], host: page.host, presentation: presentation === 'none' ? 'none' : { root: own }, onTheme: () => heard.push('theme'), onLocale: () => heard.push('locale') });
+      const os = new MessageChannel(), control = new MessageChannel();
+      try {
+        kernel.serveModule('records-app', os.port1); os.port1.start();
+        page.deliver({ source: page.host.parent, origin: 'https://desk.example', data: connectMessage('records-app', ['os', 'module']), ports: [os.port2, control.port2] });
+        (await joined).close();
+        assert.equal(page.style.size, 0, `${presentation}: the page's root is untouched`);
+        assert.equal(page.attributes.size, 0);
+        assert.deepEqual(heard.filter(h => h === 'theme' || h === 'locale'), ['theme', 'locale']);
+        assert.equal(heard.includes('own-style'), presentation === 'own', 'an own target gets the tokens');
+      } finally { for (const c of [os, control]) { c.port1.close(); c.port2.close(); } }
+    }
+  });
+});
+
 describe('the window document', () => {
   it('opens, cascades, focuses, stacks and closes', () => {
     let d = emptyDesktop({ w: 1200, h: 800 });
@@ -117,6 +160,36 @@ describe('the window document', () => {
     assert.deepEqual(d.windows[0].rect, { x: 0, y: 0, w: 1400, h: 900 });
     d = toggleMaximize(d, 'w1');
     assert.deepEqual(d.windows[0].rect, original);
+  });
+  it('opens a window wholly on a desktop narrower than it, and resizes it no smaller than its manifest says', () => {
+    // an 840 px window on a 390 px phone used to cascade to x = -309
+    let d = openWindow(emptyDesktop({ w: 390, h: 768 }), { module: 'a', title: 'A', width: 840, height: 600, minWidth: 320, minHeight: 240 });
+    assert.deepEqual(d.windows[0].rect, { x: 0, y: 24, w: 390, h: 600 });
+    d = openWindow(emptyDesktop({ w: 1000, h: 700 }), { module: 'b', title: 'B', width: 500, height: 400, minWidth: 320, minHeight: 240 });
+    const r = d.windows[0].rect;
+    assert.ok(r.x >= 0 && r.y >= 0 && r.x + r.w <= 1000 && r.y + r.h <= 700, JSON.stringify(r));
+    d = resizeWindow(d, 'w1', 10, 10);
+    assert.deepEqual([d.windows[0].rect.w, d.windows[0].rect.h], [320, 240], "the resize grip keeps the manifest's minimum");
+    d = setViewport(d, { w: 900, h: 600 });
+    assert.deepEqual([d.windows[0].rect.w, d.windows[0].rect.h], [320, 240]);
+  });
+  it('on a compact desktop opens every window maximized, shows only the focused one, and restores on leaving', () => {
+    let d = openWindow(emptyDesktop({ w: 1000, h: 700 }), { module: 'a', title: 'A', width: 400, height: 300 });
+    d = toggleMaximize(openWindow(d, { module: 'b', title: 'B', width: 400, height: 300 }), 'w2');
+    const before = d.windows[0].rect;
+    d = resizeDesktop(d, { w: 390, h: 768 }, true);
+    assert.deepEqual(d.windows.map(w => [w.maximized, w.compacted ?? false]), [[true, true], [true, false]]);
+    d = openWindow(d, { module: 'c', title: 'C' });
+    assert.deepEqual(d.windows[2].rect, { x: 0, y: 0, w: 390, h: 768 }, 'a new window opens maximized');
+    assert.deepEqual(d.windows.map(w => isVisible(d, w)), [false, false, true], 'only the focused window is shown');
+    d = toggleMaximize(d, 'w3');
+    assert.equal(d.windows[2].maximized, true, 'a compact desktop has no restore');
+    d = focusWindow(d, 'w1');
+    assert.deepEqual(d.windows.map(w => isVisible(d, w)), [true, false, false]);
+    d = resizeDesktop(d, { w: 1000, h: 700 }, false);
+    assert.deepEqual(d.windows.map(w => w.maximized), [false, true, false], "the person's own maximize stays");
+    assert.deepEqual(d.windows[0].rect, before, 'a window the desktop maximized gets its place back');
+    assert.deepEqual(d.windows.map(w => isVisible(d, w)), [true, true, true]);
   });
 });
 

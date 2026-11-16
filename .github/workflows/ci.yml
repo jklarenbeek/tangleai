@@ -38,9 +38,9 @@ jobs:
     needs: release-version
     name: packages (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    # Full native workflow, report reproduction and crash-recovery qualification.
-    # 0.42.0 needed 2 h 49 m on one runner and exceeded 3 h on another.
-    timeout-minutes: 240
+    # The release suite; reproducing committed measurements and qualifying
+    # crash recovery run in long-running, which does not block a release.
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -69,7 +69,7 @@ jobs:
           name: npm-release-verified
           path: dist/release/
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 90
 
   minimum-node:
     needs: release-version
@@ -108,6 +108,23 @@ jobs:
         run: |
           bun build --compile --minify scripts/document-compile-smoke.ts --outfile /tmp/tangle-document-smoke
           TANGLE_EXPECT_STANDALONE=1 /tmp/tangle-document-smoke
+
+  # Reproduces committed measurements (they go stale when the source they
+  # measured moves) and qualifies crash recovery: reported, never blocking.
+  long-running:
+    needs: release-version
+    if: needs.release-version.outputs.documentation-only != 'true'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          submodules: true
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: npm run test:long
 
   release-ready:
     name: release-ready

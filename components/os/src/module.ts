@@ -23,8 +23,29 @@ export type ConnectOptions = {
   context?: () => unknown;
   /** The window that sends the ports; the page's parent by default. */
   host?: { parent: any, addEventListener: (type: string, listener: (event: any) => void) => void, removeEventListener: (type: string, listener: (event: any) => void) => void, document?: any };
+  /** How long a call to the desktop may take once connected (30 s by default). */
   timeoutMs?: number;
+  /**
+   * How long to wait for a desktop to answer the page's hello. Without it the
+   * page waits as long as it is framed; past it the connection is refused
+   * with `OS0401` and the page stops listening.
+   */
+  connectTimeoutMs?: number;
+  /** Abandons a connection not yet made: refused with the signal's reason, the page stops listening. */
+  signal?: AbortSignal;
+  /**
+   * Where the desktop's theme and language land: the page's root (`'root'`,
+   * the default), an element of the page's own (`{ root }`), or nowhere
+   * (`'none'`: an application that keeps its own look, and still hears
+   * `onTheme` and `onLocale`).
+   */
+  presentation?: 'root' | 'none' | { root: any };
 };
+/** A refused connection: `OS0401` no desktop answered in time, `OS0402` the page is not framed, `OS0403` abandoned. */
+export class OsConnectError extends Error {
+  readonly code: 'OS0401' | 'OS0402' | 'OS0403';
+  constructor(code: 'OS0401' | 'OS0402' | 'OS0403', message: string, options?: { cause?: unknown }) { super(`${code}: ${message}`, options); this.code = code; this.name = 'OsConnectError'; }
+}
 export type OsConnection = {
   module: string;
   connect: ConnectMessage;
@@ -52,18 +73,26 @@ export function applyLocale(root: any, locale: { locale: string, dir: 'ltr' | 'r
 /**
  * Join the desktop that frames this page. Resolves once the shell has handed
  * over its ports; a message from a window that is not the parent, or from an
- * origin not listed, is ignored.
+ * origin not listed, is ignored. A page that is not framed is refused at once
+ * (`OS0402`); `connectTimeoutMs` and `signal` bound the wait, and a refused
+ * or abandoned connection leaves no listener behind.
  */
 export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
   const host = options.host ?? (globalThis as any);
-  const root = host.document?.documentElement;
-  return new Promise((resolve) => {
+  const presentation = options.presentation ?? 'root';
+  const root = presentation === 'none' ? null : presentation === 'root' ? host.document?.documentElement : presentation.root;
+  return new Promise((resolve, reject) => {
+    if (!host.parent || host.parent === host) { reject(new OsConnectError('OS0402', 'this page is not framed by a desktop')); return; }
+    if (options.signal?.aborted) { reject(new OsConnectError('OS0403', 'the connection was abandoned', { cause: options.signal.reason })); return; }
+    let timer: any;
+    const settle = () => { clearTimeout(timer); host.removeEventListener('message', listener); options.signal?.removeEventListener?.('abort', abandon); };
+    const abandon = () => { settle(); reject(new OsConnectError('OS0403', 'the connection was abandoned', { cause: options.signal?.reason })); };
     const listener = (event: any) => {
       const data = event?.data as ConnectMessage;
       if (data?.type !== CONNECT || data.protocol !== PROTOCOL) return;
       if (event.source !== host.parent) return;
       if (options.origins !== 'parent' && !options.origins.includes(event.origin)) return;
-      host.removeEventListener('message', listener);
+      settle();
       const ports: any[] = [...(event.ports ?? [])];
       const named = new Map<string, any>(data.ports.map((name, index) => [name, ports[index]]));
       const { os, module } = systemContracts();
@@ -108,6 +137,9 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
       });
     };
     host.addEventListener('message', listener);
+    options.signal?.addEventListener?.('abort', abandon, { once: true });
+    if (options.connectTimeoutMs !== undefined)
+      timer = setTimeout(() => { settle(); reject(new OsConnectError('OS0401', `no desktop answered within ${options.connectTimeoutMs} ms`)); }, options.connectTimeoutMs);
     // announce this page; the shell answers with the ports
     host.parent?.postMessage?.({ type: HELLO, protocol: PROTOCOL }, '*');
   });

@@ -1,6 +1,6 @@
 # 📅 Tangle Roadmap
 
-The current substrate is [JarenJS 0.207.0](JARENJS_INTEGRATION.md): atomic
+The current substrate is [JarenJS 0.212.0](JARENJS_INTEGRATION.md): atomic
 ledger storage, retention options, verified DAG checkpoints, bounded history
 reads, scheduled document transport and supervised Node SQLite execution are
 available. Native relational migrations and revision-aware collection drag are
@@ -540,7 +540,10 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   long in one file (the research one: 57). A release regenerates
   every source-bound artifact (1 h 35 min) because each hashes the whole
   `package.json` and `package-lock.json`, whose version and Jaren lines move
-  every release. [`scripts/test.ts`](../scripts/test.ts) starts the longest
+  every release. Since 0.50.0 the release suite leaves those reproductions and
+  the crash-recovery qualification to a separate, non-blocking long-running set
+  (`npm run test:long`), about 88% of the recorded file time.
+  [`scripts/test.ts`](../scripts/test.ts) starts the longest
   recorded files first; the import-graph walk in
   [`import-graph.test.ts`](../test/assistant/import-graph.test.ts) and the
   artifact source manifests already name inputs; `dist/release/gate.json`
