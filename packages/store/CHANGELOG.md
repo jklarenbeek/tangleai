@@ -1,5 +1,27 @@
 # @tangleai/store
 
+## 0.49.1
+
+### Patch Changes
+
+- Build on Jaren 0.206.0, whose calendar reads iCalendar back into its model, compiles and embeds zone definitions and edits foreign iCalendar losslessly, and whose core scores assignments exactly.
+- Updated dependencies
+  - @tangleai/core@0.49.1
+  - @tangleai/config@0.49.1
+  - @tangleai/mas@0.49.1
+  - @tangleai/documents@0.49.1
+  - @tangleai/memory@0.49.1
+  - @tangleai/outcomes@0.49.1
+  - @tangleai/trace2skill@0.49.1
+  - @tangleai/evolve@0.49.1
+  - @tangleai/hera@0.49.1
+  - @tangleai/forecast@0.49.1
+  - @tangleai/grounding@0.49.1
+  - @tangleai/lightrag@0.49.1
+  - @tangleai/trading@0.49.1
+  - @tangleai/research@0.49.1
+  - @tangleai/experiential@0.49.1
+
 ## 0.49.0
 
 ### Patch Changes

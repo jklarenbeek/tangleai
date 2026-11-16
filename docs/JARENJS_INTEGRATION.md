@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.201.2**, tag `v0.201.2`, source commit
-`af5e9f549c287d86f02a802d1fd81d95ebb1467d`. Upstream `main` and the tag agreed
+Tangle consumes **Jaren 0.206.0**, tag `v0.206.0`, source commit
+`437ec5e20dd0dce78f0db28420efa58312b1c650`. Upstream `main` and the tag agreed
 when checked on 2026-11-15; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.201.2` pin. A clean reconstruction from the pinned
+reference is an exact `0.206.0` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,25 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.201.2 to 0.206.0 and current adoption
+
+Five releases. The calendar reads iCalendar back into its model
+(`@jarenjs/josl/ical`: events, recurring series and free/busy spans, with
+everything outside the subset reported), compiles a file's own `VTIMEZONE`
+definitions into a zone provider, embeds zones on write, and edits foreign
+iCalendar losslessly, re-emitting every untouched octet; the calendar layer
+publishes its capability matrix. `@jarenjs/core/assign` admits an assignment
+problem, registers a host's rules and scores an assignment exactly, every
+match explained. Split panes keep apart under pixel floors, a host can own a
+collection's activation and selection, and the validator's length unit is a
+choice. No consumed export was removed.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Reading iCalendar (`@jarenjs/josl/ical`) | **Not yet adopted.** The desktop Calendar writes `.ics`; importing a file through the reader, with what it cannot represent reported to the person, is the natural next step. |
+| Assignment scoring (`@jarenjs/core/assign`) | **Not reached.** No Tangle surface assigns resources. |
+| Collection selection, split panes, validator length unit | **No change needed.** Tangle's surfaces keep the defaults, and their tests pass unchanged. |
 
 ## Changes from 0.201.0 to 0.201.2 and current adoption
 
@@ -447,7 +466,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.201.2 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.206.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration
