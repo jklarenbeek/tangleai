@@ -188,6 +188,9 @@ it('the native server and client agree on all five operation bindings without so
 
 it('spend reservations are atomic across distinct submissions and invalid observations invalidate cached completion', async () => {
   const f = await fixture(); let posts = 0, inspections = 0, artifacts = 0;
+  // which two of three concurrent submissions win depends on which digest finishes last; the host's reservation
+  // is atomic either way, so the test follows the two that were accepted rather than assuming an order
+  let first = '', second = '';
   const host = accepted(createHttpTrainingBackend({ base: f.base, runtime: f.runtime, budget, clock: () => 0, credential: async () => null,
     fetch: async (url, init) => {
       if (String(url).endsWith('/capabilities')) return Response.json(f.exchanges[0]!.response.body);
@@ -197,16 +200,18 @@ it('spend reservations are atomic across distinct submissions and invalid observ
       }
       if (String(url).endsWith('/artifact')) { artifacts++; return Response.json(f.receipt); }
       inspections++; const jobId = new URL(String(url)).pathname.split('/').at(-1)!;
-      return Response.json({ jobId, state: 'complete', logRefs: [], metricsRef: null, stopReason: null, spend: jobId === 'job-2' ? .5 : inspections === 1 ? .25 : null });
+      return Response.json({ jobId, state: 'complete', logRefs: [], metricsRef: null, stopReason: null, spend: jobId === second ? .5 : inspections === 1 ? .25 : null });
     } }));
   const results = await Promise.all([1, 2, 3].map(seed => host.submit({ ...f.spec, seed, budget: { ...f.spec.budget, maxSpend: 4 } })));
-  assert.equal(results.filter(r => r.ok).length, 2); assert.equal(posts, 2); issue(results[2]!);
-  assert.equal(accepted(await host.inspect('job-1')).state, 'complete');
-  issue(await host.materialize('job-1')); assert.equal(artifacts, 0, 'unobserved cost of the second job is not free');
-  issue(await host.inspect('job-1')); issue(await host.materialize('job-1'));
+  assert.equal(results.filter(r => r.ok).length, 2, 'exactly two reservations fit the host budget'); assert.equal(posts, 2);
+  issue(results.find(r => !r.ok)!);
+  [first, second] = results.filter(r => r.ok).map(r => (r as any).value.id);
+  assert.equal(accepted(await host.inspect(first)).state, 'complete');
+  issue(await host.materialize(first)); assert.equal(artifacts, 0, 'unobserved cost of the second job is not free');
+  issue(await host.inspect(first)); issue(await host.materialize(first));
   assert.equal(artifacts, 0); assert.equal(inspections, 3, 'cached completion did not bypass a new observation');
-  accepted(await host.inspect('job-2')); assert.equal(host.stats().observedSpend, null);
-  issue(await host.materialize('job-2')); assert.equal(artifacts, 0);
+  accepted(await host.inspect(second)); assert.equal(host.stats().observedSpend, null);
+  issue(await host.materialize(second)); assert.equal(artifacts, 0);
 });
 
 it('the HTTP backend composes with the durable DAG and invalid receipts or secret echoes never register an artifact', async () => {
