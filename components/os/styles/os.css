@@ -254,6 +254,7 @@
 [dir="rtl"] .is-drop-after { box-shadow: inset 3px 0 0 var(--accent); }
 .tos-dock-ghost { position: absolute; z-index: 2147482900; pointer-events: none; inline-size: 44px; block-size: 44px; translate: -50% -50%; display: grid; place-items: center; opacity: .9; }
 .tos-dock-ghost > * { inline-size: 100%; block-size: 100%; }
+.tos-dock-state { color: var(--fail, #c0392b); font-weight: 700; font-size: 18px; border: 1px solid currentColor; }
 .tos-dock-changes { margin: 6px 0 0; padding-inline-start: 18px; font-size: 13px; }
 .tos-dock-brand { flex: none; display: grid; place-items: center; block-size: var(--os-dock-size, 46px); max-inline-size: 120px; padding-inline: 4px 8px; overflow: hidden; }
 .tos-dock-brand > img { max-block-size: 70%; max-inline-size: 100%; object-fit: contain; }

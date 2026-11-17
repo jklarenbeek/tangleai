@@ -13,9 +13,14 @@ import { mkdtempSync, readFileSync, writeFileSync, copyFileSync } from 'node:fs'
 import { tmpdir } from 'node:os';
 import { join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { serveDesktopState, memoryStateRepository } from '../../components/os/src/state-server.ts';
 
 const repo = fileURLToPath(new URL('../..', import.meta.url));
 let server, origin, minified;
+// the desktop state as an application's server keeps it: one repository for every browser that signs in as Ann
+const repository = memoryStateRepository();
+const stateHandlers = serveDesktopState(repository, () => ({ person: 'ann', application: 'acme' }));
+let stateDown = false;
 test.describe.configure({ mode: 'serial' });
 
 test.beforeAll(async () => {
@@ -31,7 +36,18 @@ test.beforeAll(async () => {
   minified = readFileSync(join(out, 'os.css'), 'utf8');
   const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' };
   server = createServer((request, response) => {
-    const path = new URL(request.url, 'http://x').pathname.replace(/^\/$/, '/index.html');
+    const route = new URL(request.url, 'http://x').pathname;
+    if (route.startsWith('/state/')) {
+      let body = '';
+      request.on('data', chunk => { body += chunk; });
+      request.on('end', async () => {
+        if (stateDown) { response.writeHead(503); response.end(); return; }
+        const answer = await stateHandlers[route.slice('/state/'.length)]?.(JSON.parse(body || '{}'));
+        response.writeHead(answer ? 200 : 404, { 'content-type': 'application/json' }); response.end(JSON.stringify(answer ?? {}));
+      });
+      return;
+    }
+    const path = route.replace(/^\/$/, '/index.html');
     let body;
     try { body = readFileSync(join(out, path)); } catch { response.writeHead(404); response.end(); return; }
     response.writeHead(200, { 'content-type': types[extname(path)] ?? 'application/octet-stream' }); response.end(body);
@@ -444,4 +460,34 @@ test("the assistant's suggested dock waits in the inbox until the person accepts
   await expect(suggestion).toContainText('Hides: Screen 2');
   await suggestion.getByRole('button', { name: 'Accept' }).click();
   await expect.poll(() => tiles(page)).not.toContain('screen-2');
+});
+
+test("with a server, the person's dock follows them to another browser, and a change that cannot be saved says so", async ({ page, browser }) => {
+  await host(page, 'modules=3&dock=1&state=server', { width: 1280, height: 800 });
+  await page.waitForFunction(() => window.harness.kernel.stateStatus().status === 'ready');
+  await page.evaluate(async () => {
+    const { kernel } = window.harness;
+    const layout = kernel.dockView().layout;
+    kernel.setDock({ ...layout, items: [...layout.items].reverse() });
+    await kernel.flushState();
+  });
+  const arranged = await tiles(page);
+  // a fresh browser has none of this one's storage: what it shows came from the server
+  const other = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const second = await other.newPage();
+  await second.goto(`${origin}/?modules=3&dock=1&state=server`);
+  await second.waitForFunction(() => window.harness?.kernel.stateStatus().status === 'ready');
+  expect(await tiles(second)).toEqual(arranged);
+  expect(repository.rows().map(r => [r.owner, r.key])).toEqual([['person:ann', 'dock']]);
+  await other.close();
+  // the server goes away: the change stays on screen, and the dock says it was not saved
+  stateDown = true;
+  try {
+    await page.evaluate(() => { const { kernel } = window.harness; kernel.setDock({ ...kernel.dockView().layout, hidden: ['screen-1'] }); });
+    await expect(page.locator('.tos-dock-state')).toBeVisible();
+    expect(await tiles(page)).not.toContain('screen-1');
+  } finally { stateDown = false; }
+  await page.locator('.tos-dock-state').click();
+  await expect(page.locator('.tos-dock-state')).toHaveCount(0);
+  expect(repository.rows()[0].value.hidden).toEqual(['screen-1']);
 });

@@ -4,7 +4,7 @@
  * listing its modules (usually `origin` modules on that application's own
  * pages). A suite joined by a link is installed without grants. `#recovery` boots without the person's own layer.
  */
-import { createKernel, validateManifest, type ModuleManifest } from '@tangleai/os';
+import { createKernel, validateManifest, webStorageStore, type ModuleManifest } from '@tangleai/os';
 import * as toolbox from '@tangleai/agents/toolbox';
 import { mountDesktop } from '@tangleai/os/shell';
 import { builtinModules, shippedMounts } from './modules.ts';
@@ -15,13 +15,10 @@ type SuiteDocument = { $suite: '0.1', id: string, title?: { en: string }, module
 
 // The assistant may call every served contract for now; the grants order
 // replaces this with the person's own consent per module.
-// the person's dock (its order, folders and hidden icons) is kept in this browser
-const DOCK_SLOT = 'tangle-os-dock';
-const dock = {
-  read: () => { try { return JSON.parse(localStorage.getItem(DOCK_SLOT) ?? 'null'); } catch { return null; } },
-  write: (layout: unknown) => { try { localStorage.setItem(DOCK_SLOT, JSON.stringify(layout)); } catch { /* kept for this page */ } },
-};
-const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox, dock });
+// this page has no server, so the desktop's state (the dock, the applications' settings) is kept in this
+// browser; an application with a server passes contractStore over its own backend instead
+const state = (() => { try { return webStorageStore(localStorage); } catch { return undefined; } })();
+const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox, ...(state ? { state } : {}) });
 for (const manifest of builtinModules()) {
   const installed = kernel.install(manifest, 'shipped');
   if (!installed.ok) console.error(manifest.id, installed.issues);

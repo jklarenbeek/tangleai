@@ -13,6 +13,7 @@
     "./module": "./src/module.ts",
     "./module-host": "./src/module-host.ts",
     "./settings": "./src/settings.ts",
+    "./state-server": "./src/state-server.ts",
     "./schemas/module": "./schemas/module.schema.json",
     "./styles/os.css": "./styles/os.css",
     "./styles/module.css": "./styles/module.css"

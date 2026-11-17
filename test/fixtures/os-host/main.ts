@@ -16,9 +16,10 @@
  *   ?dock=1      a suite of one page whose screens are launch entries in two
  *                folders, the dock kept in sessionStorage, the assistant
  *                granted the dock contract
+ *   ?state=server  the desktop's state kept by the test server (POST /state/<op>)
  * Everything the browser test needs is on `window.harness`.
  */
-import { createKernel } from '../../../components/os/src/index.ts';
+import { createKernel, webStorageStore, contractStore } from '../../../components/os/src/index.ts';
 import { mountDesktop, type DesktopEvent } from '../../../components/os/src/shell.ts';
 import { ECHO } from './echo.ts';
 import { settingsModule } from '../../../components/os/src/settings.ts';
@@ -27,8 +28,15 @@ const query = new URLSearchParams(location.search);
 const count = Number(query.get('modules') ?? 16);
 const withHeader = query.get('header') === '1';
 const withDock = query.get('dock') === '1';
-const dockStore = { read: () => JSON.parse(sessionStorage.getItem('dock') ?? 'null'), write: (layout: unknown) => sessionStorage.setItem('dock', JSON.stringify(layout)) };
-const kernel = createKernel({ ...(withHeader || withDock ? { assistantGrants: [...(withHeader ? ['tangle_os_header.*'] : []), ...(withDock ? ['tangle_os_dock.*'] : [])] } : {}), ...(withDock ? { dock: dockStore } : {}) });
+// ?state=server keeps the desktop's state on the test server (as an application keeps it in its database)
+const serverState = query.get('state') === 'server';
+const httpClient = { invoke: async (op: string, input: unknown) => {
+  const response = await fetch(`/state/${op}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(input) });
+  if (!response.ok) throw new Error(`state ${op}: ${response.status}`);
+  return { ok: true, value: await response.json() };
+} };
+const state = serverState ? contractStore(httpClient) : withDock ? webStorageStore(sessionStorage) : undefined;
+const kernel = createKernel({ ...(withHeader || withDock ? { assistantGrants: [...(withHeader ? ['tangle_os_header.*'] : []), ...(withDock ? ['tangle_os_dock.*'] : [])] } : {}), ...(state ? { state } : {}) });
 const screens: string[] = [];
 const visibility: Record<string, boolean[]> = {};
 const shipped: Record<string, any> = {};

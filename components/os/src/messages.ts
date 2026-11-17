@@ -46,6 +46,8 @@ export const osMessagesEn = {
   'dock/changes-hidden': 'Hides: {list}',
   'dock/changes-shown': 'Shows: {list}',
   'dock/changes-folders': 'Folders: {list}',
+  'state/unavailable': 'Your desktop could not be loaded, so changes are off until it is.',
+  'state/failed': 'A change was not saved: {detail}.',
   'tray/theme-light': 'Switch to the light theme',
   'tray/theme-dark': 'Switch to the dark theme',
   'menu/label': 'Menu for {title}',

@@ -250,8 +250,8 @@ A shipped module calls `context.setHeader(header)` and `context.onHeader(handler
 
 The dock is a JSON document the person owns: the order of its icons and
 folders, and the icons they hid. Without one, the dock is every module in
-install order, as before. A host keeps it with `createKernel({ dock: { read, write } })`
-(the Pages desktop uses the browser's storage); a recovery boot ignores it.
+install order, as before. It is kept with the rest of the desktop's state
+(below); a recovery boot ignores it.
 
 **Icons and launch entries.** A module is one icon. A module whose screens
 live inside one page lists `entries`, and each entry is its own icon that
@@ -300,6 +300,57 @@ desktop's own words, and the person accepts or rejects it. It is refused
 then if the dock changed meanwhile; a caller has one suggestion pending at a
 time. The ids `shell`, `person` and `desktop` belong to the desktop: no module
 takes them (`OS0012`).
+
+## Desktop state: in the browser, or in the application's database
+
+Everything the desktop keeps for a person (their dock, the settings of each
+application they set in the desktop's Settings) or for the whole application
+is a keyed JSON document in one store the host chooses:
+
+```ts
+import { createKernel, webStorageStore, contractStore } from '@tangleai/os';
+createKernel({ state: webStorageStore(localStorage) });          // a page with no server (the Pages desktop)
+createKernel({ state: contractStore(httpClient) });              // a desktop page signed in to its own server
+createKernel({ state: { module: 'suite' } });                    // the framed application that is signed in serves it
+```
+
+The store is loaded once (`await kernel.ready()`), and every change shows at
+once and is saved in the background: one save at a time per document, the
+latest value winning, tried again (after 1, 2, 4 … 30 s) when the server
+cannot be reached. Each document has a revision; a save made on an older one
+is refused and the desktop takes the stored document, so another tab or
+another device is never overwritten unseen (and a dock suggestion made before
+goes stale). Until the state has loaded, nothing in it can change (`OS0121`):
+a dock arranged before the person's own dock arrived would replace it. When it
+cannot be loaded, or a change cannot be saved, the dock says so and offers to
+try again; leaving the page sends what is unsaved.
+
+A host keeps its own preferences there too, so they follow the person:
+`kernel.setState('preferences', { scheme: 'dark' })`, `kernel.state('preferences')`,
+with `scope: 'application'` for the whole application's (`OS0120` for a key
+the desktop keeps itself). **Never a secret**: a provider key stays where the
+host keeps it.
+
+**The server side** is `@tangleai/os/state-server`, with no database driver of
+its own. An application with a database (SQLite or PostgreSQL through
+`@jarenjs/db`, or anything that can compare and set a row) makes a table from
+`DESKTOP_STATE_MODEL`, implements a `StateRepository` (`list(owner)`,
+`swap(owner, document, ifRevision)`, in one transaction) and serves
+`tangle_os_state` with `serveDesktopState(repository, owner)`:
+
+```ts
+import { serveDesktopState } from '@tangleai/os/state-server';
+const handlers = serveDesktopState(repository, (ctx) => ({ person: ctx.session.userId, application: ctx.session.tenantId }));
+```
+
+The owner always comes from the server's own session, never from the
+request: a person reads their own documents and the application's, never
+another person's. A desktop on its own origin that is not signed in itself
+names the application that is (`{ module }`); that application serves the
+contract from its framed page over its port (it declares
+`STATE_CONTRACT` in its manifest's `provides`), and the desktop loads the
+state when it connects. `createKernel({ settings })`, the earlier seam for a
+host that keeps form settings itself, still works.
 
 ## The kernel
 

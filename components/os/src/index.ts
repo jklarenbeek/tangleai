@@ -9,7 +9,9 @@
 export { MODULE_MANIFEST_SCHEMA, validateManifest, localized } from './manifest.ts';
 export type { ModuleManifest, ModuleHost, ModuleSettings, ContractDocument, LocalizedText, ManifestIssue, ManifestVerdict } from './manifest.ts';
 export { createKernel, toolName, DOCK_CONTRACT, RESERVED_IDS } from './kernel.ts';
-export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore, DockStore, Proposal, Decider } from './kernel.ts';
+export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore, StateOption, StateStatus, Proposal, Decider } from './kernel.ts';
+export { STATE_CONTRACT, memoryStore, webStorageStore, contractStore } from './state.ts';
+export type { DesktopStore, StateDocument, StateScope } from './state.ts';
 export { OS_CONTRACT, MODULE_CONTRACT, PROPOSAL_SCHEMA, DECISION_SCHEMA, systemContracts, CONNECT, HELLO, KEY, FOCUS, PROTOCOL } from './contracts.ts';
 export type { ConnectMessage } from './contracts.ts';
 export { DOCK_SCHEMA, emptyDock, dockIcons, folderTitles, normalizeDock, arrangeDock, moveInDock, hideInDock, showInDock, groupInDock, renameDockFolder, dockChanges } from './dock.ts';

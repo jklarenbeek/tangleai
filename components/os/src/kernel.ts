@@ -15,6 +15,7 @@ import { JarenValidator } from '@jarenjs/validate';
 import { systemContracts, PROPOSAL_SCHEMA } from './contracts.ts';
 import { HEADER_CONTRACT, HEADER_SCHEMA, activateHeader, duplicateHeaderId, headerFor, type Header, type HeaderHandler } from './header.ts';
 import { DOCK_SCHEMA, arrangeDock, dockChanges, dockIcons, folderTitles, normalizeDock, type DockLayout } from './dock.ts';
+import { STATE_CONTRACT, contractStore, memoryStore, type DesktopStore, type StateDocument, type StateScope } from './state.ts';
 
 export type Layer = 'shipped' | 'suite' | 'user';
 export type JournalEntry = { seq: number, at: number, layer: Layer, module: string, kind: 'install' | 'patch' | 'remove', patch?: unknown[], inverse?: unknown[] };
@@ -37,15 +38,23 @@ export type Outcome = { ok: true, value: unknown } | { ok: false, error: { code:
  * `header`: a window's header bar changed (`window`), or one of its items was
  * used (`item`, and `by`: `shell` for the person, else the caller).
  */
-export type KernelEvent = { kind: 'modules' | 'mail' | 'ledger' | 'providers' | 'title' | 'settings' | 'header' | 'dock', module?: string, title?: string, window?: string, item?: string, by?: string };
+export type KernelEvent = { kind: 'modules' | 'mail' | 'ledger' | 'providers' | 'title' | 'settings' | 'header' | 'dock' | 'state', module?: string, title?: string, window?: string, item?: string, by?: string };
 /**
  * Where the desktop keeps the values of a `form` module's settings (a module
  * with no server of its own). A host passes its own storage; the default keeps
  * them for the page's lifetime. Never secrets: a form refuses them.
  */
 export type SettingsStore = { read(module: string): unknown, write(module: string, values: unknown): void };
-/** Where the person's dock layout is kept (the host's storage); absent, it lives as long as the page. */
-export type DockStore = { read(): unknown, write(layout: DockLayout): void };
+/**
+ * Where the desktop keeps its state: a store the host passes (its server
+ * through `contractStore`, the browser through `webStorageStore`), or
+ * `{ module }`, the installed application that serves `tangle_os_state`
+ * once it connects (the one that is signed in to the server). Absent, the
+ * state lives as long as the page.
+ */
+export type StateOption = DesktopStore | { module: string };
+/** Whether the desktop's state can be read and changed: `loading` and `unavailable` change nothing. */
+export type StateStatus = { status: 'loading' | 'ready' | 'unavailable', saving: number, failed: string | null };
 /** The ids no module may take: the shell's own hand, the person, and the desktop that files its own proposals. */
 export const RESERVED_IDS = ['shell', 'person', 'desktop'] as const;
 
@@ -100,7 +109,7 @@ const scopeOf = (contract: string, op: string) => [`${contract}.${op}`, `${contr
  * `assistantGrants`: what the assistant may call — `'all'`, or scopes
  * (`contract.op`, `contract.*`). Nothing by default: a host decides.
  */
-export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[], tools?: ToolBuilder, settings?: SettingsStore, dock?: DockStore } = {}) {
+export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[], tools?: ToolBuilder, settings?: SettingsStore, state?: StateOption } = {}) {
   const now = options.now ?? (() => Date.now());
   const recovery = options.recovery === true;
   const entries = new Map<string, Entry>();
@@ -120,8 +129,83 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   let dockCheck: ((value: unknown) => any) | null = null;
   let dockContract: any = null;
   let dockRevision = 0;
-  let keptDock: unknown = null;
-  const dockStore: DockStore = options.dock ?? { read: () => keptDock, write: (layout) => { keptDock = layout; } };
+
+  // ── the desktop's state: a cache of documents, loaded once, saved through ──
+  const cache = new Map<string, StateDocument>();
+  const idOf = (scope: StateScope, key: string) => `${scope}\u0000${key}`;
+  const queue = new Map<string, { scope: StateScope, key: string, value: unknown, attempt: number, timer?: any }>();
+  const inflight = new Set<string>();
+  let stateStatus: StateStatus['status'] = options.state ? 'loading' : 'ready';
+  let failed: string | null = null;
+  let activeStore: DesktopStore | null = options.state && 'load' in options.state ? options.state : options.state ? null : memoryStore();
+  const stateEvent = (key?: string) => emit({ kind: 'state', ...(key ? { module: key } : {}) });
+  let loading: Promise<void> = Promise.resolve();
+  function loadState(store: DesktopStore): Promise<void> { return (loading = loadFrom(store)); }
+  async function loadFrom(store: DesktopStore) {
+    activeStore = store;
+    stateStatus = 'loading'; stateEvent();
+    try {
+      const documents = await store.load();
+      for (const d of documents) if (!queue.has(idOf(d.scope, d.key))) cache.set(idOf(d.scope, d.key), d);
+      stateStatus = 'ready'; failed = null;
+      if (documents.some(d => d.key === 'dock')) dockRevision++;
+      emit({ kind: 'dock' });
+      for (const id of queue.keys()) flushKey(id);
+    } catch (error: any) {
+      // never write what was not read: an unreadable state stays unchangeable until it loads
+      stateStatus = 'unavailable'; failed = String(error?.message ?? error);
+    }
+    stateEvent();
+  }
+  function flushKey(id: string) {
+    const pending = queue.get(id);
+    if (!pending || inflight.has(id) || !activeStore || stateStatus !== 'ready') return;
+    inflight.add(id);
+    queue.delete(id);
+    const ifRevision = cache.get(id)?.revision ?? 0;
+    const store = activeStore;
+    store.save({ scope: pending.scope, key: pending.key, value: pending.value }, ifRevision).then((answer) => {
+      inflight.delete(id);
+      if ('conflict' in answer) {
+        // stored elsewhere meanwhile: the stored document wins, and a value set since it is dropped
+        queue.delete(id);
+        if (answer.conflict.value === null) cache.delete(id); else cache.set(id, answer.conflict);
+        if (pending.key === 'dock') { dockRevision++; emit({ kind: 'dock' }); }
+        if (pending.key.startsWith('settings/')) emit({ kind: 'settings', module: pending.key.slice(9) });
+        stateEvent(pending.key);
+        return;
+      }
+      const current = cache.get(id);
+      if (current) current.revision = answer.revision;
+      else if (pending.value !== null) cache.set(id, { scope: pending.scope, key: pending.key, value: pending.value, revision: answer.revision });
+      if (failed !== null && inflight.size === 0) failed = null;
+      stateEvent(pending.key);
+      flushKey(id);
+    }, (error: any) => {
+      inflight.delete(id);
+      // kept to try again, a little later each time; a newer value set meanwhile replaces it
+      if (!queue.has(id)) queue.set(id, { ...pending, attempt: pending.attempt + 1 });
+      const next = queue.get(id)!;
+      failed = String(error?.message ?? error);
+      stateEvent(pending.key);
+      clearTimeout(next.timer);
+      next.timer = setTimeout(() => flushKey(id), Math.min(30_000, 1000 * 2 ** Math.min(next.attempt - 1, 5)));
+    });
+  }
+  /** Change one document now, and save it in the background. */
+  function writeState(scope: StateScope, key: string, value: unknown): Outcome {
+    if (stateStatus !== 'ready') return refusal('OS0121', stateStatus === 'loading' ? 'the desktop state is still loading' : 'the desktop state could not be loaded');
+    const id = idOf(scope, key);
+    const current = cache.get(id);
+    if (value === null) { if (current) cache.set(id, { ...current, value: null }); }
+    else cache.set(id, { scope, key, value: cloneJson(value), revision: current?.revision ?? 0 });
+    const earlier = queue.get(id);
+    clearTimeout(earlier?.timer);
+    queue.set(id, { scope, key, value: value === null ? null : cloneJson(value), attempt: 0 });
+    flushKey(id);
+    return { ok: true, value: {} };
+  }
+  const readState = (scope: StateScope, key: string) => { const d = cache.get(idOf(scope, key)); return d && d.value !== null ? cloneJson(d.value) : undefined; };
   /** The checked shape of a layout, or null. */
   function checkDock(value: unknown): DockLayout | null {
     dockCheck ??= new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' }).compile(DOCK_SCHEMA as any) as any;
@@ -131,8 +215,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   /** Per window, its header bar and the module that set it; and where the window takes activations. */
   const headers = new Map<string, { module: string, header: Header }>();
   const headerHandlers = new Map<string, { module: string, handle: HeaderHandler }>();
-  const kept = new Map<string, unknown>();
-  const store: SettingsStore = options.settings ?? { read: (module) => kept.get(module), write: (module, values) => { kept.set(module, values); } };
+  // a host that keeps settings itself (the earlier seam) still does; otherwise they are desktop state
   const checkers = new Map<string, { key: string, check: (value: unknown) => any }>();
   /** The compiled schema of a form module's settings, compiled again only when its manifest changes it. */
   function checker(module: string, schema: Record<string, unknown>) {
@@ -272,7 +355,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     settings(module: string): unknown {
       const manifest = kernel.effective(module);
       if (manifest?.settings?.kind !== 'form') return {};
-      return cloneJson(store.read(module) ?? {});
+      return cloneJson((options.settings ? options.settings.read(module) : readState('person', `settings/${module}`)) ?? {});
     },
 
     /**
@@ -290,7 +373,8 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         const first = (outcome?.errors ?? [])[0];
         return refusal('OS0106', `the settings of '${module}' are refused${first ? `: ${first.instancePath || '/'} ${first.message ?? ''}`.trimEnd() : ''}`);
       }
-      store.write(module, cloneJson(values));
+      if (options.settings) options.settings.write(module, cloneJson(values));
+      else { const written = writeState('person', `settings/${module}`, values); if (!written.ok) return written; }
       emit({ kind: 'settings', module });
       return { ok: true, value: cloneJson(values) };
     },
@@ -313,6 +397,12 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       mayServe(module, id);
       providers.set(id, [...(providers.get(id) ?? []).filter(p => p.owner !== owner), { module, owner, contract, client }]);
       emit({ kind: 'providers', module });
+      // the application the host named serves the desktop's state: load it from there (again, after it reconnects)
+      if (id === STATE_CONTRACT.id && options.state && 'module' in options.state && options.state.module === module) {
+        const store = contractStore({ invoke: (op, input) => client.invoke(op, input) });
+        if (stateStatus === 'ready') { activeStore = store; for (const key of queue.keys()) flushKey(key); }
+        else void loadState(store);
+      }
     },
     /** A shipped module serves a contract from inside the page. */
     provideLocal(module: string, contractDoc: unknown, handlers: Record<string, (input: any) => unknown>, owner = module) {
@@ -490,7 +580,33 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     /** The person's saved dock layout, or null for one they have not arranged (a recovery boot ignores it). */
     dock(): DockLayout | null {
       if (recovery) return null;
-      return checkDock(dockStore.read());
+      return checkDock(readState('person', 'dock') ?? null);
+    },
+
+    /** A document of the desktop's state the host keeps for itself (its preferences): never a secret. */
+    state(key: string, scope: StateScope = 'person'): unknown { return readState(scope, key); },
+
+    /** Keep a document of the host's own; refused (`OS0121`) while the state is loading or could not be loaded. */
+    setState(key: string, value: unknown, scope: StateScope = 'person'): Outcome {
+      if (!/^[A-Za-z0-9._:/-]{1,200}$/.test(key) || key === 'dock' || key.startsWith('settings/')) return refusal('OS0120', `'${key}' is not a key the host may set`);
+      const written = writeState(scope, key, value);
+      if (written.ok) stateEvent(key);
+      return written;
+    },
+
+    /** Resolves when the state's latest load has finished (loaded, or found unavailable). */
+    ready(): Promise<void> { return loading; },
+
+    /** Whether the state is loaded, how many saves are on their way, and the last save failure. */
+    stateStatus(): StateStatus { return { status: stateStatus, saving: queue.size + inflight.size, failed }; },
+
+    /** Load the state again (after it could not be loaded, or to take what another device changed). */
+    reloadState(): Promise<void> { return activeStore ? loadState(activeStore) : Promise.resolve(); },
+
+    /** Resolves when every change made so far is saved (or has failed). */
+    async flushState(): Promise<void> {
+      for (const id of [...queue.keys()]) flushKey(id);
+      while (inflight.size) await new Promise(resolve => setTimeout(resolve, 10));
     },
 
     /** The layout's revision: it moves with every change, so a suggestion made against an older dock is refused. */
@@ -500,8 +616,9 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     setDock(layout: unknown): Outcome {
       const checked = checkDock(layout);
       if (!checked) return refusal('OS0119', 'the dock layout is refused: it does not match the dock schema');
+      const written = writeState('person', 'dock', checked);
+      if (!written.ok) return written;
       dockRevision++;
-      dockStore.write(checked);
       emit({ kind: 'dock' });
       return { ok: true, value: { revision: dockRevision } };
     },
@@ -690,6 +807,8 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
 
     subscribe(listener: (event: KernelEvent) => void) { listeners.add(listener); return () => listeners.delete(listener); },
   };
+  // a store the host passed loads at once; an application that serves the state loads it when it connects
+  if (activeStore && options.state) void loadState(activeStore);
   return kernel;
 }
 

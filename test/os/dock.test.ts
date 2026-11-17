@@ -112,21 +112,24 @@ describe('the manifest', () => {
 });
 
 describe('the dock in the kernel', () => {
-  it('keeps a checked layout in the host store, moves its revision, and ignores it on a recovery boot', async () => {
-    const { createKernel } = await import('@tangleai/os');
-    let stored: unknown = null;
-    const store = { read: () => stored, write: (layout: unknown) => { stored = layout; } };
-    const kernel = createKernel({ dock: store });
+  it('keeps a checked layout in the desktop state, moves its revision, and ignores it on a recovery boot', async () => {
+    const { createKernel, memoryStore } = await import('@tangleai/os');
+    const store = memoryStore();
+    const kernel = createKernel({ state: store });
+    await kernel.ready();
     const events: string[] = [];
-    kernel.subscribe(e => events.push(e.kind));
+    kernel.subscribe(e => { if (e.kind === 'dock') events.push(e.kind); });
     assert.equal(kernel.dock(), null);
     assert.equal(kernel.setDock({ $dock: '0.1', items: ['a', 'a', 'b'], hidden: [] }).ok, true);
-    assert.deepEqual(stored, { $dock: '0.1', items: ['a', 'b'], hidden: [] }, 'kept normalized');
+    await kernel.flushState();
+    assert.deepEqual(store.documents(), [{ scope: 'person', key: 'dock', value: { $dock: '0.1', items: ['a', 'b'], hidden: [] }, revision: 1 }], 'kept normalized');
     assert.equal(kernel.dockRevision(), 1);
     const bad = kernel.setDock({ $dock: '0.1', items: [{ folder: 'f' }], hidden: [] });
     assert.ok(!bad.ok && bad.error.code === 'OS0119');
     assert.deepEqual(events, ['dock']);
-    assert.equal(createKernel({ dock: store, recovery: true }).dock(), null);
+    const recovered = createKernel({ state: store, recovery: true });
+    await recovered.ready();
+    assert.equal(recovered.dock(), null);
   });
 
   it('refuses a module that takes an id of the desktop', async () => {

@@ -545,8 +545,10 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     if (icon?.hue !== undefined) glyph.style.setProperty('--hue', String(icon.hue));
     return glyph;
   };
+  /** The dock is the person's document: it is edited only once their state has loaded. */
+  const stateReady = () => kernel.stateStatus().status === 'ready';
   function setEditing(next: boolean) {
-    if (editing === next) return;
+    if (editing === next || (next && !stateReady())) return;
     editing = next;
     if (!next) closeFolder();
     renderDock(true);
@@ -635,7 +637,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   function renderDock(force = false) {
     // a drag in progress holds the dock still; it draws again when the drop lands
     if (dragging) return;
-    const signature = JSON.stringify([kernel.modules().map(m => [m.id, localized(m.title, locale.locale), m.icon, m.entries, m.dock]), kernel.dock(), editing, [...new Set(desktop.windows.map(w => w.module))].sort(), kernel.mail().filter(m => m.proposal ? m.proposal.status === 'pending' || m.proposal.status === 'deciding' : !m.read).length, theme.scheme, locale, desktop.focus]);
+    const signature = JSON.stringify([kernel.modules().map(m => [m.id, localized(m.title, locale.locale), m.icon, m.entries, m.dock]), kernel.dock(), editing, kernel.stateStatus().status, kernel.stateStatus().failed, [...new Set(desktop.windows.map(w => w.module))].sort(), kernel.mail().filter(m => m.proposal ? m.proposal.status === 'pending' || m.proposal.status === 'deciding' : !m.read).length, theme.scheme, locale, desktop.focus]);
     if (!force && signature === dockSignature) return;
     dockSignature = signature;
     const { view } = dockState();
@@ -677,6 +679,18 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     themeButton.innerHTML = `<span class="tos-glyph" data-glyph="${theme.scheme === 'dark' ? 'sun' : 'moon'}"></span>`;
     themeButton.addEventListener('click', toggleScheme);
     const tray = [...(options.tray?.mail === false ? [] : [mailButton]), ...(options.tray?.theme === false ? [] : [themeButton])];
+    // the person's state could not be read, or a change could not be saved: said, with a way to try again
+    const state = kernel.stateStatus();
+    if (state.status === 'unavailable' || state.failed) {
+      const notice = doc.createElement('button');
+      notice.type = 'button'; notice.className = 'tos-dock-item tos-dock-state';
+      const text = state.status === 'unavailable' ? t('state/unavailable') : t('state/failed', { detail: state.failed ?? '' });
+      notice.setAttribute('aria-label', `${text} ${t('window/retry')}`); notice.title = text;
+      notice.setAttribute('role', 'status');
+      notice.textContent = '!';
+      notice.addEventListener('click', () => { if (kernel.stateStatus().status === 'unavailable') void kernel.reloadState(); else void kernel.flushState(); });
+      tray.unshift(notice);
+    }
     const separator = doc.createElement('span'); separator.className = 'tos-dock-separator'; separator.setAttribute('aria-hidden', 'true');
     const brand = brandMark();
     // the tiles shrink with the count before the dock overflows
@@ -856,7 +870,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     else if (!singleton(moduleId)) entries.push('separator', { label: t('menu/new-window'), run: () => { open(moduleId); } });
     if (manifest.settings) entries.push('separator', { label: t('menu/settings'), run: () => openSettings(moduleId) });
     if (running.length) entries.push('separator', { label: running.length === 1 ? t('window/close') : t('menu/close-all'), run: () => { for (const w of windowsOf(moduleId)) close(w.id); } });
-    entries.push('separator', { label: t('dock/edit'), run: () => setEditing(true) });
+    entries.push('separator', { label: t('dock/edit'), disabled: !stateReady(), run: () => setEditing(true) });
     return entries;
   }
 
@@ -875,7 +889,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       ...(options.tray?.mail === false ? [] : [{ label: t('mail/title'), run: toggleMail }]),
       ...(options.tray?.theme === false ? [] : [{ label: theme.scheme === 'dark' ? t('tray/theme-light') : t('tray/theme-dark'), run: toggleScheme }]),
       'separator',
-      { label: editing ? t('dock/done') : t('dock/edit'), run: () => setEditing(!editing) },
+      { label: editing ? t('dock/done') : t('dock/edit'), disabled: !editing && !stateReady(), run: () => setEditing(!editing) },
     ];
   }
 
@@ -1315,7 +1329,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       renderHeader(event.window);
       if (event.item && event.by !== 'shell') showUse(event.window, event.item);
     }
-    if (event.kind === 'modules' || event.kind === 'dock') renderDock();
+    if (event.kind === 'modules' || event.kind === 'dock' || event.kind === 'state') renderDock();
     // a form module's windows hear their new settings; one that predates them may refuse, which is fine
     if (event.kind === 'settings' && event.module) {
       const values = kernel.settings(event.module);
@@ -1332,6 +1346,9 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     if ((event.data as any).key?.endsWith('+k')) (dock.querySelector('.tos-dock-item') as HTMLElement | null)?.focus();
   };
   win.addEventListener('message', onKey);
+  // leaving the page sends what is still unsaved
+  const onPageHide = () => { void kernel.flushState(); };
+  win.addEventListener('pagehide', onPageHide);
   // a click inside a framed window goes to the frame, not the shell: when
   // focus moves into a frame, raise the window that holds it
   const onBlur = () => win.setTimeout(() => {
@@ -1367,7 +1384,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     /** The framed module's own context row, for the assistant. */
     context: (id: string) => mounted.get(id)?.moduleClient?.invoke('module.context', {}),
     dispose() {
-      unsubscribe(); observer?.disconnect(); win.removeEventListener('message', onKey); win.removeEventListener('blur', onBlur);
+      unsubscribe(); observer?.disconnect(); win.removeEventListener('message', onKey); win.removeEventListener('blur', onBlur); win.removeEventListener('pagehide', onPageHide);
       closeMenu(); node.removeEventListener('contextmenu', onContextMenu); doc.removeEventListener('pointerdown', onOutside, true);
       win.removeEventListener('blur', onMenuBlur); win.removeEventListener('resize', onMenuBlur);
       for (const id of [...mounted.keys()]) close(id);
