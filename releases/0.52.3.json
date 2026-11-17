@@ -1,0 +1,337 @@
+{
+  "schemaVersion": 1,
+  "version": "0.52.3",
+  "baseVersion": "0.52.2",
+  "baseCommit": "2d92af94db7846ad43d49f825dcd7a4e56467ca5",
+  "preparationCommit": "b351c19bfb44431fc7e734ab9789bf2c88f9d5c4",
+  "initial": false,
+  "inputHash": "5a21dae02b652bea934905aad69e42a16b11ea334826a2ac291d776a3297eba6",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "An agent run can be resumed after a restart without a tool acting twice. A tool's context carries `call: { id, round, attempt }` (the provider's tool-call id, the round, and how often this agent ran that id), so a tool with an effect keys it by the id; `onCheckpoint` on a send is called after each round's tool results with a copy of the messages, the steps, the round and the spend, the point a host persists and resumes from.",
+      "id": "restartable-runs"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Every agent result, and the partial result a rejected call carries, says what produced it: `identity` holds the SHA-256 of the base system prompt, the canonical SHA-256 of the listed tool definitions sorted by name, the tool names, the configured provider and model, and every model the provider reported answering. A host stores it beside the run so an evaluation names the prompt and tool versions it measured, and a changed prompt or schema shows as a changed digest. `@tangleai/agents` now depends directly on `@jarenjs/json`, which was already in its closure.",
+      "id": "run-identity"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.52.3"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.52.3"
+    }
+  ]
+}
