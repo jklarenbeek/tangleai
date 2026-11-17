@@ -1,5 +1,23 @@
 # @tangleai/research
 
+## 0.52.4
+
+### Patch Changes
+
+- An agent send no longer waits on the platform's digest before its first request. The run identity's SHA-256 values are now computed synchronously (equal to `sha256Hex` and `canonicalSha256` on the same input, so every identity keeps its value): a busy thread pool held each request back by an unbounded number of event-loop turns, and on a page without `crypto.subtle` (plain http other than localhost) every send was refused.
+- Updated dependencies
+  - @tangleai/models@0.52.4
+  - @tangleai/context@0.52.4
+  - @tangleai/agents@0.52.4
+  - @tangleai/config@0.52.4
+  - @tangleai/mas@0.52.4
+  - @tangleai/documents@0.52.4
+  - @tangleai/search@0.52.4
+  - @tangleai/outcomes@0.52.4
+  - @tangleai/trace2skill@0.52.4
+  - @tangleai/evolve@0.52.4
+  - @tangleai/gmpl@0.52.4
+
 ## 0.52.3
 
 ### Patch Changes

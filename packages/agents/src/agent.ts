@@ -33,8 +33,8 @@ import { createToolbox, type ToolboxMessages, type ToolContext } from './toolbox
 import { slotAddressesIn, RECALL_TOOL_NAME, createRecallTool, roundSlotName, indexSlotName, slotAddress, slotRef, type RecallMessages } from '@tangleai/context/recall';
 import { environmentTools, type EnvironmentMessages } from '@tangleai/context/environment';
 import { excerpt, truncate, sizeOf } from '@jarenjs/core/chunk';
-import { sha256Hex } from '@jarenjs/core/string';
-import { canonicalSha256 } from '@jarenjs/json/canonical';
+import { canonicalizeJson } from '@jarenjs/json/canonical';
+import { sha256HexSync } from './sha256.ts';
 
 /**
  * Every sentence the loop writes into a request or a result, so a host
@@ -472,7 +472,8 @@ export function createAgent(options: {
 
     const steps: any[] = [];
     const answered: string[] = [];
-    const identity = await identityOf(messages, tools, client.endpoint, answered);
+    // synchronous: a digest on the platform's thread pool would hold the first request back
+    const identity = identityOf(messages, tools, client.endpoint, answered);
     const toolContext: ToolContext = {
       signal: hooks.signal,
       context: hooks.toolContext !== undefined ? hooks.toolContext : options.toolContext,
@@ -1263,13 +1264,14 @@ export type AgentIdentity = {
   models: string[];
 };
 
-async function identityOf(messages: any[], tools: any[], endpoint: { provider?: string; model?: string } | undefined, answered: string[]): Promise<AgentIdentity> {
+function identityOf(messages: any[], tools: any[], endpoint: { provider?: string; model?: string } | undefined, answered: string[]): AgentIdentity {
   const base = messages[0]?.role === 'system' && typeof messages[0].content === 'string' ? messages[0].content : '';
   const listed = (JSON.parse(JSON.stringify(tools)) as any[])
     .sort((a, b) => compareNames(a?.function?.name, b?.function?.name));
   return {
-    system: await sha256Hex(base),
-    tools: await canonicalSha256(listed),
+    system: sha256HexSync(base),
+    // the same value as `canonicalSha256` (`@jarenjs/json/canonical`): SHA-256 over the RFC 8785 text
+    tools: sha256HexSync(canonicalizeJson(listed)),
     toolNames: listed.map((tool) => String(tool?.function?.name)),
     provider: endpoint?.provider ?? null,
     model: endpoint?.model ?? null,
