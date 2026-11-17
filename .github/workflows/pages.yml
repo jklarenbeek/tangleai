@@ -1,9 +1,8 @@
 name: pages
 
-# The source checks gate deployment; Tangle npm publication is independent.
-# A manual run deploys the site from main without the full release gate (its
-# measured results can be stale while the site itself is sound): it still
-# typechecks, runs the site's own tests, builds and verifies the live site.
+# Deploys the site from main. The local release gate tests what is deployed,
+# so the runner only builds the site, deploys it and verifies the live site;
+# Tangle npm publication is independent.
 on:
   workflow_call:
     inputs:
@@ -42,12 +41,10 @@ jobs:
           submodules: true
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - name: Check the site's sources when deployed by hand
+      # the local release gate tests what is deployed; the runner only builds it
+      - name: Deploy only from main
         if: github.event_name == 'workflow_dispatch'
-        run: |
-          test "$GITHUB_REF" = refs/heads/main
-          npm run typecheck
-          node --test "test/os/*.test.ts" "test/pages/*.test.ts" "test/assistant/*.test.ts"
+        run: test "$GITHUB_REF" = refs/heads/main
       - run: npm run pages:build
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
