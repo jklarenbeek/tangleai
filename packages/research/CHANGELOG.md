@@ -1,5 +1,23 @@
 # @tangleai/research
 
+## 0.52.1
+
+### Patch Changes
+
+- Builds on Jaren 0.216.0, whose josl CSV writers can quote every field, the header included, on request. Tangle writes no CSV, so no behaviour changes; the pins, the foundation manifest and the integration audit move to the new release.
+- Updated dependencies
+  - @tangleai/models@0.52.1
+  - @tangleai/context@0.52.1
+  - @tangleai/agents@0.52.1
+  - @tangleai/config@0.52.1
+  - @tangleai/mas@0.52.1
+  - @tangleai/documents@0.52.1
+  - @tangleai/search@0.52.1
+  - @tangleai/outcomes@0.52.1
+  - @tangleai/trace2skill@0.52.1
+  - @tangleai/evolve@0.52.1
+  - @tangleai/gmpl@0.52.1
+
 ## 0.52.0
 
 ### Patch Changes

@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "version": "0.52.1",
+  "baseVersion": "0.52.0",
+  "baseCommit": "6a2e0cec29814e6b483d9f5fd6bb2b149668bb3c",
+  "preparationCommit": "6a2e0cec29814e6b483d9f5fd6bb2b149668bb3c",
+  "initial": false,
+  "inputHash": "5635c58f8fbea4351f7ded1de2301d599f51db719a6f99032cc15411384391ff",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Builds on Jaren 0.216.0, whose josl CSV writers can quote every field, the header included, on request. Tangle writes no CSV, so no behaviour changes; the pins, the foundation manifest and the integration audit move to the new release.",
+      "id": "jaren-0-216"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.52.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.52.1"
+    }
+  ]
+}

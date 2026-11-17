@@ -1,5 +1,11 @@
 # @tangleai/linq
 
+## 0.52.1
+
+### Patch Changes
+
+- Builds on Jaren 0.216.0, whose josl CSV writers can quote every field, the header included, on request. Tangle writes no CSV, so no behaviour changes; the pins, the foundation manifest and the integration audit move to the new release.
+
 ## 0.52.0
 
 ### Patch Changes
