@@ -1,5 +1,16 @@
 # @tangleai/memory
 
+## 0.51.1
+
+### Patch Changes
+
+- Build on Jaren 0.213.0, which renders an untrusted app document with its data bindings and granted widgets without a frame.
+- Updated dependencies
+  - @tangleai/models@0.51.1
+  - @tangleai/context@0.51.1
+  - @tangleai/jaren@0.51.1
+  - @tangleai/core@0.51.1
+
 ## 0.51.0
 
 ### Patch Changes

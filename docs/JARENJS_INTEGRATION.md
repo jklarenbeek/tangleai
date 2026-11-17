@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.212.0**, tag `v0.212.0`, source commit
-`d59906882fa6ddf396163540232e248f43b6b5e2`. Upstream `main` and the tag agreed
+Tangle consumes **Jaren 0.213.0**, tag `v0.213.0`, source commit
+`ceb222571e8938faf917ef2cf42406349cb2477d`. Upstream `main` and the tag agreed
 when checked on 2026-11-15; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.212.0` pin. A clean reconstruction from the pinned
+reference is an exact `0.213.0` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,18 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.212.0 to 0.213.0 and current adoption
+
+One release. `@jarenjs/view` and `@jarenjs/app` render an untrusted app
+document with its data bindings and the widgets a host grants, without a
+frame (`safe: 'interactive'`), and keep every safe document inside itself.
+Studio's project widget and documents use it. It answers Tangle's request for
+an interactive render profile. No export was removed.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Interactive safe rendering (`safe: 'interactive'`) | **Not yet adopted.** Tangle OS runs a person's or the assistant's app document as a `document` module in a sandboxed frame of an opaque origin. Rendering it in place under the interactive profile, with granted widgets, could replace that frame where the document needs no script of its own; the desktop keeps the frame until a measurement shows the profile holds the same boundary. |
 
 ## Changes from 0.207.0 to 0.212.0 and current adoption
 
@@ -493,7 +505,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.212.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.213.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

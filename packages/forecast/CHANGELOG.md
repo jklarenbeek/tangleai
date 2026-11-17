@@ -1,5 +1,19 @@
 # @tangleai/forecast
 
+## 0.51.1
+
+### Patch Changes
+
+- Build on Jaren 0.213.0, which renders an untrusted app document with its data bindings and granted widgets without a frame.
+- Updated dependencies
+  - @tangleai/models@0.51.1
+  - @tangleai/context@0.51.1
+  - @tangleai/agents@0.51.1
+  - @tangleai/mas@0.51.1
+  - @tangleai/documents@0.51.1
+  - @tangleai/search@0.51.1
+  - @tangleai/outcomes@0.51.1
+
 ## 0.51.0
 
 ### Patch Changes

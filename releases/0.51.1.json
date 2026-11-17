@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "version": "0.51.1",
+  "baseVersion": "0.51.0",
+  "baseCommit": "a419812981066950a020b70009cad2ae98501572",
+  "preparationCommit": "a419812981066950a020b70009cad2ae98501572",
+  "initial": false,
+  "inputHash": "796bc0a062817f28c6448ac641c4bb6f1ed93d834e2b3835e4e0d6ace85f0fcb",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Build on Jaren 0.213.0, which renders an untrusted app document with its data bindings and granted widgets without a frame.",
+      "id": "jaren-foundation-0-213-0"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.51.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.51.1"
+    }
+  ]
+}

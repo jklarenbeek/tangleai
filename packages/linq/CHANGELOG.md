@@ -1,5 +1,11 @@
 # @tangleai/linq
 
+## 0.51.1
+
+### Patch Changes
+
+- Build on Jaren 0.213.0, which renders an untrusted app document with its data bindings and granted widgets without a frame.
+
 ## 0.51.0
 
 ### Patch Changes
