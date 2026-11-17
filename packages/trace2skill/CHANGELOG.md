@@ -1,5 +1,16 @@
 # @tangleai/trace2skill
 
+## 0.51.3
+
+### Patch Changes
+
+- Build on Jaren 0.215.0, which compares a caller-written numeric key exactly on PostgreSQL.
+- Updated dependencies
+  - @tangleai/models@0.51.3
+  - @tangleai/agents@0.51.3
+  - @tangleai/mas@0.51.3
+  - @tangleai/outcomes@0.51.3
+
 ## 0.51.2
 
 ### Patch Changes

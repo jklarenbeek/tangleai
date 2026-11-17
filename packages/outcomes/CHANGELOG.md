@@ -1,5 +1,17 @@
 # @tangleai/outcomes
 
+## 0.51.3
+
+### Patch Changes
+
+- Build on Jaren 0.215.0, which compares a caller-written numeric key exactly on PostgreSQL.
+- Updated dependencies
+  - @tangleai/models@0.51.3
+  - @tangleai/agents@0.51.3
+  - @tangleai/core@0.51.3
+  - @tangleai/config@0.51.3
+  - @tangleai/memory@0.51.3
+
 ## 0.51.2
 
 ### Patch Changes

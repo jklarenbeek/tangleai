@@ -1,5 +1,27 @@
 # @tangleai/store
 
+## 0.51.3
+
+### Patch Changes
+
+- Build on Jaren 0.215.0, which compares a caller-written numeric key exactly on PostgreSQL.
+- Updated dependencies
+  - @tangleai/core@0.51.3
+  - @tangleai/config@0.51.3
+  - @tangleai/mas@0.51.3
+  - @tangleai/documents@0.51.3
+  - @tangleai/memory@0.51.3
+  - @tangleai/outcomes@0.51.3
+  - @tangleai/trace2skill@0.51.3
+  - @tangleai/evolve@0.51.3
+  - @tangleai/hera@0.51.3
+  - @tangleai/forecast@0.51.3
+  - @tangleai/grounding@0.51.3
+  - @tangleai/lightrag@0.51.3
+  - @tangleai/trading@0.51.3
+  - @tangleai/research@0.51.3
+  - @tangleai/experiential@0.51.3
+
 ## 0.51.2
 
 ### Patch Changes

@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.51.3
+
+Build on Jaren 0.215.0, which compares a caller-written numeric key exactly on PostgreSQL.
+
 ## 0.51.2
 
 Build on Jaren 0.214.0, which exports its host tokens as light and dark stylesheets and lets its component stylesheets follow the host's dark selection.

@@ -1,5 +1,11 @@
 # @tangleai/linq
 
+## 0.51.3
+
+### Patch Changes
+
+- Build on Jaren 0.215.0, which compares a caller-written numeric key exactly on PostgreSQL.
+
 ## 0.51.2
 
 ### Patch Changes
