@@ -1,5 +1,18 @@
 # @tangleai/lightrag
 
+## 0.53.1
+
+### Patch Changes
+
+- Builds on Jaren 0.219.1, a patch whose database owner lease is pinned to a SQLite file under every spelling of its path. Its source is unchanged, so no behaviour changes; the pins, the foundation manifest and the integration audit move to the new release.
+- Updated dependencies
+  - @tangleai/models@0.53.1
+  - @tangleai/context@0.53.1
+  - @tangleai/agents@0.53.1
+  - @tangleai/core@0.53.1
+  - @tangleai/documents@0.53.1
+  - @tangleai/outcomes@0.53.1
+
 ## 0.53.0
 
 ### Minor Changes

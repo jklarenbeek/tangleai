@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.219.0**, tag `v0.219.0`, source commit
-`5b94ceb4ff8e35eb2f0e1345da4a88f5260fa25e`. Upstream `main` and the tag agreed
+Tangle consumes **Jaren 0.219.1**, tag `v0.219.1`, source commit
+`62e8e1ca6436ef4d6e2d6867a3c5418c25133a98`. Upstream `main` and the tag agreed
 when checked on 2026-11-17; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.219.0` pin. A clean reconstruction from the pinned
+reference is an exact `0.219.1` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,13 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.219.0 to 0.219.1 and current adoption
+
+A patch. The owner lease `@jarenjs/db` holds on a SQLite file is pinned to
+that file under every other spelling of its path, and macOS is named as an
+unqualified host for it; the release changes its documentation and tests, not
+its source. Tangle's stores hold the lease the same way, so nothing is adopted.
 
 ## Changes from 0.218.0 to 0.219.0 and current adoption
 
@@ -568,7 +575,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.219.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.219.1 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

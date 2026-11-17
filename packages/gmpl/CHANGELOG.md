@@ -1,5 +1,13 @@
 # @tangleai/gmpl
 
+## 0.53.1
+
+### Patch Changes
+
+- Builds on Jaren 0.219.1, a patch whose database owner lease is pinned to a SQLite file under every spelling of its path. Its source is unchanged, so no behaviour changes; the pins, the foundation manifest and the integration audit move to the new release.
+- Updated dependencies
+  - @tangleai/mas@0.53.1
+
 ## 0.53.0
 
 ### Minor Changes
