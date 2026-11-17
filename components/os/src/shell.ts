@@ -17,6 +17,7 @@ import {
 } from './windows.ts';
 import type { Kernel, Decider } from './kernel.ts';
 import { HEADER_CONTRACT, HEADER_GLYPHS, fitHeader, headerItems, type Header, type HeaderHandler, type HeaderItem, type HeaderMenu } from './header.ts';
+import { arrangeDock, dockIcons, folderTitles, groupInDock, hideInDock, moveInDock, renameDockFolder, showInDock, type DockIcon, type DockLayout } from './dock.ts';
 
 export type ShippedContext = {
   module: ModuleManifest;
@@ -45,6 +46,10 @@ export type ShippedContext = {
   setHeader(header: Header | null): void;
   /** Where uses of the header bar arrive (by the person or a granted caller); return `{ refused }` to say it was not done. */
   onHeader(handler: HeaderHandler): () => void;
+  /** The screen of the launch entry the window was opened from, if any. */
+  readonly screen?: string;
+  /** Called when the person opens one of the module's launch entries while this window is open. */
+  onScreen(listener: (screen: string) => void): () => void;
 };
 /**
  * What happened to a window, with its state after it: a host that subscribes
@@ -106,7 +111,7 @@ type HeaderBar = {
   bar: HTMLElement, start: HTMLElement, center: HTMLElement, end: HTMLElement, more: HTMLButtonElement, subtitle: HTMLElement, titleBox: HTMLElement,
   items: Map<string, HTMLElement>, overflow: string[], fitted: number, search?: any,
 };
-type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean, releaseDecider?: () => void, header: HeaderBar, releaseHeader?: () => void };
+type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean, releaseDecider?: () => void, header: HeaderBar, releaseHeader?: () => void, screen?: string, screens: Set<(screen: string) => void> };
 
 const svg = (path: string) => `<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path d="${path}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 const ICON = { close: svg('M4 4l8 8M12 4l-8 8'), minimize: svg('M4 8h8'), maximize: svg('M4.5 4.5h7v7h-7z'), restore: svg('M6 4h6v6M4 6h6v6H4z') };
@@ -292,6 +297,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         type: CONNECT, protocol: PROTOCOL, module: manifest.id,
         ports: ['os', 'module', ...provided.map(p => p.contract.id)],
         theme: { tokens: theme.tokens, scheme: theme.scheme }, locale,
+        ...(entry.screen !== undefined ? { screen: entry.screen } : {}),
         ...(manifest.host.kind === 'document' ? { document: { app: manifest.host.app, ...(manifest.styles ? { styles: manifest.styles } : {}) } } : {}),
       };
       frame.contentWindow!.postMessage(message, targetOrigin, [os.port2, control.port2, ...provided.map(p => p.channel.port2)]);
@@ -325,6 +331,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)),
         setHeader: (header) => { const outcome = kernel.setHeader(manifest.id, w.id, header); if (!outcome.ok) throw Object.assign(new Error(outcome.error.message), { code: outcome.error.code }); },
         onHeader: (handler) => { entry.releaseHeader?.(); return (entry.releaseHeader = kernel.registerHeaderHandler(manifest.id, w.id, handler)); },
+        screen: entry.screen,
+        onScreen: (listener) => { entry.screens.add(listener); return () => { entry.screens.delete(listener); }; },
         provide: (contract, handlers) => kernel.provideLocal(manifest.id, contract, handlers, w.id),
       });
       entry.el.classList.remove('is-loading');
@@ -400,7 +408,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     bar.addEventListener('dblclick', (event) => { if (!(event.target as HTMLElement).closest(INTERACTIVE)) setDesktop(toggleMaximize(desktop, w.id)); });
     drag(bar, w.id, 'move');
     drag(grip, w.id, 'resize');
-    return { el, content, title, dispose: () => {}, ports: [], header };
+    return { el, content, title, dispose: () => {}, ports: [], header, screens: new Set() };
   }
 
   /** Pointer drags over frames: a shield takes the pointer for the drag's duration. */
@@ -425,7 +433,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     });
   }
 
-  function open(moduleId: string): string | null {
+  /** Open a module (at one of its screens, for a launch entry). */
+  function open(moduleId: string, screen?: string): string | null {
     const manifest = kernel.effective(moduleId);
     if (!manifest) { report(new Error(`no module '${moduleId}'`)); return null; }
     const before = new Set(desktop.windows.map(w => w.id));
@@ -434,6 +443,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     const created = next.windows.find(w => !before.has(w.id));
     if (!created) { setDesktop(next); return desktop.focus; }
     const entry = createWindowElement(created, manifest);
+    if (screen !== undefined) entry.screen = screen;
     mounted.set(created.id, entry);
     layer.append(entry.el);
     // the window is on the desktop before its module mounts, so the module may retitle it at once
@@ -446,6 +456,23 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       lifecycle('failed', created.id);
     }
     return created.id;
+  }
+
+  /** Show one screen in an open window: a launch entry opened while its module runs. */
+  function showScreen(id: string, screen: string) {
+    const entry = mounted.get(id);
+    if (!entry) return;
+    entry.screen = screen;
+    if (entry.frame) entry.moduleClient?.invoke('module.screen', { screen }).catch((error: unknown) => report(error));
+    else for (const listener of [...entry.screens]) { try { listener(screen); } catch (error) { report(error); } }
+  }
+
+  /** What a dock icon does: raise the module's window (at the icon's screen), or open it. */
+  function launch(icon: DockIcon) {
+    const running = desktop.windows.filter(w => w.module === icon.module).sort((a, c) => c.z - a.z)[0];
+    if (!running) { open(icon.module, icon.screen); return; }
+    setDesktop(focusWindow(desktop, running.id));
+    if (icon.screen !== undefined) showScreen(running.id, icon.screen);
   }
 
   /**
@@ -499,25 +526,142 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
 
   // ── dock and mail ─────────────────────────────────────────────────────────
   let dockSignature = '';
+  // The dock is the person's document (`kernel.dock()`), arranged over the
+  // installed modules' icons: modules, their launch entries and folders. In
+  // edit mode the person moves icons (drag, or Alt with the arrow keys),
+  // drops one on another to make a folder, hides and shows them; every one of
+  // those is also in the tile's menu.
+  let editing = false, dragging = false, openFolderId: string | null = null;
+  const folderPanel = doc.createElement('div');
+  folderPanel.className = 'tos-dock-folder-panel'; folderPanel.hidden = true; folderPanel.setAttribute('role', 'dialog');
+  node.append(folderPanel);
+  const dockState = () => {
+    const manifests = kernel.modules();
+    return arrangeDock(kernel.dock(), dockIcons(manifests, locale.locale), folderTitles(manifests, locale.locale), t('dock/folder'));
+  };
+  const saveDock = (next: DockLayout) => { const outcome = kernel.setDock(next); if (!outcome.ok) report(new Error(outcome.error.message)); };
+  const glyphOf = (icon: { glyph: string, hue?: number } | undefined) => {
+    const glyph = doc.createElement('span'); glyph.className = 'tos-glyph'; glyph.dataset.glyph = icon?.glyph ?? 'app';
+    if (icon?.hue !== undefined) glyph.style.setProperty('--hue', String(icon.hue));
+    return glyph;
+  };
+  function setEditing(next: boolean) {
+    if (editing === next) return;
+    editing = next;
+    if (!next) closeFolder();
+    renderDock(true);
+    (dock.querySelector(next ? '.tos-dock-item[data-icon], .tos-dock-folder' : '.tos-dock-item') as HTMLElement | null)?.focus({ preventScroll: true });
+  }
+
+  function iconTile(icon: DockIcon, running: Set<string>, transient = false): HTMLElement {
+    const b = doc.createElement('button');
+    b.type = 'button'; b.className = 'tos-dock-item'; b.dataset.module = icon.module; b.dataset.icon = icon.id;
+    b.setAttribute('aria-label', editing ? icon.title : t('dock/open', { title: icon.title })); b.title = icon.title;
+    b.append(glyphOf(icon.icon));
+    if (running.has(icon.module)) b.classList.add('is-running');
+    if (transient) b.classList.add('is-transient');
+    b.addEventListener('click', () => { if (!editing && !dragging) launch(icon); });
+    if (!editing || transient) return b;
+    // in edit mode a tile carries its hide badge beside it, never inside the button
+    const slot = doc.createElement('span'); slot.className = 'tos-dock-slot';
+    const hide = doc.createElement('button');
+    hide.type = 'button'; hide.className = 'tos-dock-hide'; hide.tabIndex = -1;
+    hide.setAttribute('aria-label', t('dock/hide', { title: icon.title })); hide.title = t('dock/hide', { title: icon.title });
+    hide.textContent = '−';
+    hide.addEventListener('click', () => saveDock(hideInDock(dockState().layout, icon.id)));
+    slot.append(b, hide);
+    return slot;
+  }
+
+  function folderTile(folder: { id: string, title: string, icons: DockIcon[] }, running: Set<string>): HTMLElement {
+    const b = doc.createElement('button');
+    b.type = 'button'; b.className = 'tos-dock-item tos-dock-folder'; b.dataset.folder = folder.id;
+    b.setAttribute('aria-label', t('dock/folder-open', { title: folder.title })); b.title = folder.title;
+    b.setAttribute('aria-haspopup', 'dialog'); b.setAttribute('aria-expanded', String(openFolderId === folder.id));
+    const grid = doc.createElement('span'); grid.className = 'tos-dock-folder-grid'; grid.setAttribute('aria-hidden', 'true');
+    for (const icon of folder.icons.slice(0, 4)) grid.append(glyphOf(icon.icon));
+    b.append(grid);
+    if (folder.icons.some(i => running.has(i.module))) b.classList.add('is-running');
+    b.addEventListener('click', () => { if (!dragging) { if (openFolderId === folder.id) closeFolder(); else openFolder(folder.id, b); } });
+    return b;
+  }
+
+  function closeFolder() {
+    if (openFolderId === null) return;
+    const opener = dock.querySelector<HTMLElement>(`[data-folder="${openFolderId}"]`);
+    openFolderId = null; folderPanel.hidden = true; folderPanel.replaceChildren();
+    opener?.setAttribute('aria-expanded', 'false');
+  }
+
+  function openFolder(id: string, anchor: HTMLElement | null, focus = true) {
+    const folder = dockState().view.items.find(i => i.kind === 'folder' && i.id === id) as { kind: 'folder', id: string, title: string, icons: DockIcon[] } | undefined;
+    if (!folder) { closeFolder(); return; }
+    openFolderId = id;
+    const running = new Set(desktop.windows.map(w => w.module));
+    folderPanel.setAttribute('aria-label', folder.title);
+    let heading: HTMLElement;
+    if (editing) {
+      const input = doc.createElement('input');
+      input.type = 'text'; input.className = 'tos-dock-folder-name'; input.value = folder.title; input.maxLength = 64;
+      input.setAttribute('aria-label', t('dock/rename'));
+      const commit = () => { if (input.value.trim() !== folder.title) saveDock(renameDockFolder(dockState().layout, id, input.value)); };
+      input.addEventListener('change', commit);
+      input.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); commit(); } });
+      heading = input;
+    } else { heading = doc.createElement('h2'); heading.className = 'tos-dock-folder-title'; heading.textContent = folder.title; }
+    const grid = doc.createElement('div'); grid.className = 'tos-dock-folder-icons';
+    for (const icon of folder.icons) {
+      const b = doc.createElement('button');
+      b.type = 'button'; b.className = 'tos-dock-folder-icon'; b.dataset.icon = icon.id; b.dataset.module = icon.module;
+      if (running.has(icon.module)) b.classList.add('is-running');
+      const label = doc.createElement('span'); label.textContent = icon.title;
+      b.append(glyphOf(icon.icon), label);
+      b.addEventListener('click', () => { if (editing || dragging) return; closeFolder(); launch(icon); });
+      grid.append(b);
+    }
+    folderPanel.replaceChildren(heading, grid);
+    folderPanel.hidden = false;
+    // above its tile, kept on the desktop
+    const box = node.getBoundingClientRect(), dockBox = dock.getBoundingClientRect();
+    const at = (anchor ?? dock.querySelector<HTMLElement>(`[data-folder="${id}"]`))?.getBoundingClientRect();
+    const width = folderPanel.offsetWidth;
+    const center = at ? at.left + at.width / 2 - box.left : box.width / 2;
+    folderPanel.style.left = `${Math.round(Math.max(8, Math.min(center - width / 2, box.width - width - 8)))}px`;
+    folderPanel.style.bottom = `${Math.round(box.bottom - dockBox.top + 10)}px`;
+    dock.querySelector(`[data-folder="${id}"]`)?.setAttribute('aria-expanded', 'true');
+    if (focus) (folderPanel.querySelector('input, button') as HTMLElement | null)?.focus({ preventScroll: true });
+  }
+
   function renderDock(force = false) {
-    const signature = JSON.stringify([kernel.modules().map(m => [m.id, localized(m.title, locale.locale), m.icon]), [...new Set(desktop.windows.map(w => w.module))].sort(), kernel.mail().filter(m => m.proposal ? m.proposal.status === 'pending' || m.proposal.status === 'deciding' : !m.read).length, theme.scheme, locale, desktop.focus]);
+    // a drag in progress holds the dock still; it draws again when the drop lands
+    if (dragging) return;
+    const signature = JSON.stringify([kernel.modules().map(m => [m.id, localized(m.title, locale.locale), m.icon, m.entries, m.dock]), kernel.dock(), editing, [...new Set(desktop.windows.map(w => w.module))].sort(), kernel.mail().filter(m => m.proposal ? m.proposal.status === 'pending' || m.proposal.status === 'deciding' : !m.read).length, theme.scheme, locale, desktop.focus]);
     if (!force && signature === dockSignature) return;
     dockSignature = signature;
-    const items = kernel.modules().map(manifest => {
-      const b = doc.createElement('button');
-      b.type = 'button'; b.className = 'tos-dock-item'; b.dataset.module = manifest.id;
-      const title = localized(manifest.title, locale.locale);
-      b.setAttribute('aria-label', t('dock/open', { title })); b.title = title;
-      const glyph = doc.createElement('span'); glyph.className = 'tos-glyph'; glyph.dataset.glyph = manifest.icon?.glyph ?? 'app';
-      if (manifest.icon?.hue !== undefined) glyph.style.setProperty('--hue', String(manifest.icon.hue));
-      b.append(glyph);
-      if (desktop.windows.some(w => w.module === manifest.id)) b.classList.add('is-running');
-      b.addEventListener('click', () => {
-        const running = desktop.windows.filter(w => w.module === manifest.id).sort((a, c) => c.z - a.z)[0];
-        if (running) setDesktop(focusWindow(desktop, running.id)); else open(manifest.id);
-      });
-      return b;
-    });
+    const { view } = dockState();
+    const running = new Set(desktop.windows.map(w => w.module));
+    const items: HTMLElement[] = view.items.map(item => item.kind === 'icon' ? iconTile(item.icon, running) : folderTile(item, running));
+    // a hidden icon whose module runs keeps a tile while it runs: the dock is the way back to its window
+    if (!editing) for (const icon of view.hidden) if (running.has(icon.module) && !items.some(el => el.dataset.module === icon.module)) items.push(iconTile(icon, running, true));
+    if (editing) {
+      if (view.hidden.length) {
+        const shown = doc.createElement('button');
+        shown.type = 'button'; shown.className = 'tos-dock-item tos-dock-hidden';
+        shown.setAttribute('aria-label', t('dock/hidden')); shown.title = t('dock/hidden');
+        shown.textContent = '+';
+        const badge = doc.createElement('span'); badge.className = 'tos-badge'; badge.textContent = String(view.hidden.length); shown.append(badge);
+        shown.addEventListener('click', () => {
+          const r = shown.getBoundingClientRect();
+          openMenu(t('dock/hidden'), view.hidden.map(icon => ({ label: t('dock/show', { title: icon.title }), glyph: { glyph: icon.icon?.glyph ?? 'app', hue: icon.icon?.hue }, run: () => saveDock(showInDock(dockState().layout, icon.id)) })), { x: r.left, y: r.top - 8 }, shown);
+        });
+        items.push(shown);
+      }
+      const done = doc.createElement('button');
+      done.type = 'button'; done.className = 'tos-dock-item tos-dock-done'; done.textContent = t('dock/done');
+      done.addEventListener('click', () => setEditing(false));
+      items.push(done);
+    }
+    dock.classList.toggle('is-editing', editing);
     // plain mail until it is read, a proposal while it waits for the person
     const unread = kernel.mail().filter(m => m.proposal ? m.proposal.status === 'pending' || m.proposal.status === 'deciding' : !m.read).length;
     const mailButton = doc.createElement('button');
@@ -539,9 +683,119 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     dock.style.setProperty('--tos-dock-count', String(items.length + tray.length));
     // a keyboard user stays on the tile they were on when the dock redraws
     const active = doc.activeElement as HTMLElement | null;
-    const had = active && dock.contains(active) ? (active.dataset.module ? `[data-module="${active.dataset.module}"]` : active.classList.contains('tos-dock-mail') ? '.tos-dock-mail' : active.classList.contains('tos-dock-theme') ? '.tos-dock-theme' : null) : null;
+    const had = active && dock.contains(active) ? (active.dataset.icon ? `[data-icon="${active.dataset.icon}"]` : active.dataset.folder ? `[data-folder="${active.dataset.folder}"]` : active.dataset.module ? `[data-module="${active.dataset.module}"]` : active.classList.contains('tos-dock-mail') ? '.tos-dock-mail' : active.classList.contains('tos-dock-theme') ? '.tos-dock-theme' : active.classList.contains('tos-dock-done') ? '.tos-dock-done' : null) : null;
     dock.replaceChildren(...(brand ? [brand] : []), ...items, ...(tray.length ? [separator, ...tray] : []));
     if (had) dock.querySelector<HTMLElement>(had)?.focus({ preventScroll: true });
+    if (openFolderId !== null) { if (view.items.some(i => i.kind === 'folder' && i.id === openFolderId)) openFolder(openFolderId, null, false); else closeFolder(); }
+  }
+
+  /** The top-level id a dock tile stands for: its folder, or its icon. */
+  const topId = (el: HTMLElement) => el.dataset.folder ?? el.dataset.icon ?? '';
+  const layoutIndex = (layout: DockLayout, id: string) => layout.items.findIndex(i => (typeof i === 'string' ? i : i.folder) === id);
+  const newFolderId = () => `f${Date.now().toString(36)}`;
+
+  // dragging in edit mode: an icon onto another makes a folder (onto a folder,
+  // joins it); beside a tile, it moves there; out of an open folder onto the
+  // dock, it leaves the folder
+  function onDragStart(event: PointerEvent) {
+    if (!editing || event.button !== 0) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('.tos-dock-hide, input')) return;
+    const tile = target.closest<HTMLElement>('.tos-dock [data-icon], .tos-dock [data-folder], .tos-dock-folder-panel [data-icon]');
+    if (!tile) return;
+    const fromFolder = !!tile.closest('.tos-dock-folder-panel');
+    const id = fromFolder ? tile.dataset.icon! : topId(tile);
+    const start = { x: event.clientX, y: event.clientY };
+    let ghost: HTMLElement | null = null, mark: { el: HTMLElement, kind: 'group' | 'before' | 'after' } | null = null;
+    const unmark = () => { if (mark) mark.el.classList.remove('is-drop-group', 'is-drop-before', 'is-drop-after'); mark = null; };
+    const move = (e: PointerEvent) => {
+      if (!ghost) {
+        if (Math.hypot(e.clientX - start.x, e.clientY - start.y) < 6) return;
+        dragging = true;
+        ghost = doc.createElement('div'); ghost.className = 'tos-dock-ghost';
+        ghost.append((tile.querySelector('.tos-glyph, .tos-dock-folder-grid') as HTMLElement | null)?.cloneNode(true) ?? doc.createElement('span'));
+        node.append(ghost);
+        tile.classList.add('is-dragging');
+      }
+      const box = node.getBoundingClientRect();
+      ghost.style.left = `${e.clientX - box.left}px`; ghost.style.top = `${e.clientY - box.top}px`;
+      unmark();
+      const over = (doc.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null)?.closest<HTMLElement>('.tos-dock [data-icon], .tos-dock [data-folder], .tos-dock-folder-panel [data-icon]');
+      if (!over || over === tile) return;
+      const r = over.getBoundingClientRect(), x = (e.clientX - r.left) / r.width;
+      const groupable = !tile.dataset.folder || fromFolder;
+      const kind = groupable && x > 0.25 && x < 0.75 ? 'group' : (x < 0.5) !== (locale.dir === 'rtl') ? 'before' : 'after';
+      mark = { el: over, kind: over.closest('.tos-dock-folder-panel') ? 'group' : kind };
+      over.classList.add(`is-drop-${mark.kind}`);
+    };
+    const end = (e: PointerEvent, cancelled: boolean) => {
+      win.removeEventListener('pointermove', move); win.removeEventListener('pointerup', up); win.removeEventListener('pointercancel', cancel);
+      if (!ghost) return;
+      ghost.remove(); tile.classList.remove('is-dragging');
+      const drop = mark; unmark();
+      const layout = dockState().layout;
+      let next: DockLayout | null = null;
+      if (!cancelled && drop) {
+        const targetId = drop.el.closest('.tos-dock-folder-panel') ? openFolderId! : topId(drop.el);
+        if (drop.kind === 'group') next = groupInDock(layout, id, targetId, newFolderId());
+        else { const at = layoutIndex(layout, targetId); if (at >= 0) next = moveInDock(layout, id, at + (drop.kind === 'after' ? 1 : 0)); }
+      } else if (!cancelled && fromFolder && !(doc.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null)?.closest('.tos-dock-folder-panel')) {
+        next = moveInDock(layout, id, layout.items.length);
+      }
+      // the click that ends a drag opens nothing
+      win.setTimeout(() => { dragging = false; if (next) saveDock(next); else renderDock(true); }, 0);
+    };
+    const up = (e: PointerEvent) => end(e, false), cancel = (e: PointerEvent) => end(e, true);
+    win.addEventListener('pointermove', move); win.addEventListener('pointerup', up); win.addEventListener('pointercancel', cancel);
+  }
+  dock.addEventListener('pointerdown', onDragStart);
+  folderPanel.addEventListener('pointerdown', onDragStart);
+
+  // the keyboard in edit mode: Alt with the arrow keys moves a tile, Delete hides an icon, Escape is done
+  dock.addEventListener('keydown', (event) => {
+    if (!editing) return;
+    const tile = (event.target as HTMLElement).closest<HTMLElement>('[data-icon], [data-folder]');
+    if (event.key === 'Escape') { event.preventDefault(); setEditing(false); return; }
+    if (!tile) return;
+    const id = topId(tile), layout = dockState().layout, at = layoutIndex(layout, id);
+    const back = locale.dir === 'rtl' ? 'ArrowRight' : 'ArrowLeft', forward = locale.dir === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
+    if (event.altKey && (event.key === back || event.key === forward) && at >= 0) {
+      event.preventDefault();
+      saveDock(moveInDock(layout, id, event.key === back ? Math.max(0, at - 1) : at + 2));
+    } else if ((event.key === 'Delete' || event.key === 'Backspace') && tile.dataset.icon) {
+      event.preventDefault();
+      saveDock(hideInDock(layout, tile.dataset.icon));
+    }
+  });
+  folderPanel.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') { event.preventDefault(); const id = openFolderId; closeFolder(); if (id) dock.querySelector<HTMLElement>(`[data-folder="${id}"]`)?.focus(); }
+  });
+
+  /** What a dock tile's menu offers in edit mode: every drag has its entry here. */
+  function editMenu(el: HTMLElement): MenuEntry[] {
+    const { layout, view } = dockState();
+    const entries: MenuEntry[] = [];
+    const inFolder = !!el.closest('.tos-dock-folder-panel');
+    if (el.dataset.folder) {
+      entries.push({ label: t('dock/rename'), run: () => openFolder(el.dataset.folder!, el) });
+    } else if (el.dataset.icon) {
+      const id = el.dataset.icon, title = el.title || el.textContent || id;
+      entries.push({ label: t('dock/hide', { title }), run: () => saveDock(hideInDock(layout, id)) });
+      if (inFolder) entries.push({ label: t('dock/take-out'), run: () => { saveDock(moveInDock(layout, id, layout.items.length)); } });
+      for (const f of view.items) if (f.kind === 'folder' && !f.icons.some(i => i.id === id)) entries.push({ label: t('dock/put-in', { folder: f.title }), run: () => saveDock(groupInDock(layout, id, f.id, newFolderId())) });
+      if (!inFolder) {
+        const at = view.items.findIndex(i => i.kind === 'icon' && i.icon.id === id);
+        const neighbour = view.items[at + 1] ?? view.items[at - 1];
+        if (neighbour?.kind === 'icon') entries.push({ label: t('dock/new-folder', { title: neighbour.icon.title }), run: () => saveDock(groupInDock(layout, neighbour.icon.id, id, newFolderId())) });
+      }
+    }
+    if (!inFolder) {
+      const id = topId(el), at = layoutIndex(layout, id);
+      if (at > 0) entries.push('separator', { label: t('dock/move-back'), run: () => saveDock(moveInDock(layout, id, at - 1)) });
+      if (at >= 0 && at < layout.items.length - 1) entries.push({ label: t('dock/move-forward'), run: () => saveDock(moveInDock(layout, id, at + 2)) });
+    }
+    entries.push('separator', { label: t('dock/done'), run: () => setEditing(false) });
+    return entries;
   }
 
   let brandNode: HTMLElement | null = null;
@@ -602,6 +856,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     else if (!singleton(moduleId)) entries.push('separator', { label: t('menu/new-window'), run: () => { open(moduleId); } });
     if (manifest.settings) entries.push('separator', { label: t('menu/settings'), run: () => openSettings(moduleId) });
     if (running.length) entries.push('separator', { label: running.length === 1 ? t('window/close') : t('menu/close-all'), run: () => { for (const w of windowsOf(moduleId)) close(w.id); } });
+    entries.push('separator', { label: t('dock/edit'), run: () => setEditing(true) });
     return entries;
   }
 
@@ -619,18 +874,24 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       'separator',
       ...(options.tray?.mail === false ? [] : [{ label: t('mail/title'), run: toggleMail }]),
       ...(options.tray?.theme === false ? [] : [{ label: theme.scheme === 'dark' ? t('tray/theme-light') : t('tray/theme-dark'), run: toggleScheme }]),
+      'separator',
+      { label: editing ? t('dock/done') : t('dock/edit'), run: () => setEditing(!editing) },
     ];
   }
 
   /** What a right click on this element offers, or null for the browser's own menu. */
   function menuFor(target: HTMLElement): { title: string, entries: MenuEntry[] } | null {
     if (target.closest('.tos-content, .tos-mail, .tos-dock-brand, input')) return null;
+    if (target.closest('.tos-dock-folder-panel') && !target.closest('[data-icon]')) return null;
     const windowEl = target.closest<HTMLElement>('.tos-window');
     if (windowEl?.dataset.window) {
       const w = desktop.windows.find(x => x.id === windowEl.dataset.window);
       return w ? { title: w.title, entries: windowMenu(w.id) } : null;
     }
-    const item = target.closest<HTMLElement>('.tos-dock-item[data-module]');
+    const tile = target.closest<HTMLElement>('.tos-dock [data-icon], .tos-dock [data-folder], .tos-dock-folder-panel [data-icon]');
+    if (editing && tile) return { title: tile.title || t('dock/label'), entries: editMenu(tile) };
+    if (tile?.dataset.folder) return { title: tile.title, entries: [{ label: t('dock/folder-open', { title: tile.title }), run: () => openFolder(tile.dataset.folder!, tile) }, 'separator', { label: t('dock/edit'), run: () => setEditing(true) }] };
+    const item = target.closest<HTMLElement>('.tos-dock-item[data-module], .tos-dock-folder-panel [data-module]');
     if (item?.dataset.module) {
       const manifest = kernel.effective(item.dataset.module);
       return manifest ? { title: localized(manifest.title, locale.locale), entries: dockMenu(manifest.id) } : null;
@@ -719,7 +980,11 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     const active = doc.activeElement;
     openMenu(offer.title, offer.entries, at, active && active !== doc.body ? active as HTMLElement : null);
   };
-  const onOutside = (event: Event) => { if (menu && !menu.el.contains(event.target as Node)) closeMenu(); };
+  const onOutside = (event: Event) => {
+    if (menu && !menu.el.contains(event.target as Node)) closeMenu();
+    const target = event.target as HTMLElement;
+    if (openFolderId !== null && !folderPanel.contains(target) && !target.closest?.(`[data-folder="${openFolderId}"]`) && !menu?.el.contains(target)) closeFolder();
+  };
   const onMenuBlur = () => closeMenu();
   node.addEventListener('contextmenu', onContextMenu);
   doc.addEventListener('pointerdown', onOutside, true);
@@ -730,7 +995,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     if (mailPanel.hidden) return;
     const heading = doc.createElement('h2'); heading.textContent = t('mail/title');
     const items = kernel.mail().reverse();
-    const appName = (id: string) => { const sender = kernel.effective(id); return sender ? localized(sender.title, locale.locale) : id; };
+    const appName = (id: string) => { if (id === 'desktop') return t('desktop/label'); const sender = kernel.effective(id); return sender ? localized(sender.title, locale.locale) : id; };
     const open = items.filter(m => m.proposal && (m.proposal.status === 'pending' || m.proposal.status === 'deciding'));
     const rest = items.filter(m => !open.includes(m));
     const sections: HTMLElement[] = [heading];
@@ -759,13 +1024,33 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   }
 
   /** One proposal waiting for the person: text only, links to http(s) pages only, the decision carried to its module. */
+  /** A suggested dock, in the desktop's words: what it would change, by the dock's own titles. */
+  function dockSuggestion(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { by?: string, changes?: { moved: string[], hidden: string[], shown: string[], folders: { id: string, items: string[] }[] } }) {
+    const manifests = kernel.modules();
+    const titles = new Map(dockIcons(manifests, locale.locale).map(i => [i.id, i.title]));
+    const folders = folderTitles(manifests, locale.locale);
+    const name = (id: string) => titles.get(id) ?? id;
+    const by = payload.by === 'assistant' ? (kernel.effective('assistant') ? localized(kernel.effective('assistant')!.title, locale.locale) : 'assistant') : payload.by ? (kernel.effective(payload.by) ? localized(kernel.effective(payload.by)!.title, locale.locale) : payload.by) : t('desktop/label');
+    subject.textContent = t('dock/suggestion');
+    from.textContent = t('dock/suggested-by', { sender: by });
+    const changes = payload.changes ?? { moved: [], hidden: [], shown: [], folders: [] };
+    const list = doc.createElement('ul'); list.className = 'tos-dock-changes';
+    const line = (text: string) => { const row = doc.createElement('li'); row.textContent = text; list.append(row); };
+    if (changes.folders.length) line(t('dock/changes-folders', { list: changes.folders.map(f => `${folders.get(f.id) ?? t('dock/folder')} (${f.items.map(name).join(', ')})`).join('; ') }));
+    if (changes.hidden.length) line(t('dock/changes-hidden', { list: changes.hidden.map(name).join(', ') }));
+    if (changes.shown.length) line(t('dock/changes-shown', { list: changes.shown.map(name).join(', ') }));
+    if (changes.moved.length) line(t('dock/changes-moved', { list: changes.moved.map(name).join(', ') }));
+    li.append(list);
+  }
+
   function proposalItem(item: ReturnType<Kernel['mail']>[number], app: string) {
     const p = item.proposal!;
     const li = doc.createElement('li'); li.className = 'tos-proposal'; li.dataset.proposal = p.id; li.dataset.module = item.from;
     const subject = doc.createElement('strong'); subject.textContent = item.subject;
     const from = doc.createElement('span'); from.className = 'tos-muted'; from.textContent = t('mail/from', { sender: app });
     li.append(subject, from);
-    if (p.summary) { const summary = doc.createElement('p'); summary.textContent = p.summary; li.append(summary); }
+    if (item.from === 'desktop' && p.kind === 'dock.layout') dockSuggestion(li, subject, from, p.payload as any);
+    else if (p.summary) { const summary = doc.createElement('p'); summary.textContent = p.summary; li.append(summary); }
     if (p.evidence?.length) {
       const evidence = doc.createElement('ul'); evidence.className = 'tos-evidence'; evidence.setAttribute('aria-label', t('mail/evidence'));
       for (const e of p.evidence) {
@@ -1030,7 +1315,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       renderHeader(event.window);
       if (event.item && event.by !== 'shell') showUse(event.window, event.item);
     }
-    if (event.kind === 'modules') renderDock();
+    if (event.kind === 'modules' || event.kind === 'dock') renderDock();
     // a form module's windows hear their new settings; one that predates them may refuse, which is fine
     if (event.kind === 'settings' && event.module) {
       const values = kernel.settings(event.module);

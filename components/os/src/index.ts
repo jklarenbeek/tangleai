@@ -8,10 +8,12 @@
  */
 export { MODULE_MANIFEST_SCHEMA, validateManifest, localized } from './manifest.ts';
 export type { ModuleManifest, ModuleHost, ModuleSettings, ContractDocument, LocalizedText, ManifestIssue, ManifestVerdict } from './manifest.ts';
-export { createKernel, toolName } from './kernel.ts';
-export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore, Proposal, Decider } from './kernel.ts';
+export { createKernel, toolName, DOCK_CONTRACT, RESERVED_IDS } from './kernel.ts';
+export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore, DockStore, Proposal, Decider } from './kernel.ts';
 export { OS_CONTRACT, MODULE_CONTRACT, PROPOSAL_SCHEMA, DECISION_SCHEMA, systemContracts, CONNECT, HELLO, KEY, FOCUS, PROTOCOL } from './contracts.ts';
 export type { ConnectMessage } from './contracts.ts';
+export { DOCK_SCHEMA, emptyDock, dockIcons, folderTitles, normalizeDock, arrangeDock, moveInDock, hideInDock, showInDock, groupInDock, renameDockFolder, dockChanges } from './dock.ts';
+export type { DockLayout, DockFolder, DockIcon, DockView } from './dock.ts';
 export { HEADER_SCHEMA, HEADER_CONTRACT, HEADER_GLYPHS, headerItems, headerFor, activateHeader, duplicateHeaderId, fitHeader } from './header.ts';
 export type { Header, HeaderItem, HeaderButton, HeaderToggle, HeaderMenu, HeaderMenuEntry, HeaderSearch, HeaderTabs, HeaderGlyph, HeaderActivation, HeaderHandler } from './header.ts';
 export {

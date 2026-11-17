@@ -33,6 +33,18 @@ export type ModuleManifest = {
   settings?: ModuleSettings;
   /** The kinds of proposal it files in the desktop's inbox. */
   proposals?: { kind: string, title?: LocalizedText }[];
+  /**
+   * Launch entries: each is its own dock icon that opens this module at one of
+   * its screens (an application whose screens live inside one page). Without
+   * entries the module is one icon.
+   */
+  entries?: { id: string, title: LocalizedText, icon?: { glyph: string, hue?: number }, screen?: string, folder?: string }[];
+  /**
+   * Where its icons go in a dock the person has not arranged yet: `folder`
+   * for the module's own icon, and the titles of the folders it (or its
+   * entries) name. A suite's manifests share folder ids.
+   */
+  dock?: { folder?: string, folders?: { id: string, title: LocalizedText }[] };
 };
 /** Where a module's settings live in the desktop's Settings (see the schema's `settings`). */
 export type ModuleSettings = { title?: LocalizedText, keywords?: string[] } & (
@@ -59,7 +71,7 @@ function shape() {
  * holding the input cannot change an installed module behind the kernel's
  * back; refusals carry a JSON pointer and a code (`OS0001` shape, `OS0002`
  * host kind, `OS0003` duplicate contract, `OS0004` settings that do not fit
- * the module).
+ * the module, `OS0005` a launch entry or a folder named twice).
  */
 export function validateManifest(value: unknown): ManifestVerdict {
   const issues: ManifestIssue[] = [];
@@ -93,6 +105,15 @@ export function validateManifest(value: unknown): ManifestVerdict {
     } else if (settings.kind === 'form' && /"writeOnly"\s*:\s*true|"format"\s*:\s*"password"/.test(JSON.stringify(settings.schema)))
       issues.push({ code: 'OS0004', path: '/settings/schema', message: 'the desktop keeps no secret: a form has no writeOnly or password member' });
   }
+  const twice = (list: { id: string }[] | undefined, path: string, what: string) => {
+    const seen = new Set<string>();
+    for (const [index, item] of (list ?? []).entries()) {
+      if (seen.has(item.id)) issues.push({ code: 'OS0005', path: `${path}/${index}/id`, message: `the ${what} '${item.id}' is named twice` });
+      seen.add(item.id);
+    }
+  };
+  twice((value as ModuleManifest).entries, '/entries', 'launch entry');
+  twice((value as ModuleManifest).dock?.folders, '/dock/folders', 'folder');
   const ids = new Set<string>();
   for (const [index, contract] of ((value as ModuleManifest).provides ?? []).entries()) {
     if (ids.has(contract.id)) issues.push({ code: 'OS0003', path: `/provides/${index}/id`, message: `the contract '${contract.id}' is provided twice` });

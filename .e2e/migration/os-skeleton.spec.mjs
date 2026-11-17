@@ -42,7 +42,7 @@ test('three host kinds join one desktop and talk only through contracts', async 
   expect(found).toEqual({ ok: true, value: [{ id: 'r1', name: 'Oak table', stock: 4 }] });
   expect(await page.evaluate(() => window.tangleOs.kernel.tools().list().map(t => t.name).sort()))
     // every window's header bar is the assistant's too, under the same grant
-    .toEqual(['records__records_describe', 'records__records_get', 'records__records_search', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
+    .toEqual(['records__records_describe', 'records__records_get', 'records__records_search', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
 
   const catalogue = page.frameLocator('.tos-window[data-module="catalogue"] iframe');
   await expect(catalogue.locator('#status')).toHaveText('Joined the desktop as catalogue.');
@@ -161,16 +161,16 @@ test('a right click opens the shell\'s menu on the desktop, a title bar and a do
 
   // the dock: the module's windows, a new one, and closing them
   await page.locator('.tos-dock-item[data-module="todo"]').click({ button: 'right' });
-  await expect(menu.getByRole('menuitem')).toHaveText(['To do', 'New window', 'Close']);
+  await expect(menu.getByRole('menuitem')).toHaveText(['To do', 'New window', 'Close', 'Edit the dock']);
   await menu.getByRole('menuitem', { name: 'New window' }).click();
   await expect(page.locator('.tos-window[data-module="todo"]')).toHaveCount(2);
   await page.locator('.tos-dock-item[data-module="todo"]').click({ button: 'right' });
-  await expect(menu.getByRole('menuitem')).toHaveText(['To do', 'To do', 'New window', 'Close all windows']);
+  await expect(menu.getByRole('menuitem')).toHaveText(['To do', 'To do', 'New window', 'Close all windows', 'Edit the dock']);
   await page.keyboard.press('Escape');
   await expect(menu).toHaveCount(0);
   // a singleton offers no second window
   await page.locator('.tos-dock-item[data-module="about"]').click({ button: 'right' });
-  await expect(menu.getByRole('menuitem')).toHaveText([/About Tangle OS|Tangle OS/, 'Close']);
+  await expect(menu.getByRole('menuitem')).toHaveText([/About Tangle OS|Tangle OS/, 'Close', 'Edit the dock']);
   await page.mouse.click(5, 5);
   await expect(menu).toHaveCount(0);
 
@@ -179,7 +179,7 @@ test('a right click opens the shell\'s menu on the desktop, a title bar and a do
   await page.mouse.click(300, 200, { button: 'right' });
   await expect(menu).toHaveAttribute('aria-label', 'Menu for Desktop');
   const titles = await page.evaluate(() => window.tangleOs.kernel.modules().map(m => m.title.en));
-  await expect(menu.getByRole('menuitem')).toHaveText([...titles, 'Show the desktop', 'Show all windows', 'Close all windows', 'Mail', /Switch to the (light|dark) theme/]);
+  await expect(menu.getByRole('menuitem')).toHaveText([...titles, 'Show the desktop', 'Show all windows', 'Close all windows', 'Mail', /Switch to the (light|dark) theme/, 'Edit the dock']);
   await expect(menu.getByRole('menuitem', { name: 'Show the desktop' })).toBeDisabled();
   // from the first application, past the rest and the disabled item
   for (let i = 0; i < titles.length; i++) await page.keyboard.press('ArrowDown');

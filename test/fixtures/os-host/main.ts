@@ -13,6 +13,9 @@
  *   ?header=1    (with ?framed=1) Echo puts a header bar in its title bar, and
  *                the assistant is granted the header contract
  *   ?dir=rtl     the desktop in Arabic, right to left
+ *   ?dock=1      a suite of one page whose screens are launch entries in two
+ *                folders, the dock kept in sessionStorage, the assistant
+ *                granted the dock contract
  * Everything the browser test needs is on `window.harness`.
  */
 import { createKernel } from '../../../components/os/src/index.ts';
@@ -23,7 +26,10 @@ import { settingsModule } from '../../../components/os/src/settings.ts';
 const query = new URLSearchParams(location.search);
 const count = Number(query.get('modules') ?? 16);
 const withHeader = query.get('header') === '1';
-const kernel = createKernel(withHeader ? { assistantGrants: ['tangle_os_header.*'] } : {});
+const withDock = query.get('dock') === '1';
+const dockStore = { read: () => JSON.parse(sessionStorage.getItem('dock') ?? 'null'), write: (layout: unknown) => sessionStorage.setItem('dock', JSON.stringify(layout)) };
+const kernel = createKernel({ ...(withHeader || withDock ? { assistantGrants: [...(withHeader ? ['tangle_os_header.*'] : []), ...(withDock ? ['tangle_os_dock.*'] : [])] } : {}), ...(withDock ? { dock: dockStore } : {}) });
+const screens: string[] = [];
 const visibility: Record<string, boolean[]> = {};
 const shipped: Record<string, any> = {};
 const withSettings = query.get('settings') === '1';
@@ -54,6 +60,26 @@ if (query.get('framed') === '1') {
   kernel.install({ $module: '0.1', id: 'old-echo', version: '1.0.0', title: { en: 'Old echo' }, host: { kind: 'origin', url: `${other}/old.html` },
     provides: [{ $contract: '0.1', id: 'echo_old', operations: { 'echo.say': { kind: 'read', input: { type: 'object', properties: { text: { type: 'string' } } }, output: { type: 'object' } } } }] }, 'shipped');
 }
+if (withDock) {
+  // one page, five screens: four in two folders, one on its own
+  kernel.install({
+    $module: '0.1', id: 'suite', version: '1.0.0', title: { en: 'Suite' }, icon: { glyph: 'records', hue: 200 }, host: { kind: 'shipped', mount: 'suite' },
+    window: { singleton: true },
+    entries: [
+      { id: 'staff', title: { en: 'Staff' }, screen: 'staff', folder: 'people' },
+      { id: 'leave', title: { en: 'Leave' }, screen: 'leave', folder: 'people' },
+      { id: 'rota', title: { en: 'Rota' }, screen: 'rota', folder: 'planning' },
+      { id: 'shifts', title: { en: 'Shifts' }, screen: 'shifts', folder: 'planning' },
+      { id: 'home', title: { en: 'Home' }, screen: 'home' },
+    ],
+    dock: { folders: [{ id: 'people', title: { en: 'People' } }, { id: 'planning', title: { en: 'Planning' } }] },
+  }, 'shipped');
+  shipped.suite = (node: HTMLElement, context: any) => {
+    const show = (screen: string) => { screens.push(screen); node.textContent = `Suite: ${screen}`; };
+    show(context.screen ?? 'home');
+    return context.onScreen(show);
+  };
+}
 if (withSettings) {
   shipped['screen-1-settings'] = (node: HTMLElement, context: any) => { node.innerHTML = '<h2 class="screen-settings">Screen 1 settings</h2>'; contexts['screen-1-settings'] = context; };
   kernel.install({ $module: '0.1', id: 'notes-doc', version: '1.0.0', title: { en: 'Notes' }, host: { kind: 'document', app: { $app: '0.1', state: {}, view: [] } },
@@ -72,4 +98,4 @@ const desktop = mountDesktop(document.getElementById('desktop')!, {
   ...(query.get('dir') === 'rtl' ? { locale: 'ar', dir: 'rtl' as const } : {}),
 });
 desktop.subscribe((event) => events.push(event));
-(window as any).harness = { kernel, desktop, events, visibility, contexts };
+(window as any).harness = { kernel, desktop, events, visibility, contexts, screens };

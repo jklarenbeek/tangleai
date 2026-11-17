@@ -299,6 +299,73 @@
           }
         }
       }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 24,
+      "description": "Launch entries: each is its own dock icon that opens the module at one of its screens.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,63}$"
+          },
+          "title": {
+            "$ref": "#/$defs/text"
+          },
+          "icon": {
+            "$ref": "#/$defs/icon"
+          },
+          "screen": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "folder": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{1,64}$"
+          }
+        }
+      }
+    },
+    "dock": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Where the module's icons go in a dock the person has not arranged yet.",
+      "properties": {
+        "folder": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,64}$"
+        },
+        "folders": {
+          "type": "array",
+          "maxItems": 24,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "title"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._:-]{1,64}$"
+              },
+              "title": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {

@@ -146,6 +146,12 @@ export const MODULE_CONTRACT = {
       },
       output: { type: 'object', properties: { refused: { type: 'string', maxLength: 400 } } },
     },
+    'module.screen': {
+      kind: 'command',
+      doc: 'The person opened one of the module\'s launch entries while its window was open: show that screen.',
+      input: { type: 'object', additionalProperties: false, required: ['screen'], properties: { screen: { type: 'string', minLength: 1, maxLength: 200 } } },
+      output: { type: 'object' },
+    },
     'module.context': {
       kind: 'read',
       doc: 'A compact description of what the module shows now, for the assistant.',
@@ -179,6 +185,8 @@ export type ConnectMessage = {
   ports: string[];
   theme: { tokens: Record<string, string>, scheme: 'light' | 'dark' };
   locale: { locale: string, dir: 'ltr' | 'rtl' };
+  /** The screen of the launch entry the window was opened from, for a module with entries. */
+  screen?: string;
   /** Only for a document module: what the module host boots. */
   document?: { app: Record<string, unknown>, styles?: string, provides?: unknown[] };
 };

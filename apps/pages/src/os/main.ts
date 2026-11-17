@@ -15,7 +15,13 @@ type SuiteDocument = { $suite: '0.1', id: string, title?: { en: string }, module
 
 // The assistant may call every served contract for now; the grants order
 // replaces this with the person's own consent per module.
-const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox });
+// the person's dock (its order, folders and hidden icons) is kept in this browser
+const DOCK_SLOT = 'tangle-os-dock';
+const dock = {
+  read: () => { try { return JSON.parse(localStorage.getItem(DOCK_SLOT) ?? 'null'); } catch { return null; } },
+  write: (layout: unknown) => { try { localStorage.setItem(DOCK_SLOT, JSON.stringify(layout)); } catch { /* kept for this page */ } },
+};
+const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox, dock });
 for (const manifest of builtinModules()) {
   const installed = kernel.install(manifest, 'shipped');
   if (!installed.ok) console.error(manifest.id, installed.issues);

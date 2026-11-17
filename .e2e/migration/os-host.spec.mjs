@@ -139,7 +139,8 @@ test('a host glyph renders in the dock, a title bar and a menu', async ({ page }
 });
 
 test('a minified stylesheet keeps the glass, and a window is a region that opens with its animation once', async ({ page }) => {
-  expect(minified.match(/(?<!-webkit-)backdrop-filter:var\(--os-glass\)/g)?.length).toBe(4);
+  // windows, the dock, the mail, menus and the dock's folder panel
+  expect(minified.match(/(?<!-webkit-)backdrop-filter:var\(--os-glass\)/g)?.length).toBe(5);
   await host(page, 'modules=2', { width: 1280, height: 800 });
   const id = await page.evaluate(() => window.harness.desktop.open('screen-1'));
   const win = page.locator(`.tos-window[data-window="${id}"]`);
@@ -344,4 +345,103 @@ test('a narrow window keeps what fits and moves the rest into "more", mirrored r
   await bar.getByRole('tab', { name: 'Calls' }).press('ArrowLeft');
   await expect(bar.getByRole('tab', { name: 'Replies' })).toHaveAttribute('aria-selected', 'true');
   await page.screenshot({ path: test.info().outputPath('header-narrow-rtl.png') });
+});
+
+// ── the dock: launch entries, folders, edit mode ────────────────────────────
+const dockLayout = (page) => page.evaluate(() => window.harness.kernel.dock());
+const tiles = (page) => page.locator('.tos-dock').evaluate(el => [...el.querySelectorAll('[data-icon], [data-folder]')].filter(t => !t.closest('.tos-dock-folder-panel')).map(t => t.dataset.folder ? `[${t.title}]` : t.dataset.icon));
+
+test("one page's screens arrive as launch entries in the folders its manifest names, and open at their screen", async ({ page }) => {
+  await host(page, 'modules=2&dock=1', { width: 1280, height: 800 });
+  expect(await tiles(page)).toEqual(['screen-1', 'screen-2', '[People]', '[Planning]', 'suite/home']);
+  await page.locator('.tos-dock [data-folder="people"]').click();
+  const panel = page.locator('.tos-dock-folder-panel');
+  await expect(panel.getByRole('heading', { name: 'People' })).toBeVisible();
+  await panel.getByRole('button', { name: 'Leave' }).click();
+  await expect(panel).toBeHidden();
+  await expect(page.locator('.tos-window[data-module="suite"] .tos-content')).toHaveText('Suite: leave');
+  // another entry of a running suite shows its screen in the same window
+  await page.locator('.tos-dock [data-icon="suite/home"]').click();
+  await expect(page.locator('.tos-window[data-module="suite"] .tos-content')).toHaveText('Suite: home');
+  expect(await page.evaluate(() => window.harness.desktop.state().windows.filter(w => w.module === 'suite').length)).toBe(1);
+  await expect(page.locator('.tos-dock [data-folder="people"]')).toHaveClass(/is-running/);
+});
+
+test('in edit mode the person hides, shows, folds, takes out, renames and moves icons by menu and keyboard, and it is kept', async ({ page }) => {
+  // without the wiggle: reduced motion marks movable tiles with an outline instead, and keeps them still to click
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await host(page, 'modules=3&dock=1', { width: 1280, height: 800 });
+  await page.locator('.tos-dock [data-icon="screen-1"]').click({ button: 'right' });
+  await page.getByRole('menuitem', { name: 'Edit the dock' }).click();
+  await expect(page.locator('.tos-dock')).toHaveClass(/is-editing/);
+  // a tap in edit mode launches nothing
+  await page.locator('.tos-dock [data-icon="screen-2"]').click();
+  expect(await page.evaluate(() => window.harness.desktop.state().windows.length)).toBe(0);
+  // hide by its badge, show from the hidden icons
+  await page.getByRole('button', { name: 'Hide Screen 3' }).click();
+  expect(await tiles(page)).not.toContain('screen-3');
+  await page.getByRole('button', { name: 'Hidden icons' }).click();
+  await page.getByRole('menuitem', { name: 'Show Screen 3' }).click();
+  expect((await tiles(page)).at(-1)).toBe('screen-3');
+  // a folder of two from the menu, renamed in its panel
+  await page.locator('.tos-dock [data-icon="screen-1"]').click({ button: 'right' });
+  await page.getByRole('menuitem', { name: 'Make a folder with Screen 2' }).click();
+  const folder = page.locator('.tos-dock [data-folder]').first();
+  await folder.click();
+  const name = page.getByRole('textbox', { name: 'Folder name' });
+  await name.fill('Screens');
+  await name.press('Enter');
+  await expect(page.locator('.tos-dock [data-folder]').first()).toHaveAttribute('title', 'Screens');
+  // take one out again from its panel: a folder of one dissolves
+  await page.locator('.tos-dock-folder-panel [data-icon="screen-2"]').click({ button: 'right' });
+  await page.getByRole('menuitem', { name: 'Take out of the folder' }).click();
+  expect(await tiles(page)).toEqual(['screen-1', '[People]', '[Planning]', 'suite/home', 'screen-3', 'screen-2']);
+  // Alt with an arrow key moves the focused tile; Escape is done
+  await page.locator('.tos-dock [data-icon="screen-2"]').focus();
+  await page.keyboard.press('Alt+ArrowLeft');
+  expect((await tiles(page)).slice(-2)).toEqual(['screen-2', 'screen-3']);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.tos-dock')).not.toHaveClass(/is-editing/);
+  // the arrangement is the person's: a reload keeps it
+  const kept = await dockLayout(page);
+  await page.reload();
+  await page.waitForFunction(() => window.harness);
+  expect(await dockLayout(page)).toEqual(kept);
+  expect(await tiles(page)).toEqual(['screen-1', '[People]', '[Planning]', 'suite/home', 'screen-2', 'screen-3']);
+});
+
+test('dragging one icon onto another makes a folder, and beside it moves it', async ({ page }) => {
+  await host(page, 'modules=3&dock=1', { width: 1280, height: 800 });
+  await page.evaluate(() => { const t = document.querySelector('.tos-dock [data-icon="screen-1"]'); t.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: 1, clientY: 1 })); });
+  await page.getByRole('menuitem', { name: 'Edit the dock' }).click();
+  const drag = async (from, to, x) => {
+    const a = await page.locator(`.tos-dock [data-icon="${from}"]`).boundingBox(), b = await page.locator(to).boundingBox();
+    await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(a.x + a.width / 2 + 10, a.y + a.height / 2, { steps: 3 });
+    await page.mouse.move(b.x + b.width * x, b.y + b.height / 2, { steps: 8 });
+    await page.mouse.up();
+    await page.waitForTimeout(50);
+  };
+  await drag('screen-3', '.tos-dock [data-icon="screen-1"]', 0.5);
+  expect((await tiles(page))[0]).toMatch(/^\[/);
+  await drag('suite/home', '.tos-dock [data-folder]:first-of-type', 0.05);
+  expect((await tiles(page))[0]).toBe('suite/home');
+  await page.screenshot({ path: test.info().outputPath('dock-editing.png') });
+});
+
+test("the assistant's suggested dock waits in the inbox until the person accepts it", async ({ page }) => {
+  await host(page, 'modules=2&dock=1', { width: 1280, height: 800 });
+  const filed = await page.evaluate(async () => {
+    const read = await window.harness.kernel.call('assistant', 'tangle_os_dock', 'dock.read', {});
+    const layout = { ...read.value.layout, hidden: ['screen-2'] };
+    return window.harness.kernel.call('assistant', 'tangle_os_dock', 'dock.suggest', { layout });
+  });
+  expect(filed.ok).toBe(true);
+  expect(await tiles(page)).toContain('screen-2');
+  await page.locator('.tos-dock-mail').click();
+  const suggestion = page.locator('.tos-proposal', { hasText: 'A new arrangement of the dock' });
+  await expect(suggestion).toContainText('Hides: Screen 2');
+  await suggestion.getByRole('button', { name: 'Accept' }).click();
+  await expect.poll(() => tiles(page)).not.toContain('screen-2');
 });

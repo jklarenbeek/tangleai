@@ -35,6 +35,12 @@ export type ConnectOptions = {
    * activation is refused.
    */
   onHeader?: (activation: HeaderActivation) => { refused?: string } | void | Promise<{ refused?: string } | void>;
+  /**
+   * The person opened one of this module's launch entries while its window
+   * was already open: show that screen. The screen a window opened with is
+   * `connection.screen`.
+   */
+  onScreen?: (screen: string) => void;
   /** A compact description of what the page shows now, for the assistant. */
   context?: () => unknown;
   /** The window that sends the ports; the page's parent by default. */
@@ -65,6 +71,8 @@ export class OsConnectError extends Error {
 export type OsConnection = {
   module: string;
   connect: ConnectMessage;
+  /** The screen of the launch entry this window was opened from, if any. */
+  screen?: string;
   call(contract: string, op: string, input?: unknown): Promise<any>;
   sendMail(envelope: { to?: string, subject: string, body?: string, data?: unknown }): Promise<any>;
   setTitle(title: string): Promise<any>;
@@ -133,6 +141,7 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
         'module.theme': (theme: any) => { applyTheme(root, theme); options.onTheme?.(theme); return {}; },
         'module.locale': (locale: any) => { applyLocale(root, locale); options.onLocale?.(locale); return {}; },
         'module.context': () => (options.context?.() ?? {}) as object,
+        'module.screen': ({ screen }: any) => { options.onScreen?.(screen); return {}; },
         'module.header': async (activation: any) => {
           if (!options.onHeader) return { refused: 'this application takes no header actions' };
           const answer = await options.onHeader(activation);
@@ -172,6 +181,7 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
       resolve({
         module: data.module,
         connect: data,
+        ...(typeof data.screen === 'string' ? { screen: data.screen } : {}),
         call: (contract, op, input = {}) => client.invoke('os.call', { contract, op, input }),
         sendMail: (envelope) => client.invoke('mail.send', envelope),
         setTitle: (title) => client.invoke('window.title', { title }),

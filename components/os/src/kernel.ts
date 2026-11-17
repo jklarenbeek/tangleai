@@ -14,6 +14,7 @@ import { validateManifest, type ModuleManifest, type ManifestIssue } from './man
 import { JarenValidator } from '@jarenjs/validate';
 import { systemContracts, PROPOSAL_SCHEMA } from './contracts.ts';
 import { HEADER_CONTRACT, HEADER_SCHEMA, activateHeader, duplicateHeaderId, headerFor, type Header, type HeaderHandler } from './header.ts';
+import { DOCK_SCHEMA, arrangeDock, dockChanges, dockIcons, folderTitles, normalizeDock, type DockLayout } from './dock.ts';
 
 export type Layer = 'shipped' | 'suite' | 'user';
 export type JournalEntry = { seq: number, at: number, layer: Layer, module: string, kind: 'install' | 'patch' | 'remove', patch?: unknown[], inverse?: unknown[] };
@@ -36,13 +37,37 @@ export type Outcome = { ok: true, value: unknown } | { ok: false, error: { code:
  * `header`: a window's header bar changed (`window`), or one of its items was
  * used (`item`, and `by`: `shell` for the person, else the caller).
  */
-export type KernelEvent = { kind: 'modules' | 'mail' | 'ledger' | 'providers' | 'title' | 'settings' | 'header', module?: string, title?: string, window?: string, item?: string, by?: string };
+export type KernelEvent = { kind: 'modules' | 'mail' | 'ledger' | 'providers' | 'title' | 'settings' | 'header' | 'dock', module?: string, title?: string, window?: string, item?: string, by?: string };
 /**
  * Where the desktop keeps the values of a `form` module's settings (a module
  * with no server of its own). A host passes its own storage; the default keeps
  * them for the page's lifetime. Never secrets: a form refuses them.
  */
 export type SettingsStore = { read(module: string): unknown, write(module: string, values: unknown): void };
+/** Where the person's dock layout is kept (the host's storage); absent, it lives as long as the page. */
+export type DockStore = { read(): unknown, write(layout: DockLayout): void };
+/** The ids no module may take: the shell's own hand, the person, and the desktop that files its own proposals. */
+export const RESERVED_IDS = ['shell', 'person', 'desktop'] as const;
+
+/** `tangle_os_dock`: the kernel's own contract over the person's dock, for the assistant and granted modules. */
+export const DOCK_CONTRACT = {
+  $contract: '0.1',
+  id: 'tangle_os_dock',
+  operations: {
+    'dock.read': {
+      kind: 'read',
+      doc: 'The person\'s dock: its icons in order (an id is a module, or <module>/<entry> for one of its screens), its folders with their icons, the hidden icons, every icon\'s title, and the layout\'s revision.',
+      input: { type: 'object', additionalProperties: false, properties: {} },
+      output: { type: 'object' },
+    },
+    'dock.suggest': {
+      kind: 'command',
+      doc: 'Suggest a new arrangement of the dock (a layout document, as dock.read returns it). It goes to the person\'s inbox as a proposal they accept or reject; a new suggestion replaces your earlier one. Nothing changes until they accept.',
+      input: { type: 'object', additionalProperties: false, required: ['layout'], properties: { layout: DOCK_SCHEMA } },
+      output: { type: 'object', properties: { id: { type: 'string' } } },
+    },
+  },
+} as const;
 
 type Entry = { base: ModuleManifest, layer: Layer, overlays: { layer: Layer, patch: unknown[] }[] };
 /** Any contract client: an object with `invoke`, as every Jaren binding returns. */
@@ -75,7 +100,7 @@ const scopeOf = (contract: string, op: string) => [`${contract}.${op}`, `${contr
  * `assistantGrants`: what the assistant may call — `'all'`, or scopes
  * (`contract.op`, `contract.*`). Nothing by default: a host decides.
  */
-export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[], tools?: ToolBuilder, settings?: SettingsStore } = {}) {
+export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[], tools?: ToolBuilder, settings?: SettingsStore, dock?: DockStore } = {}) {
   const now = options.now ?? (() => Date.now());
   const recovery = options.recovery === true;
   const entries = new Map<string, Entry>();
@@ -92,6 +117,17 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   let proposalCheck: ((value: unknown) => any) | null = null;
   let headerCheck: ((value: unknown) => any) | null = null;
   let headerContract: any = null;
+  let dockCheck: ((value: unknown) => any) | null = null;
+  let dockContract: any = null;
+  let dockRevision = 0;
+  let keptDock: unknown = null;
+  const dockStore: DockStore = options.dock ?? { read: () => keptDock, write: (layout) => { keptDock = layout; } };
+  /** The checked shape of a layout, or null. */
+  function checkDock(value: unknown): DockLayout | null {
+    dockCheck ??= new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' }).compile(DOCK_SCHEMA as any) as any;
+    const outcome = dockCheck!(value);
+    return (typeof outcome === 'object' && outcome !== null ? outcome.valid : outcome === true) ? normalizeDock(value as DockLayout) : null;
+  }
   /** Per window, its header bar and the module that set it; and where the window takes activations. */
   const headers = new Map<string, { module: string, header: Header }>();
   const headerHandlers = new Map<string, { module: string, handle: HeaderHandler }>();
@@ -151,6 +187,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       const verdict = validateManifest(value);
       if (!verdict.ok) return verdict;
       const { manifest } = verdict;
+      if ((RESERVED_IDS as readonly string[]).includes(manifest.id)) return { ok: false, issues: [{ code: 'OS0012', path: '/id', message: `'${manifest.id}' is the desktop's own; a module takes another id` }] };
       const existing = entries.get(manifest.id);
       if (existing && existing.layer !== layer) {
         return { ok: false, issues: [{ code: 'OS0004', path: '/id', message: `'${manifest.id}' is already installed in the ${existing.layer} layer; change it with a patch instead` }] };
@@ -303,6 +340,20 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         emit({ kind: 'ledger' });
         return outcome;
       };
+      if (contract === DOCK_CONTRACT.id) {
+        if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
+        dockContract ??= compileContract(DOCK_CONTRACT as any);
+        const client = openLocalClient(dockContract, {
+          'dock.read': () => kernel.dockView(),
+          'dock.suggest': ({ layout }: any) => { const outcome = kernel.suggestDock(caller, layout); return outcome.ok ? outcome.value : { [REFUSED]: outcome.error }; },
+        } as any) as any;
+        try {
+          const outcome = await client.invoke(op, input);
+          if (!outcome?.ok) return write(refusal(outcome?.error?.code ?? 'OS0103', outcome?.error?.message ?? 'the operation failed'));
+          const refused = outcome.value?.[REFUSED];
+          return write(refused ? refusal(refused.code, refused.message) : { ok: true, value: outcome.value });
+        } catch (error: any) { return write(refusal(error?.code ?? 'OS0103', String(error?.message ?? error))); }
+      }
       if (contract === HEADER_CONTRACT.id) {
         if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
         headerContract ??= compileContract(HEADER_CONTRACT as any);
@@ -411,6 +462,17 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         if (!reason) delete item.proposal.reason;
         emit({ kind: 'mail', module: item.from });
       };
+      // the desktop's own proposal (a suggested dock) is carried out here, against the revision it was made for
+      if (item.from === 'desktop' && p.kind === 'dock.layout') {
+        const payload = p.payload as { layout: DockLayout, revision: number };
+        if (decision === 'accept') {
+          if (payload.revision !== dockRevision) { settle('pending', { code: 'OS0112', message: 'the dock changed since this was suggested' }); return refusal('OS0112', 'the dock changed since this was suggested'); }
+          const applied = kernel.setDock(payload.layout);
+          if (!applied.ok) { settle('pending', { code: 'OS0112', message: applied.error.message }); return refusal('OS0112', applied.error.message); }
+        }
+        settle(decision === 'accept' ? 'accepted' : 'rejected');
+        return { ok: true, value: { status: item.proposal!.status } };
+      }
       const target = (deciders.get(item.from) ?? []).at(-1);
       if (!target) { settle('pending', { code: 'OS0110', message: `'${item.from}' is not running` }); return refusal('OS0110', `'${item.from}' is not running`); }
       settle('deciding');
@@ -423,6 +485,60 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       }
       settle(decision === 'accept' ? 'accepted' : 'rejected');
       return { ok: true, value: { status: item.proposal!.status } };
+    },
+
+    /** The person's saved dock layout, or null for one they have not arranged (a recovery boot ignores it). */
+    dock(): DockLayout | null {
+      if (recovery) return null;
+      return checkDock(dockStore.read());
+    },
+
+    /** The layout's revision: it moves with every change, so a suggestion made against an older dock is refused. */
+    dockRevision() { return dockRevision; },
+
+    /** Keep a new dock layout (`OS0119` when it does not match the dock schema). */
+    setDock(layout: unknown): Outcome {
+      const checked = checkDock(layout);
+      if (!checked) return refusal('OS0119', 'the dock layout is refused: it does not match the dock schema');
+      dockRevision++;
+      dockStore.write(checked);
+      emit({ kind: 'dock' });
+      return { ok: true, value: { revision: dockRevision } };
+    },
+
+    /** The dock as the installed modules and the saved layout make it, in English titles, with its revision. */
+    dockView() {
+      const manifests = kernel.modules();
+      const { layout, view } = arrangeDock(kernel.dock(), dockIcons(manifests), folderTitles(manifests));
+      const icon = (i: { id: string, title: string }) => ({ id: i.id, title: i.title });
+      return {
+        revision: dockRevision, layout,
+        items: view.items.map(i => i.kind === 'icon' ? { icon: icon(i.icon) } : { folder: i.id, title: i.title, icons: i.icons.map(icon) }),
+        hidden: view.hidden.map(icon),
+      };
+    },
+
+    /**
+     * File a suggested dock in the person's inbox, as the desktop's own
+     * proposal; nothing changes until they accept it, and it is refused then
+     * if the dock moved meanwhile. One suggestion per caller: a new one
+     * replaces the last. The inbox shows what would change, derived here,
+     * never the caller's description of it.
+     */
+    suggestDock(caller: string, layout: unknown): Outcome {
+      const checked = checkDock(layout);
+      if (!checked) return refusal('OS0119', 'the dock layout is refused: it does not match the dock schema');
+      const manifests = kernel.modules();
+      const current = arrangeDock(kernel.dock(), dockIcons(manifests), folderTitles(manifests)).layout;
+      const changes = dockChanges(current, checked);
+      const id = `dock-${caller}`.replace(/[^A-Za-z0-9._:-]/g, '_').slice(0, 128);
+      const proposal: Proposal = { id, kind: 'dock.layout', status: 'pending', payload: { layout: checked, revision: dockRevision, by: caller, changes } };
+      const existing = mail.find(m => m.from === 'desktop' && m.proposal?.id === id);
+      if (existing?.proposal?.status === 'deciding') return refusal('OS0111', 'the last suggestion is being decided');
+      if (existing) { existing.proposal = proposal; existing.read = false; existing.at = now(); }
+      else mail.push({ id: `m${++mailSeq}`, at: now(), from: 'desktop', to: 'person', subject: 'dock.layout', read: false, proposal });
+      emit({ kind: 'mail', module: 'desktop' });
+      return { ok: true, value: { id } };
     },
 
     /**
@@ -539,9 +655,10 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         for (const [op, spec] of Object.entries<any>(ops)) if (kernel.allowed(caller, id, op))
           out.push({ tool: toolName(id, op), contract: id, op, kind: spec?.kind ?? 'read', ...(spec?.doc ? { doc: spec.doc } : {}), ...(spec?.input ? { input: spec.input } : {}), ...(spec?.output ? { output: spec.output } : {}) });
       }
-      // the kernel's own header contract, under the same grants
-      for (const [op, spec] of Object.entries<any>(HEADER_CONTRACT.operations)) if (kernel.allowed(caller, HEADER_CONTRACT.id, op))
-        out.push({ tool: toolName(HEADER_CONTRACT.id, op), contract: HEADER_CONTRACT.id, op, kind: spec.kind, doc: spec.doc, input: spec.input, output: spec.output });
+      // the kernel's own contracts, under the same grants
+      for (const builtin of [HEADER_CONTRACT, DOCK_CONTRACT] as const)
+        for (const [op, spec] of Object.entries<any>(builtin.operations)) if (kernel.allowed(caller, builtin.id, op))
+          out.push({ tool: toolName(builtin.id, op), contract: builtin.id, op, kind: spec.kind, doc: spec.doc, input: spec.input, output: spec.output });
       return out;
     },
 
@@ -560,11 +677,13 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         const client = { invoke: (op: string, input: unknown) => kernel.call(caller, id, op, input) };
         options.tools.toolboxFromContract(provider.contract, client, { toolbox, ops, name: (op: string) => toolName(id, op) });
       }
-      const headerOps = Object.keys(HEADER_CONTRACT.operations).filter(op => kernel.allowed(caller, HEADER_CONTRACT.id, op));
-      if (headerOps.length) {
-        headerContract ??= compileContract(HEADER_CONTRACT as any);
-        const client = { invoke: (op: string, input: unknown) => kernel.call(caller, HEADER_CONTRACT.id, op, input) };
-        options.tools.toolboxFromContract(headerContract, client, { toolbox, ops: headerOps, name: (op: string) => toolName(HEADER_CONTRACT.id, op) });
+      headerContract ??= compileContract(HEADER_CONTRACT as any);
+      dockContract ??= compileContract(DOCK_CONTRACT as any);
+      for (const [doc, compiled] of [[HEADER_CONTRACT, headerContract], [DOCK_CONTRACT, dockContract]] as const) {
+        const ops = Object.keys(doc.operations).filter(op => kernel.allowed(caller, doc.id, op));
+        if (!ops.length) continue;
+        const client = { invoke: (op: string, input: unknown) => kernel.call(caller, doc.id, op, input) };
+        options.tools.toolboxFromContract(compiled, client, { toolbox, ops, name: (op: string) => toolName(doc.id, op) });
       }
       return toolbox;
     },

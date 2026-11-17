@@ -246,6 +246,61 @@ A shipped module calls `context.setHeader(header)` and `context.onHeader(handler
 - **Text.** The desktop adds one sentence of its own, `window/more`; a host's
   language pack translates it with the rest of its catalogue.
 
+## The dock: the person's own arrangement
+
+The dock is a JSON document the person owns: the order of its icons and
+folders, and the icons they hid. Without one, the dock is every module in
+install order, as before. A host keeps it with `createKernel({ dock: { read, write } })`
+(the Pages desktop uses the browser's storage); a recovery boot ignores it.
+
+**Icons and launch entries.** A module is one icon. A module whose screens
+live inside one page lists `entries`, and each entry is its own icon that
+opens the module at that screen, or shows that screen in its open window:
+
+```json
+"entries": [
+  { "id": "staff", "title": { "en": "Staff" }, "screen": "/staff", "folder": "people" },
+  { "id": "rota", "title": { "en": "Rota" }, "screen": "/rota", "folder": "planning" }
+],
+"dock": { "folders": [{ "id": "people", "title": { "en": "People" } }, { "id": "planning", "title": { "en": "Planning" } }] }
+```
+
+A framed page reads the screen it opened with as `connection.screen` and
+hears later ones at `onScreen(screen)`; a shipped module has `context.screen`
+and `context.onScreen(listener)`. A suite of many modules shares folder ids:
+each manifest says where its own icon goes (`dock.folder`) and may title the
+folders. A manifest places only its own icons, and only the first time they
+appear: once the person moves one, their dock wins. A launch entry or folder
+named twice in one manifest is refused (`OS0005`). An older desktop refuses
+a manifest with `entries` or `dock`, because the manifest is closed.
+
+**Editing.** "Edit the dock" in the dock's and the desktop's menus. The icons
+show they can move (a gentle wiggle, an outline with reduced motion), and the
+person:
+
+- drags an icon to a new place, or onto another icon to make a folder, or
+  onto a folder to put it in; out of an open folder onto the dock takes it out;
+- hides an icon with its "−" badge and shows it again from "Hidden icons";
+- opens a folder to rename it;
+- does every one of those without a pointer: the tile's menu (Hide, Put in
+  a folder, Make a folder with its neighbour, Take out, Move back or forward,
+  Rename) and the keyboard (Alt with the arrow keys moves, Delete hides,
+  Escape is done).
+
+A tap in edit mode opens nothing. Every icon appears exactly once (shown, in a
+folder, or hidden); a folder left with one icon becomes that icon. A hidden
+module that is running keeps a tile while it runs, so its window stays
+reachable, and the desktop menu still lists every module.
+
+**The assistant.** `tangle_os_dock` is the kernel's own contract:
+`dock.read` (the arrangement, every icon's title, the revision) and
+`dock.suggest` (`{ layout }`). A suggestion never changes the dock: it waits in
+the inbox as the desktop's proposal, showing what would change in the
+desktop's own words, and the person accepts or rejects it. It is refused
+then if the dock changed meanwhile; a caller has one suggestion pending at a
+time. The ids `shell`, `person` and `desktop` belong to the desktop: no module
+takes them (`OS0012`).
+
 ## The kernel
 
 ```ts
