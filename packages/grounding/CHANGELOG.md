@@ -1,5 +1,21 @@
 # @tangleai/grounding
 
+## 0.53.2
+
+### Patch Changes
+
+- Builds on Jaren 0.220.0, whose linq database client builds each handle on its first read instead of all at open, and whose `prepareModel` lets many stores open from one prepared model. Tangle reads its handles by name, so no behaviour changes beyond a lighter open; the pins, the foundation manifest and the integration audit move to the new release.
+- Updated dependencies
+  - @tangleai/models@0.53.2
+  - @tangleai/context@0.53.2
+  - @tangleai/agents@0.53.2
+  - @tangleai/core@0.53.2
+  - @tangleai/config@0.53.2
+  - @tangleai/mas@0.53.2
+  - @tangleai/documents@0.53.2
+  - @tangleai/search@0.53.2
+  - @tangleai/gmpl@0.53.2
+
 ## 0.53.1
 
 ### Patch Changes

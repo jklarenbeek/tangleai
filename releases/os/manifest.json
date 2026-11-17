@@ -1,20 +1,20 @@
 {
   "$osRelease": "0.1",
-  "version": "0.53.1",
+  "version": "0.53.2",
   "protocol": 1,
   "package": {
     "name": "@tangleai/os",
-    "file": "tangleai-os-0.53.1.tgz",
-    "size": 89700,
-    "sha256": "c7135426d6897938e67cc9d575df767690658953bd0a33e299fac00440ca5e0d",
-    "integrity": "sha512-RC54OgAnRt4+efOMYThbOgnjtS2P/Q5a2RZd7FRs8olN6/pbx66DLMmYpwZR4ca2v77VY5Ps6K6Pzl+n6E5zOQ==",
+    "file": "tangleai-os-0.53.2.tgz",
+    "size": 89805,
+    "sha256": "e39dec7e228202b94250b20f41d5566c83206345adbc8e2cb15dfa1727368db0",
+    "integrity": "sha512-gcqwMxMS8BiNHwJ6VfU1FJJiAlLD5wtaxO0kwxMCGFisa3g2MO2HkPBZDcYpRBPN2G9TFZ3bhO8iAR8ivKmtow==",
     "dependencies": {
-      "@jarenjs/core": "0.219.1",
-      "@jarenjs/json": "0.219.1",
-      "@jarenjs/validate": "0.219.1",
-      "@jarenjs/contract": "0.219.1",
-      "@jarenjs/app": "0.219.1",
-      "@jarenjs/forms": "0.219.1"
+      "@jarenjs/core": "0.220.0",
+      "@jarenjs/json": "0.220.0",
+      "@jarenjs/validate": "0.220.0",
+      "@jarenjs/contract": "0.220.0",
+      "@jarenjs/app": "0.220.0",
+      "@jarenjs/forms": "0.220.0"
     },
     "exports": [
       ".",
@@ -43,8 +43,8 @@
   },
   "foundation": {
     "name": "jarenjs",
-    "version": "0.219.1",
-    "commit": "62e8e1ca6436ef4d6e2d6867a3c5418c25133a98"
+    "version": "0.220.0",
+    "commit": "5bf8985f569e61ff27df9f0ef44f5f3b810601b3"
   },
   "toolchain": {
     "bun": "1.4.4"
