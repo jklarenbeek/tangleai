@@ -1,5 +1,20 @@
 /** A framed application: joins the desktop that frames it and serves one contract, counting its connections. */
 import { connectToOs } from '../../../components/os/src/module.ts';
+import { fileLocationContract, serveFileLocation, fileBytesToBase64, type FileLocationHandlers } from '../../../components/os/src/files.ts';
+
+/** Echo's own files, read-only: a text inline, and an image the location signs an address for. */
+const ECHO_FILES: FileLocationHandlers = {
+  'files.info': () => ({ writable: false }),
+  'files.list': ({ folder }) => ({ entries: folder ? [] : [
+    { id: 'hello', parent: null, name: 'hello.txt', kind: 'file', type: 'text/plain', size: 11 },
+    { id: 'logo', parent: null, name: 'logo.png', kind: 'file', type: 'image/png' },
+  ] }),
+  'files.search': ({ query }) => ({ entries: 'hello.txt'.includes(query) ? [{ id: 'hello', parent: null, name: 'hello.txt', kind: 'file', type: 'text/plain', size: 11 }] : [] }),
+  'files.read': ({ id }) => id === 'hello'
+    ? { entry: { id: 'hello', parent: null, name: 'hello.txt', kind: 'file', type: 'text/plain', size: 11 }, data: fileBytesToBase64(new TextEncoder().encode('hello, echo')) }
+    : { entry: { id: 'logo', parent: null, name: 'logo.png', kind: 'file', type: 'image/png' }, url: `${location.origin}/logo.png` },
+};
+const withFiles = new URLSearchParams(location.search).has('files');
 
 export const ECHO = { $contract: '0.1', id: 'echo', operations: { 'echo.say': { kind: 'read', input: { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] }, output: { type: 'object' } } } };
 const loaded = Number(sessionStorage.getItem('loads') ?? 0) + 1;
@@ -20,7 +35,7 @@ async function showHeader() {
 sessionStorage.setItem('loads', String(loaded));
 // two proposals for the person: one it carries out, one whose revision moved
 connectToOs({
-  origins: 'parent', presentation: 'none', serve: [{ contract: ECHO, handlers: { 'echo.say': ({ text }: any) => ({ text, loaded }) } }],
+  origins: 'parent', presentation: 'none', serve: [{ contract: ECHO, handlers: { 'echo.say': ({ text }: any) => ({ text, loaded }) } }, ...(withFiles ? [{ contract: fileLocationContract('echo_files'), handlers: serveFileLocation(ECHO_FILES) as any }] : [])],
   // every use of the header bar is written down where the test reads it; the page owns the state and sets it again
   onHeader: (activation) => {
     const used = JSON.parse(document.body.dataset.used ?? '[]');

@@ -4,7 +4,9 @@
  * listing its modules (usually `origin` modules on that application's own
  * pages). A suite joined by a link is installed without grants. `#recovery` boots without the person's own layer.
  */
-import { createKernel, validateManifest, webStorageStore, type ModuleManifest } from '@tangleai/os';
+import { createKernel, validateManifest, webStorageStore, browserLocation, type ModuleManifest } from '@tangleai/os';
+import { filesModule } from '@tangleai/os/files';
+import { parseMarkdown, toHtml } from '@jarenjs/md';
 import * as toolbox from '@tangleai/agents/toolbox';
 import { mountDesktop } from '@tangleai/os/shell';
 import { builtinModules, shippedMounts } from './modules.ts';
@@ -24,6 +26,22 @@ for (const manifest of builtinModules()) {
   if (!installed.ok) console.error(manifest.id, installed.issues);
 }
 
+// Files: the person's own files in this browser, in a folder of its private file system set aside for
+// them (the file system's top holds the data studio's databases), and Markdown drawn by Jaren, escaped
+const filesRoot = (navigator.storage as any)?.getDirectory?.().then((top: FileSystemDirectoryHandle) => top.getDirectoryHandle('tangle-files', { create: true }));
+const files = filesModule({
+  kernel,
+  ...(filesRoot ? { browser: browserLocation(filesRoot) } : {}),
+  previewers: [(node, file) => {
+    if (file.entry.type !== 'text/markdown') return false;
+    const article = document.createElement('article'); article.className = 'md tos-files-markdown';
+    article.innerHTML = toHtml(parseMarkdown(file.text()));
+    node.append(article);
+    return true;
+  }],
+});
+{ const installed = kernel.install(files.manifest, 'shipped'); if (installed.ok) files.serve(); else console.error('files', installed.issues); }
+
 let buildInfo: Promise<any> | null = null;
 const json = (url: string) => fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null);
 const build = () => (buildInfo ??= Promise.all([json('./build.json'), json('./os-build.json')]).then(([release, os]) => release && { ...release, jaren: os?.jaren }));
@@ -35,7 +53,7 @@ const node = document.getElementById('desktop')!;
 const surfaces = createSurfaces(window, { settings: () => prefs.ai(), open: (id) => { desktop.open(id); } });
 const desktop = mountDesktop(node, {
   kernel,
-  shipped: shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces }),
+  shipped: { ...shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces }), files: files.mount },
   documentHost: './os-module.html',
   // a phone gets one maximized window at a time
   compact: { below: 720 },

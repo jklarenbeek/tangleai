@@ -8,7 +8,9 @@
  */
 export { MODULE_MANIFEST_SCHEMA, validateManifest, localized } from './manifest.ts';
 export type { ModuleManifest, ModuleHost, ModuleSettings, ContractDocument, LocalizedText, ManifestIssue, ManifestVerdict } from './manifest.ts';
-export { createKernel, toolName, DOCK_CONTRACT, RESERVED_IDS } from './kernel.ts';
+export { createKernel, toolName, DOCK_CONTRACT, FILES_CONTRACT, RESERVED_IDS } from './kernel.ts';
+export { fileLocationContract, memoryLocation, browserLocation, serveFileLocation, fileAnswer, typeOfName, MAX_INLINE_BYTES, FILE_ENTRY_SCHEMA, fileBytesToBase64, fileBase64ToBytes } from './files.ts';
+export type { FileEntry, FileContent, FileLocationHandlers } from './files.ts';
 export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore, StateOption, StateStatus, Proposal, Decider } from './kernel.ts';
 export { STATE_CONTRACT, memoryStore, webStorageStore, contractStore } from './state.ts';
 export type { DesktopStore, StateDocument, StateScope } from './state.ts';

@@ -45,6 +45,12 @@ export type ModuleManifest = {
    * entries) name. A suite's manifests share folder ids.
    */
   dock?: { folder?: string, folders?: { id: string, title: LocalizedText }[] };
+  /**
+   * Its files, for the desktop's Files: the contract it serves as a file
+   * location (built with `fileLocationContract`, declared in `provides`), the
+   * location's title, and `assistant: false` to keep the assistant out of it.
+   */
+  files?: { contract: string, title?: LocalizedText, assistant?: boolean };
 };
 /** Where a module's settings live in the desktop's Settings (see the schema's `settings`). */
 export type ModuleSettings = { title?: LocalizedText, keywords?: string[] } & (
@@ -71,7 +77,8 @@ function shape() {
  * holding the input cannot change an installed module behind the kernel's
  * back; refusals carry a JSON pointer and a code (`OS0001` shape, `OS0002`
  * host kind, `OS0003` duplicate contract, `OS0004` settings that do not fit
- * the module, `OS0005` a launch entry or a folder named twice).
+ * the module, `OS0005` a launch entry or a folder named twice, `OS0006` a file
+ * location whose contract the module does not provide).
  */
 export function validateManifest(value: unknown): ManifestVerdict {
   const issues: ManifestIssue[] = [];
@@ -113,6 +120,9 @@ export function validateManifest(value: unknown): ManifestVerdict {
     }
   };
   twice((value as ModuleManifest).entries, '/entries', 'launch entry');
+  const files = (value as ModuleManifest).files;
+  if (files && !((value as ModuleManifest).provides ?? []).some(c => c.id === files.contract))
+    issues.push({ code: 'OS0006', path: '/files/contract', message: `the file location '${files.contract}' must be one of the contracts the module provides` });
   twice((value as ModuleManifest).dock?.folders, '/dock/folders', 'folder');
   const ids = new Set<string>();
   for (const [index, contract] of ((value as ModuleManifest).provides ?? []).entries()) {

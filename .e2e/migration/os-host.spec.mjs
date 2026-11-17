@@ -29,12 +29,14 @@ test.beforeAll(async () => {
   execFileSync(bun, ['build', join(repo, 'test/fixtures/os-host/main.ts'), '--target=browser', '--format=esm', `--outfile=${join(out, 'main.js')}`], { stdio: 'inherit' });
   execFileSync(bun, ['build', join(repo, 'test/fixtures/os-host/echo.ts'), '--target=browser', '--format=esm', `--outfile=${join(out, 'echo.js')}`], { stdio: 'inherit' });
   for (const page of ['index.html', 'echo.html', 'silent.html', 'old.html']) copyFileSync(join(repo, 'test/fixtures/os-host', page), join(out, page));
+  // the image Echo's file location signs an address for
+  writeFileSync(join(out, 'logo.png'), Buffer.from('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGUlEQVR4nGPg7Wr+TwlmGDVg1IBRA4aLAQCkXxkf42zACAAAAABJRU5ErkJggg==', 'base64'));
   // an application on an earlier release joins with that release's one-file module side, from git
   writeFileSync(join(out, 'old-module.js'), execFileSync('git', ['show', 'v0.49.2:releases/os/tangle-os-module.js'], { cwd: repo, maxBuffer: 8 << 20 }));
   // the host ships the stylesheet the way a production build does: minified
   execFileSync(bun, ['build', join(repo, 'components/os/styles/os.css'), '--minify', `--outfile=${join(out, 'os.css')}`], { stdio: 'inherit' });
   minified = readFileSync(join(out, 'os.css'), 'utf8');
-  const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' };
+  const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png' };
   server = createServer((request, response) => {
     const route = new URL(request.url, 'http://x').pathname;
     if (route.startsWith('/state/')) {
@@ -50,7 +52,7 @@ test.beforeAll(async () => {
     const path = route.replace(/^\/$/, '/index.html');
     let body;
     try { body = readFileSync(join(out, path)); } catch { response.writeHead(404); response.end(); return; }
-    response.writeHead(200, { 'content-type': types[extname(path)] ?? 'application/octet-stream' }); response.end(body);
+    response.writeHead(200, { 'content-type': types[extname(path)] ?? 'application/octet-stream', ...(path === '/logo.png' ? { 'access-control-allow-origin': '*' } : {}) }); response.end(body);
   });
   // the desktop is 127.0.0.1; framed applications come from localhost, a second origin on the same server
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -490,4 +492,65 @@ test("with a server, the person's dock follows them to another browser, and a ch
   await page.locator('.tos-dock-state').click();
   await expect(page.locator('.tos-dock-state')).toHaveCount(0);
   expect(repository.rows()[0].value.hidden).toEqual(['screen-1']);
+});
+
+// ── Files ─────────────────────────────────────────────────────────────────
+test('"This browser" answers the file location conformance suite in a real browser', async ({ page }) => {
+  await host(page, 'modules=1', { width: 1280, height: 800 });
+  expect((await page.evaluate(() => window.harness.conformOpfs())).length).toBe(14);
+});
+
+test("Files browses the person's own files and an application's, previews them safely, and keeps the assistant to reading", async ({ page }) => {
+  await host(page, 'modules=1&framed=1&files=1', { width: 1280, height: 800 });
+  await page.evaluate(() => window.harness.clearFiles());
+  await page.evaluate(() => window.harness.desktop.open('files'));
+  const win = page.locator('.tos-window[data-module="files"]');
+  const bar = win.locator('.tos-titlebar');
+  await expect(win.locator('.tos-files-location', { hasText: 'This browser' })).toHaveAttribute('aria-current', 'true');
+  await expect(win.locator('.tos-files-status')).toHaveText('This folder is empty.');
+  // a new folder, named in place
+  await bar.getByRole('button', { name: 'New folder' }).click();
+  const rename = win.getByRole('textbox', { name: 'Rename' });
+  await rename.fill('Notes');
+  await rename.press('Enter');
+  await expect(win.locator('.tos-files-entry', { hasText: 'Notes' })).toHaveAttribute('data-kind', 'folder');
+  // into it, and an upload from the person's computer
+  await win.locator('.tos-files-entry', { hasText: 'Notes' }).dblclick();
+  await expect(win.locator('.tos-files-crumbs')).toHaveText(/This browser\s*›\s*Notes/);
+  const choosing = page.waitForEvent('filechooser');
+  await bar.getByRole('button', { name: 'Files menu' }).click();
+  await page.getByRole('menuitem', { name: 'Upload files…' }).click();
+  await (await choosing).setFiles([{ name: 'plan.md', mimeType: 'text/markdown', buffer: Buffer.from('# Plan\n<img src=x onerror=alert(1)>\n') }]);
+  await win.locator('.tos-files-entry', { hasText: 'plan.md' }).click();
+  // a file never becomes the desktop's markup: no previewer here, so the text is text
+  await expect(win.locator('.tos-files-text')).toContainText('<img src=x onerror=alert(1)>');
+  expect(await win.locator('.tos-files-preview img').count()).toBe(0);
+  // rename with F2, then delete after asking
+  await win.locator('.tos-files-entry', { hasText: 'plan.md' }).press('F2');
+  await win.getByRole('textbox', { name: 'Rename' }).fill('plan-v2.md');
+  await win.getByRole('textbox', { name: 'Rename' }).press('Enter');
+  await expect(win.locator('.tos-files-entry', { hasText: 'plan-v2.md' })).toBeVisible();
+  await win.locator('.tos-files-entry', { hasText: 'plan-v2.md' }).click();
+  await win.locator('.tos-files-actions').getByRole('button', { name: 'Delete' }).click();
+  await win.locator('.tos-files-confirm').getByRole('button', { name: 'Delete' }).click();
+  await expect(win.locator('.tos-files-status')).toHaveText('This folder is empty.');
+  // up again by the breadcrumb
+  await win.locator('.tos-files-crumb', { hasText: 'This browser' }).click();
+  await expect(win.locator('.tos-files-entry', { hasText: 'Notes' })).toBeVisible();
+
+  // an application's files, from its own origin: a text inline, an image at an address it signed
+  await page.evaluate(() => window.harness.desktop.open('echo-app'));
+  await win.locator('.tos-files-location', { hasText: 'Echo files' }).click();
+  await win.locator('.tos-files-entry', { hasText: 'hello.txt' }).click();
+  await expect(win.locator('.tos-files-text')).toHaveText('hello, echo');
+  await win.locator('.tos-files-entry', { hasText: 'logo.png' }).click();
+  await expect.poll(() => win.locator('img.tos-files-image').evaluate(i => i.naturalWidth).catch(() => 0)).toBe(16);
+  await expect(bar.getByRole('button', { name: 'New folder' })).toBeDisabled();
+
+  // the assistant reads through tangle_os_files and never writes a location, even granted it by name
+  const read = await page.evaluate(() => window.harness.kernel.call('assistant', 'tangle_os_files', 'files.read', { location: 'echo_files', id: 'hello' }));
+  expect(read.value.text).toBe('hello, echo');
+  const write = await page.evaluate(() => window.harness.kernel.call('assistant', 'tangle_os_files_browser', 'files.mkdir', { name: 'x' }));
+  expect([write.ok, write.error?.code]).toEqual([false, 'OS0101']);
+  await page.screenshot({ path: test.info().outputPath('files.png') });
 });

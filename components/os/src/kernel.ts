@@ -16,6 +16,7 @@ import { systemContracts, PROPOSAL_SCHEMA } from './contracts.ts';
 import { HEADER_CONTRACT, HEADER_SCHEMA, activateHeader, duplicateHeaderId, headerFor, type Header, type HeaderHandler } from './header.ts';
 import { DOCK_SCHEMA, arrangeDock, dockChanges, dockIcons, folderTitles, normalizeDock, type DockLayout } from './dock.ts';
 import { STATE_CONTRACT, contractStore, memoryStore, type DesktopStore, type StateDocument, type StateScope } from './state.ts';
+import { fileAnswer, fileBase64ToBytes, type FileEntry } from './files.ts';
 
 export type Layer = 'shipped' | 'suite' | 'user';
 export type JournalEntry = { seq: number, at: number, layer: Layer, module: string, kind: 'install' | 'patch' | 'remove', patch?: unknown[], inverse?: unknown[] };
@@ -57,6 +58,39 @@ export type StateOption = DesktopStore | { module: string };
 export type StateStatus = { status: 'loading' | 'ready' | 'unavailable', saving: number, failed: string | null };
 /** The ids no module may take: the shell's own hand, the person, and the desktop that files its own proposals. */
 export const RESERVED_IDS = ['shell', 'person', 'desktop'] as const;
+
+/** How much of a text file the assistant reads at once: tool results are cut at 8,000 characters. */
+const ASSISTANT_TEXT = 6000;
+const LOCATION = { type: 'string', pattern: '^[A-Za-z_][A-Za-z0-9_-]*$' };
+/**
+ * `tangle_os_files`: the kernel's own contract over every file location, for
+ * the assistant. It lists, searches and reads (text, capped; a binary file as
+ * its description), and never writes, moves or deletes; a location marked
+ * `assistant: false` is not in it.
+ */
+export const FILES_CONTRACT = {
+  $contract: '0.1',
+  id: 'tangle_os_files',
+  operations: {
+    'files.locations': { kind: 'read', doc: 'The file locations: each application\'s files, and the person\'s own.', input: { type: 'object', additionalProperties: false, properties: {} }, output: { type: 'object' } },
+    'files.list': {
+      kind: 'read', doc: 'The files and folders in one folder of a location (no folder for its top), a page at a time.',
+      input: { type: 'object', additionalProperties: false, required: ['location'], properties: { location: LOCATION, folder: { anyOf: [{ type: 'string', maxLength: 1024 }, { type: 'null' }] }, cursor: { type: 'string', maxLength: 1024 } } },
+      output: { type: 'object' },
+    },
+    'files.search': {
+      kind: 'read', doc: 'Files and folders whose name contains the query, in one location or in all of them.',
+      input: { type: 'object', additionalProperties: false, required: ['query'], properties: { location: LOCATION, query: { type: 'string', minLength: 1, maxLength: 200 } } },
+      output: { type: 'object' },
+    },
+    'files.read': {
+      kind: 'read', doc: 'One file: the text of a text file (the first 6,000 characters), or what a binary file is.',
+      input: { type: 'object', additionalProperties: false, required: ['location', 'id'], properties: { location: LOCATION, id: { type: 'string', maxLength: 1024 } } },
+      output: { type: 'object' },
+    },
+  },
+} as const;
+const textual = (type = '') => /^text\/|\/(json|xml|csv|markdown|x-yaml|yaml|javascript)$|\+json$|\+xml$/.test(type);
 
 /** `tangle_os_dock`: the kernel's own contract over the person's dock, for the assistant and granted modules. */
 export const DOCK_CONTRACT = {
@@ -127,6 +161,16 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   let headerCheck: ((value: unknown) => any) | null = null;
   let headerContract: any = null;
   let dockCheck: ((value: unknown) => any) | null = null;
+  let filesContract: any = null;
+  /** One location operation for the assistant's reading, refusals answered as values. */
+  async function fileCall(location: string, op: string, input: unknown): Promise<unknown> {
+    const known = kernel.fileLocations().find(l => l.contract === location);
+    if (!known || !known.assistant) return { [REFUSED]: { code: 'OS0122', message: `'${location}' is not a file location the assistant may read` } };
+    const provider = providers.get(location)?.at(-1);
+    if (!provider) return { [REFUSED]: { code: 'OS0102', message: `no module serves '${location}' now` } };
+    try { return fileAnswer(await provider.client.invoke(op, input)); }
+    catch (error: any) { return { [REFUSED]: { code: error?.code ?? 'OS0103', message: String(error?.message ?? error) } }; }
+  }
   let dockContract: any = null;
   let dockRevision = 0;
 
@@ -381,6 +425,8 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
 
     allowed(caller: string, contract: string, op: string): boolean {
       if (TRUSTED.has(caller)) return true;
+      // a file location is the person's: the assistant reads it through tangle_os_files, never writes it
+      if (caller === 'assistant' && kernel.fileLocations().some(l => l.contract === contract)) return false;
       if (caller === 'assistant' && options.assistantGrants === 'all') return true;
       const set = caller === 'assistant' ? new Set(Array.isArray(options.assistantGrants) ? options.assistantGrants : []) : grants.get(caller);
       return !!set && scopeOf(contract, op).some(s => set.has(s));
@@ -430,6 +476,38 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         emit({ kind: 'ledger' });
         return outcome;
       };
+      if (contract === FILES_CONTRACT.id) {
+        if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
+        filesContract ??= compileContract(FILES_CONTRACT as any);
+        const client = openLocalClient(filesContract, {
+          'files.locations': () => ({ locations: kernel.fileLocations().filter(l => l.assistant && l.served).map(l => ({ location: l.contract, module: l.module, title: l.title })) }),
+          'files.list': (input: any) => fileCall(input.location, 'files.list', { folder: input.folder ?? null, ...(input.cursor ? { cursor: input.cursor } : {}) }),
+          'files.search': async ({ location, query }: any) => {
+            const where = location ? [location] : kernel.fileLocations().filter(l => l.assistant && l.served).map(l => l.contract);
+            const found: (FileEntry & { location: string })[] = [];
+            for (const at of where) {
+              const answer: any = await fileCall(at, 'files.search', { query, limit: 50 });
+              if (answer[REFUSED]) return answer;
+              found.push(...answer.entries.map((e: FileEntry) => ({ ...e, location: at })));
+            }
+            return { entries: found.slice(0, 100) };
+          },
+          'files.read': async ({ location, id }: any) => {
+            const answer: any = await fileCall(location, 'files.read', { id });
+            if (answer[REFUSED]) return answer;
+            const entry = answer.entry as FileEntry;
+            if (!textual(entry.type) || !answer.data) return { entry, note: `a ${entry.type ?? 'binary'} file of ${entry.size ?? '?'} bytes; only text files are read` };
+            const text = new TextDecoder().decode(fileBase64ToBytes(answer.data));
+            return { entry, text: text.slice(0, ASSISTANT_TEXT), ...(text.length > ASSISTANT_TEXT ? { truncated: text.length } : {}) };
+          },
+        } as any) as any;
+        try {
+          const outcome = await client.invoke(op, input);
+          if (!outcome?.ok) return write(refusal(outcome?.error?.code ?? 'OS0103', outcome?.error?.message ?? 'the operation failed'));
+          const refused = outcome.value?.[REFUSED];
+          return write(refused ? refusal(refused.code, refused.message) : { ok: true, value: outcome.value });
+        } catch (error: any) { return write(refusal(error?.code ?? 'OS0103', String(error?.message ?? error))); }
+      }
       if (contract === DOCK_CONTRACT.id) {
         if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
         dockContract ??= compileContract(DOCK_CONTRACT as any);
@@ -575,6 +653,11 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       }
       settle(decision === 'accept' ? 'accepted' : 'rejected');
       return { ok: true, value: { status: item.proposal!.status } };
+    },
+
+    /** Every file location the installed modules declare: its contract, title, whether the assistant may read it, and whether it is served now. */
+    fileLocations(): { module: string, contract: string, title: string, assistant: boolean, served: boolean }[] {
+      return kernel.modules().flatMap(m => m.files ? [{ module: m.id, contract: m.files.contract, title: m.files.title?.en ?? m.title.en, assistant: m.files.assistant !== false, served: providers.has(m.files.contract) }] : []);
     },
 
     /** The person's saved dock layout, or null for one they have not arranged (a recovery boot ignores it). */
@@ -773,7 +856,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
           out.push({ tool: toolName(id, op), contract: id, op, kind: spec?.kind ?? 'read', ...(spec?.doc ? { doc: spec.doc } : {}), ...(spec?.input ? { input: spec.input } : {}), ...(spec?.output ? { output: spec.output } : {}) });
       }
       // the kernel's own contracts, under the same grants
-      for (const builtin of [HEADER_CONTRACT, DOCK_CONTRACT] as const)
+      for (const builtin of [HEADER_CONTRACT, DOCK_CONTRACT, FILES_CONTRACT] as const)
         for (const [op, spec] of Object.entries<any>(builtin.operations)) if (kernel.allowed(caller, builtin.id, op))
           out.push({ tool: toolName(builtin.id, op), contract: builtin.id, op, kind: spec.kind, doc: spec.doc, input: spec.input, output: spec.output });
       return out;
@@ -796,7 +879,8 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       }
       headerContract ??= compileContract(HEADER_CONTRACT as any);
       dockContract ??= compileContract(DOCK_CONTRACT as any);
-      for (const [doc, compiled] of [[HEADER_CONTRACT, headerContract], [DOCK_CONTRACT, dockContract]] as const) {
+      filesContract ??= compileContract(FILES_CONTRACT as any);
+      for (const [doc, compiled] of [[HEADER_CONTRACT, headerContract], [DOCK_CONTRACT, dockContract], [FILES_CONTRACT, filesContract]] as const) {
         const ops = Object.keys(doc.operations).filter(op => kernel.allowed(caller, doc.id, op));
         if (!ops.length) continue;
         const client = { invoke: (op: string, input: unknown) => kernel.call(caller, doc.id, op, input) };

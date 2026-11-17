@@ -352,6 +352,60 @@ contract from its framed page over its port (it declares
 state when it connects. `createKernel({ settings })`, the earlier seam for a
 host that keeps form settings itself, still works.
 
+## Files: every application's documents in one place
+
+`@tangleai/os/files` is the desktop's Files: one window for the person's own
+files and every application's. An application shares its files by serving a
+**file location**, a contract made from one template:
+
+```ts
+import { fileLocationContract, serveFileLocation } from '@tangleai/os';
+const DOCS = fileLocationContract('records_files');
+// manifest: provides: [DOCS], files: { contract: 'records_files', title: { en: 'Documents' } }
+connectToOs({ origins, serve: [{ contract: DOCS, handlers: serveFileLocation({
+  'files.info': () => ({ writable: false }),
+  'files.list': ({ folder, cursor }) => listDocuments(folder, cursor),     // { entries, cursor? }
+  'files.search': ({ query }) => searchDocuments(query),
+  'files.read': ({ id }) => ({ entry, url: signedUrl(id) }),              // or { entry, data: base64 }, at most 10 MB
+}) }] });
+```
+
+- **Entries** are `{ id, parent, name, kind, type?, size?, modified? }`, with
+  opaque ids and a parent, never paths: a location whose files are rows
+  serves them as they are. Lists and searches come a page at a time
+  (`cursor`).
+- **Reads** answer the bytes inline (base64, at most 10 MB) or an https
+  address the location signed for a short while (http only for localhost).
+- **Writing** (`files.write`, `files.mkdir`, `files.move`, `files.delete`) is
+  a location's choice (`files.info` → `writable`); `serveFileLocation`
+  answers the ones it leaves out as refused, and answers every refusal with
+  its code and reason (`OS0601` missing, `OS0602` read-only, `OS0603` larger
+  than 10 MB, `OS0604` a name taken, `OS0605` a folder into itself).
+- **"This browser"** is the person's own files in the browser's private file
+  system, offered only by a host that has no server for them:
+  `filesModule({ kernel, browser: browserLocation(directory) })`, with a
+  directory the host sets aside, never the file system's top (where the data
+  studio keeps its databases).
+
+The window has the locations on its side, a folder with clickable breadcrumbs,
+back, forward, up, search, New folder and Upload in its header bar, and a
+preview: an image only as an image, a PDF only as a PDF, text as text, and any
+other type through a previewer the host passes (the Pages desktop draws
+Markdown with `@jarenjs/md`, escaped). Nothing in a file ever runs as the
+desktop's own markup. The person uploads (also by dropping files on the
+window), makes folders, renames (F2), moves (by dragging onto a folder),
+deletes after confirming in place, and downloads.
+
+**The assistant** reads files through the kernel's own `tangle_os_files`
+contract: `files.locations`, `files.list`, `files.search` and `files.read`
+(the first 6,000 characters of a text file; a binary file is described). It
+never writes, moves or deletes: a location's own contract is never one of the
+assistant's tools, whatever it is granted, and a location marked
+`files: { assistant: false }` is not in `tangle_os_files` at all (`OS0122`).
+Everything Files does goes through the location as the person's own hand, into
+the ledger. A manifest whose `files.contract` is not one it provides is
+refused (`OS0006`).
+
 ## The kernel
 
 ```ts

@@ -17,9 +17,13 @@
  *                folders, the dock kept in sessionStorage, the assistant
  *                granted the dock contract
  *   ?state=server  the desktop's state kept by the test server (POST /state/<op>)
+ *   ?files=1     the desktop's Files with "This browser" (a folder of OPFS), and
+ *                (with ?framed=1) Echo's read-only file location
  * Everything the browser test needs is on `window.harness`.
  */
-import { createKernel, webStorageStore, contractStore } from '../../../components/os/src/index.ts';
+import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract } from '../../../components/os/src/index.ts';
+import { filesModule } from '../../../components/os/src/files-app.ts';
+import { conformLocation } from '../file-location-conformance.ts';
 import { mountDesktop, type DesktopEvent } from '../../../components/os/src/shell.ts';
 import { ECHO } from './echo.ts';
 import { settingsModule } from '../../../components/os/src/settings.ts';
@@ -27,6 +31,7 @@ import { settingsModule } from '../../../components/os/src/settings.ts';
 const query = new URLSearchParams(location.search);
 const count = Number(query.get('modules') ?? 16);
 const withHeader = query.get('header') === '1';
+const withFiles = query.get('files') === '1';
 const withDock = query.get('dock') === '1';
 // ?state=server keeps the desktop's state on the test server (as an application keeps it in its database)
 const serverState = query.get('state') === 'server';
@@ -36,7 +41,7 @@ const httpClient = { invoke: async (op: string, input: unknown) => {
   return { ok: true, value: await response.json() };
 } };
 const state = serverState ? contractStore(httpClient) : withDock ? webStorageStore(sessionStorage) : undefined;
-const kernel = createKernel({ ...(withHeader || withDock ? { assistantGrants: [...(withHeader ? ['tangle_os_header.*'] : []), ...(withDock ? ['tangle_os_dock.*'] : [])] } : {}), ...(state ? { state } : {}) });
+const kernel = createKernel({ ...(withHeader || withDock || withFiles ? { assistantGrants: [...(withHeader ? ['tangle_os_header.*'] : []), ...(withDock ? ['tangle_os_dock.*'] : []), ...(withFiles ? ['tangle_os_files.*', 'tangle_os_files_browser.*', 'echo_files.*'] : [])] } : {}), ...(state ? { state } : {}) });
 const screens: string[] = [];
 const visibility: Record<string, boolean[]> = {};
 const shipped: Record<string, any> = {};
@@ -62,7 +67,7 @@ for (let i = 1; i <= count; i++) {
 if (query.get('framed') === '1') {
   const other = `http://localhost:${location.port}`;
   kernel.install({ $module: '0.1', id: 'silent', version: '1.0.0', title: { en: 'Silent' }, host: { kind: 'origin', url: `${other}/silent.html` } }, 'shipped');
-  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html${withHeader ? '?header' : ''}` }, provides: [ECHO], proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
+  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html${withHeader ? '?header' : withFiles ? '?files' : ''}` }, provides: [ECHO, ...(withFiles ? [fileLocationContract('echo_files') as any] : [])], ...(withFiles ? { files: { contract: 'echo_files', title: { en: 'Echo files' } } } : {}), proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
     ...(withSettings ? { settings: { kind: 'page', url: `${other}/echo.html?settings` } } : {}) }, 'shipped');
   // an application that joins with the 0.49.2 release's one-file module side
   kernel.install({ $module: '0.1', id: 'old-echo', version: '1.0.0', title: { en: 'Old echo' }, host: { kind: 'origin', url: `${other}/old.html` },
@@ -88,6 +93,14 @@ if (withDock) {
     return context.onScreen(show);
   };
 }
+let opfsRoot: Promise<FileSystemDirectoryHandle> | null = null;
+if (withFiles) {
+  opfsRoot = navigator.storage.getDirectory().then(top => top.getDirectoryHandle('tangle-files-test', { create: true }));
+  const files = filesModule({ kernel, browser: browserLocation(opfsRoot) });
+  kernel.install(files.manifest, 'shipped');
+  files.serve();
+  shipped.files = files.mount;
+}
 if (withSettings) {
   shipped['screen-1-settings'] = (node: HTMLElement, context: any) => { node.innerHTML = '<h2 class="screen-settings">Screen 1 settings</h2>'; contexts['screen-1-settings'] = context; };
   kernel.install({ $module: '0.1', id: 'notes-doc', version: '1.0.0', title: { en: 'Notes' }, host: { kind: 'document', app: { $app: '0.1', state: {}, view: [] } },
@@ -106,4 +119,13 @@ const desktop = mountDesktop(document.getElementById('desktop')!, {
   ...(query.get('dir') === 'rtl' ? { locale: 'ar', dir: 'rtl' as const } : {}),
 });
 desktop.subscribe((event) => events.push(event));
-(window as any).harness = { kernel, desktop, events, visibility, contexts, screens };
+(window as any).harness = {
+  kernel, desktop, events, visibility, contexts, screens,
+  // the conformance suite against a fresh OPFS folder of its own
+  conformOpfs: async () => {
+    const top = await navigator.storage.getDirectory();
+    await top.removeEntry('tangle-files-conformance', { recursive: true }).catch(() => {});
+    return conformLocation(browserLocation(await top.getDirectoryHandle('tangle-files-conformance', { create: true })));
+  },
+  clearFiles: async () => { if (!opfsRoot) return; const root = await opfsRoot; for await (const name of (root as any).keys()) await root.removeEntry(name, { recursive: true }); },
+};

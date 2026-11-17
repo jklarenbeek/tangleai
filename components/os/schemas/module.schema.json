@@ -366,6 +366,26 @@
           }
         }
       }
+    },
+    "files": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract"
+      ],
+      "description": "The contract the module serves as a file location for the desktop's Files.",
+      "properties": {
+        "contract": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_-]*$"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "assistant": {
+          "type": "boolean"
+        }
+      }
     }
   },
   "$defs": {
