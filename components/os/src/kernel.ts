@@ -655,6 +655,12 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       return { ok: true, value: { status: item.proposal!.status } };
     },
 
+    /** The modules that open a file of this type (`text/calendar`); a manifest's subtype or type may be a star. */
+    openersFor(type: string): ModuleManifest[] {
+      const [major, minor] = type.toLowerCase().split(';')[0].trim().split('/');
+      return kernel.modules().filter(m => (m.opens ?? []).some(o => { const [a, b] = o.type.split('/'); return (a === '*' || a === major) && (b === '*' || b === minor); }));
+    },
+
     /** Every file location the installed modules declare: its contract, title, whether the assistant may read it, and whether it is served now. */
     fileLocations(): { module: string, contract: string, title: string, assistant: boolean, served: boolean }[] {
       return kernel.modules().flatMap(m => m.files ? [{ module: m.id, contract: m.files.contract, title: m.files.title?.en ?? m.title.en, assistant: m.files.assistant !== false, served: providers.has(m.files.contract) }] : []);

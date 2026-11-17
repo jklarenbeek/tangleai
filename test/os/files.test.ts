@@ -75,3 +75,17 @@ describe("the assistant's way into files", () => {
     assert.ok(!read.ok && read.error.code === 'OS0122');
   });
 });
+
+describe('opening a file with an application', () => {
+  it('finds the applications that open a type, a star matching any subtype', () => {
+    const kernel = createKernel();
+    const app = (id: string, opens: string[]) => ({ $module: '0.1', id, version: '1.0.0', title: { en: id }, host: { kind: 'shipped', mount: id }, opens: opens.map(type => ({ type })) });
+    kernel.install(app('calendar', ['text/calendar']));
+    kernel.install(app('viewer', ['image/*']));
+    kernel.install(app('anything', ['*/*']));
+    assert.deepEqual(kernel.openersFor('text/calendar; charset=utf-8').map(m => m.id), ['calendar', 'anything']);
+    assert.deepEqual(kernel.openersFor('image/png').map(m => m.id), ['viewer', 'anything']);
+    const bad = validateManifest(app('x', ['not a type']));
+    assert.ok(!bad.ok && bad.issues[0].code === 'OS0001');
+  });
+});

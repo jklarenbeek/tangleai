@@ -554,3 +554,19 @@ test("Files browses the person's own files and an application's, previews them s
   expect([write.ok, write.error?.code]).toEqual([false, 'OS0101']);
   await page.screenshot({ path: test.info().outputPath('files.png') });
 });
+
+test('a file opens in the application the person picks, starting it when it is not running', async ({ page }) => {
+  await host(page, 'modules=1&framed=1&files=1', { width: 1280, height: 800 });
+  await page.evaluate(async () => {
+    await window.harness.clearFiles();
+    await window.harness.kernel.call('shell', 'tangle_os_files_browser', 'files.write', { name: 'note.txt', data: btoa('hi echo'), type: 'text/plain' });
+    window.harness.desktop.open('files');
+  });
+  const win = page.locator('.tos-window[data-module="files"]');
+  await win.locator('.tos-files-entry', { hasText: 'note.txt' }).click();
+  await win.locator('.tos-files-actions').getByRole('button', { name: 'Open in Echo' }).click();
+  // Echo was not running: its window opened, it joined from its own origin, and then it got the file
+  await expect(page.locator('.tos-window[data-module="echo-app"]')).toBeVisible();
+  await expect(page.frameLocator('.tos-window[data-module="echo-app"] iframe').locator('body')).toHaveAttribute('data-opened', 'note.txt: hi echo');
+  expect(await page.evaluate(() => window.harness.desktop.state().focus)).toBe(await page.evaluate(() => window.harness.desktop.state().windows.find(w => w.module === 'echo-app').id));
+});

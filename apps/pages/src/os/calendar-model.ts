@@ -9,7 +9,7 @@ import {
   weeklyPattern, evaluateAvailability, findAvailableSlots,
 } from '@jarenjs/core/calendar';
 import { createIntlZoneProvider } from '@jarenjs/locales/intl-zones';
-import { stringifyIcal } from '@jarenjs/josl/ical';
+import { stringifyIcal, parseIcal } from '@jarenjs/josl/ical';
 
 export type Repeat = 'none' | 'daily' | 'weekdays' | 'weekly' | 'monthly' | 'yearly';
 export type Colour = 'teal' | 'blue' | 'violet' | 'rose' | 'amber' | 'slate';
@@ -143,6 +143,61 @@ export function exportIcal(doc: CalendarDocument): string {
       ...(event.allDay ? { duration: 'P1D' } : { end: floatingValue(event.date, event.end) }) }
     : { type: 'event', series: seriesOf(event), summary: event.title, ...(event.notes ? { description: event.notes } : {}) });
   return stringifyIcal({ prodId: '-//Tangle OS//Calendar//EN', components } as any, { zones: 'utc', provider: provider(), runtime: { now: () => Date.now() } } as any);
+}
+
+/**
+ * The events of an iCalendar file this calendar can hold: single events and
+ * series that repeat daily, on weekdays, weekly, monthly or yearly, at a wall
+ * time or all day. What it cannot hold (another rule, a zone it cannot place)
+ * is counted, never changed into something else.
+ */
+export function importIcal(text: string): { events: CalendarEvent[], skipped: number } {
+  const { calendar } = parseIcal(text, { provider: provider() } as any) as any;
+  const events: CalendarEvent[] = [];
+  let skipped = 0;
+  const wall = (value: any): { date: string, time?: string } | null => {
+    if (!value) return null;
+    if (value.kind === 'date' && typeof value.date === 'string') return { date: value.date };
+    if (typeof value.date === 'string') return { date: value.date, ...(typeof value.time === 'string' ? { time: value.time.slice(0, 5) } : {}) };
+    return null;
+  };
+  const addMinutes = (date: string, time: string, minutes: number) => {
+    const [h, m] = time.split(':').map(Number);
+    const total = Math.min(h * 60 + m + minutes, 23 * 60 + 59);
+    return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+  };
+  const minutesOf = (duration: unknown) => { const m = /^PT(?:(\d+)H)?(?:(\d+)M)?$/.exec(String(duration ?? '')); return m ? Number(m[1] ?? 0) * 60 + Number(m[2] ?? 0) : null; };
+  const repeatOf = (rrule: any): Repeat | null => {
+    if (!rrule) return 'none';
+    const keys = Object.keys(rrule).filter(k => k !== 'FREQ' && k !== 'BYDAY');
+    if (keys.length) return null;
+    const byday = (rrule.BYDAY ?? []).join(',');
+    if (rrule.FREQ === 'DAILY' && !byday) return 'daily';
+    if (rrule.FREQ === 'WEEKLY' && byday === 'MO,TU,WE,TH,FR') return 'weekdays';
+    if (rrule.FREQ === 'WEEKLY' && !byday) return 'weekly';
+    if (rrule.FREQ === 'MONTHLY' && !byday) return 'monthly';
+    if (rrule.FREQ === 'YEARLY' && !byday) return 'yearly';
+    return null;
+  };
+  for (const c of calendar?.components ?? []) {
+    if (c.type !== 'event') continue;
+    const base = c.series?.base;
+    const start = wall(base ? base.dtstart : c.start);
+    const end = wall(base ? base.dtend : c.end);
+    const repeat = repeatOf(base?.rrule);
+    if (!start || repeat === null || (repeat !== 'none' && !supportedRepeats().includes(repeat))) { skipped++; continue; }
+    const allDay = start.time === undefined;
+    const minutes = minutesOf(base ? base.duration : c.duration);
+    const exdates = (c.series?.exdates ?? []).map((d: any) => wall(d)?.date).filter(Boolean);
+    const checked = checkEvent({
+      uid: String(c.uid ?? c.series?.uid ?? '').toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 64) || undefined,
+      title: String(c.summary ?? 'Event'), date: start.date, allDay, repeat, colour: 'blue', exdates,
+      ...(allDay ? {} : { start: start.time, end: end?.time && end.date === start.date ? end.time : addMinutes(start.date, start.time!, minutes ?? 60) }),
+      ...(c.description ? { notes: String(c.description) } : {}),
+    });
+    if (checked.ok) events.push(checked.event); else skipped++;
+  }
+  return { events, skipped };
 }
 
 /** A first look that is not empty: two everyday series, removable like any other. */

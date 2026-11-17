@@ -76,3 +76,28 @@ describe('the calendar model', () => {
     assert.match(exportIcal(doc), /RRULE:FREQ=MONTHLY/);
   });
 });
+
+describe('importing an iCalendar file', () => {
+  it('reads back what this calendar exports: single, all-day and repeating events, with the days a series skips', async () => {
+    const { importIcal, exportIcal: write, checkEvent: check, emptyCalendar: empty } = await import('../../apps/pages/src/os/calendar-model.ts');
+    const events = [
+      check({ uid: 'dentist-1', title: 'Dentist', date: '2026-11-20', start: '15:00', end: '15:45', notes: 'bring card' }),
+      check({ uid: 'holiday-1', title: 'Holiday', date: '2026-12-24', allDay: true }),
+      check({ uid: 'standup-1', title: 'Standup', date: '2026-11-16', start: '09:00', end: '09:15', repeat: 'weekdays', exdates: ['2026-11-18'] }),
+    ].map((r: any) => r.event);
+    const { events: back, skipped } = importIcal(write({ ...empty(), events }));
+    assert.equal(skipped, 0);
+    const shape = (e: any) => [e.uid, e.title, e.date, e.start, e.end, e.allDay, e.repeat, e.exdates.join(','), e.notes ?? ''];
+    assert.deepEqual(back.map(shape).sort(), events.map(shape).sort());
+  });
+  it('counts what it cannot keep instead of changing it', async () => {
+    const { importIcal } = await import('../../apps/pages/src/os/calendar-model.ts');
+    const text = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//x//y//EN',
+      'BEGIN:VEVENT', 'UID:every-other', 'DTSTAMP:20260101T000000Z', 'DTSTART:20260105T090000', 'DTEND:20260105T100000', 'RRULE:FREQ=WEEKLY;INTERVAL=2', 'SUMMARY:Every other week', 'END:VEVENT',
+      'BEGIN:VEVENT', 'UID:lunch', 'DTSTAMP:20260101T000000Z', 'DTSTART:20260106T120000', 'DURATION:PT30M', 'SUMMARY:Lunch', 'END:VEVENT',
+      'END:VCALENDAR', ''].join('\r\n');
+    const { events, skipped } = importIcal(text);
+    assert.equal(skipped, 1);
+    assert.deepEqual(events.map(e => [e.title, e.date, e.start, e.end]), [['Lunch', '2026-01-06', '12:00', '12:30']]);
+  });
+});

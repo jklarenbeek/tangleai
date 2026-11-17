@@ -70,6 +70,7 @@ export const osMessagesEn = {
   'files/failed': 'Not done: {detail}',
   'files/no-preview': 'No preview for this kind of file. Download it to open it.',
   'files/download': 'Download',
+  'files/open-in': 'Open in {app}',
   'files/rename': 'Rename',
   'files/delete': 'Delete',
   'files/cancel': 'Cancel',

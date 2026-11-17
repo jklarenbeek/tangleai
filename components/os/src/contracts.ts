@@ -146,6 +146,19 @@ export const MODULE_CONTRACT = {
       },
       output: { type: 'object', properties: { refused: { type: 'string', maxLength: 400 } } },
     },
+    'module.open': {
+      kind: 'command',
+      doc: 'The person opened a file with this module (from the desktop\'s Files): its name, its type, and its bytes (base64) or an https address. Open it, or refuse with the reason.',
+      input: {
+        type: 'object', additionalProperties: false, required: ['name', 'type'],
+        properties: {
+          name: { type: 'string', minLength: 1, maxLength: 255 }, type: { type: 'string', maxLength: 255 },
+          data: { type: 'string', maxLength: 14_000_000 }, url: { type: 'string', maxLength: 4096 },
+          source: { type: 'object', additionalProperties: false, required: ['location', 'id'], properties: { location: { type: 'string', maxLength: 128 }, id: { type: 'string', maxLength: 1024 } } },
+        },
+      },
+      output: { type: 'object', properties: { refused: { type: 'string', maxLength: 400 } } },
+    },
     'module.screen': {
       kind: 'command',
       doc: 'The person opened one of the module\'s launch entries while its window was open: show that screen.',

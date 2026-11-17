@@ -67,7 +67,7 @@ for (let i = 1; i <= count; i++) {
 if (query.get('framed') === '1') {
   const other = `http://localhost:${location.port}`;
   kernel.install({ $module: '0.1', id: 'silent', version: '1.0.0', title: { en: 'Silent' }, host: { kind: 'origin', url: `${other}/silent.html` } }, 'shipped');
-  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html${withHeader ? '?header' : withFiles ? '?files' : ''}` }, provides: [ECHO, ...(withFiles ? [fileLocationContract('echo_files') as any] : [])], ...(withFiles ? { files: { contract: 'echo_files', title: { en: 'Echo files' } } } : {}), proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
+  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html${withHeader ? '?header' : withFiles ? '?files' : ''}` }, provides: [ECHO, ...(withFiles ? [fileLocationContract('echo_files') as any] : [])], ...(withFiles ? { files: { contract: 'echo_files', title: { en: 'Echo files' } }, opens: [{ type: 'text/plain' }] } : {}), proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
     ...(withSettings ? { settings: { kind: 'page', url: `${other}/echo.html?settings` } } : {}) }, 'shipped');
   // an application that joins with the 0.49.2 release's one-file module side
   kernel.install({ $module: '0.1', id: 'old-echo', version: '1.0.0', title: { en: 'Old echo' }, host: { kind: 'origin', url: `${other}/old.html` },

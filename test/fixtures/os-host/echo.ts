@@ -45,6 +45,11 @@ connectToOs({
     if (activation.item === 'find' && typeof activation.value === 'string') document.body.dataset.found = activation.value;
     if (activation.item === 'more' && activation.value === 'clear') return { refused: 'nothing to clear' };
   },
+  // a text file the person opens with Echo from the desktop's Files
+  onOpen: (file) => {
+    if (!file.data) return { refused: 'Echo reads only inline text' };
+    document.body.dataset.opened = `${file.name}: ${new TextDecoder().decode(Uint8Array.from(atob(file.data), c => c.charCodeAt(0)))}`;
+  },
   onDecision: ({ id, decision }) => {
     if (id === 'echo-2' && decision === 'accept') return { refused: 'the echo moved' };
     document.body.dataset.decided = `${id}:${decision}`;

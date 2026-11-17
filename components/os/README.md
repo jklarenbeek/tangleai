@@ -396,6 +396,19 @@ desktop's own markup. The person uploads (also by dropping files on the
 window), makes folders, renames (F2), moves (by dragging onto a folder),
 deletes after confirming in place, and downloads.
 
+**Open with.** A module says which files it opens, as media types (a
+subtype or type may be `*`): `"opens": [{ "type": "text/calendar" }]`. Files
+offers "Open in …" for each application that opens the file's type, and
+hands it the file: to its open window, or to a window it opens for it (the
+file waits until the application has joined). A framed page takes it at
+`onOpen(file)` (`{ name, type, data (base64) | url, source }`), a shipped
+module at `context.onOpen(handler)`; either answers `{ refused: reason }` to
+say why not, which Files shows. A shipped module hands a file to another one
+with `context.openFile(module, file)`, and a host with `desktop.openFile`.
+The Pages Calendar opens iCalendar files: their single, all-day and repeating
+events join the month (`@jarenjs/josl/ical`), and what it cannot keep is
+counted, never changed into something else.
+
 **The assistant** reads files through the kernel's own `tangle_os_files`
 contract: `files.locations`, `files.list`, `files.search` and `files.read`
 (the first 6,000 characters of a text file; a binary file is described). It

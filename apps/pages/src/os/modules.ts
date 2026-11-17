@@ -25,6 +25,8 @@ export const WELCOME = app('welcome', t('Welcome', 'Welkom', 'Willkommen', 'Bien
 export const CALENDAR: ModuleManifest = {
   ...app('calendar', t('Calendar', 'Agenda', 'Kalender', 'Calendrier', 'Calendario', 'Calendário', 'التقويم', 'カレンダー', '캘린더', 'Календарь', 'Takvim', '行事曆'), 'calendar', 350, { width: 1060, height: 720, minWidth: 560, minHeight: 440 }, 'productivity'),
   provides: [CALENDAR_CONTRACT as any],
+  // an iCalendar file opened from Files is imported
+  opens: [{ type: 'text/calendar' }],
   // its working hours live in the desktop's Settings, beside every other application's
   settings: { kind: 'mount', mount: 'calendar-settings', title: { en: 'Calendar' }, keywords: ['working hours', 'hours', 'agenda', 'find a time'] },
 };

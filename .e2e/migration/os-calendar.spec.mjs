@@ -88,3 +88,23 @@ test('a monthly series on the 31st says which months it skips', async ({ page })
   const march = await page.evaluate(() => window.tangleOs.kernel.call('assistant', 'calendar', 'calendar.agenda', { from: '2027-02-01', days: 59 }));
   expect(march.value.map(e => e.date)).toEqual(['2027-03-31']);
 });
+
+test('an iCalendar file in Files opens in Calendar and its events join the month', async ({ page }) => {
+  await page.addInitScript(() => { localStorage.setItem('tangle-os-welcomed', '1'); localStorage.setItem('tangle-calendar', JSON.stringify({ $calendar: '0.1', events: [], hours: { days: ['mon', 'tue', 'wed', 'thu', 'fri'], start: '09:00', end: '17:00' }, seeded: true })); });
+  await page.goto('/');
+  await page.waitForFunction(() => window.tangleOs);
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//test//test//EN', 'BEGIN:VEVENT', 'UID:review-1', 'DTSTAMP:20260101T000000Z',
+    'DTSTART:20270114T140000', 'DTEND:20270114T150000', 'SUMMARY:Quarterly review', 'END:VEVENT', 'END:VCALENDAR', ''].join('\r\n');
+  await page.evaluate(async (text) => {
+    const kernel = window.tangleOs.kernel;
+    const top = await kernel.call('shell', 'tangle_os_files_browser', 'files.list', { folder: null });
+    for (const e of top.value.entries.filter(e => e.name === 'review.ics')) await kernel.call('shell', 'tangle_os_files_browser', 'files.delete', { id: e.id });
+    await kernel.call('shell', 'tangle_os_files_browser', 'files.write', { name: 'review.ics', data: btoa(text), type: 'text/calendar' });
+    window.tangleOs.desktop.open('files');
+  }, ics);
+  const files = page.locator('.tos-window[data-module="files"]');
+  await files.locator('.tos-files-entry', { hasText: 'review.ics' }).click();
+  await files.locator('.tos-files-actions').getByRole('button', { name: 'Open in Calendar' }).click();
+  const cal = page.locator('.tos-window[data-module="calendar"]');
+  await expect(cal.locator('[data-date="2027-01-14"] .cal-chip', { hasText: 'Quarterly review' })).toBeVisible();
+});

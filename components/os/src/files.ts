@@ -185,7 +185,9 @@ export function browserLocation(root: FileSystemDirectoryHandle | Promise<FileSy
     const parent = parts.length > 1 ? join(parts.slice(0, -1)) : null;
     if (handle.kind === 'directory') return { id: join(parts), parent, name: handle.name, kind: 'folder' };
     const file = await (handle as FileSystemFileHandle).getFile();
-    return { id: join(parts), parent, name: handle.name, kind: 'file', type: file.type || typeOfName(handle.name), size: file.size, modified: new Date(file.lastModified).toISOString() };
+    // the file system keeps no type (one browser answers octet-stream for every file): the name says it
+    const named = typeOfName(handle.name);
+    return { id: join(parts), parent, name: handle.name, kind: 'file', type: named !== 'application/octet-stream' ? named : file.type || named, size: file.size, modified: new Date(file.lastModified).toISOString() };
   }
   async function listOf(parts: string[]) {
     const out: FileEntry[] = [];

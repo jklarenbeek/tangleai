@@ -156,6 +156,7 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
       // the Settings window's header bar is the desktop's own; a section draws none
       setHeader: () => {},
       onHeader: () => () => {},
+      onOpen: () => () => {},
       provide: () => { throw new Error('a settings section provides no contract; its module window does'); },
       openSettings: () => show(`module:${manifest.id}`),
     });

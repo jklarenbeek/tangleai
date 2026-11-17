@@ -216,6 +216,15 @@ function mountFiles(node: HTMLElement, context: ShippedContext, options: FilesOp
     preview.append(title, meta, body, actions);
     const button = (label: string, run: () => void, danger = false) => { const b = el('button', danger ? 'is-danger' : '', label); b.type = 'button'; b.addEventListener('click', run); actions.append(b); return b; };
     let bytes: Uint8Array | null = null;
+    // the applications that open this kind of file, as the person's own choice
+    for (const opener of kernel.openersFor(entry.type ?? typeOfName(entry.name)).filter(m => m.id !== context.module.id)) {
+      const app = localized(opener.title, context.locale);
+      button(t('files/open-in', { app }), () => {
+        if (!bytes) return;
+        void context.openFile(opener.id, { name: entry.name, type: entry.type ?? typeOfName(entry.name), data: fileBytesToBase64(bytes), source: { location: place!.location, id: entry.id } })
+          .then(answer => { if (answer.refused) say(t('files/failed', { detail: answer.refused }), true); });
+      });
+    }
     button(t('files/download'), () => { if (bytes) download(entry, bytes); });
     if (writable) {
       button(t('files/rename'), () => rename(entry));

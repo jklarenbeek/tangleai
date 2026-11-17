@@ -386,6 +386,27 @@
           "type": "boolean"
         }
       }
+    },
+    "opens": {
+      "type": "array",
+      "maxItems": 16,
+      "description": "The kinds of file the module opens, as media types (a subtype may be *).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "pattern": "^([a-z]+|\\*)/([a-z0-9.+-]+|\\*)$"
+          },
+          "title": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
     }
   },
   "$defs": {

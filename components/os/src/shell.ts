@@ -16,6 +16,7 @@ import {
   type Desktop, type WindowState,
 } from './windows.ts';
 import type { Kernel, Decider } from './kernel.ts';
+import type { OpenedFile } from './module.ts';
 import { HEADER_CONTRACT, HEADER_GLYPHS, fitHeader, headerItems, type Header, type HeaderHandler, type HeaderItem, type HeaderMenu } from './header.ts';
 import { arrangeDock, dockIcons, folderTitles, groupInDock, hideInDock, moveInDock, renameDockFolder, showInDock, type DockIcon, type DockLayout } from './dock.ts';
 
@@ -50,6 +51,10 @@ export type ShippedContext = {
   readonly screen?: string;
   /** Called when the person opens one of the module's launch entries while this window is open. */
   onScreen(listener: (screen: string) => void): () => void;
+  /** Where files the person opens with this module arrive (from the desktop's Files); return `{ refused }` to say why not. */
+  onOpen(handler: (file: OpenedFile) => { refused?: string } | void | Promise<{ refused?: string } | void>): () => void;
+  /** Hand a file to another module, as the person asked (Files' "Open in …"): its window opens if it is not running. */
+  openFile(module: string, file: OpenedFile): Promise<{ refused?: string }>;
 };
 /**
  * What happened to a window, with its state after it: a host that subscribes
@@ -111,7 +116,8 @@ type HeaderBar = {
   bar: HTMLElement, start: HTMLElement, center: HTMLElement, end: HTMLElement, more: HTMLButtonElement, subtitle: HTMLElement, titleBox: HTMLElement,
   items: Map<string, HTMLElement>, overflow: string[], fitted: number, search?: any,
 };
-type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean, releaseDecider?: () => void, header: HeaderBar, releaseHeader?: () => void, screen?: string, screens: Set<(screen: string) => void> };
+type PendingOpen = { file: OpenedFile, settle: (answer: { refused?: string }) => void };
+type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean, releaseDecider?: () => void, header: HeaderBar, releaseHeader?: () => void, screen?: string, screens: Set<(screen: string) => void>, opens: PendingOpen[], openHandler?: (file: OpenedFile) => unknown };
 
 const svg = (path: string) => `<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path d="${path}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 const ICON = { close: svg('M4 4l8 8M12 4l-8 8'), minimize: svg('M4 8h8'), maximize: svg('M4.5 4.5h7v7h-7z'), restore: svg('M6 4h6v6M4 6h6v6H4z') };
@@ -304,6 +310,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       entry.connected = true;
       entry.el.classList.remove('is-loading');
       lifecycle('ready', w.id);
+      deliverOpens(entry);
     };
     win.addEventListener('message', onHello);
     arm();
@@ -333,6 +340,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         onHeader: (handler) => { entry.releaseHeader?.(); return (entry.releaseHeader = kernel.registerHeaderHandler(manifest.id, w.id, handler)); },
         screen: entry.screen,
         onScreen: (listener) => { entry.screens.add(listener); return () => { entry.screens.delete(listener); }; },
+        onOpen: (handler) => { entry.openHandler = handler; deliverOpens(entry); return () => { if (entry.openHandler === handler) entry.openHandler = undefined; }; },
+        openFile: (module, file) => openFile(module, file),
         provide: (contract, handlers) => kernel.provideLocal(manifest.id, contract, handlers, w.id),
       });
       entry.el.classList.remove('is-loading');
@@ -408,7 +417,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     bar.addEventListener('dblclick', (event) => { if (!(event.target as HTMLElement).closest(INTERACTIVE)) setDesktop(toggleMaximize(desktop, w.id)); });
     drag(bar, w.id, 'move');
     drag(grip, w.id, 'resize');
-    return { el, content, title, dispose: () => {}, ports: [], header, screens: new Set() };
+    return { el, content, title, dispose: () => {}, ports: [], header, screens: new Set(), opens: [] };
   }
 
   /** Pointer drags over frames: a shield takes the pointer for the drag's duration. */
@@ -467,6 +476,34 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     else for (const listener of [...entry.screens]) { try { listener(screen); } catch (error) { report(error); } }
   }
 
+  /** Hand the files waiting for a window to its module, once it can take them. */
+  function deliverOpens(entry: Mounted) {
+    const ready = entry.frame ? entry.connected && entry.moduleClient : entry.openHandler;
+    if (!ready) return;
+    for (const pending of entry.opens.splice(0)) {
+      const run = entry.frame
+        ? entry.moduleClient.invoke('module.open', pending.file).then((outcome: any) => outcome?.ok === false ? { refused: outcome.error?.message ?? 'not opened' } : (outcome?.ok === true ? outcome.value : outcome) ?? {})
+        : Promise.resolve().then(() => entry.openHandler!(pending.file)).then((answer: any) => answer && typeof answer.refused === 'string' ? { refused: answer.refused } : {});
+      run.then(pending.settle, (error: any) => pending.settle({ refused: String(error?.message ?? error) }));
+    }
+  }
+
+  /**
+   * Hand a file to a module as the person asked: to its open window (raised),
+   * or to a window opened for it. The answer says whether it was opened.
+   */
+  function openFile(moduleId: string, file: OpenedFile): Promise<{ refused?: string }> {
+    const manifest = kernel.effective(moduleId);
+    if (!manifest) return Promise.resolve({ refused: `no module '${moduleId}'` });
+    const running = desktop.windows.filter(w => w.module === moduleId).sort((a, c) => c.z - a.z)[0];
+    const id = running ? running.id : open(moduleId);
+    if (!id) return Promise.resolve({ refused: `'${moduleId}' could not start` });
+    if (running) setDesktop(focusWindow(desktop, running.id));
+    const entry = mounted.get(id);
+    if (!entry) return Promise.resolve({ refused: `'${moduleId}' could not start` });
+    return new Promise((settle) => { entry.opens.push({ file, settle }); deliverOpens(entry); });
+  }
+
   /** What a dock icon does: raise the module's window (at the icon's screen), or open it. */
   function launch(icon: DockIcon) {
     const running = desktop.windows.filter(w => w.module === icon.module).sort((a, c) => c.z - a.z)[0];
@@ -495,6 +532,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       const module = desktop.windows.find(x => x.id === id)?.module;
       if (module) kernel.setHeader(module, id, null);
       win.clearTimeout(entry.header.search?.timer);
+      for (const pending of entry.opens.splice(0)) pending.settle({ refused: 'the window closed' });
       entry.el.remove(); mounted.delete(id);
     }
     setDesktop(closeWindow(desktop, id));
@@ -1376,6 +1414,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     state: (): Desktop => JSON.parse(JSON.stringify(desktop)),
     /** Open the desktop's Settings, at a module's own section when one is named. */
     openSettings,
+    /** Hand a file to a module, opening its window when it is not running. */
+    openFile,
     /** Every window change, as it happens; returns the unsubscribe. */
     subscribe(listener: (event: DesktopEvent) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     setTheme: applyShellTheme,

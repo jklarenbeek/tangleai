@@ -6,7 +6,7 @@
  */
 import type { ShippedMount } from '@tangleai/os/shell';
 import {
-  COLOURS, WEEKDAYS, addDays, checkEvent, emptyCalendar, exportIcal, freeSlots, isoDate, occurrences, parseDate, repeatHint, seed, supportedRepeats,
+  COLOURS, WEEKDAYS, addDays, checkEvent, emptyCalendar, exportIcal, importIcal, freeSlots, isoDate, occurrences, parseDate, repeatHint, seed, supportedRepeats,
   type CalendarDocument, type CalendarEvent, type Occurrence, type Repeat,
 } from './calendar-model.ts';
 
@@ -254,6 +254,18 @@ export function calendarMount(): ShippedMount {
         return { ok: true, uid: checked.event.uid, date: checked.event.date };
       },
       'calendar.free': ({ minutes, days }: any) => freeSlots(cal, { minutes, days }).map(s => ({ start: new Date(s.start).toISOString(), end: new Date(s.end).toISOString() })),
+    });
+
+    // an iCalendar file opened from the desktop's Files: its events join the calendar (one with the same uid is replaced)
+    context.onOpen((file) => {
+      const text = file.data ? new TextDecoder().decode(Uint8Array.from(atob(file.data), c => c.charCodeAt(0))) : '';
+      let imported: ReturnType<typeof importIcal>;
+      try { imported = importIcal(text); } catch (error: any) { return { refused: `${file.name} is not a calendar this one can read: ${error?.message ?? error}` }; }
+      if (!imported.events.length) return { refused: `${file.name} holds no event this calendar can keep` };
+      const uids = new Set(imported.events.map(e => e.uid));
+      write({ ...cal, events: [...cal.events.filter(e => !uids.has(e.uid)), ...imported.events] });
+      selected = imported.events.map(e => e.date).sort()[0]; month = selected.slice(0, 7); editing = null; slots = null;
+      render();
     });
 
     // working hours set in the desktop's Settings show here at once

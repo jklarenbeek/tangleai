@@ -12,6 +12,8 @@ import { CONNECT, FOCUS, HELLO, PROTOCOL, systemContracts, type ConnectMessage }
 import type { Header, HeaderActivation } from './header.ts';
 
 export type ModuleHandlers = Record<string, (input: any) => unknown>;
+/** A file the person opened with a module. */
+export type OpenedFile = { name: string, type: string, data?: string, url?: string, source?: { location: string, id: string } };
 export type ConnectOptions = {
   /** Contract documents this page serves, by contract id, with their handlers. */
   serve?: { contract: unknown, handlers: ModuleHandlers }[];
@@ -41,6 +43,12 @@ export type ConnectOptions = {
    * `connection.screen`.
    */
   onScreen?: (screen: string) => void;
+  /**
+   * The person opened a file with this page (from the desktop's Files): its
+   * name, type, and bytes (base64) or an https address. Open it, or return
+   * `{ refused: reason }`. Without a handler every file is refused.
+   */
+  onOpen?: (file: OpenedFile) => { refused?: string } | void | Promise<{ refused?: string } | void>;
   /** A compact description of what the page shows now, for the assistant. */
   context?: () => unknown;
   /** The window that sends the ports; the page's parent by default. */
@@ -142,6 +150,11 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
         'module.locale': (locale: any) => { applyLocale(root, locale); options.onLocale?.(locale); return {}; },
         'module.context': () => (options.context?.() ?? {}) as object,
         'module.screen': ({ screen }: any) => { options.onScreen?.(screen); return {}; },
+        'module.open': async (file: any) => {
+          if (!options.onOpen) return { refused: 'this application opens no files' };
+          const answer = await options.onOpen(file);
+          return answer && typeof answer.refused === 'string' ? { refused: answer.refused.slice(0, 400) } : {};
+        },
         'module.header': async (activation: any) => {
           if (!options.onHeader) return { refused: 'this application takes no header actions' };
           const answer = await options.onHeader(activation);
