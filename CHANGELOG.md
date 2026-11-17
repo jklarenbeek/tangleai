@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.51.2
+
+Build on Jaren 0.214.0, which exports its host tokens as light and dark stylesheets and lets its component stylesheets follow the host's dark selection.
+
 ## 0.51.1
 
 Build on Jaren 0.213.0, which renders an untrusted app document with its data bindings and granted widgets without a frame.

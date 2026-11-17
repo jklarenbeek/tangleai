@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.213.0**, tag `v0.213.0`, source commit
-`ceb222571e8938faf917ef2cf42406349cb2477d`. Upstream `main` and the tag agreed
+Tangle consumes **Jaren 0.214.0**, tag `v0.214.0`, source commit
+`162833f120029fb500a0c2d20c6adcf2aa6d9123`. Upstream `main` and the tag agreed
 when checked on 2026-11-15; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.213.0` pin. A clean reconstruction from the pinned
+reference is an exact `0.214.0` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,20 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.213.0 to 0.214.0 and current adoption
+
+One release. `@jarenjs/view` exports the host tokens as stylesheets,
+`styles/tokens.css` (light on `:root`, dark on `.dark` or
+`[data-theme="dark"]`) and `styles/tokens-system.css` (the same, following the
+reader's system scheme), and the component stylesheets (Markdown, Mermaid,
+charts, calc, collection, Studio) follow the host's dark selection with the
+same selectors. It answers part of Tangle's request for theme tokens as
+exports. No export was removed.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Host tokens and dark selection (`@jarenjs/view/styles/tokens.css`) | **Not yet adopted.** The desktop marks its scheme with `data-scheme` and `color-scheme`; Jaren's components inside it follow `data-theme`, so stamping `data-theme` beside it on the shell and a framed page's root is the adoption step, with the desktop's own tokens kept as its theme documents. |
 
 ## Changes from 0.212.0 to 0.213.0 and current adoption
 
@@ -505,7 +519,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.213.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.214.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

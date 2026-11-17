@@ -1,5 +1,15 @@
 # @tangleai/documents
 
+## 0.51.2
+
+### Patch Changes
+
+- Build on Jaren 0.214.0, which exports its host tokens as light and dark stylesheets and lets its component stylesheets follow the host's dark selection.
+- Updated dependencies
+  - @tangleai/models@0.51.2
+  - @tangleai/context@0.51.2
+  - @tangleai/core@0.51.2
+
 ## 0.51.1
 
 ### Patch Changes
