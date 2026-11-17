@@ -27,7 +27,8 @@
     "@jarenjs/validate": "0.217.0",
     "@tangleai/models": "0.52.2",
     "@tangleai/context": "0.52.2",
-    "@jarenjs/contract": "0.217.0"
+    "@jarenjs/contract": "0.217.0",
+    "@jarenjs/json": "0.217.0"
   },
   "private": false,
   "files": [

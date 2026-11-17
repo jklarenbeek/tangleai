@@ -507,3 +507,39 @@ describe('restartable runs', () => {
     assert.notEqual(result.messages.at(-1).content, 'mutated', 'a checkpoint is a copy');
   });
 });
+
+describe('run identity', () => {
+  const answering = (model?: string) => ({
+    endpoint: { provider: 'openrouter', model: 'cfg/model' },
+    complete: async () => ({ message: { role: 'assistant', content: 'Hi.', toolCalls: null }, finishReason: 'stop', usage: null, ...(model ? { model } : {}) }),
+  });
+  const tool = (name: string, description = 'A tool.') => ({ name, description, inputSchema: { type: 'object', properties: {} }, execute: () => ({}) });
+  it('names the prompt and tools by digest and the models that answered', async () => {
+    const box = createToolbox();
+    box.add(tool('b'));
+    box.add(tool('a'));
+    const first = await createAgent({ client: answering('vendor/answered'), toolbox: box, system: 'Be brief.' }).send([{ role: 'user', content: 'hi' }]);
+    assert.match(first.identity.system, /^[0-9a-f]{64}$/);
+    assert.match(first.identity.tools, /^[0-9a-f]{64}$/);
+    assert.deepEqual([first.identity.toolNames, first.identity.provider, first.identity.model, first.identity.models], [['a', 'b'], 'openrouter', 'cfg/model', ['vendor/answered']]);
+    const reordered = createToolbox();
+    reordered.add(tool('a'));
+    reordered.add(tool('b'));
+    const same = await createAgent({ client: answering(), toolbox: reordered, system: 'Be brief.' }).send([{ role: 'user', content: 'hi' }]);
+    assert.equal(same.identity.tools, first.identity.tools, 'registration order does not move the digest');
+    assert.equal(same.identity.system, first.identity.system);
+    assert.deepEqual(same.identity.models, ['cfg/model'], 'an unreported model is the configured one');
+    const changed = createToolbox();
+    changed.add(tool('a', 'Another description.'));
+    changed.add(tool('b'));
+    const other = await createAgent({ client: answering(), toolbox: changed, system: 'Be terse.' }).send([{ role: 'user', content: 'hi' }]);
+    assert.notEqual(other.identity.tools, first.identity.tools, 'a changed tool definition is a changed digest');
+    assert.notEqual(other.identity.system, first.identity.system, 'a changed prompt is a changed digest');
+  });
+  it('travels with a rejected call', async () => {
+    const agent = createAgent({ client: { complete: async () => { throw new Error('down'); } }, system: 'Be brief.' });
+    const error: any = await agent.send([{ role: 'user', content: 'hi' }]).catch(e => e);
+    assert.match(error.partial.identity.system, /^[0-9a-f]{64}$/);
+    assert.deepEqual(error.partial.identity.toolNames, []);
+  });
+});

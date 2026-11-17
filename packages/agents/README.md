@@ -154,6 +154,21 @@ A model call that rejects — an abort, a transport failure — still counts as 
 rejection carries `error.partial = { messages, steps, spent }`: the rounds already finished,
 for the next turn and for the audit.
 
+**A run survives a restart.** Each tool gets `context.call = { id, round, attempt }`: the
+provider's tool-call id, the round, and how often this agent ran that id. A tool with an
+effect (a booking, a payment, a sent message) keys it by `call.id`, so a resumed round that
+asks again does not act twice. `onCheckpoint({ messages, steps, round, spent })` fires after
+each round's tool results with a copy of the transcript while it is whole; a host persists it
+and, after a restart, sends from those messages.
+
+**A result says what produced it.** Every result (and `error.partial`) carries `identity`:
+`system`, the SHA-256 of the conversation's base system prompt (before the goal and retrieval
+are composed onto it); `tools`, the canonical SHA-256 of the tool definitions the agent
+listed, sorted by name; `toolNames`; the configured `provider` and `model`; and `models`, every
+model the provider reported answering. A host stores it beside the run, so an evaluation
+names the prompt and tool versions it measured without storing either, and a changed prompt
+or schema is visible as a changed digest.
+
 **Budgets that cannot be crossed.** Beside `turns`, `tokens` and `ms`, `budget.cost` bounds
 what a run may cost, priced by `prices(model)` (per-token `{ prompt, completion }` in one
 currency of the host's choosing; `probePrices` from `@tangleai/models/providers` reads

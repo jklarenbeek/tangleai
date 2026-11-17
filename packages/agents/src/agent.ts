@@ -33,6 +33,8 @@ import { createToolbox, type ToolboxMessages, type ToolContext } from './toolbox
 import { slotAddressesIn, RECALL_TOOL_NAME, createRecallTool, roundSlotName, indexSlotName, slotAddress, slotRef, type RecallMessages } from '@tangleai/context/recall';
 import { environmentTools, type EnvironmentMessages } from '@tangleai/context/environment';
 import { excerpt, truncate, sizeOf } from '@jarenjs/core/chunk';
+import { sha256Hex } from '@jarenjs/core/string';
+import { canonicalSha256 } from '@jarenjs/json/canonical';
 
 /**
  * Every sentence the loop writes into a request or a result, so a host
@@ -254,12 +256,14 @@ export function createAgent(options: {
     messages: any[];
     steps: any[];
     stopReason: string;
+    identity: AgentIdentity;
   }>;
   resume: (history?: any[], hooks?: AgentHooks) => Promise<{
     message: any;
     messages: any[];
     steps: any[];
     stopReason: string;
+    identity: AgentIdentity;
   }>;
   spend: () => {
     turns: number;
@@ -467,6 +471,8 @@ export function createAgent(options: {
     ];
 
     const steps: any[] = [];
+    const answered: string[] = [];
+    const identity = await identityOf(messages, tools, client.endpoint, answered);
     const toolContext: ToolContext = {
       signal: hooks.signal,
       context: hooks.toolContext !== undefined ? hooks.toolContext : options.toolContext,
@@ -483,7 +489,7 @@ export function createAgent(options: {
       if (stop !== null) {
         const message = { role: 'assistant', content: stop.content };
         messages.push(message);
-        return { message, messages, steps, stopReason: stop.reason };
+        return { message, messages, steps, stopReason: stop.reason, identity };
       }
 
       const request = composeRequest(messages, composed);
@@ -512,7 +518,7 @@ export function createAgent(options: {
         if (reserved !== null) {
           const message = { role: 'assistant', content: reserved.content };
           messages.push(message);
-          return { message, messages, steps, stopReason: reserved.reason };
+          return { message, messages, steps, stopReason: reserved.reason, identity };
         }
       }
       if (startedAt === null) startedAt = clock();
@@ -532,10 +538,12 @@ export function createAgent(options: {
         // finished are the host's evidence: both travel with the rejection
         spent.turns += 1;
         if (error !== null && typeof error === 'object' && Object.isExtensible(error))
-          error.partial = { messages: [...messages], steps: [...steps], spent: spend() };
+          error.partial = { messages: [...messages], steps: [...steps], spent: spend(), identity };
         throw error;
       }
       spent.turns += 1;
+      const answeredBy = modelOf(completion);
+      if (typeof answeredBy === 'string' && !answered.includes(answeredBy)) answered.push(answeredBy);
       // reported usage is always counted (it is free and it is the truth);
       // the character estimate is only paid for when a token budget
       // depends on it — and a reserving budget books the worst case it
@@ -562,7 +570,7 @@ export function createAgent(options: {
         const message = reply.reasoning === undefined
           ? transcript
           : { ...transcript, reasoning: reply.reasoning };
-        return { message, messages, steps, stopReason: completion.finishReason ?? 'stop' };
+        return { message, messages, steps, stopReason: completion.finishReason ?? 'stop', identity };
       }
 
       if (round >= maxToolRounds) {
@@ -573,7 +581,7 @@ export function createAgent(options: {
             : words.toolLimit(maxToolRounds),
         };
         messages.push(message);
-        return { message, messages, steps, stopReason: 'tool-limit' };
+        return { message, messages, steps, stopReason: 'tool-limit', identity };
       }
 
       messages.push({
@@ -1235,6 +1243,44 @@ function recallToolbox(ledger: any, words: AgentMessages) {
 }
 
 //#endregion
+
+/**
+ * What produced a run, for the record a host keeps beside its result: the
+ * digest of the base system prompt (the conversation's own, before the goal
+ * and retrieval are composed onto it), the canonical digest of the tool
+ * definitions the agent listed (sorted by name, so registration order does
+ * not move it), the configured endpoint, and every model the provider reported
+ * answering, in order. Two runs with equal digests asked under the same
+ * prompt with the same tools; a changed prompt or tool schema shows up as a
+ * changed digest without storing either.
+ */
+export type AgentIdentity = {
+  system: string;
+  tools: string;
+  toolNames: string[];
+  provider: string | null;
+  model: string | null;
+  models: string[];
+};
+
+async function identityOf(messages: any[], tools: any[], endpoint: { provider?: string; model?: string } | undefined, answered: string[]): Promise<AgentIdentity> {
+  const base = messages[0]?.role === 'system' && typeof messages[0].content === 'string' ? messages[0].content : '';
+  const listed = (JSON.parse(JSON.stringify(tools)) as any[])
+    .sort((a, b) => compareNames(a?.function?.name, b?.function?.name));
+  return {
+    system: await sha256Hex(base),
+    tools: await canonicalSha256(listed),
+    toolNames: listed.map((tool) => String(tool?.function?.name)),
+    provider: endpoint?.provider ?? null,
+    model: endpoint?.model ?? null,
+    models: answered,
+  };
+}
+
+function compareNames(a: unknown, b: unknown): number {
+  const x = String(a), y = String(b);
+  return x < y ? -1 : x > y ? 1 : 0;
+}
 
 export type AgentHooks = { /**
  * - streamed reply text

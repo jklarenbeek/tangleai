@@ -17,7 +17,7 @@ const read = (path: string) => readFileSync(new URL(path, root), 'utf8');
 const allowed = {
   models: ['@jarenjs/core', '@jarenjs/validate'],
   context: ['@jarenjs/core', '@jarenjs/validate', '@tangleai/models'],
-  agents: ['@jarenjs/contract', '@jarenjs/core', '@jarenjs/validate', '@tangleai/context', '@tangleai/models'],
+  agents: ['@jarenjs/contract', '@jarenjs/core', '@jarenjs/json', '@jarenjs/validate', '@tangleai/context', '@tangleai/models'],
 };
 describe('mechanism ownership includes static, dynamic and declaration imports', () => {
   for (const [owner, dependencies] of Object.entries(allowed)) it(`${owner} has exactly its permitted cycle-free package edges`, async () => {
