@@ -1,5 +1,27 @@
 # @tangleai/store
 
+## 0.52.6
+
+### Patch Changes
+
+- Builds on Jaren 0.219.0, whose `$date-format` writes a date on a named time zone's wall clock through an injected zone provider and whose clock arithmetic cuts a sub-millisecond fraction instead of rounding it. Tangle uses none of the date operators, so no behaviour changes; the pins, the foundation manifest and the integration audit move to the new release.
+- Updated dependencies
+  - @tangleai/core@0.52.6
+  - @tangleai/config@0.52.6
+  - @tangleai/mas@0.52.6
+  - @tangleai/documents@0.52.6
+  - @tangleai/memory@0.52.6
+  - @tangleai/outcomes@0.52.6
+  - @tangleai/trace2skill@0.52.6
+  - @tangleai/evolve@0.52.6
+  - @tangleai/hera@0.52.6
+  - @tangleai/forecast@0.52.6
+  - @tangleai/grounding@0.52.6
+  - @tangleai/lightrag@0.52.6
+  - @tangleai/trading@0.52.6
+  - @tangleai/research@0.52.6
+  - @tangleai/experiential@0.52.6
+
 ## 0.52.5
 
 ### Patch Changes

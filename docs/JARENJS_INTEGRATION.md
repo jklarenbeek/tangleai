@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.218.0**, tag `v0.218.0`, source commit
-`44664e252c579979aca0df1741fd9e02bd1598f8`. Upstream `main` and the tag agreed
+Tangle consumes **Jaren 0.219.0**, tag `v0.219.0`, source commit
+`5b94ceb4ff8e35eb2f0e1345da4a88f5260fa25e`. Upstream `main` and the tag agreed
 when checked on 2026-11-17; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.218.0` pin. A clean reconstruction from the pinned
+reference is an exact `0.219.0` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,16 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.218.0 to 0.219.0 and current adoption
+
+One release. In `@jarenjs/json`, `$date-format` takes a time zone as its third
+operand and writes the date on that zone's wall clock, a named zone read from
+the injected `zoneProvider`; a translated saved formula carries the zone too.
+A span that moves a clock now cuts a fraction finer than a millisecond
+(`59.9996` is `59.999`) instead of rounding it into the next second or day. No
+export changed. Tangle's documents use none of the date operators, so nothing
+is adopted.
 
 ## Changes from 0.217.0 to 0.218.0 and current adoption
 
@@ -558,7 +568,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.218.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.219.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration
