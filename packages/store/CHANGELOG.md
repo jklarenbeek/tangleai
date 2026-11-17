@@ -1,5 +1,27 @@
 # @tangleai/store
 
+## 0.52.2
+
+### Patch Changes
+
+- Builds on Jaren 0.217.0, whose database runs an existence test over a hop that pairs an equality with a comparison of two non-null columns as one native statement on SQLite and PostgreSQL. Tangle issues no such query, so no behaviour changes; the pins, the foundation manifest and the integration audit move to the new release.
+- Updated dependencies
+  - @tangleai/core@0.52.2
+  - @tangleai/config@0.52.2
+  - @tangleai/mas@0.52.2
+  - @tangleai/documents@0.52.2
+  - @tangleai/memory@0.52.2
+  - @tangleai/outcomes@0.52.2
+  - @tangleai/trace2skill@0.52.2
+  - @tangleai/evolve@0.52.2
+  - @tangleai/hera@0.52.2
+  - @tangleai/forecast@0.52.2
+  - @tangleai/grounding@0.52.2
+  - @tangleai/lightrag@0.52.2
+  - @tangleai/trading@0.52.2
+  - @tangleai/research@0.52.2
+  - @tangleai/experiential@0.52.2
+
 ## 0.52.1
 
 ### Patch Changes
