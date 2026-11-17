@@ -177,6 +177,75 @@ and from the application, which opens its own section over its own port with
 no grant (`connection.openSettings()` from a framed page, `context.openSettings()`
 in a shipped one). `desktop.openSettings(moduleId?)` opens it from the host.
 
+## Header bars: an application's items in its title bar
+
+An application puts its toolbar in its window's title bar instead of in a row
+of its own: buttons, toggles, menus, tabs that switch its view, and a search
+field. It describes them as a JSON document; the desktop draws them. No
+application paints its own bar, so every bar follows the theme and the writing
+direction, works by keyboard and screen reader, fits a narrow window the same
+way, and cannot show a false close button or a false desktop dialog. Every
+item is plain data, so the assistant reads and uses the bar exactly as the
+person does, under its grants and into the ledger.
+
+```ts
+const os = await connectToOs({ origins: ['https://desk.example'], onHeader: ({ item, value, by }) => {
+  if (item === 'view') showView(value);              // by: 'person', 'assistant' or a module id
+  if (item === 'more' && value === 'export') exportAll();
+} });
+await os.setHeader({
+  start: [{ kind: 'button', id: 'back', label: 'Back', glyph: 'back' }],
+  center: { kind: 'tabs', id: 'view', label: 'View', selected: 'inbox', items: [{ id: 'inbox', label: 'Inbox' }, { id: 'sent', label: 'Sent' }] },
+  end: [
+    { kind: 'search', id: 'find', label: 'Search mail' },
+    { kind: 'button', id: 'compose', label: 'Compose', primary: true },
+    { kind: 'menu', id: 'more', label: 'Mail menu', glyph: 'menu', entries: [{ id: 'export', label: 'Export…', shortcut: 'Ctrl+E' }, { separator: true }, { id: 'wipe', label: 'Delete all', assistant: false }] },
+  ],
+  subtitle: '3 unread',
+});
+```
+
+A shipped module calls `context.setHeader(header)` and `context.onHeader(handler)`.
+
+| Item | Uses it | `value` the application hears | The desktop keeps |
+|---|---|---|---|
+| `button` | a press | none | nothing |
+| `toggle` | a press | `true` or `false` | `pressed` |
+| `menu` | choosing an entry | the entry's id | nothing (an entry's `checked` is the application's) |
+| `tabs` | choosing a tab (pointer, or arrow keys mirrored right to left) | the tab's id | `selected` |
+| `search` | typing (a moment after it stops), Enter, Escape to clear | the text | `value` |
+
+- **Layout.** `start` and `end` hold up to four items each; `center` holds tabs
+  or a search, which take the title's place (the title stays the window's
+  accessible name); `subtitle` sits under the title. A narrow window keeps what
+  fits and moves the rest into one "More" menu: `primary` buttons stay longest,
+  then the others in the order listed. Search fields and tabs shrink instead.
+- **Bounded.** The header matches `HEADER_SCHEMA`; ids are unique across items,
+  tabs and menu entries; glyphs come from the desktop's own set
+  (`HEADER_GLYPHS`); every text is drawn as text. A header that does not match
+  is refused with `OS0113`, with its code and reason on the module side.
+- **State.** The application's document is the truth. The desktop shows a tab,
+  a toggle or a search text as soon as it is used, and the application's next
+  `setHeader` wins, except over the text the person is typing. A frame that
+  reloads loses its bar until it sets it again.
+- **Shortcuts** are hints shown in menus and tooltips. Keys pressed inside a
+  framed application stay in that application, so it binds its own.
+- **The assistant.** `tangle_os_header` is the kernel's own contract:
+  `header.list` (every window's bar, with its state) and `header.activate`
+  (`{ window, item, value? }`). A host grants it like any contract
+  (`assistantGrants: ['tangle_os_header.*']`, or `'all'`), and then
+  `kernel.tools()` and `kernel.operations()` include it. The person's own
+  presses go through the same operation as the caller `shell`, so the ledger
+  holds every use. An item or a menu entry with `assistant: false` is never
+  listed to the assistant and cannot be used by it. What another caller used
+  lights up in the bar, so the person sees what was done in their window.
+- **Refusals.** `OS0114` no such item, `OS0115` disabled or kept from this
+  caller, `OS0116` a value that does not fit the item, `OS0117` the application
+  is not connected, `OS0118` the application refused (its reason). Items are
+  disabled while the application is not connected.
+- **Text.** The desktop adds one sentence of its own, `window/more`; a host's
+  language pack translates it with the rest of its catalogue.
+
 ## The kernel
 
 ```ts

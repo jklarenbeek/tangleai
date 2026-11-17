@@ -89,10 +89,11 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
   };
   const root = el('div', { class: 'tos-settings' });
   const side = el('div', { class: 'tos-settings-side' });
-  const search = el('input', { class: 'tos-settings-search', type: 'search', 'aria-label': t('settings/search'), placeholder: t('settings/search') }) as HTMLInputElement;
+  // the search sits in the window's header bar, where the person (and the assistant) find it
+  let query = '';
   const nav = el('nav', { class: 'tos-settings-nav', 'aria-label': t('settings/sections') });
   const pane = el('div', { class: 'tos-settings-pane' });
-  side.append(search, nav);
+  side.append(nav);
   root.append(side, pane);
   node.append(root);
 
@@ -105,9 +106,9 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
   let current = '', dispose: (() => void) | void = undefined;
 
   function renderNav() {
-    const query = search.value.trim().toLocaleLowerCase(locale);
+    const wanted = query.trim().toLocaleLowerCase(locale);
     const all = entries();
-    const shown = query ? all.filter(e => [e.title, ...e.keywords].some(word => word.toLocaleLowerCase(locale).includes(query))) : all;
+    const shown = wanted ? all.filter(e => [e.title, ...e.keywords].some(word => word.toLocaleLowerCase(locale).includes(wanted))) : all;
     const button = (e: Entry) => {
       const b = el('button', { type: 'button', 'data-section': e.id });
       if (e.id === current) { b.className = 'is-current'; b.setAttribute('aria-current', 'page'); }
@@ -152,6 +153,9 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
       call: (contract, op, input) => kernel.call(manifest.id, contract, op, input),
       sendMail: (envelope) => { kernel.sendMail(manifest.id, envelope); },
       setTitle: () => {},
+      // the Settings window's header bar is the desktop's own; a section draws none
+      setHeader: () => {},
+      onHeader: () => () => {},
       provide: () => { throw new Error('a settings section provides no contract; its module window does'); },
       openSettings: () => show(`module:${manifest.id}`),
     });
@@ -219,7 +223,8 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
     return () => { stop?.(); app.destroy(); };
   }
 
-  search.addEventListener('input', () => renderNav());
+  context.setHeader({ center: { kind: 'search', id: 'search', label: t('settings/search') } });
+  context.onHeader(({ item, value }) => { if (item === 'search' && typeof value === 'string') { query = value; renderNav(); } });
   const unsubscribe = kernel.subscribe((event) => { if (event.kind === 'modules') renderNav(); });
   context.provide(SETTINGS_CONTRACT, { 'settings.show': ({ section }: { section: string }) => { show(section); return {}; } });
   show(options.initial?.() ?? '');

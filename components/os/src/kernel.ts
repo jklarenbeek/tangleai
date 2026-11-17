@@ -13,6 +13,7 @@ import { openLocalClient } from '@jarenjs/contract/local';
 import { validateManifest, type ModuleManifest, type ManifestIssue } from './manifest.ts';
 import { JarenValidator } from '@jarenjs/validate';
 import { systemContracts, PROPOSAL_SCHEMA } from './contracts.ts';
+import { HEADER_CONTRACT, HEADER_SCHEMA, activateHeader, duplicateHeaderId, headerFor, type Header, type HeaderHandler } from './header.ts';
 
 export type Layer = 'shipped' | 'suite' | 'user';
 export type JournalEntry = { seq: number, at: number, layer: Layer, module: string, kind: 'install' | 'patch' | 'remove', patch?: unknown[], inverse?: unknown[] };
@@ -31,7 +32,11 @@ export type MailEnvelope = { id: string, at: number, from: string, to: string, s
 /** How a decision reaches the module that filed the proposal: its own control channel, never the bus. */
 export type Decider = (decision: { id: string, kind: string, decision: 'accept' | 'reject', revision?: string, payload?: unknown }) => Promise<{ refused?: string } | void> | { refused?: string } | void;
 export type Outcome = { ok: true, value: unknown } | { ok: false, error: { code: string, message: string } };
-export type KernelEvent = { kind: 'modules' | 'mail' | 'ledger' | 'providers' | 'title' | 'settings', module?: string, title?: string };
+/**
+ * `header`: a window's header bar changed (`window`), or one of its items was
+ * used (`item`, and `by`: `shell` for the person, else the caller).
+ */
+export type KernelEvent = { kind: 'modules' | 'mail' | 'ledger' | 'providers' | 'title' | 'settings' | 'header', module?: string, title?: string, window?: string, item?: string, by?: string };
 /**
  * Where the desktop keeps the values of a `form` module's settings (a module
  * with no server of its own). A host passes its own storage; the default keeps
@@ -62,6 +67,8 @@ export const toolName = (contract: string, op: string) => `${contract}__${op.rep
 const TRUSTED = new Set(['shell']);
 
 const refusal = (code: string, message: string): Outcome => ({ ok: false, error: { code, message } });
+/** The member a built-in operation's refusal travels in through the contract client. */
+const REFUSED = '__tangle_os_refused';
 const scopeOf = (contract: string, op: string) => [`${contract}.${op}`, `${contract}.*`];
 
 /**
@@ -83,6 +90,11 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   /** Per module, the windows that can carry a decision to it, most recent last. */
   const deciders = new Map<string, { owner: string, decide: Decider }[]>();
   let proposalCheck: ((value: unknown) => any) | null = null;
+  let headerCheck: ((value: unknown) => any) | null = null;
+  let headerContract: any = null;
+  /** Per window, its header bar and the module that set it; and where the window takes activations. */
+  const headers = new Map<string, { module: string, header: Header }>();
+  const headerHandlers = new Map<string, { module: string, handle: HeaderHandler }>();
   const kept = new Map<string, unknown>();
   const store: SettingsStore = options.settings ?? { read: (module) => kept.get(module), write: (module, values) => { kept.set(module, values); } };
   const checkers = new Map<string, { key: string, check: (value: unknown) => any }>();
@@ -291,6 +303,25 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         emit({ kind: 'ledger' });
         return outcome;
       };
+      if (contract === HEADER_CONTRACT.id) {
+        if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
+        headerContract ??= compileContract(HEADER_CONTRACT as any);
+        // checked against the contract like any served operation, with the caller bound here
+        const client = openLocalClient(headerContract, {
+          'header.list': () => ({ windows: kernel.headers(caller) }),
+          // a refusal travels as the value: a thrown error would reach the caller only as the client's own failure
+          'header.activate': async ({ window, item, value }: any) => {
+            const outcome = await kernel.activateHeader(caller, window, item, value);
+            return outcome.ok ? {} : { [REFUSED]: outcome.error };
+          },
+        } as any) as any;
+        try {
+          const outcome = await client.invoke(op, input);
+          if (!outcome?.ok) return write(refusal(outcome?.error?.code ?? 'OS0103', outcome?.error?.message ?? 'the operation failed'));
+          const refused = outcome.value?.[REFUSED];
+          return write(refused ? refusal(refused.code, refused.message) : { ok: true, value: outcome.value });
+        } catch (error: any) { return write(refusal(error?.code ?? 'OS0103', String(error?.message ?? error))); }
+      }
       const provider = providers.get(contract)?.at(-1);
       if (!provider) return write(refusal('OS0102', `no module serves '${contract}'`));
       if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
@@ -395,10 +426,83 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     },
 
     /**
+     * Set a window's header bar (`null` takes it away). The header must match
+     * {@link HEADER_SCHEMA} with every id used once (`OS0113`); the window
+     * belongs to the module that sets it.
+     */
+    setHeader(module: string, window: string, header: unknown): Outcome {
+      const held = headers.get(window);
+      if (held && held.module !== module) return refusal('OS0113', `the window '${window}' belongs to '${held.module}'`);
+      if (header === null) {
+        if (held) { headers.delete(window); emit({ kind: 'header', module, window }); }
+        return { ok: true, value: {} };
+      }
+      headerCheck ??= new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' }).compile(HEADER_SCHEMA as any) as any;
+      const outcome = headerCheck!(header);
+      if (!(typeof outcome === 'object' && outcome !== null ? outcome.valid : outcome === true)) {
+        const first = (outcome?.errors ?? [])[0];
+        return refusal('OS0113', `the header is refused${first ? `: ${first.instancePath || '/'} ${first.message ?? ''}`.trimEnd() : ''}`);
+      }
+      const twice = duplicateHeaderId(header as Header);
+      if (twice !== null) return refusal('OS0113', `the header is refused: the id '${twice}' is used twice`);
+      headers.set(window, { module, header: cloneJson(header) as Header });
+      emit({ kind: 'header', module, window });
+      return { ok: true, value: {} };
+    },
+
+    /** A window's header bar now, with its state; undefined when it has none. */
+    header(window: string): Header | undefined {
+      const held = headers.get(window);
+      return held ? cloneJson(held.header) as Header : undefined;
+    },
+
+    /** Every window's header bar, as `caller` sees it (`assistant: false` items are kept from all but the shell). */
+    headers(caller = 'shell'): { window: string, module: string, header: Header }[] {
+      return [...headers].map(([window, held]) => ({ window, module: held.module, header: headerFor(cloneJson(held.header) as Header, caller) }));
+    },
+
+    /** Where a window's header activations go while it can take them. Returns the release. */
+    registerHeaderHandler(module: string, window: string, handle: HeaderHandler) {
+      const entry = { module, handle };
+      headerHandlers.set(window, entry);
+      emit({ kind: 'header', module, window });
+      return () => { if (headerHandlers.get(window) === entry) { headerHandlers.delete(window); emit({ kind: 'header', module, window }); } };
+    },
+
+    /** Whether a window can take header activations now (its application is connected). */
+    hasHeaderHandler(window: string) { return headerHandlers.has(window); },
+
+    /**
+     * Use one item of a window's header bar: the one path for the person's
+     * hand (`caller` `shell`) and for every granted caller. The desktop keeps
+     * the item's state (a tab, a toggle, a search text) as soon as it is
+     * used, and the application's next header wins. Refused when the window
+     * has no header (`OS0114`), the item is absent (`OS0114`), disabled or
+     * kept from this caller (`OS0115`), the value does not fit it (`OS0116`),
+     * the application is not connected (`OS0117`) or it refuses (`OS0118`).
+     */
+    async activateHeader(caller: string, window: string, item: string, value?: unknown): Promise<Outcome> {
+      const held = headers.get(window);
+      if (!held) return refusal('OS0114', `the window '${window}' has no header`);
+      const checked = activateHeader(held.header, caller, item, value);
+      if (!checked.ok) return refusal(checked.code, checked.message);
+      const handler = headerHandlers.get(window);
+      if (!handler) return refusal('OS0117', `'${held.module}' is not connected to take it`);
+      held.header = checked.header;
+      const by = caller === 'shell' ? 'person' : caller;
+      emit({ kind: 'header', module: held.module, window, item, by: caller });
+      try {
+        const answer = await handler.handle({ item, ...(checked.value !== undefined ? { value: checked.value } : {}), by });
+        if (answer && typeof answer.refused === 'string') return refusal('OS0118', answer.refused.slice(0, 400));
+      } catch (error: any) { return refusal('OS0118', String(error?.message ?? error)); }
+      return { ok: true, value: {} };
+    },
+
+    /**
      * Serve `tangle_os` to one module over its own port. The module's id is
      * bound here, by the port it was handed, never taken from its input.
      */
-    serveModule(module: string, port: any, hooks: { setTitle?: (title: string) => void, openSettings?: () => void } = {}): ServedContract {
+    serveModule(module: string, port: any, hooks: { setTitle?: (title: string) => void, openSettings?: () => void, window?: string } = {}): ServedContract {
       const { os } = systemContracts();
       return servePort(os, {
         'os.call': async ({ contract, op, input }: any) => kernel.call(module, contract, op, input ?? {}),
@@ -408,6 +512,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         'window.title': ({ title }: any) => { hooks.setTitle?.(title); emit({ kind: 'title', module, title }); return {}; },
         'settings.get': () => ({ values: kernel.settings(module) }),
         'settings.open': () => { hooks.openSettings?.(); return {}; },
+        'window.header': ({ header }: any) => { const outcome = kernel.setHeader(module, hooks.window ?? module, header); return outcome.ok ? {} : { refused: outcome.error }; },
       }, { channel: port }) as ServedContract;
     },
 
@@ -434,6 +539,9 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         for (const [op, spec] of Object.entries<any>(ops)) if (kernel.allowed(caller, id, op))
           out.push({ tool: toolName(id, op), contract: id, op, kind: spec?.kind ?? 'read', ...(spec?.doc ? { doc: spec.doc } : {}), ...(spec?.input ? { input: spec.input } : {}), ...(spec?.output ? { output: spec.output } : {}) });
       }
+      // the kernel's own header contract, under the same grants
+      for (const [op, spec] of Object.entries<any>(HEADER_CONTRACT.operations)) if (kernel.allowed(caller, HEADER_CONTRACT.id, op))
+        out.push({ tool: toolName(HEADER_CONTRACT.id, op), contract: HEADER_CONTRACT.id, op, kind: spec.kind, doc: spec.doc, input: spec.input, output: spec.output });
       return out;
     },
 
@@ -451,6 +559,12 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         if (ops.length === 0) continue;
         const client = { invoke: (op: string, input: unknown) => kernel.call(caller, id, op, input) };
         options.tools.toolboxFromContract(provider.contract, client, { toolbox, ops, name: (op: string) => toolName(id, op) });
+      }
+      const headerOps = Object.keys(HEADER_CONTRACT.operations).filter(op => kernel.allowed(caller, HEADER_CONTRACT.id, op));
+      if (headerOps.length) {
+        headerContract ??= compileContract(HEADER_CONTRACT as any);
+        const client = { invoke: (op: string, input: unknown) => kernel.call(caller, HEADER_CONTRACT.id, op, input) };
+        options.tools.toolboxFromContract(headerContract, client, { toolbox, ops: headerOps, name: (op: string) => toolName(HEADER_CONTRACT.id, op) });
       }
       return toolbox;
     },

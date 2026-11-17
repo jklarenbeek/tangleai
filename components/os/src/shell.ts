@@ -16,6 +16,7 @@ import {
   type Desktop, type WindowState,
 } from './windows.ts';
 import type { Kernel, Decider } from './kernel.ts';
+import { HEADER_CONTRACT, HEADER_GLYPHS, fitHeader, headerItems, type Header, type HeaderHandler, type HeaderItem, type HeaderMenu } from './header.ts';
 
 export type ShippedContext = {
   module: ModuleManifest;
@@ -40,6 +41,10 @@ export type ShippedContext = {
   withdraw(id: string): ReturnType<Kernel['withdrawProposal']>;
   /** Where the person's decisions on this module's proposals arrive while its window is open; return `{ refused }` to keep one pending. */
   onDecision(handler: Decider): () => void;
+  /** Put buttons, toggles, menus, tabs and a search field in the window's title bar (`null` takes them away); refused with `OS0113` when it does not match the header schema. */
+  setHeader(header: Header | null): void;
+  /** Where uses of the header bar arrive (by the person or a granted caller); return `{ refused }` to say it was not done. */
+  onHeader(handler: HeaderHandler): () => void;
 };
 /**
  * What happened to a window, with its state after it: a host that subscribes
@@ -96,10 +101,21 @@ export type DesktopOptions = {
   onError?: (error: unknown) => void;
 };
 
-type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean, releaseDecider?: () => void };
+/** A window's header bar as drawn: its rows, the item elements by id, and what the narrow bar moved into "more". */
+type HeaderBar = {
+  bar: HTMLElement, start: HTMLElement, center: HTMLElement, end: HTMLElement, more: HTMLButtonElement, subtitle: HTMLElement, titleBox: HTMLElement,
+  items: Map<string, HTMLElement>, overflow: string[], fitted: number, search?: any,
+};
+type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean, releaseDecider?: () => void, header: HeaderBar, releaseHeader?: () => void };
 
 const svg = (path: string) => `<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path d="${path}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 const ICON = { close: svg('M4 4l8 8M12 4l-8 8'), minimize: svg('M4 8h8'), maximize: svg('M4.5 4.5h7v7h-7z'), restore: svg('M6 4h6v6M4 6h6v6H4z') };
+/** A header glyph from the desktop's own set: never markup an application sent. */
+const headerGlyph = (name: string | undefined) => name && Object.hasOwn(HEADER_GLYPHS, name)
+  ? `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="${HEADER_GLYPHS[name as keyof typeof HEADER_GLYPHS]}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  : '';
+/** What a press in the title bar leaves to the element under it instead of dragging or maximizing the window. */
+const INTERACTIVE = 'button, input, select, textarea, a[href], [role="tab"]';
 
 /**
  * Why an application page may not be framed as an origin module, or null.
@@ -202,6 +218,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     locale = next;
     applyLocale(node, next);
     for (const m of mounted.values()) m.moduleClient?.invoke('module.locale', next);
+    for (const m of mounted.values()) m.header.fitted = -1;
     render(); renderDock();
   }
 
@@ -214,6 +231,9 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     const release = () => {
       kernel.withdraw(manifest.id, w.id);
       entry.releaseDecider?.(); entry.releaseDecider = undefined;
+      // a frame that reloads draws its header again; until then the bar has none
+      entry.releaseHeader?.(); entry.releaseHeader = undefined;
+      kernel.setHeader(manifest.id, w.id, null);
       try { entry.served?.close?.(); } catch (error) { report(error); }
       for (const port of entry.ports) port.close();
       entry.ports = []; entry.served = undefined; entry.moduleClient = undefined; entry.connected = false;
@@ -246,7 +266,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       notice?.remove(); notice = null; entry.el.classList.remove('is-failed');
       const os = new MessageChannel(), control = new MessageChannel();
       const provided = (manifest.provides ?? []).map(contract => ({ contract, channel: new MessageChannel() }));
-      entry.served = kernel.serveModule(manifest.id, os.port1, { setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)), openSettings: () => openSettings(manifest.id) });
+      entry.served = kernel.serveModule(manifest.id, os.port1, { setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)), openSettings: () => openSettings(manifest.id), window: w.id });
       os.port1.start();
       const moduleClient = openPortClient(systemContracts().module, { channel: control.port1, timeoutMs: 10_000 });
       control.port1.start();
@@ -255,6 +275,12 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         catch (error) { report(error); }
       }
       entry.moduleClient = moduleClient;
+      // uses of the header bar go over the same control channel
+      entry.releaseHeader = kernel.registerHeaderHandler(manifest.id, w.id, async (activation) => {
+        const outcome: any = await moduleClient.invoke('module.header', activation);
+        if (outcome?.ok === false) throw new Error(outcome.error?.message ?? 'the application did not take it');
+        return outcome?.ok === true ? outcome.value : outcome;
+      });
       // the person's decisions on this module's proposals go over its own control channel, never the bus
       entry.releaseDecider = kernel.registerDecider(manifest.id, w.id, async (decision) => {
         const outcome: any = await moduleClient.invoke('module.decide', decision);
@@ -297,6 +323,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         call: (contract, op, input) => kernel.call(manifest.id, contract, op, input),
         sendMail: (envelope) => { kernel.sendMail(manifest.id, envelope); },
         setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)),
+        setHeader: (header) => { const outcome = kernel.setHeader(manifest.id, w.id, header); if (!outcome.ok) throw Object.assign(new Error(outcome.error.message), { code: outcome.error.code }); },
+        onHeader: (handler) => { entry.releaseHeader?.(); return (entry.releaseHeader = kernel.registerHeaderHandler(manifest.id, w.id, handler)); },
         provide: (contract, handlers) => kernel.provideLocal(manifest.id, contract, handlers, w.id),
       });
       entry.el.classList.remove('is-loading');
@@ -346,10 +374,21 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     controls.append(button('minimize', t('window/minimize'), ICON.minimize), button('maximize', t('window/maximize'), ICON.maximize), button('close', t('window/close'), ICON.close));
     const glyph = doc.createElement('span'); glyph.className = 'tos-glyph'; glyph.dataset.glyph = manifest.icon?.glyph ?? 'app';
     if (manifest.icon?.hue !== undefined) glyph.style.setProperty('--hue', String(manifest.icon.hue));
-    bar.append(glyph, title, controls);
+    // the header bar's rows sit around the title; empty rows take no room
+    const row = (name: string) => { const r = doc.createElement('div'); r.className = `tos-hb-row tos-hb-${name}`; return r; };
+    const start = row('start'), center = row('center'), end = row('end');
+    const titleBox = doc.createElement('div'); titleBox.className = 'tos-titlebox';
+    const subtitle = doc.createElement('p'); subtitle.className = 'tos-subtitle'; subtitle.hidden = true;
+    titleBox.append(title, subtitle);
+    const more = doc.createElement('button'); more.type = 'button'; more.className = 'tos-hb-item tos-hb-more'; more.dataset.more = '';
+    more.setAttribute('aria-haspopup', 'menu'); more.setAttribute('aria-expanded', 'false'); more.setAttribute('aria-label', t('window/more')); more.title = t('window/more');
+    more.innerHTML = headerGlyph('more'); more.hidden = true;
+    bar.append(glyph, start, titleBox, center, end, more, controls);
+    const header: HeaderBar = { bar, start, center, end, more, subtitle, titleBox, items: new Map(), overflow: [], fitted: -1 };
     const content = doc.createElement('div'); content.className = 'tos-content';
     const grip = doc.createElement('div'); grip.className = 'tos-resize'; grip.setAttribute('aria-hidden', 'true');
     el.append(bar, content, grip);
+    wireHeader(w.id, header);
 
     el.addEventListener('pointerdown', () => { if (desktop.focus !== w.id) setDesktop(focusWindow(desktop, w.id)); }, true);
     controls.addEventListener('click', (event) => {
@@ -358,16 +397,16 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       else if (action === 'minimize') setDesktop(minimizeWindow(desktop, w.id));
       else if (action === 'maximize') setDesktop(toggleMaximize(desktop, w.id));
     });
-    bar.addEventListener('dblclick', (event) => { if (!(event.target as HTMLElement).closest('button')) setDesktop(toggleMaximize(desktop, w.id)); });
+    bar.addEventListener('dblclick', (event) => { if (!(event.target as HTMLElement).closest(INTERACTIVE)) setDesktop(toggleMaximize(desktop, w.id)); });
     drag(bar, w.id, 'move');
     drag(grip, w.id, 'resize');
-    return { el, content, title, dispose: () => {}, ports: [] };
+    return { el, content, title, dispose: () => {}, ports: [], header };
   }
 
   /** Pointer drags over frames: a shield takes the pointer for the drag's duration. */
   function drag(handle: HTMLElement, id: string, mode: 'move' | 'resize') {
     handle.addEventListener('pointerdown', (event) => {
-      if (event.button !== 0 || (event.target as HTMLElement).closest('button')) return;
+      if (event.button !== 0 || (event.target as HTMLElement).closest(INTERACTIVE)) return;
       const current = desktop.windows.find(w => w.id === id);
       if (!current || current.maximized) return;
       event.preventDefault();
@@ -423,7 +462,14 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
 
   function close(id: string) {
     const entry = mounted.get(id);
-    if (entry) { try { entry.dispose(); } catch (error) { report(error); } entry.el.remove(); mounted.delete(id); }
+    if (entry) {
+      try { entry.dispose(); } catch (error) { report(error); }
+      entry.releaseHeader?.(); entry.releaseHeader = undefined;
+      const module = desktop.windows.find(x => x.id === id)?.module;
+      if (module) kernel.setHeader(module, id, null);
+      win.clearTimeout(entry.header.search?.timer);
+      entry.el.remove(); mounted.delete(id);
+    }
     setDesktop(closeWindow(desktop, id));
   }
 
@@ -444,6 +490,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       el.classList.toggle('is-maximized', w.maximized);
       el.setAttribute('aria-label', w.title);
       entry.title.textContent = w.title;
+      if (entry.header.fitted !== w.rect.w && !el.hidden) fitSoon(w.id);
       const max = el.querySelector<HTMLButtonElement>('.tos-maximize');
       if (max) { const label = w.maximized ? t('window/restore') : t('window/maximize'); max.setAttribute('aria-label', label); max.title = label; max.innerHTML = w.maximized ? ICON.restore : ICON.maximize; }
     }
@@ -525,8 +572,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   // or a dock item opens the shell's own menu. Inside a window's content the
   // browser's menu stays: a module's text is the module's to copy, and a
   // framed module's clicks never reach this page at all.
-  type MenuEntry = { label: string, run: () => void, disabled?: boolean, glyph?: { glyph: string, hue?: number } } | 'separator';
-  let menu: { el: HTMLElement, restore: HTMLElement | null } | null = null;
+  type MenuEntry = { label: string, run: () => void, disabled?: boolean, glyph?: { glyph: string, hue?: number }, checked?: boolean, hint?: string } | 'separator';
+  let menu: { el: HTMLElement, restore: HTMLElement | null, onClose?: () => void } | null = null;
 
   const windowsOf = (moduleId: string) => desktop.windows.filter(w => w.module === moduleId).sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }));
   const singleton = (moduleId: string) => kernel.effective(moduleId)?.window?.singleton === true;
@@ -577,7 +624,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
 
   /** What a right click on this element offers, or null for the browser's own menu. */
   function menuFor(target: HTMLElement): { title: string, entries: MenuEntry[] } | null {
-    if (target.closest('.tos-content, .tos-mail, .tos-dock-brand')) return null;
+    if (target.closest('.tos-content, .tos-mail, .tos-dock-brand, input')) return null;
     const windowEl = target.closest<HTMLElement>('.tos-window');
     if (windowEl?.dataset.window) {
       const w = desktop.windows.find(x => x.id === windowEl.dataset.window);
@@ -593,13 +640,14 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
 
   function closeMenu(returnFocus = false) {
     if (!menu) return;
-    const { el, restore } = menu;
+    const { el, restore, onClose } = menu;
     menu = null;
     el.remove();
+    onClose?.();
     if (returnFocus && restore?.isConnected) restore.focus();
   }
 
-  function openMenu(title: string, entries: MenuEntry[], at: { x: number, y: number }, restore: HTMLElement | null) {
+  function openMenu(title: string, entries: MenuEntry[], at: { x: number, y: number }, restore: HTMLElement | null, onClose?: () => void) {
     closeMenu();
     const el = doc.createElement('div');
     el.className = 'tos-menu';
@@ -611,14 +659,16 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       if (entry === 'separator') { const hr = doc.createElement('div'); hr.className = 'tos-menu-separator'; hr.setAttribute('role', 'separator'); el.append(hr); continue; }
       const b = doc.createElement('button');
       b.type = 'button'; b.className = 'tos-menu-item'; b.tabIndex = -1;
-      b.setAttribute('role', 'menuitem');
+      b.setAttribute('role', entry.checked === undefined ? 'menuitem' : 'menuitemcheckbox');
+      if (entry.checked !== undefined) { b.setAttribute('aria-checked', String(entry.checked)); b.classList.add('is-checkable'); }
       if (entry.disabled) { b.disabled = true; b.setAttribute('aria-disabled', 'true'); }
       if (entry.glyph) {
         const glyph = doc.createElement('span'); glyph.className = 'tos-glyph'; glyph.dataset.glyph = entry.glyph.glyph;
         if (entry.glyph.hue !== undefined) glyph.style.setProperty('--hue', String(entry.glyph.hue));
         b.append(glyph);
       }
-      const label = doc.createElement('span'); label.textContent = entry.label; b.append(label);
+      const label = doc.createElement('span'); label.className = 'tos-menu-label'; label.textContent = entry.label; b.append(label);
+      if (entry.hint) { const hint = doc.createElement('kbd'); hint.className = 'tos-menu-hint'; hint.textContent = entry.hint; b.append(hint); }
       // the pointer and the keyboard share one highlighted item
       if (!entry.disabled) b.addEventListener('pointermove', () => { if (doc.activeElement !== b) b.focus({ preventScroll: true }); });
       b.addEventListener('click', () => {
@@ -650,7 +700,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     el.style.left = `${Math.round(Math.max(margin, Math.min(x, box.width - width - margin)))}px`;
     el.style.top = `${Math.round(Math.max(margin, Math.min(y, box.height - height - margin)))}px`;
     el.style.visibility = '';
-    menu = { el, restore };
+    menu = { el, restore, onClose };
     el.querySelector<HTMLButtonElement>('.tos-menu-item:not(:disabled)')?.focus({ preventScroll: true });
   }
 
@@ -743,9 +793,243 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     return li;
   }
 
+  // ── header bars ───────────────────────────────────────────────────────────
+  // What an application puts in its title bar is a document the kernel holds
+  // (`kernel.setHeader`); the shell draws it, and every use, the person's
+  // included, goes through `tangle_os_header` so it is checked and lands in
+  // the ledger exactly like the assistant's. Items are updated in place by
+  // id, so a redraw never takes focus, the caret or a composition away.
+
+  /** Use one header item: the person's hand is the trusted caller `shell`. */
+  function useHeader(id: string, item: string, value?: string | boolean) {
+    kernel.call('shell', HEADER_CONTRACT.id, 'header.activate', { window: id, item, ...(value !== undefined ? { value } : {}) })
+      .then(outcome => { if (!outcome.ok) report(new Error(outcome.error.message)); });
+  }
+
+  function wireHeader(id: string, hb: HeaderBar) {
+    const itemOf = (el: HTMLElement | null) => {
+      const header = kernel.header(id);
+      return el && header ? headerItems(header).find(i => i.id === el.dataset.item) : undefined;
+    };
+    hb.bar.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest('[data-more]')) { openMore(id, hb); return; }
+      const el = target.closest<HTMLElement>('[data-item]');
+      const item = itemOf(el);
+      if (!el || !item || (el as HTMLButtonElement).disabled) return;
+      if (item.kind === 'button') useHeader(id, item.id);
+      else if (item.kind === 'toggle') useHeader(id, item.id, !item.pressed);
+      else if (item.kind === 'menu') openHeaderMenu(id, item, el);
+      else if (item.kind === 'tabs') { const tab = target.closest<HTMLElement>('[data-tab]'); if (tab && !(tab as HTMLButtonElement).disabled && tab.dataset.tab !== item.selected) useHeader(id, item.id, tab.dataset.tab); }
+    });
+    // a search field reports what is typed, a moment after the typing stops; Enter at once
+    hb.bar.addEventListener('input', (event) => {
+      const input = (event.target as HTMLElement).closest<HTMLInputElement>('input[data-item]');
+      if (!input) return;
+      win.clearTimeout(hb.search?.timer);
+      hb.search = { timer: win.setTimeout(() => useHeader(id, input.dataset.item!, input.value), 150) };
+    });
+    hb.bar.addEventListener('keydown', (event) => {
+      const target = event.target as HTMLElement;
+      if (target.matches('input[data-item]')) {
+        const input = target as HTMLInputElement;
+        if (event.key === 'Enter') { event.preventDefault(); win.clearTimeout(hb.search?.timer); useHeader(id, input.dataset.item!, input.value); }
+        else if (event.key === 'Escape' && input.value !== '') { event.preventDefault(); input.value = ''; win.clearTimeout(hb.search?.timer); useHeader(id, input.dataset.item!, ''); }
+        return;
+      }
+      // tabs move and select with the arrow keys, mirrored on a right-to-left desktop
+      const tab = target.closest<HTMLButtonElement>('[role="tab"]');
+      if (!tab) return;
+      const tabs = [...tab.parentElement!.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)')];
+      const at = tabs.indexOf(tab), forward = locale.dir === 'rtl' ? 'ArrowLeft' : 'ArrowRight', back = locale.dir === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
+      const next = event.key === forward ? tabs[(at + 1) % tabs.length] : event.key === back ? tabs[(at - 1 + tabs.length) % tabs.length]
+        : event.key === 'Home' ? tabs[0] : event.key === 'End' ? tabs.at(-1) : undefined;
+      if (!next) return;
+      event.preventDefault();
+      next.focus();
+      const owner = itemOf(tab.closest<HTMLElement>('[data-item]'));
+      if (owner?.kind === 'tabs' && next.dataset.tab !== owner.selected) useHeader(id, owner.id, next.dataset.tab);
+    });
+  }
+
+  /** Open a header menu under its button (or under "more" for one the narrow bar moved there). */
+  function openHeaderMenu(id: string, item: HeaderMenu, anchor: HTMLElement) {
+    const live = kernel.hasHeaderHandler(id);
+    const entries: MenuEntry[] = item.entries.map(e => 'separator' in e ? 'separator' as const
+      : { label: e.label, disabled: e.disabled === true || !live, ...(e.checked !== undefined ? { checked: e.checked } : {}), ...(e.shortcut ? { hint: e.shortcut } : {}), run: () => useHeader(id, item.id, e.id) });
+    const r = anchor.getBoundingClientRect();
+    anchor.setAttribute('aria-expanded', 'true');
+    openMenu(item.label, entries, { x: locale.dir === 'rtl' ? r.right : r.left, y: r.bottom + 4 }, anchor, () => anchor.setAttribute('aria-expanded', 'false'));
+  }
+
+  /** The items a narrow bar has no room for, as one menu. */
+  function openMore(id: string, hb: HeaderBar) {
+    const header = kernel.header(id);
+    if (!header) return;
+    const live = kernel.hasHeaderHandler(id);
+    const entries: MenuEntry[] = headerItems(header).filter(i => hb.overflow.includes(i.id)).map(item => {
+      const disabled = ('disabled' in item && item.disabled === true) || !live;
+      if (item.kind === 'toggle') return { label: item.label, checked: item.pressed, disabled, run: () => useHeader(id, item.id, !item.pressed) };
+      if (item.kind === 'menu') return { label: item.label, disabled, run: () => openHeaderMenu(id, item, hb.more) };
+      return { label: item.label, disabled, ...(item.kind === 'button' && item.shortcut ? { hint: item.shortcut } : {}), run: () => useHeader(id, item.id) };
+    });
+    const r = hb.more.getBoundingClientRect();
+    hb.more.setAttribute('aria-expanded', 'true');
+    openMenu(t('window/more'), entries, { x: locale.dir === 'rtl' ? r.right : r.left, y: r.bottom + 4 }, hb.more, () => hb.more.setAttribute('aria-expanded', 'false'));
+  }
+
+  /** Make or update one item's element in place; a kind that changed is built again. */
+  function headerElement(hb: HeaderBar, item: HeaderItem, live: boolean): HTMLElement {
+    let el = hb.items.get(item.id);
+    if (el && el.dataset.kind !== item.kind) { el.remove(); el = undefined; }
+    if (!el) {
+      el = item.kind === 'search' ? doc.createElement('input') : item.kind === 'tabs' ? doc.createElement('div') : doc.createElement('button');
+      el.dataset.item = item.id; el.dataset.kind = item.kind;
+      el.className = item.kind === 'search' || item.kind === 'tabs' ? `tos-hb-${item.kind}` : `tos-hb-item tos-hb-${item.kind}`;
+      if (item.kind === 'search') { (el as HTMLInputElement).type = 'search'; el.setAttribute('autocomplete', 'off'); el.setAttribute('spellcheck', 'false'); }
+      else if (item.kind === 'tabs') el.setAttribute('role', 'tablist');
+      else (el as HTMLButtonElement).type = 'button';
+      hb.items.set(item.id, el);
+    }
+    const disabled = ('disabled' in item && item.disabled === true) || !live;
+    el.setAttribute('aria-label', item.label);
+    if (item.kind === 'search') {
+      const input = el as HTMLInputElement;
+      input.disabled = disabled;
+      input.placeholder = item.placeholder ?? item.label;
+      // the application's text never replaces what the person is typing
+      if (doc.activeElement !== input && input.value !== (item.value ?? '')) input.value = item.value ?? '';
+      return el;
+    }
+    if (item.kind === 'tabs') {
+      const ids = item.items.map(tab => tab.id).join('\n');
+      if (el.dataset.tabs !== ids) {
+        el.dataset.tabs = ids;
+        el.replaceChildren(...item.items.map(tab => { const b = doc.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.dataset.tab = tab.id; b.className = 'tos-hb-tab'; return b; }));
+      }
+      [...el.children].forEach((b, i) => {
+        const tab = item.items[i], button = b as HTMLButtonElement, selected = tab.id === item.selected;
+        button.innerHTML = headerGlyph(tab.glyph);
+        const text = doc.createElement('span'); text.textContent = tab.label; button.append(text);
+        button.setAttribute('aria-selected', String(selected));
+        button.tabIndex = selected ? 0 : -1;
+        button.disabled = disabled || tab.disabled === true;
+      });
+      return el;
+    }
+    const button = el as HTMLButtonElement;
+    button.disabled = disabled;
+    const shortcut = 'shortcut' in item && item.shortcut ? ` (${item.shortcut})` : '';
+    button.title = item.label + shortcut;
+    // an icon when there is one (the label stays its name), else the label as text
+    button.innerHTML = headerGlyph(item.glyph);
+    if (!item.glyph) { const text = doc.createElement('span'); text.textContent = item.label; button.append(text); }
+    button.classList.toggle('has-text', !item.glyph);
+    button.classList.toggle('is-primary', item.kind === 'button' && item.primary === true);
+    if (item.kind === 'toggle') button.setAttribute('aria-pressed', String(item.pressed)); else button.removeAttribute('aria-pressed');
+    if (item.kind === 'menu') { button.setAttribute('aria-haspopup', 'menu'); if (!button.hasAttribute('aria-expanded')) button.setAttribute('aria-expanded', 'false'); }
+    return el;
+  }
+
+  function renderHeader(id: string) {
+    const entry = mounted.get(id);
+    if (!entry) return;
+    const hb = entry.header, header = kernel.header(id), live = kernel.hasHeaderHandler(id);
+    entry.el.classList.toggle('has-header', header !== undefined);
+    entry.el.classList.toggle('has-center', header?.center !== undefined);
+    hb.subtitle.textContent = header?.subtitle ?? '';
+    hb.subtitle.hidden = !header?.subtitle;
+    const seen = new Set<string>();
+    const place = (row: HTMLElement, items: HeaderItem[]) => {
+      items.forEach((item, i) => {
+        seen.add(item.id);
+        const el = headerElement(hb, item, live);
+        // moved only when out of place: moving an element takes its focus away
+        if (row.children[i] !== el) row.insertBefore(el, row.children[i] ?? null);
+      });
+    };
+    place(hb.start, header?.start ?? []);
+    place(hb.center, header?.center ? [header.center] : []);
+    place(hb.end, header?.end ?? []);
+    for (const [itemId, el] of hb.items) if (!seen.has(itemId)) { el.remove(); hb.items.delete(itemId); }
+    hb.fitted = -1;
+    fitSoon(id);
+  }
+
+  const fitting = new Set<string>();
+  /** Fit the bar after the frame's layout, once however often it is asked. */
+  function fitSoon(id: string) {
+    if (fitting.has(id)) return;
+    fitting.add(id);
+    const run = () => { fitting.delete(id); fitBar(id); };
+    if (typeof win.requestAnimationFrame === 'function') win.requestAnimationFrame(run); else run();
+  }
+
+  /**
+   * A narrow bar keeps the items it has room for and moves the rest into
+   * "more": primary buttons stay longest, then the others in the order the
+   * application listed them. Tabs keep room for themselves (and scroll past
+   * it); a search field in a crowded bar shrinks to its icon and opens across
+   * the bar while it has focus.
+   */
+  function fitBar(id: string) {
+    const entry = mounted.get(id), w = desktop.windows.find(x => x.id === id);
+    if (!entry || !w) return;
+    const hb = entry.header;
+    hb.fitted = w.rect.w;
+    const all = [...hb.start.children, ...hb.center.children, ...hb.end.children] as HTMLElement[];
+    const searches = all.filter(el => el.dataset.kind === 'search');
+    const droppable = [...hb.start.children, ...hb.end.children].filter(el => (el as HTMLElement).dataset.kind !== 'search') as HTMLElement[];
+    for (const el of droppable) el.hidden = false;
+    for (const el of searches) el.classList.remove('is-collapsed');
+    hb.more.hidden = true; hb.overflow = [];
+    const inner = hb.bar.clientWidth;
+    if (!inner || (droppable.length === 0 && searches.length === 0)) return;
+    const style = win.getComputedStyle(hb.bar);
+    const gap = parseFloat(style.columnGap) || 0;
+    const pad = (parseFloat(style.paddingInlineStart) || 0) + (parseFloat(style.paddingInlineEnd) || 0);
+    const rowGap = parseFloat(win.getComputedStyle(hb.end).columnGap) || 0;
+    const width = (el: Element) => (el as HTMLElement).hidden ? 0 : el.getBoundingClientRect().width;
+    // what never moves: the glyph and the window controls
+    const kept = [...hb.bar.children].filter(el => el !== hb.start && el !== hb.center && el !== hb.end && el !== hb.more && el !== hb.titleBox && !(el as HTMLElement).hidden);
+    const tabs = hb.center.querySelector<HTMLElement>('[data-kind="tabs"]');
+    const room = (searchWidth: number) => kept.reduce((sum, el) => sum + width(el), 0)
+      + searches.reduce(sum => sum + searchWidth + rowGap, 0)
+      + (tabs ? Math.min(tabs.scrollWidth, 168) : 0)
+      + (entry.el.classList.contains('has-center') ? 0 : Math.min(hb.titleBox.scrollWidth, 96))
+      + gap * (kept.length + 4) + pad;
+    const order = [...droppable.filter(el => el.classList.contains('is-primary')), ...droppable.filter(el => !el.classList.contains('is-primary'))];
+    const widths = order.map(el => width(el) + rowGap);
+    let fits = fitHeader(widths, inner - room(96), 32 + gap);
+    const crowded = fits < order.length || room(96) > inner;
+    if (crowded && searches.length) {
+      for (const el of searches) el.classList.add('is-collapsed');
+      fits = fitHeader(widths, inner - room(30), 32 + gap);
+    }
+    order.forEach((el, i) => { el.hidden = i >= fits; });
+    hb.overflow = order.slice(fits).map(el => el.dataset.item!);
+    hb.more.hidden = hb.overflow.length === 0;
+  }
+
+  /** An item someone other than the person used lights up, so the person sees what was done in their window. */
+  function showUse(id: string, item: string) {
+    const hb = mounted.get(id)?.header;
+    if (!hb) return;
+    const el = hb.items.get(item);
+    const shown = el && !el.hidden ? el : hb.more;
+    shown.classList.remove('is-used');
+    void shown.offsetWidth;
+    shown.classList.add('is-used');
+    win.setTimeout(() => shown.classList.remove('is-used'), 1400);
+  }
+
   // ── wiring ──────────────────────────────────────────────────────────────
   const unsubscribe = kernel.subscribe((event) => {
     if (event.kind === 'mail') { renderDock(); renderMail(); }
+    if (event.kind === 'header' && event.window && mounted.has(event.window)) {
+      renderHeader(event.window);
+      if (event.item && event.by !== 'shell') showUse(event.window, event.item);
+    }
     if (event.kind === 'modules') renderDock();
     // a form module's windows hear their new settings; one that predates them may refuse, which is fine
     if (event.kind === 'settings' && event.module) {

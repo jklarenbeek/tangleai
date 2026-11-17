@@ -34,6 +34,8 @@
   position: absolute;
   display: grid;
   grid-template-rows: auto 1fr;
+  /* the title bar is as wide as the window, never as wide as what it holds */
+  grid-template-columns: minmax(0, 1fr);
   background: var(--os-window-bg);
   -webkit-backdrop-filter: var(--os-glass);
   backdrop-filter: var(--os-glass);
@@ -51,8 +53,10 @@
 @keyframes tos-open { from { opacity: 0; transform: scale(.96) translateY(8px); } }
 
 .tos-titlebar {
+  position: relative;
   display: flex; align-items: center; gap: 10px;
   min-block-size: var(--os-titlebar-height, 42px);
+  min-inline-size: 0;
   padding-inline: 14px 8px;
   background: var(--os-titlebar);
   border-block-end: 1px solid var(--border);
@@ -60,11 +64,80 @@
   user-select: none;
   touch-action: none;
 }
+.tos-titlebox { flex: 1; min-inline-size: 0; display: grid; align-content: center; }
 .tos-title {
-  flex: 1; margin: 0; min-inline-size: 0;
+  margin: 0; min-inline-size: 0;
   font-size: 13px; font-weight: 600; letter-spacing: .01em;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.tos-subtitle { margin: 0; font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* tabs or a search in the middle take the title's place; the title stays the window's name for screen readers */
+.tos-window.has-center .tos-titlebox { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+
+/* ── header bars: an application's items, drawn by the desktop ─────────── */
+.tos-hb-row { display: flex; align-items: center; gap: 4px; min-inline-size: 0; }
+.tos-hb-row:empty { display: none; }
+.tos-hb-center { flex: 1; justify-content: center; }
+.tos-hb-item {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex: none;
+  min-inline-size: 30px; block-size: 28px; padding-inline: 7px;
+  border: 0; border-radius: 7px;
+  background: transparent; color: var(--fg);
+  font: inherit; font-size: 13px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+.tos-hb-item[hidden] { display: none; }
+.tos-hb-item.has-text { padding-inline: 10px; }
+.tos-hb-item:hover:not(:disabled) { background: var(--accent-soft); }
+.tos-hb-item:focus-visible, .tos-hb-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tos-hb-item:disabled { color: var(--muted); opacity: .55; cursor: default; }
+.tos-hb-item[aria-pressed="true"], .tos-hb-item[aria-expanded="true"] { background: var(--accent-soft); color: var(--accent); }
+.tos-hb-item.is-primary { background: var(--accent); color: var(--accent-fg, #fff); }
+.tos-hb-item.is-primary:hover:not(:disabled) { background: var(--accent-hover, var(--accent)); }
+.tos-hb-more { color: var(--muted); }
+.tos-hb-search {
+  flex: 0 1 220px; min-inline-size: 96px; block-size: 28px; padding-inline: 10px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--fg); font: inherit; font-size: 13px;
+  cursor: text;
+}
+.tos-hb-search:disabled { opacity: .55; cursor: default; }
+/* a crowded bar keeps the search as its icon; with focus it opens across the bar */
+.tos-hb-search.is-collapsed {
+  flex: none; inline-size: 30px; min-inline-size: 30px; padding: 0; border-color: transparent; background-color: transparent;
+  color: transparent; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M7 2.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9zM10.5 10.5 13.5 13.5' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: center; background-size: 16px;
+}
+.tos-hb-search.is-collapsed::placeholder { color: transparent; }
+.tos-hb-search.is-collapsed:hover:not(:disabled) { background-color: var(--accent-soft); border-color: transparent; }
+/* a search that holds text keeps showing it is active */
+.tos-hb-search.is-collapsed:not(:placeholder-shown):not(:focus) { box-shadow: inset 0 0 0 2px var(--accent); }
+.tos-hb-search.is-collapsed:focus {
+  position: absolute; z-index: 1; inset-inline: 8px; inset-block-start: 7px; inline-size: auto;
+  padding-inline: 10px; color: var(--fg); background-color: var(--surface); background-image: none; border-color: var(--border); cursor: text;
+}
+.tos-hb-search.is-collapsed:focus::placeholder { color: var(--muted); }
+.tos-hb-center .tos-hb-search { flex-basis: 320px; }
+.tos-hb-search:hover:not(:disabled) { background: var(--surface); border-color: var(--accent); }
+.tos-hb-search:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+.tos-hb-tabs {
+  display: inline-flex; gap: 2px; padding: 2px; min-inline-size: 0; max-inline-size: 100%; overflow-x: auto; scrollbar-width: none;
+  border-radius: 9px; background: var(--accent-soft); cursor: default;
+}
+.tos-hb-tab {
+  display: inline-flex; align-items: center; gap: 6px; flex: none;
+  block-size: 24px; padding-inline: 12px;
+  border: 0; border-radius: 7px; background: transparent; color: var(--muted);
+  font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;
+}
+.tos-hb-tab:hover:not(:disabled) { color: var(--fg); }
+.tos-hb-tab[aria-selected="true"] { background: var(--os-window-bg); color: var(--fg); box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+.tos-hb-tab:disabled { opacity: .5; cursor: default; }
+/* what the assistant (or another granted caller) used, shown to the person */
+.tos-hb-item.is-used, .tos-hb-tabs.is-used, .tos-hb-search.is-used { animation: tos-used 1.4s ease-out; }
+@keyframes tos-used { 0%, 30% { box-shadow: 0 0 0 2px var(--accent); } 100% { box-shadow: 0 0 0 2px transparent; } }
 .tos-controls { display: flex; gap: 2px; }
 .tos-control {
   display: grid; place-items: center;
@@ -193,7 +266,10 @@
   font: inherit; text-align: start;
   cursor: pointer;
 }
-.tos-menu-item > span:last-child { flex: 1; min-inline-size: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tos-menu-label { flex: 1; min-inline-size: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tos-menu-hint { font: inherit; font-size: 11.5px; color: var(--muted); }
+.tos-menu-item.is-checkable { padding-inline-start: 28px; position: relative; }
+.tos-menu-item[aria-checked="true"]::before { content: ""; position: absolute; inset-inline-start: 11px; inset-block-start: 50%; inline-size: 9px; block-size: 5px; border: solid currentColor; border-width: 0 0 2px 2px; transform: translateY(-70%) rotate(-45deg); }
 .tos-menu-item:hover:not(:disabled), .tos-menu-item:focus-visible { background: var(--accent-soft); outline: none; }
 .tos-menu-item:focus { outline: none; }
 .tos-menu-item:disabled { color: var(--muted); cursor: default; opacity: .6; }
@@ -278,5 +354,7 @@
 
 /* ── reduced motion ────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .tos-window, .tos-dock-item, .tos-menu { animation: none !important; transition: none !important; }
+  .tos-window, .tos-dock-item, .tos-menu, .tos-hb-item { animation: none !important; transition: none !important; }
+  /* the highlight of a use stays, without the fade */
+  .tos-hb-item.is-used, .tos-hb-tabs.is-used, .tos-hb-search.is-used { box-shadow: 0 0 0 2px var(--accent); }
 }

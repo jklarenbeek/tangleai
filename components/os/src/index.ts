@@ -12,6 +12,8 @@ export { createKernel, toolName } from './kernel.ts';
 export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore, Proposal, Decider } from './kernel.ts';
 export { OS_CONTRACT, MODULE_CONTRACT, PROPOSAL_SCHEMA, DECISION_SCHEMA, systemContracts, CONNECT, HELLO, KEY, FOCUS, PROTOCOL } from './contracts.ts';
 export type { ConnectMessage } from './contracts.ts';
+export { HEADER_SCHEMA, HEADER_CONTRACT, HEADER_GLYPHS, headerItems, headerFor, activateHeader, duplicateHeaderId, fitHeader } from './header.ts';
+export type { Header, HeaderItem, HeaderButton, HeaderToggle, HeaderMenu, HeaderMenuEntry, HeaderSearch, HeaderTabs, HeaderGlyph, HeaderActivation, HeaderHandler } from './header.ts';
 export {
   emptyDesktop, openWindow, focusWindow, closeWindow, moveWindow, resizeWindow, toggleMaximize, minimizeWindow, setTitle, setViewport, setCompact, resizeDesktop, isVisible, stacked, fit,
 } from './windows.ts';

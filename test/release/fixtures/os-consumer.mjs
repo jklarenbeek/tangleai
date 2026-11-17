@@ -46,7 +46,9 @@ async function join(connectToOs, label) {
     assert.equal(page.style.get('--os-accent'), '#0a7', `${label}: the desktop's theme reaches the page`);
     assert.deepEqual(await kernel.call('assistant', 'records', 'records.search', { query: 'oak' }), { ok: true, value: [{ name: `${label} oak` }] });
     assert.equal((await kernel.call('assistant', 'records', 'records.search', {})).ok, false, `${label}: the page's contract refuses what it does not accept`);
-    assert.deepEqual(kernel.operations().map(o => [o.tool, o.kind, o.doc]), [['records__records_search', 'read', 'Find records by name.']]);
+    // a served contract, and every window's header bar, under the same grant
+    assert.deepEqual(kernel.operations().map(o => [o.tool, o.kind]), [['records__records_search', 'read'], ['tangle_os_header__header_list', 'read'], ['tangle_os_header__header_activate', 'command']]);
+    assert.equal(kernel.operations()[0].doc, 'Find records by name.');
     assert.equal((await connection.sendMail({ subject: 'Ready' })).ok, true);
     connection.close();
   } finally { for (const c of [os, control, records]) { c.port1.close(); c.port2.close(); } }

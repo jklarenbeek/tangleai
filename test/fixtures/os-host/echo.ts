@@ -3,16 +3,41 @@ import { connectToOs } from '../../../components/os/src/module.ts';
 
 export const ECHO = { $contract: '0.1', id: 'echo', operations: { 'echo.say': { kind: 'read', input: { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] }, output: { type: 'object' } } } };
 const loaded = Number(sessionStorage.getItem('loads') ?? 0) + 1;
+let connection: Awaited<ReturnType<typeof connectToOs>> | null = null, view = 'calls', pinned = false;
+/** Echo's header bar: tabs in the middle, a search, a pin toggle, a menu and buttons that a narrow window moves into "more". */
+async function showHeader() {
+  await connection?.setHeader({
+    start: [{ kind: 'button', id: 'back', label: 'Back', glyph: 'back' }, { kind: 'button', id: 'refresh', label: 'Refresh', glyph: 'refresh' }],
+    center: { kind: 'tabs', id: 'view', label: 'View', selected: view, items: [{ id: 'calls', label: 'Calls' }, { id: 'replies', label: 'Replies' }, { id: 'archive', label: 'Archive' }] },
+    end: [
+      { kind: 'search', id: 'find', label: 'Search echoes' },
+      { kind: 'toggle', id: 'pin', label: 'Pin', glyph: 'star', pressed: pinned },
+      { kind: 'button', id: 'compose', label: 'Compose', primary: true },
+      { kind: 'menu', id: 'more', label: 'Echo menu', glyph: 'menu', entries: [{ id: 'export', label: 'Export', shortcut: 'Ctrl+E' }, { separator: true }, { id: 'clear', label: 'Clear all', assistant: false }] },
+    ],
+  });
+}
 sessionStorage.setItem('loads', String(loaded));
 // two proposals for the person: one it carries out, one whose revision moved
 connectToOs({
   origins: 'parent', presentation: 'none', serve: [{ contract: ECHO, handlers: { 'echo.say': ({ text }: any) => ({ text, loaded }) } }],
+  // every use of the header bar is written down where the test reads it; the page owns the state and sets it again
+  onHeader: (activation) => {
+    const used = JSON.parse(document.body.dataset.used ?? '[]');
+    document.body.dataset.used = JSON.stringify([...used, activation]);
+    if (activation.item === 'view' && typeof activation.value === 'string') { view = activation.value; void showHeader(); }
+    if (activation.item === 'pin') { pinned = activation.value === true; void showHeader(); }
+    if (activation.item === 'find' && typeof activation.value === 'string') document.body.dataset.found = activation.value;
+    if (activation.item === 'more' && activation.value === 'clear') return { refused: 'nothing to clear' };
+  },
   onDecision: ({ id, decision }) => {
     if (id === 'echo-2' && decision === 'accept') return { refused: 'the echo moved' };
     document.body.dataset.decided = `${id}:${decision}`;
   },
 }).then(async (desktop) => {
+  connection = desktop;
   document.body.dataset.joined = 'yes';
+  if (new URLSearchParams(location.search).has('header')) await showHeader();
   // a settings page joins too, but files nothing: proposals belong to the application's window
   if (window.name === 'settings' || new URLSearchParams(location.search).has('settings')) return;
   await desktop.propose({ id: 'echo-1', kind: 'echo.reply', title: 'Send the echo', summary: 'Answer the last call with its own words.', evidence: [{ label: 'The call', href: 'https://example.com/call' }], revision: 'r1' });

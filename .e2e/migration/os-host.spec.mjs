@@ -256,3 +256,92 @@ test('the person decides an application\'s proposals in the mail; the decision g
   await expect(panel.locator('[data-proposal="echo-2"]').getByRole('alert')).toHaveText('Echo is not running. Open it, then decide again.');
   expect(await page.evaluate(() => window.harness.kernel.mail().find(m => m.proposal?.id === 'echo-2').proposal.status)).toBe('pending');
 });
+
+// ── header bars ───────────────────────────────────────────────────────────
+const echoWindow = (page) => page.locator('.tos-window[data-module="echo-app"]');
+const echoFrame = (page) => page.frameLocator('.tos-window[data-module="echo-app"] iframe');
+const used = async (page) => JSON.parse(await echoFrame(page).locator('body').getAttribute('data-used') ?? '[]');
+async function openEcho(page, query, viewport) {
+  await host(page, `modules=2&framed=1&header=1${query}`, viewport);
+  await page.evaluate(() => window.harness.desktop.open('echo-app'));
+  await expect(echoWindow(page).locator('.tos-titlebar').getByRole('tab', { name: 'Calls' })).toHaveAttribute('aria-selected', 'true');
+  return echoWindow(page).locator('.tos-titlebar');
+}
+
+test("a framed application's header bar is drawn by the desktop and used by the person and the assistant down one path", async ({ page }) => {
+  const bar = await openEcho(page, '', { width: 1280, height: 800 });
+  // tabs by pointer and keyboard; the application sets the header again and the desktop keeps up
+  await bar.getByRole('tab', { name: 'Replies' }).click();
+  await expect(bar.getByRole('tab', { name: 'Replies' })).toHaveAttribute('aria-selected', 'true');
+  await bar.getByRole('tab', { name: 'Replies' }).press('ArrowRight');
+  await expect(bar.getByRole('tab', { name: 'Archive' })).toHaveAttribute('aria-selected', 'true');
+  await expect(bar.getByRole('tab', { name: 'Archive' })).toBeFocused();
+  await bar.getByRole('button', { name: 'Pin' }).click();
+  await expect(bar.getByRole('button', { name: 'Pin' })).toHaveAttribute('aria-pressed', 'true');
+  // typing in the search: no drag, no maximize, and the text reaches the application
+  const before = await page.evaluate(() => window.harness.desktop.state().windows.find(w => w.module === 'echo-app').rect);
+  const search = bar.getByRole('searchbox', { name: 'Search echoes' });
+  await search.dblclick();
+  await search.fill('hello');
+  await expect(echoFrame(page).locator('body')).toHaveAttribute('data-found', 'hello');
+  // a search that shrank to its icon opens across the bar while it has focus, and closes when the person moves on
+  await search.blur();
+  const after = await page.evaluate(() => window.harness.desktop.state().windows.find(w => w.module === 'echo-app'));
+  expect([after.rect, after.maximized]).toEqual([before, false]);
+  // a menu with a shortcut hint
+  await bar.getByRole('button', { name: 'Echo menu' }).click();
+  await expect(page.getByRole('menuitem', { name: /Export/ })).toContainText('Ctrl+E');
+  await page.getByRole('menuitem', { name: /Export/ }).click();
+  await expect(bar.getByRole('button', { name: 'Echo menu' })).toHaveAttribute('aria-expanded', 'false');
+  // each use crosses into the framed page over its port: wait for the last one to land
+  await expect.poll(async () => (await used(page)).length).toBe(5);
+  expect((await used(page)).map(u => [u.item, u.value, u.by])).toEqual([
+    ['view', 'replies', 'person'], ['view', 'archive', 'person'], ['pin', true, 'person'], ['find', 'hello', 'person'], ['more', 'export', 'person'],
+  ]);
+
+  // the assistant reads the same bar, without what the application kept from it, and uses it the same way
+  const id = await page.evaluate(() => window.harness.desktop.state().windows.find(w => w.module === 'echo-app').id);
+  const listed = await page.evaluate(() => window.harness.kernel.call('assistant', 'tangle_os_header', 'header.list', {}));
+  expect(listed.value.windows.map(w => w.window)).toEqual([id]);
+  expect(JSON.stringify(listed.value)).not.toContain('clear');
+  expect((await page.evaluate((target) => window.harness.kernel.call('assistant', 'tangle_os_header', 'header.activate', { window: target, item: 'view', value: 'calls' }), id)).ok).toBe(true);
+  await expect(bar.getByRole('tab', { name: 'Calls' })).toHaveAttribute('aria-selected', 'true');
+  await expect(bar.locator('.tos-hb-tabs')).toHaveClass(/is-used/);
+  await expect.poll(async () => (await used(page)).length).toBe(6);
+  const kept = await page.evaluate((target) => window.harness.kernel.call('assistant', 'tangle_os_header', 'header.activate', { window: target, item: 'more', value: 'clear' }), id);
+  expect(kept.error.code).toBe('OS0115');
+  expect((await used(page)).at(-1)).toEqual({ item: 'view', value: 'calls', by: 'assistant' });
+  // every use, the person's included, is in the ledger
+  const ledger = await page.evaluate(() => window.harness.kernel.ledger().filter(l => l.contract === 'tangle_os_header').map(l => l.caller));
+  expect(ledger.filter(c => c === 'shell').length).toBe(5);
+
+  // a reload draws no stale bar: the reloaded application starts over on its own state
+  await bar.getByRole('tab', { name: 'Replies' }).click();
+  await expect(bar.getByRole('tab', { name: 'Replies' })).toHaveAttribute('aria-selected', 'true');
+  await page.evaluate((target) => { document.querySelector(`.tos-window[data-window="${target}"] iframe`).src += ''; }, id);
+  await expect(bar.getByRole('tab', { name: 'Calls' })).toHaveAttribute('aria-selected', 'true');
+  await page.screenshot({ path: test.info().outputPath('header-wide.png') });
+});
+
+test('a narrow window keeps what fits and moves the rest into "more", mirrored right to left', async ({ page }) => {
+  const bar = await openEcho(page, '&compact=760&dir=rtl', { width: 390, height: 844 });
+  const more = bar.getByRole('button', { name: 'More' });
+  await expect(more).toBeVisible();
+  expect(await bar.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
+  // the tabs keep their room; the search shrinks to its icon and opens across the bar while it has focus
+  await expect(bar.getByRole('tab', { name: 'Calls' })).toBeVisible();
+  const search = bar.getByRole('searchbox', { name: 'Search echoes' });
+  await expect(search).toHaveClass(/is-collapsed/);
+  await search.focus();
+  expect(await search.evaluate(el => el.getBoundingClientRect().width)).toBeGreaterThan(300);
+  await search.blur();
+  await more.click();
+  const moved = await page.getByRole('menu').getByRole('menuitem').allTextContents();
+  expect(moved.length).toBeGreaterThan(0);
+  await page.getByRole('menu').getByRole('menuitem').first().click();
+  await expect.poll(async () => (await used(page)).length).toBe(1);
+  // right to left, the arrow keys follow the reading direction
+  await bar.getByRole('tab', { name: 'Calls' }).press('ArrowLeft');
+  await expect(bar.getByRole('tab', { name: 'Replies' })).toHaveAttribute('aria-selected', 'true');
+  await page.screenshot({ path: test.info().outputPath('header-narrow-rtl.png') });
+});

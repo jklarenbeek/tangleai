@@ -8,6 +8,7 @@
  * language) and what it reports (its compact context row).
  */
 import { compileContract } from '@jarenjs/contract';
+import { HEADER_SCHEMA } from './header.ts';
 
 const text = { type: 'string', maxLength: 20000 };
 const json = {};
@@ -71,6 +72,13 @@ export const OS_CONTRACT = {
       input: { type: 'object', additionalProperties: false, required: ['title'], properties: { title: { type: 'string', maxLength: 200 } } },
       output: { type: 'object' },
     },
+    'window.header': {
+      kind: 'command',
+      doc: 'Set the header bar of this module\'s window: its buttons, toggles, menus, tabs and search field, drawn by the desktop. null takes it away.',
+      input: { type: 'object', additionalProperties: false, required: ['header'], properties: { header: { anyOf: [HEADER_SCHEMA, { type: 'null' }] } } },
+      // a refusal is answered, not thrown, so the page learns its code and reason
+      output: { type: 'object', properties: { refused: { type: 'object', required: ['code', 'message'], properties: { code: { type: 'string' }, message: { type: 'string' } } } } },
+    },
     'mail.propose': {
       kind: 'command',
       doc: 'File a proposal in the desktop\'s inbox for the person to accept or reject; filing the same id again replaces it.',
@@ -127,6 +135,15 @@ export const MODULE_CONTRACT = {
       kind: 'command',
       doc: 'The person accepted or rejected one of the module\'s proposals. The module carries it out, or refuses with the reason (`refused`), for example when the revision moved.',
       input: DECISION_SCHEMA,
+      output: { type: 'object', properties: { refused: { type: 'string', maxLength: 400 } } },
+    },
+    'module.header': {
+      kind: 'command',
+      doc: 'An item of the window\'s header bar was used: by the person (`by: person`) or by a caller the desktop granted it (`assistant`, a module id). Carry it out, or refuse with the reason.',
+      input: {
+        type: 'object', additionalProperties: false, required: ['item', 'by'],
+        properties: { item: { type: 'string', maxLength: 64 }, value: { anyOf: [{ type: 'string', maxLength: 200 }, { type: 'boolean' }] }, by: { type: 'string', maxLength: 64 } },
+      },
       output: { type: 'object', properties: { refused: { type: 'string', maxLength: 400 } } },
     },
     'module.context': {

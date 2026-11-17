@@ -137,10 +137,9 @@
 .cal { flex: 1; min-inline-size: 0; display: grid; grid-template-rows: auto 1fr; }
 .cal .c-teal { --chip: hsl(176 62% 38%); } .cal .c-blue { --chip: hsl(214 70% 52%); } .cal .c-violet { --chip: hsl(262 56% 58%); }
 .cal .c-rose { --chip: hsl(342 68% 54%); } .cal .c-amber { --chip: hsl(34 86% 48%); } .cal .c-slate { --chip: hsl(220 14% 50%); }
-.cal-head { display: flex; align-items: center; gap: 14px; padding: 14px 18px 12px; border-block-end: 1px solid var(--border); }
-.cal-nav { display: flex; gap: 4px; align-items: center; }
 .cal-title { flex: 1; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
-.cal-actions { display: flex; gap: 8px; }
+/* the month's name is the window's subtitle; the heading stays for screen readers */
+.cal-visually-hidden { position: absolute; inline-size: 1px; block-size: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .cal-icon { inline-size: 32px; block-size: 32px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--fg); font-size: 18px; line-height: 1; cursor: pointer; }
 .cal-today, .cal-ghost { block-size: 32px; padding-inline: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--fg); font: inherit; font-size: 13px; font-weight: 550; cursor: pointer; }
 .cal-primary { block-size: 32px; padding-inline: 14px; border: 0; border-radius: var(--radius-sm); background: var(--accent); color: var(--accent-fg); font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; }

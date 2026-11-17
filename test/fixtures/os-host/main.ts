@@ -10,6 +10,9 @@
  *   ?settings=1  the desktop's Settings: a host section, screen 1's own
  *                settings, Echo's settings page, a document module's form,
  *                and (with ?framed=1) an application on the 0.49.2 join file
+ *   ?header=1    (with ?framed=1) Echo puts a header bar in its title bar, and
+ *                the assistant is granted the header contract
+ *   ?dir=rtl     the desktop in Arabic, right to left
  * Everything the browser test needs is on `window.harness`.
  */
 import { createKernel } from '../../../components/os/src/index.ts';
@@ -19,7 +22,8 @@ import { settingsModule } from '../../../components/os/src/settings.ts';
 
 const query = new URLSearchParams(location.search);
 const count = Number(query.get('modules') ?? 16);
-const kernel = createKernel();
+const withHeader = query.get('header') === '1';
+const kernel = createKernel(withHeader ? { assistantGrants: ['tangle_os_header.*'] } : {});
 const visibility: Record<string, boolean[]> = {};
 const shipped: Record<string, any> = {};
 const withSettings = query.get('settings') === '1';
@@ -44,7 +48,7 @@ for (let i = 1; i <= count; i++) {
 if (query.get('framed') === '1') {
   const other = `http://localhost:${location.port}`;
   kernel.install({ $module: '0.1', id: 'silent', version: '1.0.0', title: { en: 'Silent' }, host: { kind: 'origin', url: `${other}/silent.html` } }, 'shipped');
-  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html` }, provides: [ECHO], proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
+  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html${withHeader ? '?header' : ''}` }, provides: [ECHO], proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
     ...(withSettings ? { settings: { kind: 'page', url: `${other}/echo.html?settings` } } : {}) }, 'shipped');
   // an application that joins with the 0.49.2 release's one-file module side
   kernel.install({ $module: '0.1', id: 'old-echo', version: '1.0.0', title: { en: 'Old echo' }, host: { kind: 'origin', url: `${other}/old.html` },
@@ -65,6 +69,7 @@ const desktop = mountDesktop(document.getElementById('desktop')!, {
   ...(query.has('compact') ? { compact: { below: Number(query.get('compact')) } } : {}),
   tray: { mail: query.get('mail') !== '0', ...(brand ? { brand } : {}) },
   ...(query.has('deadline') ? { connectTimeoutMs: Number(query.get('deadline')) } : {}),
+  ...(query.get('dir') === 'rtl' ? { locale: 'ar', dir: 'rtl' as const } : {}),
 });
 desktop.subscribe((event) => events.push(event));
 (window as any).harness = { kernel, desktop, events, visibility, contexts };

@@ -66,7 +66,9 @@ test('the calendar downloads as iCalendar', async ({ page }) => {
   const cal = await calendar(page);
   await page.evaluate(() => window.tangleOs.kernel.call('assistant', 'calendar', 'calendar.add', { title: 'Weekly review', date: '2026-11-20', start: '16:00', end: '16:30', repeat: 'weekly' }));
   const downloading = page.waitForEvent('download');
-  await cal.getByRole('button', { name: 'Export .ics' }).click();
+  // Export lives in the calendar's menu in the window's header bar
+  await cal.getByRole('button', { name: 'Calendar menu' }).click();
+  await page.getByRole('menuitem', { name: 'Export .ics' }).click();
   const text = await readFile(await (await downloading).path(), 'utf8');
   expect(text).toContain('BEGIN:VCALENDAR');
   expect(text).toContain('SUMMARY:Weekly review');

@@ -9,6 +9,7 @@
 import { compileContract } from '@jarenjs/contract';
 import { servePort, openPortClient } from '@jarenjs/contract/port';
 import { CONNECT, FOCUS, HELLO, PROTOCOL, systemContracts, type ConnectMessage } from './contracts.ts';
+import type { Header, HeaderActivation } from './header.ts';
 
 export type ModuleHandlers = Record<string, (input: any) => unknown>;
 export type ConnectOptions = {
@@ -27,6 +28,13 @@ export type ConnectOptions = {
    * proposal stays pending with that reason. A module with no handler refuses.
    */
   onDecision?: (decision: { id: string, kind: string, decision: 'accept' | 'reject', revision?: string, payload?: unknown }) => { refused?: string } | void | Promise<{ refused?: string } | void>;
+  /**
+   * An item of this page's header bar was used, by the person (`by: 'person'`)
+   * or by a caller the desktop granted it (`'assistant'`, a module id). Carry
+   * it out, or return `{ refused: reason }`. Without a handler every
+   * activation is refused.
+   */
+  onHeader?: (activation: HeaderActivation) => { refused?: string } | void | Promise<{ refused?: string } | void>;
   /** A compact description of what the page shows now, for the assistant. */
   context?: () => unknown;
   /** The window that sends the ports; the page's parent by default. */
@@ -60,6 +68,12 @@ export type OsConnection = {
   call(contract: string, op: string, input?: unknown): Promise<any>;
   sendMail(envelope: { to?: string, subject: string, body?: string, data?: unknown }): Promise<any>;
   setTitle(title: string): Promise<any>;
+  /**
+   * Put buttons, toggles, menus, tabs and a search field in this window's
+   * title bar, drawn by the desktop (`null` takes them away). Set it again
+   * whenever its state changes in the page; uses arrive at `onHeader`.
+   */
+  setHeader(header: Header | null): Promise<void>;
   /** This module's settings as the person set them in the desktop's Settings (a `form` module's values). */
   settings(): Promise<unknown>;
   /** Open the desktop's Settings at this module's own section: the one place the person finds every application's settings. */
@@ -119,6 +133,11 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
         'module.theme': (theme: any) => { applyTheme(root, theme); options.onTheme?.(theme); return {}; },
         'module.locale': (locale: any) => { applyLocale(root, locale); options.onLocale?.(locale); return {}; },
         'module.context': () => (options.context?.() ?? {}) as object,
+        'module.header': async (activation: any) => {
+          if (!options.onHeader) return { refused: 'this application takes no header actions' };
+          const answer = await options.onHeader(activation);
+          return answer && typeof answer.refused === 'string' ? { refused: answer.refused.slice(0, 400) } : {};
+        },
         'module.settings': ({ values }: any) => { options.onSettings?.(values); return {}; },
         'module.decide': async (decision: any) => {
           if (!options.onDecision) return { refused: 'this application takes no decisions here' };
@@ -156,6 +175,11 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
         call: (contract, op, input = {}) => client.invoke('os.call', { contract, op, input }),
         sendMail: (envelope) => client.invoke('mail.send', envelope),
         setTitle: (title) => client.invoke('window.title', { title }),
+        setHeader: async (header) => {
+          const outcome: any = await client.invoke('window.header', { header });
+          const refused = outcome?.ok === false ? outcome.error : outcome?.value?.refused;
+          if (refused) throw Object.assign(new Error(refused.message ?? 'window.header failed'), { code: refused.code });
+        },
         settings: async () => {
           const outcome: any = await client.invoke('settings.get', {});
           if (outcome?.ok === false) throw Object.assign(new Error(outcome.error?.message ?? 'settings.get failed'), { code: outcome.error?.code });

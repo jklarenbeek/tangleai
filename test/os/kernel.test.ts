@@ -171,7 +171,8 @@ describe('the contract bus', () => {
     try {
       const tools = kernel.tools();
       const names = tools.list().map((t: any) => t.name).sort();
-      assert.deepEqual(names, ['records__records_get', 'records__records_search']);
+      // every window's header bar is the assistant's too, under the same grant
+      assert.deepEqual(names, ['records__records_get', 'records__records_search', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
       const result = await tools.execute('records__records_search', { query: 'oak' });
       assert.ok(JSON.stringify(result).includes('Oak table'), JSON.stringify(result));
       assert.equal(kernel.ledger().at(-1)!.caller, 'assistant');

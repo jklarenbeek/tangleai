@@ -93,15 +93,9 @@ export function calendarMount(): ShippedMount {
       const byDay = new Map<string, Occurrence[]>();
       for (const o of all) byDay.set(o.date, [...(byDay.get(o.date) ?? []), o]);
 
-      const head = h('header', { class: 'cal-head' },
-        h('div', { class: 'cal-nav' },
-          h('button', { type: 'button', class: 'cal-icon', 'aria-label': 'Previous month', onclick: () => { month = shiftMonth(month, -1); render(); } }, '‹'),
-          h('button', { type: 'button', class: 'cal-icon', 'aria-label': 'Next month', onclick: () => { month = shiftMonth(month, 1); render(); } }, '›'),
-          h('button', { type: 'button', class: 'cal-today', onclick: () => { month = today.slice(0, 7); selected = today; render(); } }, 'Today')),
-        h('h1', { class: 'cal-title' }, monthTitle(month)),
-        h('div', { class: 'cal-actions' },
-          h('button', { type: 'button', class: 'cal-ghost', onclick: download }, 'Export .ics'),
-          h('button', { type: 'button', class: 'cal-primary', onclick: () => openEditor({ date: selected }) }, 'New event')));
+      // the month's controls live in the window's header bar: one row less, and the assistant can use them too
+      showHeader();
+      const head = h('h1', { class: 'cal-title cal-visually-hidden' }, monthTitle(month));
 
       const grid = h('div', { class: 'cal-grid', role: 'grid', 'aria-label': monthTitle(month) },
         ...weekdayShort.map(name => h('div', { class: 'cal-weekday', role: 'columnheader' }, name)));
@@ -201,6 +195,33 @@ export function calendarMount(): ShippedMount {
       win.setTimeout(() => title.focus(), 0);
       return form;
     }
+
+    let shownHeader = '';
+    function showHeader() {
+      const header = {
+        start: [
+          { kind: 'button' as const, id: 'prev', label: 'Previous month', glyph: 'back' as const },
+          { kind: 'button' as const, id: 'next', label: 'Next month', glyph: 'forward' as const },
+          { kind: 'button' as const, id: 'today', label: 'Today', disabled: month === today.slice(0, 7) && selected === today },
+        ],
+        subtitle: monthTitle(month),
+        end: [
+          { kind: 'button' as const, id: 'new', label: 'New event', primary: true },
+          { kind: 'menu' as const, id: 'menu', label: 'Calendar menu', glyph: 'menu' as const, entries: [{ id: 'export', label: 'Export .ics' }] },
+        ],
+      };
+      const text = JSON.stringify(header);
+      if (text !== shownHeader) { shownHeader = text; context.setHeader(header); }
+    }
+    context.onHeader(({ item, value }) => {
+      if (item === 'prev') month = shiftMonth(month, -1);
+      else if (item === 'next') month = shiftMonth(month, 1);
+      else if (item === 'today') { month = today.slice(0, 7); selected = today; }
+      else if (item === 'new') { openEditor({ date: selected }); return; }
+      else if (item === 'menu' && value === 'export') { download(); return; }
+      else return { refused: `Calendar has no '${item}'` };
+      render();
+    });
 
     function openEditor(event: Partial<CalendarEvent>) { editing = { ...event }; if (event.date) { selected = event.date; month = event.date.slice(0, 7); } render(); }
     function remove(uid: string) { write({ ...cal, events: cal.events.filter(e => e.uid !== uid) }); editing = null; slots = null; render(); }

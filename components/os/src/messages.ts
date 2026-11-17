@@ -14,6 +14,7 @@ export const osMessagesEn = {
   'window/failed': '{title} could not start: {detail}',
   'window/unanswered': '{title} did not answer. It may not be running, or it may refuse this desktop.',
   'window/retry': 'Try again',
+  'window/more': 'More',
   'mail/title': 'Mail',
   'mail/empty': 'No messages.',
   'mail/from': 'From {sender}',

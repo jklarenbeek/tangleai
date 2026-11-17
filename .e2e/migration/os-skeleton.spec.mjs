@@ -41,7 +41,8 @@ test('three host kinds join one desktop and talk only through contracts', async 
   const found = await page.evaluate(() => window.tangleOs.kernel.call('shell', 'records', 'records.search', { query: 'oak' }));
   expect(found).toEqual({ ok: true, value: [{ id: 'r1', name: 'Oak table', stock: 4 }] });
   expect(await page.evaluate(() => window.tangleOs.kernel.tools().list().map(t => t.name).sort()))
-    .toEqual(['records__records_describe', 'records__records_get', 'records__records_search']);
+    // every window's header bar is the assistant's too, under the same grant
+    .toEqual(['records__records_describe', 'records__records_get', 'records__records_search', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
 
   const catalogue = page.frameLocator('.tos-window[data-module="catalogue"] iframe');
   await expect(catalogue.locator('#status')).toHaveText('Joined the desktop as catalogue.');
