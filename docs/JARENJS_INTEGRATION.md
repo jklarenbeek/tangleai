@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.217.0**, tag `v0.217.0`, source commit
-`33dc1479997530dcc14d2abc7406e0b42103aa13`. Upstream `main` and the tag agreed
+Tangle consumes **Jaren 0.218.0**, tag `v0.218.0`, source commit
+`44664e252c579979aca0df1741fd9e02bd1598f8`. Upstream `main` and the tag agreed
 when checked on 2026-11-17; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.217.0` pin. A clean reconstruction from the pinned
+reference is an exact `0.218.0` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,19 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.217.0 to 0.218.0 and current adoption
+
+One release. `@jarenjs/contract/http` takes a `closedQuery` option on request:
+a query member the operation does not declare, or one that conflicts with its
+body, is refused instead of ignored. It is off by default and no export moved.
+Tangle's desktop server (`apps/desktop/src/server.ts`) keeps the default for
+now; turning it on there is a separate decision, since a client that sends an
+extra member today would start to be refused. The rest of the release is
+documentation (signed requests, native joins in the db client, calendar
+defaults). Beside the pin, the Pages desktop adopts `@jarenjs/calc` as two
+applications: Calculator, and Converter (the same component in its converter
+mode).
 
 ## Changes from 0.216.0 to 0.217.0 and current adoption
 
@@ -545,7 +558,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.217.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.218.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

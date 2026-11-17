@@ -8,8 +8,8 @@ import { readFoundationArtifacts, verifyFoundationArtifacts, verifyFoundationSou
 const root = fileURLToPath(new URL('../', import.meta.url));
 const candidate = readFoundationArtifacts(root);
 if (candidate) { verifyFoundationSourcePin(root, candidate); verifyFoundationArtifacts(root, true); }
-const version = candidate?.source.version ?? '0.217.0';
-const commit = candidate?.source.commit ?? '33dc1479997530dcc14d2abc7406e0b42103aa13';
+const version = candidate?.source.version ?? '0.218.0';
+const commit = candidate?.source.commit ?? '44664e252c579979aca0df1741fd9e02bd1598f8';
 const artifacts = new Map(candidate?.packages.map(pkg => [pkg.name, pkg]) ?? []);
 const read = async (path: string) => JSON.parse(await readFile(root + path, 'utf8'));
 const manifests = ['package.json', 'benchmark/package.json'];

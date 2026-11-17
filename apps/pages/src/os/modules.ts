@@ -1,6 +1,6 @@
 /**
  * The modules the Pages desktop ships with: Welcome, the Assistant, the work
- * applications (Studio, Playground, Flow, Data), the memory loop, the
+ * applications (Studio, Playground, Flow, Data), Calculator and Converter, the memory loop, the
  * adventure, Settings, moving browser data and About as shipped components,
  * and one document module (a to-do list, run in a sandboxed frame, that
  * reaches the desktop only through its granted `os` effect).
@@ -14,6 +14,7 @@ import type { Preferences } from './preferences.ts';
 import { welcomeMount } from './welcome-app.ts';
 import { loopMount } from './loop-app.ts';
 import { calendarMount, calendarSettingsMount, CALENDAR_CONTRACT } from './calendar-app.ts';
+import { calcMount } from './calc-app.ts';
 
 const t = (en: string, nl: string, de: string, fr: string, es: string, pt: string, ar: string, ja: string, ko: string, ru: string, tr: string, zhTW: string) =>
   ({ en, nl, de, fr, es, pt, ar, ja, ko, ru, tr, 'zh-TW': zhTW });
@@ -31,6 +32,8 @@ export const STUDIO = app('studio', t('Studio', 'Studio', 'Studio', 'Studio', 'E
 export const PLAYGROUND = app('playground', t('Playground', 'Speeltuin', 'Spielwiese', 'Bac à sable', 'Área de pruebas', 'Área de testes', 'ساحة التجربة', 'プレイグラウンド', '플레이그라운드', 'Песочница', 'Deneme alanı', '遊樂場'), 'playground', 320, { width: 1180, height: 760, minWidth: 520, minHeight: 420 });
 export const FLOW = app('flow', t('Flow', 'Flow', 'Flow', 'Flow', 'Flujo', 'Fluxo', 'التدفق', 'フロー', '플로', 'Поток', 'Akış', '流程'), 'flow', 260, { width: 1100, height: 720, minWidth: 520, minHeight: 420 });
 export const DATA = app('data', t('Data', 'Data', 'Daten', 'Données', 'Datos', 'Dados', 'البيانات', 'データ', '데이터', 'Данные', 'Veri', '資料'), 'data', 30, { width: 1100, height: 720, minWidth: 520, minHeight: 420 });
+export const CALCULATOR = app('calculator', t('Calculator', 'Rekenmachine', 'Rechner', 'Calculatrice', 'Calculadora', 'Calculadora', 'الآلة الحاسبة', '電卓', '계산기', 'Калькулятор', 'Hesap makinesi', '計算機'), 'calculator', 205, { width: 480, height: 680, minWidth: 340, minHeight: 480 }, 'productivity');
+export const CONVERTER = app('converter', t('Converter', 'Omrekenen', 'Umrechner', 'Convertisseur', 'Conversor', 'Conversor', 'المحوّل', '単位換算', '변환기', 'Конвертер', 'Dönüştürücü', '換算器'), 'converter', 40, { width: 420, height: 600, minWidth: 340, minHeight: 440 }, 'productivity');
 export const LOOP = app('loop', t('Memory loop', 'Geheugenlus', 'Gedächtnisschleife', 'Boucle de mémoire', 'Bucle de memoria', 'Ciclo de memória', 'حلقة الذاكرة', 'メモリーループ', '메모리 루프', 'Цикл памяти', 'Bellek döngüsü', '記憶迴圈'), 'loop', 178, { width: 820, height: 700, minWidth: 380, minHeight: 360 }, 'productivity');
 export const ADVENTURE = app('adventure', t('Adventure', 'Avontuur', 'Abenteuer', 'Aventure', 'Aventura', 'Aventura', 'المغامرة', 'アドベンチャー', '어드벤처', 'Приключение', 'Macera', '冒險'), 'adventure', 12, { width: 980, height: 720, minWidth: 420, minHeight: 420 }, 'play');
 export const TRANSFER = app('transfer', t('Move data', 'Gegevens verplaatsen', 'Daten übertragen', 'Déplacer les données', 'Mover datos', 'Mover dados', 'نقل البيانات', 'データの移動', '데이터 이동', 'Перенос данных', 'Verileri taşı', '移動資料'), 'transfer', 160, { width: 560, height: 360, minWidth: 360, minHeight: 240 }, 'system');
@@ -130,7 +133,7 @@ export const TODO: ModuleManifest = {
   },
 };
 
-export const builtinModules = (): ModuleManifest[] => [WELCOME, ASSISTANT, CALENDAR, STUDIO, PLAYGROUND, FLOW, DATA, LOOP, ADVENTURE, TODO, SETTINGS, TRANSFER, ABOUT];
+export const builtinModules = (): ModuleManifest[] => [WELCOME, ASSISTANT, CALENDAR, CALCULATOR, CONVERTER, STUDIO, PLAYGROUND, FLOW, DATA, LOOP, ADVENTURE, TODO, SETTINGS, TRANSFER, ABOUT];
 
 /** The shipped components this desktop registers. */
 export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel, prefs: Preferences, open: (id: string) => void, surfaces: { mounts: Record<string, ShippedMount>, toolbox: any, system: string } }): Record<string, ShippedMount> {
@@ -139,6 +142,8 @@ export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel,
     welcome: welcomeMount(host.open),
     calendar: calendarMount(),
     'calendar-settings': calendarSettingsMount(),
+    calculator: calcMount('calculator'),
+    converter: calcMount('converter'),
     loop: loopMount,
     assistant: assistantMount(host.kernel, host.prefs, () => host.open('settings'), { toolbox: host.surfaces.toolbox, system: host.surfaces.system }),
     about(node, context) {

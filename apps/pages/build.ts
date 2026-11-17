@@ -68,11 +68,11 @@ const vendor = [
   'node_modules/@jarenjs/mermaid/styles/mermaid.css',
 ];
 let css = '';
-for (const name of ['studio', 'play', 'md']) {
+for (const name of ['studio', 'play', 'md', 'calc']) {
   await cp(join(repo, `node_modules/@jarenjs/${name}/styles`), join(dist, `vendor/${name}`), { recursive: true });
 }
 await cp(join(repo, 'components/assistant/styles/assistant.css'), join(dist, 'vendor/assistant.css'));
-css += ['studio/studio.css', 'studio/data.css', 'play/play.css', 'md/md.css', 'assistant.css']
+css += ['studio/studio.css', 'studio/data.css', 'play/play.css', 'md/md.css', 'calc/calc.css', 'assistant.css']
   .map(path => `@import url('./vendor/${path}');\n`).join('');
 for (const path of vendor) css += await readFile(join(repo, path), 'utf8');
 css += await readFile(join(here, 'src/demos/game/styles.css'), 'utf8');

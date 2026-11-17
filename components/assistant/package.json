@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/assistant",
-  "version": "0.52.4",
+  "version": "0.52.5",
   "description": "Reusable assistant state, streaming lifecycle and optional Jaren visual component.",
   "license": "MIT",
   "type": "module",
@@ -32,14 +32,14 @@
     "**/*.css"
   ],
   "dependencies": {
-    "@tangleai/models": "0.52.4",
-    "@tangleai/context": "0.52.4",
-    "@tangleai/agents": "0.52.4",
-    "@jarenjs/core": "0.217.0",
-    "@jarenjs/json": "0.217.0",
-    "@jarenjs/app": "0.217.0",
-    "@jarenjs/md": "0.217.0",
-    "@jarenjs/mermaid": "0.217.0"
+    "@tangleai/models": "0.52.5",
+    "@tangleai/context": "0.52.5",
+    "@tangleai/agents": "0.52.5",
+    "@jarenjs/core": "0.218.0",
+    "@jarenjs/json": "0.218.0",
+    "@jarenjs/app": "0.218.0",
+    "@jarenjs/md": "0.218.0",
+    "@jarenjs/mermaid": "0.218.0"
   },
   "private": false,
   "files": [

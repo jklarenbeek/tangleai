@@ -1,5 +1,21 @@
 # @tangleai/hera
 
+## 0.52.5
+
+### Patch Changes
+
+- Builds on Jaren 0.218.0, whose HTTP contract server can refuse a query member an operation does not declare (`closedQuery`, off by default, not turned on here). The Pages desktop adds two applications from Jaren's `@jarenjs/calc`: Calculator (standard, scientific, programmer, financial and converter modes) and Converter (the same component in its converter mode alone, with live public currency rates and an offline table to fall back on), both in the desktop's language and theme.
+- Updated dependencies
+  - @tangleai/models@0.52.5
+  - @tangleai/context@0.52.5
+  - @tangleai/agents@0.52.5
+  - @tangleai/config@0.52.5
+  - @tangleai/mas@0.52.5
+  - @tangleai/documents@0.52.5
+  - @tangleai/memory@0.52.5
+  - @tangleai/outcomes@0.52.5
+  - @tangleai/gmpl@0.52.5
+
 ## 0.52.4
 
 ### Patch Changes

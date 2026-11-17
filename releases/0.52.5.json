@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "version": "0.52.5",
+  "baseVersion": "0.52.4",
+  "baseCommit": "92cbe5f3daf881103827a3866465a0b152dc27b9",
+  "preparationCommit": "92cbe5f3daf881103827a3866465a0b152dc27b9",
+  "initial": false,
+  "inputHash": "3b6db5c0bcaea356bb6e9ad5a674d5406f43c56af235c5122b00e323ecc364c3",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Builds on Jaren 0.218.0, whose HTTP contract server can refuse a query member an operation does not declare (`closedQuery`, off by default, not turned on here). The Pages desktop adds two applications from Jaren's `@jarenjs/calc`: Calculator (standard, scientific, programmer, financial and converter modes) and Converter (the same component in its converter mode alone, with live public currency rates and an offline table to fall back on), both in the desktop's language and theme.",
+      "id": "jaren-0-218-calc"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.52.5"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.52.5"
+    }
+  ]
+}

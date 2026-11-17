@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/trading",
-  "version": "0.52.4",
+  "version": "0.52.5",
   "description": "Point-in-time trading contracts and atomic simulated portfolio persistence",
   "license": "MIT",
   "type": "module",
@@ -17,11 +17,11 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.217.0",
-    "@jarenjs/json": "0.217.0",
-    "@jarenjs/validate": "0.217.0",
-    "@tangleai/mas": "0.52.4",
-    "@tangleai/gmpl": "0.52.4"
+    "@jarenjs/core": "0.218.0",
+    "@jarenjs/json": "0.218.0",
+    "@jarenjs/validate": "0.218.0",
+    "@tangleai/mas": "0.52.5",
+    "@tangleai/gmpl": "0.52.5"
   },
   "private": false,
   "types": "./src/index.ts",
