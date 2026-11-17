@@ -1,0 +1,667 @@
+{
+  "schemaVersion": 1,
+  "version": "0.52.0",
+  "baseVersion": "0.51.3",
+  "baseCommit": "bb299058a24db48071e30261f3f54f2470db3e36",
+  "preparationCommit": "4c6a627f1cbbfce33f421cb11c06a586bb882287",
+  "initial": false,
+  "inputHash": "e447eb38b5d9712db1e37bd5419eb0b689c873c18df5d7ffc134920b94bc2e78",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "A failure says how it happened without a message to match: a direct call's `AI0002` carries `outcome: \"timeout\"` or `outcome: \"network\"`, and a routed client reports every route it tried, including one stopped before it started by the caller's abort or the account's budget (`outcome: \"budget\"`, `started: false`), so a meter accounts for every attempt. The assistant view announces its errors (`role=\"alert\"`), keeps its log live and busy while a run works, offers a failed run a retry (the `retry` intent, in all twelve languages) and returns focus to its launcher when the panel closes with focus inside it.",
+      "id": "honest-outcomes"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "The desktop stamps `data-theme` beside `data-scheme` on its own root and on a joined page's, so Jaren's component stylesheets (Markdown, diagrams, charts, Studio) turn dark with the desktop.",
+      "id": "host-dark"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "The Pages playground hands its renderers and validator to the Play component once instead of on every run, and its game shares the playground's compiled language catalogues instead of compiling its own.",
+      "id": "playground-seams"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "The desktop's mail is the one inbox for what a person decides. An application declares the kinds of proposal it files (`proposals` in its manifest) and files them with `propose` (the same id replaces, `withdraw` takes one back); the mail shows them as text, with evidence linking only to http(s) pages, and the person accepts or rejects. The decision goes back to the application over its own control channel (`onDecision`), never as a contract operation, so neither the assistant nor another module can decide, whatever their grants. One decision runs at a time; an application that is not running or refuses (a moved revision) leaves the proposal pending with the reason. `kernel.propose`, `kernel.decide` and the `mail` events serve a host with its own inbox.",
+      "id": "proposals-inbox"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "A provider's usage has a type, `ChatUsage`, in place of `any`; a structured result's summed usage keeps reasoning tokens once a call reports them, and `usageComplete` says whether every call reported usage, so a partial sum no longer reads as complete. Every release build writes `releases/digests.json` (each tarball's size, SHA-256 and integrity, with the input hash), committed with the release and checked against a fresh build, so a release stays verifiable from the repository after CI's artifact expires.",
+      "id": "usage-and-digests"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.52.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.52.0"
+    }
+  ]
+}

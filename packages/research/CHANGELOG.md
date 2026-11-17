@@ -1,5 +1,31 @@
 # @tangleai/research
 
+## 0.52.0
+
+### Patch Changes
+
+- e5d7435: A failure says how it happened without a message to match: a direct call's `AI0002` carries `outcome: "timeout"` or `outcome: "network"`, and a routed client reports every route it tried, including one stopped before it started by the caller's abort or the account's budget (`outcome: "budget"`, `started: false`), so a meter accounts for every attempt. The assistant view announces its errors (`role="alert"`), keeps its log live and busy while a run works, offers a failed run a retry (the `retry` intent, in all twelve languages) and returns focus to its launcher when the panel closes with focus inside it.
+- fd8be60: The desktop stamps `data-theme` beside `data-scheme` on its own root and on a joined page's, so Jaren's component stylesheets (Markdown, diagrams, charts, Studio) turn dark with the desktop.
+- e5d7435: The Pages playground hands its renderers and validator to the Play component once instead of on every run, and its game shares the playground's compiled language catalogues instead of compiling its own.
+- e5d7435: The desktop's mail is the one inbox for what a person decides. An application declares the kinds of proposal it files (`proposals` in its manifest) and files them with `propose` (the same id replaces, `withdraw` takes one back); the mail shows them as text, with evidence linking only to http(s) pages, and the person accepts or rejects. The decision goes back to the application over its own control channel (`onDecision`), never as a contract operation, so neither the assistant nor another module can decide, whatever their grants. One decision runs at a time; an application that is not running or refuses (a moved revision) leaves the proposal pending with the reason. `kernel.propose`, `kernel.decide` and the `mail` events serve a host with its own inbox.
+- 552b27e: A provider's usage has a type, `ChatUsage`, in place of `any`; a structured result's summed usage keeps reasoning tokens once a call reports them, and `usageComplete` says whether every call reported usage, so a partial sum no longer reads as complete. Every release build writes `releases/digests.json` (each tarball's size, SHA-256 and integrity, with the input hash), committed with the release and checked against a fresh build, so a release stays verifiable from the repository after CI's artifact expires.
+- Updated dependencies [e5d7435]
+- Updated dependencies [fd8be60]
+- Updated dependencies [e5d7435]
+- Updated dependencies [e5d7435]
+- Updated dependencies [552b27e]
+  - @tangleai/models@0.52.0
+  - @tangleai/context@0.52.0
+  - @tangleai/agents@0.52.0
+  - @tangleai/config@0.52.0
+  - @tangleai/mas@0.52.0
+  - @tangleai/documents@0.52.0
+  - @tangleai/search@0.52.0
+  - @tangleai/outcomes@0.52.0
+  - @tangleai/trace2skill@0.52.0
+  - @tangleai/evolve@0.52.0
+  - @tangleai/gmpl@0.52.0
+
 ## 0.51.3
 
 ### Patch Changes
