@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "version": "0.53.0",
+  "baseVersion": "0.52.6",
+  "baseCommit": "ca87a0b503bf704a3e4601f99f51ac71ee160ea5",
+  "preparationCommit": "f4868f025c0c9791a1429c2a817153beb4f2eafd",
+  "initial": false,
+  "inputHash": "cfe715df6e8491a9b9877faccadc8003af05f79c3ac4fb2ce5405a81009208fa",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Applications put their toolbar in their window's title bar: buttons, toggles, menus, tabs and a search field, described as a JSON document (`HEADER_SCHEMA`) and drawn by the desktop, so every bar follows the theme and the writing direction, works by keyboard and screen reader, and fits a narrow window by moving what does not fit into one \"More\" menu. A framed page calls `setHeader` and hears uses at `onHeader`; a shipped module has the same pair on its context. Every use, the person's and the assistant's, goes through the kernel's own `tangle_os_header` contract (`header.list`, `header.activate`) under grants and into the ledger; an item marked `assistant: false` is kept from the assistant. Calendar moves its month controls into its header bar and Settings its search.",
+      "id": "header-bars"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.53.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.53.0"
+    }
+  ]
+}

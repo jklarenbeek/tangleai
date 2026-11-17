@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/core",
-  "version": "0.52.6",
+  "version": "0.53.0",
   "description": "Tangle AI core — memory record model, k-means clustering, token heuristics (vector arithmetic is @jarenjs/core/vector's)",
   "license": "MIT",
   "type": "module",
@@ -26,7 +26,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@tangleai/context": "0.52.6",
+    "@tangleai/context": "0.53.0",
     "@jarenjs/validate": "0.219.0",
     "@jarenjs/core": "0.219.0",
     "@jarenjs/json": "0.219.0"

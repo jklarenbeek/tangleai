@@ -1,5 +1,26 @@
 # @tangleai/research
 
+## 0.53.0
+
+### Minor Changes
+
+- f4868f0: Applications put their toolbar in their window's title bar: buttons, toggles, menus, tabs and a search field, described as a JSON document (`HEADER_SCHEMA`) and drawn by the desktop, so every bar follows the theme and the writing direction, works by keyboard and screen reader, and fits a narrow window by moving what does not fit into one "More" menu. A framed page calls `setHeader` and hears uses at `onHeader`; a shipped module has the same pair on its context. Every use, the person's and the assistant's, goes through the kernel's own `tangle_os_header` contract (`header.list`, `header.activate`) under grants and into the ledger; an item marked `assistant: false` is kept from the assistant. Calendar moves its month controls into its header bar and Settings its search.
+
+### Patch Changes
+
+- Updated dependencies [f4868f0]
+  - @tangleai/models@0.53.0
+  - @tangleai/context@0.53.0
+  - @tangleai/agents@0.53.0
+  - @tangleai/config@0.53.0
+  - @tangleai/mas@0.53.0
+  - @tangleai/documents@0.53.0
+  - @tangleai/search@0.53.0
+  - @tangleai/outcomes@0.53.0
+  - @tangleai/trace2skill@0.53.0
+  - @tangleai/evolve@0.53.0
+  - @tangleai/gmpl@0.53.0
+
 ## 0.52.6
 
 ### Patch Changes
