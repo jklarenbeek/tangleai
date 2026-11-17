@@ -88,6 +88,29 @@ export function copyOsArtifacts(target: string, root = ROOT) {
   for (const name of readdirSync(resolve(root, OS_DIRECTORY))) copyFileSync(resolve(root, OS_DIRECTORY, name), resolve(target, name));
 }
 
+/** The committed record of every tarball a release build packed: what a consumer's own build of the tag must equal. */
+export const DIGESTS = 'releases/digests.json';
+
+function digests(root: string) {
+  const artifacts = readJson<{ version: string, inputHash: string, packages: Array<{ name: string, filename: string, integrity: string }> }>(resolve(root, 'dist/release/artifacts.json'));
+  const packages = artifacts.packages.map(pkg => {
+    const bytes = readFileSync(resolve(root, 'dist/release', pkg.filename));
+    assert.equal(integrity(bytes), pkg.integrity, `${pkg.filename} changed after the build`);
+    return { name: pkg.name, file: pkg.filename, size: bytes.length, sha256: sha256(bytes), integrity: pkg.integrity };
+  });
+  return JSON.stringify({ version: artifacts.version, inputHash: artifacts.inputHash, packages }, null, 2) + '\n';
+}
+
+/** Write the release's digests beside its record, so a release stays verifiable from the repository alone. */
+export function writeReleaseDigests(root = ROOT) { writeFileSync(resolve(root, DIGESTS), digests(root)); console.log(`Wrote ${DIGESTS}.`); }
+
+/** Assert the committed digests equal the fresh build's. */
+export function checkReleaseDigests(root = ROOT) {
+  assert.ok(existsSync(resolve(root, DIGESTS)), `Run the release build to write ${DIGESTS}`);
+  assert.equal(readFileSync(resolve(root, DIGESTS), 'utf8'), digests(root), `${DIGESTS} differs from a fresh build; run the release build`);
+  console.log(`Verified ${DIGESTS} against the fresh build.`);
+}
+
 if (isMain(import.meta.url)) {
   const args = process.argv.slice(2);
   assert.ok(args.length === 0 || (args.length === 1 && args[0] === '--check'), 'Use os-artifacts.ts or os-artifacts.ts --check');

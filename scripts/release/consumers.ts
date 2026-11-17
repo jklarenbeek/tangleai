@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import vm from 'node:vm';
 import ts from 'typescript';
 import { ROOT, config, npm, readJson, writeJson, inputHash, integrity, sha256, isMain } from './common.ts';
-import { checkOsArtifacts, copyOsArtifacts } from './os-artifacts.ts';
+import { checkOsArtifacts, checkReleaseDigests, copyOsArtifacts } from './os-artifacts.ts';
 import { jsonDeclarationAttributes, type Artifacts } from './build.ts';
 import { readFoundationArtifacts, verifyFoundationArtifacts } from '../jaren-artifacts.ts';
 import { checkProgramBundle } from '../check-program-bundle.ts';
@@ -53,7 +53,7 @@ export function testOsConsumer(root = ROOT) {
 }
 
 export async function testConsumers(root = ROOT, options: { registry?: boolean; runtimeOnly?: boolean } = {}) {
-  if (!options.registry) testOsConsumer(root);
+  if (!options.registry) { checkReleaseDigests(root); testOsConsumer(root); }
   const artifacts = readArtifacts(root);
   const cfg = config(root);
   const bun = execFileSync('bun', ['--version'], { encoding: 'utf8' }).trim();

@@ -147,15 +147,19 @@ export type StructuredError = {
   docPath?: string;
 };
 
-/** Token counts summed over the attempts that reported usage. */
-export type StructuredUsage = { prompt_tokens: number; completion_tokens: number; total_tokens: number };
+/**
+ * Token counts summed over the attempts that reported usage; `reasoning_tokens`
+ * appears once any attempt reported reasoning. Whether every attempt reported
+ * is the result's `usageComplete`.
+ */
+export type StructuredUsage = { prompt_tokens: number; completion_tokens: number; total_tokens: number; reasoning_tokens?: number };
 
 /** One model call of a generation. `usage` is `null` where the provider reported none. */
 export type StructuredCall = {
   attempt: number;
   outcome: 'valid' | StructuredStage;
   finishReason: string | null;
-  usage: any;
+  usage: import('./client.ts').ChatUsage | null;
 };
 
 type StructuredCommon = {
@@ -163,6 +167,8 @@ type StructuredCommon = {
   attempts: number;
   finishReason: string | null;
   usage: StructuredUsage | null;
+  /** `false` when some call reported no usage, so `usage` undercounts what was spent. */
+  usageComplete: boolean;
   calls: StructuredCall[];
 };
 
@@ -180,6 +186,8 @@ function addUsage(total: StructuredUsage | null, usage: any): StructuredUsage | 
   if (usage === null || typeof usage !== 'object') return total;
   const sum = total ?? { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
   for (const key of USAGE_KEYS) if (Number.isFinite(usage[key])) sum[key] += usage[key];
+  const reasoning = usage.completion_tokens_details?.reasoning_tokens;
+  if (Number.isFinite(reasoning)) sum.reasoning_tokens = (sum.reasoning_tokens ?? 0) + reasoning;
   return sum;
 }
 
@@ -367,6 +375,7 @@ export function createStructuredOutput<T = any>(options: {
     let errors: StructuredError[] = [];
     let finishReason: string | null = null;
     let usage: StructuredUsage | null = null;
+    const complete = () => calls.length > 0 && calls.every(call => call.usage !== null && typeof call.usage === 'object');
     const calls: StructuredCall[] = [];
     const settle = (attempt: number, outcome: 'valid' | StructuredStage, reply: any) => {
       calls.push({ attempt, outcome, finishReason, usage: reply.usage ?? null });
@@ -388,7 +397,7 @@ export function createStructuredOutput<T = any>(options: {
             : 'the reply carried reasoning and no content: the model spent its output budget thinking';
           errors = [recordOf('truncated', { instancePath: '', keyword: 'truncated', message })];
           settle(attempt, 'truncated', result);
-          return { ok: false, errors, raw, attempts: attempt, finishReason, usage, calls };
+          return { ok: false, errors, raw, attempts: attempt, finishReason, usage, usageComplete: complete(), calls };
         }
 
         const parsed = parseReply(raw);
@@ -408,7 +417,7 @@ export function createStructuredOutput<T = any>(options: {
           errors = [];
           settle(attempt, 'valid', result);
           return {
-            ok: true, value: value as T, raw, attempts: attempt, finishReason, usage, calls,
+            ok: true, value: value as T, raw, attempts: attempt, finishReason, usage, usageComplete: complete(), calls,
             ...(options.gate === undefined ? {} : { gateData: typeof options.gate === 'function' ? gated!.data[0] : gated!.data }),
           };
         }
@@ -426,7 +435,7 @@ export function createStructuredOutput<T = any>(options: {
     finally {
       clearTimeout(timer);
     }
-    return { ok: false, errors, raw, attempts: calls.length, finishReason, usage, calls };
+    return { ok: false, errors, raw, attempts: calls.length, finishReason, usage, usageComplete: complete(), calls };
   }
 
   return { generate };

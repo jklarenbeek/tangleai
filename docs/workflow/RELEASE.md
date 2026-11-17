@@ -169,6 +169,12 @@ actual archive inventory; a missing guide fails the build. Installed temporal
 consumers also read the guide linked by the memory README. Workspace manifests continue to serve TypeScript during
 development. Their lifecycle guards refuse direct source publication.
 
+`release:build` also writes `releases/digests.json`: the version, the input hash
+and every tarball's file name, size, SHA-256 and integrity. Committed with the
+release, it lets anyone who builds the tag compare their bytes with the
+release's, after CI's artifact has expired; `release:test` proves it equals the
+fresh build.
+
 `release:build` also writes the desktop package into the tree:
 `releases/os/tangleai-os-<version>.tgz`, the one-file module side
 `releases/os/tangle-os-module.js` and `releases/os/manifest.json`. Applications

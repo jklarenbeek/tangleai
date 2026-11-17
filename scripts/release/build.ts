@@ -4,7 +4,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from
 import { resolve, basename } from 'node:path';
 import ts from 'typescript';
 import { ROOT, config, readJson, writeJson, npm, inputHash, integrity, git, isMain, type Manifest } from './common.ts';
-import { writeOsArtifacts } from './os-artifacts.ts';
+import { writeOsArtifacts, writeReleaseDigests } from './os-artifacts.ts';
 
 export interface Artifact {
   name: string; version: string; filename: string; integrity: string;
@@ -126,4 +126,6 @@ if (isMain(import.meta.url)) {
   // the desktop package also lives in the tree, for applications that pull
   // this repository in as a submodule
   writeOsArtifacts();
+  // and the digests of every tarball, so a release is verifiable after CI's artifact expires
+  writeReleaseDigests();
 }

@@ -478,10 +478,26 @@ export type ChatToolCall = { id: string; name: string; arguments: string };
  * the model emitted some), why it stopped, the provider's usage when it
  * reported one, and `replayed` when the cache answered it.
  */
+/**
+ * What a provider reports a call used, as OpenAI-compatible providers word
+ * it. Every member is optional: a provider reports what it knows, and a
+ * reasoning model's thinking is counted in `completion_tokens_details`.
+ */
+export type ChatUsage = {
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  total_tokens?: number;
+  completion_tokens_details?: { reasoning_tokens?: number; [detail: string]: unknown };
+  prompt_tokens_details?: { cached_tokens?: number; [detail: string]: unknown };
+  /** The provider's own price for the call, where it states one. */
+  cost?: number;
+  [member: string]: unknown;
+};
+
 export type ChatResult = {
   message: { role: string; content: string; toolCalls: ChatToolCall[] | null; reasoning?: string };
   finishReason: string | null;
-  usage: any;
+  usage: ChatUsage | null;
   model: string | null;
   replayed?: { ms: number };
 };

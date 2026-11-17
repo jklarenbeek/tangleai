@@ -320,3 +320,29 @@ describe('repair and retry counts are whole numbers, checked before any call', (
     assert.doesNotThrow(() => createChatClient({ provider: 'openrouter', model: 'm', retry: { attempts: 0 }, fetch: async () => new Response('{}') }));
   });
 });
+
+describe('usage says what it covers', () => {
+  const withUsage = (usages: any[]) => {
+    let call = 0;
+    return createChatClient({ provider: 'openrouter', model: 'm', retry: { attempts: 1 }, fetch: async () => {
+      const usage = usages[Math.min(call, usages.length - 1)]; const content = call++ === 0 ? 'not json' : JSON.stringify({ name: 'Ada', age: 36 });
+      return new Response(JSON.stringify({ choices: [{ message: { content } }], ...(usage ? { usage } : {}) }), { status: 200 });
+    } });
+  };
+  it('sums reasoning tokens with the rest and says the sum is complete when every call reported', async () => {
+    const client = withUsage([
+      { prompt_tokens: 10, completion_tokens: 30, total_tokens: 40, completion_tokens_details: { reasoning_tokens: 20 } },
+      { prompt_tokens: 12, completion_tokens: 8, total_tokens: 20, completion_tokens_details: { reasoning_tokens: 5 } },
+    ]);
+    const result = await createStructuredOutput({ client, schema: SCHEMA, maxRepairs: 1 }).generate([{ role: 'user', content: 'x' }]);
+    assert.equal(result.ok, true);
+    assert.deepEqual(result.usage, { prompt_tokens: 22, completion_tokens: 38, total_tokens: 60, reasoning_tokens: 25 });
+    assert.equal(result.usageComplete, true);
+  });
+  it('says the sum undercounts when a call reported no usage', async () => {
+    const client = withUsage([{ prompt_tokens: 10, completion_tokens: 3, total_tokens: 13 }, null]);
+    const result = await createStructuredOutput({ client, schema: SCHEMA, maxRepairs: 1 }).generate([{ role: 'user', content: 'x' }]);
+    assert.deepEqual(result.usage, { prompt_tokens: 10, completion_tokens: 3, total_tokens: 13 }, 'no reasoning member when none was reported');
+    assert.equal(result.usageComplete, false);
+  });
+});
