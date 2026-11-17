@@ -77,7 +77,8 @@ export function applyTheme(root: any, theme: { tokens: Record<string, string>, s
   for (const [name, value] of Object.entries(theme.tokens)) {
     if (/^--[a-z0-9-]+$/.test(name)) root.style.setProperty(name, value);
   }
-  if (theme.scheme) { root.style.colorScheme = theme.scheme; root.dataset && (root.dataset.scheme = theme.scheme); }
+  // `data-theme` too: Jaren's component stylesheets follow it, so its Markdown, diagrams and charts turn with the desktop
+  if (theme.scheme) { root.style.colorScheme = theme.scheme; if (root.dataset) { root.dataset.scheme = theme.scheme; root.dataset.theme = theme.scheme; } }
 }
 
 export function applyLocale(root: any, locale: { locale: string, dir: 'ltr' | 'rtl' }) {

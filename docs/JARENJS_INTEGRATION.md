@@ -49,7 +49,7 @@ exports. No export was removed.
 
 | Surface | Tangle use and boundary |
 |---|---|
-| Host tokens and dark selection (`@jarenjs/view/styles/tokens.css`) | **Not yet adopted.** The desktop marks its scheme with `data-scheme` and `color-scheme`; Jaren's components inside it follow `data-theme`, so stamping `data-theme` beside it on the shell and a framed page's root is the adoption step, with the desktop's own tokens kept as its theme documents. |
+| Host tokens and dark selection (`@jarenjs/view/styles/tokens.css`) | **Dark selection adopted.** The desktop stamps `data-theme` beside `data-scheme` on its own root and on a joined page's, so Jaren's components inside it turn with the desktop. Its own colours stay its theme documents; the token stylesheet itself is not loaded, since the desktop's theme documents already set the tokens it reads. |
 
 ## Changes from 0.212.0 to 0.213.0 and current adoption
 

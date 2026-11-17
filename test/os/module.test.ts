@@ -64,6 +64,7 @@ describe('joining a desktop from a framed page', () => {
       assert.equal(page.style.get('--accent'), '#ff0066');
       assert.equal(page.style.has('bad name'), false, 'only custom property names are set');
       assert.equal(page.root.style.colorScheme, 'dark');
+      assert.deepEqual([page.root.dataset.scheme, page.root.dataset.theme], ['dark', 'dark'], "Jaren's components follow data-theme");
       assert.deepEqual([page.attributes.get('lang'), page.attributes.get('dir')], ['ar', 'rtl']);
 
       const found = await kernel.call('shell', 'records', 'records.search', { query: 'oak' });
