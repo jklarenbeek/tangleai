@@ -49,6 +49,13 @@ export const TOOLBOX_MESSAGES: ToolboxMessages = Object.freeze({
 export type ToolContext = {
   signal?: AbortSignal;
   context?: unknown;
+  /**
+   * The model's call being run: its id (the provider's tool-call id), the
+   * agent round it belongs to, and how many times this agent has run that
+   * same id. A tool with an effect keys it by `id`, so a run resumed from a
+   * checkpoint, or a repeated call, does not act twice.
+   */
+  call?: { id: string; round: number; attempt: number };
 };
 
 /** Whether a property schema asks for structure (object or array). */

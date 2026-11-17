@@ -329,6 +329,8 @@ export function createAgent(options: {
   // what this agent has spent, across every `send` it has served. The
   // counters live on the agent and not on a call, because a budget that
   // reset each turn would bound nothing a long-horizon run cares about.
+  /** How many times each tool-call id has run on this agent, for the tool's `call.attempt`. */
+  const ranCalls = new Map<string, number>();
   const spent = {
     turns: budget?.spent?.turns ?? 0,
     tokens: budget?.spent?.tokens ?? 0,
@@ -587,9 +589,11 @@ export function createAgent(options: {
       for (const call of reply.toolCalls) {
         hooks.onToolCall?.({ name: call.name, arguments: call.arguments });
         const parsed = parseArguments(call.arguments, words);
+        const attempt = (ranCalls.get(call.id) ?? 0) + 1;
+        if (parsed.error === undefined) ranCalls.set(call.id, attempt);
         const result = parsed.error !== undefined
           ? parsed
-          : await dispatch(call.name, parsed.value, listed, toolContext);
+          : await dispatch(call.name, parsed.value, listed, { ...toolContext, call: { id: call.id, round, attempt } });
         hooks.onToolResult?.({ name: call.name, result });
         steps.push({ name: call.name, arguments: call.arguments, result });
         messages.push({
@@ -599,6 +603,8 @@ export function createAgent(options: {
           content: truncate(JSON.stringify(result ?? null), maxToolResultChars),
         });
       }
+      // every tool result of the round is in: the transcript is whole again, the point a host resumes from
+      hooks.onCheckpoint?.({ messages: structuredClone(messages), steps: steps.slice(), round, spent: { ...spend(), cost: spent.cost } });
     }
   }
 
@@ -1237,6 +1243,12 @@ export type AgentHooks = { /**
  * - streamed thinking
  */
   onReasoning?: (text: string) => void; onToolCall?: (call: { name: string; arguments: string; }) => void; onToolResult?: (step: { name: string; result: any; }) => void; signal?: AbortSignal; /**
+ * - after each round's tool results, while the transcript is whole: a copy of
+ *   the messages, the steps so far, the round and the spend. A host persists it
+ *   and resumes from those messages after a restart (tools key effects by
+ *   `context.call.id`, so a resumed round does not act twice).
+ */
+  onCheckpoint?: (checkpoint: { messages: any[]; steps: any[]; round: number; spent: { turns: number; tokens: number; ms: number; cost: number } }) => void; /**
  * - handed to every tool of this send as `context.context`; overrides the agent's `toolContext`
  */
   toolContext?: unknown;

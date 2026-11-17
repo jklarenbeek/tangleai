@@ -5,7 +5,7 @@
   "entries": [
     {
       "entry": ".",
-      "bytes": 441925,
+      "bytes": 442110,
       "inputModules": 131,
       "mechanisms": [
         "@tangleai/agents",
@@ -15,7 +15,7 @@
     },
     {
       "entry": "./component",
-      "bytes": 777590,
+      "bytes": 777768,
       "inputModules": 211,
       "mechanisms": [
         "@tangleai/agents",

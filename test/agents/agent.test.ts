@@ -478,3 +478,32 @@ describe('ai — history compaction', function () {
 
   //#endregion
 });
+
+describe('restartable runs', () => {
+  /** Asks for the same tool twice (the second time with an id it used before), then answers. */
+  function replay() {
+    const turns = [['c1'], ['c2', 'c1']];
+    let n = 0;
+    return {
+      complete: async () => {
+        const ids = turns[n++];
+        return ids
+          ? { message: { role: 'assistant', content: '', toolCalls: ids.map(id => ({ id, name: 'note', arguments: '{"text":"x"}' })) }, finishReason: 'tool_calls', usage: null }
+          : { message: { role: 'assistant', content: 'Done.', toolCalls: null }, finishReason: 'stop', usage: null };
+      },
+    };
+  }
+  it('hands each tool its call id, round and attempt, and checkpoints after every round of tool results', async () => {
+    const calls: any[] = [], checkpoints: any[] = [];
+    const toolbox = createToolbox();
+    toolbox.add({ name: 'note', description: 'Note a text.', inputSchema: { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] }, execute: (_input: any, context: any) => { calls.push(context.call); return { ok: true }; } });
+    const agent = createAgent({ client: replay(), toolbox });
+    const result = await agent.send([{ role: 'user', content: 'go' }], { onCheckpoint: (c: any) => checkpoints.push(c) });
+    assert.equal(result.message.content, 'Done.');
+    assert.deepEqual(calls, [{ id: 'c1', round: 0, attempt: 1 }, { id: 'c2', round: 1, attempt: 1 }, { id: 'c1', round: 1, attempt: 2 }]);
+    assert.deepEqual(checkpoints.map(c => [c.round, c.steps.length, c.messages.at(-1).role]), [[0, 1, 'tool'], [1, 3, 'tool']]);
+    assert.equal(checkpoints[1].spent.turns, 2);
+    checkpoints[0].messages.push({ role: 'user', content: 'mutated' });
+    assert.notEqual(result.messages.at(-1).content, 'mutated', 'a checkpoint is a copy');
+  });
+});
