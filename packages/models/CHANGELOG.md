@@ -155,11 +155,15 @@
 
 ## 0.45.2
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.183.1 to 0.184.2. No source of this package changed.
 
 ## 0.45.1
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.179.0 to 0.183.1. No source of this package changed.
 
 ## 0.45.0
 
@@ -171,15 +175,21 @@ No changes in this release.
 
 ## 0.44.0
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.176.8 to 0.176.11. No source of this package changed.
 
 ## 0.43.1
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.176.5 to 0.176.8. No source of this package changed.
 
 ## 0.43.0
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.161.0 to 0.176.5. No source of this package changed.
 
 ## 0.42.1
 
@@ -241,15 +251,21 @@ No changes in this release.
 
 ## 0.30.1
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.91.3 to 0.91.4. No source of this package changed.
 
 ## 0.30.0
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.91.2 to 0.91.3. No source of this package changed.
 
 ## 0.29.8
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.90.6 to 0.91.2. No source of this package changed.
 
 ## 0.29.7
 
@@ -285,7 +301,9 @@ No changes in this release.
 
 ## 0.28.0
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.89.0 to 0.90.6. No source of this package changed.
 
 ## 0.27.3
 
@@ -293,7 +311,9 @@ No changes in this release.
 
 ## 0.27.2
 
-No changes in this release.
+### Patch Changes
+
+- Dependencies only: the exact `@jarenjs/core` and `@jarenjs/validate` pins move from 0.87.0 to 0.89.0. No source of this package changed.
 
 ## 0.27.1
 
