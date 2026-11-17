@@ -232,3 +232,27 @@ test('an application built on the 0.49.2 release still joins this desktop and se
   await expect.poll(() => page.evaluate(async () => (await window.harness.kernel.call('shell', 'echo_old', 'echo.say', { text: 'hi' })).value ?? null)).toEqual({ text: 'hi', from: '0.49.2' });
   expect(await page.evaluate(() => window.harness.events.filter(e => e.module === 'old-echo').map(e => e.type))).toContain('ready');
 });
+
+test('the person decides an application\'s proposals in the mail; the decision goes back to it, refusals and closed applications stay pending', async ({ page }) => {
+  await host(page, 'modules=1&framed=1', { width: 1280, height: 800 });
+  await page.evaluate(() => window.harness.desktop.open('echo-app'));
+  await expect.poll(() => page.evaluate(() => window.harness.kernel.mail().filter(m => m.proposal).length)).toBe(2);
+  await expect(page.locator('.tos-dock-mail .tos-badge')).toHaveText('2');
+  await page.locator('.tos-dock-mail').click();
+  const panel = page.locator('.tos-mail');
+  await expect(panel.locator('.tos-mail-group')).toHaveText('To decide');
+  const first = panel.locator('[data-proposal="echo-1"]');
+  await expect(first).toContainText('Send the echo');
+  await expect(first.getByRole('link', { name: 'The call' })).toHaveAttribute('href', 'https://example.com/call');
+  await first.getByRole('button', { name: 'Accept' }).click();
+  await expect.poll(() => page.evaluate(() => window.harness.kernel.mail().find(m => m.proposal?.id === 'echo-1').proposal.status)).toBe('accepted');
+  await expect(page.locator('.tos-window[data-module="echo-app"] iframe').contentFrame().locator('body')).toHaveAttribute('data-decided', 'echo-1:accept');
+  const second = panel.locator('[data-proposal="echo-2"]');
+  await second.getByRole('button', { name: 'Accept' }).click();
+  await expect(second.getByRole('alert')).toHaveText('Not done: the echo moved');
+  await expect(page.locator('.tos-dock-mail .tos-badge')).toHaveText('1');
+  await page.evaluate(() => window.harness.desktop.close(window.harness.desktop.state().windows.find(w => w.module === 'echo-app').id));
+  await panel.locator('[data-proposal="echo-2"]').getByRole('button', { name: 'Reject' }).click();
+  await expect(panel.locator('[data-proposal="echo-2"]').getByRole('alert')).toHaveText('Echo is not running. Open it, then decide again.');
+  expect(await page.evaluate(() => window.harness.kernel.mail().find(m => m.proposal?.id === 'echo-2').proposal.status)).toBe('pending');
+});

@@ -129,4 +129,5 @@ export const ru = {
     : p.stage ? `Шаг ${num(p.step)} — ${p.stage}` : `Шаг ${num(p.step)}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `Не удалось запустить выполнение: ${p.detail}` : 'Не удалось запустить выполнение.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `Не удалось отменить выполнение: ${p.detail}` : 'Не удалось отменить выполнение.',
+  'view/retry': 'Повторить',
 } satisfies Required<AssistantCatalogue>;

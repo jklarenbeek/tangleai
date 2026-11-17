@@ -273,3 +273,75 @@ describe('settings', () => {
     } finally { channel.port1.close(); channel.port2.close(); }
   });
 });
+
+describe('proposals in the inbox', () => {
+  const SHOP = () => manifest('shop', { proposals: [{ kind: 'purchase.draft', title: { en: 'Purchase draft' } }] });
+  const draft = (extra: object = {}) => ({ id: 'po-7', kind: 'purchase.draft', title: 'Reorder 12 oak tables', summary: 'Stock is 2, the reorder point 5.', payload: { lines: 1 }, evidence: [{ label: 'Stock report', href: 'https://shop.example/stock' }], revision: 'r3', ...extra });
+
+  it('files a declared kind, replaces the same id, withdraws, and refuses what does not fit', () => {
+    const kernel = createKernel();
+    kernel.install(SHOP(), 'suite');
+    assert.equal(kernel.propose('shop', draft()).ok, true);
+    assert.equal(kernel.propose('shop', draft({ title: 'Reorder 14 oak tables' })).ok, true);
+    assert.deepEqual(kernel.mail().map(m => [m.from, m.subject, m.proposal?.status]), [['shop', 'Reorder 14 oak tables', 'pending']], 'the same id replaces');
+    const code = (outcome: any) => outcome.ok ? null : outcome.error.code;
+    assert.equal(code(kernel.propose('shop', draft({ kind: 'refund' }))), 'OS0107', 'an undeclared kind');
+    assert.equal(code(kernel.propose('shop', draft({ id: 'po-8', evidence: [{ label: 'x', href: 'javascript:alert(1)' }] }))), 'OS0108', 'only http(s) links');
+    assert.equal(code(kernel.propose('shop', draft({ id: 'po-9', title: 'x'.repeat(201) }))), 'OS0108');
+    assert.equal(code(kernel.propose('shop', { ...draft({ id: 'po-10' }), from: 'bank' })), 'OS0108', 'the sender is the port, never the input');
+    assert.equal(kernel.withdrawProposal('shop', 'po-7').ok, true);
+    assert.deepEqual(kernel.mail(), []);
+  });
+
+  it('carries the decision to the module that filed it, one at a time, and keeps a refused one pending with the reason', async () => {
+    const kernel = createKernel();
+    kernel.install(SHOP(), 'suite');
+    kernel.propose('shop', draft());
+    const id = kernel.mail()[0].id;
+    const notRunning = await kernel.decide(id, 'accept');
+    assert.equal(!notRunning.ok && notRunning.error.code, 'OS0110');
+    assert.deepEqual([kernel.mail()[0].proposal!.status, kernel.mail()[0].proposal!.reason?.code], ['pending', 'OS0110']);
+    const received: any[] = [];
+    let answer: any = { refused: 'the stock moved: revision r4' };
+    let release!: () => void;
+    const gate = new Promise<void>(r => { release = r; });
+    kernel.registerDecider('shop', 'w1', async (decision) => { received.push(decision); await gate; return answer; });
+    const first = kernel.decide(id, 'accept');
+    const second = await kernel.decide(id, 'accept');
+    assert.equal(!second.ok && second.error.code, 'OS0111', 'a double click makes one call');
+    release();
+    const refused = await first;
+    assert.equal(!refused.ok && refused.error.code, 'OS0112');
+    assert.deepEqual([kernel.mail()[0].proposal!.status, kernel.mail()[0].proposal!.reason?.message], ['pending', 'the stock moved: revision r4']);
+    answer = undefined;
+    assert.deepEqual(await kernel.decide(id, 'reject'), { ok: true, value: { status: 'rejected' } });
+    assert.equal(kernel.mail()[0].proposal!.reason, undefined);
+    assert.deepEqual(received.map(d => [d.id, d.kind, d.decision, d.revision]), [['po-7', 'purchase.draft', 'accept', 'r3'], ['po-7', 'purchase.draft', 'reject', 'r3']]);
+  });
+
+  it('gives neither the assistant nor another module a way to decide', async () => {
+    const kernel = createKernel({ assistantGrants: 'all', tools: toolbox });
+    kernel.install(SHOP(), 'suite');
+    kernel.registerDecider('shop', 'w1', () => {});
+    kernel.propose('shop', draft());
+    assert.deepEqual(kernel.operations('assistant').filter(o => /decide|propos/.test(o.op)), [], 'no decision is an operation');
+    assert.equal(kernel.tools().list().some((t: any) => /decide/.test(t.name)), false);
+    const viaBus = await kernel.call('assistant', 'tangle_os_module', 'module.decide', { id: 'po-7', kind: 'purchase.draft', decision: 'accept' });
+    assert.equal(viaBus.ok, false);
+    assert.equal(kernel.mail()[0].proposal!.status, 'pending');
+  });
+
+  it('takes proposals over a module\'s own port', async () => {
+    const kernel = createKernel();
+    kernel.install(SHOP(), 'suite');
+    const channel = new MessageChannel();
+    kernel.serveModule('shop', channel.port1); channel.port1.start();
+    const client: any = openPortClient(systemContracts().os, { channel: channel.port2, timeoutMs: 5000 }); channel.port2.start();
+    try {
+      assert.equal((await client.invoke('mail.propose', draft())).ok, true);
+      assert.equal(kernel.mail()[0].from, 'shop');
+      assert.equal((await client.invoke('mail.withdraw', { id: 'po-7' })).ok, true);
+      assert.deepEqual(kernel.mail(), []);
+    } finally { channel.port1.close(); channel.port2.close(); }
+  });
+});

@@ -263,7 +263,8 @@ export function createAssistantViewRules() {
   const panel =
     ['div', { class: 'ai-panel' },
       ['div', { class: 'ai-head' }, title, close],
-      ['div', { class: 'ai-log' },
+      // a screen reader hears what arrives, and that the run is still working
+      ['div', { class: 'ai-log', 'aria-live': 'polite', 'aria-busy': { $if: ['$.busy', 'true', 'false'] } },
         { $if: ['$.empty', intro] },
         [{ $apply: '$.messages[*]' }],
         pending,
@@ -273,9 +274,11 @@ export function createAssistantViewRules() {
         // reports which one was chosen and navigates nowhere itself
         { $if: ['$.hasLinks', ['div', { class: 'ai-links' }, [{ $apply: '$.links[*]' }]]] },
         { $if: ['$.notice', ['p', { class: 'ai-notice' }, '$.notice']] },
-        { $if: ['$.error', ['p', { class: 'ai-error' }, '$.error']] },
-        { $if: ['$.startError', ['p', { class: 'ai-error' }, '$.startError']] },
-        { $if: ['$.cancelError', ['p', { class: 'ai-error' }, '$.cancelError']] },
+        { $if: ['$.error', ['p', { class: 'ai-error', role: 'alert' }, '$.error']] },
+        { $if: ['$.startError', ['p', { class: 'ai-error', role: 'alert' }, '$.startError']] },
+        { $if: ['$.cancelError', ['p', { class: 'ai-error', role: 'alert' }, '$.cancelError']] },
+        // a failed run offers to try again; the host decides what that means
+        { $if: ['$.canRetry', ['button', { type: 'button', class: 'btn small ai-retry', on: { click: 'view/retry' } }, '$.retryLabel']] },
       ],
       composer,
     ];

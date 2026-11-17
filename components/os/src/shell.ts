@@ -15,7 +15,7 @@ import {
   closeWindow, emptyDesktop, focusWindow, isVisible, minimizeWindow, moveWindow, openWindow, resizeDesktop, resizeWindow, setTitle, stacked, toggleMaximize,
   type Desktop, type WindowState,
 } from './windows.ts';
-import type { Kernel } from './kernel.ts';
+import type { Kernel, Decider } from './kernel.ts';
 
 export type ShippedContext = {
   module: ModuleManifest;
@@ -34,6 +34,12 @@ export type ShippedContext = {
   readonly theme: { tokens: Record<string, string>, scheme?: 'light' | 'dark' };
   /** Open the desktop's Settings at this module's own section. */
   openSettings(): void;
+  /** File a proposal in the desktop's inbox (the same id again replaces it). */
+  propose(proposal: { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string }): ReturnType<Kernel['propose']>;
+  /** Take back a pending proposal. */
+  withdraw(id: string): ReturnType<Kernel['withdrawProposal']>;
+  /** Where the person's decisions on this module's proposals arrive while its window is open; return `{ refused }` to keep one pending. */
+  onDecision(handler: Decider): () => void;
 };
 /**
  * What happened to a window, with its state after it: a host that subscribes
@@ -90,7 +96,7 @@ export type DesktopOptions = {
   onError?: (error: unknown) => void;
 };
 
-type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean };
+type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean, releaseDecider?: () => void };
 
 const svg = (path: string) => `<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path d="${path}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 const ICON = { close: svg('M4 4l8 8M12 4l-8 8'), minimize: svg('M4 8h8'), maximize: svg('M4.5 4.5h7v7h-7z'), restore: svg('M6 4h6v6M4 6h6v6H4z') };
@@ -207,6 +213,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     /** Close what an earlier connection of this window held. */
     const release = () => {
       kernel.withdraw(manifest.id, w.id);
+      entry.releaseDecider?.(); entry.releaseDecider = undefined;
       try { entry.served?.close?.(); } catch (error) { report(error); }
       for (const port of entry.ports) port.close();
       entry.ports = []; entry.served = undefined; entry.moduleClient = undefined; entry.connected = false;
@@ -248,6 +255,12 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         catch (error) { report(error); }
       }
       entry.moduleClient = moduleClient;
+      // the person's decisions on this module's proposals go over its own control channel, never the bus
+      entry.releaseDecider = kernel.registerDecider(manifest.id, w.id, async (decision) => {
+        const outcome: any = await moduleClient.invoke('module.decide', decision);
+        if (outcome?.ok === false) throw new Error(outcome.error?.message ?? 'the application did not take the decision');
+        return outcome?.ok === true ? outcome.value : outcome;
+      });
       entry.ports.push(os.port1, control.port1, ...provided.map(p => p.channel.port1));
       const message: ConnectMessage = {
         type: CONNECT, protocol: PROTOCOL, module: manifest.id,
@@ -277,6 +290,9 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         get visible() { return seen.visible; },
         get theme() { return { tokens: { ...theme.tokens }, scheme: theme.scheme }; },
         openSettings: () => openSettings(manifest.id),
+        propose: (proposal) => kernel.propose(manifest.id, proposal),
+        withdraw: (id) => kernel.withdrawProposal(manifest.id, id),
+        onDecision: (handler) => { entry.releaseDecider?.(); return (entry.releaseDecider = kernel.registerDecider(manifest.id, w.id, handler)); },
         onVisibility: (listener) => { seen.listeners.add(listener); return () => { seen.listeners.delete(listener); }; },
         call: (contract, op, input) => kernel.call(manifest.id, contract, op, input),
         sendMail: (envelope) => { kernel.sendMail(manifest.id, envelope); },
@@ -285,7 +301,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       });
       entry.el.classList.remove('is-loading');
       lifecycle('ready', w.id);
-      return () => { visibility.delete(w.id); dispose?.(); kernel.withdraw(manifest.id, w.id); };
+      return () => { visibility.delete(w.id); dispose?.(); kernel.withdraw(manifest.id, w.id); entry.releaseDecider?.(); };
     }
     const frame = doc.createElement('iframe');
     frame.className = 'tos-frame';
@@ -306,7 +322,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     frame.addEventListener('focus', () => { if (desktop.focus !== w.id) setDesktop(focusWindow(desktop, w.id)); });
     const stop = connectFrame(w, manifest, frame, entry);
     entry.content.append(frame);
-    return () => { stop(); kernel.withdraw(manifest.id, w.id); try { entry.served?.close?.(); } catch { /* closing */ } for (const port of entry.ports) port.close(); frame.remove(); };
+    return () => { stop(); kernel.withdraw(manifest.id, w.id); entry.releaseDecider?.(); try { entry.served?.close?.(); } catch { /* closing */ } for (const port of entry.ports) port.close(); frame.remove(); };
   }
 
   // ── windows ───────────────────────────────────────────────────────────────
@@ -437,7 +453,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   // ── dock and mail ─────────────────────────────────────────────────────────
   let dockSignature = '';
   function renderDock(force = false) {
-    const signature = JSON.stringify([kernel.modules().map(m => [m.id, localized(m.title, locale.locale), m.icon]), [...new Set(desktop.windows.map(w => w.module))].sort(), kernel.mail().filter(m => !m.read).length, theme.scheme, locale, desktop.focus]);
+    const signature = JSON.stringify([kernel.modules().map(m => [m.id, localized(m.title, locale.locale), m.icon]), [...new Set(desktop.windows.map(w => w.module))].sort(), kernel.mail().filter(m => m.proposal ? m.proposal.status === 'pending' || m.proposal.status === 'deciding' : !m.read).length, theme.scheme, locale, desktop.focus]);
     if (!force && signature === dockSignature) return;
     dockSignature = signature;
     const items = kernel.modules().map(manifest => {
@@ -455,7 +471,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       });
       return b;
     });
-    const unread = kernel.mail().filter(m => !m.read).length;
+    // plain mail until it is read, a proposal while it waits for the person
+    const unread = kernel.mail().filter(m => m.proposal ? m.proposal.status === 'pending' || m.proposal.status === 'deciding' : !m.read).length;
     const mailButton = doc.createElement('button');
     mailButton.type = 'button'; mailButton.className = 'tos-dock-item tos-dock-mail';
     mailButton.setAttribute('aria-label', t('mail/title')); mailButton.title = t('mail/title');
@@ -662,20 +679,68 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   function renderMail() {
     if (mailPanel.hidden) return;
     const heading = doc.createElement('h2'); heading.textContent = t('mail/title');
-    const list = doc.createElement('ul');
     const items = kernel.mail().reverse();
-    if (items.length === 0) { const empty = doc.createElement('p'); empty.className = 'tos-muted'; empty.textContent = t('mail/empty'); mailPanel.replaceChildren(heading, empty); return; }
-    for (const item of items) {
-      const li = doc.createElement('li'); li.className = item.read ? 'is-read' : '';
-      const subject = doc.createElement('strong'); subject.textContent = item.subject;
-      const sender = kernel.effective(item.from);
-      const from = doc.createElement('span'); from.className = 'tos-muted'; from.textContent = t('mail/from', { sender: sender ? localized(sender.title, locale.locale) : item.from });
-      li.append(subject, from);
-      if (item.body) { const body = doc.createElement('p'); body.textContent = item.body; li.append(body); }
-      list.append(li);
-      if (!item.read) kernel.markRead(item.id);
+    const appName = (id: string) => { const sender = kernel.effective(id); return sender ? localized(sender.title, locale.locale) : id; };
+    const open = items.filter(m => m.proposal && (m.proposal.status === 'pending' || m.proposal.status === 'deciding'));
+    const rest = items.filter(m => !open.includes(m));
+    const sections: HTMLElement[] = [heading];
+    if (open.length) {
+      const title = doc.createElement('h3'); title.className = 'tos-mail-group'; title.textContent = t('mail/to-decide');
+      const list = doc.createElement('ul'); list.className = 'tos-proposals';
+      for (const item of open) list.append(proposalItem(item, appName(item.from)));
+      sections.push(title, list);
     }
-    mailPanel.replaceChildren(heading, list);
+    if (rest.length) {
+      const list = doc.createElement('ul');
+      for (const item of rest) {
+        const li = doc.createElement('li'); li.className = item.read || item.proposal ? 'is-read' : '';
+        const subject = doc.createElement('strong'); subject.textContent = item.subject;
+        const from = doc.createElement('span'); from.className = 'tos-muted'; from.textContent = t('mail/from', { sender: appName(item.from) });
+        li.append(subject, from);
+        if (item.proposal) { const status = doc.createElement('span'); status.className = 'tos-muted'; status.textContent = item.proposal.status === 'accepted' ? t('mail/accepted') : t('mail/rejected'); li.append(status); }
+        if (item.body) { const body = doc.createElement('p'); body.textContent = item.body; li.append(body); }
+        list.append(li);
+        if (!item.read && !item.proposal) kernel.markRead(item.id);
+      }
+      sections.push(list);
+    }
+    if (!open.length && !rest.length) { const empty = doc.createElement('p'); empty.className = 'tos-muted'; empty.textContent = t('mail/empty'); sections.push(empty); }
+    mailPanel.replaceChildren(...sections);
+  }
+
+  /** One proposal waiting for the person: text only, links to http(s) pages only, the decision carried to its module. */
+  function proposalItem(item: ReturnType<Kernel['mail']>[number], app: string) {
+    const p = item.proposal!;
+    const li = doc.createElement('li'); li.className = 'tos-proposal'; li.dataset.proposal = p.id; li.dataset.module = item.from;
+    const subject = doc.createElement('strong'); subject.textContent = item.subject;
+    const from = doc.createElement('span'); from.className = 'tos-muted'; from.textContent = t('mail/from', { sender: app });
+    li.append(subject, from);
+    if (p.summary) { const summary = doc.createElement('p'); summary.textContent = p.summary; li.append(summary); }
+    if (p.evidence?.length) {
+      const evidence = doc.createElement('ul'); evidence.className = 'tos-evidence'; evidence.setAttribute('aria-label', t('mail/evidence'));
+      for (const e of p.evidence) {
+        const row = doc.createElement('li');
+        if (e.href && /^https?:\/\//.test(e.href)) { const a = doc.createElement('a'); a.href = e.href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = e.label; row.append(a); }
+        else row.textContent = e.label;
+        evidence.append(row);
+      }
+      li.append(evidence);
+    }
+    if (p.reason) {
+      const reason = doc.createElement('p'); reason.className = 'tos-proposal-reason'; reason.setAttribute('role', 'alert');
+      reason.textContent = p.reason.code === 'OS0110' ? t('mail/not-running', { app }) : t('mail/refused', { detail: p.reason.message });
+      li.append(reason);
+    }
+    const actions = doc.createElement('div'); actions.className = 'tos-proposal-actions';
+    const deciding = p.status === 'deciding';
+    for (const [decision, label] of [['accept', t('mail/accept')], ['reject', t('mail/reject')]] as const) {
+      const b = doc.createElement('button'); b.type = 'button'; b.dataset.decision = decision; b.textContent = deciding ? t('mail/deciding') : label;
+      b.disabled = deciding;
+      b.addEventListener('click', () => { for (const x of actions.querySelectorAll('button')) (x as HTMLButtonElement).disabled = true; kernel.decide(item.id, decision).catch(report); });
+      actions.append(b);
+    }
+    li.append(actions);
+    return li;
   }
 
   // ── wiring ──────────────────────────────────────────────────────────────

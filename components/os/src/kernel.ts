@@ -12,12 +12,24 @@ import { openPortClient } from '@jarenjs/contract/port';
 import { openLocalClient } from '@jarenjs/contract/local';
 import { validateManifest, type ModuleManifest, type ManifestIssue } from './manifest.ts';
 import { JarenValidator } from '@jarenjs/validate';
-import { systemContracts } from './contracts.ts';
+import { systemContracts, PROPOSAL_SCHEMA } from './contracts.ts';
 
 export type Layer = 'shipped' | 'suite' | 'user';
 export type JournalEntry = { seq: number, at: number, layer: Layer, module: string, kind: 'install' | 'patch' | 'remove', patch?: unknown[], inverse?: unknown[] };
 export type LedgerEntry = { seq: number, at: number, caller: string, contract: string, op: string, ok: boolean, code?: string, ms: number };
-export type MailEnvelope = { id: string, at: number, from: string, to: string, subject: string, body?: string, data?: unknown, read: boolean };
+/**
+ * A proposal in the inbox, kept by the kernel: its kind, status and sender come
+ * from the module's port and manifest, never from what the module wrote.
+ */
+export type Proposal = {
+  id: string, kind: string, status: 'pending' | 'deciding' | 'accepted' | 'rejected',
+  summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string,
+  /** Why the last decision did not take effect; the proposal stays pending. */
+  reason?: { code: string, message: string },
+};
+export type MailEnvelope = { id: string, at: number, from: string, to: string, subject: string, body?: string, data?: unknown, read: boolean, proposal?: Proposal };
+/** How a decision reaches the module that filed the proposal: its own control channel, never the bus. */
+export type Decider = (decision: { id: string, kind: string, decision: 'accept' | 'reject', revision?: string, payload?: unknown }) => Promise<{ refused?: string } | void> | { refused?: string } | void;
 export type Outcome = { ok: true, value: unknown } | { ok: false, error: { code: string, message: string } };
 export type KernelEvent = { kind: 'modules' | 'mail' | 'ledger' | 'providers' | 'title' | 'settings', module?: string, title?: string };
 /**
@@ -68,6 +80,9 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   const mail: MailEnvelope[] = [];
   const listeners = new Set<(event: KernelEvent) => void>();
   let seq = 0, mailSeq = 0;
+  /** Per module, the windows that can carry a decision to it, most recent last. */
+  const deciders = new Map<string, { owner: string, decide: Decider }[]>();
+  let proposalCheck: ((value: unknown) => any) | null = null;
   const kept = new Map<string, unknown>();
   const store: SettingsStore = options.settings ?? { read: (module) => kept.get(module), write: (module, values) => { kept.set(module, values); } };
   const checkers = new Map<string, { key: string, check: (value: unknown) => any }>();
@@ -299,6 +314,87 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     markRead(id: string) { const item = mail.find(m => m.id === id); if (item && !item.read) { item.read = true; emit({ kind: 'mail' }); } },
 
     /**
+     * File a proposal in the inbox for the person. The kind must be one the
+     * module's manifest declares (`OS0107`) and the proposal must match its
+     * schema (`OS0108`); filing the same id again replaces it, pending again.
+     * The module keeps its proposals: the inbox lives as long as the page.
+     */
+    propose(module: string, input: unknown): Outcome {
+      const manifest = kernel.effective(module);
+      if (!manifest) return refusal('OS0108', `no module '${module}'`);
+      proposalCheck ??= new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' }).compile(PROPOSAL_SCHEMA as any) as any;
+      const outcome = proposalCheck!(input);
+      if (!(typeof outcome === 'object' && outcome !== null ? outcome.valid : outcome === true)) {
+        const first = (outcome?.errors ?? [])[0];
+        return refusal('OS0108', `the proposal is refused${first ? `: ${first.instancePath || '/'} ${first.message ?? ''}`.trimEnd() : ''}`);
+      }
+      const p = input as { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string };
+      if (!(manifest.proposals ?? []).some(d => d.kind === p.kind)) return refusal('OS0107', `'${module}' declares no proposals of kind '${p.kind}'`);
+      const proposal: Proposal = { id: p.id, kind: p.kind, status: 'pending',
+        ...(p.summary !== undefined ? { summary: p.summary } : {}), ...(p.payload !== undefined ? { payload: cloneJson(p.payload) } : {}),
+        ...(p.evidence !== undefined ? { evidence: cloneJson(p.evidence) } : {}), ...(p.revision !== undefined ? { revision: p.revision } : {}) };
+      const existing = mail.find(m => m.from === module && m.proposal?.id === p.id);
+      if (existing?.proposal?.status === 'deciding') return refusal('OS0111', `the proposal '${p.id}' is being decided`);
+      if (existing) { existing.subject = p.title; existing.proposal = proposal; existing.read = false; existing.at = now(); }
+      else mail.push({ id: `m${++mailSeq}`, at: now(), from: module, to: 'person', subject: p.title, read: false, proposal });
+      emit({ kind: 'mail', module });
+      return { ok: true, value: { id: p.id } };
+    },
+
+    /** Take back a module's pending proposal. */
+    withdrawProposal(module: string, id: string): Outcome {
+      const index = mail.findIndex(m => m.from === module && m.proposal?.id === id);
+      if (index < 0) return refusal('OS0109', `no proposal '${id}' from '${module}'`);
+      if (mail[index].proposal!.status !== 'pending') return refusal('OS0111', `the proposal '${id}' is ${mail[index].proposal!.status}`);
+      mail.splice(index, 1);
+      emit({ kind: 'mail', module });
+      return { ok: true, value: {} };
+    },
+
+    /**
+     * Where a module's decisions go while one of its windows can take them:
+     * the shell registers the window's control channel. Returns the release.
+     */
+    registerDecider(module: string, owner: string, decide: Decider) {
+      const list = (deciders.get(module) ?? []).filter(d => d.owner !== owner);
+      list.push({ owner, decide });
+      deciders.set(module, list);
+      return () => { const kept = (deciders.get(module) ?? []).filter(d => d.owner !== owner); if (kept.length) deciders.set(module, kept); else deciders.delete(module); };
+    },
+
+    /**
+     * The person accepts or rejects a proposal. The decision goes to the
+     * module that filed it, over its own channel, never as a contract
+     * operation, so neither the assistant nor another module can decide. One
+     * decision at a time; a module that is not running (`OS0110`), refuses
+     * (`OS0112`, e.g. its revision moved) or fails leaves the proposal pending
+     * with the reason.
+     */
+    async decide(mailId: string, decision: 'accept' | 'reject'): Promise<Outcome> {
+      const item = mail.find(m => m.id === mailId);
+      const p = item?.proposal;
+      if (!item || !p) return refusal('OS0109', `no proposal '${mailId}'`);
+      if (p.status !== 'pending') return refusal('OS0111', `the proposal is ${p.status}`);
+      const settle = (status: Proposal['status'], reason?: Proposal['reason']) => {
+        item.proposal = { ...item.proposal!, status, ...(reason ? { reason } : {}) };
+        if (!reason) delete item.proposal.reason;
+        emit({ kind: 'mail', module: item.from });
+      };
+      const target = (deciders.get(item.from) ?? []).at(-1);
+      if (!target) { settle('pending', { code: 'OS0110', message: `'${item.from}' is not running` }); return refusal('OS0110', `'${item.from}' is not running`); }
+      settle('deciding');
+      try {
+        const answer = await target.decide({ id: p.id, kind: p.kind, decision, ...(p.revision !== undefined ? { revision: p.revision } : {}), ...(p.payload !== undefined ? { payload: cloneJson(p.payload) } : {}) });
+        if (answer && typeof answer.refused === 'string') { settle('pending', { code: 'OS0112', message: answer.refused }); return refusal('OS0112', answer.refused); }
+      } catch (error: any) {
+        const message = String(error?.message ?? error);
+        settle('pending', { code: 'OS0112', message }); return refusal('OS0112', message);
+      }
+      settle(decision === 'accept' ? 'accepted' : 'rejected');
+      return { ok: true, value: { status: item.proposal!.status } };
+    },
+
+    /**
      * Serve `tangle_os` to one module over its own port. The module's id is
      * bound here, by the port it was handed, never taken from its input.
      */
@@ -307,6 +403,8 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       return servePort(os, {
         'os.call': async ({ contract, op, input }: any) => kernel.call(module, contract, op, input ?? {}),
         'mail.send': ({ to, subject, body, data }: any) => ({ id: kernel.sendMail(module, { to, subject, body, data }).id }),
+        'mail.propose': (input: any) => { const outcome = kernel.propose(module, input); if (!outcome.ok) throw Object.assign(new Error(outcome.error.message), { code: outcome.error.code }); return outcome.value as { id: string }; },
+        'mail.withdraw': ({ id }: any) => { const outcome = kernel.withdrawProposal(module, id); if (!outcome.ok) throw Object.assign(new Error(outcome.error.message), { code: outcome.error.code }); return {}; },
         'window.title': ({ title }: any) => { hooks.setTitle?.(title); emit({ kind: 'title', module, title }); return {}; },
         'settings.get': () => ({ values: kernel.settings(module) }),
         'settings.open': () => { hooks.openSettings?.(); return {}; },

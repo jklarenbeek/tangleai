@@ -91,4 +91,5 @@ export const de = {
     : p.stage ? `Schritt ${number.format(p.step)} — ${p.stage}` : `Schritt ${number.format(p.step)}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `Der Auftrag konnte nicht gestartet werden: ${p.detail}` : 'Der Auftrag konnte nicht gestartet werden.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `Der Auftrag konnte nicht abgebrochen werden: ${p.detail}` : 'Der Auftrag konnte nicht abgebrochen werden.',
+  'view/retry': 'Erneut versuchen',
 } satisfies Required<AssistantCatalogue>;

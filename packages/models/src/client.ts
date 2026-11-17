@@ -314,7 +314,7 @@ export function createChatClient(options: {
     }
     catch (err: any) {
       if (deadline.signal.aborted && request.signal?.aborted !== true && !(err instanceof AiError))
-        throw new AiError('AI0002', `no answer from ${endpoint.url} within ${timeoutMs} ms`, { status: 0, cause: err });
+        throw new AiError('AI0002', `no answer from ${endpoint.url} within ${timeoutMs} ms`, { status: 0, cause: err, outcome: 'timeout' });
       throw err;
     }
     finally {

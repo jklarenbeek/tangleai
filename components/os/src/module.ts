@@ -21,6 +21,12 @@ export type ConnectOptions = {
   onLocale?: (locale: { locale: string, dir: 'ltr' | 'rtl' }) => void;
   /** Called when the person changes this module's settings in the desktop's Settings (a `form` module's values). */
   onSettings?: (values: unknown) => void;
+  /**
+   * The person accepted or rejected one of this module's proposals. Carry it
+   * out, or return `{ refused: reason }` (the revision moved, say) and the
+   * proposal stays pending with that reason. A module with no handler refuses.
+   */
+  onDecision?: (decision: { id: string, kind: string, decision: 'accept' | 'reject', revision?: string, payload?: unknown }) => { refused?: string } | void | Promise<{ refused?: string } | void>;
   /** A compact description of what the page shows now, for the assistant. */
   context?: () => unknown;
   /** The window that sends the ports; the page's parent by default. */
@@ -58,6 +64,10 @@ export type OsConnection = {
   settings(): Promise<unknown>;
   /** Open the desktop's Settings at this module's own section: the one place the person finds every application's settings. */
   openSettings(): Promise<void>;
+  /** File a proposal in the desktop's inbox (filing the same id again replaces it); the module keeps it and refiles after a reload. */
+  propose(proposal: { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string }): Promise<void>;
+  /** Take back a pending proposal. */
+  withdraw(id: string): Promise<void>;
   close(): void;
 };
 
@@ -109,6 +119,11 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
         'module.locale': (locale: any) => { applyLocale(root, locale); options.onLocale?.(locale); return {}; },
         'module.context': () => (options.context?.() ?? {}) as object,
         'module.settings': ({ values }: any) => { options.onSettings?.(values); return {}; },
+        'module.decide': async (decision: any) => {
+          if (!options.onDecision) return { refused: 'this application takes no decisions here' };
+          const answer = await options.onDecision(decision);
+          return answer && typeof answer.refused === 'string' ? { refused: answer.refused.slice(0, 400) } : {};
+        },
       }, { channel: named.get('module') });
       disposers.push(() => (moduleServer as any)?.close?.());
       named.get('module')?.start?.();
@@ -146,6 +161,14 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
           return (outcome?.ok === true ? outcome.value : outcome)?.values ?? {};
         },
         openSettings: async () => { await client.invoke('settings.open', {}); },
+        propose: async (proposal) => {
+          const outcome: any = await client.invoke('mail.propose', proposal);
+          if (outcome?.ok === false) throw Object.assign(new Error(outcome.error?.message ?? 'mail.propose failed'), { code: outcome.error?.code });
+        },
+        withdraw: async (id) => {
+          const outcome: any = await client.invoke('mail.withdraw', { id });
+          if (outcome?.ok === false) throw Object.assign(new Error(outcome.error?.message ?? 'mail.withdraw failed'), { code: outcome.error?.code });
+        },
         close() { for (const dispose of disposers) dispose(); (client as any).close?.(); for (const port of ports) port.close?.(); },
       });
     };

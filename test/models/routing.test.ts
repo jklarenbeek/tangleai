@@ -87,4 +87,25 @@ describe('ai — the routed client codes its own failures', function () {
     assert.deepStrictEqual(router.endpoint, chat.endpoint);
     assert.ok(!inspect(router, { showHidden: true, depth: null }).includes('sk-or-secret-value'));
   });
+
+  it('reports every stop before a route starts, so a meter accounts for every attempt', async function () {
+    const events: any[] = [];
+    const account = { stop: () => 'budget-cost', reserve() { }, settle() { } };
+    const budget = createRoutedClient({ client: scripted(async () => assert.fail('must not be sent')), account, onRoute: (e: any) => events.push(e) }, { purpose: 'author' });
+    await assert.rejects(budget.complete({ messages: [{ role: 'user', content: 'x' }] }), (e: any) => e.code === 'AI0006' && e.outcome === 'budget');
+    const controller = new AbortController(); controller.abort(new Error('the person left'));
+    const aborted = createRoutedClient({ client: scripted(async () => assert.fail('must not be sent')), onRoute: (e: any) => events.push(e) }, { purpose: 'author' });
+    await assert.rejects(aborted.complete({ messages: [{ role: 'user', content: 'x' }], signal: controller.signal }), /the person left/);
+    assert.deepStrictEqual(events.map(e => [e.outcome, e.errorCode, e.identity, e.started, e.ms]), [['budget', 'AI0006', 'default', false, 0], ['aborted', 'Error', 'default', false, 0]]);
+  });
+});
+
+describe('ai — a direct call says how it failed without a message to match', function () {
+  it('names a timeout and a network failure as outcomes, both still AI0002 with status 0', async function () {
+    const slow = createChatClient({ provider: 'openrouter', model: 'm', retry: { attempts: 1 }, timeoutMs: 20,
+      fetch: (_url: any, init: any) => new Promise((_resolve, reject) => init.signal.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' })))) });
+    await assert.rejects(slow.complete({ messages: [{ role: 'user', content: 'x' }] }), (e: any) => e.code === 'AI0002' && e.status === 0 && e.outcome === 'timeout');
+    const down = createChatClient({ provider: 'openrouter', model: 'm', retry: { attempts: 1 }, fetch: async () => { throw new TypeError('fetch failed'); } });
+    await assert.rejects(down.complete({ messages: [{ role: 'user', content: 'x' }] }), (e: any) => e.code === 'AI0002' && e.status === 0 && e.outcome === 'network');
+  });
 });

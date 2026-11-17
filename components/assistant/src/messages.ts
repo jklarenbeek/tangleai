@@ -94,6 +94,7 @@ export const assistantMessagesEn = {
     : stage ? `Step ${step} — ${stage}` : `Step ${step}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `The run could not be started: ${p.detail}` : 'The run could not be started.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `The run could not be cancelled: ${p.detail}` : 'The run could not be cancelled.',
+  'view/retry': 'Try again',
 };
 
 const built = new WeakSet<object>();

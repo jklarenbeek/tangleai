@@ -61,7 +61,7 @@ it('a refused start shows the framed reason and keeps the draft', async t => {
   type(view.container, 'Plan the week'); submit(view.container); await settle();
   const { starting, draft, startError } = view.handle.read();
   assert.deepEqual({ starting, draft, startError }, { starting: false, draft: 'Plan the week', startError: 'quota reached' });
-  assert.match(serialize(view.container), /<p class="ai-error">The run could not be started: quota reached<\/p>/);
+  assert.match(serialize(view.container), /<p class="ai-error" role="alert">The run could not be started: quota reached<\/p>/);
   let attempts = 0;
   const thrown = mounted(t, { start: () => { if (attempts++ === 0) throw new Error('offline'); return 'run-2'; } });
   type(thrown.container, 'Plan the week'); submit(thrown.container);
@@ -86,7 +86,7 @@ it('cancel asks the host once per report, only while it reports a run with an id
   const refused = mounted(t, { state: RUNNING, cancel: () => Promise.reject(new Error('already finished')) });
   fire(button(refused.container, 'Cancel'), 'click'); await settle();
   assert.equal(refused.handle.read().cancelling, false);
-  assert.match(serialize(refused.container), /<p class="ai-error">The run could not be cancelled: already finished<\/p>/);
+  assert.match(serialize(refused.container), /<p class="ai-error" role="alert">The run could not be cancelled: already finished<\/p>/);
 });
 
 it('links and the launcher report intents and navigate nowhere', t => {
@@ -117,7 +117,7 @@ it('update replaces the host report and renders it as data', async t => {
   assert.match(html, /id="user-content-tangle-assistant-\d+-plan"/, 'reply headings carry the instance prefix');
   assert.doesNotMatch(html, /partial|Reading orders|Open orders|Using last week/, 'nothing merges from the earlier report');
   assert.match(html, /The assistant could not finish this run\./);
-  assert.match(html, /<p class="ai-error">Upstream timeout<\/p>/);
+  assert.match(html, /<p class="ai-error" role="alert">Upstream timeout<\/p>/);
   assert.deepEqual(view.handle.read().state, {
     status: 'failed', runId: null, messages: [...report.messages, { role: 'assistant', content: '## Plan\n\n**Half** done' }],
     pending: '', progress: null, links: [], notice: null, error: 'Upstream timeout', conversation: null,
@@ -238,7 +238,7 @@ it('a refusal without a reason reads as a whole sentence', async t => {
   for (const [refusal, shown] of cases) {
     const view = mounted(t, { start: () => Promise.reject(refusal) });
     type(view.container, 'Plan'); submit(view.container); await settle();
-    assert.ok(serialize(view.container).includes(`<p class="ai-error">${shown}</p>`), shown);
+    assert.ok(serialize(view.container).includes(`<p class="ai-error" role="alert">${shown}</p>`), shown);
   }
 });
 
@@ -279,4 +279,16 @@ it('renders replies with the host\'s Markdown alone when it brings its own', t =
   const view = mounted(t, { state: { status: 'succeeded', messages: [{ role: 'user', content: 'Hi' }, { role: 'assistant', content: '**Done**' }] }, renderMarkdown: (source: string) => { rendered.push(source); return ['p', {}, `host:${source}`]; } });
   assert.ok(serialize(view.container).includes('host:**Done**'), serialize(view.container).slice(0, 300));
   assert.ok(rendered.includes('**Done**'));
+});
+
+it('announces errors, keeps the log live and busy while running, and offers a failed run a retry', t => {
+  const view = mounted(t, { state: { status: 'failed', error: 'The provider refused the key.', messages: [{ role: 'user', content: 'Plan the week' }] } });
+  const html = serialize(view.container);
+  assert.match(html, /class="ai-error" role="alert"/);
+  assert.match(html, /class="ai-log" aria-live="polite" aria-busy="false"/);
+  fire(button(view.container, 'Try again'), 'click');
+  assert.deepEqual(view.intents, [{ type: 'retry' }]);
+  view.handle.update(RUNNING);
+  assert.match(serialize(view.container), /aria-busy="true"/);
+  assert.equal(button(view.container, 'Try again'), undefined, 'no retry while it runs');
 });

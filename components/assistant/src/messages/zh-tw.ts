@@ -88,4 +88,5 @@ export const zhTW = {
     : p.stage ? `第 ${num(p.step)} 步 — ${p.stage}` : `第 ${num(p.step)} 步`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `無法開始執行：${p.detail}` : '無法開始執行。',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `無法取消執行：${p.detail}` : '無法取消執行。',
+  'view/retry': '重試',
 } satisfies Required<AssistantCatalogue>;

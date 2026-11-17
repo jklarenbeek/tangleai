@@ -35,7 +35,8 @@ export class AiError extends CodedError {
   declare status?: number;
   declare attempts?: number;
   declare retryAfterMs?: number;
-  declare outcome?: 'timeout' | 'token-limit' | 'budget';
+  /** How a call ended when it did not answer: its deadline (`timeout`), the network before any response (`network`), a token ceiling or the account's budget. */
+  declare outcome?: 'timeout' | 'network' | 'token-limit' | 'budget';
   declare deadlineMs?: number;
   declare limit?: number;
   declare usage?: any;
@@ -55,7 +56,7 @@ export class AiError extends CodedError {
     status?: number;
     attempts?: number;
     retryAfterMs?: number;
-    outcome?: 'timeout' | 'token-limit' | 'budget';
+    outcome?: 'timeout' | 'network' | 'token-limit' | 'budget';
     deadlineMs?: number;
     limit?: number;
     usage?: any;

@@ -91,4 +91,5 @@ export const pt = {
     : p.stage ? `Etapa ${number.format(p.step)} — ${p.stage}` : `Etapa ${number.format(p.step)}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `Não foi possível iniciar a tarefa: ${p.detail}` : 'Não foi possível iniciar a tarefa.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `Não foi possível cancelar a tarefa: ${p.detail}` : 'Não foi possível cancelar a tarefa.',
+  'view/retry': 'Tentar novamente',
 } satisfies Required<AssistantCatalogue>;

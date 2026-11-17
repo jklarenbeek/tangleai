@@ -13,8 +13,7 @@
 import { createChatClient, createStructuredOutput } from '@tangleai/models';
 import { createFormActions } from '@jarenjs/app';
 import { buildFormModel, buildFormViewModel } from '@jarenjs/forms';
-import { compileMessageCatalog } from '@jarenjs/validate';
-import { ar, de, es, fr, ja, ko, nl, pt, ru, tr, zhTW } from '@jarenjs/locales';
+import { playCatalogs, LOCALES } from '../playground/validator.ts';
 import { stringifyCsv } from '@jarenjs/josl/csv';
 import { stringifyJsonx, parseJsonx } from '@jarenjs/josl/jsonx';
 import { sceneApp } from './gameFsms.ts';
@@ -39,14 +38,10 @@ export const NAME_FORM_ACTIONS = {
   input: 'game/f-input', check: 'game/f-check', number: 'game/f-number',
   json: 'game/f-json', add: 'game/f-add', remove: 'game/f-remove',
 };
-// compiled forms catalogs per locale, every pack @jarenjs/locales ships; 'en' uses the built-in default (undefined)
-const CATALOGS = {
-  nl: compileMessageCatalog(nl), de: compileMessageCatalog(de), fr: compileMessageCatalog(fr), es: compileMessageCatalog(es),
-  pt: compileMessageCatalog(pt), ar: compileMessageCatalog(ar), ja: compileMessageCatalog(ja), ko: compileMessageCatalog(ko),
-  ru: compileMessageCatalog(ru), tr: compileMessageCatalog(tr), 'zh-tw': compileMessageCatalog(zhTW),
-};
-// derived from CATALOGS, so a pack cannot lack a button nor a button a pack
-export const GAME_LOCALES = ['en', ...Object.keys(CATALOGS)].map((id) => ({ id, label: id.toUpperCase() }));
+// the forms catalogs the playground compiles once for the whole site ('en' is the built-in default);
+// the game's own button order first, then any language a later pack adds, so a pack never lacks a button
+const ORDER = ['en', 'nl', 'de', 'fr', 'es', 'pt', 'ar', 'ja', 'ko', 'ru', 'tr', 'zh-tw'];
+export const GAME_LOCALES = [...ORDER.filter((id) => LOCALES.includes(id)), ...LOCALES.filter((id) => !ORDER.includes(id))].map((id) => ({ id, label: id.toUpperCase() }));
 
 const scene = sceneApp();   // { slice: { current }, actions: { 'scene/go-*' } }
 
@@ -167,7 +162,7 @@ export function gamePageViewModel(game: any) {
     started: game.started,
     pirate: game.nameForm.name,
     // the @jarenjs/forms name field, its validation localized (@jarenjs/locales)
-    nameForm: buildFormViewModel(NAME_MODEL, game.nameForm, { validateFields: true, catalog: CATALOGS[game.locale as keyof typeof CATALOGS] }),
+    nameForm: buildFormViewModel(NAME_MODEL, game.nameForm, { validateFields: true, catalog: playCatalogs.catalogFor(game.locale) }),
     locales: GAME_LOCALES.map((l) => ({ ...l, active: l.id === game.locale })),
     won: game.won,
     verb: game.verb,

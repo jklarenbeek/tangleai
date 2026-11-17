@@ -89,4 +89,5 @@ export const nl = {
     : p.stage ? `Stap ${number.format(p.step)} — ${p.stage}` : `Stap ${number.format(p.step)}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `Het verzoek kon niet worden verstuurd: ${p.detail}` : 'Het verzoek kon niet worden verstuurd.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `Het verzoek kon niet worden geannuleerd: ${p.detail}` : 'Het verzoek kon niet worden geannuleerd.',
+  'view/retry': 'Opnieuw proberen',
 } satisfies Required<AssistantCatalogue>;

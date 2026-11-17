@@ -92,4 +92,5 @@ export const tr = {
     : p.stage ? `Adım ${num(p.step)} — ${p.stage}` : `Adım ${num(p.step)}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `Çalıştırma başlatılamadı: ${p.detail}` : 'Çalıştırma başlatılamadı.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `Çalıştırma iptal edilemedi: ${p.detail}` : 'Çalıştırma iptal edilemedi.',
+  'view/retry': 'Yeniden deneyin',
 } satisfies Required<AssistantCatalogue>;

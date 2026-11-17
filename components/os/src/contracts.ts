@@ -11,6 +11,32 @@ import { compileContract } from '@jarenjs/contract';
 
 const text = { type: 'string', maxLength: 20000 };
 const json = {};
+/**
+ * A proposal a module files for the person to accept or reject. Plain JSON,
+ * bounded: the desktop shows it as text, links only to http(s) pages, and
+ * never runs anything from it. The module keeps the proposal and decides what
+ * accepting it does; `revision` is what it expects to still be true then.
+ */
+export const PROPOSAL_SCHEMA = {
+  type: 'object', additionalProperties: false, required: ['id', 'kind', 'title'],
+  properties: {
+    id: { type: 'string', pattern: '^[A-Za-z0-9._:-]{1,128}$' },
+    kind: { type: 'string', pattern: '^[a-z][a-z0-9.-]{0,63}$' },
+    title: { type: 'string', minLength: 1, maxLength: 200 },
+    summary: { type: 'string', maxLength: 2000 },
+    payload: json,
+    evidence: {
+      type: 'array', maxItems: 12,
+      items: { type: 'object', additionalProperties: false, required: ['label'], properties: { label: { type: 'string', minLength: 1, maxLength: 200 }, href: { type: 'string', maxLength: 2000, pattern: '^https?://' } } },
+    },
+    revision: { type: 'string', maxLength: 128 },
+  },
+} as const;
+/** What the desktop carries back to the module that filed a proposal. */
+export const DECISION_SCHEMA = {
+  type: 'object', additionalProperties: false, required: ['id', 'kind', 'decision'],
+  properties: { id: PROPOSAL_SCHEMA.properties.id, kind: PROPOSAL_SCHEMA.properties.kind, decision: { enum: ['accept', 'reject'] }, revision: { type: 'string', maxLength: 128 }, payload: json },
+} as const;
 
 export const OS_CONTRACT = {
   $contract: '0.1',
@@ -43,6 +69,18 @@ export const OS_CONTRACT = {
       kind: 'command',
       doc: 'Set the title of this module\'s window.',
       input: { type: 'object', additionalProperties: false, required: ['title'], properties: { title: { type: 'string', maxLength: 200 } } },
+      output: { type: 'object' },
+    },
+    'mail.propose': {
+      kind: 'command',
+      doc: 'File a proposal in the desktop\'s inbox for the person to accept or reject; filing the same id again replaces it.',
+      input: PROPOSAL_SCHEMA,
+      output: { type: 'object', required: ['id'], properties: { id: { type: 'string' } } },
+    },
+    'mail.withdraw': {
+      kind: 'command',
+      doc: 'Take back one of this module\'s proposals that is still pending.',
+      input: { type: 'object', additionalProperties: false, required: ['id'], properties: { id: PROPOSAL_SCHEMA.properties.id } },
       output: { type: 'object' },
     },
     'settings.get': {
@@ -84,6 +122,12 @@ export const MODULE_CONTRACT = {
       doc: 'The module\'s settings changed in the desktop\'s Settings: its new values.',
       input: { type: 'object', additionalProperties: false, properties: { values: json } },
       output: { type: 'object' },
+    },
+    'module.decide': {
+      kind: 'command',
+      doc: 'The person accepted or rejected one of the module\'s proposals. The module carries it out, or refuses with the reason (`refused`), for example when the revision moved.',
+      input: DECISION_SCHEMA,
+      output: { type: 'object', properties: { refused: { type: 'string', maxLength: 400 } } },
     },
     'module.context': {
       kind: 'read',

@@ -25,8 +25,6 @@ import { chartRenderer } from './services.ts';
 import { playCatalogs, playValidator } from './validator.ts';
 import { formatJson } from './services.ts';
 
-/** The component, with the site's math/finance/stats packs mounted. */
-export const playComponent = createPlayComponent({ operators: operatorRegistry });
 
 /** The mdx pass (markdown × data), with the suite's own query compiler
  * injected — the expression language IS jaren-query, no new mini-language. */
@@ -112,6 +110,9 @@ const renderers = {
   charts: (source: any, config: any) => chartRenderer(source, config),
 };
 
+/** The component, with the site's math/finance/stats packs, its renderers and its validator, given once. */
+export const playComponent = createPlayComponent({ operators: operatorRegistry, renderers, validate: playValidator.validate });
+
 /**
  * The initial slice: the kit's (the first example, loaded and ready to run)
  * plus the reader's message language, null until they choose one on the
@@ -125,10 +126,7 @@ export const withPlayLocale = (slice: any) => kitWithPlayLocale(slice, slice.loc
 
 /** Run the active engine in the reader's language, with the site's operators, renderers and validator. */
 export function runPlay(slice: any) {
-  return kitRunPlay(playComponent, slice, {
-    lang: slice.locale ?? null, catalogs: playCatalogs,
-    operators: operatorRegistry, renderers, validate: playValidator.validate,
-  });
+  return kitRunPlay(playComponent, slice, { lang: slice.locale ?? null, catalogs: playCatalogs });
 }
 
 /**

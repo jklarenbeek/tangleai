@@ -89,4 +89,5 @@ export const ko = {
     : p.stage ? `${num(p.step)}단계 — ${p.stage}` : `${num(p.step)}단계`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `실행을 시작하지 못했습니다: ${p.detail}` : '실행을 시작하지 못했습니다.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `실행을 취소하지 못했습니다: ${p.detail}` : '실행을 취소하지 못했습니다.',
+  'view/retry': '다시 시도',
 } satisfies Required<AssistantCatalogue>;

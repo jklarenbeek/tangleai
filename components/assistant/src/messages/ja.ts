@@ -87,4 +87,5 @@ export const ja = {
     : p.stage ? `ステップ ${num(p.step)} — ${p.stage}` : `ステップ ${num(p.step)}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `実行を開始できませんでした: ${p.detail}` : '実行を開始できませんでした。',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `実行をキャンセルできませんでした: ${p.detail}` : '実行をキャンセルできませんでした。',
+  'view/retry': '再試行',
 } satisfies Required<AssistantCatalogue>;

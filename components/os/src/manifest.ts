@@ -31,6 +31,8 @@ export type ModuleManifest = {
   styles?: string;
   window?: { width?: number, height?: number, minWidth?: number, minHeight?: number, singleton?: boolean, resizable?: boolean };
   settings?: ModuleSettings;
+  /** The kinds of proposal it files in the desktop's inbox. */
+  proposals?: { kind: string, title?: LocalizedText }[];
 };
 /** Where a module's settings live in the desktop's Settings (see the schema's `settings`). */
 export type ModuleSettings = { title?: LocalizedText, keywords?: string[] } & (

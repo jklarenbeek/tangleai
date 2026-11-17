@@ -98,6 +98,48 @@ manifest's `minWidth` and `minHeight` when the person resizes it, and opens
 wholly on the desktop, sized to it. Motion stops under
 `prefers-reduced-motion`.
 
+## Proposals: one inbox for what the person decides
+
+An application, or the assistant working through it, often prepares
+something a person must approve: a purchase draft, a print batch, a leave
+request. The desktop's mail is the one inbox for all of them, so the person
+does not visit each application's own review screen.
+
+```jsonc
+// the manifest declares the kinds it files
+"proposals": [{ "kind": "purchase.draft", "title": { "en": "Purchase draft" } }]
+```
+
+```ts
+const desktop = await connectToOs({
+  origins: ['https://desk.example'],
+  onDecision: async ({ id, decision, revision }) => {
+    if (await stale(id, revision)) return { refused: 'the stock moved since this draft' };
+    if (decision === 'accept') await placeOrder(id);
+  },
+});
+await desktop.propose({ id: 'po-7', kind: 'purchase.draft', title: 'Reorder 12 oak tables',
+  summary: 'Stock is 2, the reorder point 5.', evidence: [{ label: 'Stock report', href: 'https://shop.example/stock' }], revision: 'r3' });
+```
+
+- **The application keeps its proposals.** The inbox lives as long as the
+  page; filing the same `id` again replaces it, and `withdraw(id)` takes one
+  back, so an application refiles what is still open when it connects. A
+  shipped module has the same `propose`, `withdraw` and `onDecision` in its
+  context; `kernel.propose`, `kernel.decide` and the `mail` events serve a
+  host that renders its own inbox.
+- **Only the person decides.** The decision reaches the application over its
+  own control channel, never as a contract operation, so neither the
+  assistant nor another module can accept a proposal, whatever their grants.
+- **One decision at a time, and honest about failure.** A double click makes
+  one call. An application that is not running (`OS0110`), or that refuses
+  (`OS0112`, for instance because the `revision` it expected moved), leaves
+  the proposal pending with the reason shown.
+- **Shown as text.** Titles and summaries are bounded text, evidence links go
+  to http(s) pages only, and the application's name comes from its manifest.
+  A proposal of a kind the manifest does not declare is refused (`OS0107`), as
+  is one that does not match the schema (`OS0108`).
+
 ## Settings: one place for every application
 
 `@tangleai/os/settings` is the desktop's Settings. It is the one place a

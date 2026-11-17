@@ -19,7 +19,7 @@ export type AssistantViewState = {
   progress?: { stage?: string, step?: number } | null, links?: { id: string, label: string }[],
   notice?: string | null, error?: string | null, conversation?: Json,
 };
-export type AssistantViewIntent = { type: 'open' } | { type: 'close' } | { type: 'link', id: string };
+export type AssistantViewIntent = { type: 'open' } | { type: 'close' } | { type: 'link', id: string } | { type: 'retry' };
 export type AssistantViewTransport = {
   start(message: string, context: { conversation: Json, signal: AbortSignal }): string | Promise<string>;
   cancel(runId: string): void | Promise<void>;
@@ -112,6 +112,7 @@ const ACTIONS = {
   'ai/send': { effects: [{ run: 'view-start' }] },
   'ai/cancel': { effects: [{ run: 'view-cancel' }] },
   'view/link': { effects: [{ run: 'view-intent', with: { type: 'link', id: '$payload.id' } }] },
+  'view/retry': { effects: [{ run: 'view-intent', with: { type: 'retry' } }] },
   'view/starting': { patch: [{ op: 'replace', path: '/local/starting', value: true }, { op: 'replace', path: '/local/startError', value: null }] },
   'view/started': { patch: [{ op: 'replace', path: '/local/starting', value: false }, { op: 'replace', path: '/local/draft', value: '$payload' }] },
   'view/start-failed': { patch: [{ op: 'replace', path: '/local/starting', value: false }, { op: 'replace', path: '/local/startError', value: '$payload' }] },
@@ -141,6 +142,7 @@ function project({ host, local, presentation: shown }: any, messages: AssistantM
     error: host.error ? messages['error/detail']({ detail: host.error }) : '',
     startError: local.startError === null ? '' : messages['view/start-failed']({ detail: local.startError }),
     cancelError: local.cancelError === null ? '' : messages['view/cancel-failed']({ detail: local.cancelError }),
+    canRetry: host.status === 'failed' && !local.starting, retryLabel: messages['view/retry'](),
   };
 }
 
@@ -158,7 +160,7 @@ export function mountAssistantView(node: HTMLElement | null, options: AssistantV
   // the person leaving is not a cancellation: disposal aborts a start in
   // flight and never cancels the host's run
   const lifetime = new AbortController();
-  let app: any, disposed = false, closing: Promise<void> | undefined, starting = false, cancelling = false;
+  let app: any, disposed = false, closing: Promise<void> | undefined, starting = false, cancelling = false, wasOpen = options.open ?? false;
   // An outcome counts only for the request it answers: each start and each
   // report gets a number, and a settle under an older number changes nothing.
   let start = 0, report = 0, sent = '', cancelled: string | null = null;
@@ -206,7 +208,16 @@ export function mountAssistantView(node: HTMLElement | null, options: AssistantV
   }, {
     node, document: node?.ownerDocument, schedule: options.schedule, onError: options.onError,
     eventFields: formEventFields(), effects,
-    afterRender: () => md?.hydrate(node),
+    afterRender: () => {
+      md?.hydrate(node);
+      // closing the panel returns focus to its launcher rather than to the page's start
+      const open = app?.getState().local.open === true;
+      // (only when focus was lost with the panel, never taken from elsewhere on the page)
+      const active = node?.ownerDocument.activeElement;
+      if (wasOpen && !open && typeof node?.querySelector === 'function' && (!active || active === node.ownerDocument.body))
+        (node.querySelector('.ai-launch') as HTMLElement | null)?.focus();
+      wasOpen = open;
+    },
     viewModel: (state: any) => ({ ui: { assistant: project(state, messages, renderMarkdown) } }),
   });
   const detach = keepFragments(node);

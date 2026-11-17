@@ -381,10 +381,10 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 - [ ] **A host's own database, review inbox and document authoring.** *Wanted:* the MAS store and the run log running on a
   host-supplied `@jarenjs/db` Store and inside a host transaction, over a
   published model fragment of Tangle's collections, with the run log in an
-  entry whose closure is small; a capability declaration (contract documents,
-  context reads, proposal kinds with review policy, a prompt pack), a proposal
-  envelope and a headless review inbox with a view-only, catalogued rendering
-  that also lists MAS interaction pauses; and a formula author (the `$formula`
+  entry whose closure is small; the review inbox listing MAS interaction
+  pauses beside the proposals applications file (the desktop's mail already is
+  that inbox for proposals: see the OS [README](../components/os/README.md)),
+  with a capability's review policy and prompt pack; and a formula author (the `$formula`
   grammar, profile, compile gate and repair loop) with revision-checked
   propose/accept adapters for app, view, form and flow documents outside
   Studio. *Constraint:* the inbox is the interaction inbox the staged-authoring
@@ -398,33 +398,26 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   a generated formula compiling and evaluating against sample rows, and a
   proposed app version refused on a stale revision.
 
-- [ ] **A browser operating system for Tangle suites.** Applications built on
-  Jaren and Tangle each run their own cockpit, so a person working across
-  several of them switches tabs, signs in per product, and has no assistant
-  that can act across them; nothing lets a person or the assistant build a
-  small module of their own beside them. *Wanted:* `@tangleai/os`, a browser
-  desktop where a module is a JSON manifest plus the `@jarenjs/contract`
-  operations it serves and needs, and the OS gives it a window, one theme and
-  language, a launcher entry, mail to the person and to other modules, and one
-  assistant that sees every granted contract as tools; modules, themes,
-  backgrounds and screensavers that a person or the assistant designs are
-  documents run by Jaren's engines; the Pages site becomes its first host and
-  an application suite joins as another by importing the package.
-  *Constraint:* authored artifacts are documents, never script in the shell's
-  origin; a module authored from a document runs in a sandboxed frame and
-  never sees a key; contracts are the only bus; the mail is the one review and
-  interaction inbox the entry above names; every visible sentence comes from
-  the twelve catalogues, and layouts mirror for right-to-left. *Stands on:*
-  `@jarenjs/app`, `@jarenjs/contract/port`, `@jarenjs/studio`, `@jarenjs/db`
-  over SQLite-wasm, the assistant, `toolboxFromContract`, and Tangle's program
-  recursion. Measured 2026-11-14: the configured model wrote no working app
-  document from a bare instruction (0 of 10; five passed the Studio gate), and
-  29 of 33 over three trials with a grammar crib and one working example,
-  judged by behaviour against a declared interface; a sandboxed frame booted Jaren's runtime in 29 ms and answered a
-  contract call in 4.6 ms. *Closes on:* a neutral application on its own
-  origin joining the desktop through the packed package with a window, the
-  theme, mail and assistant tools; and the published rate at which the
-  assistant turns a plain request into a module that passes a behaviour gate.
+- [ ] **Applications authored on the desktop.** `@tangleai/os` is the
+  desktop, documented in its [README](../components/os/README.md): an
+  application suite hosts it or joins it, from a submodule or by URL, with its
+  windows, theme, language, mail, Settings and the assistant's tools, and
+  Tangle's Pages site is its first host. What stays open is the assistant
+  turning a person's plain request into a module of its own. *Wanted:* the
+  assistant authoring a module document from a request, gated by its
+  behaviour, and run as a document module. *Constraint:* an authored module is
+  a document, never script in the shell's origin; it runs isolated (a
+  sandboxed frame today, Jaren's `safe: 'interactive'` profile once measured
+  to hold the same boundary) and never sees a key; every visible sentence comes
+  from the twelve catalogues and layouts mirror for right-to-left (the shell's
+  own catalogue, Settings and the Calendar's section are English-only today).
+  *Stands on:* the grammar
+  crib and seed, the Studio gate and the behaviour probe. Measured 2026-11-14:
+  the configured model wrote no working app document from a bare instruction
+  (0 of 10; five passed the Studio gate), and 29 of 33 over three trials with
+  a grammar crib and one working example, judged by behaviour against a
+  declared interface. *Closes on:* the published rate at which the assistant
+  turns a plain request into a module that passes a behaviour gate.
 
 ## Reuse of the suite
 
@@ -476,17 +469,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   hand-built inputs. *Constraint:* the settings pane has its own layout,
   secret fields and per-field help, which the generated form must carry.
   *Closes on:* the desktop settings tests and a visual check in every locale.
-- [ ] **The Pages playground without a port.** *Wanted:* the playground built
-  from what `@jarenjs/play`, `@jarenjs/app` and `@jarenjs/forms` export,
-  rather than as a TypeScript port of the upstream site's boundaries.
-  *Constraint:* the port drifts. 0.188.0 found it four fixes behind the
-  upstream site: the option switch, number text, referenced schemas and input
-  guards. Its compiled locale catalogues are duplicated beside the game's, its
-  draft label reads `$schema` by substring rather than through
-  `detectSchemaDraft`, and it passes Play's renderers and validator on every
-  call rather than at `createPlayComponent`. *Closes on:* the Pages revamp
-  hosting Play with no copied site boundary, the playground tests passing
-  unchanged.
 
 ## The loop that runs the workflows
 

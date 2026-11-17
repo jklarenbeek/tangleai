@@ -53,9 +53,22 @@ export function createRoutedClient(options: {
       for (const [index, route] of routes.entries()) {
         if (!route?.client?.complete || typeof route.identity !== 'string' || !route.identity)
           throw new TypeError('a model route needs client and identity');
-        request.signal?.throwIfAborted();
+        // a stop before the route starts is reported like any other, so every route tried has one event
+        const stoppedEvent = (outcome: 'aborted' | 'budget', errorCode: string): ModelRouteEvent => ({
+          ...context, identity: route.identity, fallback: index, started: false, limits, outcome, ms: 0, usage: null,
+          schemaBytes: request.responseFormat?.schema ? new TextEncoder().encode(JSON.stringify(request.responseFormat.schema)).length : 0,
+          finishReason: null, errorCode,
+        });
+        if (request.signal?.aborted) {
+          const reason = request.signal.reason;
+          options.onRoute?.(stoppedEvent('aborted', (reason as any)?.code ?? (reason as any)?.name ?? 'AbortError'));
+          request.signal.throwIfAborted();
+        }
         const stopped = options.account?.stop();
-        if (stopped) throw new AiError('AI0006', String(stopped), { outcome: 'budget' });
+        if (stopped) {
+          options.onRoute?.(stoppedEvent('budget', 'AI0006'));
+          throw new AiError('AI0006', String(stopped), { outcome: 'budget' });
+        }
         const controller = new AbortController();
         const remaining = options.account?.remaining?.().ms;
         const deadline = Math.min(limits.deadlineMs ?? Infinity, remaining ?? Infinity);
@@ -65,7 +78,7 @@ export function createRoutedClient(options: {
         let timer;
         const started = performance.now();
         const event: ModelRouteEvent = {
-          ...context, identity: route.identity, fallback: index, limits, outcome: 'provider', ms: 0, usage: null,
+          ...context, identity: route.identity, fallback: index, started: true, limits, outcome: 'provider', ms: 0, usage: null,
           schemaBytes: request.responseFormat?.schema ? new TextEncoder().encode(JSON.stringify(request.responseFormat.schema)).length : 0,
           finishReason: null, errorCode: null
         };
@@ -131,9 +144,11 @@ export type ModelRouteEvent = ModelContext & {
   identity: string;
   /** 0 for the first route, then each fallback in order. */
   fallback: number;
+  /** Whether the call went out; `false` for a route stopped before it started (the caller's abort, the account's budget). */
+  started: boolean;
   limits: ModelLimits;
-  /** `provider` while running; then how the route ended. */
-  outcome: 'provider' | 'complete' | 'timeout' | 'aborted' | 'token-limit';
+  /** `provider` while running; then how the route ended (`budget`: the account stopped it before it started). */
+  outcome: 'provider' | 'complete' | 'timeout' | 'aborted' | 'token-limit' | 'budget';
   ms: number;
   /** The provider's usage, when it reported one. */
   usage: any;

@@ -124,7 +124,7 @@ export function transportFailure(err: any, url: string): any {
   if (err?.name === 'AbortError') return err;
   return new AiError('AI0002',
     `network error calling ${url}: ${err?.message ?? err}`,
-    { status: 0, cause: err });
+    { status: 0, cause: err, outcome: 'network' });
 }
 
 /**

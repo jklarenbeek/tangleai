@@ -89,4 +89,5 @@ export const ar = {
     : p.stage ? `الخطوة ${num(p.step)} — ${p.stage}` : `الخطوة ${num(p.step)}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `تعذّر بدء المهمة: ${p.detail}` : 'تعذّر بدء المهمة.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `تعذّر إلغاء المهمة: ${p.detail}` : 'تعذّر إلغاء المهمة.',
+  'view/retry': 'إعادة المحاولة',
 } satisfies Required<AssistantCatalogue>;

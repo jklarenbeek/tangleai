@@ -92,4 +92,5 @@ export const fr = {
     : p.stage ? `Étape ${number.format(p.step)} — ${p.stage}` : `Étape ${number.format(p.step)}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `La tâche n’a pas pu être démarrée : ${p.detail}` : 'La tâche n’a pas pu être démarrée.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `La tâche n’a pas pu être annulée : ${p.detail}` : 'La tâche n’a pas pu être annulée.',
+  'view/retry': 'Réessayer',
 } satisfies Required<AssistantCatalogue>;

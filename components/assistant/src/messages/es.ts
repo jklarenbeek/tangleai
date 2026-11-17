@@ -92,4 +92,5 @@ export const es = {
     : p.stage ? `Paso ${number.format(p.step)} — ${p.stage}` : `Paso ${number.format(p.step)}`,
   'view/start-failed': (p: { detail?: string }) => p.detail ? `No se pudo iniciar la tarea: ${p.detail}` : 'No se pudo iniciar la tarea.',
   'view/cancel-failed': (p: { detail?: string }) => p.detail ? `No se pudo cancelar la tarea: ${p.detail}` : 'No se pudo cancelar la tarea.',
+  'view/retry': 'Reintentar',
 } satisfies Required<AssistantCatalogue>;
