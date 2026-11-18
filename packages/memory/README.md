@@ -47,6 +47,16 @@ npm run emit:policy -- --check
 
 The drift check validates the immutable live evidence, regenerates the expected artifact in memory, checks the registry reference and probes the public runtime behavior. `npm run policy:generate` writes a default only from a complete eligible confirmation; regenerate declarations with `npm run emit:policy` after a contract change. Contract compatibility is checked against the committed v1 fixture.
 
+## Contradictions resolved as one operation
+
+`resolveContradictions` marks the older unit superseded and stores the judge's
+synthesized resolution as one operation. A store that offers the optional
+`mutate({ put, delete })` (the in-memory `createMemoryUnitStore` does) writes
+both or neither; on any other store the resolution is written first and taken
+back if the loser cannot be written. A loser already superseded, by this winner
+in a replayed pass or by another in a concurrent one, is counted in
+`applicationSkips` and never written again.
+
 ## Temporal memory
 
 `@tangleai/memory/temporal` adds explicit occurrence and claim identity, cited

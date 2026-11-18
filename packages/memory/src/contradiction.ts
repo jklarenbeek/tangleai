@@ -179,22 +179,34 @@ export async function resolveContradictions(
     const supersededAt = options.now();
     const loser = await store.get(older.id);
     if (!loser) { applicationSkips++; continue; } // a prior pass or a host raced us
+    // already resolved: by this winner (a replayed pass) or by another (a concurrent winner); neither writes again
+    if (loser.supersededBy !== undefined) { applicationSkips++; continue; }
     loser.supersededBy = newer.id;
     loser.supersededAt = supersededAt;
     loser.supersededReason = verdict.reason ?? 'contradiction detected';
-    await store.put(loser);
 
-    if (verdict.resolution !== undefined && verdict.resolution !== newer.text) {
-      const resolution = createMemoryUnit({
+    const resolution = verdict.resolution !== undefined && verdict.resolution !== newer.text
+      ? createMemoryUnit({
         text: verdict.resolution,
         evidence: `contradiction resolution of ${older.id} by ${newer.id}: ${verdict.reason ?? 'contradiction detected'}`,
         tags: [...new Set([...older.tags, ...newer.tags, 'resolution'])],
         at: supersededAt,
         kind: 'summary',
-      });
+      })
+      : null;
+    // the loser and its resolution land together or not at all
+    if (resolution && store.mutate) await store.mutate({ put: [resolution, loser] });
+    else if (resolution) {
       await store.put(resolution);
-      resolutions.push(resolution);
+      try { await store.put(loser); }
+      catch (error) {
+        // the loser did not take: take the resolution back, so nothing of the operation remains
+        await store.delete(resolution.id);
+        throw error;
+      }
     }
+    else await store.put(loser);
+    if (resolution) resolutions.push(resolution);
     contradictions++;
   }
 

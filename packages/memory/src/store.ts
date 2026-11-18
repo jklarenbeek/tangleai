@@ -33,6 +33,13 @@ export interface MemoryStore {
   put(unit: MemoryUnit): Promise<void>;
   delete(id: string): Promise<void>;
   list(): Promise<MemoryUnit[]>;
+  /**
+   * Optional: apply several writes as one, or none of them. A store that
+   * offers it applies every put and delete or throws having applied none;
+   * an operation that changes several units (a contradiction resolved with a
+   * synthesized resolution) uses it when it is there.
+   */
+  mutate?(change: { put?: MemoryUnit[], delete?: string[] }): Promise<void>;
 }
 
 export interface MemoryUnitStoreOptions {
@@ -67,6 +74,15 @@ export function createMemoryUnitStore(options: MemoryUnitStoreOptions = {}): Mem
     },
     async list() {
       return [...units.values()].map((u) => clone(u));
+    },
+    async mutate(change) {
+      // every unit is checked before anything is written, so a refusal leaves the store as it was
+      for (const unit of change.put ?? []) {
+        const outcome = validate(unit);
+        if (outcome.valid !== true) throw callerError(`memory unit rejected by schema: ${JSON.stringify(outcome.errors?.[0] ?? null)}`);
+      }
+      for (const unit of change.put ?? []) units.set(unit.id, clone(unit));
+      for (const id of change.delete ?? []) units.delete(id);
     },
   };
 }

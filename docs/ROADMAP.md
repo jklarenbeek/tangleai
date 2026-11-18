@@ -73,11 +73,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   the default stays off. Hosts own actual provider budgets, cadence and lifecycle;
   no desktop timer or automatic pipeline integration is shipped. Historical
   predecessor policies are not a blanket commitment to port all 22 modules.
-- [ ] **Atomic contradiction resolution.** The current resolver supersedes a
-  loser before storing a synthesized resolution. A persistence failure can leave
-  that operation partially applied. Qualify a shared atomic mutation contract
-  with rollback, concurrent winner and replay tests before exposing transactional
-  guarantees; consolidation uses its own immutable batch activation.
 - [ ] **Experiential learning, live.** *Wanted:* an authorized training and
   evaluation run over a registered domain, a configuration adapter component
   that includes the learned artifact reference in the run identity, and a local

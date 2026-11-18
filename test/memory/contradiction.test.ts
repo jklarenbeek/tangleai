@@ -180,3 +180,55 @@ describe('judge contract', () => {
     assert.equal(CONTRADICTION_VERDICT_SCHEMA.additionalProperties, false);
   });
 });
+
+describe('resolving a contradiction as one operation', () => {
+  const judge = async () => ({ contradiction: true, reason: 'moved', resolution: 'office moved from Arnhem to Nijmegen' });
+  async function seeded(store = createMemoryUnitStore()) {
+    const a = unit('a', 'office in Arnhem', EARLY, [1, 0]);
+    const b = unit('b', 'office in Nijmegen', LATE, [1, 0]);
+    await store.put(a); await store.put(b);
+    return { store, pairs: [{ a, b, similarity: 1 }] as any };
+  }
+
+  it('writes the loser and its resolution together where the store can, and none of them when one is refused', async () => {
+    const { store, pairs } = await seeded();
+    const outcome = await resolveContradictions(store, pairs, { judge, now });
+    assert.equal(outcome.contradictions, 1);
+    assert.equal((await store.get('a'))?.supersededBy, 'b');
+    assert.equal(outcome.resolutions.length, 1);
+    assert.ok(await store.get(outcome.resolutions[0].id));
+    // the atomic write refuses a unit that does not validate, having written nothing
+    const before = await store.list();
+    await assert.rejects(store.mutate!({ put: [{ ...before[0], text: 'changed' }, { id: 'bad' } as any] }));
+    assert.deepEqual(await store.list(), before);
+  });
+
+  it('takes the resolution back when the loser cannot be written, on a store without the atomic write', async () => {
+    const inner = createMemoryUnitStore();
+    let failLoser = true;
+    const store = { get: inner.get, list: inner.list, delete: inner.delete, put: async (u: MemoryUnit) => { if (u.id === 'a' && u.supersededBy && failLoser) throw new Error('disk full'); return inner.put(u); } };
+    const { pairs } = await seeded(store as any);
+    await assert.rejects(resolveContradictions(store as any, pairs, { judge, now }), /disk full/);
+    const left = await inner.list();
+    assert.deepEqual(left.map(u => u.id).sort(), ['a', 'b'], 'no resolution is left behind');
+    assert.equal(left.find(u => u.id === 'a')?.supersededBy, undefined);
+    failLoser = false;
+    assert.equal((await resolveContradictions(store as any, pairs, { judge, now })).contradictions, 1, 'and a later pass applies it whole');
+  });
+
+  it('applies a replayed pass once, and leaves a loser another winner took to that winner', async () => {
+    const { store, pairs } = await seeded();
+    await resolveContradictions(store, pairs, { judge, now });
+    const replay = await resolveContradictions(store, pairs, { judge, now });
+    assert.equal(replay.contradictions, 0);
+    assert.equal(replay.applicationSkips, 1);
+    assert.equal((await store.list()).filter(u => u.tags.includes('resolution')).length, 1, 'one resolution, not two');
+
+    const raced = await seeded();
+    const loser = (await raced.store.get('a'))!;
+    await raced.store.put({ ...loser, supersededBy: 'c', supersededAt: NOW, supersededReason: 'another pass' });
+    const outcome = await resolveContradictions(raced.store, raced.pairs, { judge, now });
+    assert.equal(outcome.contradictions, 0);
+    assert.equal((await raced.store.get('a'))?.supersededBy, 'c', 'the first winner keeps it');
+  });
+});
