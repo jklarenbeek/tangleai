@@ -1,5 +1,14 @@
 # @tangleai/trading
 
+## 0.58.1
+
+### Patch Changes
+
+- bdf7736: Choosing a language in Settings now outranks a `?lang=` the link carried, so the desktop starts again in the chosen one. A browser check proves that the assistant and Jaren's applications follow the one language choice, and that a right-to-left assistant reply mirrors its lists, quotes and table cells; a column the Markdown aligns itself keeps the physical side Jaren's renderer writes, as the assistant's README now says.
+- Updated dependencies [bdf7736]
+  - @tangleai/mas@0.58.1
+  - @tangleai/gmpl@0.58.1
+
 ## 0.58.0
 
 ### Minor Changes
