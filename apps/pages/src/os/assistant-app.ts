@@ -11,6 +11,7 @@ import type { ShippedMount } from '@tangleai/os/shell';
 import type { Preferences, ProviderKind } from './preferences.ts';
 import { providerLabel } from './settings-app.ts';
 import { t } from './i18n.ts';
+import { assistantMessages } from './language.ts';
 
 const SYSTEM = [
   'You are the assistant of Tangle OS, a desktop in the browser where every application is a window.',
@@ -58,6 +59,7 @@ export function assistantMount(kernel: Kernel, prefs: Preferences, openSettings:
         settingsHint: t('assistant/settings-hint'),
         aiStorage, aiChat: prefs.chat, toolbox: liveToolbox(kernel, extra?.toolbox), system: extra ? `${SYSTEM}\n\n${extra.system}` : SYSTEM,
         lang: context.locale, dir: context.dir,
+        ...(assistantMessages() ? { messages: assistantMessages() } : {}),
         onError: (error) => console.error(error),
       });
       // the panel's own close button would leave only its launcher; in a

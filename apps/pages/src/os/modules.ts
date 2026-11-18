@@ -5,7 +5,7 @@
  * and one document module (a to-do list, run in a sandboxed frame, that
  * reaches the desktop only through its granted `os` effect).
  */
-import type { Kernel, LocalizedText, ModuleManifest } from '@tangleai/os';
+import type { Kernel, LocalizedText, ModuleManifest, OsCatalogue } from '@tangleai/os';
 import type { ShippedMount } from '@tangleai/os/shell';
 import { assistantMount } from './assistant-app.ts';
 import { settingsSections, initialSection } from './settings-app.ts';
@@ -59,7 +59,7 @@ export function builtinModules(): ModuleManifest[] {
 
   const SETTINGS: ModuleManifest = {
     $module: '0.1', id: 'settings', version: '1.0.0', category: 'system',
-    title: localizedText(englishOf('apps/settings'), t('apps/settings'), shipped('Instellingen', 'Einstellungen', 'Réglages', 'Ajustes', 'Definições', 'الإعدادات', '設定', '설정', 'Настройки', 'Ayarlar', '設定')),
+    title: localizedText(englishOf('apps/settings'), t('apps/settings'), shipped('Instellingen', 'Einstellungen', 'Paramètres', 'Configuración', 'Configurações', 'الإعدادات', '設定', '설정', 'Настройки', 'Ayarlar', '設定')),
     icon: { glyph: 'gear', hue: 215 },
     host: { kind: 'shipped', mount: 'settings' },
     // the desktop's Settings (`@tangleai/os/settings`): shows a section when asked
@@ -148,7 +148,7 @@ export function builtinModules(): ModuleManifest[] {
 }
 
 /** The shipped components this desktop registers. */
-export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel, prefs: Preferences, open: (id: string) => void, surfaces: { mounts: Record<string, ShippedMount>, toolbox: any, system: string } }): Record<string, ShippedMount> {
+export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel, prefs: Preferences, open: (id: string) => void, surfaces: { mounts: Record<string, ShippedMount>, toolbox: any, system: string }, chrome?: { messages?: OsCatalogue, locale?: string } }): Record<string, ShippedMount> {
   const mounts: Record<string, ShippedMount> = {
     ...host.surfaces.mounts,
     welcome: welcomeMount(host.open),
@@ -183,6 +183,6 @@ export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel,
     },
   };
   // the desktop's Settings: the site's own sections, then every application's
-  mounts.settings = settingsModule({ kernel: host.kernel, shipped: mounts, sections: settingsSections(host.prefs), initial: () => initialSection(host.prefs) }).mount;
+  mounts.settings = settingsModule({ kernel: host.kernel, shipped: mounts, ...(host.chrome ?? {}), sections: settingsSections(host.prefs), initial: () => initialSection(host.prefs) }).mount;
   return mounts;
 }

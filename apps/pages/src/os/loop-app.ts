@@ -22,12 +22,18 @@ const labels = (): Record<string, string> => ({
 /** The question asked when the field is empty: the observations are English, so the recall asks in English. */
 const DEFAULT_QUESTION = 'What is the current API rate limit?';
 
+/** A stage of the pipeline as the steps and the diagram name it. */
+const stageLabel = (id: string) => ({
+  observations: t('loop/stage-observations'), embed: t('loop/stage-embed'), novelty: t('loop/stage-novelty'),
+  contradiction: t('loop/stage-contradiction'), crystallize: t('loop/stage-crystallize'), report: t('loop/stage-report'),
+} as Record<string, string>)[id]?.replace(/"/g, "'") ?? id;
+
 function nodes(records: DagNodeRecord[]): any {
   const byId = new Map(records.map(r => [r.id, r]));
   return ['ol', { class: 'loop-nodes', 'aria-label': t('loop/steps') }, [...PIPELINE_NODES].map((id) => {
     const record = byId.get(id);
     return ['li', { key: id, class: `loop-node ${record ? record.status : 'idle'}` },
-      ['span', { class: 'loop-node-name' }, id],
+      ['span', { class: 'loop-node-name' }, stageLabel(id)],
       record ? ['span', { class: 'loop-node-ms' }, t('loop/ms', { value: Math.round(record.ms * 100) / 100 })] : null];
   })];
 }
@@ -86,7 +92,9 @@ export const loopMount: ShippedMount = (node) => {
   // so the caption says it instead
   const chain = dagToMermaid().split('\n')
     .filter(line => !/^\w+ -->\|[^|]*\| report$/.test(line) || line.startsWith('crystallize '))
-    .join('\n').replace(/^flowchart TD/m, 'flowchart LR').replace(/-->\|[^|]*\|/g, '-->').replace(/\[\[([^\]]+)\]\]/g, '($1)');
+    .join('\n').replace(/^flowchart TD/m, 'flowchart LR').replace(/-->\|[^|]*\|/g, '-->').replace(/\[\[([^\]]+)\]\]/g, '($1)')
+    // the stages keep the document's ids; their labels are the person's language
+    .replace(/^(\w+)(\(\[|\(\(\(|\()\1(\]\)|\)\)\)|\))$/gm, (_all, id, open, close) => `${id}${open}"${stageLabel(id)}"${close}`);
   const diagram = renderMermaid(chain, { theme: 'host' });
   const embedder = createOfflineEmbedder();
   let store: MemoryStore = createMemoryUnitStore();

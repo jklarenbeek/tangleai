@@ -14,8 +14,17 @@ import {
   type Preferences, type ProviderKind, type Scheme,
 } from './preferences.ts';
 import { englishOf, localizedKeywords, localizedText, t } from './i18n.ts';
+import { LANGUAGES, resolveLanguage } from './language.ts';
 
 /** The wallpaper patterns, by what they look like. */
+/** A theme kit's name and line in the desktop's language (a kit a host adds keeps its own). */
+const kitText = (id: string): [string, string] | undefined => ({
+  loom: [t('appearance/kit-loom'), t('appearance/kit-loom-about')],
+  topograph: [t('appearance/kit-topograph'), t('appearance/kit-topograph-about')],
+  risograph: [t('appearance/kit-risograph'), t('appearance/kit-risograph-about')],
+  cyanotype: [t('appearance/kit-cyanotype'), t('appearance/kit-cyanotype-about')],
+  tide: [t('appearance/kit-tide'), t('appearance/kit-tide-about')],
+} as Record<string, [string, string]>)[id];
 const patternNames = (): Record<string, string> => ({ weave: t('appearance/pattern-weave'), contours: t('appearance/pattern-contours'), halftone: t('appearance/pattern-halftone'), sunprint: t('appearance/pattern-sunprint'), moire: t('appearance/pattern-moire') });
 /** A provider's name as the person reads it: product names as written, the generic endpoint in their language. */
 export const providerLabel = (kind: ProviderKind) => kind === 'custom' ? t('providers/custom') : PROVIDER_KINDS[kind].label;
@@ -367,12 +376,20 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
         return h('label', { class: 'tos-field tos-slider' }, h('span', {}, label), input);
       };
 
+      // one language for the whole desktop: the browser's, or the person's; it starts again in it
+      const languagePicker = () => {
+        const browser = LANGUAGES.find(l => l.code === resolveLanguage('system', navigator.languages ?? [navigator.language]))!;
+        const select = h('select', { id: 'tos-language', onchange: () => { prefs.writeDesktop({ language: select.value }); location.reload(); } },
+          h('option', { value: 'system', selected: desk.language === 'system' }, t('appearance/language-system', { language: browser.name })),
+          ...LANGUAGES.map(l => h('option', { value: l.code, lang: l.code, selected: desk.language === l.code }, l.name))) as HTMLSelectElement;
+        return h('div', { class: 'tos-field' }, h('label', { for: 'tos-language' }, t('appearance/language')), select, h('p', { class: 'tos-muted' }, t('appearance/language-note')));
+      };
       // the kits, each previewed with its own wallpaper in the current scheme
       const gallery = h('div', { class: 'tos-kits', role: 'radiogroup', 'aria-label': t('appearance/theme') },
         ...THEME_KITS.map(kit => h('button', {
           type: 'button', role: 'radio', class: 'tos-kit', 'aria-checked': String(kit.id === desk.kit), 'data-kit': kit.id,
           onclick: () => { prefs.writeDesktop({ kit: kit.id, custom: {} }); redraw(); },
-        }, preview(kit.id), h('span', { class: 'tos-kit-name' }, kit.name), h('span', { class: 'tos-kit-text' }, kit.description))));
+        }, preview(kit.id), h('span', { class: 'tos-kit-name' }, kitText(kit.id)?.[0] ?? kit.name), h('span', { class: 'tos-kit-text' }, kitText(kit.id)?.[1] ?? kit.description))));
 
       const accentPicker = h('input', { type: 'color', value: custom.accent ?? composed.tokens['--accent'].slice(0, 7), 'aria-label': t('appearance/accent-colour') }) as HTMLInputElement;
       accentPicker.addEventListener('input', () => setCustom({ accent: accentPicker.value }, false));
@@ -420,6 +437,7 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
       put(
         h('h2', {}, t('appearance/title')),
         choices<Scheme>('tos-scheme', t('appearance/mode'), [['system', t('appearance/mode-system')], ['light', t('appearance/mode-light')], ['dark', t('appearance/mode-dark')]], desk.scheme, (v) => { prefs.writeDesktop({ scheme: v }); redraw(); }),
+        languagePicker(),
         h('h3', {}, t('appearance/theme')), gallery,
         h('h3', {}, t('appearance/make-yours')),
         accents, knot, patterns,

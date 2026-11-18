@@ -14,12 +14,26 @@ import { mountDesktop, type SuiteDocument } from '@tangleai/os/shell';
 import { builtinModules, shippedMounts } from './modules.ts';
 import { createPreferences } from './preferences.ts';
 import { createSurfaces } from './surfaces.ts';
+import { setPagesLanguage, setPagesMessages } from './i18n.ts';
+import { catalogues, dirOf, resolveLanguage, setActiveLanguage } from './language.ts';
 
 // The assistant may call every served contract of the desktop's own applications;
 // an application the person added reaches it only when they allowed that.
 // this page has no server, so the desktop's state (the dock, the applications' settings) is kept in this
 // browser; an application with a server passes contractStore over its own backend instead
 const state = (() => { try { return webStorageStore(localStorage); } catch { return undefined; } })();
+const prefs = createPreferences(window);
+// one language for everything the desktop draws: the person's choice, or the browser's (`?lang=` for a link or a test)
+const asked = new URLSearchParams(location.search).get('lang');
+const sentinel = asked === 'sentinel';
+const language = sentinel ? 'en' : resolveLanguage(asked ?? prefs.desktop().language, navigator.languages ?? [navigator.language]);
+const packs = catalogues(sentinel ? 'sentinel' : language);
+setPagesLanguage(language);
+setPagesMessages(packs.pages);
+setActiveLanguage(sentinel ? 'en' : language);
+document.documentElement.lang = language;
+document.documentElement.dir = dirOf(language);
+const chrome = { ...(packs.os ? { messages: packs.os } : {}), ...(language !== 'en' ? { locale: language } : {}) };
 const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox, ...(state ? { state } : {}) });
 for (const manifest of builtinModules()) {
   const installed = kernel.install(manifest, 'shipped');
@@ -30,7 +44,7 @@ for (const manifest of builtinModules()) {
 // them (the file system's top holds the data studio's databases), and Markdown drawn by Jaren, escaped
 const filesRoot = (navigator.storage as any)?.getDirectory?.().then((top: FileSystemDirectoryHandle) => top.getDirectoryHandle('tangle-files', { create: true }));
 const files = filesModule({
-  kernel,
+  kernel, ...chrome,
   ...(filesRoot ? { browser: browserLocation(filesRoot) } : {}),
   previewers: [(node, file) => {
     if (file.entry.type !== 'text/markdown') return false;
@@ -46,14 +60,13 @@ let buildInfo: Promise<any> | null = null;
 const json = (url: string) => fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null);
 const build = () => (buildInfo ??= Promise.all([json('./build.json'), json('./os-build.json')]).then(([release, os]) => release && { ...release, jaren: os?.jaren }));
 
-const prefs = createPreferences(window);
 const node = document.getElementById('desktop')!;
 // the work surfaces (Studio, Playground, Flow, Data, the adventure) share one
 // composition; their tools join the assistant, and their links open windows
 const surfaces = createSurfaces(window, { settings: () => prefs.ai(), open: (id) => { desktop.open(id); } });
 const desktop = mountDesktop(node, {
   kernel,
-  shipped: { ...shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces }), files: files.mount },
+  shipped: { ...shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces, chrome }), files: files.mount },
   documentHost: './os-module.html',
   // a phone gets one maximized window at a time
   compact: { below: 720 },
@@ -61,8 +74,9 @@ const desktop = mountDesktop(node, {
   themeFor: (scheme) => prefs.theme(scheme),
   // the dock's switch is an explicit choice: it stops following the system
   onSchemeSwitch: (scheme) => { prefs.writeDesktop({ scheme }, 'dock'); },
-  locale: document.documentElement.lang || 'en',
-  dir: (document.documentElement.dir as 'ltr' | 'rtl') || 'ltr',
+  locale: language,
+  dir: dirOf(language),
+  ...(packs.os ? { messages: packs.os } : {}),
 });
 
 // the person's appearance: applied when it changes, and when the system's

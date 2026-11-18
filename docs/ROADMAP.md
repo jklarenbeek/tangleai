@@ -364,19 +364,22 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   stylesheet. *Stands on:* the stylesheet is Jaren's. *Closes on:* the
   Markdown stylesheet setting no physical side.
 
-- [ ] **The desktop app and the Pages site in every language.** Tangle is used
-  globally and must allow English and every language `@jarenjs/locales` ships:
-  Dutch, German, French, Spanish, Portuguese, Arabic, Japanese, Korean,
-  Russian, Turkish and Traditional Chinese. The assistant does; the desktop app
-  and the Pages site write their visible English as literals outside any
-  catalogue, and their stylesheets assume left-to-right. *Wanted:* their
-  visible text from catalogues with the same eleven packs, and layouts that
-  mirror for right-to-left. *Constraint:* the formal register the assistant
-  uses; no English left beyond named owners. *Stands on:*
-  `@jarenjs/core/message`, the assistant's packs and its key-sentinel census.
-  *Closes on:* a key-sentinel render of their pinned screens finding no literal
-  outside a catalogue, and a render in each language finding no English beyond
-  named owners.
+- [ ] **The compiled desktop app and the Pages site in every language.**
+  Tangle is used globally and must allow English and every language
+  `@jarenjs/locales` ships: Dutch, German, French, Spanish, Portuguese,
+  Arabic, Japanese, Korean, Russian, Turkish and Traditional Chinese. The
+  assistant, the OS chrome (`@tangleai/os/messages/*`) and the Pages desktop
+  (`apps/pages/src/os`, one choice in Settings → Appearance, Arabic mirrored)
+  do, each checked by a sentinel render and a render per language. The
+  compiled desktop app (`apps/desktop`) and the Pages site's other pages
+  (the home page and its demos outside the desktop) still write their visible
+  English as literals outside any catalogue. *Wanted:* their visible text from
+  catalogues with the same eleven packs, and layouts that mirror for
+  right-to-left. *Constraint:* the formal register the other packs use; no
+  English left beyond named owners. *Stands on:* `@jarenjs/core/message`, the
+  packs above and their sentinel checks. *Closes on:* a sentinel render of
+  their pinned screens finding no literal outside a catalogue, and a render in
+  each language finding no English beyond named owners.
 
 - [ ] **A host's own database and document authoring.** *Wanted:* the MAS store and the run log running on a
   host-supplied `@jarenjs/db` Store and inside a host transaction, over a
@@ -406,8 +409,7 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   sandboxed frame today, Jaren's `safe: 'interactive'` profile once measured
   to hold the same boundary) and never sees a key; every visible sentence comes
   from the twelve catalogues and layouts mirror for right-to-left (the shell,
-  Settings and Files have all twelve; the Pages desktop's own applications,
-  the Calendar among them, are English-only today).
+  Settings, Files and the Pages desktop's own applications have all twelve).
   *Stands on:* the grammar
   crib and seed, the Studio gate and the behaviour probe. Measured 2026-11-14:
   the configured model wrote no working app document from a bare instruction

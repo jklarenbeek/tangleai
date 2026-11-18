@@ -170,6 +170,19 @@ export const pagesMessagesEn = {
   // ── Settings: Appearance ──
   'appearance/title': 'Appearance', // Settings: name of the Appearance section, and its heading
   'appearance/keywords': 'theme, dark, light, wallpaper, colour, color, accent, kit', // Settings search: comma-separated words that find the Appearance section
+  'appearance/language': 'Language', // Appearance section: label of the menu that picks the desktop's language
+  'appearance/language-system': 'Same as this browser ({language})', // Appearance section: the first option, which follows the browser's language; {language} is that language's own name
+  'appearance/language-note': 'The desktop starts again in the language you choose.', // Appearance section: hint under the language menu
+  'appearance/kit-loom': 'Loom', // Appearance section: the name of the "Loom" theme kit (a look named after a printing or drawing technique)
+  'appearance/kit-loom-about': 'Threads woven across fog, with knots where they cross.', // Appearance section: one line under the "Loom" theme kit describing its wallpaper
+  'appearance/kit-topograph': 'Topograph', // Appearance section: the name of the "Topograph" theme kit (a look named after a printing or drawing technique)
+  'appearance/kit-topograph-about': 'A surveyor\'s sheet: contour lines of a landscape that is only yours.', // Appearance section: one line under the "Topograph" theme kit describing its wallpaper
+  'appearance/kit-risograph': 'Risograph', // Appearance section: the name of the "Risograph" theme kit (a look named after a printing or drawing technique)
+  'appearance/kit-risograph-about': 'Two fluorescent inks printed a hair off register.', // Appearance section: one line under the "Risograph" theme kit describing its wallpaper
+  'appearance/kit-cyanotype': 'Cyanotype', // Appearance section: the name of the "Cyanotype" theme kit (a look named after a printing or drawing technique)
+  'appearance/kit-cyanotype-about': 'Plants laid on blue paper and left in the sun.', // Appearance section: one line under the "Cyanotype" theme kit describing its wallpaper
+  'appearance/kit-tide': 'Tide', // Appearance section: the name of the "Tide" theme kit (a look named after a printing or drawing technique)
+  'appearance/kit-tide-about': 'Two swells meeting, drawn as rings that interfere.', // Appearance section: one line under the "Tide" theme kit describing its wallpaper
   'appearance/mode': 'Mode', // Appearance section: legend of the light/dark choice
   'appearance/mode-system': 'Follow the system', // Appearance section: mode choice that follows the device
   'appearance/mode-light': 'Light', // Appearance section: mode choice for the light scheme
@@ -299,6 +312,12 @@ export const pagesMessagesEn = {
   // Memory loop window: the policy the run uses; each flag is on or off, {dims} the embedding's dimensions
   'loop/policy': (p: { novelty: boolean, contradiction: boolean, crystallization: boolean, dims: number }) =>
     `Novelty ${p.novelty ? 'on' : 'off'}, contradiction ${p.contradiction ? 'on' : 'off'}, crystallization ${p.crystallization ? 'on' : 'off'}; ${p.dims}-dimension hash matching in this browser.`,
+  'loop/stage-observations': 'observations', // Memory loop: a node of the pipeline diagram, the stage that does the observations it reads (one or two words)
+  'loop/stage-embed': 'embed', // Memory loop: a node of the pipeline diagram, the stage that does turning text into vectors (one or two words)
+  'loop/stage-novelty': 'novelty', // Memory loop: a node of the pipeline diagram, the stage that does checking what is new (one or two words)
+  'loop/stage-contradiction': 'contradiction', // Memory loop: a node of the pipeline diagram, the stage that does checking what contradicts (one or two words)
+  'loop/stage-crystallize': 'crystallize', // Memory loop: a node of the pipeline diagram, the stage that does merging into lasting memory (one or two words)
+  'loop/stage-report': 'report', // Memory loop: a node of the pipeline diagram, the stage that does the counts it reports (one or two words)
   'loop/observations': 'Observations', // Memory loop report: how many observations went in
   'loop/gated': 'Repeats gated', // Memory loop report: how many repeats were kept out
   'loop/resolved': 'Contradictions resolved', // Memory loop report: how many contradictions were resolved
