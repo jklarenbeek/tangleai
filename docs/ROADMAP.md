@@ -352,17 +352,16 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   did; no benchmark claim reaches a surface before the matrix above has put a
   number behind it. *Closes on:* n/a — surface work, held to the content rule.
 
-- [ ] **Markdown direction in a translated assistant reply.**
-  `@tangleai/assistant` renders every sentence of its panel and its view-only
-  entry, and the accessible names Jaren's Markdown renderer writes into a
-  reply, from one message catalogue with English and a pack for each of the
-  eleven languages `@jarenjs/locales` ships; a render of every pinned state in
-  each pack shows no assistant-owned English, and its own stylesheet sets no
-  physical side. Jaren's Markdown stylesheet still sets physical sides (list
-  indents, the quote rule, table alignment, the copy button), so a
-  right-to-left reply does not mirror. *Wanted:* a direction-neutral Markdown
-  stylesheet. *Stands on:* the stylesheet is Jaren's. *Closes on:* the
-  Markdown stylesheet setting no physical side.
+- [ ] **Aligned table columns in a right-to-left assistant reply.** A
+  translated reply mirrors: Jaren's Markdown stylesheet sets logical sides only,
+  so a right-to-left reply indents its lists, rules its quotes and starts its
+  cells on the right (checked in Chromium and Firefox). A column the Markdown
+  aligns itself (`:---`, `---:`) is written by Jaren's renderer as an inline
+  `text-align: left` or `right`, which stays on that physical side in a
+  right-to-left reply. *Wanted:* aligned columns that follow the reply's
+  direction. *Stands on:* the renderer is Jaren's (asked upstream: `start` and
+  `end` for the GFM alignments). *Closes on:* an aligned column of a
+  right-to-left reply aligning to the reply's start and end.
 
 - [ ] **The compiled desktop app and the Pages site in every language.**
   Tangle is used globally and must allow English and every language

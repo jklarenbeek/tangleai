@@ -85,3 +85,23 @@ for (const lang of ['ar', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt', 'ru', 'tr', 
     }
   });
 }
+
+test('one choice reaches the assistant and Jaren\'s applications too, and the picker outranks a link\'s language', async ({ page }) => {
+  const assistant = Object.values(await import('../../components/assistant/src/messages/de.ts'))[0];
+  await page.addInitScript(() => localStorage.setItem('tangle-os-welcomed', '1'));
+  await page.goto('/?lang=de');
+  await page.waitForFunction(() => window.tangleOs?.kernel);
+  await page.evaluate(() => { window.tangleOs.desktop.open('assistant'); window.tangleOs.desktop.open('calculator'); });
+  const ai = page.locator('.tos-window[data-module="assistant"] .tos-content');
+  await expect(ai).toContainText(typeof assistant['settings/api-key'] === 'string' ? assistant['settings/api-key'] : 'API-Schlüssel');
+  // the Calculator's modes come from Jaren's own German locale
+  await expect(page.locator('.tos-window[data-module="calculator"] .tos-content')).toContainText('Wissenschaftlich');
+  // picking Dutch in Settings drops the link's German and starts again in Dutch
+  await page.evaluate(() => window.tangleOs.desktop.openSettings());
+  await page.evaluate(() => window.tangleOs.desktop.focus(window.tangleOs.desktop.state().windows.find(w => w.module === 'settings').id));
+  await page.locator('.tos-settings-nav [data-section="appearance"]').click();
+  await Promise.all([page.waitForEvent('load'), page.locator('#tos-language').selectOption('nl')]);
+  await page.waitForFunction(() => window.tangleOs?.kernel);
+  expect(new URL(page.url()).searchParams.has('lang')).toBe(false);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'nl');
+});

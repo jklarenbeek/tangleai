@@ -379,7 +379,11 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
       // one language for the whole desktop: the browser's, or the person's; it starts again in it
       const languagePicker = () => {
         const browser = LANGUAGES.find(l => l.code === resolveLanguage('system', navigator.languages ?? [navigator.language]))!;
-        const select = h('select', { id: 'tos-language', onchange: () => { prefs.writeDesktop({ language: select.value }); location.reload(); } },
+        const select = h('select', { id: 'tos-language', onchange: () => {
+          prefs.writeDesktop({ language: select.value });
+          // the person's choice outranks a language the link carried
+          const url = new URL(location.href); url.searchParams.delete('lang'); location.replace(url.href);
+        } },
           h('option', { value: 'system', selected: desk.language === 'system' }, t('appearance/language-system', { language: browser.name })),
           ...LANGUAGES.map(l => h('option', { value: l.code, lang: l.code, selected: desk.language === l.code }, l.name))) as HTMLSelectElement;
         return h('div', { class: 'tos-field' }, h('label', { for: 'tos-language' }, t('appearance/language')), select, h('p', { class: 'tos-muted' }, t('appearance/language-note')));

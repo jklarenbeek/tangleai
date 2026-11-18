@@ -31,3 +31,28 @@ for (const dir of ['ltr', 'rtl']) {
     await page.evaluate(() => window.directionView.dispose());
   });
 }
+
+// a reply is Jaren's Markdown in Jaren's stylesheet, which sets logical sides only: in a right-to-left
+// reply the list indent, the quote rule and the cells start on the right, and diagram source stays code
+test('a right-to-left reply mirrors its lists, quotes and tables', async ({ page }) => {
+  const { parseMarkdown, toHtml } = await import('@jarenjs/md');
+  const md = readFileSync(new URL('../../node_modules/@jarenjs/md/styles/md.css', import.meta.url), 'utf8');
+  const html = toHtml(parseMarkdown('- أولًا\n- ثانيًا\n\n> اقتباس من المصدر\n\n| العمود | القيمة |\n|---|---|\n| أ | ١ |\n'));
+  for (const dir of ['ltr', 'rtl']) {
+    await page.setContent(`<style>${md}</style><article class="md" dir="${dir}" lang="${dir === 'rtl' ? 'ar' : 'en'}" style="inline-size:600px">${html}</article>`);
+    const sides = await page.evaluate(() => {
+      const s = (sel) => getComputedStyle(document.querySelector(sel));
+      return { listLeft: parseFloat(s('.md ul').paddingLeft), listRight: parseFloat(s('.md ul').paddingRight), quoteLeft: parseFloat(s('.md blockquote').borderLeftWidth), quoteRight: parseFloat(s('.md blockquote').borderRightWidth) };
+    });
+    const cell = await page.locator('.md td').first().boundingBox(), table = await page.locator('.md table').boundingBox();
+    if (dir === 'rtl') {
+      expect(sides.listRight).toBeGreaterThan(0); expect(sides.listLeft).toBe(0);
+      expect(sides.quoteRight).toBe(3); expect(sides.quoteLeft).toBe(0);
+      expect(Math.round(cell.x + cell.width)).toBeGreaterThanOrEqual(Math.round(table.x + table.width) - 1);
+    } else {
+      expect(sides.listLeft).toBeGreaterThan(0); expect(sides.listRight).toBe(0);
+      expect(sides.quoteLeft).toBe(3); expect(sides.quoteRight).toBe(0);
+      expect(Math.round(cell.x)).toBeLessThanOrEqual(Math.round(table.x) + 1);
+    }
+  }
+});

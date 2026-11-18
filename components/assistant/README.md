@@ -136,9 +136,12 @@ and Chinese count with counters. Both mounts take `lang`
 and `dir` (`ltr`, `rtl` or `auto`) and write them on the assistant's root;
 without them the page's language and direction apply. The stylesheet sets no
 physical side, so with `dir: 'rtl'` the launcher and the panel sit at the left
-edge and the panel's own layout mirrors. A Markdown reply keeps the sides
-Jaren's Markdown stylesheet sets (list indents, the quote rule, table
-alignment) until that stylesheet is direction-neutral.
+edge and the panel's own layout mirrors. A Markdown reply mirrors too: Jaren's
+Markdown stylesheet sets logical sides only, so a right-to-left reply indents
+its lists, rules its quotes and starts its table cells on the right (checked in
+Chromium and Firefox); diagram source stays left to right, as code. A column the
+Markdown aligns itself (`:---`, `---:`) keeps the physical side Jaren's
+renderer writes for it.
 
 The accessible names Jaren's Markdown renderer writes into a reply (the
 footnotes heading, page breaks, heading permalinks and footnote
