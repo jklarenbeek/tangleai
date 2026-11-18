@@ -211,7 +211,7 @@ Longitude and latitude are numeric mirrors in each JSON row; the declared
 gazetteer and cell indexes materialize their own native scalar columns. No
 longitude/latitude index, derived bounding box or R-tree is created.
 
-The [registered candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale-2026-11-06.json)
+The [registered candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale-2026-11-18.json)
 keeps the in-memory sweep after both Node and Bun meet the target on the
 50,000-entry sparse synthetic workload. Bbox and R-tree trials remain
 untriggered. That measurement reuses the internal candidate owner; synthetic

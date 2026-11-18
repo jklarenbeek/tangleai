@@ -78,10 +78,11 @@ export async function tradingSource(): Promise<Source> {
     'scripts/trading-artifacts.ts', 'scripts/trading-sources.ts', 'test/fixtures/trading-prompts.json'],
   ['benchmark/fixtures/trading', 'packages/trading', 'test/trading', 'prompts/trading', 'packages/gmpl', 'packages/mas', 'packages/store', 'packages/agents', 'packages/models', 'packages/context', 'packages/config', 'packages/core']);
 }
-export async function buildTradingReport(options: { source?: Source } = {}): Promise<Trading> {
+/** `suite`: the release a committed report was measured with, so a rebuild reproduces it; the current one otherwise. */
+export async function buildTradingReport(options: { source?: Source, suite?: Trading['suite'] } = {}): Promise<Trading> {
   const fixture = await loadTradingFixture(), rows = await tradingControlRows(fixture), poison = await auditTradingPoison(fixture), mechanisms = await measureTradingMechanisms(fixture);
   const payload: Omit<Trading, 'reportId'> = { instrument: 'trading', version: 1, source: options.source ?? await tradingSource(),
-    suite: { tangle: rootPackage.version, jaren: jarenPackage.version }, fixture: { id: fixture.manifest.id, sha256: fixture.sha256, licence: fixture.manifest.licence },
+    suite: options.suite ?? { tangle: rootPackage.version, jaren: jarenPackage.version }, fixture: { id: fixture.manifest.id, sha256: fixture.sha256, licence: fixture.manifest.licence },
     registration: fixture.strategies, conventions: tradingConventions(fixture.manifest), rows, poison, mechanisms, counts: tradingCounts(rows), capabilities: tradingCapabilities(rows, poison, mechanisms),
     identity: analyticEnvelope(rows.map(r => r.id)) as Trading['identity'], limitations: LIMITATIONS,
     paper: await measureTradingPaperProfile(), live: { status: 'not-run', reason: 'no spend approval', fresh: 0, replayed: 0 }, ablations: await measureTradingAblations(fixture),
@@ -99,7 +100,8 @@ export async function validateTradingReport(value: unknown, fixture?: TradingFix
   const { reportId, ...payload } = report;
   same(reportId, await canonicalSha256(payload), 'report identity');
   same(report.source.sha256, await canonicalSha256({ head: report.source.head, files: report.source.files }), 'source identity');
-  same(report.suite, { tangle: rootPackage.version, jaren: jarenPackage.version }, 'suite identity');
+  // the Tangle release is when it was measured, not what it measured; a Jaren move is a different foundation
+  same(report.suite.jaren, jarenPackage.version, 'suite identity');
   same(report.fixture, { id: loaded.manifest.id, sha256: loaded.sha256, licence: loaded.manifest.licence }, 'fixture identity');
   same(report.registration, loaded.strategies, 'registered strategy coverage');
   same(report.conventions, tradingConventions(loaded.manifest), 'metric conventions');

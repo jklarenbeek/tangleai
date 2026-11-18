@@ -911,6 +911,8 @@ async function observeContracts(loaded: LoadedFixture): Promise<{
 export interface ReportOptions extends LoadOptions {
   /** Frozen source manifest, so a test can pin determinism. */
   source?: SourceManifest;
+  /** The release a committed report was measured with, so a rebuild reproduces it; the current one otherwise. */
+  suite?: { tangle: string, jaren: string };
 }
 
 interface Analytic { oracleRow: Row, randomRow: Row, ceiling: number, draw: ReturnType<typeof randomDraw>, poolSize: number }
@@ -1180,7 +1182,7 @@ async function assemble(options: ReportOptions): Promise<Trace2skillReport> {
       instrument: 'trace2skill',
       version: 1,
       source: options.source ?? loaded.source,
-      suite: { tangle: rootPackage.version, jaren: jarenPackage.version },
+      suite: options.suite ?? { tangle: rootPackage.version, jaren: jarenPackage.version },
       fixtureId: loaded.fixtureId,
       registrationId: await registrationIdOf(loaded),
       splits: {

@@ -72,7 +72,10 @@ describe('skill-evolution instrument', () => {
   });
 
   it('the committed report is exactly what the command produces', async () => {
-    const fresh = await buildTrace2SkillReport();
+    // the Tangle release is when it was measured, not what it measured; the Jaren foundation must be this one
+    const committed = JSON.parse(await readFile(REPORT_PATH, 'utf8'));
+    assert.equal(committed.suite.jaren, (await import('@jarenjs/json/package.json', { with: { type: 'json' } })).default.version, 'measured on this Jaren foundation');
+    const fresh = await buildTrace2SkillReport({ suite: committed.suite });
     assert.equal(renderReport(fresh), await readFile(REPORT_PATH, 'utf8'));
     assert.equal(renderDocument(fresh), await readFile(DOCUMENT_PATH, 'utf8'));
   });

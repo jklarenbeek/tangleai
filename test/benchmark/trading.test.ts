@@ -177,7 +177,7 @@ describe('registered trading measurement', () => {
     const committed = JSON.parse(await readFile('benchmark/results/trading.json', 'utf8')) as Trading;
     assert.equal((await validateTradingReport(committed)).valid, true);
     const current = await tradingSource(); assert.deepEqual(committed.source.files, current.files);
-    const rebuilt = await buildTradingReport({ source: committed.source });
+    const rebuilt = await buildTradingReport({ source: committed.source, suite: committed.suite });
     assert.equal(renderReport(rebuilt), await readFile('benchmark/results/trading.json', 'utf8'));
     assert.equal(renderDocument(rebuilt), await readFile('docs/TRADING_BENCHMARK.md', 'utf8'));
   });

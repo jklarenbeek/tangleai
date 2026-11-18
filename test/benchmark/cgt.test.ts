@@ -216,9 +216,9 @@ it('CGT reproduces every committed measurement byte and keeps actual runtime pro
   equalBytes(renderReport(fresh), renderReport(report), 'same-runtime report bytes');
   const committed = await validateCgtReport(JSON.parse(await readFile(join(root, REPORT_PATH), 'utf8')));
   // Cross-runtime reproduction retains every observation and changes only the
-  // host's observed Node/Bun versions and the identity that binds those versions.
+  // host's observed Node/Bun versions, the Tangle release it runs on, and the identity that binds them.
   const expected = await rehash({ ...committed, runtime: { ...committed.runtime,
-    node: process.versions.node, bun: process.versions.bun ?? null } });
+    node: process.versions.node, bun: process.versions.bun ?? null, tangle: report.runtime.tangle } });
   equalBytes(renderReport(report), renderReport(expected), 'committed measurement and source bytes');
   equalBytes(renderDocument(committed), await readFile(join(root, DOCUMENT_PATH), 'utf8'), 'committed document bytes');
   await verifyCgtReport(report, root);
