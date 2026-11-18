@@ -12,6 +12,7 @@ import type { ShippedMount } from '@tangleai/os/shell';
 import { mountPageHost } from '../demos/host.ts';
 import { mountTransferControls } from '../demos/transfer-controls.ts';
 import { SYSTEM_PROMPT } from '../demos/playground/toolbox.ts';
+import { t } from './i18n.ts';
 
 /** Which application a former page link opens. */
 export const SURFACE_OF: Record<string, string> = { project: 'studio', studio: 'studio', play: 'playground', flow: 'flow', data: 'data', game: 'adventure' };
@@ -71,7 +72,7 @@ export function createSurfaces(win: any, options: { settings: () => any, open: (
     node.classList.add('tos-surface', 'tos-transfer');
     const lead = doc.createElement('p');
     lead.className = 'tos-transfer-lead';
-    lead.textContent = 'Export your projects, sessions, conversation and game to a file, or import such a file into empty places. Settings and keys never leave this browser. Close other Tangle tabs first.';
+    lead.textContent = t('surfaces/transfer-lead');
     const controls = doc.createElement('div');
     controls.id = 'data-transfer-controls';
     node.append(lead, controls);

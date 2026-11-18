@@ -12,19 +12,23 @@ import { createOfflineEmbedder, createPipeline, dagToMermaid, PIPELINE_NODES, ty
 import type { ShippedMount } from '@tangleai/os/shell';
 import integration from '../../../../benchmark/results/jaren-integration.json' with { type: 'json' };
 import { OBSERVATIONS } from '../loop-data.ts';
+import { t } from './i18n.ts';
 
-const LABELS: Record<string, string> = {
-  'long-context': 'Full conversation', 'near-raw': 'Raw dialogue', 'rag-observation': 'Observations',
-  'rag-summary': 'Session summaries', 'long-horizon': 'Bounded agent', near: 'Historical Tangle',
-};
+/** The measured strategies, by what each puts in front of the model. */
+const labels = (): Record<string, string> => ({
+  'long-context': t('loop/strategy-long-context'), 'near-raw': t('loop/strategy-near-raw'), 'rag-observation': t('loop/strategy-rag-observation'),
+  'rag-summary': t('loop/strategy-rag-summary'), 'long-horizon': t('loop/strategy-long-horizon'), near: t('loop/strategy-near'),
+});
+/** The question asked when the field is empty: the observations are English, so the recall asks in English. */
+const DEFAULT_QUESTION = 'What is the current API rate limit?';
 
 function nodes(records: DagNodeRecord[]): any {
   const byId = new Map(records.map(r => [r.id, r]));
-  return ['ol', { class: 'loop-nodes', 'aria-label': 'Pipeline steps' }, [...PIPELINE_NODES].map((id) => {
+  return ['ol', { class: 'loop-nodes', 'aria-label': t('loop/steps') }, [...PIPELINE_NODES].map((id) => {
     const record = byId.get(id);
     return ['li', { key: id, class: `loop-node ${record ? record.status : 'idle'}` },
       ['span', { class: 'loop-node-name' }, id],
-      record ? ['span', { class: 'loop-node-ms' }, `${Math.round(record.ms * 100) / 100} ms`] : null];
+      record ? ['span', { class: 'loop-node-ms' }, t('loop/ms', { value: Math.round(record.ms * 100) / 100 })] : null];
   })];
 }
 
@@ -32,44 +36,44 @@ function view(state: any, diagram: any): any {
   const r = state.report;
   return ['div', { class: 'loop' },
     ['header', { class: 'loop-head' },
-      ['h1', {}, 'The memory loop'],
-      ['p', {}, 'Six observations go in: a repeat, a paraphrase, and two rate limits that cannot both be true. The loop keeps what is new, merges what is the same, and resolves what conflicts, with evidence on every record.']],
-    ['figure', { class: 'loop-diagram' }, diagram, ['figcaption', {}, 'Drawn from the same jaren-dag document the pipeline executes; every stage also writes its counts to the report.']],
+      ['h1', {}, t('loop/title')],
+      ['p', {}, t('loop/lead')]],
+    ['figure', { class: 'loop-diagram' }, diagram, ['figcaption', {}, t('loop/caption')]],
     ['section', { class: 'loop-run' },
-      ['button', { type: 'button', class: 'primary', disabled: state.running ? true : null, on: { click: 'run' } }, state.ran ? 'Run it again' : 'Run the loop'],
-      ['p', { class: 'loop-policy' }, `Novelty ${DEFAULT_MEMORY_POLICY.novelty.enabled ? 'on' : 'off'}, contradiction ${DEFAULT_MEMORY_POLICY.contradiction.enabled ? 'on' : 'off'}, crystallization ${DEFAULT_MEMORY_POLICY.crystallization.enabled ? 'on' : 'off'}; ${DEFAULT_MEMORY_POLICY.embedding.dims}-dimension hash matching in this browser.`],
+      ['button', { type: 'button', class: 'primary', disabled: state.running ? true : null, on: { click: 'run' } }, state.ran ? t('loop/run-again') : t('loop/run')],
+      ['p', { class: 'loop-policy' }, t('loop/policy', { novelty: DEFAULT_MEMORY_POLICY.novelty.enabled, contradiction: DEFAULT_MEMORY_POLICY.contradiction.enabled, crystallization: DEFAULT_MEMORY_POLICY.crystallization.enabled, dims: DEFAULT_MEMORY_POLICY.embedding.dims })],
       nodes(state.records),
       r ? ['dl', { class: 'loop-report' },
-        ['div', {}, ['dt', {}, 'Observations'], ['dd', {}, String(r.observations)]],
-        ['div', {}, ['dt', {}, 'Repeats gated'], ['dd', {}, String(r.novelty.filtered)]],
-        ['div', {}, ['dt', {}, 'Contradictions resolved'], ['dd', {}, String(r.contradiction.contradictions)]],
-        ['div', {}, ['dt', {}, 'Paraphrases merged'], ['dd', {}, String(r.crystallize.merged)]],
-        ['div', {}, ['dt', {}, 'Live records'], ['dd', {}, `${r.memories.live} of ${r.memories.total}`]]] : null],
+        ['div', {}, ['dt', {}, t('loop/observations')], ['dd', {}, String(r.observations)]],
+        ['div', {}, ['dt', {}, t('loop/gated')], ['dd', {}, String(r.novelty.filtered)]],
+        ['div', {}, ['dt', {}, t('loop/resolved')], ['dd', {}, String(r.contradiction.contradictions)]],
+        ['div', {}, ['dt', {}, t('loop/merged')], ['dd', {}, String(r.crystallize.merged)]],
+        ['div', {}, ['dt', {}, t('loop/live')], ['dd', {}, t('loop/live-of', { live: r.memories.live, total: r.memories.total })]]] : null],
     state.ran ? ['section', { class: 'loop-ask' },
-      ['h2', {}, 'Ask the memory'],
+      ['h2', {}, t('loop/ask')],
       ['form', { on: { submit: { action: 'ask', preventDefault: true } } },
-        ['input', { type: 'text', value: state.question, placeholder: 'What is the current API rate limit?', 'aria-label': 'Question', on: { input: { action: 'question', event: ['value'] } } }],
-        ['button', { type: 'submit', class: 'primary' }, 'Recall']],
-      state.answer ? (state.answer.results.length === 0 ? ['p', { class: 'loop-empty' }, 'Nothing recalled. Run the loop first.']
+        ['input', { type: 'text', value: state.question, placeholder: t('loop/question-placeholder'), 'aria-label': t('loop/question'), on: { input: { action: 'question', event: ['value'] } } }],
+        ['button', { type: 'submit', class: 'primary' }, t('loop/recall')]],
+      state.answer ? (state.answer.results.length === 0 ? ['p', { class: 'loop-empty' }, t('loop/nothing-recalled')]
         : ['ul', { class: 'loop-hits' }, state.answer.results.map((hit: any, i: number) => ['li', { key: String(i) },
           ['span', { class: 'loop-score' }, hit.score], ['span', { class: 'loop-text' }, hit.text], ['span', { class: 'loop-evidence' }, hit.evidence]])]) : null] : null,
     ['section', { class: 'loop-measured' },
-      ['h2', {}, 'Measured, losses included'],
-      ['p', {}, `History measured on JarenJS ${integration.jaren}, ${integration.measuredAt}. An ordered cursor returns the same 50 runs while loading 50 records instead of 5,000.`],
+      ['h2', {}, t('loop/measured')],
+      ['p', {}, t('loop/history', { version: integration.jaren, date: integration.measuredAt })],
       ['table', {},
-        ['thead', {}, ['tr', {}, ['th', {}, 'Runtime'], ['th', {}, 'Before, p95'], ['th', {}, 'Cursor, p95'], ['th', {}, 'Faster']]],
+        ['thead', {}, ['tr', {}, ['th', {}, t('loop/runtime')], ['th', {}, t('loop/before')], ['th', {}, t('loop/cursor')], ['th', {}, t('loop/faster')]]],
         ['tbody', {}, integration.history.map((row: any) => ['tr', { key: row.runtime },
-          ['td', {}, `${row.runtime} ${row.version}`], ['td', {}, `${row.previousP95Ms.toFixed(2)} ms`], ['td', {}, `${row.boundedP95Ms.toFixed(2)} ms`], ['td', {}, `${row.p95Speedup.toFixed(2)}×`]])]],
-      ['p', {}, `Dated answer measurements with ${integration.paid.model}: F1 is answer overlap, recall is how much gold evidence reached the model.`],
+          ['td', {}, `${row.runtime} ${row.version}`], ['td', {}, t('loop/ms', { value: row.previousP95Ms.toFixed(2) })], ['td', {}, t('loop/ms', { value: row.boundedP95Ms.toFixed(2) })], ['td', {}, `${row.p95Speedup.toFixed(2)}×`]])]],
+      ['p', {}, t('loop/answers', { model: integration.paid.model })],
       ['table', {},
-        ['thead', {}, ['tr', {}, ['th', {}, 'Strategy'], ['th', {}, 'Valid replies'], ['th', {}, 'F1'], ['th', {}, 'Recall']]],
+        ['thead', {}, ['tr', {}, ['th', {}, t('loop/strategy')], ['th', {}, t('loop/valid')], ['th', {}, t('loop/f-score')], ['th', {}, t('loop/recall-column')]]],
         ['tbody', {}, integration.paid.qa.rows.map((row: any) => ['tr', { key: row.key },
-          ['td', {}, LABELS[row.key] ?? row.key],
+          ['td', {}, labels()[row.key] ?? row.key],
           ['td', {}, row.key === 'long-horizon' ? `${integration.bounded.current.valid}/${integration.bounded.current.planned}` : `${row.answered - row.invalid}/${row.planned}`],
           ['td', {}, (row.key === 'long-horizon' ? integration.bounded.current.f1 : row.f1)?.toFixed(3) ?? '—'],
           ['td', {}, (row.key === 'long-horizon' ? integration.bounded.current.recall : row.ceiling)?.toFixed(3) ?? '—']])]],
-      ['p', { class: 'loop-note' }, 'These are historical measurements with different coverage per strategy; they do not establish current answer quality. ',
-        ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/JARENJS_BENCHMARK.md', target: '_blank', rel: 'noopener' }, 'Methods and raw results']]],
+      ['p', { class: 'loop-note' }, t('loop/note'),
+        ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/JARENJS_BENCHMARK.md', target: '_blank', rel: 'noopener' }, t('loop/methods')]]],
   ];
 }
 
@@ -109,7 +113,7 @@ export const loopMount: ShippedMount = (node) => {
           .then((report) => { if (live) dispatch('run/done', report); });
       },
       recall: (props: any, dispatch: (a: string, p?: unknown) => void) => {
-        const question = typeof props.question === 'string' && props.question !== '' ? props.question : 'What is the current API rate limit?';
+        const question = typeof props.question === 'string' && props.question !== '' ? props.question : DEFAULT_QUESTION;
         void Promise.all([store.list(), embedder.embed([question])]).then(([units, [vector]]) => {
           const { ranked } = recallByEmbedding(units, vector, { identity: { model: embedder.model, dims: embedder.dims } });
           if (live) dispatch('ask/done', { results: ranked.map(({ unit, score }: any) => ({ score: score.toFixed(3), text: unit.text, evidence: unit.evidence })) });

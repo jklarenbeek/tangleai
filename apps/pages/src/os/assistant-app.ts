@@ -8,7 +8,9 @@
 import { mountAssistant } from '@tangleai/assistant/component';
 import type { Kernel } from '@tangleai/os';
 import type { ShippedMount } from '@tangleai/os/shell';
-import { PROVIDER_KINDS, type Preferences, type ProviderKind } from './preferences.ts';
+import type { Preferences, ProviderKind } from './preferences.ts';
+import { providerLabel } from './settings-app.ts';
+import { t } from './i18n.ts';
 
 const SYSTEM = [
   'You are the assistant of Tangle OS, a desktop in the browser where every application is a window.',
@@ -50,10 +52,10 @@ export function assistantMount(kernel: Kernel, prefs: Preferences, openSettings:
 
     function mount() {
       handle = mountAssistant(host, {
-        title: 'Assistant', launchTitle: 'Open the assistant', open: true,
-        intro: 'Ask about anything on this desktop. The assistant can use every application that is open and has granted it access.',
-        capabilities: ['Search and read what open applications serve', 'Answer with the application it used', 'Keep the conversation in this browser'],
-        settingsHint: 'Your key stays in this browser and is sent only to its own provider. Settings has every provider, the model list and your starred models.',
+        title: t('assistant/title'), launchTitle: t('assistant/launch'), open: true,
+        intro: t('assistant/intro'),
+        capabilities: [t('assistant/can-search'), t('assistant/can-cite'), t('assistant/can-keep')],
+        settingsHint: t('assistant/settings-hint'),
         aiStorage, aiChat: prefs.chat, toolbox: liveToolbox(kernel, extra?.toolbox), system: extra ? `${SYSTEM}\n\n${extra.system}` : SYSTEM,
         lang: context.locale, dir: context.dir,
         onError: (error) => console.error(error),
@@ -79,7 +81,7 @@ export function assistantMount(kernel: Kernel, prefs: Preferences, openSettings:
     footer.className = 'tos-assistant-footer';
     const switcher = doc.createElement('select');
     switcher.className = 'tos-model-switch';
-    switcher.setAttribute('aria-label', 'Model');
+    switcher.setAttribute('aria-label', t('assistant/model'));
     switcher.addEventListener('change', () => {
       const [kind, ...rest] = switcher.value.split(':');
       prefs.use(kind as ProviderKind, rest.join(':'), 'switch');
@@ -91,7 +93,7 @@ export function assistantMount(kernel: Kernel, prefs: Preferences, openSettings:
       switcher.replaceChildren(...options.map(o => {
         const option = doc.createElement('option');
         option.value = `${o.kind}:${o.model}`;
-        option.textContent = `${o.model} · ${PROVIDER_KINDS[o.kind].label}`;
+        option.textContent = `${o.model} · ${providerLabel(o.kind)}`;
         option.selected = o.kind === kind && o.model === model;
         return option;
       }));
@@ -99,7 +101,7 @@ export function assistantMount(kernel: Kernel, prefs: Preferences, openSettings:
     }
     const link = doc.createElement('button');
     link.type = 'button'; link.className = 'tos-link';
-    link.textContent = 'Providers and models';
+    link.textContent = t('assistant/providers');
     link.addEventListener('click', openSettings);
     footer.append(switcher, link);
     node.append(footer);

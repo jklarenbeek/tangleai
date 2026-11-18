@@ -10,6 +10,7 @@ import {
 } from '@jarenjs/core/calendar';
 import { createIntlZoneProvider } from '@jarenjs/locales/intl-zones';
 import { stringifyIcal, parseIcal } from '@jarenjs/josl/ical';
+import { t } from './i18n.ts';
 
 export type Repeat = 'none' | 'daily' | 'weekdays' | 'weekly' | 'monthly' | 'yearly';
 export type Colour = 'teal' | 'blue' | 'violet' | 'rose' | 'amber' | 'slate';
@@ -49,23 +50,23 @@ export function supportedRepeats(): Repeat[] {
 /** What a repeat skips: a monthly date some months lack, or 29 February outside leap years. */
 export function repeatHint(repeat: Repeat, date: string): string {
   const day = Number(date.slice(8, 10)), monthOfYear = date.slice(5, 7);
-  if (repeat === 'monthly' && day >= 29) return `Months without a ${day}${day === 31 ? 'st' : 'th'} are skipped.`;
-  if (repeat === 'yearly' && monthOfYear === '02' && day === 29) return 'Repeats only in leap years.';
+  if (repeat === 'monthly' && day >= 29) return t('calendar/skip-months', { day });
+  if (repeat === 'yearly' && monthOfYear === '02' && day === 29) return t('calendar/leap-years');
   return '';
 }
 
 /** Check and normalise an event a person, the assistant or another module proposes. */
 export function checkEvent(input: Partial<CalendarEvent>): { ok: true, event: CalendarEvent } | { ok: false, error: string } {
   const title = String(input.title ?? '').trim().slice(0, 200);
-  if (!title) return { ok: false, error: 'An event needs a title.' };
-  if (!DATE.test(String(input.date))) return { ok: false, error: 'The date must be YYYY-MM-DD.' };
+  if (!title) return { ok: false, error: t('calendar/needs-title') };
+  if (!DATE.test(String(input.date))) return { ok: false, error: t('calendar/date-format') };
   const allDay = input.allDay === true;
   const start = allDay ? '00:00' : String(input.start ?? '');
   const end = allDay ? '23:59' : String(input.end ?? '');
-  if (!allDay && (!HHMM.test(start) || !HHMM.test(end))) return { ok: false, error: 'Times must be HH:MM.' };
-  if (!allDay && end <= start) return { ok: false, error: 'The event must end after it starts.' };
+  if (!allDay && (!HHMM.test(start) || !HHMM.test(end))) return { ok: false, error: t('calendar/time-format') };
+  if (!allDay && end <= start) return { ok: false, error: t('calendar/end-after') };
   const repeat = (input.repeat ?? 'none') as Repeat;
-  if (!supportedRepeats().includes(repeat)) return { ok: false, error: `Repeating ${repeat} is not available in this calendar engine.` };
+  if (!supportedRepeats().includes(repeat)) return { ok: false, error: t('calendar/repeat-unavailable', { repeat }) };
   const colour = COLOURS.includes(input.colour as Colour) ? input.colour as Colour : 'teal';
   const exdates = Array.isArray(input.exdates) ? input.exdates.filter(d => DATE.test(String(d))).slice(0, 500) : [];
   const uid = typeof input.uid === 'string' && /^[a-z0-9-]{4,64}$/.test(input.uid) ? input.uid : `ev-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -191,7 +192,7 @@ export function importIcal(text: string): { events: CalendarEvent[], skipped: nu
     const exdates = (c.series?.exdates ?? []).map((d: any) => wall(d)?.date).filter(Boolean);
     const checked = checkEvent({
       uid: String(c.uid ?? c.series?.uid ?? '').toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 64) || undefined,
-      title: String(c.summary ?? 'Event'), date: start.date, allDay, repeat, colour: 'blue', exdates,
+      title: String(c.summary ?? t('calendar/untitled')), date: start.date, allDay, repeat, colour: 'blue', exdates,
       ...(allDay ? {} : { start: start.time, end: end?.time && end.date === start.date ? end.time : addMinutes(start.date, start.time!, minutes ?? 60) }),
       ...(c.description ? { notes: String(c.description) } : {}),
     });
@@ -205,8 +206,8 @@ export function seed(doc: CalendarDocument, today: string): CalendarDocument {
   if (doc.seeded || doc.events.length) return { ...doc, seeded: true };
   const monday = (() => { const d = parseDate(today); const back = (d.getDay() + 6) % 7; d.setDate(d.getDate() - back); return isoDate(d); })();
   const events = [
-    checkEvent({ title: 'Plan the week', date: monday, start: '09:30', end: '10:00', repeat: 'weekly', colour: 'violet' }),
-    checkEvent({ title: 'Lunch walk', date: monday, start: '12:30', end: '13:00', repeat: 'weekdays', colour: 'teal' }),
+    checkEvent({ title: t('calendar/seed-plan'), date: monday, start: '09:30', end: '10:00', repeat: 'weekly', colour: 'violet' }),
+    checkEvent({ title: t('calendar/seed-lunch'), date: monday, start: '12:30', end: '13:00', repeat: 'weekdays', colour: 'teal' }),
   ].flatMap(r => r.ok ? [r.event] : []);
   return { ...doc, events, seeded: true };
 }

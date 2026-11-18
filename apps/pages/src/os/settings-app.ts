@@ -9,12 +9,16 @@ import { PROVIDERS, probeProvider } from '@tangleai/models/providers';
 import type { SettingsSection } from '@tangleai/os/settings';
 import { THEME_KITS, composeTheme, patternBackground } from '@tangleai/os';
 
-/** The wallpaper patterns, by what they look like. */
-const PATTERN_NAMES: Record<string, string> = { weave: 'Threads', contours: 'Contours', halftone: 'Halftone', sunprint: 'Sun print', moire: 'Moiré' };
 import {
   ACCENT_SWATCHES, PROVIDER_KINDS, RECOMMENDED_MODELS, VENICE_BASE, cleanCustom, toAiSettings,
   type Preferences, type ProviderKind, type Scheme,
 } from './preferences.ts';
+import { englishOf, localizedKeywords, localizedText, t } from './i18n.ts';
+
+/** The wallpaper patterns, by what they look like. */
+const patternNames = (): Record<string, string> => ({ weave: t('appearance/pattern-weave'), contours: t('appearance/pattern-contours'), halftone: t('appearance/pattern-halftone'), sunprint: t('appearance/pattern-sunprint'), moire: t('appearance/pattern-moire') });
+/** A provider's name as the person reads it: product names as written, the generic endpoint in their language. */
+export const providerLabel = (kind: ProviderKind) => kind === 'custom' ? t('providers/custom') : PROVIDER_KINDS[kind].label;
 
 type ModelRow = { id: string, name: string, context?: number, prompt?: number, completion?: number, tools: boolean, privacy?: string };
 
@@ -25,12 +29,14 @@ const OPENROUTER = 'https://openrouter.ai/api/v1';
  * and Enterprise plans) that keeps inference in Europe or the United States
  * and fails rather than leave it.
  */
-export const OPENROUTER_REGIONS: [string, string][] = [
-  ['', 'Any region (default)'],
-  ['https://eu.openrouter.ai/api/v1', 'Europe · eu.openrouter.ai'],
-  ['https://us.openrouter.ai/api/v1', 'United States · us.openrouter.ai'],
+export const OPENROUTER_REGIONS = ['', 'https://eu.openrouter.ai/api/v1', 'https://us.openrouter.ai/api/v1'] as const;
+/** The region menu: each region's address and its label. */
+const regionChoices = (): [string, string][] => [
+  ['', t('providers/region-any')],
+  [OPENROUTER_REGIONS[1], t('providers/region-eu', { host: 'eu.openrouter.ai' })],
+  [OPENROUTER_REGIONS[2], t('providers/region-us', { host: 'us.openrouter.ai' })],
 ];
-const regionOf = (baseUrl: string) => OPENROUTER_REGIONS.some(([url]) => url && url === baseUrl) ? baseUrl : '';
+const regionOf = (baseUrl: string) => OPENROUTER_REGIONS.some(url => url && url === baseUrl) ? baseUrl : '';
 const LIST_LIMIT = 80;
 
 /** Where a provider's requests go, for the sentence that says so. */
@@ -72,7 +78,9 @@ async function veniceModels(signal: AbortSignal): Promise<ModelRow[]> {
   });
 }
 
-const money = (perMillion?: number) => perMillion === undefined ? '' : perMillion === 0 ? 'free' : `$${perMillion.toFixed(perMillion < 10 ? 2 : 0)}`;
+const money = (perMillion?: number) => perMillion === undefined ? '' : perMillion === 0 ? t('models/free') : `$${perMillion.toFixed(perMillion < 10 ? 2 : 0)}`;
+/** Venice's privacy mark of a model, in the person's language when it is one of the two Venice names. */
+const privacyLabel = (mark: string) => mark === 'private' ? t('models/private') : mark === 'anonymized' ? t('models/anonymized') : mark;
 const tokens = (n?: number) => n === undefined ? '' : n >= 1_000_000 ? `${Math.round(n / 100_000) / 10}M` : `${Math.round(n / 1000)}k`;
 
 type SectionId = 'providers' | 'model' | 'appearance' | 'privacy';
@@ -85,10 +93,10 @@ const keyReady = (prefs: Preferences) => { const k = prefs.active(); return !PRO
  */
 export function settingsSections(prefs: Preferences): SettingsSection[] {
   return [
-    { id: 'providers', title: { en: 'Providers' }, keywords: ['key', 'api key', 'openrouter', 'anthropic', 'endpoint', 'provider'], mount: sectionMount(prefs, 'providers') },
-    { id: 'model', title: { en: 'Models' }, keywords: ['model', 'assistant', 'haiku', 'qwen'], mount: sectionMount(prefs, 'model') },
-    { id: 'appearance', title: { en: 'Appearance' }, keywords: ['theme', 'dark', 'light', 'wallpaper', 'colour', 'color', 'accent', 'kit'], mount: sectionMount(prefs, 'appearance') },
-    { id: 'privacy', title: { en: 'Privacy and data' }, keywords: ['privacy', 'forget', 'storage', 'data', 'reset'], mount: sectionMount(prefs, 'privacy') },
+    { id: 'providers', title: localizedText(englishOf('providers/title'), t('providers/title')), keywords: localizedKeywords(englishOf('providers/keywords'), t('providers/keywords')), mount: sectionMount(prefs, 'providers') },
+    { id: 'model', title: localizedText(englishOf('models/title'), t('models/title')), keywords: localizedKeywords(englishOf('models/keywords'), t('models/keywords')), mount: sectionMount(prefs, 'model') },
+    { id: 'appearance', title: localizedText(englishOf('appearance/title'), t('appearance/title')), keywords: localizedKeywords(englishOf('appearance/keywords'), t('appearance/keywords')), mount: sectionMount(prefs, 'appearance') },
+    { id: 'privacy', title: localizedText(englishOf('privacy/title'), t('privacy/title')), keywords: localizedKeywords(englishOf('privacy/keywords'), t('privacy/keywords')), mount: sectionMount(prefs, 'privacy') },
   ];
 }
 /** Settings opens on the models once a provider is ready, on the providers before. */
@@ -127,64 +135,64 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
 
     // ── providers ──────────────────────────────────────────────────────────
     function renderProviders() {
-      const kind = prefs.active(), info = PROVIDER_KINDS[kind], conn = prefs.connection(kind), desk = prefs.desktop();
+      const kind = prefs.active(), info = PROVIDER_KINDS[kind], label = providerLabel(kind), conn = prefs.connection(kind), desk = prefs.desktop();
       const status = h('p', { class: 'tos-settings-status', role: 'status' });
       const say = (text: string, tone: 'ok' | 'fail' | 'muted' = 'muted') => { status.textContent = text; status.dataset.tone = tone; };
 
       const provider = h('select', { id: 'tos-provider', onchange: () => { prefs.use(provider.value as ProviderKind); show('providers'); } },
-        ...(Object.keys(PROVIDER_KINDS) as ProviderKind[]).map(k => h('option', { value: k, selected: k === kind }, PROVIDER_KINDS[k].label))) as HTMLSelectElement;
+        ...(Object.keys(PROVIDER_KINDS) as ProviderKind[]).map(k => h('option', { value: k, selected: k === kind }, providerLabel(k)))) as HTMLSelectElement;
 
       const key = h('input', {
         id: 'tos-key', type: 'password', autocomplete: 'off', spellcheck: 'false', autocapitalize: 'off',
-        placeholder: kind === 'openrouter' ? 'sk-or-v1-…' : 'API key', value: conn.apiKey,
+        placeholder: kind === 'openrouter' ? 'sk-or-v1-…' : t('providers/key-placeholder'), value: conn.apiKey,
         'data-lpignore': 'true', 'data-1p-ignore': 'true',
-        oninput: () => say('Not saved yet.'),
+        oninput: () => say(t('providers/not-saved')),
         onkeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault(); saveKey(); } },
       }) as HTMLInputElement;
       const reveal = h('button', { type: 'button', class: 'tos-btn', 'aria-pressed': 'false', onclick: () => {
         const shown = key.type === 'text'; key.type = shown ? 'password' : 'text';
-        reveal.textContent = shown ? 'Show' : 'Hide'; reveal.setAttribute('aria-pressed', String(!shown));
-      } }, 'Show');
+        reveal.textContent = shown ? t('providers/show') : t('providers/hide'); reveal.setAttribute('aria-pressed', String(!shown));
+      } }, t('providers/show'));
       function saveKey() {
         key.value = key.value.trim();
         const ok = prefs.setConnection(kind, { apiKey: key.value });
-        say(ok ? (key.value ? `${info.label} key saved in this browser.` : 'Key removed.') : 'This browser refused to save it (private mode or storage full).', ok ? 'ok' : 'fail');
+        say(ok ? (key.value ? t('providers/key-saved', { provider: label }) : t('providers/key-removed')) : t('providers/save-refused'), ok ? 'ok' : 'fail');
         renderOverview();
       }
-      const save = h('button', { type: 'button', class: 'tos-btn primary', onclick: saveKey }, 'Save key');
-      const check = h('button', { type: 'button', class: 'tos-btn', onclick: () => checkKey() }, info.needsKey && kind !== 'custom' ? 'Check key' : 'Test connection');
-      const forget = h('button', { type: 'button', class: 'tos-btn', onclick: () => { prefs.forgetKey(kind); key.value = ''; say(`${info.label} key removed from this browser.`, 'ok'); renderOverview(); } }, 'Forget key');
+      const save = h('button', { type: 'button', class: 'tos-btn primary', onclick: saveKey }, t('providers/save'));
+      const check = h('button', { type: 'button', class: 'tos-btn', onclick: () => checkKey() }, info.needsKey && kind !== 'custom' ? t('providers/check') : t('providers/test'));
+      const forget = h('button', { type: 'button', class: 'tos-btn', onclick: () => { prefs.forgetKey(kind); key.value = ''; say(t('providers/key-forgotten', { provider: label }), 'ok'); renderOverview(); } }, t('providers/forget'));
 
       async function checkKey() {
         const apiKey = key.value.trim(), c = prefs.connection(kind);
-        if (info.needsKey && kind !== 'custom' && !apiKey) { say('Enter a key first.', 'fail'); return; }
-        say('Checking…');
+        if (info.needsKey && kind !== 'custom' && !apiKey) { say(t('providers/enter-key'), 'fail'); return; }
+        say(t('providers/checking'));
         try {
           if (kind === 'openrouter') {
             const r = await fetch(`${regionOf(c.baseUrl) || OPENROUTER}/key`, { headers: { Authorization: `Bearer ${apiKey}` }, credentials: 'omit', signal: lifetime.signal });
-            if (r.status === 401 || r.status === 403) { say('OpenRouter refused this key.', 'fail'); return; }
-            if (!r.ok) { say(`OpenRouter answered HTTP ${r.status}.`, 'fail'); return; }
+            if (r.status === 401 || r.status === 403) { say(t('providers/key-refused', { provider: 'OpenRouter' }), 'fail'); return; }
+            if (!r.ok) { say(t('providers/http-status', { provider: 'OpenRouter', status: r.status }), 'fail'); return; }
             const data = (await r.json())?.data ?? {};
-            const used = typeof data.usage === 'number' ? `$${data.usage.toFixed(2)} used` : '';
-            const limit = typeof data.limit === 'number' ? ` of $${data.limit.toFixed(2)}` : data.limit === null ? ', no limit' : '';
-            say(`The key works${used ? ` · ${used}${limit}` : ''}${data.is_free_tier ? ' · free tier' : ''}.`, 'ok');
+            const used = typeof data.usage === 'number' ? `$${data.usage.toFixed(2)}` : undefined;
+            const limit = typeof data.limit === 'number' ? `$${data.limit.toFixed(2)}` : data.limit === null ? null : undefined;
+            say(t('providers/key-works', { used, limit, freeTier: !!data.is_free_tier }), 'ok');
           } else if (kind === 'venice') {
             const r = await fetch(`${VENICE_BASE}/api_keys/rate_limits`, { headers: { Authorization: `Bearer ${apiKey}` }, credentials: 'omit', signal: lifetime.signal });
-            if (r.status === 401 || r.status === 403) { say('Venice refused this key.', 'fail'); return; }
-            say(r.ok ? 'The key works.' : `Venice answered HTTP ${r.status}.`, r.ok ? 'ok' : 'fail');
+            if (r.status === 401 || r.status === 403) { say(t('providers/key-refused', { provider: 'Venice' }), 'fail'); return; }
+            say(r.ok ? t('providers/key-works', {}) : t('providers/http-status', { provider: 'Venice', status: r.status }), r.ok ? 'ok' : 'fail');
           } else {
             const s = toAiSettings(kind, { ...c, apiKey });
             const result = await probeProvider({ provider: s.provider, baseUrl: s.baseUrl, apiKey: s.apiKey });
-            say(result.ok ? `Connected · ${result.models.length} models available.` : `No connection: ${result.error}`, result.ok ? 'ok' : 'fail');
+            say(result.ok ? t('providers/connected', { count: result.models.length }) : t('providers/no-connection', { detail: String(result.error) }), result.ok ? 'ok' : 'fail');
           }
-        } catch (error: any) { if (error?.name !== 'AbortError') say(`No connection: ${error?.message ?? error}`, 'fail'); }
+        } catch (error: any) { if (error?.name !== 'AbortError') say(t('providers/no-connection', { detail: String(error?.message ?? error) }), 'fail'); }
       }
 
       // what else a provider needs: OpenRouter a region, a local runtime its
       // server's address, a generic endpoint its base URL; Venice nothing
       const preset = (((PROVIDERS as any)[kind]?.baseUrl as string | null) ?? '').replace(/\/v1$/, '');
-      const region = h('select', { id: 'tos-region', onchange: () => { prefs.setConnection(kind, { baseUrl: region.value }); say('Region saved.', 'ok'); } },
-        ...OPENROUTER_REGIONS.map(([value, label]) => h('option', { value, selected: value === regionOf(conn.baseUrl) }, label))) as HTMLSelectElement;
+      const region = h('select', { id: 'tos-region', onchange: () => { prefs.setConnection(kind, { baseUrl: region.value }); say(t('providers/region-saved'), 'ok'); } },
+        ...regionChoices().map(([value, text]) => h('option', { value, selected: value === regionOf(conn.baseUrl) }, text))) as HTMLSelectElement;
       const baseUrl = h('input', {
         id: 'tos-base-url', type: 'url', spellcheck: 'false', autocomplete: 'off',
         placeholder: info.local ? preset : 'https://api.example.com/v1', value: conn.baseUrl,
@@ -193,33 +201,33 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
       const origin = win.location.origin;
       const endpoint =
         kind === 'openrouter' ? h('div', { class: 'tos-field' },
-          h('label', { for: 'tos-region' }, 'Region'), region,
-          h('p', { class: 'tos-muted' }, 'Any region lets OpenRouter use every provider of a model, wherever it runs. Europe and United States keep inference in that region; they need an OpenRouter Business or Enterprise plan, and a model with no endpoint there fails instead of leaving it.'))
-        : kind === 'venice' ? h('p', { class: 'tos-muted' }, 'Create a key in your Venice account under API. The model list marks which models are private (Venice keeps no record of the prompt) and which are anonymized (served by a third party without your identity).')
+          h('label', { for: 'tos-region' }, t('providers/region')), region,
+          h('p', { class: 'tos-muted' }, t('providers/region-hint')))
+        : kind === 'venice' ? h('p', { class: 'tos-muted' }, t('providers/venice-hint'))
         : info.local ? h('div', { class: 'tos-field' },
-          h('label', { for: 'tos-base-url' }, 'Server address'), baseUrl,
+          h('label', { for: 'tos-base-url' }, t('providers/server-address')), baseUrl,
           h('p', { class: 'tos-muted' }, kind === 'ollama'
-            ? `Ollama must allow this page: start it with OLLAMA_ORIGINS=${origin}. Leave the address empty for ${preset}.`
-            : `Turn on CORS in LM Studio's server settings so this page may call it. Leave the address empty for ${preset}.`))
+            ? t('providers/ollama-hint', { origin, address: preset })
+            : t('providers/lmstudio-hint', { address: preset })))
         : h('div', { class: 'tos-field' },
-          h('label', { for: 'tos-base-url' }, 'Base URL'), baseUrl,
-          h('p', { class: 'tos-muted' }, 'Any OpenAI-compatible endpoint that answers /chat/completions and allows this page (CORS).'));
+          h('label', { for: 'tos-base-url' }, t('providers/base-url')), baseUrl,
+          h('p', { class: 'tos-muted' }, t('providers/custom-hint')));
 
       const remember = h('input', { id: 'tos-remember', type: 'checkbox', checked: desk.rememberKey, onchange: () => {
         prefs.writeDesktop({ rememberKey: remember.checked });
-        say(remember.checked ? 'Keys are kept in this browser until you forget them.' : 'Keys are kept only until this tab closes.', 'ok');
+        say(remember.checked ? t('providers/remembered') : t('providers/session-only'), 'ok');
       } }) as HTMLInputElement;
 
       const overview = h('div', { class: 'tos-overview' });
       function renderOverview() {
         const active = prefs.active();
         overview.replaceChildren(h('table', { class: 'tos-table' },
-          h('thead', {}, h('tr', {}, h('th', {}, 'Provider'), h('th', {}, 'Key'), h('th', {}, 'Model'))),
+          h('thead', {}, h('tr', {}, h('th', {}, t('providers/column-provider')), h('th', {}, t('providers/column-key')), h('th', {}, t('providers/column-model')))),
           h('tbody', {}, ...(Object.keys(PROVIDER_KINDS) as ProviderKind[]).map(k => {
             const c = prefs.connection(k);
             return h('tr', { class: k === active ? 'is-active' : '', 'data-provider': k },
-              h('td', {}, PROVIDER_KINDS[k].label, k === active ? h('span', { class: 'tos-badge-soft' }, 'in use') : null),
-              h('td', {}, PROVIDER_KINDS[k].needsKey ? (c.apiKey ? 'saved' : '—') : 'not needed'),
+              h('td', {}, providerLabel(k), k === active ? h('span', { class: 'tos-badge-soft' }, t('providers/badge-in-use')) : null),
+              h('td', {}, PROVIDER_KINDS[k].needsKey ? (c.apiKey ? t('providers/key-present') : '—') : t('providers/key-not-needed')),
               h('td', {}, c.model ? h('code', {}, c.model) : '—'));
           }))));
       }
@@ -227,22 +235,22 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
 
       const host = hostOf(kind, conn.baseUrl);
       put(
-        h('h2', {}, 'Providers'),
-        h('p', { class: 'tos-muted' }, 'The assistant talks to a model through the provider in use. Each provider keeps its own key, so you can set up several and switch between them; a key is only ever sent to its own provider.'),
-        h('label', { class: 'tos-field', for: 'tos-provider' }, h('span', {}, 'Provider in use'), provider),
+        h('h2', {}, t('providers/title')),
+        h('p', { class: 'tos-muted' }, t('providers/lead')),
+        h('label', { class: 'tos-field', for: 'tos-provider' }, h('span', {}, t('providers/in-use')), provider),
         info.needsKey && h('div', { class: 'tos-field' },
-          h('label', { for: 'tos-key' }, `${info.label} API key`),
+          h('label', { for: 'tos-key' }, t('providers/key-label', { provider: label })),
           h('div', { class: 'tos-row' }, key, reveal),
-          kind === 'openrouter' && h('p', { class: 'tos-muted' }, 'Create one at openrouter.ai/keys. A key with a credit limit is the safest choice for a browser.')),
+          kind === 'openrouter' && h('p', { class: 'tos-muted' }, t('providers/openrouter-hint'))),
         info.needsKey && h('div', { class: 'tos-row' }, save, check, forget),
         !info.needsKey && h('div', { class: 'tos-row' }, check),
         endpoint,
-        h('label', { class: 'tos-check' }, remember, h('span', {}, 'Remember keys in this browser')),
+        h('label', { class: 'tos-check' }, remember, h('span', {}, t('providers/remember'))),
         status,
         host && h('p', { class: 'tos-note' }, info.needsKey
-          ? `Requests go from this browser straight to ${host}. Applications on the desktop run in isolated frames and cannot read the key.`
-          : `Requests go from this browser straight to ${host}; nothing passes through a Tangle server.`),
-        h('h3', {}, 'Your providers'),
+          ? t('providers/requests-key', { host })
+          : t('providers/requests-local', { host })),
+        h('h3', {}, t('providers/yours')),
         overview,
       );
     }
@@ -259,20 +267,20 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
       const favs = h('div', { class: 'tos-row tos-wrap' });
       const refresh = () => {
         const active = prefs.active(), c = prefs.connection(active);
-        chosen.replaceChildren('In use: ', h('strong', {}, PROVIDER_KINDS[active].label), ' · ', h('code', {}, c.model || 'no model yet'));
+        chosen.replaceChildren(t('models/in-use'), h('strong', {}, providerLabel(active)), ' · ', h('code', {}, c.model || t('models/none-yet')));
         const list = prefs.favourites();
         favs.replaceChildren(...(list.length ? list.map(f => h('button', {
           type: 'button', class: `tos-chip${f.kind === active && f.model === c.model ? ' is-chosen' : ''}`, 'data-favourite': `${f.kind}:${f.model}`,
-          title: `Use ${f.model} through ${PROVIDER_KINDS[f.kind].label}`,
+          title: t('models/use-favourite', { model: f.model, provider: providerLabel(f.kind) }),
           onclick: () => { prefs.use(f.kind, f.model); show('model'); },
-        }, f.model, h('span', { class: 'tos-chip-provider' }, PROVIDER_KINDS[f.kind].label))) : [h('p', { class: 'tos-muted' }, 'Star models below to keep them here, from any provider. The Assistant window switches between them too.')]));
+        }, f.model, h('span', { class: 'tos-chip-provider' }, providerLabel(f.kind)))) : [h('p', { class: 'tos-muted' }, t('models/no-favourites'))]));
       };
       refresh();
       const pick = (id: string) => { prefs.setConnection(kind, { model: id }); refresh(); renderList(); };
 
-      const search = h('input', { id: 'tos-model-search', type: 'search', placeholder: 'Search models, or type a model id', spellcheck: 'false', autocomplete: 'off', oninput: () => renderList() }) as HTMLInputElement;
+      const search = h('input', { id: 'tos-model-search', type: 'search', placeholder: t('models/search'), spellcheck: 'false', autocomplete: 'off', oninput: () => renderList() }) as HTMLInputElement;
       const toolsOnly = h('input', { type: 'checkbox', checked: true, onchange: () => renderList() }) as HTMLInputElement;
-      const list = h('div', { class: 'tos-models', role: 'list', 'aria-label': 'Models' });
+      const list = h('div', { class: 'tos-models', role: 'list', 'aria-label': t('models/list') });
       const note = h('p', { class: 'tos-muted', role: 'status' });
       const listed = PROVIDER_KINDS[kind].local || kind === 'custom';
 
@@ -283,33 +291,33 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
         const rows = (entry.rows ?? []).filter(m => (!toolsOnly.checked || m.tools) && (!query || m.id.toLowerCase().includes(query) || m.name.toLowerCase().includes(query)));
         rows.sort((a, b) => Number(RECOMMENDED_MODELS.includes(b.id)) - Number(RECOMMENDED_MODELS.includes(a.id)) || a.name.localeCompare(b.name));
         for (const m of rows.slice(0, LIST_LIMIT)) {
-          const meta = [m.context ? `${tokens(m.context)} context` : '', m.prompt !== undefined ? `${money(m.prompt)} in · ${money(m.completion)} out per 1M` : '', m.tools ? 'tools' : ''].filter(Boolean).join(' · ');
+          const meta = [m.context ? t('models/context', { tokens: tokens(m.context) }) : '', m.prompt !== undefined ? t('models/price', { prompt: money(m.prompt), completion: money(m.completion) }) : '', m.tools ? t('models/tools') : ''].filter(Boolean).join(' · ');
           const starred = prefs.isFavourite(kind, m.id);
           list.append(h('div', { class: 'tos-model-row', role: 'listitem' },
             h('button', {
               type: 'button', class: `tos-model${m.id === model ? ' is-chosen' : ''}`, 'aria-pressed': String(m.id === model),
               'data-model': m.id, onclick: () => pick(m.id),
             }, h('span', { class: 'tos-model-name' }, m.name,
-              RECOMMENDED_MODELS.includes(m.id) && kind === 'openrouter' ? h('span', { class: 'tos-badge-soft' }, 'recommended') : null,
-              m.privacy ? h('span', { class: `tos-badge-soft${m.privacy === 'private' ? '' : ' is-muted'}` }, m.privacy) : null),
+              RECOMMENDED_MODELS.includes(m.id) && kind === 'openrouter' ? h('span', { class: 'tos-badge-soft' }, t('models/recommended')) : null,
+              m.privacy ? h('span', { class: `tos-badge-soft${m.privacy === 'private' ? '' : ' is-muted'}` }, privacyLabel(m.privacy)) : null),
             h('code', {}, m.id), meta ? h('span', { class: 'tos-muted' }, meta) : null),
             h('button', {
               type: 'button', class: `tos-star${starred ? ' is-on' : ''}`, 'aria-pressed': String(starred), 'data-star': m.id,
-              'aria-label': starred ? `Remove ${m.name} from your models` : `Add ${m.name} to your models`, title: starred ? 'Remove from your models' : 'Add to your models',
+              'aria-label': starred ? t('models/unstar', { model: m.name }) : t('models/star', { model: m.name }), title: starred ? t('models/unstar-title') : t('models/star-title'),
               onclick: () => { prefs.toggleFavourite(kind, m.id); refresh(); renderList(); },
             }, starred ? '★' : '☆')));
         }
-        if (entry.error) note.textContent = `The model list did not load (${entry.error}). You can still type a model id.`;
-        else if (!entry.rows) note.textContent = listed ? 'Load the models this provider serves, or type an id.' : 'Loading models…';
-        else note.textContent = rows.length > LIST_LIMIT ? `${rows.length} models match; showing ${LIST_LIMIT}. Narrow the search.` : `${rows.length} models match.`;
+        if (entry.error) note.textContent = t('models/list-failed', { detail: entry.error });
+        else if (!entry.rows) note.textContent = listed ? t('models/load-hint') : t('models/loading');
+        else note.textContent = rows.length > LIST_LIMIT ? t('models/match-limited', { count: rows.length, limit: LIST_LIMIT }) : t('models/match', { count: rows.length });
         if (query && !rows.some(m => m.id.toLowerCase() === query)) {
           const id = search.value.trim();
-          list.prepend(h('div', { class: 'tos-model-row' }, h('button', { type: 'button', class: 'tos-model', onclick: () => pick(id) }, h('span', { class: 'tos-model-name' }, 'Use this id'), h('code', {}, id))));
+          list.prepend(h('div', { class: 'tos-model-row' }, h('button', { type: 'button', class: 'tos-model', onclick: () => pick(id) }, h('span', { class: 'tos-model-name' }, t('models/use-id')), h('code', {}, id))));
         }
       }
 
       async function load() {
-        entry.error = ''; note.textContent = 'Loading models…';
+        entry.error = ''; note.textContent = t('models/loading');
         try {
           if (kind === 'openrouter') entry.rows = await openRouterModels(regionOf(conn.baseUrl) || OPENROUTER, lifetime.signal);
           else if (kind === 'venice') entry.rows = await veniceModels(lifetime.signal);
@@ -324,14 +332,14 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
       }
 
       put(
-        h('h2', {}, 'Models'),
-        h('p', { class: 'tos-muted' }, 'The assistant writes Jaren JSON documents and calls tools; only a few models do that reliably. On OpenRouter, anthropic/claude-haiku-5.5 and qwen/qwen3.8-27b are a good start.'),
+        h('h2', {}, t('models/title')),
+        h('p', { class: 'tos-muted' }, t('models/lead')),
         chosen,
-        h('div', { class: 'tos-field' }, h('span', {}, 'Your models'), favs),
-        h('label', { class: 'tos-field', for: 'tos-model-search' }, h('span', {}, `${PROVIDER_KINDS[kind].label} models`), search),
-        h('label', { class: 'tos-check' }, toolsOnly, h('span', {}, 'Only models that can use tools')),
+        h('div', { class: 'tos-field' }, h('span', {}, t('models/yours')), favs),
+        h('label', { class: 'tos-field', for: 'tos-model-search' }, h('span', {}, t('models/search-label', { provider: providerLabel(kind) })), search),
+        h('label', { class: 'tos-check' }, toolsOnly, h('span', {}, t('models/tools-only'))),
         note, list,
-        listed && h('div', { class: 'tos-row' }, h('button', { type: 'button', class: 'tos-btn', onclick: load }, 'Load models')),
+        listed && h('div', { class: 'tos-row' }, h('button', { type: 'button', class: 'tos-btn', onclick: load }, t('models/load'))),
       );
       if (!listed && !entry.rows && !entry.error) void load(); else renderList();
     }
@@ -360,34 +368,34 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
       };
 
       // the kits, each previewed with its own wallpaper in the current scheme
-      const gallery = h('div', { class: 'tos-kits', role: 'radiogroup', 'aria-label': 'Theme' },
+      const gallery = h('div', { class: 'tos-kits', role: 'radiogroup', 'aria-label': t('appearance/theme') },
         ...THEME_KITS.map(kit => h('button', {
           type: 'button', role: 'radio', class: 'tos-kit', 'aria-checked': String(kit.id === desk.kit), 'data-kit': kit.id,
           onclick: () => { prefs.writeDesktop({ kit: kit.id, custom: {} }); redraw(); },
         }, preview(kit.id), h('span', { class: 'tos-kit-name' }, kit.name), h('span', { class: 'tos-kit-text' }, kit.description))));
 
-      const accentPicker = h('input', { type: 'color', value: custom.accent ?? composed.tokens['--accent'].slice(0, 7), 'aria-label': 'Accent colour' }) as HTMLInputElement;
+      const accentPicker = h('input', { type: 'color', value: custom.accent ?? composed.tokens['--accent'].slice(0, 7), 'aria-label': t('appearance/accent-colour') }) as HTMLInputElement;
       accentPicker.addEventListener('input', () => setCustom({ accent: accentPicker.value }, false));
-      const knotPicker = h('input', { type: 'color', value: custom.knot ?? composed.tokens['--os-knot'], 'aria-label': 'Knot colour' }) as HTMLInputElement;
+      const knotPicker = h('input', { type: 'color', value: custom.knot ?? composed.tokens['--os-knot'], 'aria-label': t('appearance/knot-colour') }) as HTMLInputElement;
       knotPicker.addEventListener('input', () => setCustom({ knot: knotPicker.value }, false));
-      const accents = h('div', { class: 'tos-field' }, h('span', {}, 'Accent'),
+      const accents = h('div', { class: 'tos-field' }, h('span', {}, t('appearance/accent')),
         h('div', { class: 'tos-swatches' },
           ...ACCENT_SWATCHES.map(colour => h('button', { type: 'button', class: 'tos-swatch-btn', style: `--swatch:${colour}`, 'aria-label': colour, 'aria-pressed': String(custom.accent === colour), onclick: () => setCustom({ accent: colour }) })),
           accentPicker,
-          custom.accent && h('button', { type: 'button', class: 'tos-link', onclick: () => setCustom({ accent: undefined }) }, 'Use the theme\'s own')));
-      const knot = h('div', { class: 'tos-field' }, h('span', {}, 'Highlights'), h('div', { class: 'tos-swatches' }, knotPicker,
-        custom.knot && h('button', { type: 'button', class: 'tos-link', onclick: () => setCustom({ knot: undefined }) }, 'Use the theme\'s own')));
+          custom.accent && h('button', { type: 'button', class: 'tos-link', onclick: () => setCustom({ accent: undefined }) }, t('appearance/theme-own'))));
+      const knot = h('div', { class: 'tos-field' }, h('span', {}, t('appearance/highlights')), h('div', { class: 'tos-swatches' }, knotPicker,
+        custom.knot && h('button', { type: 'button', class: 'tos-link', onclick: () => setCustom({ knot: undefined }) }, t('appearance/theme-own'))));
 
       const pattern = custom.pattern ?? THEME_KITS.find(k => k.id === desk.kit)!.pattern;
-      const patterns = h('div', { class: 'tos-field' }, h('span', {}, 'Wallpaper'),
-        h('div', { class: 'tos-patterns', role: 'radiogroup', 'aria-label': 'Wallpaper pattern' },
-          ...Object.entries(PATTERN_NAMES).map(([id, label]) => h('button', {
+      const patterns = h('div', { class: 'tos-field' }, h('span', {}, t('appearance/wallpaper')),
+        h('div', { class: 'tos-patterns', role: 'radiogroup', 'aria-label': t('appearance/wallpaper-pattern') },
+          ...Object.entries(patternNames()).map(([id, label]) => h('button', {
             type: 'button', role: 'radio', class: 'tos-pattern', 'aria-checked': String(id === pattern),
             onclick: () => setCustom({ pattern: id }),
           }, preview(desk.kit, { ...custom, pattern: id }), h('span', {}, label)))),
         h('div', { class: 'tos-row' },
-          h('button', { type: 'button', class: 'tos-btn', onclick: () => setCustom({ seed: Math.floor(Math.random() * 2 ** 31) }) }, 'Shuffle the pattern'),
-          h('span', { class: 'tos-muted' }, `Pattern number ${custom.seed ?? 7}`)));
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => setCustom({ seed: Math.floor(Math.random() * 2 ** 31) }) }, t('appearance/shuffle')),
+          h('span', { class: 'tos-muted' }, t('appearance/pattern-number', { number: custom.seed ?? 7 }))));
       const shape = THEME_KITS.find(k => k.id === desk.kit)!.shape;
 
       // a theme is a document: it can leave this browser as text and come back
@@ -397,32 +405,32 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
         const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
         const link = h('a', { href: url, download: `tangle-theme-${desk.kit}.json` }); doc.body.append(link); link.click(); link.remove();
         setTimeout(() => URL.revokeObjectURL(url), 0);
-        status.textContent = 'Theme exported.';
+        status.textContent = t('appearance/exported');
       };
       const file = h('input', { type: 'file', accept: '.json,application/json', hidden: true }) as HTMLInputElement;
       file.addEventListener('change', async () => {
         try {
           const value = JSON.parse(await file.files![0].text());
-          if (value?.$tangletheme !== '0.1' || !THEME_KITS.some(k => k.id === value.kit)) throw new Error('This file is not a Tangle theme.');
+          if (value?.$tangletheme !== '0.1' || !THEME_KITS.some(k => k.id === value.kit)) throw new Error(t('appearance/not-a-theme'));
           prefs.writeDesktop({ kit: value.kit, custom: cleanCustom(value.custom), ...(['system', 'light', 'dark'].includes(value.scheme) ? { scheme: value.scheme } : {}) });
           redraw();
-        } catch (error: any) { status.textContent = `The theme was not imported: ${error?.message ?? error}`; }
+        } catch (error: any) { status.textContent = t('appearance/import-failed', { detail: String(error?.message ?? error) }); }
       });
 
       put(
-        h('h2', {}, 'Appearance'),
-        choices<Scheme>('tos-scheme', 'Mode', [['system', 'Follow the system'], ['light', 'Light'], ['dark', 'Dark']], desk.scheme, (v) => { prefs.writeDesktop({ scheme: v }); redraw(); }),
-        h('h3', {}, 'Theme'), gallery,
-        h('h3', {}, 'Make it yours'),
+        h('h2', {}, t('appearance/title')),
+        choices<Scheme>('tos-scheme', t('appearance/mode'), [['system', t('appearance/mode-system')], ['light', t('appearance/mode-light')], ['dark', t('appearance/mode-dark')]], desk.scheme, (v) => { prefs.writeDesktop({ scheme: v }); redraw(); }),
+        h('h3', {}, t('appearance/theme')), gallery,
+        h('h3', {}, t('appearance/make-yours')),
         accents, knot, patterns,
-        slider('Pattern density', 0.3, 2, 0.1, custom.density ?? 1, (v) => setCustom({ density: v }, false)),
-        slider('Glass', 0, 1, 0.05, custom.glass ?? shape.glass, (v) => setCustom({ glass: v }, false)),
-        choices('tos-corners', 'Corners', [['sharp', 'Sharp'], ['soft', 'Soft'], ['round', 'Round']], custom.corners ?? shape.corners, (v) => setCustom({ corners: v })),
-        choices('tos-spacing', 'Spacing', [['compact', 'Compact'], ['comfortable', 'Comfortable']], custom.spacing ?? shape.spacing, (v) => setCustom({ spacing: v })),
+        slider(t('appearance/density'), 0.3, 2, 0.1, custom.density ?? 1, (v) => setCustom({ density: v }, false)),
+        slider(t('appearance/glass'), 0, 1, 0.05, custom.glass ?? shape.glass, (v) => setCustom({ glass: v }, false)),
+        choices('tos-corners', t('appearance/corners'), [['sharp', t('appearance/corners-sharp')], ['soft', t('appearance/corners-soft')], ['round', t('appearance/corners-round')]], custom.corners ?? shape.corners, (v) => setCustom({ corners: v })),
+        choices('tos-spacing', t('appearance/spacing'), [['compact', t('appearance/spacing-compact')], ['comfortable', t('appearance/spacing-comfortable')]], custom.spacing ?? shape.spacing, (v) => setCustom({ spacing: v })),
         h('div', { class: 'tos-row' },
-          h('button', { type: 'button', class: 'tos-btn', onclick: exportTheme }, 'Export theme'),
-          h('button', { type: 'button', class: 'tos-btn', onclick: () => file.click() }, 'Import theme'),
-          h('button', { type: 'button', class: 'tos-btn', onclick: () => { prefs.writeDesktop({ custom: {} }); redraw(); } }, 'Reset to the theme')),
+          h('button', { type: 'button', class: 'tos-btn', onclick: exportTheme }, t('appearance/export')),
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => file.click() }, t('appearance/import')),
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => { prefs.writeDesktop({ custom: {} }); redraw(); } }, t('appearance/reset'))),
         file, status,
       );
     }
@@ -433,20 +441,20 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
       const done = (text: string) => { status.textContent = text; status.dataset.tone = 'ok'; };
       let armed = false, timer = 0;
       const everything = h('button', { type: 'button', class: 'tos-btn danger', onclick: () => {
-        if (!armed) { armed = true; everything.textContent = 'Click again to forget everything'; timer = win.setTimeout(() => { armed = false; everything.textContent = 'Forget everything'; }, 4000); return; }
-        win.clearTimeout(timer); armed = false; everything.textContent = 'Forget everything';
-        prefs.forgetEverything(); done('Removed every key, the models, the conversation and the appearance from this browser.');
-      } }, 'Forget everything');
+        if (!armed) { armed = true; everything.textContent = t('privacy/confirm'); timer = win.setTimeout(() => { armed = false; everything.textContent = t('privacy/forget-everything'); }, 4000); return; }
+        win.clearTimeout(timer); armed = false; everything.textContent = t('privacy/forget-everything');
+        prefs.forgetEverything(); done(t('privacy/everything-removed'));
+      } }, t('privacy/forget-everything'));
       put(
-        h('h2', {}, 'Privacy and data'),
+        h('h2', {}, t('privacy/title')),
         h('ul', { class: 'tos-facts' },
-          h('li', {}, 'Your keys, models and appearance are kept in this browser\'s storage, never on a server.'),
-          h('li', {}, 'Each key is sent only to its own provider, in the request\'s Authorization header. It is never part of a page address.'),
-          h('li', {}, 'Applications on the desktop run in isolated frames (another origin, or none) and cannot read this storage. The assistant\'s tools never see a key.'),
-          h('li', {}, 'Other pages served from this same address (every github.io project of this account) share this browser storage. Use keys with a credit limit, and forget them on a shared computer.')),
+          h('li', {}, t('privacy/fact-storage')),
+          h('li', {}, t('privacy/fact-header')),
+          h('li', {}, t('privacy/fact-frames')),
+          h('li', {}, t('privacy/fact-shared'))),
         h('div', { class: 'tos-row tos-wrap' },
-          h('button', { type: 'button', class: 'tos-btn', onclick: () => { for (const k of Object.keys(PROVIDER_KINDS) as ProviderKind[]) prefs.forgetKey(k); done('Every key removed.'); } }, 'Forget all keys'),
-          h('button', { type: 'button', class: 'tos-btn', onclick: () => { prefs.chat.clear(); prefs.use(prefs.active(), undefined, 'chat'); done('Conversation cleared.'); } }, 'Clear the conversation'),
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => { for (const k of Object.keys(PROVIDER_KINDS) as ProviderKind[]) prefs.forgetKey(k); done(t('privacy/keys-removed')); } }, t('privacy/forget-keys')),
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => { prefs.chat.clear(); prefs.use(prefs.active(), undefined, 'chat'); done(t('privacy/chat-cleared')); } }, t('privacy/clear-chat')),
           everything),
         status,
       );

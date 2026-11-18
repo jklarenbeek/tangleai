@@ -7,11 +7,15 @@
 import type { ShippedMount } from '@tangleai/os/shell';
 import {
   COLOURS, WEEKDAYS, addDays, checkEvent, emptyCalendar, exportIcal, importIcal, freeSlots, isoDate, occurrences, parseDate, repeatHint, seed, supportedRepeats,
-  type CalendarDocument, type CalendarEvent, type Occurrence, type Repeat,
+  type CalendarDocument, type CalendarEvent, type Colour, type Occurrence, type Repeat,
 } from './calendar-model.ts';
+import { t } from './i18n.ts';
 
 const SLOT = 'tangle-calendar';
-const REPEAT_LABEL: Record<Repeat, string> = { none: 'Does not repeat', daily: 'Every day', weekdays: 'Every weekday', weekly: 'Every week', monthly: 'Every month', yearly: 'Every year' };
+/** What a repeat choice says, in the menu and beside a repeating event. */
+const repeatLabels = (): Record<Repeat, string> => ({ none: t('calendar/repeat-none'), daily: t('calendar/repeat-daily'), weekdays: t('calendar/repeat-weekdays'), weekly: t('calendar/repeat-weekly'), monthly: t('calendar/repeat-monthly'), yearly: t('calendar/repeat-yearly') });
+/** A colour's accessible name. */
+const colourLabels = (): Record<Colour, string> => ({ teal: t('calendar/colour-teal'), blue: t('calendar/colour-blue'), violet: t('calendar/colour-violet'), rose: t('calendar/colour-rose'), amber: t('calendar/colour-amber'), slate: t('calendar/colour-slate') });
 
 export const CALENDAR_CONTRACT = {
   $contract: '0.1', id: 'calendar',
@@ -111,7 +115,7 @@ export function calendarMount(): ShippedMount {
         }, h('span', { class: 'cal-num' }, String(Number(date.slice(8)))));
         for (const o of items.slice(0, 3)) cell.append(h('span', { class: `cal-chip c-${o.colour}${o.allDay ? ' is-allday' : ''}`, title: o.title },
           o.allDay ? null : h('span', { class: 'cal-chip-time' }, chipTime(o.start)), o.title));
-        if (items.length > 3) cell.append(h('span', { class: 'cal-more' }, `+${items.length - 3} more`));
+        if (items.length > 3) cell.append(h('span', { class: 'cal-more' }, t('calendar/more', { count: items.length - 3 })));
         grid.append(cell);
       }
 
@@ -123,28 +127,28 @@ export function calendarMount(): ShippedMount {
       const panel = h('aside', { class: 'cal-side' });
       if (editing) { panel.append(editor()); return panel; }
       panel.append(h('h2', { class: 'cal-side-title' }, dayTitle(selected)));
-      if (!items.length) panel.append(h('p', { class: 'cal-empty' }, 'Nothing planned. Add an event, or find a free time below.'));
+      if (!items.length) panel.append(h('p', { class: 'cal-empty' }, t('calendar/nothing-planned')));
       else panel.append(h('ul', { class: 'cal-agenda' }, ...items.map(o => h('li', { class: `cal-item c-${o.colour}` },
-        h('span', { class: 'cal-item-time' }, o.allDay ? 'All day' : `${time(o.start)} – ${time(o.end)}`),
+        h('span', { class: 'cal-item-time' }, o.allDay ? t('calendar/all-day') : `${time(o.start)} – ${time(o.end)}`),
         h('strong', { class: 'cal-item-title' }, o.title),
-        o.repeat !== 'none' ? h('span', { class: 'cal-item-repeat' }, REPEAT_LABEL[o.repeat]) : null,
+        o.repeat !== 'none' ? h('span', { class: 'cal-item-repeat' }, repeatLabels()[o.repeat]) : null,
         h('span', { class: 'cal-item-actions' },
-          h('button', { type: 'button', class: 'cal-link', onclick: () => openEditor(cal.events.find(e => e.uid === o.uid)!) }, 'Edit'),
-          o.repeat !== 'none' ? h('button', { type: 'button', class: 'cal-link', onclick: () => skipOne(o) }, 'Skip this day') : null,
-          h('button', { type: 'button', class: 'cal-link is-danger', onclick: () => remove(o.uid) }, o.repeat !== 'none' ? 'Delete all' : 'Delete'))))));
+          h('button', { type: 'button', class: 'cal-link', onclick: () => openEditor(cal.events.find(e => e.uid === o.uid)!) }, t('calendar/edit')),
+          o.repeat !== 'none' ? h('button', { type: 'button', class: 'cal-link', onclick: () => skipOne(o) }, t('calendar/skip-day')) : null,
+          h('button', { type: 'button', class: 'cal-link is-danger', onclick: () => remove(o.uid) }, o.repeat !== 'none' ? t('calendar/delete-all') : t('calendar/delete')))))));
       panel.append(finder());
       return panel;
     }
 
     function finder() {
-      const box = h('section', { class: 'cal-find' }, h('h3', {}, 'Find a time'));
-      const lengths = h('div', { class: 'cal-segment', role: 'radiogroup', 'aria-label': 'Length' },
-        ...[30, 60, 90, 120].map(m => h('button', { type: 'button', role: 'radio', 'aria-checked': String(m === findMinutes), onclick: () => { findMinutes = m; slots = null; render(); } }, m < 60 ? `${m} min` : `${m / 60} h`.replace('.5 h', '½ h'))));
-      const hours = h('p', { class: 'cal-hours' }, `Within your working hours, ${time(cal.hours.start)}–${time(cal.hours.end)} on ${cal.hours.days.map(d => weekdayShort[WEEKDAYS.indexOf(d)]).join(', ')}, over the next 7 days.`);
-      const search = h('button', { type: 'button', class: 'cal-ghost', onclick: () => { slots = freeSlots(cal, { minutes: findMinutes }); render(); } }, 'Search');
+      const box = h('section', { class: 'cal-find' }, h('h3', {}, t('calendar/find')));
+      const lengths = h('div', { class: 'cal-segment', role: 'radiogroup', 'aria-label': t('calendar/length') },
+        ...[30, 60, 90, 120].map(m => h('button', { type: 'button', role: 'radio', 'aria-checked': String(m === findMinutes), onclick: () => { findMinutes = m; slots = null; render(); } }, m < 60 ? t('calendar/minutes', { count: m }) : t('calendar/hours', { count: m / 60 }))));
+      const hours = h('p', { class: 'cal-hours' }, t('calendar/within-hours', { start: time(cal.hours.start), end: time(cal.hours.end), days: cal.hours.days.map(d => weekdayShort[WEEKDAYS.indexOf(d)]).join(', ') }));
+      const search = h('button', { type: 'button', class: 'cal-ghost', onclick: () => { slots = freeSlots(cal, { minutes: findMinutes }); render(); } }, t('calendar/search'));
       box.append(lengths, hours, search);
       if (slots) {
-        if (!slots.length) box.append(h('p', { class: 'cal-empty' }, 'No free time of that length in your working hours this week.'));
+        if (!slots.length) box.append(h('p', { class: 'cal-empty' }, t('calendar/no-free-time')));
         else box.append(h('div', { class: 'cal-slots' }, ...slots.map(s => {
           const start = new Date(s.start), end = new Date(s.end);
           const label = `${fmt({ weekday: 'short', day: 'numeric', month: 'short' }).format(start)} · ${fmt({ hour: 'numeric', minute: '2-digit' }).format(start)}–${fmt({ hour: 'numeric', minute: '2-digit' }).format(end)}`;
@@ -158,25 +162,27 @@ export function calendarMount(): ShippedMount {
       const e = editing!;
       const isNew = !cal.events.some(x => x.uid === e.uid);
       const status = h('p', { class: 'cal-error', role: 'alert' });
-      const title = h('input', { type: 'text', value: e.title ?? '', placeholder: 'What is it?', 'aria-label': 'Title', class: 'cal-input cal-input-title' }) as HTMLInputElement;
-      const date = h('input', { type: 'date', value: e.date ?? selected, 'aria-label': 'Date', class: 'cal-input' }) as HTMLInputElement;
+      const title = h('input', { type: 'text', value: e.title ?? '', placeholder: t('calendar/what'), 'aria-label': t('calendar/title-field'), class: 'cal-input cal-input-title' }) as HTMLInputElement;
+      const date = h('input', { type: 'date', value: e.date ?? selected, 'aria-label': t('calendar/date'), class: 'cal-input' }) as HTMLInputElement;
       const allDay = h('input', { type: 'checkbox', checked: e.allDay === true }) as HTMLInputElement;
-      const start = h('input', { type: 'time', value: e.start ?? '09:00', 'aria-label': 'Starts', class: 'cal-input' }) as HTMLInputElement;
-      const end = h('input', { type: 'time', value: e.end ?? '10:00', 'aria-label': 'Ends', class: 'cal-input' }) as HTMLInputElement;
+      const start = h('input', { type: 'time', value: e.start ?? '09:00', 'aria-label': t('calendar/starts'), class: 'cal-input' }) as HTMLInputElement;
+      const end = h('input', { type: 'time', value: e.end ?? '10:00', 'aria-label': t('calendar/ends'), class: 'cal-input' }) as HTMLInputElement;
       const times = h('div', { class: 'cal-row' }, start, h('span', { class: 'cal-dash' }, '–'), end);
       const syncTimes = () => { times.hidden = allDay.checked; };
       allDay.addEventListener('change', syncTimes); syncTimes();
-      const repeat = h('select', { class: 'cal-input', 'aria-label': 'Repeat' }, ...repeats.map(r => h('option', { value: r, selected: r === (e.repeat ?? 'none') }, REPEAT_LABEL[r]))) as HTMLSelectElement;
+      const labels = repeatLabels();
+      const repeat = h('select', { class: 'cal-input', 'aria-label': t('calendar/repeat') }, ...repeats.map(r => h('option', { value: r, selected: r === (e.repeat ?? 'none') }, labels[r]))) as HTMLSelectElement;
       // the calendar never moves a date a month or year lacks; say so before it surprises
       const hint = h('p', { class: 'cal-hint', 'aria-live': 'polite' });
       const syncHint = () => { hint.textContent = repeatHint(repeat.value as Repeat, date.value); };
       repeat.addEventListener('change', syncHint); date.addEventListener('input', syncHint); syncHint();
       let colour = e.colour ?? 'teal';
-      const swatches = h('div', { class: 'cal-swatches', role: 'radiogroup', 'aria-label': 'Colour' },
-        ...COLOURS.map(c => h('button', { type: 'button', role: 'radio', class: `cal-swatch c-${c}`, 'aria-label': c, 'aria-checked': String(c === colour), onclick: (ev: Event) => {
+      const colourNames = colourLabels();
+      const swatches = h('div', { class: 'cal-swatches', role: 'radiogroup', 'aria-label': t('calendar/colour') },
+        ...COLOURS.map(c => h('button', { type: 'button', role: 'radio', class: `cal-swatch c-${c}`, 'aria-label': colourNames[c], 'aria-checked': String(c === colour), onclick: (ev: Event) => {
           colour = c; for (const b of swatches.children) b.setAttribute('aria-checked', String(b === ev.currentTarget));
         } })));
-      const notes = h('textarea', { class: 'cal-input', rows: 3, placeholder: 'Notes', 'aria-label': 'Notes' }, e.notes ?? '') as HTMLTextAreaElement;
+      const notes = h('textarea', { class: 'cal-input', rows: 3, placeholder: t('calendar/notes'), 'aria-label': t('calendar/notes') }, e.notes ?? '') as HTMLTextAreaElement;
       const save = () => {
         const checked = checkEvent({ ...e, title: title.value, date: date.value, allDay: allDay.checked, start: start.value, end: end.value, repeat: repeat.value as Repeat, colour, notes: notes.value });
         if (!checked.ok) { status.textContent = checked.error; return; }
@@ -184,14 +190,14 @@ export function calendarMount(): ShippedMount {
         selected = checked.event.date; month = selected.slice(0, 7); editing = null; slots = null; render();
       };
       const form = h('form', { class: 'cal-editor', onsubmit: (ev: Event) => { ev.preventDefault(); save(); } },
-        h('h2', { class: 'cal-side-title' }, isNew ? 'New event' : 'Edit event'),
+        h('h2', { class: 'cal-side-title' }, isNew ? t('calendar/new-event') : t('calendar/edit-event')),
         title, date,
-        h('label', { class: 'cal-check' }, allDay, h('span', {}, 'All day')),
+        h('label', { class: 'cal-check' }, allDay, h('span', {}, t('calendar/all-day'))),
         times, repeat, hint, swatches, notes, status,
         h('div', { class: 'cal-row cal-form-actions' },
-          h('button', { type: 'submit', class: 'cal-primary' }, 'Save'),
-          h('button', { type: 'button', class: 'cal-ghost', onclick: () => { editing = null; render(); } }, 'Cancel'),
-          !isNew ? h('button', { type: 'button', class: 'cal-link is-danger', onclick: () => remove(e.uid!) }, 'Delete') : null));
+          h('button', { type: 'submit', class: 'cal-primary' }, t('calendar/save')),
+          h('button', { type: 'button', class: 'cal-ghost', onclick: () => { editing = null; render(); } }, t('calendar/cancel')),
+          !isNew ? h('button', { type: 'button', class: 'cal-link is-danger', onclick: () => remove(e.uid!) }, t('calendar/delete')) : null));
       win.setTimeout(() => title.focus(), 0);
       return form;
     }
@@ -200,14 +206,14 @@ export function calendarMount(): ShippedMount {
     function showHeader() {
       const header = {
         start: [
-          { kind: 'button' as const, id: 'prev', label: 'Previous month', glyph: 'back' as const },
-          { kind: 'button' as const, id: 'next', label: 'Next month', glyph: 'forward' as const },
-          { kind: 'button' as const, id: 'today', label: 'Today', disabled: month === today.slice(0, 7) && selected === today },
+          { kind: 'button' as const, id: 'prev', label: t('calendar/previous-month'), glyph: 'back' as const },
+          { kind: 'button' as const, id: 'next', label: t('calendar/next-month'), glyph: 'forward' as const },
+          { kind: 'button' as const, id: 'today', label: t('calendar/today'), disabled: month === today.slice(0, 7) && selected === today },
         ],
         subtitle: monthTitle(month),
         end: [
-          { kind: 'button' as const, id: 'new', label: 'New event', primary: true },
-          { kind: 'menu' as const, id: 'menu', label: 'Calendar menu', glyph: 'menu' as const, entries: [{ id: 'export', label: 'Export .ics' }] },
+          { kind: 'button' as const, id: 'new', label: t('calendar/new-event'), primary: true },
+          { kind: 'menu' as const, id: 'menu', label: t('calendar/menu'), glyph: 'menu' as const, entries: [{ id: 'export', label: t('calendar/export') }] },
         ],
       };
       const text = JSON.stringify(header);
@@ -219,7 +225,7 @@ export function calendarMount(): ShippedMount {
       else if (item === 'today') { month = today.slice(0, 7); selected = today; }
       else if (item === 'new') { openEditor({ date: selected }); return; }
       else if (item === 'menu' && value === 'export') { download(); return; }
-      else return { refused: `Calendar has no '${item}'` };
+      else return { refused: t('calendar/no-item', { item }) };
       render();
     });
 
@@ -260,8 +266,8 @@ export function calendarMount(): ShippedMount {
     context.onOpen((file) => {
       const text = file.data ? new TextDecoder().decode(Uint8Array.from(atob(file.data), c => c.charCodeAt(0))) : '';
       let imported: ReturnType<typeof importIcal>;
-      try { imported = importIcal(text); } catch (error: any) { return { refused: `${file.name} is not a calendar this one can read: ${error?.message ?? error}` }; }
-      if (!imported.events.length) return { refused: `${file.name} holds no event this calendar can keep` };
+      try { imported = importIcal(text); } catch (error: any) { return { refused: t('calendar/unreadable', { name: file.name, detail: String(error?.message ?? error) }) }; }
+      if (!imported.events.length) return { refused: t('calendar/no-events', { name: file.name }) };
       const uids = new Set(imported.events.map(e => e.uid));
       write({ ...cal, events: [...cal.events.filter(e => !uids.has(e.uid)), ...imported.events] });
       selected = imported.events.map(e => e.date).sort()[0]; month = selected.slice(0, 7); editing = null; slots = null;
@@ -297,13 +303,13 @@ export function calendarSettingsMount(): ShippedMount {
       if (typeof next === 'string') { status.textContent = next; status.dataset.tone = 'fail'; return; }
       try { win.localStorage.setItem(SLOT, JSON.stringify({ ...cal, hours: next })); } catch { /* kept for this session */ }
       win.dispatchEvent(new Event(CHANGED));
-      status.textContent = 'Saved.'; status.dataset.tone = 'ok';
+      status.textContent = t('calendar/settings-saved'); status.dataset.tone = 'ok';
     };
     const hours = read().hours;
-    const heading = el('h2', {}, 'Working hours');
-    const lead = el('p', { class: 'tos-muted' }, '"Find a time" offers free time only within these hours, and never time no hours cover.');
+    const heading = el('h2', {}, t('calendar/working-hours'));
+    const lead = el('p', { class: 'tos-muted' }, t('calendar/working-hours-lead'));
     const days = el('fieldset', { class: 'tos-choices' });
-    days.append(el('legend', {}, 'Days'));
+    days.append(el('legend', {}, t('calendar/days')));
     const names = new Intl.DateTimeFormat(doc.documentElement.lang || 'en', { weekday: 'long' });
     WEEKDAYS.forEach((day, i) => {
       const label = el('label', { class: 'tos-check' });
@@ -316,11 +322,11 @@ export function calendarSettingsMount(): ShippedMount {
     const time = (labelText: string, value: string, key: 'start' | 'end') => {
       const label = el('label', { class: 'tos-field' }); const span = el('span', {}, labelText);
       const input = el('input', { type: 'time', value, 'aria-label': labelText }) as HTMLInputElement;
-      input.addEventListener('change', () => save(h => { const next = { ...h, [key]: input.value }; return next.end > next.start ? next : 'The day must end after it starts.'; }));
+      input.addEventListener('change', () => save(h => { const next = { ...h, [key]: input.value }; return next.end > next.start ? next : t('calendar/day-end-after'); }));
       label.append(span, input); return label;
     };
     const times = el('div', { class: 'tos-row' });
-    times.append(time('Starts', hours.start, 'start'), time('Ends', hours.end, 'end'));
+    times.append(time(t('calendar/starts'), hours.start, 'start'), time(t('calendar/ends'), hours.end, 'end'));
     node.append(heading, lead, days, times, status);
     return () => { heading.remove(); lead.remove(); days.remove(); times.remove(); status.remove(); };
   };

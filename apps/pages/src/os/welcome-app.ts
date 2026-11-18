@@ -3,17 +3,22 @@
  * it, and how they fit together. Each application opens from here.
  */
 import type { ShippedMount } from '@tangleai/os/shell';
+import { t } from './i18n.ts';
 
-const APPS: [string, string, string][] = [
-  ['assistant', 'Assistant', 'Ask in plain words; it uses the applications on this desktop to answer.'],
-  ['calendar', 'Calendar', 'Plan your weeks, repeat what recurs, and find a free hour in your working day.'],
-  ['studio', 'Studio', 'Build a Jaren application from documents, and run it as you type.'],
-  ['playground', 'Playground', 'Try every Jaren engine: queries, schemas, stylesheets, charts and more.'],
-  ['flow', 'Flow', 'Draw a state machine or a pipeline, then run it step by step.'],
-  ['data', 'Data', 'A real database in this browser, queried with Jaren\'s query language.'],
-  ['loop', 'Memory loop', 'Watch Tangle\'s memory gate, merge and resolve what it is told.'],
-  ['adventure', 'Adventure', 'A small pirate story whose characters can answer through a model.'],
-  ['settings', 'Settings', 'Pick a theme, a wallpaper and the model the assistant uses.'],
+/** The product's name, the same in every language. */
+const PRODUCT = 'Tangle OS';
+
+/** The applications Welcome introduces: id, name, what it does. */
+const apps = (): [string, string, string][] => [
+  ['assistant', t('apps/assistant'), t('welcome/assistant')],
+  ['calendar', t('apps/calendar'), t('welcome/calendar')],
+  ['studio', t('apps/studio'), t('welcome/studio')],
+  ['playground', t('apps/playground'), t('welcome/playground')],
+  ['flow', t('apps/flow'), t('welcome/flow')],
+  ['data', t('apps/data'), t('welcome/data')],
+  ['loop', t('apps/loop'), t('welcome/loop')],
+  ['adventure', t('apps/adventure'), t('welcome/adventure')],
+  ['settings', t('apps/settings'), t('welcome/settings')],
 ];
 
 /** Applications whose glyph is not named after them. */
@@ -28,9 +33,9 @@ export function welcomeMount(open: (id: string) => void): ShippedMount {
     const mark = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
     mark.setAttribute('viewBox', '0 0 64 64'); mark.setAttribute('class', 'tos-welcome-mark'); mark.setAttribute('aria-hidden', 'true');
     mark.innerHTML = '<path d="M6 22c14-10 22 18 36 8s16-12 16-12" /><path d="M6 42c12 10 22-16 34-6s18 10 18 10" /><path d="M20 6c-8 14 18 22 8 36s-6 16-6 16" /><circle cx="31" cy="31" r="4.5" />';
-    head.append(mark, h('h1', '', 'Tangle OS'), h('p', 'tos-welcome-lead', 'Applications and an assistant on one desktop, in your browser. What you build here is a document you can read, share and undo.'));
+    head.append(mark, h('h1', '', PRODUCT), h('p', 'tos-welcome-lead', t('welcome/lead')));
     const list = h('ul', 'tos-welcome-apps');
-    for (const [id, name, text] of APPS) {
+    for (const [id, name, text] of apps()) {
       const item = h('li', '');
       const button = h('button', 'tos-welcome-app') as HTMLButtonElement;
       button.type = 'button'; button.dataset.open = id;
@@ -43,12 +48,12 @@ export function welcomeMount(open: (id: string) => void): ShippedMount {
     }
     const facts = h('section', 'tos-welcome-facts');
     for (const [title, text] of [
-      ['Applications talk through contracts', 'Every call between applications is a declared operation, checked and written down. The assistant gets the same operations as tools.'],
-      ['Documents, not code', 'What you or the assistant make here is JSON that Jaren runs. A window from a document cannot reach your keys or your other data.'],
-      ['Your key stays here', 'Bring a key for a model provider in Settings. It is stored in this browser and sent only to that provider.'],
+      [t('welcome/contracts-title'), t('welcome/contracts-text')],
+      [t('welcome/documents-title'), t('welcome/documents-text')],
+      [t('welcome/key-title'), t('welcome/key-text')],
     ]) { const block = h('div', ''); block.append(h('h2', '', title), h('p', '', text)); facts.append(block); }
     const links = h('p', 'tos-welcome-links');
-    for (const [label, href] of [['Source on GitHub', 'https://github.com/jklarenbeek/tangleai'], ['Read the guide', 'https://github.com/jklarenbeek/tangleai#readme']]) {
+    for (const [label, href] of [[t('welcome/source'), 'https://github.com/jklarenbeek/tangleai'], [t('welcome/guide'), 'https://github.com/jklarenbeek/tangleai#readme']]) {
       const a = h('a', '', label) as HTMLAnchorElement; a.href = href; a.target = '_blank'; a.rel = 'noopener'; links.append(a);
     }
     root.append(head, list, facts, links);
