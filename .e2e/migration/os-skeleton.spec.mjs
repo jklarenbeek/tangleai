@@ -101,7 +101,8 @@ test('a link installs nothing until the person adds it, and what they add stays 
   await expect(offered.locator('.tos-join-origin')).toHaveText(/^Runs from http:\/\/127\.0\.0\.1:\d+$/);
   await expect(offered.locator('.tos-join-provides')).toHaveText('Offers: records');
   await expect(offered.locator('.tos-join-ai')).not.toBeChecked();
-  await expect(sheet.getByRole('button', { name: 'Add' })).toBeFocused();
+  // opened by a link: a stray Enter cancels, it never consents
+  await expect(sheet.getByRole('button', { name: 'Cancel' })).toBeFocused();
   // cancelled: nothing joins
   await page.keyboard.press('Escape');
   await expect(sheet).toHaveCount(0);

@@ -1449,6 +1449,10 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       if (event.item && event.by !== 'shell') showUse(event.window, event.item);
     }
     if (event.kind === 'modules' || event.kind === 'dock' || event.kind === 'state') renderDock();
+    // a module that left the desktop (removed, undone, dropped by another device) takes its windows along
+    if (event.kind === 'modules' && event.module && !kernel.effective(event.module)) {
+      for (const w of desktop.windows.filter(x => x.module === event.module)) close(w.id);
+    }
     // a form module's windows hear their new settings; one that predates them may refuse, which is fine
     if (event.kind === 'settings' && event.module) {
       const values = kernel.settings(event.module);
@@ -1481,6 +1485,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   const observer = typeof win.ResizeObserver === 'function' ? new win.ResizeObserver(() => setDesktop(resized(desktop, area()))) : null;
   observer?.observe(node);
 
+  let joining: Promise<unknown> = Promise.resolve();
   desktop = resized(desktop, area());
   applyShellTheme(theme);
   applyShellLocale(locale);
@@ -1502,8 +1507,12 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
      * one's origin, what it provides and asks to use, and the assistant's
      * access, and only what they add joins the desktop (kept in their state).
      */
-    join: (suite: SuiteDocument, join: { source?: string } = {}): Promise<JoinResult> =>
-      joinSuite({ kernel, doc, node, locale: locale.locale, t, desktopOrigin: win.location?.origin ?? null }, suite, join.source),
+    join: (suite: SuiteDocument, join: { source?: string } = {}): Promise<JoinResult> => {
+      // one sheet at a time: a second suite waits for the person's answer to the first
+      const next = joining.catch(() => undefined).then(() => joinSuite({ kernel, doc, node, locale: locale.locale, t, desktopOrigin: win.location?.origin ?? null }, suite, join.source));
+      joining = next;
+      return next;
+    },
     /** Every window change, as it happens; returns the unsubscribe. */
     subscribe(listener: (event: DesktopEvent) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     setTheme: applyShellTheme,

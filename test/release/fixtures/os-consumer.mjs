@@ -9,6 +9,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { createKernel, CONNECT, HELLO, PROTOCOL, systemContracts } from '@tangleai/os';
 import * as packaged from '@tangleai/os/module';
 import { checkSuite, createTestDesktop } from '@tangleai/os/testing';
+import { ar } from '@tangleai/os/messages/ar';
+import { osMessagesEn } from '@tangleai/os';
 import { openPortClient } from '@jarenjs/contract/port';
 
 globalThis.fetch = async () => { throw Error('The desktop consumer forbids network'); };
@@ -57,6 +59,8 @@ async function join(connectToOs, label) {
 
 await join(packaged.connectToOs, 'package');
 await join(single.connectToOs, 'single-file');
+// a language pack from the tarball: every sentence of the chrome
+assert.deepEqual(Object.keys(ar).sort(), Object.keys(osMessagesEn).sort());
 // the consumer's own CI: its suite checked, and run headless as a person's link would join it
 const SUITE = { $suite: '0.1', id: 'records-suite', modules: [{ $module: '0.1', id: 'records-app', version: '1.0.0', title: { en: 'Records' }, host: { kind: 'origin', url: 'https://records.example/app' }, provides: [RECORDS] }] };
 assert.deepEqual(checkSuite(SUITE, { desktopOrigin: 'https://desk.example' }), []);

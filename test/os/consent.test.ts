@@ -102,6 +102,55 @@ describe('joining an application', () => {
   });
 });
 
+describe('an application that leaves the desktop', () => {
+  for (const [how, leave] of [
+    ['removed', (k: any) => k.remove('catalogue')],
+    ['undone', (k: any) => k.undo()],
+  ] as const) {
+    it(`takes what it served along when it is ${how}, so nothing of it reaches the assistant`, async () => {
+      const kernel = await desktop();
+      kernel.join(catalogue(), { scopes: [], assistant: false });
+      kernel.provideLocal('catalogue', RECORDS, { 'records.search': () => ['secret'] });
+      kernel.setHeader('catalogue', 'w1', { start: [{ kind: 'button', id: 'go', label: 'Go' }] });
+      assert.equal(leave(kernel).ok, true);
+      assert.throws(() => kernel.provideLocal('catalogue', RECORDS, { 'records.search': () => ['again'] }), /may not serve/, 'its window cannot serve it again');
+      assert.equal(kernel.operations().some(o => o.contract === 'records'), false);
+      assert.equal((await kernel.call('assistant', 'records', 'records.search', {})).ok, false);
+      assert.equal(kernel.providers().some(p => p.contract === 'records'), false);
+      assert.deepEqual(kernel.headers('shell'), []);
+    });
+  }
+
+  it('is dropped with what it served when another device removed it', async () => {
+    const store = memoryStore();
+    const here = await desktop(store);
+    here.join(catalogue(), { scopes: [], assistant: false });
+    await here.flushState();
+    const there = await desktop(store);
+    there.remove('catalogue');
+    await there.flushState();
+    here.provideLocal('catalogue', RECORDS, { 'records.search': () => ['secret'] });
+    // this device's next save conflicts, and the kept list (without it) wins
+    here.setConsent('catalogue', { assistant: true });
+    await here.flushState();
+    assert.equal(here.layerOf('catalogue'), null);
+    assert.equal((await here.call('assistant', 'records', 'records.search', {})).ok, false);
+  });
+
+  it('is never restored over a contract another module declares', async () => {
+    const store = memoryStore();
+    const first = await desktop(store);
+    first.join(catalogue(), { scopes: [], assistant: false });
+    await first.flushState();
+    const next = createKernel({ assistantGrants: 'all', state: store });
+    // the host installs its own records module before the state loads
+    next.install({ $module: '0.1', id: 'records-host', version: '1.0.0', title: { en: 'Records' }, host: { kind: 'origin', url: 'https://records.example/' }, provides: [RECORDS] }, 'shipped');
+    await next.ready();
+    assert.equal(next.layerOf('catalogue'), null);
+    assert.equal(next.layerOf('records-host'), 'shipped');
+  });
+});
+
 describe('installed applications in the person state', () => {
   it('are there on the next visit, with their grants, and stay out of a recovery boot', async () => {
     const store = memoryStore();

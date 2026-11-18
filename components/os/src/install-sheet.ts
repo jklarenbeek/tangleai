@@ -146,7 +146,8 @@ function ask(ctx: Context, suite: SuiteDocument, offers: Offer[], source?: strin
   sheet.append(actions);
   scrim.append(sheet);
   node.append(scrim);
-  add.focus();
+  // the sheet opens from a link: a stray Enter must not consent, so the keyboard starts on Cancel
+  cancel.focus();
 
   return new Promise((resolve) => {
     const done = (ids: Set<string>) => {

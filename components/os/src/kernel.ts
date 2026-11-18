@@ -316,15 +316,28 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       const id = verdict.manifest.id;
       const existing = entries.get(id);
       if ((RESERVED_IDS as readonly string[]).includes(id) || (existing && existing.layer !== 'user')) continue;
+      // a kept application never takes a contract another module declares
+      if ((verdict.manifest.provides ?? []).some(c => [...entries.values()].some(e => e.base.id !== id && (e.base.provides ?? []).some(p => p.id === c.id)))) continue;
       ids.add(id);
       entries.set(id, { base: verdict.manifest, layer: 'user', overlays: existing?.overlays ?? [], consent: cloneJson(consent) });
       grants.set(id, new Set(consent.scopes.filter(s => consent.offered.includes(s))));
       emit({ kind: 'modules', module: id });
     }
     for (const [id, entry] of [...entries]) if (entry.layer === 'user' && entry.consent && !ids.has(id)) {
-      entries.delete(id); grants.delete(id);
+      entries.delete(id); grants.delete(id); dropLive(id);
       emit({ kind: 'modules', module: id });
     }
+  }
+  /** A module that leaves the desktop takes what it served with it: its contracts, header bars, header handlers and deciders. */
+  function dropLive(module: string) {
+    for (const [id, list] of [...providers]) {
+      const kept = list.filter(p => p.module !== module);
+      if (kept.length) providers.set(id, kept); else providers.delete(id);
+    }
+    for (const [window, held] of [...headers]) if (held.module === module) { headers.delete(window); emit({ kind: 'header', module, window }); }
+    for (const [window, handler] of [...headerHandlers]) if (handler.module === module) headerHandlers.delete(window);
+    deciders.delete(module);
+    emit({ kind: 'providers', module });
   }
   /** A joined application's kept scopes follow its grants, within what it asked for. */
   function keepScopes(module: string) {
@@ -433,6 +446,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       if (entry.consent && stateStatus !== 'ready') return refusal('OS0121', 'the desktop state is not ready to change the installed applications');
       entries.delete(id);
       grants.delete(id);
+      dropLive(id);
       record({ layer: 'user', module: id, kind: 'remove', patch: [], inverse: [{ op: 'add', path: '', value: cloneJson(entry.base) }], ...(entry.consent ? { consent: cloneJson(entry.consent) } : {}) });
       if (entry.consent) persistApps();
       emit({ kind: 'modules', module: id });
@@ -446,7 +460,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       journal.splice(journal.indexOf(last), 1);
       const entry = entries.get(last.module);
       const joined = !!entry?.consent || !!last.consent;
-      if (last.kind === 'install') { entries.delete(last.module); grants.delete(last.module); }
+      if (last.kind === 'install') { entries.delete(last.module); grants.delete(last.module); dropLive(last.module); }
       else if (last.kind === 'patch' && entry) {
         const index = entry.overlays.map(o => o.layer).lastIndexOf('user');
         if (index >= 0) entry.overlays.splice(index, 1);
@@ -571,6 +585,9 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       if (caller === 'assistant' && kernel.fileLocations().some(l => l.contract === contract)) return false;
       // what a joined application provides reaches the assistant only when the person allowed it, whatever the host grants
       if (caller === 'assistant') { const owner = joinedOwner(contract); if (owner && !assistantMay(owner)) return false; }
+      // and what a module no longer on the desktop still answers is no one's to call
+      const serving = providers.get(contract)?.at(-1);
+      if (serving && !entries.has(serving.module)) return false;
       if (caller === 'assistant' && options.assistantGrants === 'all') return true;
       const set = caller === 'assistant' ? new Set(Array.isArray(options.assistantGrants) ? options.assistantGrants : []) : grants.get(caller);
       return !!set && scopeOf(contract, op).some(s => set.has(s));
