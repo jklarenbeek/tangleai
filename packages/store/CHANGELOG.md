@@ -1,5 +1,27 @@
 # @tangleai/store
 
+## 0.60.1
+
+### Patch Changes
+
+- 248bf42: A table column a reply's Markdown aligns itself (`:---`, `---:`) now aligns to the reply's reading start and end, so it mirrors in a right-to-left reply: the assistant maps the `left` and `right` Jaren's renderer writes to `start` and `end`.
+- Updated dependencies [248bf42]
+  - @tangleai/core@0.60.1
+  - @tangleai/config@0.60.1
+  - @tangleai/mas@0.60.1
+  - @tangleai/documents@0.60.1
+  - @tangleai/memory@0.60.1
+  - @tangleai/outcomes@0.60.1
+  - @tangleai/trace2skill@0.60.1
+  - @tangleai/evolve@0.60.1
+  - @tangleai/hera@0.60.1
+  - @tangleai/forecast@0.60.1
+  - @tangleai/grounding@0.60.1
+  - @tangleai/lightrag@0.60.1
+  - @tangleai/trading@0.60.1
+  - @tangleai/research@0.60.1
+  - @tangleai/experiential@0.60.1
+
 ## 0.60.0
 
 ### Minor Changes
