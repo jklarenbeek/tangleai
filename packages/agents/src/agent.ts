@@ -27,6 +27,7 @@
  * accumulating yesterday's.
  */
 
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { goalPrompt, type GoalMessages } from '@tangleai/context/retention';
 import { AiError, countOption } from '@tangleai/models/errors';
 import { createToolbox, type ToolboxMessages, type ToolContext } from './toolbox.ts';
@@ -818,7 +819,7 @@ function reportedUsage(completion: any): { prompt: number; completion: number } 
  * passes its own.
  */
 function utf8Tokens(request: { messages: any[]; tools: any[] }): number {
-  return new TextEncoder().encode(JSON.stringify(request.messages) + JSON.stringify(request.tools)).length;
+  return utf8ByteLength(JSON.stringify(request.messages) + JSON.stringify(request.tools));
 }
 
 /**

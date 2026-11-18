@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { compileDag } from '@jarenjs/flow';
 import { createExperientialMemoryStore, createExperientialTrainingTasks, EXPERIENTIAL_TRAINING_DAG,
   EXPERIENTIAL_TRAINING_NODES, planTrainingTransition, cancelExperientialTraining, sealExperientialRecord,
-  type ExperientialTrainingContext } from '@tangleai/experiential';
+  renderExperientialExamples, type ExperientialTrainingContext } from '@tangleai/experiential';
+import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { accepted } from './identity-fixtures.ts';
 import { SELECTION_TIME } from './selection-fixtures.ts';
 import { trainingFixture } from './pipeline-fixtures.ts';
@@ -147,4 +148,29 @@ it('checked commands refuse generic completion, forged verification, stale reser
     await tasks.verify.run(args); await tasks.register.run(args);
     assert.equal(accepted(await v.store.get('training_runs', run.id))!.state, 'complete');
   } finally { await v.store.close(); }
+});
+
+it('the render byte budget is the canonical examples\' exact UTF-8 bytes, at the bound and one below', async () => {
+  // Canonical text is always a string, and canonicalization refuses a lone surrogate before it is measured.
+  const measured = await fixture();
+  let bytes: number;
+  try {
+    const source = await measured.context.resolveExamples(measured.data.dataset);
+    const rendered = accepted(await renderExperientialExamples(measured.data, source.template, source.variables));
+    bytes = new TextEncoder().encode(canonicalizeJson(rendered)).length;
+    const tasks = createExperientialTrainingTasks(measured.context), args = { input: measured.plan.input };
+    for (const node of ['select', 'render'] as const) await tasks[node].run(args);
+    assert.equal(accepted(await measured.store.get('training_runs', measured.plan.run.id))!.progress!.renderedBytes, bytes);
+  } finally { await measured.store.close(); }
+  for (const [maxBytes, failed] of [[bytes, false], [bytes - 1, true]] as const) {
+    const f = await fixture({ budget: { maxBytes } });
+    try {
+      const tasks = createExperientialTrainingTasks(f.context), args = { input: f.plan.input };
+      for (const node of ['select', 'render'] as const) await tasks[node].run(args);
+      const run = accepted(await f.store.get('training_runs', f.plan.run.id))!;
+      assert.equal(run.state === 'failed', failed, String(maxBytes));
+      if (failed) { assert.equal(run.stopReason, 'byte-budget'); assert.equal(run.progress!.issues[0].code, 'TEXP1009'); assert.doesNotMatch(JSON.stringify(run.progress!.issues), /utf8ByteLength/); }
+      else assert.equal(run.progress!.renderedBytes, bytes);
+    } finally { await f.store.close(); }
+  }
 });

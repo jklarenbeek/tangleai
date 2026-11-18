@@ -70,3 +70,23 @@ it('an unsafe path inside a directory is refused by the validator too', () => {
   assert.ok(!refused.valid);
   assert.equal(refused.issues[0].code, 'TT2S1003');
 });
+
+it('the per-file bound counts UTF-8 bytes, a lone surrogate as 3, and non-text content is refused by its own code', () => {
+  const profile: SkillFormatProfile = { ...MINIMAL_SKILL_PROFILE, id: 'bytes', maxFileBytes: 512, maxTotalBytes: 1 << 20 };
+  const root = page('SKILL.md', '# root\n');
+  const at = (content: unknown) => validateFormat([root, { ...page('references/a.md', ''), content } as SkillFileDraft], profile);
+  // 170 lone surrogates and 'aa' are exactly 512 bytes: inside the per-file bound
+  const inside = at('\uD800'.repeat(170) + 'aa');
+  assert.ok(inside.valid, inside.valid ? '' : JSON.stringify(inside.issues));
+  const over = at('\uD800'.repeat(170) + 'aaa');
+  assert.ok(!over.valid);
+  assert.equal(over.issues[0].code, 'TT2S1005');
+  assert.equal(over.issues[0].detail, '513 bytes exceed the per-file bound of 512');
+  for (const content of [5, undefined, { length: 1 }, ['x']]) {
+    const refused = at(content);
+    assert.ok(!refused.valid);
+    assert.equal(refused.issues[0].code, 'TT2S1005');
+    assert.equal(refused.issues[0].detail, 'a file\'s content must be text or null');
+    assert.doesNotMatch(refused.issues[0].detail, /utf8ByteLength/);
+  }
+});

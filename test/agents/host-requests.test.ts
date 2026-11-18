@@ -162,6 +162,31 @@ describe('the host\'s control over a send', () => {
     assert.throws(() => createAgent({ client, budget: { reserve: true } }), (err: any) => err instanceof AiError && /maxOutputTokens/.test(err.message));
     assert.throws(() => createAgent({ client, budget: { cost: 1 } }), (err: any) => err instanceof AiError && /prices/.test(err.message));
   });
+
+  it('the default reservation prices the request at its exact UTF-8 bytes, lone surrogates included', async () => {
+    // JSON text escapes a lone surrogate as six ASCII bytes and keeps é as two UTF-8 bytes.
+    const content = '\uD800'.repeat(5) + 'é'.repeat(3);
+    let snapshot = '';
+    const run = async (tokens: number) => {
+      // the transcript grows after the call, so the prompt is read as it was sent
+      const client = scriptedClient([(request: any) => { snapshot = JSON.stringify(request.messages); return final('done'); }]);
+      const agent = createAgent({ client, maxOutputTokens: 1, budget: { tokens, reserve: true } });
+      return { client, result: await agent.send([{ role: 'user', content }]) };
+    };
+    const open = await run(1_000_000);
+    assert.strictEqual(open.result.stopReason, 'stop');
+    // no toolbox: the estimate measures the messages and an empty tool list
+    const sent = snapshot + JSON.stringify([]);
+    assert.ok(sent.includes('\\ud800'), 'the lone surrogate travels escaped');
+    const bytes = new TextEncoder().encode(sent).length;
+    assert.strictEqual(bytes, sent.length + 3, 'only the three é add a byte each');
+    // the reservation is the estimate plus the one-token output cap
+    assert.strictEqual((await run(bytes + 1)).result.stopReason, 'stop');
+    const refused = await run(bytes);
+    assert.strictEqual(refused.result.stopReason, 'budget-tokens');
+    assert.strictEqual(refused.client.requests.length, 0);
+    assert.doesNotMatch(String(refused.result.message.content), /utf8ByteLength/);
+  });
 });
 
 describe('the toolbox a host registers', () => {

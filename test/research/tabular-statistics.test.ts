@@ -84,3 +84,14 @@ test('the read-only evaluator captures source CSV bytes before the caller can re
   const observed = await evaluator.evaluate({ rawOutput: result.run.output!, contract: f.contract, plan: f.plan, manifest: f.manifest, hiddenLabels: null });
   assert.equal(observed.valid, true, JSON.stringify(observed));
 });
+test('the 256 KiB CSV bound counts UTF-8 bytes, a lone surrogate as 3, and refuses a non-string by its own code', () => {
+  const issue = (csv: unknown) => { const refused = parseTabularSamples(csv as string); assert.equal(refused.valid, false); return refused.valid ? null : refused.issues[0]; };
+  // 87381 lone surrogates and 'a' are exactly 262144 bytes: inside the bound, refused only for the missing header
+  assert.equal(issue('\uD800'.repeat(87381) + 'a')?.code, 'TRSH1001');
+  assert.deepEqual([issue('\uD800'.repeat(87381) + 'aa')?.code, issue('\uD800'.repeat(87381) + 'aa')?.path], ['TRSH1006', '/csv']);
+  for (const csv of [5, null, undefined, ['id,pairId'], { toString: () => 'id' }]) {
+    const refused = issue(csv);
+    assert.deepEqual([refused?.code, refused?.detail], ['TRSH1006', 'CSV input must fit the 256 KiB profile bound.']);
+    assert.doesNotMatch(refused?.detail ?? '', /utf8ByteLength/);
+  }
+});

@@ -1,3 +1,4 @@
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { equalsJson } from '@jarenjs/core/object';
 import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { compileJSONPointer, JSONPOINTER_NOTHING } from '@jarenjs/json/pointer';
@@ -120,7 +121,7 @@ export function createLessonStore(host: LessonPersistenceHost): LessonStore {
     if (lesson.decay.observedAtRun !== owner.id) refuse('TRSH2002', '/decay/observedAtRun', 'The initial observation belongs to its actual origin run.');
     if (new Set(lesson.decay.relevanceRows.map(row => row.runId)).size !== lesson.decay.relevanceRows.length)
       refuse('TRSH2004', '/decay/relevanceRows', 'A run has only one retained relevance observation.');
-    if (new TextEncoder().encode(canonicalizeJson(lesson.proposal)).length > 8192)
+    if (utf8ByteLength(canonicalizeJson(lesson.proposal)) > 8192)
       refuse('TRSH2001', '/proposal', 'A lesson proposal exceeds the registered 8 KiB bound.');
     const base = await storedProcedure(tx, lesson.proposal.baseHash, true);
     if (base!.bundle.scopeKey !== lessonScopeKey(lesson.scope)) refuse('TRSH2003', '/proposal/baseHash', 'The frozen procedure belongs to another lesson scope.');

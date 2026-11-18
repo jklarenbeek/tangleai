@@ -1,4 +1,5 @@
 /** Durable dispatch/output states prevent accidental repetition of remote work. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { equalsJson } from '@jarenjs/core/object';
 import { checkShape, jsonBytes } from './schema.ts';
 import { issue, reject, OutcomeRefusal } from './errors.ts';
@@ -14,7 +15,7 @@ import type { Operation, ReflectCommand, ReflectInput, ProposalReply, PreparedMo
 function boundedReply(context: ServiceContext, value: unknown): ProposalReply {
   const reply = checkShape<ProposalReply>('proposalReply', value);
   if (!reply.proposal && !reply.issues.length) reject('OUTC1002', 'The proposer returned neither a proposal nor issues.');
-  if (reply.proposal && (new TextEncoder().encode(reply.proposal.text).length > context.policy.maxReflectionBytes || jsonBytes(asJson(reply.proposal)) > context.policy.maxPayloadBytes + context.policy.maxReflectionBytes + context.policy.maxOperations * 128)) {
+  if (reply.proposal && (utf8ByteLength(reply.proposal.text) > context.policy.maxReflectionBytes || jsonBytes(asJson(reply.proposal)) > context.policy.maxPayloadBytes + context.policy.maxReflectionBytes + context.policy.maxOperations * 128)) {
     return { ...reply, proposal: null, issues: [issue('OUTC1009', 'Returned proposal bytes exceed the retained-output bound.')] };
   }
   return reply;

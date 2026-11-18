@@ -1,4 +1,5 @@
 /** Content-addressed execution admission; no process, filesystem or clock access. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { composeChecks, checkOutcome } from '@jarenjs/core/check';
 import { equalsJson } from '@jarenjs/core/object';
 import { EVOLVE_EXECUTOR_MANIFEST } from '@tangleai/evolve';
@@ -31,12 +32,11 @@ export interface ResearchWorkspaceFile {
   mode: WorkspaceManifestEntriesItem['mode'];
   role: WorkspaceManifestEntriesItem['role'];
 }
-const encoder = new TextEncoder();
 const forbidden = new Set(['hidden', 'secrets', '.env', '.git', '.ssh', '.aws', '.config', 'proc', 'sys', 'dev', 'etc']);
 
 /** The same logical-path policy is used by archives, authoring and output capture. */
 export function isResearchWorkspacePath(path: unknown, maxBytes = RESEARCH_EXECUTION_LIMITS.maxPathBytes): path is string {
-  return typeof path === 'string' && encoder.encode(path).byteLength <= maxBytes
+  return typeof path === 'string' && utf8ByteLength(path) <= maxBytes
     && /^[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.-]+)*$/.test(path)
     && path.split('/').every(part => part !== '.' && part !== '..' && !forbidden.has(part.toLowerCase())
       && !part.toLowerCase().startsWith('.env.'));

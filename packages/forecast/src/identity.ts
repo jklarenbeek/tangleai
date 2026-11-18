@@ -1,4 +1,5 @@
 /** Content addresses bind immutable inputs; commands alone can change lifecycle fields. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { checkShape, checkTime, forecastBytes, DEFAULT_FORECAST_POLICY } from './schema.ts';
 import { reject } from './errors.ts';
@@ -83,7 +84,7 @@ export async function validateForecastRecord<K extends ForecastTable>(table: K, 
   }
   if (table === 'harnesses') {
     const h = value as ForecastHarnessVersion;
-    if (Object.values(h.document).some(s => new TextEncoder().encode(s).length > DEFAULT_FORECAST_POLICY.maxComponentBytes) || forecastBytes(h.document) > DEFAULT_FORECAST_POLICY.maxHarnessBytes) reject('TFCT1001', 'Harness exceeds its canonical UTF-8 byte bound.');
+    if (Object.values(h.document).some(s => utf8ByteLength(s) > DEFAULT_FORECAST_POLICY.maxComponentBytes) || forecastBytes(h.document) > DEFAULT_FORECAST_POLICY.maxHarnessBytes) reject('TFCT1001', 'Harness exceeds its canonical UTF-8 byte bound.');
     if (h.digest !== await canonicalSha256(h.document)) reject('TFCT1002', 'Harness digest differs from its document.');
     if ((h.status === 'checked-ref') !== (h.checkedVersionId !== null)) reject('TFCT1004', 'Only a checked reference can name an outcome version.');
     if (h.questionId === null && !h.provenance.seed && h.status !== 'checked-ref') reject('TFCT1003', 'A provisional harness requires a question owner.');

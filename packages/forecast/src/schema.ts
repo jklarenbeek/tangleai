@@ -1,4 +1,5 @@
 /** Closed schemas are the single record gate, independent of physical storage. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { JarenValidator } from '@jarenjs/validate';
 import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { cloneJson, deepFreeze } from '@jarenjs/core/object';
@@ -24,5 +25,6 @@ export function checkTime(value: string): string {
     reject('TFCT1001', 'Expected a valid normalized UTC instant.');
   return value;
 }
-export function forecastBytes(value: unknown): number { return new TextEncoder().encode(canonicalizeJson(value)).length; }
+/** The canonical text is always a string: a value that is not JSON data is refused by `canonicalizeJson`, never measured. */
+export function forecastBytes(value: unknown): number { return utf8ByteLength(canonicalizeJson(value)); }
 export const DEFAULT_FORECAST_POLICY = Object.freeze({ maxVersions: 10, maxTraceBytes: 262144, maxComponentBytes: 4096, maxHarnessBytes: 32768, maxOperations: 32, maxChangedLeaves: 32 });

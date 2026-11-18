@@ -270,3 +270,29 @@ for (const first of ['approve', 'stop'] as const) it(`attributed ${first} wins i
     assert.equal((await ensurePendingMasSegments(db, a)).enqueued, first === 'approve' ? 1 : 0);
   } finally { await db.close(); }
 });
+it('the trace byte budget counts the trace JSON in exact UTF-8 bytes, at the budget and one under', async () => {
+  // one run per budget: the budget's digits are part of the trace, so every budget tried has five
+  const attempt = async (traceBytes: number, note: string) => {
+    const db = await openTangleDb(), store = createMasStore(db, { now: () => '2026-10-04T00:00:00Z' });
+    try {
+      value(await store.createRun({ ...version, runId: 'byte-bound', input: {}, limits: { traceBytes } }));
+      value(await store.claimRunSegment('byte-bound', 'owner'));
+      const gate = value(await store.createInteraction({ runId: 'byte-bound', node: 'review', path: 'review', prompt: 'v1',
+        responseSchema: attributedSchema, expiry: null, segment: 0 }));
+      value(await store.transitionRun('byte-bound', { kind: 'wait' }));
+      const result = await store.resolveInteraction(gate.id, 'cancelled', 0, { responseKey: 'bounded', response: { decision: 'stop', actor: 'operator', note } });
+      return { result, bytes: new TextEncoder().encode(JSON.stringify(await store.readTrace('byte-bound'))).length };
+    } finally { await db.close(); }
+  };
+  // a lone surrogate never reaches the budget: terminal attribution refuses it first as not finite JSON
+  const surrogate = (await attempt(99999, '\uD800')).result;
+  refused(surrogate, 'TMAS2007');
+  const note = 'é'.repeat(6000) + '\u{1F600}'.repeat(500);
+  const measured = await attempt(99999, note);
+  assert.equal(measured.result.ok, true, JSON.stringify(measured.result));
+  assert.ok(measured.bytes > 10000 && measured.bytes < 99999, String(measured.bytes));
+  assert.equal((await attempt(measured.bytes, note)).result.ok, true, 'a trace of exactly its budget is retained');
+  const over = (await attempt(measured.bytes - 1, note)).result;
+  refused(over, 'TMAS2009');
+  assert.doesNotMatch(JSON.stringify(over), /utf8ByteLength/);
+});

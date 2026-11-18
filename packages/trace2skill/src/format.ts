@@ -8,6 +8,7 @@
  * frontmatter keys or declared tool names; nothing here rewrites or
  * reformats content, because the directory a human wrote is the artifact.
  */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { trace2SkillIssue, trace2SkillRefusal, type Trace2SkillOutcome } from './errors.ts';
 import type { Trace2SkillIssue } from './contracts.gen.ts';
 import { normalizePath, SKILL_ROOT_FILE, type SkillFileDraft } from './bundle.ts';
@@ -65,11 +66,14 @@ const frontmatterKeys = (content: string): Set<string> => {
 
 /** Byte length of the draft as it will be stored. */
 export const draftSize = (draft: SkillFileDraft): number =>
-  draft.content === null ? draft.size ?? 0 : new TextEncoder().encode(draft.content).length;
+  draft.content === null ? draft.size ?? 0 : utf8ByteLength(draft.content);
 
 export function validateFormat(files: readonly SkillFileDraft[], profile: SkillFormatProfile = MINIMAL_SKILL_PROFILE): Trace2SkillOutcome<null> {
   const issues: Trace2SkillIssue[] = [];
   const at = (path: string) => `/files/${path}`;
+  // Every check below reads content as text: a file whose content is neither text nor null is refused before any is measured.
+  const untyped = files.find(file => file.content !== null && typeof file.content !== 'string');
+  if (untyped) return trace2SkillRefusal<null>([trace2SkillIssue('TT2S1005', at(untyped.path), 'a file\'s content must be text or null')]);
   if (files.length > profile.maxFiles) issues.push(trace2SkillIssue('TT2S1005', '/files', `${files.length} files exceed the profile bound of ${profile.maxFiles}`));
   const seen = new Set<string>();
   let total = 0;

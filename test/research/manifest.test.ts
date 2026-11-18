@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { buildExecutionManifest, createResearchWorkspace, validateExecutionManifest, validateResearchWorkspace,
-  researchRevisionOf, RESEARCH_EXECUTION_LIMITS, type ResearchExecutionManifestInput, type ResearchOutcome } from '@tangleai/research';
+  researchRevisionOf, RESEARCH_EXECUTION_LIMITS, isResearchWorkspacePath, type ResearchExecutionManifestInput, type ResearchOutcome } from '@tangleai/research';
 import { checked, hash } from './fixtures.ts';
 import { executionFixture } from './execution-fixtures.ts';
 import { probeResearchExecutionRefusal } from '../../benchmark/lib/research-execution-fixture.ts';
@@ -71,4 +71,14 @@ test('aliased addresses count materialized bytes and async hashing snapshots mut
     files: ['a', 'b'].map(path => ({ path, bytes: new Uint8Array(10), mode: 'read-only', role: 'input' })) }));
   assert.equal(workspace.artifacts.length, 1);
   code(await validateResearchWorkspace(workspace, { ...RESEARCH_EXECUTION_LIMITS, maxInputBytes: 15 }), 'TRSH1010');
+});
+test('the workspace path bound counts UTF-8 bytes at its limit, and a non-string is no workspace path', () => {
+  const max = RESEARCH_EXECUTION_LIMITS.maxPathBytes;
+  assert.equal(isResearchWorkspacePath('a'.repeat(max)), true);
+  assert.equal(isResearchWorkspacePath('a'.repeat(max + 1)), false);
+  assert.equal(isResearchWorkspacePath('a'.repeat(9), 9), true);
+  assert.equal(isResearchWorkspacePath('a'.repeat(10), 9), false);
+  // A lone surrogate never reaches the bound's meaning: the path alphabet refuses it at any length.
+  assert.equal(isResearchWorkspacePath('a/\uD800'), false);
+  for (const path of [5, null, undefined, ['a'], { toString: () => 'a' }]) assert.equal(isResearchWorkspacePath(path), false);
 });

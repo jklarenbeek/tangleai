@@ -87,6 +87,24 @@ describe('durable bounded outcome model proposals', () => {
     for (let i = 0; i < 10; i++) await f.stage('candidate:' + i);
     code(await service.reflect({ ...c, requestKey: 'eleven' }), 'OUTC1014'); assert.equal(calls, 1);
   });
+  it('bounds the returned reflection in UTF-8 bytes; a lone surrogate or non-string text fails the reply shape first', async () => {
+    const outcomes: Record<string, unknown> = {};
+    for (const [name, text] of [['at', 'é'.repeat(4096)], ['over', 'é'.repeat(4096) + 'a'], ['surrogate', '\uD800'.repeat(2731)], ['number', 42]] as const) {
+      const real = await createStructuredOutcomeProposer({ configuration: await configuration(), role: 'answer', apiKey: 'test-only', clock: () => 0, deadline: () => new AbortController().signal,
+        async fetch(_url, init) { return response(proposed(JSON.parse(String(init?.body)))); } });
+      // The model's text is swapped after decoding, so the reply reaches the service's own bound unrepaired.
+      const proposer = { identity: real.identity, async propose(...args: Parameters<typeof real.propose>) {
+        const reply = await real.propose(...args); return { ...reply, proposal: reply.proposal && { ...reply.proposal, text } } as unknown as ProposalReply; } };
+      const f = await lifecycleFixture(), service = await createOutcomeService({ ...f.host, proposer });
+      outcomes[name] = await service.reflect(f.command('model', f.input({ payload: null, text: '', configuration: { kind: 'model', identityId: proposer.identity.identityId } })));
+    }
+    assert.equal((outcomes.at as { ok: boolean }).ok, true);
+    code(outcomes.over as never, 'OUTC1009');
+    assert.match(JSON.stringify(outcomes.over), /retained-output bound/);
+    // checkShape('proposalReply') canonicalizes and validates before the bound; after dispatch that is an uncertain completion.
+    code(outcomes.surrogate as never, 'OUTC1017'); code(outcomes.number as never, 'OUTC1017');
+    assert.doesNotMatch(JSON.stringify(outcomes), /utf8ByteLength/);
+  });
   it('a deadline before dispatch is refused without an uncertain purchase', async () => {
     const controller = new AbortController(); controller.abort(); let calls = 0;
     const proposer = await createStructuredOutcomeProposer({ configuration: await configuration(), role: 'answer', apiKey: 'test-only', clock: () => 0, deadline: () => controller.signal, async fetch() { calls++; throw Error('must not fetch'); } });

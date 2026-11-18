@@ -1,4 +1,5 @@
 /** Question-local feedback uses the existing agent loop and synchronous guarded editor. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { createAgent } from '@tangleai/agents';
 import { createStructuredOutput, unfence } from '@tangleai/models/structured';
 import { equalsJson } from '@jarenjs/core/object';
@@ -52,7 +53,7 @@ export function createInternalFeedbackEditor(options: InternalFeedbackOptions) {
     const validate = (value: Feedback) => {
       if (sourceIssues.length) return { valid: false,errors: sourceIssues.map(e => ({ ...e,docPath: e.path,message: e.detail })) };
       for (const [key,items] of Object.entries(value) as [string,Feedback['provisionalDiagnoses']][]) {
-        if (items.length > limits.maxItems || items.some(item => new TextEncoder().encode(item.text).length > limits.maxItemBytes)) return { valid: false,errors: [{ code: 'TFCT1007',docPath: '/' + key,message: 'Feedback exceeds its item or UTF-8 byte bound.' }] };
+        if (items.length > limits.maxItems || items.some(item => utf8ByteLength(item.text) > limits.maxItemBytes)) return { valid: false,errors: [{ code: 'TFCT1007',docPath: '/' + key,message: 'Feedback exceeds its item or UTF-8 byte bound.' }] };
       }
       for (const item of value.committedGuidance) { const outcome = screen(item.text,toolbox.context()); if (!outcome.ok) remember(item,outcome.findings.map(f => f.kind)); }
       return refiner.dryRunGuidance(value.committedGuidance);

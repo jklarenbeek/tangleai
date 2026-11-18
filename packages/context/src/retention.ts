@@ -1,10 +1,11 @@
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { JarenValidator } from '@jarenjs/validate';
 import { GOAL_SCHEMA } from './schemas/ledger.ts';
 import { checkOutcome } from '@jarenjs/core/check';
 const checkpointCheck = new JarenValidator({ collectErrors: true, skipErrors: false, unknownFormats: 'ignore' }).compile(GOAL_SCHEMA.properties.checkpoint);
 
 /** Serialized UTF-8 bytes, including JSON escaping and punctuation. */
-export const jsonBytes = (value: any) => new TextEncoder().encode(JSON.stringify(value)).length;
+export const jsonBytes = (value: any) => utf8ByteLength(JSON.stringify(value) ?? ''); // a value JSON leaves out (undefined, a function) has no text: 0 bytes
 
 /**
  * Exact whole-map accounting. Braces belong to overhead; each member owns its

@@ -1,4 +1,5 @@
 /** Seven checkpointed tasks; the injected native job runner owns retries and scheduling. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { deepFreeze, equalsJson } from '@jarenjs/core/object';
 import { backoffDelay, createAttemptBudget } from '@jarenjs/core/retry';
 import { canonicalSha256, canonicalizeJson, cloneJson } from '@jarenjs/json/canonical';
@@ -143,7 +144,7 @@ export function createExperientialTrainingTasks(context: ExperientialTrainingCon
       signal?.throwIfAborted();
       if (!rendered.ok) await fail(run, 'TEXP1002', 'dataset');
       else {
-        const bytes = new TextEncoder().encode(canonicalizeJson(rendered.value)).byteLength;
+        const bytes = utf8ByteLength(canonicalizeJson(rendered.value));
         if (bytes > Math.min(run.budget.maxBytes, budgets.maxBytes)) await fail(run, 'TEXP1009', 'byte-budget');
         else await update(run, { kind: 'rendered', bytes, digest: await canonicalSha256(rendered.value) });
       }

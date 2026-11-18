@@ -1,4 +1,5 @@
 /** Bounded payload plans over Jaren's generic guarded engine and JSON Patch. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { checkedHead } from './promotion.ts';
 import { createGuardedRefiner } from '@jarenjs/core/guarded';
 import { cloneJson, equalsJson } from '@jarenjs/core/object';
@@ -42,7 +43,7 @@ export function preparePayload(adapter: OutcomeAdapter, policy: Policy, previous
     validateProposal(value: unknown) {
       const input = checkShape<ReflectInput>('reflectInput', value);
       if (input.patch.length > policy.maxOperations) reject('OUTC1009', 'Patch operation limit exceeded.');
-      if (new TextEncoder().encode(input.text).length > policy.maxReflectionBytes) reject('OUTC1009', 'Reflection UTF-8 byte limit exceeded.');
+      if (utf8ByteLength(input.text) > policy.maxReflectionBytes) reject('OUTC1009', 'Reflection UTF-8 byte limit exceeded.');
       if (input.mode === 'create' && input.patch.length) reject('OUTC1009', 'Root creation requires a payload, without a patch.');
       if (input.mode === 'evolve' && input.payload !== null) reject('OUTC1009', 'Evolution requires a patch, with payload null.');
       for (const patch of input.patch) {

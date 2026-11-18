@@ -3,7 +3,7 @@ import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { createLedger } from '@tangleai/context/ledger';
 import { createMemoryStorage } from '@tangleai/context/storage/memory';
-import { checkpointProgress, validateCheckpoint, ledgerFootprint } from '@tangleai/context/retention';
+import { checkpointProgress, validateCheckpoint, ledgerFootprint, jsonBytes } from '@tangleai/context/retention';
 import { archiveFootprint } from '@tangleai/context/archive';
 import { retentionFixture, measureRetention } from '../../benchmark/lib/retention.ts';
 const now = () => '2026-09-09T00:00:00Z';
@@ -195,4 +195,14 @@ it('archive limits do not make ordinary slot writes copy an unrelated corpus', a
   await ledger.putSlot('small', 'content');
   assert.ok(copied < 1000, `ordinary write copied ${copied} bytes`);
   assert.equal(withMember((await ledger.readSlot('corpus'))!, 'length').length, 100000);
+});
+
+it('measures JSON text in exact UTF-8 bytes, a lone surrogate as its escape, and a value JSON leaves out as 0 bytes', () => {
+  const encoded = (value: unknown) => new TextEncoder().encode(JSON.stringify(value)).length;
+  assert.equal(jsonBytes('\uD800'.repeat(3)), 2 + 3 * 6, 'JSON writes each lone surrogate as the 6 bytes of its escape');
+  for (const value of ['\uD800x', { a: 'é', b: ['\u{1F600}'] }, 5, null, [1, 'ü']]) assert.equal(jsonBytes(value), encoded(value));
+  // JSON.stringify gives no text for these; they count 0 bytes, as TextEncoder measured them, instead of refusing
+  for (const value of [undefined, () => 1, Symbol('s')]) assert.equal(jsonBytes(value), 0);
+  const footprint = ledgerFootprint({ 'ai/state/memory/m': undefined, 'ai/state/memory/n': 'é' });
+  assert.equal(footprint.classes.memories.bytes, jsonBytes('ai/state/memory/m') + 1 + 0 + jsonBytes('ai/state/memory/n') + 1 + 4 + 1);
 });

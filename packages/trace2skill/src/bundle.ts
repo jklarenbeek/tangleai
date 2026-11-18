@@ -8,6 +8,7 @@
  * source directory is never written, and binary bytes live behind an
  * injected artifact seam so a row never carries them.
  */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { trace2SkillIssue, trace2SkillRefuse, trace2SkillRefusal, type Trace2SkillOutcome } from './errors.ts';
 import { bundleIdOf, byPath, skillFileDigest } from './identity.ts';
 import { validateTrace2SkillShape } from './schema.ts';
@@ -62,7 +63,7 @@ export function normalizePath(path: unknown): Trace2SkillOutcome<string> {
   if (typeof path !== 'string' || path === '') return trace2SkillRefuse('TT2S1003', at, 'a file path is a non-empty string');
   if (path.includes('\0')) return trace2SkillRefuse('TT2S1003', at, 'a file path carries a NUL');
   if (path.includes('\\')) return trace2SkillRefuse('TT2S1003', at, `a file path uses POSIX separators: ${path}`);
-  if (new TextEncoder().encode(path).length > MAX_PATH_BYTES) return trace2SkillRefuse('TT2S1003', at, 'the file path exceeds the length bound');
+  if (utf8ByteLength(path) > MAX_PATH_BYTES) return trace2SkillRefuse('TT2S1003', at, 'the file path exceeds the length bound');
   if (path.startsWith('/') || /^[A-Za-z]:/.test(path)) return trace2SkillRefuse('TT2S1003', at, `a file path is relative to the directory: ${path}`);
   const segments = path.split('/');
   for (const segment of segments) {

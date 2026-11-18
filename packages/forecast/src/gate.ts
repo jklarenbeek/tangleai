@@ -1,4 +1,5 @@
 /** Bounded, deterministic screening of question facts before reusable guidance. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { isDateOnlyRFC3339 } from '@jarenjs/core/dates';
 import { deepFreeze, cloneJson } from '@jarenjs/core/object';
 import { createStructuredOutput } from '@tangleai/models';
@@ -15,7 +16,7 @@ const procedureWords = new Set(('A An And At Before Compare Check Consult Each E
 const tokens = (text: string) => normalizeForecastProcedure(text).split(' ').filter(Boolean);
 const contains = (whole: string, part: string) => (' ' + whole + ' ').includes(' ' + part + ' ');
 export function volatileFactGate(text: string, context: VolatileContext, shingle = 8) {
-  if (typeof text !== 'string' || new TextEncoder().encode(text).length > 32768) throw new TypeError('Guidance screening requires bounded text.');
+  if (typeof text !== 'string' || utf8ByteLength(text) > 32768) throw new TypeError('Guidance screening requires bounded text.');
   context = captureVolatileContext(context);
   if (!Number.isSafeInteger(shingle) || shingle < 2 || shingle > 32) throw new TypeError('A shingle bound from two to thirty-two is required.');
   const findings: { kind: VolatileKind; span: string; detail: string }[] = [];
@@ -40,7 +41,7 @@ export function volatileFactGate(text: string, context: VolatileContext, shingle
 export function captureVolatileContext(input: VolatileContext): VolatileContext {
   if (!input || typeof input.questionPrompt !== 'string' || typeof input.questionId !== 'string' || Object.keys(input).some(k => !['questionPrompt','questionId','adapterOptions','evidenceExcerpts','toolResultExcerpts','checkpointIds'].includes(k))) throw new TypeError('Supply only this question\'s bounded screening context.');
   for (const key of ['adapterOptions','evidenceExcerpts','toolResultExcerpts','checkpointIds'] as const) if (!Array.isArray(input[key]) || input[key].length > 1000 || input[key].some(v => typeof v !== 'string')) throw new TypeError('Screening context collections must be bounded strings.');
-  if (new TextEncoder().encode(JSON.stringify(input)).length > 1048576) throw new TypeError('Screening context exceeds its byte bound.');
+  if (utf8ByteLength(JSON.stringify(input)) > 1048576) throw new TypeError('Screening context exceeds its byte bound.');
   return deepFreeze(cloneJson(input));
 }
 export async function forecastSemanticStage(result: Json): Promise<HarnessRevision['gate']['semantic']> {
@@ -50,7 +51,7 @@ export async function forecastSemanticStage(result: Json): Promise<HarnessRevisi
 export function createVolatileFactClassifier(options: { client: ForecastChatClient; now: () => number }) {
   return { async classify(items: readonly CommittedGuidance[], input: VolatileContext, budget: ForecastBudget, signal?: AbortSignal) {
     const context = captureVolatileContext(input), meter = createForecastMeter(options.client,budget,options.now);
-    if (!Array.isArray(items) || items.length > 32 || items.some(i => new TextEncoder().encode(i.text).length > 512)) reject('TFCT1001','The classifier requires bounded guidance items.');
+    if (!Array.isArray(items) || items.length > 32 || items.some(i => typeof i?.text !== 'string' || utf8ByteLength(i.text) > 512)) reject('TFCT1001','The classifier requires bounded guidance items.');
     let result: VolatileFactVerdict | null = null, failure: { code: string;detail: string } | null = null;
     try {
       if (items.length === 0) result = { verdicts: [] };

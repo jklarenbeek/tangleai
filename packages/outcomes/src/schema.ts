@@ -1,4 +1,5 @@
 /** One schema authority. Canonicalization rejects non-JSON input before cloning. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { JarenValidator } from '@jarenjs/validate';
 import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { cloneJson, deepFreeze } from '@jarenjs/core/object';
@@ -35,5 +36,6 @@ export function checkTime(value: string): string {
     return value;
 }
 export const DEFAULT_OUTCOME_POLICY: Readonly<Policy> = Object.freeze({ maxVersions: 10, maxPayloadBytes: 32768, maxOperations: 32, maxChangedLeaves: 32, maxReflectionBytes: 8192 });
-export function jsonBytes(value: Json): number { return new TextEncoder().encode(canonicalizeJson(value)).length; }
+/** The canonical text is always a string: a value that is not JSON data is refused by `canonicalizeJson`, never measured. */
+export function jsonBytes(value: Json): number { return utf8ByteLength(canonicalizeJson(value)); }
 export function checkRecordShape(value: unknown): OutcomeRecord { const r = checkShape<OutcomeRecord>('outcomeRecord', value); checkTime(r.recordedAt); return r; }

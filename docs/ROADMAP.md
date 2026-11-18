@@ -368,17 +368,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 ## Reuse of the suite
 
 
-- [ ] **Byte bounds measured by Jaren.** Tangle measures text in bytes at 33
-  bounds with `new TextEncoder().encode(s).length`, several on untrusted input
-  (feedback items, screening text, outcome proposals). `@jarenjs/core/string`
-  `utf8ByteLength` agrees with it on every string, lone surrogates included,
-  and since 0.192.0 refuses a non-string instead of measuring it as 0 bytes.
-  *Wanted:* the bounds on `utf8ByteLength`, without a copy per measurement.
-  *Constraint:* a non-string that reaches a bound today is coerced to text and
-  measured; after the swap it is refused, so each bound must say which it
-  wants, and a refusal must reach its caller as the bound's own coded error.
-  *Closes on:* no `TextEncoder` byte length left at a bound, each bound tested
-  with a non-string and a lone surrogate.
 - [ ] **JSON equality and copies by meaning.** *Wanted:* `equalsJson` from
   `@jarenjs/core/object` where Tangle compares `JSON.stringify` texts (agents'
   refinement `sameJson`, the context ledger, the Pages storage transfer), and

@@ -64,3 +64,22 @@ it('editor and classifier clocks share cumulative allowance without double-count
   assert.deepEqual(result.revision.receipt!.calls.map((c: any) => c.stage),['feedback','revision.gate']);
   forecastMust(await forecastRevisionCommit(f.store,result));
 });
+it('the feedback item bound measures a lone surrogate as three bytes, and a non-string never reaches it',async () => {
+  const run = async (text: unknown) => {
+    const f = await feedbackFixture(), requests: unknown[] = [];
+    const client = scriptedClient(async request => { requests.push(request.messages); return feedbackAnswer({ provisionalDiagnoses: [{ text,sources: f.item.sources }],committedGuidance: [f.item],deferredFeedback: [] }); });
+    const result = await createInternalFeedbackEditor({ ...f,client }).run(f,f.budget);
+    return { result,requests: requests.length,repair: JSON.stringify(requests) };
+  };
+  // 170 lone surrogates are 510 bytes: two more bytes fill the 512 bound and pass the gate in one answer
+  // (the record shape refuses the unpaired surrogate afterwards), three cross it and the gate's own TFCT1007 asks for a repair.
+  const admitted = await run('\uD800'.repeat(170) + 'aa');
+  assert.equal(admitted.requests,1); assert.equal(admitted.result.revision.validation.issues[0].detail,'Only finite JSON data is accepted.');
+  const over = await run('\uD800'.repeat(170) + 'aaa');
+  assert.equal(over.requests,2); assert.ok(over.repair.includes('TFCT1007') && over.repair.includes('Feedback exceeds its item or UTF-8 byte bound.'));
+  assert.equal(over.result.status,'refused'); assert.ok(!/utf8ByteLength/.test(over.repair));
+  // A non-string is refused by the structured schema before the gate measures it.
+  const numeric = await run(5);
+  assert.equal(numeric.requests,2); assert.ok(!numeric.repair.includes('TFCT1007')); assert.ok(numeric.repair.includes('/provisionalDiagnoses/0/text')); assert.ok(!/utf8ByteLength/.test(numeric.repair));
+  assert.equal(numeric.result.status,'refused');
+});

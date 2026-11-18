@@ -1,4 +1,5 @@
 /** Guarded edits create pending descendants; independent stage verification admits them. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { createGuardedRefiner } from '@jarenjs/core/guarded';
 import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { applyJSONPatch, createJSONPatch } from '@jarenjs/json/patch';
@@ -54,7 +55,7 @@ export function createStagedArtifactRefiner(options: {
     validateProposal(patch: unknown) {
       const checked = validateResearchShape<ResearchJsonPatch>('ResearchJsonPatch', patch);
       if (!checked.valid) return { valid: false, errors: checked.issues.map(issue => ({ code: issue.code, docPath: issue.path, message: issue.detail })) };
-      if (new TextEncoder().encode(canonicalizeJson(checked.value)).byteLength > maxPatchBytes)
+      if (utf8ByteLength(canonicalizeJson(checked.value)) > maxPatchBytes)
         return problem('TRSH1006', '/patch', 'The patch exceeds its declared byte budget.');
       for (const [index, operation] of checked.value.entries()) {
         try {
@@ -67,7 +68,7 @@ export function createStagedArtifactRefiner(options: {
     apply: applyJSONPatch,
     validateCandidate(candidate: unknown) {
       const checked = shape(candidate); if (!checked.valid) return checked;
-      return new TextEncoder().encode(canonicalizeJson(candidate)).byteLength <= maxArtifactBytes ? checked
+      return utf8ByteLength(canonicalizeJson(candidate)) <= maxArtifactBytes ? checked
         : problem('TRSH1006', '/candidate', 'The edited artifact exceeds its declared byte budget.');
     },
     planCommit: (candidate: unknown, previous: unknown) => ({ candidate, patch: createJSONPatch(previous, candidate) }),

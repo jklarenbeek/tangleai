@@ -60,4 +60,19 @@ describe('guarded outcome payload preparation', () => {
       assert.equal(plan.changed.length, count + 1); assert.equal(plan.issues.length, count === 31 ? 0 : 1);
     }
   });
+  it('measures reflection text in UTF-8 bytes and refuses a lone surrogate or a non-string by shape, not by Jaren', async () => {
+    const schema = { type: 'object', additionalProperties: { type: 'string' } };
+    const schemas = { input: schema, output: schema, resolution: schema, artifact: schema };
+    const adapter: OutcomeAdapter = { identity: await adapterIdentity('bounds/v1', schemas, {}), schemas, staticPayload: {}, score: () => ({ outcome: 'success', diagnostics: {} }), interpret: x => x, validatePayload: () => [] };
+    const input: ReflectInput = { mode: 'create', scoreIds: ['a'.repeat(64)], parentVersionId: null, payload: {}, patch: [], text: '', citations: ['a'.repeat(64)], configuration: { kind: 'scripted', revision } };
+    const refusal = (expected: string) => (e: unknown) => e instanceof Error && 'code' in e && e.code === expected && !/utf8ByteLength/.test(e.message);
+    // 4096 two-byte characters sit exactly at the 8192-byte bound; one more byte crosses it.
+    preparePayload(adapter, DEFAULT_OUTCOME_POLICY, {}, { ...input, text: 'é'.repeat(4096) });
+    assert.throws(() => preparePayload(adapter, DEFAULT_OUTCOME_POLICY, {}, { ...input, text: 'é'.repeat(4096) + 'a' }), refusal('OUTC1009'));
+    // The reflectInput shape check canonicalizes first, so a lone surrogate never reaches the byte bound.
+    assert.throws(() => preparePayload(adapter, DEFAULT_OUTCOME_POLICY, {}, { ...input, text: '\uD800'.repeat(2731) }), refusal('OUTC1001'));
+    // jsonBytes measures canonical text only: a payload a lone surrogate cannot canonicalize is refused before it is measured.
+    assert.throws(() => preparePayload(adapter, { ...DEFAULT_OUTCOME_POLICY, maxPayloadBytes: 16 }, {}, { ...input, payload: { a: '\uD800' } }), refusal('OUTC1001'));
+    for (const text of [42, null, ['x']]) assert.throws(() => preparePayload(adapter, DEFAULT_OUTCOME_POLICY, {}, { ...input, text } as unknown as ReflectInput), refusal('OUTC1001'));
+  });
 });

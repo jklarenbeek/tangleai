@@ -24,6 +24,22 @@ describe('closed forecasting records', () => {
     await assert.rejects(sealForecastRecord('harnesses', { ...harnesses, document, digest: await forecastRevision(document) }), shapeFailure);
     assert.throws(() => checkShape('harnessDocument', { ...harnesses.document, factorTracking: ' ' }), shapeFailure);
   });
+  it('the harness component bound measures UTF-8 exactly; the record shape refuses a lone surrogate or a non-string first', async () => {
+    const { harnesses } = await makeForecastFixture();
+    const seal = async (factorTracking: unknown) => { const document = { ...harnesses.document, factorTracking } as typeof harnesses.document; return sealForecastRecord('harnesses', { ...harnesses, document, digest: await forecastRevision(document) }); };
+    // 2048 two-byte letters fill the 4096-byte component bound; one more byte crosses it with the bound's own refusal.
+    assert.equal((await seal('é'.repeat(2048))).document.factorTracking.length, 2048);
+    await assert.rejects(seal('é'.repeat(2048) + 'a'), (e: unknown) => shapeFailure(e) && (e as Error).message === 'Harness exceeds its canonical UTF-8 byte bound.');
+    // An unpaired surrogate is not JSON data: the shape check refuses it before any byte is counted.
+    const surrogate = { ...harnesses.document, factorTracking: '\uD800'.repeat(1366) };
+    await assert.rejects(validateForecastRecord('harnesses', { ...harnesses, document: surrogate }), (e: unknown) => shapeFailure(e) && (e as Error).message === 'Only finite JSON data is accepted.');
+    await assert.rejects(validateForecastRecord('harnesses', { ...harnesses, document: { ...harnesses.document, factorTracking: 5 } }), (e: unknown) => shapeFailure(e) && !/utf8ByteLength/.test((e as Error).message));
+  });
+  it('forecastBytes counts canonical UTF-8 and leaves a value that is not JSON data to canonicalization', () => {
+    assert.equal(forecastBytes({ a: 'é' }), 10); assert.equal(forecastBytes('\u{1F642}'), 6);
+    assert.throws(() => forecastBytes({ a: '\uD800' }), (e: unknown) => (e as { code?: string }).code === 'JO2007' && !/utf8ByteLength/.test((e as Error).message));
+    assert.throws(() => forecastBytes(undefined), (e: unknown) => !/utf8ByteLength/.test((e as Error).message));
+  });
   it('refuses empty scopes, non-normalized instants, impossible dates and nonfinite JSON', async () => {
     const f = await makeForecastFixture();
     for (const change of [{ scopeKey: '' }, { issuedAt: '2025-01-01T00:00:00Z' }, { issuedAt: '2025-02-30T00:00:00.000Z' }]) await assert.rejects(sealForecastRecord('questions', { ...f.questions, ...change }), shapeFailure);

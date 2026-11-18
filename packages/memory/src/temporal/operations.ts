@@ -1,4 +1,5 @@
 /** Durable accounting immediately around the one-attempt injected transport. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { checkTemporal, refuse, success, temporalIdentity, type TemporalResult, type TemporalOperation, type TemporalLimits, type PhysicalAttempt, type Json, type Refusal } from './contracts.ts';
 import type { TemporalStore } from './store.ts';
 export class TemporalFailure extends Error {
@@ -38,7 +39,8 @@ export async function createTemporalExecution(store: TemporalStore, reserved: Te
         signal.throwIfAborted();
         if (operation.attempts.some(a => a.phase === 'in-flight')) throw new TemporalFailure(refuse('provider-refusal', 'a physical request is already in progress'));
         if (operation.attempts.length >= limits.maxPhysicalRequests) throw new TemporalFailure(refuse('budget-exhausted', 'physical request budget exhausted before transport'));
-        const body = String(init?.body ?? ''), inputTokens = new TextEncoder().encode(body).length;
+        // The body is measured as text on purpose: a body that is not a string reserves the bytes of its String() form.
+        const body = String(init?.body ?? ''), inputTokens = utf8ByteLength(body);
         // Conservative UTF-8 byte reservation, not measured tokenizer usage. Actual usage remains in the persisted wire reply.
         if (inputTokens > limits.maxInputTokens) throw new TemporalFailure(refuse('budget-exhausted', 'request UTF-8 byte token ceiling exceeds maxInputTokens'));
         const index = operation.attempts.length;

@@ -1,4 +1,5 @@
 /** One artifact lineage interprets cutoff-pinned prediction bundles by canonical digest. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import schema from '../schemas/outcome-adapter.schema.json' with { type: 'json' };
 import { adapterIdentity, domainValidator, type OutcomeAdapter } from '@tangleai/outcomes';
 import { forecastRevision } from './identity.ts';
@@ -21,7 +22,7 @@ export async function createForecastHarnessAdapter(): Promise<OutcomeAdapter> {
     normalizePayload: raw => artifact(Object.fromEntries(Object.entries(artifact(raw) as object).map(([key,value]) => [key,(value as string).trimEnd()]))),
     validatePayload(raw) {
       const value = artifact(raw) as unknown as HarnessDocument;
-      return forecastBytes(value) > DEFAULT_FORECAST_POLICY.maxHarnessBytes || Object.values(value).some(text => new TextEncoder().encode(text).length > DEFAULT_FORECAST_POLICY.maxComponentBytes) ? [{ code: 'OUTC1010',detail: 'Forecast harness exceeds its UTF-8 byte bound.',path: '',retryable: false }] : [];
+      return forecastBytes(value) > DEFAULT_FORECAST_POLICY.maxHarnessBytes || Object.values(value).some(text => utf8ByteLength(text) > DEFAULT_FORECAST_POLICY.maxComponentBytes) ? [{ code: 'OUTC1010',detail: 'Forecast harness exceeds its UTF-8 byte bound.',path: '',retryable: false }] : [];
     },
     async interpret(raw,payload) {
       const value = input(raw) as unknown as Input, digest = await forecastRevision(artifact(payload)), answer = value.predictions[digest];

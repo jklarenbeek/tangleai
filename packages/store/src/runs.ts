@@ -23,7 +23,7 @@
  * exactly one of the two, and `getRun` answers the union.
  */
 
-import { hashContent } from '@jarenjs/core/string';
+import { hashContent, utf8ByteLength } from '@jarenjs/core/string';
 import { JarenValidator } from '@jarenjs/validate';
 import { callerError } from '@tangleai/core/errors';
 
@@ -236,7 +236,6 @@ const viewOf = (run: RunRecord): RunView => ({
   identityStatus: typeof run.identityId === 'string' ? 'run' : 'legacy-unrecorded',
 });
 
-const utf8Bytes = (text: string): number => new TextEncoder().encode(text).length;
 
 const eventOf = (frame: RunFrame): RunEvent => ({
   id: frame.id,
@@ -315,7 +314,7 @@ export function createRunLog(db: RunLogStore, options: RunLogOptions = {}): RunL
     if (body === null || typeof body !== 'object' || Array.isArray(body)) return `a ${kind} frame body must be an object`;
     const outcome = validate(body);
     if (outcome.valid !== true) return `a ${kind} frame body does not validate: ${JSON.stringify(outcome.errors ?? [])}`;
-    const bytes = utf8Bytes(JSON.stringify(body));
+    const bytes = utf8ByteLength(JSON.stringify(body));
     if (bytes > MAX_FRAME_BODY_BYTES) return `a ${kind} frame body is ${bytes} bytes, over the ${MAX_FRAME_BODY_BYTES} one frame may carry`;
     return null;
   }
@@ -469,7 +468,7 @@ export function createRunLog(db: RunLogStore, options: RunLogOptions = {}): RunL
       let bytes = 0;
       for (const frame of bounded) {
         const patch = [{ op: 'add', path: '/rows/-', value: frame }];
-        const size = utf8Bytes(JSON.stringify(patch));
+        const size = utf8ByteLength(JSON.stringify(patch));
         // the first frame always ships: a page that could carry none
         // would end the replay and lose every frame above it silently
         if (items.length > 0 && bytes + size > pageOptions.maxBytes) break;

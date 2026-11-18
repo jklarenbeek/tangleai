@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { createMemoryResearchPersistence, createResearchStoreAdapter, lessonDecayWeight, lessonInputHash,
   planStageCommit, sealLessonSetRecord, sealLessonValidationRun, researchRevisionOf, DECAY_HYPOTHESES,
   type ResearchStore, type ResearchStoreOutcome, type ResearchTransaction } from '@tangleai/research';
@@ -239,4 +240,24 @@ it('record seals refuse malformed payloads as values and decay only uses registe
       const { revision, ...body } = hypothesis; assert.equal(await researchRevisionOf(body), revision);
     }
   } finally { await h.close(); }
+});
+it('the 8 KiB lesson-proposal bound counts canonical UTF-8 bytes exactly, at the bound and one over', async () => {
+  const bytes = (value: unknown) => new TextEncoder().encode(canonicalizeJson(value)).length;
+  const attempt = async (filler: (base: number) => string) => {
+    const h = await memory();
+    try {
+      const { lesson } = await lessonFixture(h.store);
+      const base = bytes({ ...lesson.proposal, edit: { ...lesson.proposal.edit, reasoning: '' } });
+      const revised = await reviseLesson(lesson, row => { row.proposal.edit.reasoning = filler(base); });
+      return { size: bytes(revised.proposal), result: await h.store.lessons.putProposal(revised) };
+    } finally { await h.close(); }
+  };
+  // 'é' is 2 bytes, canonical JSON writes it unescaped; one ASCII letter evens the count
+  const reasoning = (extra: number) => (base: number) => 'é'.repeat((8192 - base) >> 1) + 'a'.repeat(((8192 - base) & 1) + extra);
+  const inside = await attempt(reasoning(0));
+  assert.equal(inside.size, 8192); stored(inside.result);
+  const over = await attempt(reasoning(1));
+  assert.equal(over.size, 8193); refused(over.result, 'TRSH2001');
+  assert.equal(!over.result.ok && over.result.issue.path, '/proposal');
+  assert.doesNotMatch(JSON.stringify(over.result), /utf8ByteLength/);
 });

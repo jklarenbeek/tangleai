@@ -130,3 +130,15 @@ it('an empty directory and a directory with no root page are refused', async () 
   assert.ok(!rootless.valid);
   assert.equal(rootless.issues[0].code, 'TT2S1005');
 });
+
+it('the path bound counts UTF-8 bytes, a lone surrogate as 3, and a non-string path is refused by its own code', () => {
+  const detail = (path: unknown) => { const refused = normalizePath(path); assert.ok(!refused.valid); assert.equal(refused.issues[0].code, 'TT2S1003'); return refused.issues[0].detail; };
+  // 170 lone surrogates and 'aa' are exactly 512 bytes: inside the bound, refused only for the name's letters
+  assert.match(detail('\uD800'.repeat(170) + 'aa'), /letters, digits/);
+  assert.equal(detail('\uD800'.repeat(170) + 'aaa'), 'the file path exceeds the length bound');
+  for (const path of [5, null, undefined, { toString: () => 'SKILL.md' }, ['SKILL.md']]) {
+    const message = detail(path);
+    assert.equal(message, 'a file path is a non-empty string');
+    assert.doesNotMatch(message, /utf8ByteLength/);
+  }
+});

@@ -53,3 +53,32 @@ it('a forged prepared plan cannot bypass guarded publication',async () => {
   assert.equal(result.ok,false); assert.equal(result.errors[0].code,'TFCT1007'); assert.equal(writes,0);
   const valid = await f.refiner.guarded.commitPrepared(f.refiner.previous,prepared); assert.equal(valid.ok,true); assert.equal(writes,1);
 });
+it('the guidance item bound measures UTF-8 exactly; the guidance shape refuses a lone surrogate or a non-string first',async () => {
+  const reached: string[] = [];
+  const f = await fixture(), refiner = await createHarnessRefiner({ ...f.options,gate: text => { reached.push(text); return { ok: false,findings: [{ kind: 'date',span: '',detail: 'probe' }] }; } });
+  // 256 two-byte letters fill the 512-byte item bound and reach the screen; one more byte is the bound's own TFCT1007.
+  const admitted = await refiner.prepareGuidance([{ ...f.item,text: 'é'.repeat(256) }]);
+  assert.equal(admitted.valid,false); assert.equal(admitted.errors[0].code,'TFCT1008'); assert.equal(reached.length,1);
+  const over = await refiner.prepareGuidance([{ ...f.item,text: 'é'.repeat(256) + 'a' }]);
+  assert.equal(over.valid,false); assert.deepEqual([over.errors[0].code,(over.errors[0] as { detail?: string; message?: string }).detail ?? (over.errors[0] as { message?: string }).message],['TFCT1007','Guidance UTF-8 byte limit exceeded.']); assert.equal(reached.length,1);
+  for (const [text,detail] of [['\uD800'.repeat(171),'Only finite JSON data is accepted.'],[5,'Invalid committedGuidance data.']] as const) {
+    const refused = await refiner.prepareGuidance([{ ...f.item,text: text as string }]);
+    assert.equal(refused.valid,false); assert.equal(refused.errors[0].code,'TFCT1001'); assert.equal((refused.errors[0] as { detail?: string; message?: string }).detail ?? (refused.errors[0] as { message?: string }).message,detail);
+  }
+  assert.equal(reached.length,1);
+});
+it('the component and growth bounds measure UTF-8 exactly; the patch shape refuses a lone surrogate or a non-string first',async () => {
+  const f = await fixture(), old = new TextEncoder().encode(f.refiner.previous.skills[0].instructions).length;
+  const message = (r: { valid: boolean; errors?: unknown[] }) => { const e = r.errors![0] as { code: string; message?: string; detail?: string }; return [e.code,e.message ?? e.detail]; };
+  const replace = (value: unknown) => [{ op: 'replace',path: '/skills/0/instructions',value }];
+  const component = await createHarnessRefiner({ ...f.options,limits: { maxComponentBytes: 1000,maxGrowthBytes: 4096 } });
+  // 500 two-byte letters fill a 1000-byte component bound; the patch then fails only its attribution check.
+  assert.deepEqual(message(component.guarded.prepare(component.previous,replace('é'.repeat(500)))),['TFCT1007','The patch changes bytes not attributable to its cited guidance.']);
+  assert.deepEqual(message(component.guarded.prepare(component.previous,replace('é'.repeat(500) + 'a'))),['TFCT1007','Component byte or growth bound exceeded.']);
+  const growth = await createHarnessRefiner({ ...f.options,limits: { maxGrowthBytes: 100 } });
+  const grown = 'é'.repeat((old + 100) / 2);
+  assert.equal(new TextEncoder().encode(grown).length - old,100);
+  assert.deepEqual(message(growth.guarded.prepare(growth.previous,replace(grown))),['TFCT1007','The patch changes bytes not attributable to its cited guidance.']);
+  assert.deepEqual(message(growth.guarded.prepare(growth.previous,replace(grown + 'a'))),['TFCT1007','Component byte or growth bound exceeded.']);
+  for (const value of ['\uD800'.repeat(10),5]) assert.deepEqual(message(f.refiner.guarded.prepare(f.refiner.previous,replace(value))),['TFCT1007','Invalid harness patch shape.']);
+});

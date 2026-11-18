@@ -1,4 +1,5 @@
 /** Strict CSV admission and independent paired-sample statistics use native owners. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { parseCsv } from '@jarenjs/josl';
 import { mean, variance, stddev, pairedBootstrap } from '@jarenjs/core/stats';
 import { equalsJson } from '@jarenjs/core/object';
@@ -8,7 +9,7 @@ import { researchRefuse, type ResearchOutcome } from '../errors.ts';
 import { validateResearchShape } from '../schema.ts';
 
 export function parseTabularSamples(csv: string): ResearchOutcome<TabularSample[]> {
-  if (typeof csv !== 'string' || new TextEncoder().encode(csv).byteLength > 262144)
+  if (typeof csv !== 'string' || utf8ByteLength(csv) > 262144)
     return researchRefuse('TRSH1006', '/csv', 'CSV input must fit the 256 KiB profile bound.');
   try {
     const records = parseCsv(csv, { headers: false, typed: true, repair: false, trim: false });

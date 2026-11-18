@@ -22,3 +22,12 @@ it('the static payload is the seed harness and its adapter identity is stable', 
   assert.equal(adapter.identity.revision,'7d8d984ef89e85c17b5c0caee65007a4e96fd6013cd2c0b2a35a9cee2cf115a5');
   assert.ok(adapter.validatePayload({ ...SEED_HARNESS,factorTracking: '🙂'.repeat(2000) }).length);
 });
+it('the harness payload bound measures UTF-8 exactly; the domain shape refuses a lone surrogate or a non-string first', async () => {
+  const adapter = await createForecastHarnessAdapter();
+  // 2048 two-byte letters fill the 4096-byte component bound; one more byte crosses it as OUTC1010.
+  assert.deepEqual(adapter.validatePayload({ ...SEED_HARNESS,factorTracking: 'é'.repeat(2048) }),[]);
+  assert.deepEqual(adapter.validatePayload({ ...SEED_HARNESS,factorTracking: 'é'.repeat(2048) + 'a' }).map(i => [i.code,i.detail]),[['OUTC1010','Forecast harness exceeds its UTF-8 byte bound.']]);
+  const domain = (detail: string) => (e: unknown) => (e as { code?: string }).code === 'OUTC1001' && (e as Error).message === detail && !/utf8ByteLength/.test((e as Error).message);
+  assert.throws(() => adapter.validatePayload({ ...SEED_HARNESS,factorTracking: '\uD800'.repeat(1366) }),domain('Expected finite JSON domain data.'));
+  assert.throws(() => adapter.validatePayload({ ...SEED_HARNESS,factorTracking: 5 }),domain('Domain schema rejected the value.'));
+});

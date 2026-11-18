@@ -1,4 +1,5 @@
 /** A HERA policy consumer of the suite's guarded engine; JSON Patch remains its owner. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import {createGuardedRefiner} from '@jarenjs/core/guarded';
 import {equalsJson} from '@jarenjs/core/object';
 import {applyJSONPatch,createJSONPatch} from '@jarenjs/json/patch';
@@ -70,7 +71,7 @@ export async function integratePrompt(input:{agent:HeraAgentDefinition;active:He
         return bad('/trial/delta','Activation requires higher task score, or a tie with fewer known provider tokens.');
       if(blockNames.some(block=>candidate[block].some(rule=>!rule.derivedFrom.length||rule.derivedFrom.some(id=>!trial.bufferTrajectoryIds.includes(id)))))return bad('/derivedFrom','The tested candidate must retain its original failure provenance.');
       const rules=blockNames.flatMap(name=>next[name]);
-      if(rules.length>bounds.maxRules||new TextEncoder().encode(candidate.effectivePrompt).byteLength>bounds.maxBytes)return bad('/bounds','The prompt exceeds its registered rule or byte cap.');
+      if(rules.length>bounds.maxRules||utf8ByteLength(candidate.effectivePrompt)>bounds.maxBytes)return bad('/bounds','The prompt exceeds its registered rule or byte cap.');
       const seen=new Set<string>();for(const [index,rule] of rules.entries()){
         if(seen.has(normalized(rule)))return bad('/rules/'+index,'A prompt cannot contain duplicate normalized rules.');seen.add(normalized(rule));
         if(rules.slice(0,index).some(other=>conflictingPromptRules(rule,other)))return bad('/rules/'+index,'The registered negation policy refuses conflicting rules.');

@@ -419,3 +419,42 @@ describe('run frames: a database written before frames existed', () => {
     }
   });
 });
+
+describe('run frames: byte bounds', () => {
+  it('measures a frame body as its JSON text, a lone surrogate as its 6-byte escape, at the bound and one over', async () => {
+    const db = await open();
+    const log = createRunLog(db, { now: clock() });
+    const run = await log.startRun('chat');
+    // '{"text":"","chars":1}' is 21 bytes; JSON writes each lone surrogate as the 6 bytes of `\ud800`
+    const body = (filler: number) => ({ text: '\uD800'.repeat(10919) + 'a'.repeat(filler), chars: 1 });
+    assert.equal(new TextEncoder().encode(JSON.stringify(body(1))).length, MAX_FRAME_BODY_BYTES);
+    const inside = await log.appendFrame(run.id, { kind: 'delta', body: body(1) });
+    assert.equal(inside.ok, true, JSON.stringify(inside));
+    const over = await log.appendFrame(run.id, { kind: 'delta', body: body(2) });
+    assert.equal(over.ok === false && over.code, 'TDSK1003');
+    assert.equal(over.ok === false && over.reason, `a delta frame body is ${MAX_FRAME_BODY_BYTES + 1} bytes, over the ${MAX_FRAME_BODY_BYTES} one frame may carry`);
+    // the measured value is always JSON text: a body that is not an object is refused before it is measured
+    for (const notObject of ['text', 5, null]) {
+      const refused = await log.appendFrame(run.id, { kind: 'delta', body: notObject as never });
+      assert.equal(refused.ok === false && refused.code, 'TDSK1003');
+      assert.doesNotMatch(refused.ok === false ? refused.reason : '', /utf8ByteLength/);
+    }
+    await db.close();
+  });
+
+  it('cuts a replay page at exactly the UTF-8 bytes of its patches', async () => {
+    const db = await open();
+    const log = createRunLog(db, { now: clock() });
+    const run = await log.startRun('chat');
+    for (const text of ['é'.repeat(100), '\uD800'.repeat(50) + 'ü', 'tail'])
+      assert.equal((await log.appendFrame(run.id, { kind: 'delta', body: { text, chars: text.length } })).ok, true);
+    const whole = await log.replayPage(run.id, 0, { limit: 50, maxBytes: 1 << 20 });
+    assert.ok(whole);
+    const [first, second] = whole.items.map(item => new TextEncoder().encode(JSON.stringify(item.patch)).length);
+    const fits = await log.replayPage(run.id, 0, { limit: 50, maxBytes: first + second });
+    assert.equal(fits?.items.length, 2, 'two frames fit a page of exactly their bytes');
+    const cut = await log.replayPage(run.id, 0, { limit: 50, maxBytes: first + second - 1 });
+    assert.equal(cut?.items.length, 1, 'one byte less cuts the page before the second frame');
+    await db.close();
+  });
+});

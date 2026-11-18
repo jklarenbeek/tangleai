@@ -1,4 +1,5 @@
 /** Bounded retrospective proposals retain their purchase before outcome evaluation. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { createAgent } from '@tangleai/agents';
 import { createStructuredOutput, unfence } from '@tangleai/models/structured';
 import { equalsJson } from '@jarenjs/core/object';
@@ -132,7 +133,7 @@ export async function forecastPromoteOrRetain(host: ForecastOutcomeHost,id: stri
       const scoreIds = resolution.losses.map(loss => loss.scoreId).sort();
       if (!scoreIds.length) reject('TFCT1011','No independently scored checkpoints can train this candidate.');
       const text = record.verdicts.map(v => v.verdict + ': ' + v.reason).join('\n');
-      if (new TextEncoder().encode(text).length > 8192) reject('TFCT1007','Retrospective summary exceeds its outcome bound.');
+      if (utf8ByteLength(text) > 8192) reject('TFCT1007','Retrospective summary exceeds its outcome bound.');
       const step = async <T>(result: import('@tangleai/outcomes').Result): Promise<T> => { const value = forecastOutcomeValue<T>(result); if (result.ok) writes += result.writes; return value; };
       if (!record.reflect) {
         const reflected = await step<NonNullable<RetrospectiveCheck['reflect']>>(await host.service.reflect(host.command('reflect:' + id,{ mode: record.parentHead!.versionId === null ? 'create' : 'evolve',parentVersionId: record.parentHead!.versionId,scoreIds,citations: scoreIds,text,payload: record.parentHead!.versionId === null ? record.candidateDocument : null,patch: record.parentHead!.versionId === null ? [] : patch,configuration: { kind: 'scripted',revision: record.id } },at)));

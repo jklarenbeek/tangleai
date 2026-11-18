@@ -29,3 +29,14 @@ it('a stopped or malformed classifier result fails closed and keeps its charged 
   }
   assert.deepEqual((await forecastSemanticStage({ result: 'not-run' })).result,{ result: 'not-run' });
 });
+it('the classifier item bound measures a lone surrogate as three bytes and refuses a non-string as TFCT1001',async () => {
+  let calls = 0;
+  const classifier = createVolatileFactClassifier({ client: scriptedClient(async () => { calls++; return feedbackAnswer({ verdicts: [{ index: 0,verdict: 'reusable',reason: 'A procedure.' }] },null); }),now: () => 0 });
+  const bounded = (e: unknown) => (e as { code?: string }).code === 'TFCT1001' && (e as Error).message === 'The classifier requires bounded guidance items.' && !/utf8ByteLength/.test((e as Error).message);
+  // 170 lone surrogates are 510 bytes: two more bytes fill the 512 bound, three cross it.
+  const admitted = await classifier.classify([{ ...item,text: '\uD800'.repeat(170) + 'aa' }],context,{ turns: 3,ms: 1000 });
+  assert.equal(admitted.failure,null); assert.equal(calls,1);
+  await assert.rejects(classifier.classify([{ ...item,text: '\uD800'.repeat(170) + 'aaa' }],context,{ turns: 3,ms: 1000 }),bounded);
+  for (const bad of [{ ...item,text: 5 },{ ...item,text: undefined },null]) await assert.rejects(classifier.classify([bad as unknown as typeof item],context,{ turns: 3,ms: 1000 }),bounded);
+  assert.equal(calls,1);
+});

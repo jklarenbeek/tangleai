@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createTemporalMemoryStore, prepareTemporal, temporalValue, recoverTemporalOperation } from '@tangleai/memory/temporal';
-import { temporalTestBundle, extractionReply, chatResponse, preparationInput, TEMPORAL_TEST_MODEL } from '../fixtures/temporal-provider.ts';
+import { temporalTestBundle, extractionReply, chatResponse, preparationInput, TEMPORAL_TEST_MODEL, TEMPORAL_TEST_LIMITS } from '../fixtures/temporal-provider.ts';
 test('zero request budget and oversized input dispatch no transport; one repair consumes a second request', async () => {
   for (const limit of [{ maxPhysicalRequests: 0 }, { maxInputTokens: 1 }]) {
     const bundle = await temporalTestBundle(), input = preparationInput(bundle), store = createTemporalMemoryStore(); let calls = 0;
@@ -49,4 +49,20 @@ test('explicit crashed-owner recovery preserves unknown outcome and completed op
   const recovered = temporalValue(await recoverTemporalOperation(store, 's', 'crashed', 0));
   assert.equal(recovered.phase, 'unknown'); assert.equal(recovered.attempts.length, 0);
   assert.equal((await recoverTemporalOperation(store, 's', 'crashed', 0)).status, 'refused');
+});
+test('the input ceiling reserves the request body\'s exact UTF-8 bytes, at the ceiling and one under', async () => {
+  const run = async (maxInputTokens: number) => {
+    const bundle = await temporalTestBundle(), input = preparationInput(bundle), store = createTemporalMemoryStore(); const bodies: unknown[] = [];
+    const result = await prepareTemporal({ ...input, limits: { ...input.limits, maxInputTokens } },
+      { store, model: TEMPORAL_TEST_MODEL, fetch: async (_url, init) => { bodies.push(init?.body); return chatResponse(extractionReply(bundle)); } });
+    return { result, bodies };
+  };
+  const open = await run(TEMPORAL_TEST_LIMITS.maxInputTokens);
+  assert.equal(open.result.status, 'success'); assert.equal(open.bodies.length, 1); assert.equal(typeof open.bodies[0], 'string');
+  const bytes = new TextEncoder().encode(open.bodies[0] as string).length;
+  const exact = await run(bytes);
+  assert.equal(exact.result.status, 'success'); assert.equal(exact.bodies.length, 1);
+  const under = await run(bytes - 1);
+  assert.equal(under.result.status !== 'success' && under.result.reason, 'budget-exhausted'); assert.equal(under.bodies.length, 0);
+  assert.doesNotMatch(JSON.stringify(under.result), /utf8ByteLength/);
 });

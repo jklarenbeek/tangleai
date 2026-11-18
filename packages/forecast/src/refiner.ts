@@ -1,4 +1,5 @@
 /** One guarded harness editor over the existing three-skill ledger projection. */
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { createLedger, createMemoryStorage, SKILL_SCHEMA } from '@tangleai/context';
 import { JarenValidator } from '@jarenjs/validate';
 import { createGuardedRefiner } from '@jarenjs/core/guarded';
@@ -16,7 +17,6 @@ export interface HarnessLimits { maxItems: number; maxItemBytes: number; maxOps:
 export const DEFAULT_HARNESS_LIMITS: Readonly<HarnessLimits> = Object.freeze({ maxItems: 5,maxItemBytes: 512,maxOps: 8,maxComponents: 2,maxGrowthBytes: 512,maxComponentBytes: 4096,maxHarnessBytes: 32768,maxTraceReads: 8,shingle: 8 });
 const applicability: Record<keyof HarnessDocument,string> = { evidenceHandling: 'When assessing a source for a forecast.',factorTracking: 'When identifying factors that can change a forecast.',uncertaintyHandling: 'When comparing uncertainty before a forecast.' };
 const skillCheck = new JarenValidator({ collectErrors: true }).compile(SKILL_SCHEMA);
-const textBytes = (text: string) => new TextEncoder().encode(text).length;
 export function checkedHarnessLimits(input: Partial<HarnessLimits> = {}): HarnessLimits {
   if (Object.keys(input).some(k => !Object.hasOwn(DEFAULT_HARNESS_LIMITS,k))) reject('TFCT1001','Unknown harness limit.');
   const result = { ...DEFAULT_HARNESS_LIMITS,...input };
@@ -78,7 +78,7 @@ export async function createHarnessRefiner(options: HarnessRefinerOptions) {
     return items.map((raw,index) => {
       if (!raw || !Array.isArray(raw.sources) || !raw.sources.length || raw.sources.some((id: unknown) => typeof id !== 'string' || !admitted.has(id))) reject('TFCT1007','Guidance cites a dangling or unprefixed source.','/committedGuidance/' + index + '/sources');
       const item = checkShape<CommittedGuidance>('committedGuidance',raw);
-      if (textBytes(item.text) > limits.maxItemBytes) reject('TFCT1007','Guidance UTF-8 byte limit exceeded.','/committedGuidance/' + index + '/text');
+      if (utf8ByteLength(item.text) > limits.maxItemBytes) reject('TFCT1007','Guidance UTF-8 byte limit exceeded.','/committedGuidance/' + index + '/text');
       const screened = gate(item.text,context,limits.shingle);
       if (!screened.ok) reject('TFCT1008','Guidance contains ' + screened.findings.map(f => f.kind).join(', ') + '.','/committedGuidance/' + index + '/text');
       return item;
@@ -103,7 +103,7 @@ export async function createHarnessRefiner(options: HarnessRefinerOptions) {
         const old = before.skills[i];
         if (skill.name !== old.name || skill.id !== old.id || skill.at !== old.at || skill.tools.length) reject('TFCT1007','A patch cannot alter skill identity or grant tools.','/skills/' + i);
         if (!equalsJson(skill,old)) changed++;
-        if (textBytes(skill.instructions) > limits.maxComponentBytes || textBytes(skill.instructions) - textBytes(old.instructions) > limits.maxGrowthBytes) reject('TFCT1007','Component byte or growth bound exceeded.','/skills/' + i + '/instructions');
+        if (utf8ByteLength(skill.instructions) > limits.maxComponentBytes || utf8ByteLength(skill.instructions) - utf8ByteLength(old.instructions) > limits.maxGrowthBytes) reject('TFCT1007','Component byte or growth bound exceeded.','/skills/' + i + '/instructions');
       }
       if (changed > limits.maxComponents || forecastBytes(document) > limits.maxHarnessBytes) reject('TFCT1007','Harness churn or total byte bound exceeded.','/skills');
       guidance(active);

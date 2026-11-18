@@ -46,3 +46,15 @@ it('duplicate and registered contradictory rules are refused across prompt block
   }
   assert.equal(conflictingPromptRules('Always verify evidence.','Never verify evidence.'),true);assert.equal(conflictingPromptRules('Check dates.','Verify citations.'),false);
 });
+it('the prompt byte cap counts UTF-8 bytes exactly, and a non-string prompt is refused by shape before it',async()=>{
+  // A lone surrogate never reaches the cap: the candidate's canonical content id refuses it when the version is created.
+  const input=await integrationFixture([{text:'Verify évidence.',derivedFrom:['control']}]),prompt=input.candidate.effectivePrompt;
+  const bytes=prompt.length+1;assert.equal(new TextEncoder().encode(prompt).length,bytes);
+  const at=structuredClone(input);at.config.promptBounds.maxBytes=bytes;assert.ok((await integratePrompt(at)).valid);
+  const over=structuredClone(input);over.config.promptBounds.maxBytes=bytes-1;const refused=await integratePrompt(over);
+  assert.equal(refused.valid,false);if(!refused.valid){assert.equal(refused.issues[0].code,'THERA1008');assert.equal(refused.issues[0].path,'/bounds');}
+  for(const value of [42,null,['text']]){
+    const changed=structuredClone(input);(changed.candidate as unknown as {effectivePrompt:unknown}).effectivePrompt=value;const result=await integratePrompt(changed);
+    assert.equal(result.valid,false);if(!result.valid){assert.equal(result.issues[0].code,'THERA1001');assert.equal(result.issues[0].path,'/effectivePrompt');assert.doesNotMatch(result.issues[0].detail,/utf8ByteLength/);}
+  }
+});

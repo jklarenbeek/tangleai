@@ -15,6 +15,7 @@
  * uncertain attempt rather than repeating external work.
  */
 
+import { utf8ByteLength } from '@jarenjs/core/string';
 import { equalsJson, cloneJson } from '@jarenjs/core/object';
 import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { JarenValidator } from '@jarenjs/validate';
@@ -117,7 +118,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
   async function enforceTraceLimit(txn: TransactionStore, runId: string): Promise<void> {
     const trace = await readTraceFrom(txn, runId);
     const limit = (trace?.run.budget.limits as { traceBytes?: number } | undefined)?.traceBytes;
-    if (limit !== undefined && new TextEncoder().encode(JSON.stringify(trace)).byteLength > limit) {
+    if (limit !== undefined && utf8ByteLength(JSON.stringify(trace)) > limit) {
       throw new MasRollback(refuse('TMAS2009', '/limits/traceBytes', 'the retained trace byte budget is spent; the completion was rolled back'));
     }
   }
