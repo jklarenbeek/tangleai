@@ -128,4 +128,7 @@ export const zhTW: OsCatalogue = {
   'access/remove-confirm': '要移除 {title} 嗎？',
   'access/remove': '移除',
   'access/keep': '保留',
+  'apps/offer': '新增應用程式「{title}」',
+  'apps/written-by': '由 {sender} 為您撰寫',
+  'apps/asks-nothing': '它獨立執行，不要求任何權限：無法存取您的檔案、其他應用程式或助理。',
 };

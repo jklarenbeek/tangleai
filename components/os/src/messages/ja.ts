@@ -128,4 +128,7 @@ export const ja: OsCatalogue = {
   'access/remove-confirm': '{title} を削除しますか？',
   'access/remove': '削除',
   'access/keep': '残す',
+  'apps/offer': 'アプリケーション「{title}」を追加',
+  'apps/written-by': '{sender} があなたのために作成',
+  'apps/asks-nothing': '単独で動作し、何も要求しません。ファイル、ほかのアプリケーション、アシスタントにはアクセスできません。',
 };

@@ -1151,6 +1151,16 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     li.append(list);
   }
 
+  /** An application the assistant wrote, in the desktop's words: who wrote it, what it is for, and that it asks for nothing. */
+  function appOffer(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { title?: string, summary?: string, by?: string }) {
+    const by = payload.by && kernel.effective(payload.by) ? localized(kernel.effective(payload.by)!.title, locale.locale) : payload.by ?? t('desktop/label');
+    subject.textContent = t('apps/offer', { title: payload.title ?? '' });
+    from.textContent = t('apps/written-by', { sender: by });
+    if (payload.summary) { const summary = doc.createElement('p'); summary.textContent = payload.summary; li.append(summary); }
+    const note = doc.createElement('p'); note.className = 'tos-muted'; note.textContent = t('apps/asks-nothing');
+    li.append(note);
+  }
+
   function proposalItem(item: ReturnType<Kernel['mail']>[number], app: string) {
     const p = item.proposal!;
     const li = doc.createElement('li'); li.className = 'tos-proposal'; li.dataset.proposal = p.id; li.dataset.module = item.from;
@@ -1158,6 +1168,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     const from = doc.createElement('span'); from.className = 'tos-muted'; from.textContent = t('mail/from', { sender: app });
     li.append(subject, from);
     if (item.from === 'desktop' && p.kind === 'dock.layout') dockSuggestion(li, subject, from, p.payload as any);
+    else if (item.from === 'desktop' && p.kind === 'app.add') appOffer(li, subject, from, p.payload as any);
     else if (p.summary) { const summary = doc.createElement('p'); summary.textContent = p.summary; li.append(summary); }
     if (p.evidence?.length) {
       const evidence = doc.createElement('ul'); evidence.className = 'tos-evidence'; evidence.setAttribute('aria-label', t('mail/evidence'));
@@ -1204,7 +1215,11 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     for (const [decision, label] of [['accept', t('mail/accept')], ['reject', t('mail/reject')]] as const) {
       const b = doc.createElement('button'); b.type = 'button'; b.dataset.decision = decision; b.textContent = deciding ? t('mail/deciding') : label;
       b.disabled = deciding;
-      b.addEventListener('click', () => { for (const x of actions.querySelectorAll('button')) (x as HTMLButtonElement).disabled = true; kernel.decide(item.id, decision).catch(report); });
+      b.addEventListener('click', () => {
+        for (const x of actions.querySelectorAll('button')) (x as HTMLButtonElement).disabled = true;
+        // an application the person just added opens, so they see what they accepted
+        kernel.decide(item.id, decision).then((outcome: any) => { if (outcome?.ok && outcome.value?.module) open(outcome.value.module); }, report);
+      });
       actions.append(b);
     }
     li.append(actions);

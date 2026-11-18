@@ -120,10 +120,10 @@ describe('header bars in the kernel', () => {
     kernel.setHeader('cal', 'w1', HEADER);
     const used: any[] = [];
     kernel.registerHeaderHandler('cal', 'w1', (a) => { used.push(a); });
-    assert.deepEqual(kernel.operations().map(o => o.tool), ['tangle_os_header__header_list', 'tangle_os_header__header_activate', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_locations', 'tangle_os_files__files_list', 'tangle_os_files__files_search', 'tangle_os_files__files_read']);
+    assert.deepEqual(kernel.operations().map(o => o.tool), ['tangle_os_header__header_list', 'tangle_os_header__header_activate', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_locations', 'tangle_os_files__files_list', 'tangle_os_files__files_search', 'tangle_os_files__files_read', 'tangle_os_apps__apps_crib', 'tangle_os_apps__apps_check', 'tangle_os_apps__apps_suggest']);
     const tools: any = kernel.tools();
     const names = tools.toFunctionTools().map((t: any) => t.function.name);
-    assert.deepEqual(names, ['tangle_os_header__header_list', 'tangle_os_header__header_activate', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_locations', 'tangle_os_files__files_list', 'tangle_os_files__files_search', 'tangle_os_files__files_read']);
+    assert.deepEqual(names, ['tangle_os_header__header_list', 'tangle_os_header__header_activate', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_locations', 'tangle_os_files__files_list', 'tangle_os_files__files_search', 'tangle_os_files__files_read', 'tangle_os_apps__apps_crib', 'tangle_os_apps__apps_check', 'tangle_os_apps__apps_suggest']);
     await tools.execute('tangle_os_header__header_activate', { window: 'w1', item: 'sidebar', value: true });
     assert.deepEqual(used, [{ item: 'sidebar', value: true, by: 'assistant' }]);
   });

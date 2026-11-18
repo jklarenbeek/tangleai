@@ -130,6 +130,9 @@ export const osMessagesEn = {
   'access/remove-confirm': 'Remove {title}?',
   'access/remove': 'Remove',
   'access/keep': 'Keep',
+  'apps/offer': 'Add the application {title}',
+  'apps/written-by': 'Written for you by {sender}',
+  'apps/asks-nothing': 'It runs on its own and asks for nothing: it cannot reach your files, your other applications or the assistant.',
 } as const;
 
 export type OsMessageKey = keyof typeof osMessagesEn;

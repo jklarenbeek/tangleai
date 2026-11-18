@@ -172,7 +172,7 @@ describe('the contract bus', () => {
       const tools = kernel.tools();
       const names = tools.list().map((t: any) => t.name).sort();
       // every window's header bar is the assistant's too, under the same grant
-      assert.deepEqual(names, ['records__records_get', 'records__records_search', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_list', 'tangle_os_files__files_locations', 'tangle_os_files__files_read', 'tangle_os_files__files_search', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
+      assert.deepEqual(names, ['records__records_get', 'records__records_search', 'tangle_os_apps__apps_check', 'tangle_os_apps__apps_crib', 'tangle_os_apps__apps_suggest', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_list', 'tangle_os_files__files_locations', 'tangle_os_files__files_read', 'tangle_os_files__files_search', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
       const result = await tools.execute('records__records_search', { query: 'oak' });
       assert.ok(JSON.stringify(result).includes('Oak table'), JSON.stringify(result));
       assert.equal(kernel.ledger().at(-1)!.caller, 'assistant');

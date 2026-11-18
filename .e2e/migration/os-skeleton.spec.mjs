@@ -46,7 +46,7 @@ test('three host kinds join one desktop and talk only through contracts', async 
   expect(found).toEqual({ ok: true, value: [{ id: 'r1', name: 'Oak table', stock: 4 }] });
   expect(await page.evaluate(() => window.tangleOs.kernel.tools().list().map(t => t.name).sort()))
     // every window's header bar is the assistant's too, under the same grant
-    .toEqual(['records__records_describe', 'records__records_get', 'records__records_search', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_list', 'tangle_os_files__files_locations', 'tangle_os_files__files_read', 'tangle_os_files__files_search', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
+    .toEqual(['records__records_describe', 'records__records_get', 'records__records_search', 'tangle_os_apps__apps_check', 'tangle_os_apps__apps_crib', 'tangle_os_apps__apps_suggest', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_list', 'tangle_os_files__files_locations', 'tangle_os_files__files_read', 'tangle_os_files__files_search', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
 
   const catalogue = page.frameLocator('.tos-window[data-module="catalogue"] iframe');
   await expect(catalogue.locator('#status')).toHaveText('Joined the desktop as catalogue.');
@@ -388,4 +388,31 @@ test('appearance: a theme kit, an accent and a pattern apply at once, survive a 
   await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'catalogue'));
   expect(await token('--accent')).toBe('#c81e64');
   expect(await token('--os-desktop')).toBe('moire');
+});
+
+test('the assistant offers an application it wrote; the person adds it from the inbox and it runs in a frame of its own', async ({ page }) => {
+  const BILL = { $app: '0.1', state: { amount: 0 }, view: { $jslt: '0.1', rules: [{ match: '$', body: ['div', {},
+    ['label', {}, 'Bill amount ', ['input', { type: 'number', on: { input: 'amount' } }]], ['p', { class: 'total' }, 'Total: ', '$.amount']] }] },
+    actions: { amount: { patch: [{ op: 'replace', path: '/amount', value: { $number: '$event.value' } }] } } };
+  await page.addInitScript(() => localStorage.setItem('tangle-os-welcomed', '1'));
+  await page.goto('/');
+  await page.waitForFunction(() => window.tangleOs?.kernel);
+  const offered = await page.evaluate((doc) => window.tangleOs.kernel.call('assistant', 'tangle_os_apps', 'apps.suggest', { title: 'Bill splitter', summary: 'Splits a bill between friends.', doc }), BILL);
+  expect(offered.ok).toBe(true);
+  expect(await page.evaluate(() => window.tangleOs.kernel.modules().some(m => m.id === 'my-bill-splitter'))).toBe(false);
+  await page.locator('.tos-dock-mail').click();
+  const offer = page.locator('.tos-proposal').filter({ hasText: 'Add the application Bill splitter' });
+  await expect(offer).toContainText('Splits a bill between friends.');
+  await expect(offer).toContainText('asks for nothing');
+  await offer.getByRole('button', { name: 'Accept' }).click();
+  // added, opened, and running in a sandboxed frame of its own
+  const win = page.locator('.tos-window[data-module="my-bill-splitter"]');
+  await expect(win).toBeVisible();
+  const app = page.frameLocator('.tos-window[data-module="my-bill-splitter"] iframe');
+  await app.getByLabel('Bill amount').fill('12');
+  await expect(app.locator('.total')).toHaveText('Total: 12');
+  expect(await page.evaluate(() => window.tangleOs.kernel.grants()['my-bill-splitter'])).toEqual([]);
+  // the person's own now: there on the next visit
+  await page.reload();
+  await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'my-bill-splitter'));
 });

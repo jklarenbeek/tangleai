@@ -396,20 +396,20 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   without opening another; a generated formula compiling and evaluating
   against sample rows, and a proposed app version refused on a stale revision.
 
-- [ ] **Applications authored on the desktop.** `@tangleai/os` is the
-  desktop, documented in its [README](../components/os/README.md), and
-  `@tangleai/os/authoring` is its model-free half of authoring: a crib of
-  Jaren's own operators with a working example, a gate (lint, compile, first
-  frame) and probes that use an application as a person would. Measured in
-  [AUTHORING_BENCHMARK.md](AUTHORING_BENCHMARK.md): 22 of 24 plain requests
-  became an application that works. *Wanted:* the assistant doing it on the
-  desktop: drafting against the gate as tools, and proposing the application in
-  the inbox, where the person adds it as a document module that asks for
-  nothing. *Constraint:* an authored module is a document, never script in the
-  shell's origin; it runs isolated (a sandboxed frame today) and never sees a
-  key; its probes run outside the desktop's origin. *Closes on:* a person's
-  plain request in the Pages desktop ending in an application they added from
-  the inbox, measured at the published rate's path.
+- [ ] **Applications authored on the desktop, measured in conversation.**
+  The assistant writes an application for the person on the desktop:
+  `@tangleai/os/authoring` gives it a crib of Jaren's own operators, a gate and
+  probes, the desktop's `tangle_os_apps` contract lets it check drafts and
+  suggest the finished one, and the person adds it from the inbox as a
+  document module that asks for nothing (see the OS
+  [README](../components/os/README.md)). [AUTHORING_BENCHMARK.md](AUTHORING_BENCHMARK.md)
+  measures the author against the gate: 22 of 24 plain requests became an
+  application that works. *Wanted:* the same rate measured through the
+  assistant's own conversation (its tools, its turns, its probes), and for
+  requests in the eleven other languages. *Constraint:* the live tier's
+  ceiling per run; probes run outside the desktop's origin. *Closes on:* the
+  conversation's rate published beside the author's, in English and at least
+  one other language.
 
 ## Reuse of the suite
 

@@ -72,6 +72,34 @@ const LOCATION = { type: 'string', pattern: '^[A-Za-z_][A-Za-z0-9_-]*$' };
  * its description), and never writes, moves or deletes; a location marked
  * `assistant: false` is not in it.
  */
+/** Bounds on an application the assistant writes: its document's size as JSON text. */
+const AUTHORED_MAX_BYTES = 200_000;
+/**
+ * The desktop's own contract for applications the assistant writes. The
+ * assistant reads the crib, checks a draft against the gate (and its own
+ * probes) as often as it likes, and proposes the finished document: the
+ * person adds it from the inbox, as a document module that asks for nothing.
+ */
+export const APPS_CONTRACT = {
+  $contract: '0.1',
+  id: 'tangle_os_apps',
+  operations: {
+    'apps.crib': { kind: 'read', doc: 'How to write an application for this desktop: the rules of a Jaren app document, the operators it may use, and a complete working example. Read it before writing one.', input: { type: 'object', additionalProperties: false, properties: {} }, output: { type: 'object' } },
+    'apps.check': {
+      kind: 'read',
+      doc: 'Check a draft application: it must compile, render a first frame with text and carry no code in strings. Optional probes use it as a person would ({"steps": [{"find": {"role": "field"|"button"|"checkbox"|"select", "name": "pattern of its label or text"}, "type": "what to type"}], "expect": {"text": ["what must show"]}}). Returns the problems to fix, and what the screen shows.',
+      input: { type: 'object', additionalProperties: false, required: ['doc'], properties: { doc: { type: 'object' }, probes: { type: 'array', maxItems: 8, items: { type: 'object' } } } },
+      output: { type: 'object' },
+    },
+    'apps.suggest': {
+      kind: 'command',
+      doc: 'Offer the person a finished application: it goes to their inbox, and it is added to their desktop only when they accept. It must pass apps.check first. It runs on its own and can reach nothing else.',
+      input: { type: 'object', additionalProperties: false, required: ['title', 'doc'], properties: { title: { type: 'string', minLength: 1, maxLength: 60 }, summary: { type: 'string', maxLength: 400 }, doc: { type: 'object' } } },
+      output: { type: 'object', properties: { id: { type: 'string' } } },
+    },
+  },
+} as const;
+
 export const FILES_CONTRACT = {
   $contract: '0.1',
   id: 'tangle_os_files',
@@ -197,6 +225,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     catch (error: any) { return { [REFUSED]: { code: error?.code ?? 'OS0103', message: String(error?.message ?? error) } }; }
   }
   let dockContract: any = null;
+  let appsContract: any = null;
   let dockRevision = 0;
 
   // ── the desktop's state: a cache of documents, loaded once, saved through ──
@@ -669,6 +698,28 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
           return write(refused ? refusal(refused.code, refused.message) : { ok: true, value: outcome.value });
         } catch (error: any) { return write(refusal(error?.code ?? 'OS0103', String(error?.message ?? error))); }
       }
+      if (contract === APPS_CONTRACT.id) {
+        if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
+        appsContract ??= compileContract(APPS_CONTRACT as any);
+        const client = openLocalClient(appsContract, {
+          'apps.crib': async () => ({ crib: (await import('./authoring.ts')).authoringCrib() }),
+          'apps.check': async ({ doc, probes }: any) => {
+            if (JSON.stringify(doc).length > AUTHORED_MAX_BYTES) return { ok: false, problems: [`the document is larger than ${AUTHORED_MAX_BYTES} bytes`] };
+            const verdict = await (await import('./authoring.ts')).checkAuthoredApp(doc, probes ?? []);
+            return { ok: verdict.ok, problems: verdict.problems, ...(verdict.shown ? { shown: verdict.shown } : {}) };
+          },
+          'apps.suggest': async ({ title, summary, doc }: any) => {
+            const outcome = await kernel.proposeApp(caller, { title, ...(summary ? { summary } : {}), doc });
+            return outcome.ok ? outcome.value : { [REFUSED]: outcome.error };
+          },
+        } as any) as any;
+        try {
+          const outcome = await client.invoke(op, input);
+          if (!outcome?.ok) return write(refusal(outcome?.error?.code ?? 'OS0103', outcome?.error?.message ?? 'the operation failed'));
+          const refused = outcome.value?.[REFUSED];
+          return write(refused ? refusal(refused.code, refused.message) : { ok: true, value: outcome.value });
+        } catch (error: any) { return write(refusal(error?.code ?? 'OS0103', String(error?.message ?? error))); }
+      }
       if (contract === DOCK_CONTRACT.id) {
         if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
         dockContract ??= compileContract(DOCK_CONTRACT as any);
@@ -842,6 +893,22 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         if (!reason) delete item.proposal.reason;
         emit({ kind: 'mail', module: item.from });
       };
+      // an application the assistant wrote joins the person's layer, asking for nothing
+      if (item.from === 'desktop' && p.kind === 'app.add') {
+        const payload = p.payload as { title: string, doc: unknown, by: string };
+        let module: string | undefined;
+        if (decision === 'accept') {
+          const base = `my-${payload.title.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'app'}`;
+          let candidate = base;
+          for (let n = 2; entries.has(candidate); n++) candidate = `${base}-${n}`;
+          const manifest = (await import('./authoring.ts')).authoredManifest(payload.doc, { id: candidate, title: { en: payload.title } });
+          const joined = kernel.join(manifest, { scopes: [], assistant: false, source: `assistant:${payload.by}` });
+          if (!joined.ok) { settle('pending', { code: 'OS0112', message: joined.error.message }); return refusal('OS0112', joined.error.message); }
+          module = candidate;
+        }
+        settle(decision === 'accept' ? 'accepted' : 'rejected');
+        return { ok: true, value: { status: item.proposal!.status, ...(module ? { module } : {}) } };
+      }
       // the desktop's own proposal (a suggested dock) is carried out here, against the revision it was made for
       if (item.from === 'desktop' && p.kind === 'dock.layout') {
         const payload = p.payload as { layout: DockLayout, revision: number };
@@ -943,6 +1010,28 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
      * replaces the last. The inbox shows what would change, derived here,
      * never the caller's description of it.
      */
+    /**
+     * Offer an application `caller` wrote, as the desktop's own proposal: the
+     * document must pass the gate (`OS0160` with what to fix); the person adds
+     * it from the inbox, where it becomes a document module that asks for
+     * nothing. A new offer under the same title replaces the last.
+     */
+    async proposeApp(caller: string, offer: { title: string, summary?: string, doc: unknown }): Promise<Outcome> {
+      if (typeof offer.title !== 'string' || !offer.title.trim()) return refusal('OS0160', 'an application needs a title');
+      if (JSON.stringify(offer.doc ?? null).length > AUTHORED_MAX_BYTES) return refusal('OS0160', `the document is larger than ${AUTHORED_MAX_BYTES} bytes`);
+      const { problems } = (await import('./authoring.ts')).gateAuthoredApp(offer.doc);
+      if (problems.length) return refusal('OS0160', `the application does not pass the gate: ${problems.slice(0, 5).join('; ')}`);
+      const slug = offer.title.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'app';
+      const id = `app-${caller}-${slug}`.replace(/[^A-Za-z0-9._:-]/g, '_').slice(0, 128);
+      const proposal: Proposal = { id, kind: 'app.add', status: 'pending', payload: { title: offer.title.trim(), ...(offer.summary ? { summary: offer.summary } : {}), doc: cloneJson(offer.doc), by: caller } };
+      const existing = mail.find(m => m.from === 'desktop' && m.proposal?.id === id);
+      if (existing?.proposal?.status === 'deciding') return refusal('OS0111', 'the last offer is being decided');
+      if (existing) { existing.proposal = proposal; existing.read = false; existing.at = now(); }
+      else mail.push({ id: `m${++mailSeq}`, at: now(), from: 'desktop', to: 'person', subject: 'app.add', read: false, proposal });
+      emit({ kind: 'mail', module: 'desktop' });
+      return { ok: true, value: { id } };
+    },
+
     suggestDock(caller: string, layout: unknown): Outcome {
       const checked = checkDock(layout);
       if (!checked) return refusal('OS0119', 'the dock layout is refused: it does not match the dock schema');
@@ -1075,7 +1164,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
           out.push({ tool: toolName(id, op), contract: id, op, kind: spec?.kind ?? 'read', ...(spec?.doc ? { doc: spec.doc } : {}), ...(spec?.input ? { input: spec.input } : {}), ...(spec?.output ? { output: spec.output } : {}) });
       }
       // the kernel's own contracts, under the same grants
-      for (const builtin of [HEADER_CONTRACT, DOCK_CONTRACT, FILES_CONTRACT] as const)
+      for (const builtin of [HEADER_CONTRACT, DOCK_CONTRACT, FILES_CONTRACT, APPS_CONTRACT] as const)
         for (const [op, spec] of Object.entries<any>(builtin.operations)) if (kernel.allowed(caller, builtin.id, op))
           out.push({ tool: toolName(builtin.id, op), contract: builtin.id, op, kind: spec.kind, doc: spec.doc, input: spec.input, output: spec.output });
       return out;
@@ -1099,7 +1188,8 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       headerContract ??= compileContract(HEADER_CONTRACT as any);
       dockContract ??= compileContract(DOCK_CONTRACT as any);
       filesContract ??= compileContract(FILES_CONTRACT as any);
-      for (const [doc, compiled] of [[HEADER_CONTRACT, headerContract], [DOCK_CONTRACT, dockContract], [FILES_CONTRACT, filesContract]] as const) {
+      appsContract ??= compileContract(APPS_CONTRACT as any);
+      for (const [doc, compiled] of [[HEADER_CONTRACT, headerContract], [DOCK_CONTRACT, dockContract], [FILES_CONTRACT, filesContract], [APPS_CONTRACT, appsContract]] as const) {
         const ops = Object.keys(doc.operations).filter(op => kernel.allowed(caller, doc.id, op));
         if (!ops.length) continue;
         const client = { invoke: (op: string, input: unknown) => kernel.call(caller, doc.id, op, input) };

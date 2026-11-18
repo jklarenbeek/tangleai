@@ -128,4 +128,7 @@ export const nl: OsCatalogue = {
   'access/remove-confirm': '{title} verwijderen?',
   'access/remove': 'Verwijderen',
   'access/keep': 'Behouden',
+  'apps/offer': 'Applicatie {title} toevoegen',
+  'apps/written-by': 'Voor u geschreven door {sender}',
+  'apps/asks-nothing': 'Ze draait op zichzelf en vraagt niets: ze kan niet bij uw bestanden, uw andere applicaties of de assistent.',
 };

@@ -548,6 +548,15 @@ const manifest = authoredManifest(doc, { id: 'bill-splitter', title: { en: 'Bill
   module with no `requires`, `provides`, files or settings, so writing an
   application never grants the assistant anything.
 
+- **On the desktop.** The kernel serves the desktop's own contract
+  `tangle_os_apps` to a granted assistant: `apps.crib`, `apps.check` (the gate
+  and the assistant's own probes, as often as it likes) and `apps.suggest`,
+  which files the finished document in the person's inbox as the desktop's own
+  proposal (`OS0160` when it does not pass the gate). The inbox says who wrote
+  it and that it asks for nothing; when the person accepts, it joins their
+  layer through `kernel.join` with no grants, opens, and runs in its sandboxed
+  frame. The kernel loads this code only when the assistant uses it.
+
 Measured in [AUTHORING_BENCHMARK.md](../../docs/AUTHORING_BENCHMARK.md).
 
 ## The kernel

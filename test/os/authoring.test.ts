@@ -76,3 +76,43 @@ describe('an authored module', () => {
     assert.equal(manifest.host.kind, 'document');
   });
 });
+
+describe('the desktop\'s apps contract', () => {
+  const BILL = { $app: '0.1', state: { amount: 0 }, view: { $jslt: '0.1', rules: [{ match: '$', body: ['div', {},
+    ['label', {}, 'Bill amount', ['input', { type: 'number', on: { input: 'amount' } }]], ['p', {}, 'Total: ', '$.amount']] }] },
+    actions: { amount: { patch: [{ op: 'replace', path: '/amount', value: { $number: '$event.value' } }] } } };
+
+  it('gives the assistant the crib and a check, and offers a finished application in the inbox, never on the desktop', async () => {
+    const { createKernel, memoryStore } = await import('@tangleai/os');
+    const kernel = createKernel({ assistantGrants: 'all', state: memoryStore() });
+    await kernel.ready();
+    assert.ok(kernel.operations().some(o => o.tool === 'tangle_os_apps__apps_suggest'));
+    const crib: any = await kernel.call('assistant', 'tangle_os_apps', 'apps.crib', {});
+    assert.match(crib.value.crib, /\$app/);
+    const check: any = await kernel.call('assistant', 'tangle_os_apps', 'apps.check', { doc: BILL, probes: [{ steps: [{ find: { role: 'field', name: 'amount' }, type: '12' }], expect: { text: ['Total: 12'] } }] });
+    assert.deepEqual(check.value, { ok: true, problems: [], shown: check.value.shown });
+
+    const broken: any = await kernel.call('assistant', 'tangle_os_apps', 'apps.suggest', { title: 'Broken', doc: { $app: '0.1', state: {}, view: { $jslt: '0.1', rules: [{ match: '$', body: ['p', {}, '${x}'] }] } } });
+    assert.equal(broken.error.code, 'OS0160');
+
+    const offered: any = await kernel.call('assistant', 'tangle_os_apps', 'apps.suggest', { title: 'Bill splitter', summary: 'Splits a bill.', doc: BILL });
+    assert.equal(offered.ok, true);
+    assert.equal(kernel.modules().some(m => m.id.startsWith('my-')), false, 'nothing is added until the person accepts');
+    const mail = kernel.mail().find(m => m.proposal?.kind === 'app.add')!;
+    assert.equal(mail.from, 'desktop');
+    // the assistant cannot decide: deciding is the person's, through the shell
+    assert.equal(kernel.operations().some(o => /decide/.test(o.op)), false);
+
+    const decided: any = await kernel.decide(mail.id, 'accept');
+    assert.equal(decided.value.module, 'my-bill-splitter');
+    const added = kernel.effective('my-bill-splitter')!;
+    assert.equal(added.host.kind, 'document');
+    assert.deepEqual(kernel.grants()['my-bill-splitter'], []);
+    assert.deepEqual(kernel.consentOf('my-bill-splitter')?.scopes, []);
+    assert.equal(kernel.layerOf('my-bill-splitter'), 'user');
+    // a second application of the same name gets its own id
+    await kernel.call('assistant', 'tangle_os_apps', 'apps.suggest', { title: 'Bill splitter', doc: BILL });
+    const again = kernel.mail().filter(m => m.proposal?.kind === 'app.add').at(-1)!;
+    assert.equal(((await kernel.decide(again.id, 'accept')) as any).value.module, 'my-bill-splitter-2');
+  });
+});
