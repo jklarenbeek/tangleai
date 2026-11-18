@@ -409,16 +409,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   selection improvement over both controls under the registered refusal checks,
   and independently approved promotion. Fixture success alone closes none of
   these target or live-model claims.
-- [ ] **Experiment cleanup recovery after the terminal transition.** *Wanted:*
-  a durable cleanup receipt that distinguishes a recorded decision from completed
-  workspace removal. `settleExperiment` currently wins its compare-and-swap
-  before removing the worktree; a crash in that interval leaves a terminal
-  experiment and a workspace for operator inspection. A returned cleanup failure
-  is explicit, but a later reconciler skips the terminal experiment. *Constraint:*
-  recovery must not delete a recreated workspace or reapply a completed effect.
-  *Closes on:* crash tests at both sides of removal converge through a fenced
-  cleanup receipt, while stale settlement and recreated-workspace tests still
-  refuse. Until then, terminal status alone is not evidence of cleanup.
 - [ ] **Research learning under live, comparable evidence.** *Wanted:* a
   reproducible held-out lesson gain and measured human-review efficacy across
   the shipped domains. *Constraint:* the [scripted matrix](RESEARCH_BENCHMARK.md)

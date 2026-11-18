@@ -20,6 +20,7 @@
 
 import { mkdir, readFile, writeFile, realpath, lstat, readdir, rm } from 'node:fs/promises';
 import { dirname, join, resolve, sep } from 'node:path';
+import { randomUUID } from 'node:crypto';
 
 import { refuseOne, ok, type EvolveOutcome } from '../errors.ts';
 import type { EvolveBase, EvolveRepository } from '../contracts.gen.ts';
@@ -60,6 +61,34 @@ export interface WorktreeHost {
   /** Every tracked path, its staged inventory and its bytes, as one digest. */
   trackedDigest(path: string): Promise<EvolveOutcome<string>>;
   remove(path: string, options: { deleteBranch: boolean, experimentId: string }): Promise<EvolveOutcome<true>>;
+  /**
+   * Whether the workspace at `path` exists, and the instance token `create`
+   * wrote for it, kept in the worktree's git administration directory (never
+   * in the tracked tree, so `status`, `diff` and `trackedDigest` never see
+   * it). A workspace recreated at the same path carries another token, or none.
+   */
+  instance(path: string): Promise<EvolveOutcome<{ exists: boolean, token: string | null }>>;
+  /** Where an experiment's workspace lives: `create` puts it there, and nowhere else. */
+  pathOf(experimentId: string): string;
+  /**
+   * Finish removing an experiment's workspace, each step only if it is still
+   * needed: the worktree if it is there, its metadata, and the branch if it is
+   * to go and still exists. Idempotent, so a crash between any two steps is
+   * finished by calling it again.
+   */
+  finish(options: { experimentId: string, deleteBranch: boolean }): Promise<EvolveOutcome<{ removedWorktree: boolean, deletedBranch: boolean }>>;
+}
+
+/** The file of an instance token, inside the worktree's git administration directory. */
+const INSTANCE_FILE = 'tangle-instance';
+/** The administration directory a linked worktree's `.git` file points at, or null. */
+async function adminDirOf(path: string): Promise<string | null> {
+  try {
+    const text = await readFile(join(path, '.git'), 'utf8');
+    const match = /^gitdir:\s*(.+?)\s*$/m.exec(text);
+    return match === null ? null : resolve(path, match[1]);
+  }
+  catch { return null; }
 }
 
 const branchFor = (experimentId: string): string => 'exp/' + experimentId;
@@ -161,6 +190,9 @@ export function createWorktreeHost(options: WorktreeHostOptions): WorktreeHost {
       await mkdir(resolve(worktreeRoot), { recursive: true });
       const added = green(await git(['worktree', 'add', '-b', branch, path, baseRevision], resolvedRepo), 'worktree add');
       if (!added.ok) return added as EvolveOutcome<{ path: string, branch: string }>;
+      // this workspace's own identity, so a cleanup that resumes later can tell it from one recreated at the same path
+      const admin = await adminDirOf(path);
+      if (admin !== null) await writeFile(join(admin, INSTANCE_FILE), randomUUID());
       return ok({ path, branch });
     },
 
@@ -371,6 +403,42 @@ export function createWorktreeHost(options: WorktreeHostOptions): WorktreeHost {
         }
       }
       return ok(true as const);
+    },
+
+    pathOf(experimentId: string) { return join(resolve(worktreeRoot), experimentId); },
+
+    async instance(path: string) {
+      try { await lstat(path); }
+      catch { return ok({ exists: false, token: null }); }
+      const admin = await adminDirOf(path);
+      if (admin === null) return ok({ exists: true, token: null });
+      try { return ok({ exists: true, token: (await readFile(join(admin, INSTANCE_FILE), 'utf8')).trim() || null }); }
+      catch { return ok({ exists: true, token: null }); }
+    },
+
+    async finish({ experimentId, deleteBranch }) {
+      const resolvedRepo = await realpath(resolve(repositoryRoot));
+      const path = join(resolve(worktreeRoot), experimentId);
+      let removedWorktree = false, deletedBranch = false;
+      let present = true;
+      try { await lstat(path); } catch { present = false; }
+      if (present) {
+        const removed = await git(['worktree', 'remove', '--force', path], resolvedRepo);
+        if (!removed.ok || removed.value.exitCode !== 0) return refuseOne('TEVO1009', '/worktree', 'Removing the worktree did not succeed; the workspace may still exist.');
+        removedWorktree = true;
+      }
+      const pruned = await git(['worktree', 'prune'], resolvedRepo);
+      if (!pruned.ok || pruned.value.exitCode !== 0) return refuseOne('TEVO1009', '/worktree', 'Pruning worktree metadata did not succeed.');
+      if (deleteBranch) {
+        const branch = branchFor(experimentId);
+        const held = await git(['show-ref', '--verify', 'refs/heads/' + branch], resolvedRepo);
+        if (held.ok && held.value.exitCode === 0) {
+          const deleted = await git(['branch', '-D', branch], resolvedRepo);
+          if (!deleted.ok || deleted.value.exitCode !== 0) return refuseOne('TEVO1009', '/branch', 'Deleting the experiment branch did not succeed.');
+          deletedBranch = true;
+        }
+      }
+      return ok({ removedWorktree, deletedBranch });
     },
   };
 }

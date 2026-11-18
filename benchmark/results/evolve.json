@@ -152,7 +152,7 @@
       },
       {
         "path": "packages/evolve/src/host/index.ts",
-        "sha256": "c1b70dc8fb54ebd1105b09daeffc90c158dfedc93b1e7f9b29b755b32b4aa1b2"
+        "sha256": "e8488ea0a1e3014af4a6e705d03313784ec0028b9ccdcca238ffab60135e2729"
       },
       {
         "path": "packages/evolve/src/host/measure.ts",
@@ -164,7 +164,7 @@
       },
       {
         "path": "packages/evolve/src/host/settle.ts",
-        "sha256": "f33b0cd701eb0b3f90cf148635961fdb541ee113ec7cfab0c0c8ea73ce413c51"
+        "sha256": "9efcbf7e990c2a573644c2f56b5687eae10a6de8c195156aa40494ca0a253008"
       },
       {
         "path": "packages/evolve/src/host/worker.ts",
@@ -172,7 +172,7 @@
       },
       {
         "path": "packages/evolve/src/host/worktree.ts",
-        "sha256": "e37a009e4929078c462586e4328ace4efcbc3a3e8f6802c84ad7a05894561494"
+        "sha256": "0bc18e0949e7935b5d8d9d99977a727708414d3a343a7ce56c562e706f51586d"
       },
       {
         "path": "packages/evolve/src/identity.ts",
@@ -255,7 +255,7 @@
         "sha256": "1b35b9772c50a55a3f2da2d76c5db2952662b5b70d9776e89c6a44a337d388d8"
       }
     ],
-    "sha256": "add7819090a6891c87c9939a4b4e27d8a549601e98b023165d43b15b70151b9e"
+    "sha256": "ad122772497197a796d8c6f9c1f6438d4790a17f5856f35e9b94d6a404d92267"
   },
   "suite": {
     "packages": [
@@ -1326,5 +1326,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "ac8a726602b7f479be7a526597c06d5695333186656234ce0ca6c41ce24d9be2"
+  "reportId": "d4a2c7577165193c432936d365aee9155987ed95e390ded7a64b007e9127defb"
 }

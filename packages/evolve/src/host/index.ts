@@ -45,8 +45,8 @@ export type { MeasureOptions, MeasureOutcome, MeasureSide, BaseSeal } from './me
 export { applyProposal, isolatePlan, commitPlan } from './apply.ts';
 export type { ApplyOptions, ApplyOutcome } from './apply.ts';
 
-export { settleExperiment, dispositionOf } from './settle.ts';
-export type { SettleOptions, SettleOutcome, Disposition, ReviewBundleInput } from './settle.ts';
+export { settleExperiment, dispositionOf, reconcileCleanups, CLEANUP_INTENT, CLEANUP_DONE } from './settle.ts';
+export type { SettleOptions, SettleOutcome, Disposition, ReviewBundleInput, CleanupIntent, ReconcileCleanupsOutcome } from './settle.ts';
 
 export { createEvolveEffectWorker, createEffectAddressing, EVOLVE_EFFECT_KIND } from './worker.ts';
 export type {

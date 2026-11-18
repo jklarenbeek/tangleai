@@ -83,6 +83,19 @@ export interface SettleOutcome {
   reviewBundle: EvolveReviewBundle | null;
 }
 
+/**
+ * The cleanup receipt, in the store's key table (first writer wins, an
+ * identical write is a no-op). The intent is written BEFORE the swap and
+ * names the revision and status the swap produces, the workspace's instance
+ * token and whether the branch goes; completion is written once the workspace
+ * is gone. Neither is a sealed record: the token differs per workspace, and the
+ * sealed records stay byte-reproducible.
+ */
+export const CLEANUP_INTENT = 'cleanup-intent';
+export const CLEANUP_DONE = 'cleanup-done';
+export type CleanupIntent = { revision: number, status: string, token: string | null, deleteBranch: boolean };
+const DONE = JSON.stringify({ outcome: 'completed' });
+
 export async function settleExperiment(options: SettleOptions): Promise<EvolveOutcome<SettleOutcome>> {
   const { host, store, experiment, decision, worktreePath } = options;
 
@@ -127,6 +140,19 @@ export async function settleExperiment(options: SettleOptions): Promise<EvolveOu
     reviewBundle = sealed.value;
   }
 
+  // The intent is durable before the swap: a crash anywhere after this leaves a
+  // receipt `reconcileCleanups` can finish, fenced to this workspace instance.
+  let present = false;
+  if (disposition.removeWorktree && worktreePath !== undefined) {
+    const instance = await host.instance(worktreePath);
+    if (!instance.ok) return instance as EvolveOutcome<SettleOutcome>;
+    present = instance.value.exists;
+    const intent: CleanupIntent = { revision: experiment.revision + 1, status: planned.status, token: instance.value.token, deleteBranch: disposition.deleteBranch };
+    const written = await store.putKey(CLEANUP_INTENT, experiment.experimentId, JSON.stringify(intent));
+    // an earlier settle's receipt already stands (first writer wins); the swap below decides whether this one may go on
+    if (!written.ok && written.issues[0]?.code !== 'TEVO1002') return written as EvolveOutcome<SettleOutcome>;
+  }
+
   // The compare-and-swap comes BEFORE the removal, and that ordering is the
   // whole protection against settling twice: a second settle holding a
   // stale revision loses the swap and never reaches a `worktree remove`.
@@ -139,15 +165,25 @@ export async function settleExperiment(options: SettleOptions): Promise<EvolveOu
   let worktreeRemoved = false;
   let branchDeleted = false;
   if (disposition.removeWorktree && worktreePath !== undefined) {
-    const removed = await host.remove(worktreePath, {
-      deleteBranch: disposition.deleteBranch,
-      experimentId: experiment.experimentId,
-    });
-    // TEVO1009 travels up unchanged: a workspace that may still exist is
-    // uncertain, and uncertainty stops for a person.
-    if (!removed.ok) return removed as EvolveOutcome<SettleOutcome>;
-    worktreeRemoved = true;
-    branchDeleted = disposition.deleteBranch;
+    if (present) {
+      const removed = await host.remove(worktreePath, {
+        deleteBranch: disposition.deleteBranch,
+        experimentId: experiment.experimentId,
+      });
+      // TEVO1009 travels up unchanged: a workspace that may still exist is
+      // uncertain, and uncertainty stops for a person (and the receipt waits for the reconciler).
+      if (!removed.ok) return removed as EvolveOutcome<SettleOutcome>;
+      worktreeRemoved = true;
+      branchDeleted = disposition.deleteBranch;
+    }
+    else {
+      // already gone (a crash after an earlier removal): finish what may remain, the metadata and the branch
+      const finished = await host.finish({ experimentId: experiment.experimentId, deleteBranch: disposition.deleteBranch });
+      if (!finished.ok) return finished as EvolveOutcome<SettleOutcome>;
+      branchDeleted = finished.value.deletedBranch;
+    }
+    const done = await store.putKey(CLEANUP_DONE, experiment.experimentId, DONE);
+    if (!done.ok) return done as EvolveOutcome<SettleOutcome>;
   }
 
   return ok({
@@ -157,4 +193,53 @@ export async function settleExperiment(options: SettleOptions): Promise<EvolveOu
     branchDeleted,
     reviewBundle,
   });
+}
+
+export interface ReconcileCleanupsOutcome {
+  examined: number;
+  completed: number;
+  /** Receipts left for a person: the workspace at the path is another instance, or the experiment moved on. */
+  refused: Array<{ experimentId: string, reason: 'recreated' | 'moved' }>;
+}
+
+/**
+ * Finish every cleanup a settle recorded but did not complete, and only
+ * that: the receipt is live while the experiment sits exactly at the revision
+ * and status its swap produced (one that never swapped is a settle's to
+ * redo), and the workspace is removed only when it is the instance the
+ * receipt names; one recreated at the same path is refused and left as it is.
+ * Each step is idempotent, so a crash between any two is finished by running
+ * this again, and a completed receipt is never reapplied.
+ */
+export async function reconcileCleanups(options: { store: EvolveStore, host: WorktreeHost }): Promise<EvolveOutcome<ReconcileCleanupsOutcome>> {
+  const { store, host } = options;
+  const experiments = await store.listRecords({ kind: 'experiment' });
+  if (!experiments.ok) return experiments as EvolveOutcome<ReconcileCleanupsOutcome>;
+  const outcome: ReconcileCleanupsOutcome = { examined: 0, completed: 0, refused: [] };
+  for (const record of experiments.value) {
+    const experiment = record as EvolveExperiment;
+    const intentText = await store.getKey(CLEANUP_INTENT, experiment.experimentId);
+    if (!intentText.ok) return intentText as EvolveOutcome<ReconcileCleanupsOutcome>;
+    if (intentText.value === null) continue;
+    const done = await store.getKey(CLEANUP_DONE, experiment.experimentId);
+    if (!done.ok) return done as EvolveOutcome<ReconcileCleanupsOutcome>;
+    if (done.value !== null) continue;
+    outcome.examined += 1;
+    const intent = JSON.parse(intentText.value) as CleanupIntent;
+    const held = await store.getExperiment(experiment.experimentId);
+    if (!held.ok) return held as EvolveOutcome<ReconcileCleanupsOutcome>;
+    const current = held.value;
+    // the swap never happened: the settle that wrote this intent will settle again
+    if (current === null || current.revision < intent.revision) continue;
+    if (current.revision !== intent.revision || current.status !== intent.status) { outcome.refused.push({ experimentId: experiment.experimentId, reason: 'moved' }); continue; }
+    const instance = await host.instance(host.pathOf(experiment.experimentId));
+    if (!instance.ok) return instance as EvolveOutcome<ReconcileCleanupsOutcome>;
+    if (instance.value.exists && instance.value.token !== intent.token) { outcome.refused.push({ experimentId: experiment.experimentId, reason: 'recreated' }); continue; }
+    const finished = await host.finish({ experimentId: experiment.experimentId, deleteBranch: intent.deleteBranch });
+    if (!finished.ok) return finished as EvolveOutcome<ReconcileCleanupsOutcome>;
+    const written = await store.putKey(CLEANUP_DONE, experiment.experimentId, DONE);
+    if (!written.ok) return written as EvolveOutcome<ReconcileCleanupsOutcome>;
+    outcome.completed += 1;
+  }
+  return ok(outcome);
 }

@@ -254,8 +254,8 @@ stopped run executes no further segment, so the cleanup cannot be a node — it
 would never fire, and the worktree would outlive the run.
 `reconcileStoppedExperiments` does it instead, for both ways a run can stop,
 and rejects repeated settlement through the experiment's compare-and-swap.
-After successful cleanup a second pass settles none; the terminal-transition
-crash limitation is described below.
+After successful cleanup a second pass settles none; a settle that crashed after
+its swap is finished by `reconcileCleanups`, described below.
 `reconcileCancelledExperiments` is its cancelled case, and supplies the one
 thing specific to that case — the decision a cancel settles to.
 
@@ -323,9 +323,18 @@ selection artifacts. The original sixteen-proposal manifest and oracle rows
 remain fixed. The package's injected proposal seam is exported because that
 oracle remains exact and the model arm passes its registered adversarial cases.
 
-A terminal experiment status alone does not prove workspace cleanup. Settlement
-wins its revision fence before removal; a crash after that transition requires
-operator inspection, as recorded in [the roadmap](../../docs/ROADMAP.md).
+A terminal experiment status alone does not prove workspace cleanup; the
+cleanup receipt does. Before its swap, `settleExperiment` writes a
+`cleanup-intent` key naming the revision and status the swap produces, the
+workspace's instance token (kept in the worktree's git administration
+directory, never in the tracked tree) and whether the branch goes; once the
+workspace is gone it writes `cleanup-done`. `reconcileCleanups({ store, host })`
+finishes every intent without completion: it acts only while the experiment
+sits exactly where the swap left it, removes the workspace only when it is the
+instance the intent names (one recreated at the same path is refused and left
+alone), finishes each git step only if it is still needed, and never reapplies
+a completed cleanup. Crash tests before the swap, after it, between git steps
+and after removal converge on the real git host and on both stores.
 
 Semantic store key kinds must be nonempty and contain neither whitespace nor NUL.
 Both stores return `TEVO1001` before reading or writing an ambiguous kind; key
