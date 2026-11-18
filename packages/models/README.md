@@ -351,7 +351,11 @@ provider receives `schema` as given. `bundle: true` sends `bundleSchema(schema, 
 instead — one self-contained document whose every reference points into its own `$defs` —
 and `bundleSchema` is exported for a host that builds its own requests. A reference to an
 anchor (`$anchor`, or a fragment-only `$id`) is resolved as the validator resolves it and
-bundled exactly as a pointer to the same schema would be. `tier` overrides the
+bundled exactly as a pointer to the same schema would be. `profile: 'strict'` sends, on a
+`json_schema` tier, the schema's strict profile (`deriveStrictProfile` from
+`@jarenjs/validate/strict-profile`) with `strict: true`, maps each answer back and validates
+it against the original schema; measured in
+[STRICT_PROFILE_BENCHMARK.md](../../docs/STRICT_PROFILE_BENCHMARK.md). `tier` overrides the
 client's structured-output tier for one generator.
 
 **Bounds and parsing.** `deadlineMs` (per generator, or per `generate` call) bounds a whole

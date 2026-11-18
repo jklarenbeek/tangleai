@@ -16,6 +16,7 @@
 import { JarenValidator } from '@jarenjs/validate';
 import { checkOutcome } from '@jarenjs/core/check';
 import { bundleSchema } from './bundle.ts';
+import { deriveStrictProfile } from '@jarenjs/validate/strict-profile';
 import { AiError, countOption } from './errors.ts';
 import { PROVIDERS } from './providers.ts';
 
@@ -283,6 +284,15 @@ export function createStructuredOutput<T = any>(options: {
   tier?: 'json_schema' | 'json' | null;
   parse?: 'strict' | 'lenient';
   deadlineMs?: number;
+  /**
+   * `'strict'`: on a `json_schema` tier, send the schema's strict profile
+   * (`deriveStrictProfile` from `@jarenjs/validate/strict-profile`: closed
+   * objects, every member required, `anyOf` for `oneOf`, references bundled)
+   * with `strict: true`, and map each answer back before it is validated
+   * against the ORIGINAL schema, which stays the authority. Other tiers send
+   * the schema as given.
+   */
+  profile?: 'strict';
 }): {
   generate: (messages: any[], hooks?: {
     signal?: AbortSignal;
@@ -311,7 +321,10 @@ export function createStructuredOutput<T = any>(options: {
   const tier = options.tier !== undefined ? options.tier
     : client.endpoint.structured !== undefined ? client.endpoint.structured
       : PROVIDERS[client.endpoint.provider]?.structured ?? null;
-  const wireSchema = options.bundle === true ? bundleSchema(schema, options.refs ?? []) : schema;
+  const strictProfile = options.profile === 'strict' && tier === 'json_schema'
+    ? deriveStrictProfile(schema, { references: [...(options.refs ?? [])] }) : null;
+  const wireSchema = strictProfile !== null ? strictProfile.schema
+    : options.bundle === true ? bundleSchema(schema, options.refs ?? []) : schema;
 
   /** Each gate in order, stopping at the first refusal; the passing gates' data. */
   function runGates(value: any): { outcome: { valid: boolean, errors: any[] }, data: unknown[] } {
@@ -362,7 +375,7 @@ export function createStructuredOutput<T = any>(options: {
     const request: any = { stream, signal };
     let turn = [...messages];
     if (tier === 'json_schema') {
-      request.responseFormat = { name, schema: wireSchema, strict: options.strict ?? true };
+      request.responseFormat = { name, schema: wireSchema, strict: strictProfile !== null ? true : options.strict ?? true };
     }
     else {
       // JSON mode (or nothing): the schema travels in the prompt;
@@ -409,7 +422,17 @@ export function createStructuredOutput<T = any>(options: {
           { role: 'user', content: 'That reply was not parseable JSON. Reply again with ONLY the JSON value.' }];
           continue;
         }
-        const value = parsed.value;
+        let value = parsed.value;
+        // a profile's answer is mapped back first: what is validated, gated and returned is the original's instance
+        if (strictProfile !== null) {
+          try { value = strictProfile.fromProfile(value); }
+          catch (error: any) {
+            errors = [recordOf('parse', { instancePath: '', keyword: 'profile', message: `the reply does not fit the strict profile: ${String(error?.message ?? error)}` })];
+            settle(attempt, 'parse', result);
+            turn = [...turn, { role: 'assistant', content: raw }, { role: 'user', content: 'That reply did not fit the required schema. Reply again with ONLY the JSON value.' }];
+            continue;
+          }
+        }
         const shape = checkOutcome(base(value));
         const gated = shape.valid ? runGates(value) : null;
         const outcome = gated === null ? shape : gated.outcome;

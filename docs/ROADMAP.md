@@ -396,13 +396,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   artifacts may change. *Closes on:* per site, a decision on member order and
   `undefined`, and the trace2skill refusal tested, with the artifacts
   regenerated.
-- [ ] **A strict structured-output profile.** *Wanted:* `deriveStrictProfile`
-  from `@jarenjs/validate/strict-profile` for structured output, which sends
-  `strict: true` with any schema. The profile derives a schema the provider's
-  strict mode accepts and maps answers back. *Constraint:* providers accept
-  different strict subsets, and a mapped answer must still validate against
-  the original schema. *Closes on:* the live tier's strict refusals counted
-  before and after, per pinned model.
 - [ ] **The desktop settings form from its schema.** *Wanted:* the desktop
   settings inputs generated from `SETTINGS_SCHEMA` through `buildFormModel`,
   `createFormView` and `createFormActions`, as the Pages forms are, in place of

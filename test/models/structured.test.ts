@@ -346,3 +346,43 @@ describe('usage says what it covers', () => {
     assert.equal(result.usageComplete, false);
   });
 });
+
+describe('a strict profile on the wire', () => {
+  // the shape providers' strict modes refuse: a oneOf, an optional member, an open-ended note
+  const ANSWER = {
+    type: 'object', additionalProperties: false, required: ['kind'],
+    properties: {
+      kind: { oneOf: [{ const: 'answer' }, { const: 'refusal' }] },
+      text: { type: 'string' },
+      score: { type: 'number', minimum: 0, maximum: 1 },
+    },
+  };
+
+  it('sends the profile with strict, and returns the original\'s instance', async () => {
+    // a profile answer: every member present, the absent one as a placeholder null
+    const { client, sent } = scriptedClient('openrouter', [JSON.stringify({ kind: 'answer', text: 'Nijmegen', score: null })]);
+    const result: any = await createStructuredOutput({ client, schema: ANSWER, name: 'answer', profile: 'strict' }).generate([{ role: 'user', content: 'where?' }]);
+    assert.strictEqual(result.ok, true);
+    assert.deepStrictEqual(result.value, { kind: 'answer', text: 'Nijmegen' }, 'the placeholder becomes an absent member again');
+    const format = sent[0].response_format;
+    assert.strictEqual(format.json_schema.strict, true);
+    const wire = JSON.stringify(format.json_schema.schema);
+    assert.ok(!wire.includes('"oneOf"'), 'no oneOf reaches the provider');
+    assert.deepStrictEqual(format.json_schema.schema.required.sort(), ['kind', 'score', 'text']);
+  });
+
+  it('still answers to the original schema: a mapped answer it refuses is repaired', async () => {
+    const { client } = scriptedClient('openrouter', [JSON.stringify({ kind: 'answer', text: 'x', score: 7 }), JSON.stringify({ kind: 'refusal', text: null, score: null })]);
+    const result: any = await createStructuredOutput({ client, schema: ANSWER, name: 'answer', profile: 'strict', maxRepairs: 1 }).generate([{ role: 'user', content: 'where?' }]);
+    assert.strictEqual(result.ok, true);
+    assert.strictEqual(result.attempts, 2);
+    assert.deepStrictEqual(result.value, { kind: 'refusal' });
+  });
+
+  it('sends the schema as given on a tier without a schema-constrained mode', async () => {
+    const { client, sent } = scriptedClient('custom', [JSON.stringify({ kind: 'answer' })]);
+    const result: any = await createStructuredOutput({ client, schema: ANSWER, name: 'answer', profile: 'strict', tier: null }).generate([{ role: 'user', content: 'where?' }]);
+    assert.strictEqual(result.ok, true);
+    assert.ok(JSON.stringify(sent[0].messages).includes('oneOf'));
+  });
+});
