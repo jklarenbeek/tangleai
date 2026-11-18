@@ -1,5 +1,19 @@
 # @tangleai/trace2skill
 
+## 0.58.0
+
+### Minor Changes
+
+- 2beaaeb: The Pages desktop speaks the twelve languages: every sentence of its own applications (Welcome, Settings' Providers, Models, Appearance and Privacy sections, the Calendar, To do, About, the memory loop and the Assistant window) comes from one catalogue with a pack per language, in the formal register of the chrome's and the assistant's packs. One choice in Settings → Appearance (the browser's language by default) feeds the shell, Settings, Files, the assistant, Jaren's applications and `Intl`, and Arabic mirrors the desktop; `?lang=` overrides it for a link. The theme kits and the memory pipeline's diagram are named in the person's language too. A browser check renders a sentinel pack over the desktop's own windows and finds no sentence outside a catalogue, and renders every pack and finds no English sentence left.
+
+### Patch Changes
+
+- Updated dependencies [2beaaeb]
+  - @tangleai/models@0.58.0
+  - @tangleai/agents@0.58.0
+  - @tangleai/mas@0.58.0
+  - @tangleai/outcomes@0.58.0
+
 ## 0.57.0
 
 ### Minor Changes
