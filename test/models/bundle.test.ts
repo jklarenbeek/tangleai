@@ -46,9 +46,21 @@ it('a host schema over a Jaren profile bundles into one document that validates 
 });
 
 it('refuses anchors and shared ids, leaves unknown references and data alone', () => {
-  assert.throws(() => bundleSchema({ $ref: 'https://x.test/a#anchor' }, [{ $id: 'https://x.test/a' }]), /anchor fragment/);
+  assert.throws(() => bundleSchema({ $ref: 'https://x.test/a#anchor' }, [{ $id: 'https://x.test/a' }]), /declares no such anchor/);
   assert.throws(() => bundleSchema({}, [{ $id: 'https://x.test/a' }, { $id: 'https://x.test/a#' }]), /share the \$id/);
   assert.throws(() => bundleSchema({}, [{}]), /string \$id/);
   const kept = bundleSchema({ properties: { a: { $ref: 'https://unknown.test/b' }, c: { const: { $ref: 'https://x.test/a' } } } }, [{ $id: 'https://x.test/a', type: 'string' }]);
   assert.deepEqual(kept, { properties: { a: { $ref: 'https://unknown.test/b' }, c: { const: { $ref: 'https://x.test/a' } } } });
+});
+
+it('admits an anchor as the validator reads it, landing where its pointer would', () => {
+  const shared = { $id: 'https://x.test/shared', $defs: { money: { $anchor: 'money', type: 'number', minimum: 0 }, code: { $id: '#code', type: 'string' } } };
+  const byAnchor = bundleSchema({ type: 'object', properties: { price: { $ref: 'https://x.test/shared#money' }, sku: { $ref: 'https://x.test/shared#code' } } }, [shared]);
+  const byPointer = bundleSchema({ type: 'object', properties: { price: { $ref: 'https://x.test/shared#/$defs/money' }, sku: { $ref: 'https://x.test/shared#/$defs/code' } } }, [shared]);
+  assert.deepEqual(byAnchor, byPointer, 'an anchor and its pointer bundle to the same bytes');
+  // a same-document anchor of a copied resource, and one of the root
+  const nested = bundleSchema({ $ref: 'https://x.test/n' }, [{ $id: 'https://x.test/n', type: 'array', items: { $ref: '#item' }, $defs: { item: { $anchor: 'item', type: 'integer' } } }]);
+  assert.equal(nested.$defs[Object.keys(nested.$defs).find(k => nested.$defs[k].type === 'array')!].items.$ref.startsWith('#/$defs/'), true);
+  const rooted = bundleSchema({ $id: 'https://x.test/root', $defs: { leaf: { $anchor: 'leaf', type: 'string' } }, properties: { x: { $ref: 'https://x.test/root#leaf' } } });
+  assert.equal(rooted.properties.x.$ref, '#/$defs/leaf');
 });

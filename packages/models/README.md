@@ -349,7 +349,9 @@ gate may answer `{ valid: true, data }`, and what it computed comes back as `gat
 **What reaches the provider.** `refs` resolve `$ref`s for local validation only; the
 provider receives `schema` as given. `bundle: true` sends `bundleSchema(schema, refs)`
 instead — one self-contained document whose every reference points into its own `$defs` —
-and `bundleSchema` is exported for a host that builds its own requests. `tier` overrides the
+and `bundleSchema` is exported for a host that builds its own requests. A reference to an
+anchor (`$anchor`, or a fragment-only `$id`) is resolved as the validator resolves it and
+bundled exactly as a pointer to the same schema would be. `tier` overrides the
 client's structured-output tier for one generator.
 
 **Bounds and parsing.** `deadlineMs` (per generator, or per `generate` call) bounds a whole

@@ -14,13 +14,38 @@
  *
  * Only what a reference reaches is copied. A reference that names no
  * known resource is left as written, as the validator would leave it
- * unresolved too; a fragment that is an anchor (`#name`) rather than a
- * pointer is refused, since nothing here resolves anchors. The data
+ * unresolved too. A fragment that is an anchor (`#name`, an `$anchor` or a
+ * fragment-only `$id`) is resolved by `@jarenjs/validate/references`, as the
+ * validator resolves it, to the JSON pointer of the schema it names, so it
+ * lands in the bundle like any pointer; an anchor the resource does not
+ * declare is refused. The data
  * keywords `const`, `enum`, `default` and `examples` are never read as
  * schema.
  */
 
+import { collectSameDocumentAnchors } from '@jarenjs/validate/references';
+
 const DATA_KEYWORDS = new Set(['const', 'enum', 'default', 'examples']);
+
+/** The JSON pointer at which `target` sits inside `root`, or null. */
+function pointerOf(root: any, target: any): string | null {
+  if (root === target) return '';
+  if (root === null || typeof root !== 'object') return null;
+  for (const [key, value] of Object.entries(root)) {
+    if (!Array.isArray(root) && DATA_KEYWORDS.has(key)) continue;
+    const below = pointerOf(value, target);
+    if (below !== null) return `/${key.replaceAll('~', '~0').replaceAll('/', '~1')}${below}`;
+  }
+  return null;
+}
+
+/** The pointer an anchor of `resource` names, as the validator reads it. */
+function anchorPointer(resource: any, anchor: string, id: string): string {
+  const node = collectSameDocumentAnchors(resource).get(anchor);
+  const pointer = node === undefined ? null : pointerOf(resource, node);
+  if (pointer === null) throw new TypeError(`bundleSchema cannot resolve the anchor fragment #${anchor} of ${id}: it declares no such anchor`);
+  return pointer;
+}
 
 type Json = any;
 
@@ -34,7 +59,7 @@ const withoutFragment = (id: string) => id.replace(/#.*$/, '');
  * Inline every resource `schema` reaches through `refs` into its
  * `$defs`, and point every reference there.
  * @throws {TypeError} when a ref lacks a string `$id`, two refs share one,
- *   or a reference uses an anchor fragment
+ *   or a reference names an anchor its resource does not declare
  */
 export function bundleSchema(schema: Json, refs: readonly Json[] = []): Json {
   if (schema === null || typeof schema !== 'object' || Array.isArray(schema))
@@ -83,8 +108,7 @@ export function bundleSchema(schema: Json, refs: readonly Json[] = []): Json {
 
   /** The same-document pointer a fragment of resource `id` has in the bundle. */
   const pointerInto = (id: string, fragment: string): string => {
-    if (fragment !== '' && !fragment.startsWith('/'))
-      throw new TypeError(`bundleSchema cannot resolve the anchor fragment #${fragment} of ${id}`);
+    if (fragment !== '' && !fragment.startsWith('/')) return pointerInto(id, anchorPointer(resources.get(id), fragment, id));
     const match = /^\/\$defs\/([^/]+)(.*)$/.exec(fragment);
     if (match !== null) {
       const key = match[1].replaceAll('~1', '/').replaceAll('~0', '~');
@@ -115,11 +139,7 @@ export function bundleSchema(schema: Json, refs: readonly Json[] = []): Json {
     const target = withoutFragment(absolute);
     const hash = absolute.indexOf('#');
     const fragment = hash < 0 ? '' : decodeURIComponent(absolute.slice(hash + 1));
-    if (target === rootId) {
-      if (fragment !== '' && !fragment.startsWith('/'))
-        throw new TypeError(`bundleSchema cannot resolve the anchor fragment #${fragment} of ${target}`);
-      return `#${fragment}`;
-    }
+    if (target === rootId) return `#${fragment !== '' && !fragment.startsWith('/') ? anchorPointer(schema, fragment, target) : fragment}`;
     if (!resources.has(target)) return ref;
     nameOf(target);
     return pointerInto(target, fragment);

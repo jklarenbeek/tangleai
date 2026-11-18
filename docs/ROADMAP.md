@@ -403,12 +403,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   different strict subsets, and a mapped answer must still validate against
   the original schema. *Closes on:* the live tier's strict refusals counted
   before and after, per pinned model.
-- [ ] **Schema references in model bundles.** *Wanted:* `indexSchemaResources`
-  and `resolveSchemaReference` from `@jarenjs/validate/references` in place of
-  the hand-written resolution in `packages/models/src/bundle.ts`, which refuses
-  anchors. *Constraint:* the bundle's hoisted names are part of what a recorded
-  request contains. *Closes on:* the bundle tests passing with anchors admitted and the recorded
-  requests unchanged.
 - [ ] **The desktop settings form from its schema.** *Wanted:* the desktop
   settings inputs generated from `SETTINGS_SCHEMA` through `buildFormModel`,
   `createFormView` and `createFormActions`, as the Pages forms are, in place of
