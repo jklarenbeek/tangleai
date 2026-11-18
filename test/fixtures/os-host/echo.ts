@@ -50,9 +50,9 @@ connectToOs({
     if (!file.data) return { refused: 'Echo reads only inline text' };
     document.body.dataset.opened = `${file.name}: ${new TextDecoder().decode(Uint8Array.from(atob(file.data), c => c.charCodeAt(0)))}`;
   },
-  onDecision: ({ id, decision }) => {
+  onDecision: ({ id, decision, response }) => {
     if (id === 'echo-2' && decision === 'accept') return { refused: 'the echo moved' };
-    document.body.dataset.decided = `${id}:${decision}`;
+    document.body.dataset.decided = `${id}:${decision}${response === undefined ? '' : `:${JSON.stringify(response)}`}`;
   },
 }).then(async (desktop) => {
   connection = desktop;
@@ -62,4 +62,9 @@ connectToOs({
   if (window.name === 'settings' || new URLSearchParams(location.search).has('settings')) return;
   await desktop.propose({ id: 'echo-1', kind: 'echo.reply', title: 'Send the echo', summary: 'Answer the last call with its own words.', evidence: [{ label: 'The call', href: 'https://example.com/call' }], revision: 'r1' });
   await desktop.propose({ id: 'echo-2', kind: 'echo.reply', title: 'Send the second echo', revision: 'r1' });
+  // a paused run that asks the person something: filed again on every load, as the server still has it
+  if (new URLSearchParams(location.search).has('pause')) await desktop.propose({
+    id: 'echo-pause', kind: 'echo.reply', title: 'How many crates for the weekly order?', origin: 'ai', revision: '0',
+    answer: { label: 'Send', schema: { type: 'object', additionalProperties: false, required: ['crates'], properties: { crates: { type: 'integer', minimum: 0, title: 'Crates' }, rush: { type: 'boolean', title: 'Rush delivery' }, note: { type: 'string', maxLength: 100, title: 'Note' } } } },
+  });
 });

@@ -570,3 +570,25 @@ test('a file opens in the application the person picks, starting it when it is n
   await expect(page.frameLocator('.tos-window[data-module="echo-app"] iframe').locator('body')).toHaveAttribute('data-opened', 'note.txt: hi echo');
   expect(await page.evaluate(() => window.harness.desktop.state().focus)).toBe(await page.evaluate(() => window.harness.desktop.state().windows.find(w => w.module === 'echo-app').id));
 });
+
+test('a paused run waits in the inbox as a form; the answer reaches its application, and a reload files it again', async ({ page }) => {
+  await host(page, 'modules=1&framed=1&pause=1', { width: 1280, height: 800 });
+  await page.evaluate(() => window.harness.desktop.open('echo-app'));
+  await expect.poll(() => page.evaluate(() => window.harness.kernel.mail().some(m => m.proposal?.id === 'echo-pause'))).toBe(true);
+  await page.locator('.tos-dock-mail').click();
+  const pause = page.locator('.tos-proposal', { hasText: 'How many crates for the weekly order?' });
+  await expect(pause.locator('.tos-proposal-origin')).toHaveText('Proposed by the assistant');
+  // a value the run's schema refuses is not sent
+  await pause.getByLabel('Crates').fill('-2');
+  await pause.getByRole('button', { name: 'Send' }).click();
+  await expect(pause.getByRole('alert')).toContainText('Not sent');
+  await pause.getByLabel('Crates').fill('12');
+  await pause.getByLabel('Rush delivery').check();
+  await pause.getByRole('button', { name: 'Send' }).click();
+  await expect(page.frameLocator('.tos-window[data-module="echo-app"] iframe').locator('body')).toHaveAttribute('data-decided', 'echo-pause:answer:{"crates":12,"rush":true}');
+  // the page reloads: the inbox lives as long as the page, and the application files what still waits
+  await page.reload();
+  await page.waitForFunction(() => window.harness);
+  await page.evaluate(() => window.harness.desktop.open('echo-app'));
+  await expect.poll(() => page.evaluate(() => window.harness.kernel.mail().find(m => m.proposal?.id === 'echo-pause')?.proposal?.status)).toBe('pending');
+});

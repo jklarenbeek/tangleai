@@ -102,6 +102,33 @@ await store.respondInteraction(interactionId, response, revision, key);
 await ensurePendingMasSegments(db, store);                            // idempotent resume outbox
 ```
 
+## Paused runs in a review inbox
+
+A run that reaches an interaction node waits durably for a typed response.
+`@tangleai/mas/inbox` turns those waits into proposals a desktop's inbox
+shows, and the person's answers back into responses, on the application's
+server, with no desktop import:
+
+```ts
+import { waitingProposals, decideInteraction } from '@tangleai/mas/inbox';
+for (const proposal of await waitingProposals(store, { kind: 'run.pause', answerLabel: 'Send' }))
+  await os.propose(proposal);                        // filed again after every reload: the store still has it
+const os = await connectToOs({ origins, onDecision: async (decision) => {
+  const done = await decideInteraction(store, decision);   // an answer → respondInteraction; a rejection → cancelled
+  if (done.resume) await ensurePendingMasSegments(db, store);
+  return done.refused ? { refused: done.refused } : undefined;
+} });
+```
+
+Each proposal is the interaction's prompt, `origin: 'ai'`, its revision, and
+an answer form drawn from its response schema. The response key is derived
+from the interaction and the revision it answers (`inboxResponseKey`), so an
+answer sent twice is one answer and a different answer to the same wait is
+refused; a wait answered, cancelled or expired elsewhere is refused with the
+store's reason and stays pending in the inbox until the application withdraws
+it. `store.listWaitingInteractions()` lists every waiting interaction, found
+by its status like the resume outbox, so no table changes.
+
 ## Run and attempt lifecycle
 
 ```text

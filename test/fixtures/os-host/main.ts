@@ -19,6 +19,7 @@
  *   ?state=server  the desktop's state kept by the test server (POST /state/<op>)
  *   ?files=1     the desktop's Files with "This browser" (a folder of OPFS), and
  *                (with ?framed=1) Echo's read-only file location
+ *   ?pause=1     (with ?framed=1) Echo also files a paused run that asks for an answer
  * Everything the browser test needs is on `window.harness`.
  */
 import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract } from '../../../components/os/src/index.ts';
@@ -32,6 +33,10 @@ const query = new URLSearchParams(location.search);
 const count = Number(query.get('modules') ?? 16);
 const withHeader = query.get('header') === '1';
 const withFiles = query.get('files') === '1';
+const withPause = query.get('pause') === '1';
+// what the framed Echo turns on, from the host's own switches
+const echoFlags = [withHeader && 'header', withFiles && 'files', withPause && 'pause'].filter(Boolean);
+const echoQuery = echoFlags.length ? `?${echoFlags.join('&')}` : '';
 const withDock = query.get('dock') === '1';
 // ?state=server keeps the desktop's state on the test server (as an application keeps it in its database)
 const serverState = query.get('state') === 'server';
@@ -67,7 +72,7 @@ for (let i = 1; i <= count; i++) {
 if (query.get('framed') === '1') {
   const other = `http://localhost:${location.port}`;
   kernel.install({ $module: '0.1', id: 'silent', version: '1.0.0', title: { en: 'Silent' }, host: { kind: 'origin', url: `${other}/silent.html` } }, 'shipped');
-  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html${withHeader ? '?header' : withFiles ? '?files' : ''}` }, provides: [ECHO, ...(withFiles ? [fileLocationContract('echo_files') as any] : [])], ...(withFiles ? { files: { contract: 'echo_files', title: { en: 'Echo files' } }, opens: [{ type: 'text/plain' }] } : {}), proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
+  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html${echoQuery}` }, provides: [ECHO, ...(withFiles ? [fileLocationContract('echo_files') as any] : [])], ...(withFiles ? { files: { contract: 'echo_files', title: { en: 'Echo files' } }, opens: [{ type: 'text/plain' }] } : {}), proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
     ...(withSettings ? { settings: { kind: 'page', url: `${other}/echo.html?settings` } } : {}) }, 'shipped');
   // an application that joins with the 0.49.2 release's one-file module side
   kernel.install({ $module: '0.1', id: 'old-echo', version: '1.0.0', title: { en: 'Old echo' }, host: { kind: 'origin', url: `${other}/old.html` },

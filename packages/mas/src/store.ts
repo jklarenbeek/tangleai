@@ -155,6 +155,8 @@ export interface MasStore {
 
   /** Runs whose typed response is accepted but whose resume segment is not yet queued. */
   listResumePendingRuns(): Promise<MasRun[]>;
+  /** Every interaction still waiting for its response, of every run: what a review inbox lists. */
+  listWaitingInteractions(): Promise<MasInteraction[]>;
 
   // trace
   readTrace(runId: string): Promise<TraceView | undefined>;

@@ -31,12 +31,22 @@ export const PROPOSAL_SCHEMA = {
       items: { type: 'object', additionalProperties: false, required: ['label'], properties: { label: { type: 'string', minLength: 1, maxLength: 200 }, href: { type: 'string', maxLength: 2000, pattern: '^https?://' } } },
     },
     revision: { type: 'string', maxLength: 128 },
+    /** Who proposes: a person, a rule, an import or the assistant (`ai`). */
+    origin: { enum: ['human', 'rule', 'import', 'ai'] },
+    /**
+     * A proposal that asks the person something (a paused run, say): the
+     * JSON Schema of the answer, drawn as a form, and the button's words.
+     */
+    answer: {
+      type: 'object', additionalProperties: false, required: ['schema'],
+      properties: { schema: { anyOf: [{ type: 'object' }, { type: 'boolean' }] }, label: { type: 'string', minLength: 1, maxLength: 64 } },
+    },
   },
 } as const;
 /** What the desktop carries back to the module that filed a proposal. */
 export const DECISION_SCHEMA = {
   type: 'object', additionalProperties: false, required: ['id', 'kind', 'decision'],
-  properties: { id: PROPOSAL_SCHEMA.properties.id, kind: PROPOSAL_SCHEMA.properties.kind, decision: { enum: ['accept', 'reject'] }, revision: { type: 'string', maxLength: 128 }, payload: json },
+  properties: { id: PROPOSAL_SCHEMA.properties.id, kind: PROPOSAL_SCHEMA.properties.kind, decision: { enum: ['accept', 'reject', 'answer'] }, revision: { type: 'string', maxLength: 128 }, payload: json, response: json },
 } as const;
 
 export const OS_CONTRACT = {

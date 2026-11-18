@@ -255,6 +255,14 @@
 .tos-dock-ghost { position: absolute; z-index: 2147482900; pointer-events: none; inline-size: 44px; block-size: 44px; translate: -50% -50%; display: grid; place-items: center; opacity: .9; }
 .tos-dock-ghost > * { inline-size: 100%; block-size: 100%; }
 .tos-dock-state { color: var(--fail, #c0392b); font-weight: 700; font-size: 18px; border: 1px solid currentColor; }
+.tos-proposal-origin { font-size: 11px; color: var(--muted); }
+.tos-answer { display: grid; gap: 8px; margin-block-start: 6px; }
+.tos-answer-field { display: grid; gap: 3px; font-size: 13px; }
+/* a yes or no sits beside its words */
+.tos-answer-field:has(> input[type="checkbox"]) { grid-template-columns: auto 1fr; align-items: center; gap: 8px; }
+.tos-answer-field:has(> input[type="checkbox"]) > input { order: -1; margin: 0; }
+.tos-answer input:not([type="checkbox"]), .tos-answer select, .tos-answer textarea { box-sizing: border-box; inline-size: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--fg); font: inherit; }
+.tos-answer input:focus-visible, .tos-answer select:focus-visible, .tos-answer textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .tos-dock-changes { margin: 6px 0 0; padding-inline-start: 18px; font-size: 13px; }
 .tos-dock-brand { flex: none; display: grid; place-items: center; block-size: var(--os-dock-size, 46px); max-inline-size: 120px; padding-inline: 4px 8px; overflow: hidden; }
 .tos-dock-brand > img { max-block-size: 70%; max-inline-size: 100%; object-fit: contain; }
@@ -368,7 +376,7 @@
 .tos-proposal-actions { display: flex; gap: 8px; }
 .tos-proposal-actions { margin-block-start: 4px; }
 .tos-proposal-actions button { padding: 5px 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); color: var(--fg); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
-.tos-proposal-actions button[data-decision="accept"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg, #fff); }
+.tos-proposal-actions button[data-decision="accept"], .tos-proposal-actions button[data-decision="answer"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg, #fff); }
 .tos-proposal-actions button:disabled { opacity: .6; cursor: progress; }
 .tos-proposal-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 

@@ -38,7 +38,7 @@ export type ShippedContext = {
   /** Open the desktop's Settings at this module's own section. */
   openSettings(): void;
   /** File a proposal in the desktop's inbox (the same id again replaces it). */
-  propose(proposal: { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string }): ReturnType<Kernel['propose']>;
+  propose(proposal: { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string, origin?: 'human' | 'rule' | 'import' | 'ai', answer?: { schema: Record<string, unknown> | boolean, label?: string } }): ReturnType<Kernel['propose']>;
   /** Take back a pending proposal. */
   withdraw(id: string): ReturnType<Kernel['withdrawProposal']>;
   /** Where the person's decisions on this module's proposals arrive while its window is open; return `{ refused }` to keep one pending. */
@@ -1076,6 +1076,54 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   }
 
   /** One proposal waiting for the person: text only, links to http(s) pages only, the decision carried to its module. */
+  /**
+   * The form an answer schema asks for: one field per property of a flat
+   * object (text, a longer text, a number, a choice, a yes or no), or one text
+   * for any other schema, read as JSON when it is not a plain string schema.
+   * Labels are the schema's own titles; nothing in it is markup.
+   */
+  function answerForm(schema: Record<string, unknown> | boolean): { el: HTMLFormElement, value: () => unknown } {
+    const el = doc.createElement('form'); el.className = 'tos-answer';
+    const s: any = schema;
+    const props = s && typeof s === 'object' && s.type === 'object' && s.properties && typeof s.properties === 'object' ? Object.entries<any>(s.properties).slice(0, 20) : null;
+    if (!props || props.some(([, p]) => !['string', 'number', 'integer', 'boolean'].includes(p?.type) && !Array.isArray(p?.enum))) {
+      const area = doc.createElement('textarea'); area.rows = 3; area.setAttribute('aria-label', typeof s?.title === 'string' ? s.title : t('mail/answer'));
+      el.append(area);
+      const plain = s === true || s?.type === 'string';
+      return { el, value: () => plain ? area.value : JSON.parse(area.value) };
+    }
+    const required = new Set<string>(Array.isArray(s.required) ? s.required : []);
+    const read: (() => [string, unknown] | null)[] = [];
+    for (const [name, p] of props) {
+      const field = doc.createElement('label'); field.className = 'tos-answer-field';
+      const caption = doc.createElement('span'); caption.textContent = typeof p.title === 'string' ? p.title : name;
+      let control: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+      if (Array.isArray(p.enum)) {
+        const select = doc.createElement('select');
+        for (const option of p.enum.slice(0, 50)) { const o = doc.createElement('option'); o.value = JSON.stringify(option); o.textContent = String(option); select.append(o); }
+        control = select;
+        read.push(() => [name, JSON.parse(select.value)]);
+      } else if (p.type === 'boolean') {
+        const box = doc.createElement('input'); box.type = 'checkbox'; box.checked = p.default === true; control = box;
+        read.push(() => [name, box.checked]);
+      } else if (p.type === 'number' || p.type === 'integer') {
+        const input = doc.createElement('input'); input.type = 'number'; if (p.type === 'integer') input.step = '1'; control = input;
+        read.push(() => input.value === '' ? null : [name, Number(input.value)]);
+      } else {
+        const long = (p.maxLength ?? 0) > 200 || p.maxLength === undefined;
+        const input = long ? doc.createElement('textarea') : doc.createElement('input');
+        if (input instanceof HTMLTextAreaElement) input.rows = 2; else input.type = 'text';
+        if (typeof p.maxLength === 'number') input.maxLength = p.maxLength;
+        control = input;
+        read.push(() => input.value === '' && !required.has(name) ? null : [name, input.value]);
+      }
+      if (required.has(name) && !(control instanceof HTMLInputElement && control.type === 'checkbox')) control.required = true;
+      field.append(caption, control);
+      el.append(field);
+    }
+    return { el, value: () => Object.fromEntries(read.map(r => r()).filter((x): x is [string, unknown] => x !== null)) };
+  }
+
   /** A suggested dock, in the desktop's words: what it would change, by the dock's own titles. */
   function dockSuggestion(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { by?: string, changes?: { moved: string[], hidden: string[], shown: string[], folders: { id: string, items: string[] }[] } }) {
     const manifests = kernel.modules();
@@ -1118,8 +1166,30 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       reason.textContent = p.reason.code === 'OS0110' ? t('mail/not-running', { app }) : t('mail/refused', { detail: p.reason.message });
       li.append(reason);
     }
+    if (p.origin) { const origin = doc.createElement('span'); origin.className = 'tos-proposal-origin'; origin.textContent = { human: t('mail/origin-human'), rule: t('mail/origin-rule'), import: t('mail/origin-import'), ai: t('mail/origin-ai') }[p.origin]; li.insertBefore(origin, from.nextSibling); }
     const actions = doc.createElement('div'); actions.className = 'tos-proposal-actions';
     const deciding = p.status === 'deciding';
+    // a proposal that asks something: its answer is a form drawn from the schema, sent instead of an accept
+    if (p.answer) {
+      const form = answerForm(p.answer.schema);
+      const error = doc.createElement('p'); error.className = 'tos-proposal-reason'; error.setAttribute('role', 'alert'); error.hidden = true;
+      const send = doc.createElement('button'); send.type = 'submit'; send.dataset.decision = 'answer'; send.textContent = deciding ? t('mail/deciding') : p.answer.label ?? t('mail/answer'); send.disabled = deciding;
+      const reject = doc.createElement('button'); reject.type = 'button'; reject.dataset.decision = 'reject'; reject.textContent = t('mail/reject'); reject.disabled = deciding;
+      reject.addEventListener('click', () => { send.disabled = reject.disabled = true; kernel.decide(item.id, 'reject').catch(report); });
+      form.el.addEventListener('submit', (event) => {
+        event.preventDefault();
+        let response: unknown;
+        try { response = form.value(); } catch (problem: any) { error.textContent = t('mail/answer-invalid', { detail: String(problem?.message ?? problem) }); error.hidden = false; return; }
+        send.disabled = reject.disabled = true;
+        kernel.decide(item.id, 'answer', response).then((outcome) => {
+          if (!outcome.ok && (outcome.error.code === 'OS0124' || outcome.error.code === 'OS0123')) { error.textContent = t('mail/answer-invalid', { detail: outcome.error.message }); error.hidden = false; send.disabled = reject.disabled = false; }
+        }, report);
+      });
+      actions.append(send, reject);
+      form.el.append(error, actions);
+      li.append(form.el);
+      return li;
+    }
     for (const [decision, label] of [['accept', t('mail/accept')], ['reject', t('mail/reject')]] as const) {
       const b = doc.createElement('button'); b.type = 'button'; b.dataset.decision = decision; b.textContent = deciding ? t('mail/deciding') : label;
       b.disabled = deciding;

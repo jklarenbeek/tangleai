@@ -29,7 +29,7 @@ export type ConnectOptions = {
    * out, or return `{ refused: reason }` (the revision moved, say) and the
    * proposal stays pending with that reason. A module with no handler refuses.
    */
-  onDecision?: (decision: { id: string, kind: string, decision: 'accept' | 'reject', revision?: string, payload?: unknown }) => { refused?: string } | void | Promise<{ refused?: string } | void>;
+  onDecision?: (decision: { id: string, kind: string, decision: 'accept' | 'reject' | 'answer', revision?: string, payload?: unknown, response?: unknown }) => { refused?: string } | void | Promise<{ refused?: string } | void>;
   /**
    * An item of this page's header bar was used, by the person (`by: 'person'`)
    * or by a caller the desktop granted it (`'assistant'`, a module id). Carry
@@ -95,7 +95,7 @@ export type OsConnection = {
   /** Open the desktop's Settings at this module's own section: the one place the person finds every application's settings. */
   openSettings(): Promise<void>;
   /** File a proposal in the desktop's inbox (filing the same id again replaces it); the module keeps it and refiles after a reload. */
-  propose(proposal: { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string }): Promise<void>;
+  propose(proposal: { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string, origin?: 'human' | 'rule' | 'import' | 'ai', answer?: { schema: Record<string, unknown> | boolean, label?: string } }): Promise<void>;
   /** Take back a pending proposal. */
   withdraw(id: string): Promise<void>;
   close(): void;

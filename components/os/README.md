@@ -140,6 +140,22 @@ await desktop.propose({ id: 'po-7', kind: 'purchase.draft', title: 'Reorder 12 o
   A proposal of a kind the manifest does not declare is refused (`OS0107`), as
   is one that does not match the schema (`OS0108`).
 
+**Who proposes, and proposals that ask.** A proposal says who it comes from
+(`origin`: `human`, `rule`, `import` or `ai`), which the inbox shows. One that
+asks the person something carries `answer: { schema, label? }`: the inbox draws
+a form from the JSON Schema (a field per property of a flat object: text, a
+number, a choice, a yes or no; one text for any other schema), the kernel
+checks the answer against the schema before it leaves (`OS0124`, the proposal
+stays pending), and the module that filed it receives `{ decision: 'answer',
+response }` at `onDecision`. Only a proposal that asks takes an answer
+(`OS0123`); a schema larger than 20,000 characters, or one asking for a
+password or a write-only member, is refused when filed. As with accepting, no
+operation reaches it: the assistant cannot answer. An older desktop refuses a
+proposal with `origin` or `answer`, and an older page refuses an `answer`
+decision; the protocol stays 1. A run of `@tangleai/mas` that pauses for a
+person files such a proposal from the application's server with
+`@tangleai/mas/inbox`.
+
 ## Settings: one place for every application
 
 `@tangleai/os/settings` is the desktop's Settings. It is the one place a

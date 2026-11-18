@@ -645,6 +645,11 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
       });
     },
 
+    async listWaitingInteractions() {
+      const rows = asRows(await db.collection<MasInteraction>('mas_interactions').execute<MasInteraction>(matching({ status: 'waiting' })));
+      return rows.map((row) => structuredClone(row));
+    },
+
     async listResumePendingRuns() {
       const rows = asRows(await db.collection<MasRun>('mas_runs').execute<MasRun>(matching({ status: 'resume_pending' })));
       return rows.map((row) => structuredClone(row));

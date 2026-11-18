@@ -28,12 +28,15 @@ export type LedgerEntry = { seq: number, at: number, caller: string, contract: s
 export type Proposal = {
   id: string, kind: string, status: 'pending' | 'deciding' | 'accepted' | 'rejected',
   summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string,
+  origin?: 'human' | 'rule' | 'import' | 'ai',
+  /** The answer it asks for: its JSON Schema and the button's words. */
+  answer?: { schema: Record<string, unknown> | boolean, label?: string },
   /** Why the last decision did not take effect; the proposal stays pending. */
   reason?: { code: string, message: string },
 };
 export type MailEnvelope = { id: string, at: number, from: string, to: string, subject: string, body?: string, data?: unknown, read: boolean, proposal?: Proposal };
 /** How a decision reaches the module that filed the proposal: its own control channel, never the bus. */
-export type Decider = (decision: { id: string, kind: string, decision: 'accept' | 'reject', revision?: string, payload?: unknown }) => Promise<{ refused?: string } | void> | { refused?: string } | void;
+export type Decider = (decision: { id: string, kind: string, decision: 'accept' | 'reject' | 'answer', revision?: string, payload?: unknown, response?: unknown }) => Promise<{ refused?: string } | void> | { refused?: string } | void;
 export type Outcome = { ok: true, value: unknown } | { ok: false, error: { code: string, message: string } };
 /**
  * `header`: a window's header bar changed (`window`), or one of its items was
@@ -158,6 +161,14 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   /** Per module, the windows that can carry a decision to it, most recent last. */
   const deciders = new Map<string, { owner: string, decide: Decider }[]>();
   let proposalCheck: ((value: unknown) => any) | null = null;
+  const answerCheckers = new Map<string, (value: unknown) => any>();
+  /** The compiled check of an answer schema, kept by its text. */
+  function answerChecker(schema: unknown) {
+    const key = JSON.stringify(schema);
+    let check = answerCheckers.get(key);
+    if (!check) { check = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' }).compile(schema as any) as any; answerCheckers.set(key, check!); }
+    return check!;
+  }
   let headerCheck: ((value: unknown) => any) | null = null;
   let headerContract: any = null;
   let dockCheck: ((value: unknown) => any) | null = null;
@@ -578,9 +589,17 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         const first = (outcome?.errors ?? [])[0];
         return refusal('OS0108', `the proposal is refused${first ? `: ${first.instancePath || '/'} ${first.message ?? ''}`.trimEnd() : ''}`);
       }
-      const p = input as { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string };
+      const p = input as { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string, origin?: Proposal['origin'], answer?: Proposal['answer'] };
       if (!(manifest.proposals ?? []).some(d => d.kind === p.kind)) return refusal('OS0107', `'${module}' declares no proposals of kind '${p.kind}'`);
+      if (p.answer) {
+        // the answer's form is drawn from its schema: bounded, compilable, and never asking for a secret
+        const text = JSON.stringify(p.answer.schema);
+        if (text.length > 20_000) return refusal('OS0108', 'the proposal is refused: its answer schema is larger than 20,000 characters');
+        if (/"writeOnly"\s*:\s*true|"format"\s*:\s*"password"/.test(text)) return refusal('OS0108', 'the proposal is refused: the desktop asks for no secret');
+        try { answerChecker(p.answer.schema); } catch (error: any) { return refusal('OS0108', `the proposal is refused: its answer schema does not compile (${String(error?.message ?? error).slice(0, 200)})`); }
+      }
       const proposal: Proposal = { id: p.id, kind: p.kind, status: 'pending',
+        ...(p.origin !== undefined ? { origin: p.origin } : {}), ...(p.answer !== undefined ? { answer: cloneJson(p.answer) as Proposal['answer'] } : {}),
         ...(p.summary !== undefined ? { summary: p.summary } : {}), ...(p.payload !== undefined ? { payload: cloneJson(p.payload) } : {}),
         ...(p.evidence !== undefined ? { evidence: cloneJson(p.evidence) } : {}), ...(p.revision !== undefined ? { revision: p.revision } : {}) };
       const existing = mail.find(m => m.from === module && m.proposal?.id === p.id);
@@ -620,11 +639,19 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
      * (`OS0112`, e.g. its revision moved) or fails leaves the proposal pending
      * with the reason.
      */
-    async decide(mailId: string, decision: 'accept' | 'reject'): Promise<Outcome> {
+    async decide(mailId: string, decision: 'accept' | 'reject' | 'answer', response?: unknown): Promise<Outcome> {
       const item = mail.find(m => m.id === mailId);
       const p = item?.proposal;
       if (!item || !p) return refusal('OS0109', `no proposal '${mailId}'`);
       if (p.status !== 'pending') return refusal('OS0111', `the proposal is ${p.status}`);
+      if (decision === 'answer') {
+        if (!p.answer) return refusal('OS0123', 'this proposal asks for no answer');
+        const verdict = answerChecker(p.answer.schema)(response);
+        if (!(typeof verdict === 'object' && verdict !== null ? verdict.valid : verdict === true)) {
+          const first = (verdict?.errors ?? [])[0];
+          return refusal('OS0124', `the answer is refused${first ? `: ${first.instancePath || '/'} ${first.message ?? ''}`.trimEnd() : ''}`);
+        }
+      }
       const settle = (status: Proposal['status'], reason?: Proposal['reason']) => {
         item.proposal = { ...item.proposal!, status, ...(reason ? { reason } : {}) };
         if (!reason) delete item.proposal.reason;
@@ -645,13 +672,13 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       if (!target) { settle('pending', { code: 'OS0110', message: `'${item.from}' is not running` }); return refusal('OS0110', `'${item.from}' is not running`); }
       settle('deciding');
       try {
-        const answer = await target.decide({ id: p.id, kind: p.kind, decision, ...(p.revision !== undefined ? { revision: p.revision } : {}), ...(p.payload !== undefined ? { payload: cloneJson(p.payload) } : {}) });
+        const answer = await target.decide({ id: p.id, kind: p.kind, decision, ...(p.revision !== undefined ? { revision: p.revision } : {}), ...(p.payload !== undefined ? { payload: cloneJson(p.payload) } : {}), ...(decision === 'answer' ? { response: cloneJson(response ?? null) } : {}) });
         if (answer && typeof answer.refused === 'string') { settle('pending', { code: 'OS0112', message: answer.refused }); return refusal('OS0112', answer.refused); }
       } catch (error: any) {
         const message = String(error?.message ?? error);
         settle('pending', { code: 'OS0112', message }); return refusal('OS0112', message);
       }
-      settle(decision === 'accept' ? 'accepted' : 'rejected');
+      settle(decision === 'reject' ? 'rejected' : 'accepted');
       return { ok: true, value: { status: item.proposal!.status } };
     },
 
