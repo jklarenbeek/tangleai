@@ -931,7 +931,7 @@ export function createLedger(options: {
    * @param [ranking]
    */
   function rankedResult(records: any[], probe: any, query: LedgerQuery, member: 'memories' | 'skills', skipped: number, via: 'sweep' | 'adapter',
-    ranking: LedgerRanking = { algorithm: 'exact-cosine', exhaustive: true, candidateCount: records.length }) {
+    ranking: LedgerRanking = { algorithm: 'exact-cosine', exhaustive: true, candidateCount: records.length }, missing?: number) {
     const ranked = records
       .map((record: any) => ({ record, score: cosineSimilarity(probe, record.embedding) }))
       .sort((a, b) => (b.score - a.score) || recencyOrder(a.record, b.record));
@@ -943,6 +943,7 @@ export function createLedger(options: {
       [member]: capped.map((entry) => entry.record),
       scores: capped.map((entry) => entry.score),
       skipped,
+      ...(missing ? { missing } : {}),
       via,
       ranking,
     };
@@ -1044,9 +1045,11 @@ export function createLedger(options: {
         found.set(describeIdentity(stored), stored);
       }
       const records = await Promise.all(hits.hits.map((hit: any) => storage.get(hit.key)));
+      let missing = 0;
       for (let i = 0; i < records.length; i++) {
         const record = records[i];
-        if (record == null) continue; // Deleted between selection and read.
+        // ranked, then deleted before this read: counted, never silently dropped
+        if (record == null) { missing += 1; continue; }
         if (`${prefix}${record.id}` !== hits.hits[i].key || !sameIdentity(record.embeddedBy, identity))
           return { error: `${name}: storage rank candidate identity mismatch` };
         if (!isVector(record.embedding, identity.dims))
@@ -1058,8 +1061,8 @@ export function createLedger(options: {
       // a key the adapter ranked and a read that no longer finds it is a
       // record deleted in between, not a record without a vector
       return rankedResult(records.filter((record: any) => record?.embedding !== undefined),
-        probe, query, member, hits.skipped, 'adapter',
-        { algorithm: ranking.algorithm, exhaustive: ranking.exhaustive, candidateCount: ranking.candidateCount });
+        probe, query, member, hits.skipped + missing, 'adapter',
+        { algorithm: ranking.algorithm, exhaustive: ranking.exhaustive, candidateCount: ranking.candidateCount }, missing);
     }
 
     // the identity check, before any math: every candidate's identity
@@ -1452,6 +1455,10 @@ export type LedgerEmbeddedBy = import('./schemas/ledger.ts').LedgerEmbeddedBy;
 export type Embedder = import('@tangleai/models/embed').Embedder;
 export type LedgerRankedMemories = {
   memories: LedgerMemory[]; scores: number[]; skipped: number; /**
+ * - on the adapter path, when any: records the adapter ranked that were deleted before the
+ *   ledger read them (also counted in `skipped`)
+ */
+  missing?: number; /**
  * - which path answered: the ledger's
  * own read-and-rank, or the adapter's `rank` capability
  */
@@ -1462,6 +1469,9 @@ export type LedgerRankedMemories = {
 };
 export type LedgerRankedSkills = {
   skills: LedgerSkill[]; scores: number[]; skipped: number; /**
+ * - see {@link LedgerRankedMemories}
+ */
+  missing?: number; /**
  * - see {@link LedgerRankedMemories}
  */
   via: "sweep" | "adapter"; /**

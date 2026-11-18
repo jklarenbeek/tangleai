@@ -48,14 +48,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Memory policies
 
-- [ ] **Count missing ranked memories.** *Wanted:* a ledger recall whose
-  `skipped` count includes a record deleted between the rank adapter's selection
-  and the ledger read. *Constraint:* `recall({ near })` currently drops that
-  missing record without counting it. The isolated deletion probe reproduces
-  this accounting gap; it is outside research lesson activation. *Closes on:* a
-  counted `missing` value and a reproduction test that uses the same ranked
-  corpus and deletes the selected record before the ledger reads it.
-
 - [ ] **Embedding width against a variable-dimension semantic embedder.**
   *Wanted:* test whether the offline width decision transfers to semantic
   retrieval and answers. *Constraint:* the [registered policy result](LOCOMO_POLICY.md)

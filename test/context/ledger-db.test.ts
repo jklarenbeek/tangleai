@@ -250,6 +250,29 @@ describe('the db-backed ledger adapter — rank, and the same answer without it'
     assert.deepStrictEqual(top.memories.map((m: any) => m.id), ['exact', 'close']);
   });
 
+  it('a record the adapter ranked and that was deleted before the ledger read it is counted as missing', async function () {
+    const { adapter } = await seeded();
+    // the same ranked corpus; the selected record is deleted between the adapter's selection and the ledger's read
+    let deletedKey: string | null = null;
+    const racing = {
+      ...adapter,
+      rank: async (request: any) => {
+        const answer = await adapter.rank!(request);
+        deletedKey = answer.hits[0].key;
+        await adapter.delete(deletedKey);
+        return answer;
+      },
+    };
+    const ledger = createLedger({ storage: racing, embedder: hash16(), now: clock() });
+    const recalled = await ledger.recall({ near: 'alpha beta gamma delta', limit: 3 });
+    assert.ok('memories' in recalled);
+    assert.ok(deletedKey !== null);
+    assert.strictEqual((recalled as any).missing, 1, 'the deleted record is counted, not dropped');
+    assert.strictEqual(recalled.skipped, 1, 'and counted among the skipped');
+    assert.strictEqual(recalled.memories.length, 2);
+    assert.ok(!recalled.memories.some((m: any) => deletedKey!.endsWith(m.id)));
+  });
+
   it('a record with no vector is reported, not scored, on both paths', async function () {
     const { ledger, swept } = await seeded([UNEMBEDDABLE]);
     // the sweep embedded everything; a record added after it has none

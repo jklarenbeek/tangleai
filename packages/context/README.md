@@ -494,3 +494,8 @@ export async function createDbStorage({ path = ':memory:', dims }: { path?: stri
   };
 }
 ```
+
+With `rank` present, `recall({ near })` reads the records the adapter ranked. A
+record deleted between the adapter's selection and that read is not ranked and
+not dropped silently: the result counts it as `missing` (only when there is
+one) and among the `skipped`.
