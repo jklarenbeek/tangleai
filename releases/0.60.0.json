@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "version": "0.60.0",
+  "baseVersion": "0.59.0",
+  "baseCommit": "4fea0239163a03a2b23068ac5e68275fdab9a6e5",
+  "preparationCommit": "585178f5fe7917aa6d0b9b73847856bde34b74fa",
+  "initial": false,
+  "inputHash": "09e92bf5db8c9be39a5225f9d5dca3113663a3e215ee7961b9111d52bd951fdb",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "The assistant can write an application for the person. The desktop's own contract `tangle_os_apps` gives it the crib (`apps.crib`), a check against the gate and its own probes (`apps.check`), and `apps.suggest`, which files the finished document in the person's inbox as the desktop's own proposal, refused (`OS0160`) when it does not pass the gate. The inbox says who wrote it and that it asks for nothing; when the person accepts, it joins their layer as a document module with no grants, opens, and runs in its sandboxed frame. The kernel loads the authoring code only when the assistant uses it, and the Pages assistant is told when and how to write one. Measured through that assistant (a headless desktop, its system prompt and the kernel's tools, one turn): every one of 32 plain requests, 16 in English and 16 in Dutch, ended with an application in the inbox that works when the person uses it (docs/AUTHORING_BENCHMARK.md).",
+      "id": "authored-apps"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.60.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.60.0"
+    }
+  ]
+}

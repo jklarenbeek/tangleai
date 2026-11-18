@@ -353,31 +353,31 @@
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.59.0"
+        "version": "0.60.0"
       },
       {
         "name": "@tangleai/config",
-        "version": "0.59.0"
+        "version": "0.60.0"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.59.0"
+        "version": "0.60.0"
       },
       {
         "name": "@tangleai/mas",
-        "version": "0.59.0"
+        "version": "0.60.0"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.59.0"
+        "version": "0.60.0"
       },
       {
         "name": "@tangleai/outcomes",
-        "version": "0.59.0"
+        "version": "0.60.0"
       },
       {
         "name": "@tangleai/store",
-        "version": "0.59.0"
+        "version": "0.60.0"
       }
     ]
   },
@@ -1326,5 +1326,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "c5f689e42f10b7b1a333bdcea8065d5c32c4355a431a2bd92ca2f310ca37e74b"
+  "reportId": "dd8dc7291a0f8cfadb292e8c8a8e571548b496d46e20832f54fe600b527d9b12"
 }

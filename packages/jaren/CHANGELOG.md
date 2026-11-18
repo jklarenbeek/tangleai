@@ -1,5 +1,18 @@
 # @tangleai/jaren
 
+## 0.60.0
+
+### Minor Changes
+
+- 7f5cf01: The assistant can write an application for the person. The desktop's own contract `tangle_os_apps` gives it the crib (`apps.crib`), a check against the gate and its own probes (`apps.check`), and `apps.suggest`, which files the finished document in the person's inbox as the desktop's own proposal, refused (`OS0160`) when it does not pass the gate. The inbox says who wrote it and that it asks for nothing; when the person accepts, it joins their layer as a document module with no grants, opens, and runs in its sandboxed frame. The kernel loads the authoring code only when the assistant uses it, and the Pages assistant is told when and how to write one. Measured through that assistant (a headless desktop, its system prompt and the kernel's tools, one turn): every one of 32 plain requests, 16 in English and 16 in Dutch, ended with an application in the inbox that works when the person uses it (docs/AUTHORING_BENCHMARK.md).
+
+### Patch Changes
+
+- Updated dependencies [7f5cf01]
+  - @tangleai/models@0.60.0
+  - @tangleai/context@0.60.0
+  - @tangleai/agents@0.60.0
+
 ## 0.59.0
 
 ### Minor Changes
