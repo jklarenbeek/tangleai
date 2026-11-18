@@ -1,5 +1,27 @@
 # @tangleai/store
 
+## 0.55.1
+
+### Patch Changes
+
+- 89f116e: A desktop loads Jaren's port transport when its first framed window opens instead of with the desktop. The shell waits for it before it hands a frame its ports, and a failed fetch fails that window, whose Retry fetches again. The kernel's `serveModule` and `connectProvider` stay synchronous for any other caller: until the transport arrives, what reaches a served port is held and handed over in order, and a client's calls wait for it. How much this saves depends on the host's bundler: with esbuild splitting chunks, a desktop of in-page modules loads about 25 KB less minified code up front (6 KB gzipped) and the 28 KB port chunk only with a framed window; a bundle built without splitting keeps it inline. `applyTheme` and `applyLocale` live in their own file, so the shell no longer imports the joining side.
+- Updated dependencies [89f116e]
+  - @tangleai/core@0.55.1
+  - @tangleai/config@0.55.1
+  - @tangleai/mas@0.55.1
+  - @tangleai/documents@0.55.1
+  - @tangleai/memory@0.55.1
+  - @tangleai/outcomes@0.55.1
+  - @tangleai/trace2skill@0.55.1
+  - @tangleai/evolve@0.55.1
+  - @tangleai/hera@0.55.1
+  - @tangleai/forecast@0.55.1
+  - @tangleai/grounding@0.55.1
+  - @tangleai/lightrag@0.55.1
+  - @tangleai/trading@0.55.1
+  - @tangleai/research@0.55.1
+  - @tangleai/experiential@0.55.1
+
 ## 0.55.0
 
 ### Minor Changes
