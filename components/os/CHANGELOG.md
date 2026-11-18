@@ -1,5 +1,11 @@
 # @tangleai/os
 
+## 0.62.3
+
+### Patch Changes
+
+- b4acfd5: Source receipts hash a package manifest and the lockfile without Tangle's own version strings (each package's `version` and every `@tangleai/*` pin), so a version-only release no longer re-identifies the benchmark artifacts that list them; every other byte, Jaren's pins included, still counts.
+
 ## 0.62.2
 
 ### Patch Changes

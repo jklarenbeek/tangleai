@@ -60,7 +60,7 @@
       },
       {
         "path": "benchmark/lib/source-manifest.ts",
-        "sha256": "1ef15c822791160d23f1b97e80f4dc7d91558b65575aedd8c96e45aaac118367"
+        "sha256": "bb2128a25aa3e66d3f2f7fba8041dac98bd3de30d4cc5a7a0b76c55cb33fd92a"
       },
       {
         "path": "benchmark/lib/table.ts",
@@ -255,7 +255,7 @@
         "sha256": "1b35b9772c50a55a3f2da2d76c5db2952662b5b70d9776e89c6a44a337d388d8"
       }
     ],
-    "sha256": "ad122772497197a796d8c6f9c1f6438d4790a17f5856f35e9b94d6a404d92267"
+    "sha256": "0dba862a00613b14ffa64e4412a7e7fdd21e1fd79ad93ef93b7a3ac78298cbde"
   },
   "suite": {
     "packages": [
@@ -353,31 +353,31 @@
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.62.2"
+        "version": "0.62.3"
       },
       {
         "name": "@tangleai/config",
-        "version": "0.62.2"
+        "version": "0.62.3"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.62.2"
+        "version": "0.62.3"
       },
       {
         "name": "@tangleai/mas",
-        "version": "0.62.2"
+        "version": "0.62.3"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.62.2"
+        "version": "0.62.3"
       },
       {
         "name": "@tangleai/outcomes",
-        "version": "0.62.2"
+        "version": "0.62.3"
       },
       {
         "name": "@tangleai/store",
-        "version": "0.62.2"
+        "version": "0.62.3"
       }
     ]
   },
@@ -1326,5 +1326,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "2cbcb2e09447897de92778ea67163764b05a303bfb27847cade4727b16ba317e"
+  "reportId": "80095c78f6d5f84dab8cd0035d4e68d451cc6aa56e09faeded1eee4d9ab4148b"
 }

@@ -1,5 +1,27 @@
 # @tangleai/store
 
+## 0.62.3
+
+### Patch Changes
+
+- b4acfd5: Source receipts hash a package manifest and the lockfile without Tangle's own version strings (each package's `version` and every `@tangleai/*` pin), so a version-only release no longer re-identifies the benchmark artifacts that list them; every other byte, Jaren's pins included, still counts.
+- Updated dependencies [b4acfd5]
+  - @tangleai/core@0.62.3
+  - @tangleai/config@0.62.3
+  - @tangleai/mas@0.62.3
+  - @tangleai/documents@0.62.3
+  - @tangleai/memory@0.62.3
+  - @tangleai/outcomes@0.62.3
+  - @tangleai/trace2skill@0.62.3
+  - @tangleai/evolve@0.62.3
+  - @tangleai/hera@0.62.3
+  - @tangleai/forecast@0.62.3
+  - @tangleai/grounding@0.62.3
+  - @tangleai/lightrag@0.62.3
+  - @tangleai/trading@0.62.3
+  - @tangleai/research@0.62.3
+  - @tangleai/experiential@0.62.3
+
 ## 0.62.2
 
 ### Patch Changes
