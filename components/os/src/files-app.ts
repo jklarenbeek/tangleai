@@ -31,6 +31,8 @@ export type FilesOptions = {
   /** Previewers for types the desktop does not draw itself, tried in order before plain text. */
   previewers?: FilePreviewer[],
   messages?: Partial<OsCatalogue>,
+  /** The language `messages` is in: the desktop's own title of Files and of "This browser" in it. */
+  locale?: string,
   id?: string,
 };
 export const BROWSER_LOCATION = 'tangle_os_files_browser';
@@ -38,12 +40,15 @@ export const BROWSER_LOCATION = 'tangle_os_files_browser';
 /** The Files module: its manifest, its mount, and `serve` (call once it is installed) for "This browser". */
 export function filesModule(options: FilesOptions): { manifest: ModuleManifest, mount: ShippedMount, serve(): void } {
   const id = options.id ?? 'files';
+  const t = createOsMessages(options.messages);
+  // the desktop's own application is named in the person's language, as its chrome is
+  const named = (en: string, text: string) => ({ en, ...(options.locale && options.locale !== 'en' && options.messages ? { [options.locale]: text } : {}) });
   const manifest: ModuleManifest = {
     $module: '0.1', id, version: '1.0.0', category: 'system',
-    title: { en: 'Files' }, icon: { glyph: 'files', hue: 38 },
+    title: named('Files', t('files/title')), icon: { glyph: 'files', hue: 38 },
     host: { kind: 'shipped', mount: id },
     window: { width: 980, height: 640, minWidth: 420, minHeight: 360, singleton: true },
-    ...(options.browser ? { provides: [fileLocationContract(BROWSER_LOCATION) as any], files: { contract: BROWSER_LOCATION, title: { en: 'This browser' } } } : {}),
+    ...(options.browser ? { provides: [fileLocationContract(BROWSER_LOCATION) as any], files: { contract: BROWSER_LOCATION, title: named('This browser', t('files/this-browser')) } } : {}),
   };
   return {
     manifest,

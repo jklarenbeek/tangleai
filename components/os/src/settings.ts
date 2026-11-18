@@ -59,6 +59,8 @@ export type SettingsOptions = {
   /** How long a settings page has to say hello (15 s by default). */
   connectTimeoutMs?: number;
   messages?: Partial<OsCatalogue>;
+  /** The language `messages` is in: the desktop's own title of Settings. */
+  locale?: string;
   /** The module id of Settings itself (`settings` by default). */
   id?: string;
 };
@@ -70,7 +72,7 @@ export function settingsModule(options: SettingsOptions): { manifest: ModuleMani
   const id = options.id ?? 'settings';
   const manifest: ModuleManifest = {
     $module: '0.1', id, version: '1.0.0', category: 'system',
-    title: { en: 'Settings' }, icon: { glyph: 'gear', hue: 215 },
+    title: { en: 'Settings', ...(options.locale && options.locale !== 'en' && options.messages ? { [options.locale]: createOsMessages(options.messages)('menu/settings') } : {}) }, icon: { glyph: 'gear', hue: 215 },
     host: { kind: 'shipped', mount: id },
     provides: [SETTINGS_CONTRACT as any],
     window: { width: 900, height: 620, minWidth: 560, minHeight: 420, singleton: true },

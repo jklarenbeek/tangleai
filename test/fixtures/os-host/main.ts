@@ -13,6 +13,8 @@
  *   ?header=1    (with ?framed=1) Echo puts a header bar in its title bar, and
  *                the assistant is granted the header contract
  *   ?dir=rtl     the desktop in Arabic, right to left
+ *   ?lang=xx     the desktop's chrome in one of the eleven packs (ar mirrors);
+ *                ?lang=sentinel renders every key as ⟦key⟧, to find text outside the catalogue
  *   ?dock=1      a suite of one page whose screens are launch entries in two
  *                folders, the dock kept in sessionStorage, the assistant
  *                granted the dock contract
@@ -30,8 +32,26 @@ import { conformLocation } from '../file-location-conformance.ts';
 import { mountDesktop, type DesktopEvent } from '../../../components/os/src/shell.ts';
 import { ECHO } from './echo.ts';
 import { settingsModule } from '../../../components/os/src/settings.ts';
+import { osMessagesEn, type OsCatalogue } from '../../../components/os/src/messages.ts';
+import { ar } from '../../../components/os/src/messages/ar.ts';
+import { de } from '../../../components/os/src/messages/de.ts';
+import { es } from '../../../components/os/src/messages/es.ts';
+import { fr } from '../../../components/os/src/messages/fr.ts';
+import { ja } from '../../../components/os/src/messages/ja.ts';
+import { ko } from '../../../components/os/src/messages/ko.ts';
+import { nl } from '../../../components/os/src/messages/nl.ts';
+import { pt } from '../../../components/os/src/messages/pt.ts';
+import { ru } from '../../../components/os/src/messages/ru.ts';
+import { tr } from '../../../components/os/src/messages/tr.ts';
+import { zhTW } from '../../../components/os/src/messages/zh-tw.ts';
 
 const query = new URLSearchParams(location.search);
+const PACKS: Record<string, OsCatalogue> = { ar, de, es, fr, ja, ko, nl, pt, ru, tr, 'zh-TW': zhTW };
+const lang = query.get('lang');
+// the sentinel pack: every key renders as itself, so any other text in the chrome came from somewhere else
+const messages: Partial<OsCatalogue> | undefined = lang === 'sentinel'
+  ? Object.fromEntries(Object.keys(osMessagesEn).map(k => [k, `⟦${k}⟧`])) as OsCatalogue
+  : lang ? PACKS[lang] : undefined;
 const count = Number(query.get('modules') ?? 16);
 const withHeader = query.get('header') === '1';
 const withFiles = query.get('files') === '1';
@@ -114,7 +134,7 @@ if (withDock) {
 let opfsRoot: Promise<FileSystemDirectoryHandle> | null = null;
 if (withFiles) {
   opfsRoot = navigator.storage.getDirectory().then(top => top.getDirectoryHandle('tangle-files-test', { create: true }));
-  const files = filesModule({ kernel, browser: browserLocation(opfsRoot) });
+  const files = filesModule({ kernel, browser: browserLocation(opfsRoot), ...(messages ? { messages, ...(lang !== 'sentinel' ? { locale: lang! } : {}) } : {}) });
   kernel.install(files.manifest, 'shipped');
   files.serve();
   shipped.files = files.mount;
@@ -123,7 +143,7 @@ if (withSettings) {
   shipped['screen-1-settings'] = (node: HTMLElement, context: any) => { node.innerHTML = '<h2 class="screen-settings">Screen 1 settings</h2>'; contexts['screen-1-settings'] = context; };
   kernel.install({ $module: '0.1', id: 'notes-doc', version: '1.0.0', title: { en: 'Notes' }, host: { kind: 'document', app: { $app: '0.1', state: {}, view: [] } },
     settings: { kind: 'form', schema: { type: 'object', additionalProperties: false, properties: { greeting: { type: 'string', title: 'Greeting', maxLength: 20 }, count: { type: 'integer', title: 'Count', minimum: 0, maximum: 9 } } } } }, 'shipped');
-  const settings = settingsModule({ kernel, shipped, sections: [{ id: 'general', title: { en: 'General' }, keywords: ['name'], mount: (node) => { node.innerHTML = '<h2>General</h2>'; } }] });
+  const settings = settingsModule({ kernel, shipped, ...(messages ? { messages, ...(lang !== 'sentinel' ? { locale: lang! } : {}) } : {}), sections: [{ id: 'general', title: { en: 'General' }, keywords: ['name'], mount: (node) => { node.innerHTML = '<h2>General</h2>'; } }] });
   kernel.install(settings.manifest, 'shipped');
   shipped.settings = settings.mount;
 }
@@ -134,7 +154,8 @@ const desktop = mountDesktop(document.getElementById('desktop')!, {
   ...(query.has('compact') ? { compact: { below: Number(query.get('compact')) } } : {}),
   tray: { mail: query.get('mail') !== '0', ...(brand ? { brand } : {}) },
   ...(query.has('deadline') ? { connectTimeoutMs: Number(query.get('deadline')) } : {}),
-  ...(query.get('dir') === 'rtl' ? { locale: 'ar', dir: 'rtl' as const } : {}),
+  ...(query.get('dir') === 'rtl' || lang === 'ar' ? { locale: 'ar', dir: 'rtl' as const } : lang && lang !== 'sentinel' ? { locale: lang } : {}),
+  ...(messages ? { messages } : {}),
 });
 desktop.subscribe((event) => events.push(event));
 // the scheduled run paused overnight: the host files it at boot, before any window opens, and takes the answer itself

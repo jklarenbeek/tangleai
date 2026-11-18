@@ -616,3 +616,58 @@ test("two capabilities' proposals and pauses wait in one inbox, one filed with n
   expect(bundle).not.toContain('chat/completions');
   expect(bundle).not.toContain('createChatClient');
 });
+
+// ── the chrome in every language ───────────────────────────────────────────
+/** Every text the desktop's own chrome shows now (its labels and titles too), outside the applications' own content. */
+const chromeTexts = (page) => page.evaluate(() => {
+  const out = new Set();
+  const own = (el) => !el.closest('.tos-content') || el.closest('.tos-window[data-module="settings"], .tos-window[data-module="files"]');
+  const walker = document.createTreeWalker(document.getElementById('desktop'), NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node.textContent.trim();
+    if (text && own(node.parentElement) && node.parentElement.closest(':not([hidden])') && node.parentElement.checkVisibility?.() !== false) out.add(text);
+  }
+  for (const el of document.querySelectorAll('#desktop [aria-label], #desktop [title], #desktop [placeholder]')) if (own(el)) for (const a of ['aria-label', 'title', 'placeholder']) { const v = el.getAttribute(a)?.trim(); if (v) out.add(v); }
+  return [...out];
+});
+/** Open what the chrome draws: the mail, a window's menu, Settings at Applications and access, and Files. */
+async function everySurface(page) {
+  await page.evaluate(() => { window.harness.desktop.open('screen-1'); window.harness.desktop.open('files'); window.harness.desktop.openSettings(); });
+  await page.locator('.tos-settings-nav [data-section="access"]').click();
+  await expect(page.locator('.tos-access')).toBeVisible();
+  await page.locator('.tos-dock-mail').click();
+  await expect(page.locator('.tos-mail')).toBeVisible();
+}
+
+test('the chrome writes no text outside its catalogue: a sentinel pack finds every other sentence', async ({ page }) => {
+  await host(page, 'modules=2&framed=1&settings=1&files=1&lang=sentinel', { width: 1280, height: 800 });
+  await everySurface(page);
+  const texts = await chromeTexts(page);
+  // named owners: the applications' titles, the host's own section, file names and counts
+  const owned = new Set(await page.evaluate(() => [...window.harness.kernel.modules().flatMap(m => [m.title.en, ...(m.settings?.title ? [m.settings.title.en] : [])]), 'General']));
+  const stray = texts.filter(t => !t.includes('⟦') && !owned.has(t) && !/^[\d\s.,:/()+−-]*$/.test(t));
+  expect(stray).toEqual([]);
+  await page.keyboard.press('Escape');
+  await page.evaluate(() => window.harness.desktop.focus(window.harness.desktop.state().windows.find(w => w.module === 'screen-1').id));
+  await page.locator('.tos-window[data-module="screen-1"] .tos-titlebar').click({ button: 'right' });
+  await expect(page.locator('.tos-menu')).toBeVisible();
+  const menu = await chromeTexts(page);
+  expect(menu.filter(t => !t.includes('⟦') && !owned.has(t) && !/^[\d\s.,:/()+−-]*$/.test(t))).toEqual([]);
+});
+
+for (const lang of ['ar', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt', 'ru', 'tr', 'zh-TW']) {
+  test(`the chrome in ${lang}: every sentence from its pack, no English left${lang === 'ar' ? ', mirrored' : ''}`, async ({ page }) => {
+    const file = lang === 'zh-TW' ? 'zh-tw' : lang;
+    const pack = Object.values(await import(`../../components/os/src/messages/${file}.ts`))[0];
+    const { osMessagesEn } = await import('../../components/os/src/messages.ts');
+    await host(page, `modules=2&framed=1&settings=1&files=1&lang=${lang}`, { width: 1280, height: 800 });
+    await everySurface(page);
+    await expect(page.locator('#desktop')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    await expect(page.locator('.tos-access-title')).toHaveText(pack['access/title']);
+    await expect(page.locator('.tos-dock')).toHaveAttribute('aria-label', pack['dock/label']);
+    const texts = new Set(await chromeTexts(page));
+    // an English sentence the pack translated must not be on screen
+    const english = Object.entries(osMessagesEn).filter(([k, v]) => pack[k] !== v && !v.includes('{') && v.length > 3).map(([, v]) => v);
+    expect(english.filter(v => texts.has(v))).toEqual([]);
+  });
+}

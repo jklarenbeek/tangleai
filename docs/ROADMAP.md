@@ -405,8 +405,9 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   a document, never script in the shell's origin; it runs isolated (a
   sandboxed frame today, Jaren's `safe: 'interactive'` profile once measured
   to hold the same boundary) and never sees a key; every visible sentence comes
-  from the twelve catalogues and layouts mirror for right-to-left (the shell's
-  own catalogue, Settings and the Calendar's section are English-only today).
+  from the twelve catalogues and layouts mirror for right-to-left (the shell,
+  Settings and Files have all twelve; the Pages desktop's own applications,
+  the Calendar among them, are English-only today).
   *Stands on:* the grammar
   crib and seed, the Studio gate and the behaviour probe. Measured 2026-11-14:
   the configured model wrote no working app document from a bare instruction

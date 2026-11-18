@@ -54,6 +54,7 @@ export const osMessagesEn = {
   'dock/changes-hidden': 'Hides: {list}',
   'dock/changes-shown': 'Shows: {list}',
   'dock/changes-folders': 'Folders: {list}',
+  'files/title': 'Files',
   'files/locations': 'Locations',
   'files/contents': 'Files and folders',
   'files/preview': 'Preview',

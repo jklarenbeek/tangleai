@@ -39,6 +39,21 @@ sign-in, and the desktop sees only its contracts.
   as a **classic** script (an opaque-origin frame cannot load a module script
   from a server without CORS headers) and serves it from a page whose root
   carries `data-tangle-os-module="auto"`.
+- `@tangleai/os/messages/<lang>`: the chrome's sentences (the shell,
+  Settings, Files, the install sheet, Applications and access) in `ar`, `de`,
+  `es`, `fr`, `ja`, `ko`, `nl`, `pt`, `ru`, `tr` and `zh-tw`, in the formal
+  register of the assistant's packs. Pass one as `messages` to
+  `mountDesktop`, `settingsModule` and `filesModule` (with `locale` too, so
+  Settings and Files carry their names in it); Arabic with `dir: 'rtl'`
+  mirrors the desktop.
+
+  ```ts
+  import { de } from '@tangleai/os/messages/de';
+  const settings = settingsModule({ kernel, shipped, locale: 'de', messages: de });
+  mountDesktop(node, { kernel, shipped, locale: 'de', messages: de });
+  ```
+- `@tangleai/os/testing`: `checkSuite` and `createTestDesktop` for an
+  application's own CI (see below).
 - `@tangleai/os/schemas/module`, `@tangleai/os/styles/os.css`,
   `@tangleai/os/styles/module.css`.
 
