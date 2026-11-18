@@ -23,6 +23,7 @@ import { localized, type LocalizedText, type ModuleManifest } from './manifest.t
 import { CONNECT, HELLO, PROTOCOL, systemContracts, type ConnectMessage } from './contracts.ts';
 import { createOsMessages, type OsCatalogue } from './messages.ts';
 import type { Kernel } from './kernel.ts';
+import { mountAccess } from './access.ts';
 import type { ShippedContext, ShippedMount } from './shell.ts';
 
 /** What the shell calls to show a section: `module:<id>` for a module's, a host section's own id otherwise. */
@@ -62,7 +63,7 @@ export type SettingsOptions = {
   id?: string;
 };
 
-type Entry = { id: string, title: string, keywords: string[], kind: 'host' | 'mount' | 'page' | 'form', manifest?: ModuleManifest, section?: SettingsSection };
+type Entry = { id: string, title: string, keywords: string[], kind: 'host' | 'access' | 'mount' | 'page' | 'form', manifest?: ModuleManifest, section?: SettingsSection };
 
 /** The Settings module: its manifest for the kernel and its mount for the shell. */
 export function settingsModule(options: SettingsOptions): { manifest: ModuleManifest, mount: ShippedMount } {
@@ -99,6 +100,8 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
 
   const entries = (): Entry[] => [
     ...(options.sections ?? []).map(section => ({ id: section.id, title: localized(section.title, locale), keywords: section.keywords ?? [], kind: 'host' as const, section })),
+    // the desktop's own: what every application may use, and the ones the person added
+    { id: 'access', title: t('access/title'), keywords: [t('access/remove'), t('join/assistant')], kind: 'access' as const },
     ...kernel.modules().filter(m => m.settings && m.id !== context.module.id).map(m => ({
       id: `module:${m.id}`, title: localized(m.settings!.title ?? m.title, locale), keywords: m.settings!.keywords ?? [], kind: m.settings!.kind, manifest: m,
     })),
@@ -121,7 +124,7 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
       b.addEventListener('click', () => show(e.id));
       return b;
     };
-    const host = shown.filter(e => e.kind === 'host'), apps = shown.filter(e => e.kind !== 'host');
+    const host = shown.filter(e => e.kind === 'host' || e.kind === 'access'), apps = shown.filter(e => e.kind !== 'host' && e.kind !== 'access');
     const groups: Node[] = [...host.map(button)];
     if (apps.length) { const heading = el('h3', { class: 'tos-settings-group' }); heading.textContent = t('settings/applications'); groups.push(heading, ...apps.map(button)); }
     if (!shown.length) { const none = el('p', { class: 'tos-muted' }); none.textContent = t('settings/no-match'); groups.push(none); }
@@ -139,6 +142,7 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
     if (!entry) { const empty = el('p', { class: 'tos-muted' }); empty.textContent = t('settings/empty'); pane.append(empty); return; }
     pane.dataset.showing = entry.id;
     if (entry.kind === 'host') dispose = entry.section!.mount(pane, context);
+    else if (entry.kind === 'access') dispose = mountAccess(pane, { kernel, doc, locale, t, self: context.module.id });
     else if (entry.kind === 'mount') dispose = mountSection(entry.manifest!);
     else if (entry.kind === 'page') dispose = pageSection(entry.manifest!);
     else dispose = formSection(entry.manifest!);

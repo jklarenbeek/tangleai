@@ -28,6 +28,10 @@ async function desktop(page) {
   // a returning visitor: Welcome greets only on a first visit
   await page.addInitScript(() => localStorage.setItem('tangle-os-welcomed', '1'));
   await page.goto(`/?suite=${encodeURIComponent(suiteUrl)}`);
+  // the link installs nothing by itself: the person adds the catalogue, and lets the assistant use it
+  const sheet = page.locator('.tos-join');
+  await sheet.locator('.tos-join-app[data-module="catalogue"] .tos-join-ai').check();
+  await sheet.getByRole('button', { name: 'Add' }).click();
   await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'catalogue'));
   await page.evaluate(() => ['about', 'todo', 'catalogue'].map(id => window.tangleOs.desktop.open(id)));
   await page.waitForFunction(() => window.tangleOs.kernel.providers().some(p => p.contract === 'records'));
@@ -84,6 +88,61 @@ test('the theme reaches both frames, and a switch reaches them again', async ({ 
   expect(after.shell).not.toBe(before.shell);
   expect([after.catalogue, after.todo]).toEqual([after.shell, after.shell]);
   expect(after.todoBody).not.toBe(before.todoBody);
+});
+
+test('a link installs nothing until the person adds it, and what they add stays theirs to change', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('tangle-os-welcomed', '1'));
+  await page.goto(`/?suite=${encodeURIComponent(suiteUrl)}`);
+  const sheet = page.locator('.tos-join');
+  const offered = sheet.locator('.tos-join-app[data-module="catalogue"]');
+  await expect(sheet).toBeVisible();
+  await expect(sheet).toHaveAttribute('aria-modal', 'true');
+  // the workers' fixture servers share one suite file, so the page may be another worker's port
+  await expect(offered.locator('.tos-join-origin')).toHaveText(/^Runs from http:\/\/127\.0\.0\.1:\d+$/);
+  await expect(offered.locator('.tos-join-provides')).toHaveText('Offers: records');
+  await expect(offered.locator('.tos-join-ai')).not.toBeChecked();
+  await expect(sheet.getByRole('button', { name: 'Add' })).toBeFocused();
+  // cancelled: nothing joins
+  await page.keyboard.press('Escape');
+  await expect(sheet).toHaveCount(0);
+  expect(await page.evaluate(async () => (await window.tangleOs.suites)[0])).toEqual({ installed: [], declined: ['catalogue'], unchanged: [], refused: [] });
+  expect(await page.evaluate(() => window.tangleOs.kernel.layerOf('catalogue'))).toBe(null);
+
+  // added without the assistant: the person reaches it, the assistant does not, on a desktop that grants it everything else
+  await page.reload();
+  await page.locator('.tos-join').getByRole('button', { name: 'Add' }).click();
+  expect(await page.evaluate(async () => (await window.tangleOs.suites)[0].installed)).toEqual(['catalogue']);
+  await page.evaluate(() => window.tangleOs.desktop.open('catalogue'));
+  await page.waitForFunction(() => window.tangleOs.kernel.providers().some(p => p.contract === 'records'));
+  expect(await page.evaluate(() => window.tangleOs.kernel.tools().list().map(t => t.name).filter(n => n.startsWith('records')))).toEqual([]);
+  expect((await page.evaluate(() => window.tangleOs.kernel.call('assistant', 'records', 'records.search', { query: 'oak' }))).ok).toBe(false);
+  expect((await page.evaluate(() => window.tangleOs.kernel.call('shell', 'records', 'records.search', { query: 'oak' }))).ok).toBe(true);
+
+  // the next visit asks nothing: the person's state kept it
+  await page.reload();
+  expect(await page.evaluate(async () => (await window.tangleOs.suites)[0].unchanged)).toEqual(['catalogue']);
+  await expect(page.locator('.tos-join')).toHaveCount(0);
+
+  // Settings → Applications and access: the person lets the assistant use it, sees its calls, then removes it
+  await page.evaluate(() => window.tangleOs.desktop.openSettings());
+  await page.locator('.tos-settings-nav [data-section="access"]').click();
+  const item = page.locator('.tos-access-item[data-module="catalogue"]');
+  await expect(item.locator('.tos-access-layer')).toHaveText('Added by you');
+  await expect(page.locator('.tos-access-item[data-module="todo"] .tos-access-layer')).toHaveText('Part of this desktop');
+  await item.locator('.tos-access-ai').check();
+  await page.waitForFunction(() => window.tangleOs.kernel.consentOf('catalogue')?.assistant === true);
+  await page.evaluate(() => window.tangleOs.desktop.open('catalogue'));
+  await page.waitForFunction(() => window.tangleOs.kernel.providers().some(p => p.contract === 'records'));
+  expect((await page.evaluate(() => window.tangleOs.kernel.call('assistant', 'records', 'records.search', { query: 'oak' }))).ok).toBe(true);
+  await page.evaluate(() => window.tangleOs.desktop.focus(window.tangleOs.desktop.state().windows.find(w => w.module === 'settings').id));
+  await item.locator('summary').click();
+  await expect(item.locator('.tos-access-calls li').first()).toContainText('assistant called records.records.search');
+  await item.getByRole('button', { name: 'Remove' }).click();
+  await expect(item.getByRole('button', { name: 'Keep' })).toBeFocused();
+  await item.getByRole('button', { name: 'Remove' }).click();
+  await page.waitForFunction(() => window.tangleOs.kernel.layerOf('catalogue') === null);
+  await page.reload();
+  await expect(page.locator('.tos-join')).toBeVisible();
 });
 
 test('a link grants nothing, and an application on the desktop\'s own origin is refused', async ({ page }) => {

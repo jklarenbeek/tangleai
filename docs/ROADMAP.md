@@ -378,25 +378,21 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   outside a catalogue, and a render in each language finding no English beyond
   named owners.
 
-- [ ] **A host's own database, review inbox and document authoring.** *Wanted:* the MAS store and the run log running on a
+- [ ] **A host's own database and document authoring.** *Wanted:* the MAS store and the run log running on a
   host-supplied `@jarenjs/db` Store and inside a host transaction, over a
   published model fragment of Tangle's collections, with the run log in an
-  entry whose closure is small; the review inbox listing MAS interaction
-  pauses beside the proposals applications file (the desktop's mail already is
-  that inbox for proposals: see the OS [README](../components/os/README.md)),
-  with a capability's review policy and prompt pack; and a formula author (the `$formula`
+  entry whose closure is small; and a formula author (the `$formula`
   grammar, profile, compile gate and repair loop) with revision-checked
   propose/accept adapters for app, view, form and flow documents outside
-  Studio. *Constraint:* the inbox is the interaction inbox the staged-authoring
-  entry names and the review UI the outcomes entry leaves open — one surface,
-  not three; the store split must not fork the store's own conformance.
-  *Stands on:* `createRunLog`'s `RunLogStore`, `TANGLE_DB_MODEL`, the
-  assistant's view-only entry and catalogues, `createGrammarAuthor`.
+  Studio, whose proposals reach the person through the desktop's inbox (which
+  already lists proposals and MAS interaction pauses under each capability's
+  review policy: see the OS [README](../components/os/README.md)).
+  *Constraint:* the store split must not fork the store's own conformance.
+  *Stands on:* `createRunLog`'s `RunLogStore`, `TANGLE_DB_MODEL`,
+  `createGrammarAuthor`, `@tangleai/mas/inbox`.
   *Closes on:* MAS and the run log running on a host-owned SQLite Store
-  without opening another; a host declaring two capabilities and rendering
-  their proposals and pauses in one inbox with no model client in the browser;
-  a generated formula compiling and evaluating against sample rows, and a
-  proposed app version refused on a stale revision.
+  without opening another; a generated formula compiling and evaluating
+  against sample rows, and a proposed app version refused on a stale revision.
 
 - [ ] **Applications authored on the desktop.** `@tangleai/os` is the
   desktop, documented in its [README](../components/os/README.md): an

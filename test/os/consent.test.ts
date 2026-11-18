@@ -58,6 +58,17 @@ describe('joining an application', () => {
     assert.equal(kernel.allowed('catalogue', 'tangle_os_files', 'files.list'), false, 'a scope the person declined');
   });
 
+  it('updates an application joined before in place, so undo does not take it away', async () => {
+    const kernel = await desktop();
+    kernel.join(catalogue(), { scopes: ['labels.*'], assistant: false });
+    kernel.patch('catalogue', [{ op: 'replace', path: '/title/en', value: 'My catalogue' }]);
+    assert.equal(kernel.join(catalogue({ version: '1.1.0' }), { scopes: ['labels.*'], assistant: false }).ok, true);
+    assert.equal(kernel.effective('catalogue')?.version, '1.1.0');
+    assert.equal(kernel.undo().ok, true, 'the undo takes back the rename');
+    assert.equal(kernel.effective('catalogue')?.title.en, 'Catalogue');
+    assert.equal(kernel.layerOf('catalogue'), 'user');
+  });
+
   it('keeps the assistant out until the person opens the application to it, on a desktop that grants it everything', async () => {
     const kernel = await desktop();
     kernel.join(catalogue(), { scopes: [], assistant: false });

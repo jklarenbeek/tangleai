@@ -157,8 +157,8 @@ test('a host glyph renders in the dock, a title bar and a menu', async ({ page }
 });
 
 test('a minified stylesheet keeps the glass, and a window is a region that opens with its animation once', async ({ page }) => {
-  // windows, the dock, the mail, menus and the dock's folder panel
-  expect(minified.match(/(?<!-webkit-)backdrop-filter:var\(--os-glass\)/g)?.length).toBe(5);
+  // windows, the dock, the mail, menus, the dock's folder panel and the install sheet
+  expect(minified.match(/(?<!-webkit-)backdrop-filter:var\(--os-glass\)/g)?.length).toBe(6);
   await host(page, 'modules=2', { width: 1280, height: 800 });
   const id = await page.evaluate(() => window.harness.desktop.open('screen-1'));
   const win = page.locator(`.tos-window[data-window="${id}"]`);
@@ -205,7 +205,8 @@ test("every application's settings are found in one place: from Settings, the wi
   await page.evaluate(() => window.harness.desktop.openSettings());
   const settings = settingsWindow(page);
   const nav = settings.locator('.tos-settings-nav');
-  await expect(nav.locator('button')).toHaveText(['General', 'Screen 1', 'Echo', 'Notes']);
+  // the host's sections, the desktop's own Applications and access, then each application's
+  await expect(nav.locator('button')).toHaveText(['General', 'Applications and access', 'Screen 1', 'Echo', 'Notes']);
   await expect(nav.locator('.tos-settings-group')).toHaveText('Applications');
   await settings.getByRole('searchbox', { name: 'Search settings' }).fill('labels');
   await expect(nav.locator('button')).toHaveText(['Screen 1']);

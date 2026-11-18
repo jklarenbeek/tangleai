@@ -236,6 +236,36 @@ and from the application, which opens its own section over its own port with
 no grant (`connection.openSettings()` from a framed page, `context.openSettings()`
 in a shipped one). `desktop.openSettings(moduleId?)` opens it from the host.
 
+Settings also has a section of the desktop's own, **Applications and
+access** (`access`): every application with where it comes from, what it may
+use and its recent calls from the ledger. For an application the person
+added, each scope it asked for and the assistant's access are switches they
+change at any time, and they can remove it; what the host installed is shown
+as the host granted it.
+
+## Adding applications: the install sheet
+
+A link to a suite document installs nothing by itself. The host hands the
+document to the shell, and the person sees an install sheet:
+
+```ts
+const response = await fetch(suiteUrl, { credentials: 'omit' });
+const result = await desktop.join(await response.json(), { source: suiteUrl });
+// { installed: ['catalogue'], declined: [], unchanged: [], refused: [] }
+```
+
+Each application in the sheet shows where its pages come from, the contracts
+it offers, what it asks to use (each scope a choice, ticked) and whether the
+assistant may use it (not ticked). Add installs what the person kept ticked
+through `kernel.join`; Cancel and Escape install nothing. An application on
+this device or the local network, offered on a desktop that is not, says
+that the browser may ask the person whether the page may reach it, and a
+window of one that did not answer says how to allow it and try again. The
+next time the same suite is offered, an application joined before is updated
+without asking, unless it now comes from another origin or asks for a scope
+or contract the person was not shown; then the sheet asks again, with what
+they allowed before still as they left it.
+
 ## Header bars: an application's items in its title bar
 
 An application puts its toolbar in its window's title bar instead of in a row
@@ -503,9 +533,10 @@ fits as it is. The package itself depends on Jaren alone.
   `createKernel({ recovery: true })` boots without the person's layer.
 - **The bus.** Every call between modules is a contract operation, checked
   against grants and written to a ledger. A shipped module, or a suite the host
-  configured, is granted what its manifest `requires`. A suite joined from a
-  link (`install(…, 'suite', { grant: false })`) and a module a person or the
-  assistant made are granted nothing until the person grants it (`OS0101`).
+  configured, is granted what its manifest `requires`. An application joined
+  from a link (through the install sheet, `desktop.join`) is granted what the
+  person allowed, and a module a person or the assistant made is granted
+  nothing until the person grants it (`OS0101`).
   The assistant is granted nothing unless the host says so
   (`assistantGrants`).
 - **Joined applications.** An application a person joins (from a suite
@@ -609,6 +640,29 @@ let the desktop's origin read its suite document (CORS) and frame its page
 page of one GitHub Pages account shares one origin, so an application that
 allows a Pages desktop allows all of them; an application can also host the
 desktop itself, since the shell is part of this package.
+
+**Testing an application's suite in its own CI.** `@tangleai/os/testing` runs
+the desktop without a browser:
+
+```ts
+import { checkSuite, createTestDesktop } from '@tangleai/os/testing';
+
+assert.deepEqual(checkSuite(suite, { desktopOrigin: 'https://desk.example' }), []);
+const desk = await createTestDesktop({
+  suite,                                             // joined as a person's link would: with consent
+  consent: { labels: { assistant: false } },         // narrow it per application
+  serve: { records: { 'records.search': ({ query }) => search(query) } },
+});
+await desk.call('labels', 'records', 'records.search', { query: 'oak' });
+desk.assistant.operations();                         // what the assistant is offered
+desk.onDecision('catalogue');                        // proposals filed and decided through the inbox's path
+```
+
+`checkSuite` reports what keeps a suite from joining as errors (not a suite
+`OS0150`, an id listed twice `OS0151`, a reserved id `OS0012`, a contract two
+applications provide `OS0011`, a page on the desktop's origin `OS0201`, an
+invalid manifest, capabilities that disagree) and what will not work as a
+warning (a required contract nothing provides, `OS0152`).
 
 ## Measured
 

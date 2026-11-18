@@ -5,6 +5,10 @@
  * manifests, the theme document and the message catalogue.
  */
 import { openPortClientLazily, loadPorts, portsLoaded } from './ports.ts';
+import { joinSuite, type SuiteDocument, type JoinResult } from './install-sheet.ts';
+export type { SuiteDocument, JoinResult } from './install-sheet.ts';
+import { isLocalOrigin } from './consent.ts';
+import { originHostProblem } from './shell-origin.ts';
 import { localized, type ModuleManifest } from './manifest.ts';
 import { CONNECT, FOCUS, HELLO, KEY, PROTOCOL, systemContracts, type ConnectMessage } from './contracts.ts';
 import { DEFAULT_THEMES, checkTheme, type ThemeDocument } from './theme.ts';
@@ -128,19 +132,7 @@ const headerGlyph = (name: string | undefined) => name && Object.hasOwn(HEADER_G
 /** What a press in the title bar leaves to the element under it instead of dragging or maximizing the window. */
 const INTERACTIVE = 'button, input, select, textarea, a[href], [role="tab"]';
 
-/**
- * Why an application page may not be framed as an origin module, or null.
- * A page on the desktop's own origin would be framed with that origin's
- * rights and could read the desktop's storage and keys (all project sites of
- * one GitHub Pages account share an origin), so it is refused.
- */
-export function originHostProblem(url: string, desktopOrigin: string | undefined): string | null {
-  let target: URL;
-  try { target = new URL(url); } catch { return `'${url}' is not a URL`; }
-  if (target.protocol !== 'https:' && target.protocol !== 'http:') return `'${url}' is not an http(s) page`;
-  if (desktopOrigin && target.origin === desktopOrigin) return `'${url}' shares the desktop's origin; an application must be served from its own origin`;
-  return null;
-}
+export { originHostProblem } from './shell-origin.ts';
 
 export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   const { kernel } = options;
@@ -256,6 +248,12 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       notice?.remove();
       notice = doc.createElement('div'); notice.className = 'tos-notice'; notice.setAttribute('role', 'alert');
       const text = doc.createElement('p'); text.textContent = t('window/unanswered', { title: localized(manifest.title, locale.locale) });
+      notice.append(text);
+      // a page on this device or the local network may wait for the browser's permission, or have been refused it
+      if (manifest.host.kind === 'origin' && isLocalOrigin(targetOrigin) && !isLocalOrigin(win.location?.origin ?? null)) {
+        const hint = doc.createElement('p'); hint.className = 'tos-muted'; hint.textContent = t('window/local-network');
+        notice.append(hint);
+      }
       const retry = doc.createElement('button'); retry.type = 'button'; retry.textContent = t('window/retry');
       retry.addEventListener('click', () => {
         notice?.remove(); notice = null;
@@ -263,7 +261,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         arm();
         frame.src = frame.src;
       });
-      notice.append(text, retry);
+      notice.append(retry);
       entry.content.append(notice);
       lifecycle('failed', w.id);
     };
@@ -1499,6 +1497,13 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     openSettings,
     /** Hand a file to a module, opening its window when it is not running. */
     openFile,
+    /**
+     * Offer a suite's applications to the person: an install sheet shows each
+     * one's origin, what it provides and asks to use, and the assistant's
+     * access, and only what they add joins the desktop (kept in their state).
+     */
+    join: (suite: SuiteDocument, join: { source?: string } = {}): Promise<JoinResult> =>
+      joinSuite({ kernel, doc, node, locale: locale.locale, t, desktopOrigin: win.location?.origin ?? null }, suite, join.source),
     /** Every window change, as it happens; returns the unsubscribe. */
     subscribe(listener: (event: DesktopEvent) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     setTheme: applyShellTheme,

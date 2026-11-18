@@ -15,6 +15,7 @@
     "./settings": "./src/settings.ts",
     "./files": "./src/files-app.ts",
     "./state-server": "./src/state-server.ts",
+    "./testing": "./src/testing.ts",
     "./schemas/module": "./schemas/module.schema.json",
     "./styles/os.css": "./styles/os.css",
     "./styles/module.css": "./styles/module.css"

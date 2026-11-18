@@ -10,8 +10,8 @@ import { readFileSync } from 'node:fs';
 import { osMessagesEn, createOsMessages } from '@tangleai/os';
 import { originHostProblem } from '@tangleai/os/shell';
 
-// the chrome's text: the shell, the desktop's Settings and its Files
-const shell = ['shell.ts', 'settings.ts', 'files-app.ts'].map(file => readFileSync(new URL(`../../components/os/src/${file}`, import.meta.url), 'utf8')).join('\n');
+// the chrome's text: the shell, the desktop's Settings, its Files, the install sheet and Applications and access
+const shell = ['shell.ts', 'settings.ts', 'files-app.ts', 'install-sheet.ts', 'access.ts'].map(file => readFileSync(new URL(`../../components/os/src/${file}`, import.meta.url), 'utf8')).join('\n');
 
 describe('the shell catalogue', () => {
   it('renders exactly the catalogue\'s keys', () => {

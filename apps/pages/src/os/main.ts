@@ -2,21 +2,21 @@
  * The Pages desktop. The kernel installs the shipped modules, then every
  * suite named by `?suite=<url>`: a suite document an application serves,
  * listing its modules (usually `origin` modules on that application's own
- * pages). A suite joined by a link is installed without grants. `#recovery` boots without the person's own layer.
+ * pages). A link installs nothing by itself: the install sheet shows each
+ * application and the person adds what they choose, kept in their state.
+ * `#recovery` boots without the person's own layer.
  */
-import { createKernel, validateManifest, webStorageStore, browserLocation, type ModuleManifest } from '@tangleai/os';
+import { createKernel, webStorageStore, browserLocation } from '@tangleai/os';
 import { filesModule } from '@tangleai/os/files';
 import { parseMarkdown, toHtml } from '@jarenjs/md';
 import * as toolbox from '@tangleai/agents/toolbox';
-import { mountDesktop } from '@tangleai/os/shell';
+import { mountDesktop, type SuiteDocument } from '@tangleai/os/shell';
 import { builtinModules, shippedMounts } from './modules.ts';
 import { createPreferences } from './preferences.ts';
 import { createSurfaces } from './surfaces.ts';
 
-type SuiteDocument = { $suite: '0.1', id: string, title?: { en: string }, modules: ModuleManifest[] };
-
-// The assistant may call every served contract for now; the grants order
-// replaces this with the person's own consent per module.
+// The assistant may call every served contract of the desktop's own applications;
+// an application the person added reaches it only when they allowed that.
 // this page has no server, so the desktop's state (the dock, the applications' settings) is kept in this
 // browser; an application with a server passes contractStore over its own backend instead
 const state = (() => { try { return webStorageStore(localStorage); } catch { return undefined; } })();
@@ -74,21 +74,14 @@ const applyAppearance = () => {
 prefs.subscribe((what, source) => { if (what === 'desktop' && source !== 'dock') applyAppearance(); });
 window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (prefs.desktop().scheme === 'system') applyAppearance(); });
 
+// a suite named by a link joins only what the person adds in the install sheet
 async function joinSuite(url: string) {
   const response = await fetch(url, { credentials: 'omit' });
   if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
-  const suite = await response.json() as SuiteDocument;
-  if (suite?.$suite !== '0.1' || !Array.isArray(suite.modules)) throw new Error(`${url}: not a suite document`);
-  const results = [];
-  for (const manifest of suite.modules) {
-    const verdict = validateManifest(manifest);
-    // a suite named by a link gets no grants: a link must not hand out access
-    results.push(verdict.ok ? kernel.install(manifest, 'suite', { grant: false }) : verdict);
-  }
-  return results;
+  return desktop.join(await response.json() as SuiteDocument, { source: url });
 }
 
-const suites = Promise.all(new URLSearchParams(location.search).getAll('suite').map(url => joinSuite(url).catch((error) => { console.error(error); return [{ ok: false, error: String(error) }]; })));
+const suites = Promise.all(new URLSearchParams(location.search).getAll('suite').map(url => joinSuite(url).catch((error) => { console.error(error); return { installed: [], declined: [], unchanged: [], refused: [{ id: url, message: String(error) }] }; })));
 
 // arriving: a former page link opens its application; otherwise Welcome greets
 const arrival = location.hash.replace(/^#/, '');

@@ -489,7 +489,15 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       const offered = scopesOf(verdict.manifest);
       const extra = (allow.scopes ?? []).filter(s => !offered.includes(s));
       if (extra.length) return refusal('OS0140', `'${verdict.manifest.id}' does not ask for ${extra.join(', ')}`);
-      const installed = kernel.install(verdict.manifest, 'user', { grant: false });
+      const existing = entries.get(verdict.manifest.id);
+      let installed: ReturnType<typeof kernel.install>;
+      if (existing?.layer === 'user' && existing.consent) {
+        // joined before: its manifest is updated in place, so the person's undo does not take the application away
+        const taken = (verdict.manifest.provides ?? []).find(c => [...entries.values()].some(e => e !== existing && (e.base.provides ?? []).some(p => p.id === c.id)));
+        if (taken) return refusal('OS0011', `the contract '${taken.id}' is already provided by another module`);
+        existing.base = verdict.manifest;
+        installed = { ok: true, manifest: verdict.manifest };
+      } else installed = kernel.install(verdict.manifest, 'user', { grant: false });
       if (!installed.ok) return refusal(installed.issues[0]?.code ?? 'OS0007', installed.issues.map(i => i.message).join('; '));
       const id = installed.manifest.id;
       const consent: Consent = {
