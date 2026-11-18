@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/mas",
-  "version": "0.60.1",
+  "version": "0.61.0",
   "description": "Tangle AI multi-agent runtime core — the one closed workflow IR, its pure validator/partitioner/lowering over JarenJS flow, and the store-neutral runtime contracts",
   "license": "MIT",
   "type": "module",
@@ -26,9 +26,9 @@
     "@jarenjs/linq": "0.220.0",
     "@jarenjs/validate": "0.220.0",
     "@jarenjs/mermaid": "0.220.0",
-    "@tangleai/models": "0.60.1",
-    "@tangleai/context": "0.60.1",
-    "@tangleai/agents": "0.60.1"
+    "@tangleai/models": "0.61.0",
+    "@tangleai/context": "0.61.0",
+    "@tangleai/agents": "0.61.0"
   },
   "private": false,
   "types": "./src/index.ts",

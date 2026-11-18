@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.61.0
+
+The assistant can change an application it wrote for the person: `apps.read` gives it with a revision (refused with `OS0161` for any module not written for the person), and `apps.revise` offers a new version in the inbox against that revision, refused with `OS0112` when the application changed since, both when offered and when accepted. Accepted, the new version replaces the application, still asking for nothing, and its windows start again on it.
+
 ## 0.60.1
 
 A table column a reply's Markdown aligns itself (`:---`, `---:`) now aligns to the reply's reading start and end, so it mirrors in a right-to-left reply: the assistant maps the `left` and `right` Jaren's renderer writes to `start` and `end`.

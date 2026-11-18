@@ -1,5 +1,16 @@
 # @tangleai/gmpl
 
+## 0.61.0
+
+### Minor Changes
+
+- d4629ba: The assistant can change an application it wrote for the person: `apps.read` gives it with a revision (refused with `OS0161` for any module not written for the person), and `apps.revise` offers a new version in the inbox against that revision, refused with `OS0112` when the application changed since, both when offered and when accepted. Accepted, the new version replaces the application, still asking for nothing, and its windows start again on it.
+
+### Patch Changes
+
+- Updated dependencies [d4629ba]
+  - @tangleai/mas@0.61.0
+
 ## 0.60.1
 
 ### Patch Changes
