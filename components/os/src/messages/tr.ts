@@ -129,6 +129,7 @@ export const tr: OsCatalogue = {
   'access/remove': 'Kaldır',
   'access/keep': 'Koru',
   'apps/offer': '{title} uygulamasını ekle',
+  'apps/revise-offer': '{title} uygulamasını değiştir',
   'apps/written-by': 'Sizin için yazan: {sender}',
   'apps/asks-nothing': 'Kendi başına çalışır ve hiçbir şey istemez: dosyalarınıza, diğer uygulamalarınıza veya asistana erişemez.',
 };

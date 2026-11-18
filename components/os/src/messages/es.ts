@@ -129,6 +129,7 @@ export const es: OsCatalogue = {
   'access/remove': 'Quitar',
   'access/keep': 'Conservar',
   'apps/offer': 'Agregar la aplicación {title}',
+  'apps/revise-offer': 'Cambiar la aplicación {title}',
   'apps/written-by': 'Escrita para usted por {sender}',
   'apps/asks-nothing': 'Funciona por sí sola y no pide nada: no puede acceder a sus archivos, a sus otras aplicaciones ni al asistente.',
 };

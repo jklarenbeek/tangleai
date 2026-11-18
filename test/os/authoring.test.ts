@@ -116,3 +116,45 @@ describe('the desktop\'s apps contract', () => {
     assert.equal(((await kernel.decide(again.id, 'accept')) as any).value.module, 'my-bill-splitter-2');
   });
 });
+
+describe('changing an application written for the person', () => {
+  const app = (total: string) => ({ $app: '0.1', state: { n: 0 }, view: { $jslt: '0.1', rules: [{ match: '$', body: ['p', {}, total, '$.n'] }] } });
+
+  it('reads it with a revision, offers a new version in the inbox, and refuses one written against an older revision', async () => {
+    const { createKernel, memoryStore } = await import('@tangleai/os');
+    const kernel = createKernel({ assistantGrants: 'all', state: memoryStore() });
+    await kernel.ready();
+    await kernel.call('assistant', 'tangle_os_apps', 'apps.suggest', { title: 'Counter', doc: app('Count: ') });
+    await kernel.decide(kernel.mail().at(-1)!.id, 'accept');
+    const list: any = await kernel.call('assistant', 'tangle_os_apps', 'apps.read', {});
+    assert.deepEqual(list.value.applications, [{ module: 'my-counter', title: 'Counter' }]);
+    const read: any = await kernel.call('assistant', 'tangle_os_apps', 'apps.read', { module: 'my-counter' });
+    assert.equal(read.value.doc.view.rules[0].body[2], 'Count: ');
+
+    // a host's own module is never the assistant's to change
+    kernel.install({ $module: '0.1', id: 'notes', version: '1.0.0', title: { en: 'Notes' }, host: { kind: 'document', app: app('x') } }, 'shipped');
+    assert.equal(((await kernel.call('assistant', 'tangle_os_apps', 'apps.read', { module: 'notes' })) as any).error.code, 'OS0161');
+
+    const revised: any = await kernel.call('assistant', 'tangle_os_apps', 'apps.revise', { module: 'my-counter', revision: read.value.revision, summary: 'Says "Total".', doc: app('Total: ') });
+    assert.equal(revised.ok, true);
+    assert.equal(kernel.effective('my-counter')!.host.kind === 'document' && (kernel.effective('my-counter')!.host as any).app.view.rules[0].body[2], 'Count: ', 'nothing changes until the person accepts');
+    // a second version written against the same, now older, revision is refused once the first is accepted
+    const offer = kernel.mail().find(m => m.proposal?.kind === 'app.revise')!;
+    const accepted: any = await kernel.decide(offer.id, 'accept');
+    assert.deepEqual(accepted.value, { status: 'accepted', module: 'my-counter', revised: true });
+    assert.equal((kernel.effective('my-counter')!.host as any).app.view.rules[0].body[2], 'Total: ');
+    assert.deepEqual(kernel.grants()['my-counter'], [], 'the new version asks for nothing either');
+    const stale: any = await kernel.call('assistant', 'tangle_os_apps', 'apps.revise', { module: 'my-counter', revision: read.value.revision, doc: app('Sum: ') });
+    assert.equal(stale.error.code, 'OS0112');
+
+    // and one that went stale while it waited in the inbox stays pending with the reason
+    const now: any = await kernel.call('assistant', 'tangle_os_apps', 'apps.read', { module: 'my-counter' });
+    await kernel.call('assistant', 'tangle_os_apps', 'apps.revise', { module: 'my-counter', revision: now.value.revision, doc: app('Sum: ') });
+    const waiting = kernel.mail().find(m => m.proposal?.kind === 'app.revise' && m.proposal.status === 'pending')!;
+    const other = { ...kernel.effective('my-counter')!, host: { kind: 'document', app: app('Elsewhere: ') } };
+    kernel.join(other, { scopes: [], assistant: false, source: 'assistant:assistant' });
+    const late: any = await kernel.decide(waiting.id, 'accept');
+    assert.equal(late.error.code, 'OS0112');
+    assert.equal(kernel.mail().find(m => m.id === waiting.id)!.proposal!.status, 'pending');
+  });
+});

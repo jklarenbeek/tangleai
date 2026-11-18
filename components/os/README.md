@@ -556,6 +556,12 @@ const manifest = authoredManifest(doc, { id: 'bill-splitter', title: { en: 'Bill
   it and that it asks for nothing; when the person accepts, it joins their
   layer through `kernel.join` with no grants, opens, and runs in its sandboxed
   frame. The kernel loads this code only when the assistant uses it.
+- **Changing one.** `apps.read` gives an application written for the person
+  with its revision (`OS0161` for any other module: a host's own is never the
+  assistant's to change), and `apps.revise` offers a new version against that
+  revision. It is refused when the application changed since (`OS0112`), both
+  when it is offered and when the person accepts it; accepted, it replaces the
+  application, still asking for nothing, and its windows start again on it.
 
 Measured in [AUTHORING_BENCHMARK.md](../../docs/AUTHORING_BENCHMARK.md).
 

@@ -91,6 +91,18 @@ export const APPS_CONTRACT = {
       input: { type: 'object', additionalProperties: false, required: ['doc'], properties: { doc: { type: 'object' }, probes: { type: 'array', maxItems: 8, items: { type: 'object' } } } },
       output: { type: 'object' },
     },
+    'apps.read': {
+      kind: 'read',
+      doc: 'Read an application written for the person: its document and its revision, to change it with apps.revise. Lists the applications written for them when no module is named.',
+      input: { type: 'object', additionalProperties: false, properties: { module: { type: 'string', maxLength: 128 } } },
+      output: { type: 'object' },
+    },
+    'apps.revise': {
+      kind: 'command',
+      doc: 'Offer the person a new version of an application written for them, against the revision apps.read gave: it goes to their inbox and replaces the application only when they accept, and is refused if the application changed since. It must pass apps.check first.',
+      input: { type: 'object', additionalProperties: false, required: ['module', 'revision', 'doc'], properties: { module: { type: 'string', maxLength: 128 }, revision: { type: 'string', maxLength: 64 }, summary: { type: 'string', maxLength: 400 }, doc: { type: 'object' } } },
+      output: { type: 'object', properties: { id: { type: 'string' } } },
+    },
     'apps.suggest': {
       kind: 'command',
       doc: 'Offer the person a finished application: it goes to their inbox, and it is added to their desktop only when they accept. It must pass apps.check first. It runs on its own and can reach nothing else.',
@@ -367,6 +379,19 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     for (const [window, handler] of [...headerHandlers]) if (handler.module === module) headerHandlers.delete(window);
     deciders.delete(module);
     emit({ kind: 'providers', module });
+  }
+  /** A document's revision: a digest of its JSON text, which moves whenever the document does. */
+  function revisionOf(doc: unknown): string {
+    let h = 0x811c9dc5;
+    const text = JSON.stringify(doc ?? null);
+    for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return `r${h.toString(16).padStart(8, '0')}${text.length.toString(16)}`;
+  }
+  /** An application written for the person (by the assistant, added from the inbox), or null. */
+  function authored(module: string): { manifest: ModuleManifest, doc: unknown } | null {
+    const entry = entries.get(module);
+    if (!entry?.consent?.source?.startsWith('assistant:') || entry.base.host.kind !== 'document') return null;
+    return { manifest: entry.base, doc: (entry.base.host as any).app };
   }
   /** A joined application's kept scopes follow its grants, within what it asked for. */
   function keepScopes(module: string) {
@@ -708,6 +733,15 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
             const verdict = await (await import('./authoring.ts')).checkAuthoredApp(doc, probes ?? []);
             return { ok: verdict.ok, problems: verdict.problems, ...(verdict.shown ? { shown: verdict.shown } : {}) };
           },
+          'apps.read': ({ module }: any) => {
+            if (module === undefined) return { applications: [...entries.keys()].filter(id => authored(id)).map(id => ({ module: id, title: kernel.effective(id)?.title.en ?? id })) };
+            const app = authored(module);
+            return app ? { module, title: app.manifest.title.en, revision: revisionOf(app.doc), doc: cloneJson(app.doc) } : { [REFUSED]: { code: 'OS0161', message: `'${module}' is not an application written for the person` } };
+          },
+          'apps.revise': async ({ module, revision, summary, doc }: any) => {
+            const outcome = await kernel.reviseApp(caller, { module, revision, ...(summary ? { summary } : {}), doc });
+            return outcome.ok ? outcome.value : { [REFUSED]: outcome.error };
+          },
           'apps.suggest': async ({ title, summary, doc }: any) => {
             const outcome = await kernel.proposeApp(caller, { title, ...(summary ? { summary } : {}), doc });
             return outcome.ok ? outcome.value : { [REFUSED]: outcome.error };
@@ -909,6 +943,21 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         settle(decision === 'accept' ? 'accepted' : 'rejected');
         return { ok: true, value: { status: item.proposal!.status, ...(module ? { module } : {}) } };
       }
+      // a new version of an application written for the person, against the revision it was made for
+      if (item.from === 'desktop' && p.kind === 'app.revise') {
+        const payload = p.payload as { module: string, revision: string, doc: unknown };
+        if (decision === 'accept') {
+          const app = authored(payload.module);
+          if (!app) { settle('pending', { code: 'OS0161', message: `'${payload.module}' is no longer on the desktop` }); return refusal('OS0161', `'${payload.module}' is no longer on the desktop`); }
+          if (revisionOf(app.doc) !== payload.revision) { settle('pending', { code: 'OS0112', message: 'the application changed since this version was written' }); return refusal('OS0112', 'the application changed since this version was written'); }
+          const consent = entries.get(payload.module)!.consent!;
+          const manifest = { ...app.manifest, version: app.manifest.version, host: { kind: 'document', app: cloneJson(payload.doc) } } as ModuleManifest;
+          const joined = kernel.join(manifest, { scopes: consent.scopes, assistant: consent.assistant, ...(consent.source ? { source: consent.source } : {}) });
+          if (!joined.ok) { settle('pending', { code: 'OS0112', message: joined.error.message }); return refusal('OS0112', joined.error.message); }
+        }
+        settle(decision === 'accept' ? 'accepted' : 'rejected');
+        return { ok: true, value: { status: item.proposal!.status, ...(decision === 'accept' ? { module: payload.module, revised: true } : {}) } };
+      }
       // the desktop's own proposal (a suggested dock) is carried out here, against the revision it was made for
       if (item.from === 'desktop' && p.kind === 'dock.layout') {
         const payload = p.payload as { layout: DockLayout, revision: number };
@@ -1028,6 +1077,30 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       if (existing?.proposal?.status === 'deciding') return refusal('OS0111', 'the last offer is being decided');
       if (existing) { existing.proposal = proposal; existing.read = false; existing.at = now(); }
       else mail.push({ id: `m${++mailSeq}`, at: now(), from: 'desktop', to: 'person', subject: 'app.add', read: false, proposal });
+      emit({ kind: 'mail', module: 'desktop' });
+      return { ok: true, value: { id } };
+    },
+
+    /**
+     * Offer a new version of an application written for the person, against
+     * the revision `caller` read: refused when it is not one (`OS0161`), when
+     * it changed since (`OS0112`) or when the new document does not pass the
+     * gate (`OS0160`). The person accepts it in the inbox; it is refused then
+     * too if the application changed meanwhile.
+     */
+    async reviseApp(caller: string, offer: { module: string, revision: string, summary?: string, doc: unknown }): Promise<Outcome> {
+      const app = authored(offer.module);
+      if (!app) return refusal('OS0161', `'${offer.module}' is not an application written for the person`);
+      if (revisionOf(app.doc) !== offer.revision) return refusal('OS0112', `'${offer.module}' changed since revision ${offer.revision}; read it again`);
+      if (JSON.stringify(offer.doc ?? null).length > AUTHORED_MAX_BYTES) return refusal('OS0160', `the document is larger than ${AUTHORED_MAX_BYTES} bytes`);
+      const { problems } = (await import('./authoring.ts')).gateAuthoredApp(offer.doc);
+      if (problems.length) return refusal('OS0160', `the new version does not pass the gate: ${problems.slice(0, 5).join('; ')}`);
+      const id = `app-revise-${offer.module}`.slice(0, 128);
+      const proposal: Proposal = { id, kind: 'app.revise', status: 'pending', payload: { module: offer.module, title: app.manifest.title.en, revision: offer.revision, ...(offer.summary ? { summary: offer.summary } : {}), doc: cloneJson(offer.doc), by: caller } };
+      const existing = mail.find(m => m.from === 'desktop' && m.proposal?.id === id);
+      if (existing?.proposal?.status === 'deciding') return refusal('OS0111', 'the last offer is being decided');
+      if (existing) { existing.proposal = proposal; existing.read = false; existing.at = now(); }
+      else mail.push({ id: `m${++mailSeq}`, at: now(), from: 'desktop', to: 'person', subject: 'app.revise', read: false, proposal });
       emit({ kind: 'mail', module: 'desktop' });
       return { ok: true, value: { id } };
     },

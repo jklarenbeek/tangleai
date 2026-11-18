@@ -129,6 +129,7 @@ export const ar: OsCatalogue = {
   'access/remove': 'إزالة',
   'access/keep': 'إبقاء',
   'apps/offer': 'إضافة التطبيق {title}',
+  'apps/revise-offer': 'تغيير التطبيق {title}',
   'apps/written-by': 'كتبه لك: {sender}',
   'apps/asks-nothing': 'يعمل وحده ولا يطلب شيئًا: لا يمكنه الوصول إلى ملفاتك أو تطبيقاتك الأخرى أو المساعد.',
 };

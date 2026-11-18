@@ -46,7 +46,7 @@ test('three host kinds join one desktop and talk only through contracts', async 
   expect(found).toEqual({ ok: true, value: [{ id: 'r1', name: 'Oak table', stock: 4 }] });
   expect(await page.evaluate(() => window.tangleOs.kernel.tools().list().map(t => t.name).sort()))
     // every window's header bar is the assistant's too, under the same grant
-    .toEqual(['records__records_describe', 'records__records_get', 'records__records_search', 'tangle_os_apps__apps_check', 'tangle_os_apps__apps_crib', 'tangle_os_apps__apps_suggest', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_list', 'tangle_os_files__files_locations', 'tangle_os_files__files_read', 'tangle_os_files__files_search', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
+    .toEqual(['records__records_describe', 'records__records_get', 'records__records_search', 'tangle_os_apps__apps_check', 'tangle_os_apps__apps_crib', 'tangle_os_apps__apps_read', 'tangle_os_apps__apps_revise', 'tangle_os_apps__apps_suggest', 'tangle_os_dock__dock_read', 'tangle_os_dock__dock_suggest', 'tangle_os_files__files_list', 'tangle_os_files__files_locations', 'tangle_os_files__files_read', 'tangle_os_files__files_search', 'tangle_os_header__header_activate', 'tangle_os_header__header_list']);
 
   const catalogue = page.frameLocator('.tos-window[data-module="catalogue"] iframe');
   await expect(catalogue.locator('#status')).toHaveText('Joined the desktop as catalogue.');
@@ -412,6 +412,21 @@ test('the assistant offers an application it wrote; the person adds it from the 
   await app.getByLabel('Bill amount').fill('12');
   await expect(app.locator('.total')).toHaveText('Total: 12');
   expect(await page.evaluate(() => window.tangleOs.kernel.grants()['my-bill-splitter'])).toEqual([]);
+  // the assistant offers a new version against the revision it read; accepted, the window starts again on it
+  const revised = await page.evaluate(async () => {
+    const { kernel } = window.tangleOs;
+    const read = await kernel.call('assistant', 'tangle_os_apps', 'apps.read', { module: 'my-bill-splitter' });
+    const doc = structuredClone(read.value.doc);
+    doc.view.rules[0].body[3][2] = 'Sum: ';
+    return kernel.call('assistant', 'tangle_os_apps', 'apps.revise', { module: 'my-bill-splitter', revision: read.value.revision, summary: 'Says "Sum".', doc });
+  });
+  expect(revised.ok).toBe(true);
+  if (!(await page.locator('.tos-mail').isVisible())) await page.locator('.tos-dock-mail').click();
+  const change = page.locator('.tos-proposal').filter({ hasText: 'Change the application Bill splitter' });
+  await change.getByRole('button', { name: 'Accept' }).click();
+  const again = page.frameLocator('.tos-window[data-module="my-bill-splitter"] iframe');
+  await again.getByLabel('Bill amount').fill('7');
+  await expect(again.locator('.total')).toHaveText('Sum: 7');
   // the person's own now: there on the next visit
   await page.reload();
   await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'my-bill-splitter'));

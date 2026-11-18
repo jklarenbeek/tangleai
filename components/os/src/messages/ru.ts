@@ -129,6 +129,7 @@ export const ru: OsCatalogue = {
   'access/remove': 'Удалить',
   'access/keep': 'Оставить',
   'apps/offer': 'Добавить приложение «{title}»',
+  'apps/revise-offer': 'Изменить приложение «{title}»',
   'apps/written-by': 'Написано для вас: {sender}',
   'apps/asks-nothing': 'Оно работает само по себе и ничего не запрашивает: у него нет доступа к вашим файлам, другим приложениям и ассистенту.',
 };

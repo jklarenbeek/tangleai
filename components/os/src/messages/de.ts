@@ -129,6 +129,7 @@ export const de: OsCatalogue = {
   'access/remove': 'Entfernen',
   'access/keep': 'Behalten',
   'apps/offer': 'Anwendung {title} hinzufügen',
+  'apps/revise-offer': 'Anwendung {title} ändern',
   'apps/written-by': 'Für Sie geschrieben von {sender}',
   'apps/asks-nothing': 'Sie läuft für sich allein und verlangt nichts: Sie erreicht weder Ihre Dateien noch Ihre anderen Anwendungen noch den Assistenten.',
 };

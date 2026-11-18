@@ -369,21 +369,21 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   their pinned screens finding no literal outside a catalogue, and a render in
   each language finding no English beyond named owners.
 
-- [ ] **A host's own database and document authoring.** *Wanted:* the MAS store and the run log running on a
+- [ ] **A host's own database and formula authoring.** *Wanted:* the MAS store and the run log running on a
   host-supplied `@jarenjs/db` Store and inside a host transaction, over a
   published model fragment of Tangle's collections, with the run log in an
   entry whose closure is small; and a formula author (the `$formula`
   grammar, profile, compile gate and repair loop) with revision-checked
-  propose/accept adapters for app, view, form and flow documents outside
-  Studio, whose proposals reach the person through the desktop's inbox (which
-  already lists proposals and MAS interaction pauses under each capability's
-  review policy: see the OS [README](../components/os/README.md)).
+  propose/accept adapters for view, form and flow documents outside Studio,
+  as applications already have (`apps.read` and `apps.revise` on the desktop:
+  a new version waits in the inbox and is refused on a stale revision; see the
+  OS [README](../components/os/README.md)).
   *Constraint:* the store split must not fork the store's own conformance.
   *Stands on:* `createRunLog`'s `RunLogStore`, `TANGLE_DB_MODEL`,
-  `createGrammarAuthor`, `@tangleai/mas/inbox`.
+  `createGrammarAuthor`, `@tangleai/mas/inbox`, `tangle_os_apps`.
   *Closes on:* MAS and the run log running on a host-owned SQLite Store
   without opening another; a generated formula compiling and evaluating
-  against sample rows, and a proposed app version refused on a stale revision.
+  against sample rows.
 
 ## Reuse of the suite
 

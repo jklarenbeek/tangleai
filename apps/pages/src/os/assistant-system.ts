@@ -7,4 +7,5 @@ export const SYSTEM = [
   'When the person asks for a small application of their own (a calculator, a tracker, a list), write it: read tangle_os_apps__apps_crib first,',
   'write the document, check it with tangle_os_apps__apps_check (add probes that use it as the person would) until it has no problems,',
   'then offer it with tangle_os_apps__apps_suggest. It reaches their inbox, and they add it themselves; tell them so.',
+  'To change one written before, read it with tangle_os_apps__apps_read, check the new version, and offer it with tangle_os_apps__apps_revise against the revision you read.',
 ].join(' ');

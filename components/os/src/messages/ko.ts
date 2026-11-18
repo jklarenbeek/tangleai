@@ -129,6 +129,7 @@ export const ko: OsCatalogue = {
   'access/remove': '제거',
   'access/keep': '유지',
   'apps/offer': '{title} 애플리케이션 추가',
+  'apps/revise-offer': '{title} 애플리케이션 변경',
   'apps/written-by': '작성자: {sender}',
   'apps/asks-nothing': '단독으로 실행되며 아무것도 요청하지 않습니다. 파일, 다른 애플리케이션, 어시스턴트에 접근할 수 없습니다.',
 };
