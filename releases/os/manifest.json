@@ -1,13 +1,13 @@
 {
   "$osRelease": "0.1",
-  "version": "0.54.0",
+  "version": "0.55.0",
   "protocol": 1,
   "package": {
     "name": "@tangleai/os",
-    "file": "tangleai-os-0.54.0.tgz",
-    "size": 135912,
-    "sha256": "474ab01c39dd110fe3b5b55bf25182bf943e0118e31065877780dacfb880a956",
-    "integrity": "sha512-xKw/T6BzO0Dd4vhBoYF7DAKCFm6f0y9TrA3W+GTVL8q9LbYLmGZubULSHBbcrtLKLANjhKmkNJH0s4TjxQajoQ==",
+    "file": "tangleai-os-0.55.0.tgz",
+    "size": 146131,
+    "sha256": "3d95284c53f54bb0dcbae490b60b3ad12a6a0b7f8f40ea310d372b368bd400f3",
+    "integrity": "sha512-fiI5x4n6kWJHpz9MhKj6m7y+QUjhbVesYeM446bh/c+gqKzbqdBs8pnUMmYrM3t/Yl+m71zklAJykzOLsytKDw==",
     "dependencies": {
       "@jarenjs/core": "0.220.0",
       "@jarenjs/json": "0.220.0",
@@ -32,8 +32,8 @@
   },
   "module": {
     "file": "tangle-os-module.js",
-    "size": 465511,
-    "sha256": "c48b47ce0a64df520cc44514d36a045b981dd19a0bacba92070f808fdde51f85",
+    "size": 465822,
+    "sha256": "bb271acc24d220c7c8952bb758154b49d58ae4b880c78c4c082de7fc468e980a",
     "format": "esm",
     "target": "browser",
     "exports": [
