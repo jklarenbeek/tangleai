@@ -1,5 +1,11 @@
 # Tangle releases
 
+## 0.62.0
+
+`bundleSchema` admits anchors: a reference to an `$anchor` or a fragment-only `$id` is resolved through `@jarenjs/validate/references`, as the validator resolves it, and bundled exactly as a pointer to the same schema would be, so every recorded request keeps its bytes. An anchor the resource does not declare is refused.
+
+`createStructuredOutput({ profile: 'strict' })` sends, on a `json_schema` tier, the schema's strict profile (`deriveStrictProfile` from `@jarenjs/validate/strict-profile`) with `strict: true`, maps each answer back and validates it against the original schema, which stays the authority. Measured with Claude Haiku 5.5: the provider refused 3 of 4 of the suite's schemas as they are and 1 of 4 as their profile (a grammar-size limit); every profile answer validated (docs/STRICT_PROFILE_BENCHMARK.md).
+
 ## 0.61.1
 
 A contradiction is resolved as one operation: `MemoryStore` gains an optional atomic `mutate({ put, delete })` (the in-memory store has it), which `resolveContradictions` uses to write the superseded loser and its synthesized resolution together; on a store without it the resolution is written first and taken back if the loser cannot be written. A loser already superseded, by the same winner in a replayed pass or by another in a concurrent one, is counted as an application skip and never written again, so a replay no longer stores a second resolution.

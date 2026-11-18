@@ -1,0 +1,337 @@
+{
+  "schemaVersion": 1,
+  "version": "0.62.0",
+  "baseVersion": "0.61.1",
+  "baseCommit": "2355ab3627852a074f8027ac39bb64ef3e283755",
+  "preparationCommit": "59ee39cc380438b3bbefe1fce9fef933279bd846",
+  "initial": false,
+  "inputHash": "c46d634429e063eca10197d1c0e4f83a50eb75fe80314583d754d8bf161342d4",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "`bundleSchema` admits anchors: a reference to an `$anchor` or a fragment-only `$id` is resolved through `@jarenjs/validate/references`, as the validator resolves it, and bundled exactly as a pointer to the same schema would be, so every recorded request keeps its bytes. An anchor the resource does not declare is refused.",
+      "id": "bundle-anchors"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "`createStructuredOutput({ profile: 'strict' })` sends, on a `json_schema` tier, the schema's strict profile (`deriveStrictProfile` from `@jarenjs/validate/strict-profile`) with `strict: true`, maps each answer back and validates it against the original schema, which stays the authority. Measured with Claude Haiku 5.5: the provider refused 3 of 4 of the suite's schemas as they are and 1 of 4 as their profile (a grammar-size limit); every profile answer validated (docs/STRICT_PROFILE_BENCHMARK.md).",
+      "id": "strict-profile"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.62.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.62.0"
+    }
+  ]
+}

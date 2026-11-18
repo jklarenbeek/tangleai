@@ -1,5 +1,32 @@
 # @tangleai/store
 
+## 0.62.0
+
+### Minor Changes
+
+- 59ee39c: `createStructuredOutput({ profile: 'strict' })` sends, on a `json_schema` tier, the schema's strict profile (`deriveStrictProfile` from `@jarenjs/validate/strict-profile`) with `strict: true`, maps each answer back and validates it against the original schema, which stays the authority. Measured with Claude Haiku 5.5: the provider refused 3 of 4 of the suite's schemas as they are and 1 of 4 as their profile (a grammar-size limit); every profile answer validated (docs/STRICT_PROFILE_BENCHMARK.md).
+
+### Patch Changes
+
+- 726d1ef: `bundleSchema` admits anchors: a reference to an `$anchor` or a fragment-only `$id` is resolved through `@jarenjs/validate/references`, as the validator resolves it, and bundled exactly as a pointer to the same schema would be, so every recorded request keeps its bytes. An anchor the resource does not declare is refused.
+- Updated dependencies [726d1ef]
+- Updated dependencies [59ee39c]
+  - @tangleai/core@0.62.0
+  - @tangleai/config@0.62.0
+  - @tangleai/mas@0.62.0
+  - @tangleai/documents@0.62.0
+  - @tangleai/memory@0.62.0
+  - @tangleai/outcomes@0.62.0
+  - @tangleai/trace2skill@0.62.0
+  - @tangleai/evolve@0.62.0
+  - @tangleai/hera@0.62.0
+  - @tangleai/forecast@0.62.0
+  - @tangleai/grounding@0.62.0
+  - @tangleai/lightrag@0.62.0
+  - @tangleai/trading@0.62.0
+  - @tangleai/research@0.62.0
+  - @tangleai/experiential@0.62.0
+
 ## 0.61.1
 
 ### Patch Changes
