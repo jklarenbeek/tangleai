@@ -17,9 +17,10 @@ import { DOCK_SCHEMA, arrangeDock, dockChanges, dockIcons, folderTitles, normali
 import { STATE_CONTRACT, contractStore, memoryStore, type DesktopStore, type StateDocument, type StateScope } from './state.ts';
 import { fileAnswer, fileBase64ToBytes, type FileEntry } from './files.ts';
 import { CAPABILITY_SCHEMA, capabilityIssues, type CapabilityDocument } from './capability.ts';
+import { APPS_KEY, consentNeeded, originOf, scopesOf, type Consent, type InstalledApp } from './consent.ts';
 
 export type Layer = 'shipped' | 'suite' | 'user';
-export type JournalEntry = { seq: number, at: number, layer: Layer, module: string, kind: 'install' | 'patch' | 'remove', patch?: unknown[], inverse?: unknown[] };
+export type JournalEntry = { seq: number, at: number, layer: Layer, module: string, kind: 'install' | 'patch' | 'remove', patch?: unknown[], inverse?: unknown[], consent?: Consent };
 export type LedgerEntry = { seq: number, at: number, caller: string, contract: string, op: string, ok: boolean, code?: string, ms: number };
 /**
  * A proposal in the inbox, kept by the kernel: its kind, status and sender come
@@ -115,7 +116,7 @@ export const DOCK_CONTRACT = {
   },
 } as const;
 
-type Entry = { base: ModuleManifest, layer: Layer, overlays: { layer: Layer, patch: unknown[] }[] };
+type Entry = { base: ModuleManifest, layer: Layer, overlays: { layer: Layer, patch: unknown[] }[], consent?: Consent };
 /** Any contract client: an object with `invoke`, as every Jaren binding returns. */
 export type ContractClient = { invoke: (op: string, input: unknown, ctx?: unknown) => Promise<any>, close?: () => void };
 /** A served contract: what `servePort` returns. */
@@ -216,6 +217,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       const documents = await store.load();
       for (const d of documents) if (!queue.has(idOf(d.scope, d.key))) cache.set(idOf(d.scope, d.key), d);
       stateStatus = 'ready'; failed = null;
+      restoreApps();
       if (documents.some(d => d.key === 'dock')) dockRevision++;
       emit({ kind: 'dock' });
       for (const id of queue.keys()) flushKey(id);
@@ -240,6 +242,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         if (answer.conflict.value === null) cache.delete(id); else cache.set(id, answer.conflict);
         if (pending.key === 'dock') { dockRevision++; emit({ kind: 'dock' }); }
         if (pending.key.startsWith('settings/')) emit({ kind: 'settings', module: pending.key.slice(9) });
+        if (pending.key === APPS_KEY) restoreApps();
         stateEvent(pending.key);
         return;
       }
@@ -292,6 +295,53 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     const check = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' }).compile(schema) as any;
     checkers.set(module, { key, check });
     return check;
+  }
+
+  // ── joined applications: installed by the person's consent, kept in their state ──
+  /** The joined applications as the person's state keeps them. */
+  function persistApps(): Outcome {
+    const apps: InstalledApp[] = [...entries.values()].filter(e => e.layer === 'user' && e.consent).map(e => ({ manifest: cloneJson(e.base), consent: cloneJson(e.consent!) }));
+    // an empty list, not a deleted document: a store may count a deleted document's revision from the start again
+    return writeState('person', APPS_KEY, { apps });
+  }
+  /** Take the kept list as it is: install what it holds, drop joined applications it no longer holds. */
+  function restoreApps() {
+    const kept = (readState('person', APPS_KEY) as { apps?: InstalledApp[] } | undefined)?.apps;
+    const list = Array.isArray(kept) ? kept : [];
+    const ids = new Set<string>();
+    for (const app of list) {
+      const verdict = validateManifest(app?.manifest);
+      const consent = app?.consent;
+      if (!verdict.ok || !consent || !Array.isArray(consent.offered) || !Array.isArray(consent.scopes) || !Array.isArray(consent.provides)) continue;
+      const id = verdict.manifest.id;
+      const existing = entries.get(id);
+      if ((RESERVED_IDS as readonly string[]).includes(id) || (existing && existing.layer !== 'user')) continue;
+      ids.add(id);
+      entries.set(id, { base: verdict.manifest, layer: 'user', overlays: existing?.overlays ?? [], consent: cloneJson(consent) });
+      grants.set(id, new Set(consent.scopes.filter(s => consent.offered.includes(s))));
+      emit({ kind: 'modules', module: id });
+    }
+    for (const [id, entry] of [...entries]) if (entry.layer === 'user' && entry.consent && !ids.has(id)) {
+      entries.delete(id); grants.delete(id);
+      emit({ kind: 'modules', module: id });
+    }
+  }
+  /** A joined application's kept scopes follow its grants, within what it asked for. */
+  function keepScopes(module: string) {
+    const entry = entries.get(module);
+    if (!entry?.consent || stateStatus !== 'ready') return;
+    entry.consent = { ...entry.consent, scopes: [...(grants.get(module) ?? [])].filter(s => entry.consent!.offered.includes(s)) };
+    persistApps();
+  }
+  /** Whether the assistant may reach a module: a joined application only when the person allowed it. */
+  function assistantMay(module: string): boolean {
+    const entry = entries.get(module);
+    return !entry?.consent || entry.consent.assistant === true;
+  }
+  /** The joined application that declares a contract, if one does. */
+  function joinedOwner(contract: string): string | null {
+    for (const [id, entry] of entries) if (entry.consent && (compose(entry).provides ?? []).some(c => c.id === contract)) return id;
+    return null;
   }
 
   const emit = (event: KernelEvent) => { for (const listener of listeners) listener(event); };
@@ -380,9 +430,11 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       const entry = entries.get(id);
       if (!entry) return refusal('OS0005', `no module '${id}'`);
       if (entry.layer !== 'user') return refusal('OS0009', `'${id}' belongs to the ${entry.layer} layer and cannot be removed`);
+      if (entry.consent && stateStatus !== 'ready') return refusal('OS0121', 'the desktop state is not ready to change the installed applications');
       entries.delete(id);
       grants.delete(id);
-      record({ layer: 'user', module: id, kind: 'remove', patch: [], inverse: [{ op: 'add', path: '', value: cloneJson(entry.base) }] });
+      record({ layer: 'user', module: id, kind: 'remove', patch: [], inverse: [{ op: 'add', path: '', value: cloneJson(entry.base) }], ...(entry.consent ? { consent: cloneJson(entry.consent) } : {}) });
+      if (entry.consent) persistApps();
       emit({ kind: 'modules', module: id });
       return { ok: true, value: null };
     },
@@ -393,15 +445,18 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       if (!last) return refusal('OS0010', 'nothing to undo');
       journal.splice(journal.indexOf(last), 1);
       const entry = entries.get(last.module);
-      if (last.kind === 'install') entries.delete(last.module);
+      const joined = !!entry?.consent || !!last.consent;
+      if (last.kind === 'install') { entries.delete(last.module); grants.delete(last.module); }
       else if (last.kind === 'patch' && entry) {
         const index = entry.overlays.map(o => o.layer).lastIndexOf('user');
         if (index >= 0) entry.overlays.splice(index, 1);
       }
       else if (last.kind === 'remove') {
         const base = (last.inverse?.[0] as any)?.value as ModuleManifest;
-        entries.set(last.module, { base, layer: 'user', overlays: [] });
+        entries.set(last.module, { base, layer: 'user', overlays: [], ...(last.consent ? { consent: cloneJson(last.consent) } : {}) });
+        if (last.consent) grants.set(last.module, new Set(last.consent.scopes));
       }
+      if (joined) persistApps();
       emit({ kind: 'modules', module: last.module });
       return { ok: true, value: { undone: last.seq } };
     },
@@ -416,8 +471,63 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     layerOf(id: string): Layer | null { return entries.get(id)?.layer ?? null; },
     journal(): JournalEntry[] { return cloneJson(journal); },
 
-    grant(caller: string, scope: string) { const set = grants.get(caller) ?? new Set<string>(); set.add(scope); grants.set(caller, set); emit({ kind: 'modules', module: caller }); },
-    revoke(caller: string, scope: string) { grants.get(caller)?.delete(scope); emit({ kind: 'modules', module: caller }); },
+    grant(caller: string, scope: string) { const set = grants.get(caller) ?? new Set<string>(); set.add(scope); grants.set(caller, set); keepScopes(caller); emit({ kind: 'modules', module: caller }); },
+    revoke(caller: string, scope: string) { grants.get(caller)?.delete(scope); keepScopes(caller); emit({ kind: 'modules', module: caller }); },
+
+    /**
+     * Install an application the person joined, in their layer, with exactly
+     * what they allowed: `scopes` out of what its manifest asks for (`OS0140`
+     * for one it does not ask for), and whether the assistant may use what it
+     * provides. Kept in the person's state, so it is there on their next visit
+     * and on their other devices; refused (`OS0121`) until that state loads.
+     * Only the shell's install sheet, after the person's gesture, calls this.
+     */
+    join(value: unknown, allow: { scopes: string[], assistant: boolean, source?: string }): Outcome {
+      if (stateStatus !== 'ready') return refusal('OS0121', stateStatus === 'loading' ? 'the desktop state is still loading' : 'the desktop state could not be loaded');
+      const verdict = validateManifest(value);
+      if (!verdict.ok) return refusal('OS0007', `the application is not valid: ${verdict.issues.map(i => `${i.path} ${i.message}`).join('; ')}`);
+      const offered = scopesOf(verdict.manifest);
+      const extra = (allow.scopes ?? []).filter(s => !offered.includes(s));
+      if (extra.length) return refusal('OS0140', `'${verdict.manifest.id}' does not ask for ${extra.join(', ')}`);
+      const installed = kernel.install(verdict.manifest, 'user', { grant: false });
+      if (!installed.ok) return refusal(installed.issues[0]?.code ?? 'OS0007', installed.issues.map(i => i.message).join('; '));
+      const id = installed.manifest.id;
+      const consent: Consent = {
+        ...(allow.source ? { source: allow.source } : {}),
+        origin: originOf(installed.manifest), offered, scopes: [...new Set(allow.scopes ?? [])],
+        provides: (installed.manifest.provides ?? []).map(c => c.id), assistant: allow.assistant === true, at: now(),
+      };
+      entries.get(id)!.consent = consent;
+      grants.set(id, new Set(consent.scopes));
+      persistApps();
+      emit({ kind: 'modules', module: id });
+      return { ok: true, value: { manifest: installed.manifest, consent: cloneJson(consent) } };
+    },
+
+    /** What the person allowed a joined application, or null for one they did not join. */
+    consentOf(id: string): Consent | null { const c = entries.get(id)?.consent; return c ? cloneJson(c) : null; },
+
+    /** Whether installing this manifest needs the person's consent (again), against what they allowed before. */
+    consentNeeded(value: ModuleManifest) { return consentNeeded(value, entries.get(value.id)?.consent ?? null); },
+
+    /** Change what a joined application may use, or whether the assistant may use it (`OS0141` for one not joined). */
+    setConsent(id: string, change: { scopes?: string[], assistant?: boolean }): Outcome {
+      const entry = entries.get(id);
+      if (!entry?.consent) return refusal('OS0141', `'${id}' was not joined with the person's consent`);
+      if (stateStatus !== 'ready') return refusal('OS0121', 'the desktop state is not ready');
+      const next = { ...entry.consent };
+      if (change.scopes) {
+        const extra = change.scopes.filter(s => !next.offered.includes(s));
+        if (extra.length) return refusal('OS0140', `'${id}' does not ask for ${extra.join(', ')}`);
+        next.scopes = [...new Set(change.scopes)];
+        grants.set(id, new Set(next.scopes));
+      }
+      if (typeof change.assistant === 'boolean') next.assistant = change.assistant;
+      entry.consent = next;
+      persistApps();
+      emit({ kind: 'modules', module: id });
+      return { ok: true, value: cloneJson(next) };
+    },
     grants(): Record<string, string[]> { return Object.fromEntries([...grants].map(([k, v]) => [k, [...v].sort()])); },
     /** A `form` module's settings as the person set them (`{}` until they do); `{}` for a module that keeps its own. */
     settings(module: string): unknown {
@@ -451,6 +561,8 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       if (TRUSTED.has(caller)) return true;
       // a file location is the person's: the assistant reads it through tangle_os_files, never writes it
       if (caller === 'assistant' && kernel.fileLocations().some(l => l.contract === contract)) return false;
+      // what a joined application provides reaches the assistant only when the person allowed it, whatever the host grants
+      if (caller === 'assistant') { const owner = joinedOwner(contract); if (owner && !assistantMay(owner)) return false; }
       if (caller === 'assistant' && options.assistantGrants === 'all') return true;
       const set = caller === 'assistant' ? new Set(Array.isArray(options.assistantGrants) ? options.assistantGrants : []) : grants.get(caller);
       return !!set && scopeOf(contract, op).some(s => set.has(s));
@@ -738,7 +850,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
 
     /** Every file location the installed modules declare: its contract, title, whether the assistant may read it, and whether it is served now. */
     fileLocations(): { module: string, contract: string, title: string, assistant: boolean, served: boolean }[] {
-      return kernel.modules().flatMap(m => m.files ? [{ module: m.id, contract: m.files.contract, title: m.files.title?.en ?? m.title.en, assistant: m.files.assistant !== false, served: providers.has(m.files.contract) }] : []);
+      return kernel.modules().flatMap(m => m.files ? [{ module: m.id, contract: m.files.contract, title: m.files.title?.en ?? m.title.en, assistant: m.files.assistant !== false && assistantMay(m.id), served: providers.has(m.files.contract) }] : []);
     },
 
     /** The person's saved dock layout, or null for one they have not arranged (a recovery boot ignores it). */
@@ -752,7 +864,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
 
     /** Keep a document of the host's own; refused (`OS0121`) while the state is loading or could not be loaded. */
     setState(key: string, value: unknown, scope: StateScope = 'person'): Outcome {
-      if (!/^[A-Za-z0-9._:/-]{1,200}$/.test(key) || key === 'dock' || key.startsWith('settings/')) return refusal('OS0120', `'${key}' is not a key the host may set`);
+      if (!/^[A-Za-z0-9._:/-]{1,200}$/.test(key) || key === 'dock' || key === APPS_KEY || key.startsWith('settings/')) return refusal('OS0120', `'${key}' is not a key the host may set`);
       const written = writeState(scope, key, value);
       if (written.ok) stateEvent(key);
       return written;
@@ -855,7 +967,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
 
     /** Every window's header bar, as `caller` sees it (`assistant: false` items are kept from all but the shell). */
     headers(caller = 'shell'): { window: string, module: string, header: Header }[] {
-      return [...headers].map(([window, held]) => ({ window, module: held.module, header: headerFor(cloneJson(held.header) as Header, caller) }));
+      return [...headers].filter(([, held]) => caller !== 'assistant' || assistantMay(held.module)).map(([window, held]) => ({ window, module: held.module, header: headerFor(cloneJson(held.header) as Header, caller) }));
     },
 
     /** Where a window's header activations go while it can take them. Returns the release. */
@@ -881,6 +993,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     async activateHeader(caller: string, window: string, item: string, value?: unknown): Promise<Outcome> {
       const held = headers.get(window);
       if (!held) return refusal('OS0114', `the window '${window}' has no header`);
+      if (caller === 'assistant' && !assistantMay(held.module)) return refusal('OS0115', `the person did not let the assistant use '${held.module}'`);
       const checked = activateHeader(held.header, caller, item, value);
       if (!checked.ok) return refusal(checked.code, checked.message);
       const handler = headerHandlers.get(window);

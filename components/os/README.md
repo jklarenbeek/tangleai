@@ -508,6 +508,21 @@ fits as it is. The package itself depends on Jaren alone.
   assistant made are granted nothing until the person grants it (`OS0101`).
   The assistant is granted nothing unless the host says so
   (`assistantGrants`).
+- **Joined applications.** An application a person joins (from a suite
+  document a link names) is installed in their layer with their consent:
+  `kernel.join(manifest, { scopes, assistant, source })` grants exactly the
+  scopes they allowed out of what its manifest `requires` (`OS0140` for any
+  other), and the assistant reaches what it provides, its header bar and its
+  file location only when they said so, even on a desktop whose
+  `assistantGrants` is `'all'`. The kernel keeps the joined applications in
+  the person's state (key `apps`, refused to `setState` with `OS0120`), so
+  they come back on the next visit and on another device, and a list another
+  device kept wins over this one's. `kernel.consentNeeded(manifest)` says
+  whether to ask again: only for another origin, or for a scope or contract
+  the person was not shown. `kernel.setConsent(id, { scopes, assistant })`
+  changes it later (`OS0141` for an application that was not joined), and
+  `remove` and `undo` take the consent with the application. Joining waits
+  for the state to load (`OS0121`).
 - **One owner per contract.** Only the module whose manifest declares a
   contract may serve it, and a contract another module already declares is
   refused (`OS0011`), so a module cannot take over another's.

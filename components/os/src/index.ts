@@ -15,6 +15,8 @@ export { fileLocationContract, memoryLocation, browserLocation, serveFileLocatio
 export type { FileEntry, FileContent, FileLocationHandlers } from './files.ts';
 export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore, StateOption, StateStatus, Proposal, Decider } from './kernel.ts';
 export { STATE_CONTRACT, memoryStore, webStorageStore, contractStore } from './state.ts';
+export { APPS_KEY, scopesOf, originOf, isLocalOrigin, consentNeeded } from './consent.ts';
+export type { Consent, InstalledApp } from './consent.ts';
 export type { DesktopStore, StateDocument, StateScope } from './state.ts';
 export { OS_CONTRACT, MODULE_CONTRACT, PROPOSAL_SCHEMA, DECISION_SCHEMA, systemContracts, CONNECT, HELLO, KEY, FOCUS, PROTOCOL } from './contracts.ts';
 export type { ConnectMessage } from './contracts.ts';
