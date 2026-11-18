@@ -1,0 +1,337 @@
+{
+  "schemaVersion": 1,
+  "version": "0.57.0",
+  "baseVersion": "0.56.0",
+  "baseCommit": "c7a821949bba4d6107d3b0a341699f071405f263",
+  "preparationCommit": "27d5ccd4d814c561e47201377e9fc1cbfe241c79",
+  "initial": false,
+  "inputHash": "d2486736eb043f9743700e4e589f9ed526e2bce59f0f3ed21f2d5f36dbeeac4d",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "An application the person removes (or whose joining they undo, or that another device removed) now takes what it served along: its contracts, header bars and deciders leave the kernel and its windows close, so its window can no longer answer the assistant, which under `assistantGrants: 'all'` it could before. A contract whose module is no longer on the desktop is no one's to call. A kept application is never restored over a contract another module declares. The install sheet opens with Cancel focused, so a stray Enter never consents, and two suites named at once show their sheets one after the other.",
+      "id": "consent-fixes"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "The desktop's chrome speaks the eleven languages `@jarenjs/locales` ships besides English: `@tangleai/os/messages/<lang>` (`ar`, `de`, `es`, `fr`, `ja`, `ko`, `nl`, `pt`, `ru`, `tr`, `zh-tw`) is a pack of every sentence the shell, Settings, Files, the install sheet and Applications and access write, in the formal register the assistant's packs use. A host passes one as `messages` to `mountDesktop`, `settingsModule` and `filesModule` (the last two also take `locale`, so Settings, Files and \"This browser\" carry their names in that language); with Arabic and `dir: 'rtl'` the desktop mirrors. A browser check renders a sentinel pack and finds no chrome text outside the catalogue, and renders every pack and finds no English sentence left.",
+      "id": "os-languages"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.57.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.57.0"
+    }
+  ]
+}

@@ -1,5 +1,28 @@
 # @tangleai/research
 
+## 0.57.0
+
+### Minor Changes
+
+- ea954a3: The desktop's chrome speaks the eleven languages `@jarenjs/locales` ships besides English: `@tangleai/os/messages/<lang>` (`ar`, `de`, `es`, `fr`, `ja`, `ko`, `nl`, `pt`, `ru`, `tr`, `zh-tw`) is a pack of every sentence the shell, Settings, Files, the install sheet and Applications and access write, in the formal register the assistant's packs use. A host passes one as `messages` to `mountDesktop`, `settingsModule` and `filesModule` (the last two also take `locale`, so Settings, Files and "This browser" carry their names in that language); with Arabic and `dir: 'rtl'` the desktop mirrors. A browser check renders a sentinel pack and finds no chrome text outside the catalogue, and renders every pack and finds no English sentence left.
+
+### Patch Changes
+
+- 27d5ccd: An application the person removes (or whose joining they undo, or that another device removed) now takes what it served along: its contracts, header bars and deciders leave the kernel and its windows close, so its window can no longer answer the assistant, which under `assistantGrants: 'all'` it could before. A contract whose module is no longer on the desktop is no one's to call. A kept application is never restored over a contract another module declares. The install sheet opens with Cancel focused, so a stray Enter never consents, and two suites named at once show their sheets one after the other.
+- Updated dependencies [27d5ccd]
+- Updated dependencies [ea954a3]
+  - @tangleai/models@0.57.0
+  - @tangleai/context@0.57.0
+  - @tangleai/agents@0.57.0
+  - @tangleai/config@0.57.0
+  - @tangleai/mas@0.57.0
+  - @tangleai/documents@0.57.0
+  - @tangleai/search@0.57.0
+  - @tangleai/outcomes@0.57.0
+  - @tangleai/trace2skill@0.57.0
+  - @tangleai/evolve@0.57.0
+  - @tangleai/gmpl@0.57.0
+
 ## 0.56.0
 
 ### Minor Changes
