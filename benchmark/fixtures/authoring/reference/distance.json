@@ -1,0 +1,19 @@
+{
+  "$app": "0.1",
+  "state": { "km": 0 },
+  "view": {
+    "$jslt": "0.1",
+    "rules": [
+      {
+        "match": "$",
+        "body": ["div", { "class": "distance" },
+          ["h2", {}, "Kilometres to miles"],
+          ["label", {}, "Distance in kilometres ", ["input", { "type": "number", "min": "0", "step": "any", "value": "$.km", "on": { "input": "setKm" } }]],
+          ["p", {}, "$.km", " km is ", { "$round": [{ "$div": ["$.km", 1.609344] }, 2] }, " miles"]]
+      }
+    ]
+  },
+  "actions": {
+    "setKm": { "patch": [{ "op": "replace", "path": "/km", "value": { "$if": [{ "$eq": ["$event.value", ""] }, 0, { "$number": "$event.value" }] } }] }
+  }
+}

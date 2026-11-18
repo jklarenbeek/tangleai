@@ -1,0 +1,34 @@
+{
+  "$app": "0.1",
+  "state": {
+    "query": "",
+    "contacts": [
+      { "name": "Ada", "email": "ada@example.org", "city": "Amsterdam" },
+      { "name": "Bram", "email": "bram@example.org", "city": "Utrecht" },
+      { "name": "Chen", "email": "chen@example.org", "city": "Amsterdam" },
+      { "name": "Dana", "email": "dana@example.org", "city": "Rotterdam" },
+      { "name": "Emre", "email": "emre@example.org", "city": "Utrecht" }
+    ]
+  },
+  "view": {
+    "$jslt": "0.1",
+    "rules": [
+      {
+        "match": "$",
+        "body": ["div", { "class": "contacts" },
+          ["h2", {}, "Contacts"],
+          ["label", {}, "Search ", ["input", { "type": "search", "value": "$.query", "placeholder": "Name or city", "on": { "input": "search" } }]],
+          ["ul", {}, [{
+            "$for": { "c": "$.contacts[*]" },
+            "$where": { "$or": [
+              { "$contains": [{ "$lower": "$c.name" }, { "$lower": "$.query" }] },
+              { "$contains": [{ "$lower": "$c.city" }, { "$lower": "$.query" }] }] },
+            "$return": ["li", { "key": "$c.email" }, ["strong", {}, "$c.name"], " · ", "$c.email", " · ", "$c.city"]
+          }]]]
+      }
+    ]
+  },
+  "actions": {
+    "search": { "patch": [{ "op": "replace", "path": "/query", "value": "$event.value" }] }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "$comment": "Plain requests for the authoring instrument. The author sees only `request`; it chooses its own state, actions and layout. Each probe uses the application as a person would (a field or button found by its words) and checks text any correct application shows. A probe is the judge; the author's own checks never are.",
+  "version": 2,
+  "$history": ["2: the shopping request says the list starts empty; version 1 left it open, and three applications that began with sample items were judged wrong for counting them (run of 2026-11-18, 21 of 24)."],
+  "tasks": [
+    {
+      "id": "bill",
+      "request": "Make me a bill splitter. I type the bill amount, a tip percentage and how many people are paying; it shows the tip, the total and what each person pays.",
+      "probes": [
+        { "steps": [
+          { "find": { "role": "field", "name": "amount|bill" }, "type": "100" },
+          { "find": { "role": "field", "name": "tip" }, "type": "10" },
+          { "find": { "role": "field", "name": "people|persons|person|split|guests" }, "type": "4" }
+        ], "expect": { "text": ["110", "27.5"] } }
+      ]
+    },
+    {
+      "id": "templog",
+      "request": "A temperature log: I type a reading and add it to the log. Show every reading, and the average (one decimal), the lowest and the highest.",
+      "probes": [
+        { "steps": [
+          { "find": { "role": "field", "name": "reading|temperature|temp|°" }, "type": "12" },
+          { "find": { "role": "button", "name": "add|log|save|record" } },
+          { "find": { "role": "field", "name": "reading|temperature|temp|°" }, "type": "18" },
+          { "find": { "role": "button", "name": "add|log|save|record" } },
+          { "find": { "role": "field", "name": "reading|temperature|temp|°" }, "type": "15.5" },
+          { "find": { "role": "button", "name": "add|log|save|record" } }
+        ], "expect": { "text": ["15.2", "12", "18"] } }
+      ]
+    },
+    {
+      "id": "contacts",
+      "request": "A contact list with these five people: Ada (ada@example.org, Amsterdam), Bram (bram@example.org, Utrecht), Chen (chen@example.org, Amsterdam), Dana (dana@example.org, Rotterdam) and Emre (emre@example.org, Utrecht). A search box shows only the contacts whose name or city contains what I type, ignoring upper and lower case.",
+      "probes": [
+        { "steps": [{ "find": { "role": "field", "name": "search|filter|find" }, "type": "amster" }],
+          "expect": { "text": ["Ada", "Chen"], "absent": ["Bram", "Dana", "Emre"] } },
+        { "steps": [{ "find": { "role": "field", "name": "search|filter|find" }, "type": "UTRECHT" }],
+          "expect": { "text": ["Bram", "Emre"], "absent": ["Ada", "Chen", "Dana"] } }
+      ]
+    },
+    {
+      "id": "counter",
+      "request": "A counter with a plus and a minus button, a field for the step size, and a reset button that sets it back to zero.",
+      "probes": [
+        { "steps": [
+          { "find": { "role": "field", "name": "step" }, "type": "7" },
+          { "find": { "role": "button", "name": "^\\s*\\+|plus|increase|increment|add|up" } },
+          { "find": { "role": "button", "name": "^\\s*\\+|plus|increase|increment|add|up" } }
+        ], "expect": { "text": ["14"] } },
+        { "steps": [
+          { "find": { "role": "field", "name": "step" }, "type": "7" },
+          { "find": { "role": "button", "name": "^\\s*\\+|plus|increase|increment|add|up" } },
+          { "find": { "role": "button", "name": "^\\s*\\+|plus|increase|increment|add|up" } },
+          { "find": { "role": "button", "name": "reset|clear|zero" } }
+        ], "expect": { "absent": ["14"] } }
+      ]
+    },
+    {
+      "id": "distance",
+      "request": "Convert kilometres to miles: I type a distance in kilometres and see it in miles with two decimals.",
+      "probes": [
+        { "steps": [{ "find": { "role": "field", "name": "km|kilomet|distance" }, "type": "10" }], "expect": { "text": ["6.21"] } },
+        { "steps": [{ "find": { "role": "field", "name": "km|kilomet|distance" }, "type": "42.195" }], "expect": { "text": ["26.22"] } }
+      ]
+    },
+    {
+      "id": "shopping",
+      "request": "A shopping list that starts empty: I type an item and add it, and I can tick items off. It shows how many items are still to buy.",
+      "probes": [
+        { "steps": [
+          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Milk" },
+          { "find": { "role": "button", "name": "add" } },
+          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Bread" },
+          { "find": { "role": "button", "name": "add" } }
+        ], "expect": { "text": ["Milk", "Bread", "2"] } },
+        { "steps": [
+          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Milk" },
+          { "find": { "role": "button", "name": "add" } },
+          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Bread" },
+          { "find": { "role": "button", "name": "add" } },
+          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Eggs" },
+          { "find": { "role": "button", "name": "add" } },
+          { "find": { "role": "checkbox", "nth": 0 } }
+        ], "expect": { "text": ["Milk", "Bread", "Eggs", "2"] } }
+      ]
+    },
+    {
+      "id": "bmi",
+      "request": "A body mass index calculator: I type my weight in kilograms and my height in centimetres, and it shows my BMI with one decimal.",
+      "probes": [
+        { "steps": [
+          { "find": { "role": "field", "name": "weight|kg|kilo" }, "type": "70" },
+          { "find": { "role": "field", "name": "height|cm|centi" }, "type": "175" }
+        ], "expect": { "text": ["22.9"] } }
+      ]
+    },
+    {
+      "id": "words",
+      "request": "A word counter: a text box where I write, with the number of words and the number of characters shown below it.",
+      "probes": [
+        { "steps": [{ "find": { "role": "field", "name": "text|write|type|words|content|here" }, "type": "one two three" }], "expect": { "text": ["3", "13"] } }
+      ]
+    }
+  ]
+}

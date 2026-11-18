@@ -1,0 +1,26 @@
+{
+  "$app": "0.1",
+  "state": { "count": 0, "step": 1 },
+  "view": {
+    "$jslt": "0.1",
+    "rules": [
+      {
+        "match": "$",
+        "body": ["div", { "class": "counter" },
+          ["h2", {}, "Counter"],
+          ["p", { "class": "counter-value" }, "$.count"],
+          ["label", {}, "Step size ", ["input", { "type": "number", "step": "any", "value": "$.step", "on": { "input": "setStep" } }]],
+          ["div", { "class": "counter-buttons" },
+            ["button", { "type": "button", "aria-label": "Decrease", "on": { "click": "decrease" } }, "−"],
+            ["button", { "type": "button", "aria-label": "Increase", "on": { "click": "increase" } }, "+"],
+            ["button", { "type": "button", "on": { "click": "reset" } }, "Reset"]]]
+      }
+    ]
+  },
+  "actions": {
+    "setStep": { "patch": [{ "op": "replace", "path": "/step", "value": { "$if": [{ "$eq": ["$event.value", ""] }, 0, { "$number": "$event.value" }] } }] },
+    "increase": { "patch": [{ "op": "replace", "path": "/count", "value": { "$add": ["$.count", "$.step"] } }] },
+    "decrease": { "patch": [{ "op": "replace", "path": "/count", "value": { "$sub": ["$.count", "$.step"] } }] },
+    "reset": { "patch": [{ "op": "replace", "path": "/count", "value": 0 }] }
+  }
+}

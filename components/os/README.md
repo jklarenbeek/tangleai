@@ -523,6 +523,33 @@ Everything Files does goes through the location as the person's own hand, into
 the ledger. A manifest whose `files.contract` is not one it provides is
 refused (`OS0006`).
 
+## Authoring: the assistant writes an application
+
+`@tangleai/os/authoring` is what a desktop gives an author model and what it
+checks before a person sees what the model wrote. It is model-free.
+
+```ts
+import { authoringCrib, gateAuthoredApp, checkAuthoredApp, authoredManifest } from '@tangleai/os/authoring';
+const system = `Author one @jarenjs/app document.\n\n${authoringCrib()}`;    // the rules, Jaren's operators, a working example
+gateAuthoredApp(doc).problems;                  // lint, compile, first frame: what to send back for repair
+await checkAuthoredApp(doc, [{ steps: [{ find: { role: 'field', name: 'amount' }, type: '100' }], expect: { text: ['110'] } }]);
+const manifest = authoredManifest(doc, { id: 'bill-splitter', title: { en: 'Bill splitter' } });
+```
+
+- **The gate.** A document compiles and boots as Jaren runs it (an unknown
+  operator is named with the nearest one), its first frame renders text, and
+  no string carries another language's code or an object-shaped vnode.
+- **Probes are data.** A probe uses the application as a person would: it
+  finds a field, button, checkbox or select by its words (a wrapping label, a
+  `<label for>`, its placeholder, accessible name or text), types or presses,
+  and checks the text on screen, so it does not depend on the names an author
+  chose.
+- **An authored module asks for nothing.** `authoredManifest` makes a document
+  module with no `requires`, `provides`, files or settings, so writing an
+  application never grants the assistant anything.
+
+Measured in [AUTHORING_BENCHMARK.md](../../docs/AUTHORING_BENCHMARK.md).
+
 ## The kernel
 
 ```ts

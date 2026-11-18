@@ -1,0 +1,35 @@
+{
+  "$app": "0.1",
+  "state": { "draft": "", "nextId": 1, "items": [] },
+  "view": {
+    "$jslt": "0.1",
+    "rules": [
+      {
+        "match": "$",
+        "body": ["div", { "class": "shopping" },
+          ["h2", {}, "Shopping list"],
+          ["p", { "class": "shopping-count" }, { "$count": "$.items[?@.done == false]" }, " still to buy"],
+          ["form", { "on": { "submit": { "action": "add", "preventDefault": true } } },
+            ["label", {}, "Item ", ["input", { "type": "text", "value": "$.draft", "placeholder": "e.g. milk", "on": { "input": "draft" } }]],
+            ["button", { "type": "submit", "disabled": { "$eq": ["$.draft", ""] } }, "Add"]],
+          ["ul", {}, [{ "$apply": "$.items[*]" }]]]
+      },
+      {
+        "match": "$.items[*]",
+        "body": ["li", { "key": { "$string": "$.id" }, "class": { "$if": ["$.done", "bought", "to-buy"] } },
+          ["label", {}, ["input", { "type": "checkbox", "checked": "$.done", "on": { "change": { "action": "toggle", "with": { "id": "$.id" } } } }], " ", "$.text"],
+          ["button", { "type": "button", "on": { "click": { "action": "remove", "with": { "id": "$.id" } } } }, "Remove"]]
+      }
+    ]
+  },
+  "actions": {
+    "draft": { "patch": [{ "op": "replace", "path": "/draft", "value": "$event.value" }] },
+    "add": { "$if": [{ "$eq": ["$.draft", ""] }, null, { "patch": [
+      { "op": "add", "path": "/items/-", "value": { "id": "$.nextId", "text": "$.draft", "done": false } },
+      { "op": "replace", "path": "/nextId", "value": { "$add": ["$.nextId", 1] } },
+      { "op": "replace", "path": "/draft", "value": "" }
+    ] }] },
+    "toggle": { "patch": [{ "op": "replace", "path": "/items", "value": [{ "$for": { "i": "$.items[*]" }, "$return": { "$if": [{ "$eq": ["$i.id", "$payload.id"] }, { "id": "$i.id", "text": "$i.text", "done": { "$not": "$i.done" } }, "$i"] } }] }] },
+    "remove": { "patch": [{ "op": "replace", "path": "/items", "value": [{ "$for": { "i": "$.items[*]" }, "$where": { "$ne": ["$i.id", "$payload.id"] }, "$return": "$i" }] }] }
+  }
+}

@@ -397,25 +397,19 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   against sample rows, and a proposed app version refused on a stale revision.
 
 - [ ] **Applications authored on the desktop.** `@tangleai/os` is the
-  desktop, documented in its [README](../components/os/README.md): an
-  application suite hosts it or joins it, from a submodule or by URL, with its
-  windows, theme, language, mail, Settings and the assistant's tools, and
-  Tangle's Pages site is its first host. What stays open is the assistant
-  turning a person's plain request into a module of its own. *Wanted:* the
-  assistant authoring a module document from a request, gated by its
-  behaviour, and run as a document module. *Constraint:* an authored module is
-  a document, never script in the shell's origin; it runs isolated (a
-  sandboxed frame today, Jaren's `safe: 'interactive'` profile once measured
-  to hold the same boundary) and never sees a key; every visible sentence comes
-  from the twelve catalogues and layouts mirror for right-to-left (the shell,
-  Settings, Files and the Pages desktop's own applications have all twelve).
-  *Stands on:* the grammar
-  crib and seed, the Studio gate and the behaviour probe. Measured 2026-11-14:
-  the configured model wrote no working app document from a bare instruction
-  (0 of 10; five passed the Studio gate), and 29 of 33 over three trials with
-  a grammar crib and one working example, judged by behaviour against a
-  declared interface. *Closes on:* the published rate at which the assistant
-  turns a plain request into a module that passes a behaviour gate.
+  desktop, documented in its [README](../components/os/README.md), and
+  `@tangleai/os/authoring` is its model-free half of authoring: a crib of
+  Jaren's own operators with a working example, a gate (lint, compile, first
+  frame) and probes that use an application as a person would. Measured in
+  [AUTHORING_BENCHMARK.md](AUTHORING_BENCHMARK.md): 22 of 24 plain requests
+  became an application that works. *Wanted:* the assistant doing it on the
+  desktop: drafting against the gate as tools, and proposing the application in
+  the inbox, where the person adds it as a document module that asks for
+  nothing. *Constraint:* an authored module is a document, never script in the
+  shell's origin; it runs isolated (a sandboxed frame today) and never sees a
+  key; its probes run outside the desktop's origin. *Closes on:* a person's
+  plain request in the Pages desktop ending in an application they added from
+  the inbox, measured at the published rate's path.
 
 ## Reuse of the suite
 

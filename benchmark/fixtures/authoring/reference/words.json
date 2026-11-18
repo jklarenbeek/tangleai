@@ -1,0 +1,20 @@
+{
+  "$app": "0.1",
+  "state": { "text": "" },
+  "view": {
+    "$jslt": "0.1",
+    "rules": [
+      {
+        "match": "$",
+        "body": ["div", { "class": "words" },
+          ["h2", {}, "Word counter"],
+          ["label", {}, "Your text ", ["textarea", { "rows": "8", "value": "$.text", "placeholder": "Write here", "on": { "input": "write" } }]],
+          ["p", {}, "Words: ", { "$count": { "$tokenize": [{ "$normalize-space": "$.text" }, " "] } }],
+          ["p", {}, "Characters: ", { "$string-length": "$.text" }]]
+      }
+    ]
+  },
+  "actions": {
+    "write": { "patch": [{ "op": "replace", "path": "/text", "value": "$event.value" }] }
+  }
+}

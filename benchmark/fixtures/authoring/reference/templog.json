@@ -1,0 +1,38 @@
+{
+  "$app": "0.1",
+  "state": { "draft": "", "nextId": 1, "readings": [] },
+  "view": {
+    "$jslt": "0.1",
+    "rules": [
+      {
+        "match": "$",
+        "body": ["div", { "class": "templog" },
+          ["h2", {}, "Temperature log"],
+          ["form", { "on": { "submit": { "action": "add", "preventDefault": true } } },
+            ["label", {}, "Reading (°C) ", ["input", { "type": "number", "step": "any", "value": "$.draft", "on": { "input": "draft" } }]],
+            ["button", { "type": "submit", "disabled": { "$eq": ["$.draft", ""] } }, "Add reading"]],
+          { "$if": [{ "$gt": [{ "$count": "$.readings[*]" }, 0] },
+            ["dl", {},
+              ["dt", {}, "Average"], ["dd", {}, { "$round": [{ "$avg": "$.readings[*].value" }, 1] }, " °C"],
+              ["dt", {}, "Lowest"], ["dd", {}, { "$min": "$.readings[*].value" }, " °C"],
+              ["dt", {}, "Highest"], ["dd", {}, { "$max": "$.readings[*].value" }, " °C"]],
+            ["p", {}, "No readings yet."]] },
+          ["ol", {}, [{ "$apply": "$.readings[*]" }]]]
+      },
+      {
+        "match": "$.readings[*]",
+        "body": ["li", { "key": { "$string": "$.id" } }, "$.value", " °C ",
+          ["button", { "type": "button", "on": { "click": { "action": "remove", "with": { "id": "$.id" } } } }, "Remove"]]
+      }
+    ]
+  },
+  "actions": {
+    "draft": { "patch": [{ "op": "replace", "path": "/draft", "value": "$event.value" }] },
+    "add": { "$if": [{ "$eq": ["$.draft", ""] }, null, { "patch": [
+      { "op": "add", "path": "/readings/-", "value": { "id": "$.nextId", "value": { "$number": "$.draft" } } },
+      { "op": "replace", "path": "/nextId", "value": { "$add": ["$.nextId", 1] } },
+      { "op": "replace", "path": "/draft", "value": "" }
+    ] }] },
+    "remove": { "patch": [{ "op": "replace", "path": "/readings", "value": [{ "$for": { "r": "$.readings[*]" }, "$where": { "$ne": ["$r.id", "$payload.id"] }, "$return": "$r" }] }] }
+  }
+}

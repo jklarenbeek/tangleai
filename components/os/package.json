@@ -16,6 +16,7 @@
     "./files": "./src/files-app.ts",
     "./state-server": "./src/state-server.ts",
     "./testing": "./src/testing.ts",
+    "./authoring": "./src/authoring.ts",
     "./messages": "./src/messages.ts",
     "./messages/ar": "./src/messages/ar.ts",
     "./messages/de": "./src/messages/de.ts",

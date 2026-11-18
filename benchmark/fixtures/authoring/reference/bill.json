@@ -1,0 +1,31 @@
+{
+  "$app": "0.1",
+  "state": { "amount": 0, "tip": 15, "people": 1 },
+  "view": {
+    "$jslt": "0.1",
+    "rules": [
+      {
+        "match": "$",
+        "body": ["div", { "class": "bill" },
+          ["h2", {}, "Bill splitter"],
+          ["label", {}, "Bill amount ", ["input", { "type": "number", "min": "0", "step": "0.01", "value": "$.amount", "on": { "input": "setAmount" } }]],
+          ["label", {}, "Tip percentage ", ["input", { "type": "number", "min": "0", "step": "1", "value": "$.tip", "on": { "input": "setTip" } }]],
+          ["label", {}, "Number of people ", ["input", { "type": "number", "min": "1", "step": "1", "value": "$.people", "on": { "input": "setPeople" } }]],
+          ["dl", {},
+            ["dt", {}, "Tip"],
+            ["dd", {}, { "$round": [{ "$div": [{ "$mul": ["$.amount", "$.tip"] }, 100] }, 2] }],
+            ["dt", {}, "Total"],
+            ["dd", {}, { "$round": [{ "$add": ["$.amount", { "$div": [{ "$mul": ["$.amount", "$.tip"] }, 100] }] }, 2] }],
+            ["dt", {}, "Each person pays"],
+            ["dd", {}, { "$if": [{ "$gt": ["$.people", 0] },
+              { "$round": [{ "$div": [{ "$add": ["$.amount", { "$div": [{ "$mul": ["$.amount", "$.tip"] }, 100] }] }, "$.people"] }, 2] },
+              "Enter how many people are paying"] }]]]
+      }
+    ]
+  },
+  "actions": {
+    "setAmount": { "patch": [{ "op": "replace", "path": "/amount", "value": { "$if": [{ "$eq": ["$event.value", ""] }, 0, { "$number": "$event.value" }] } }] },
+    "setTip": { "patch": [{ "op": "replace", "path": "/tip", "value": { "$if": [{ "$eq": ["$event.value", ""] }, 0, { "$number": "$event.value" }] } }] },
+    "setPeople": { "patch": [{ "op": "replace", "path": "/people", "value": { "$if": [{ "$eq": ["$event.value", ""] }, 0, { "$number": "$event.value" }] } }] }
+  }
+}
