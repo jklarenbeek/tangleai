@@ -10,6 +10,7 @@ import { compileContract } from '@jarenjs/contract';
 import { servePort, openPortClient } from '@jarenjs/contract/port';
 import { CONNECT, FOCUS, HELLO, PROTOCOL, systemContracts, type ConnectMessage } from './contracts.ts';
 import type { Header, HeaderActivation } from './header.ts';
+import { applyTheme, applyLocale } from './apply.ts';
 
 export type ModuleHandlers = Record<string, (input: any) => unknown>;
 /** A file the person opened with a module. */
@@ -101,21 +102,7 @@ export type OsConnection = {
   close(): void;
 };
 
-/** Set token values as custom properties on a root element, and the colour scheme. */
-export function applyTheme(root: any, theme: { tokens: Record<string, string>, scheme?: 'light' | 'dark' }) {
-  if (!root?.style) return;
-  for (const [name, value] of Object.entries(theme.tokens)) {
-    if (/^--[a-z0-9-]+$/.test(name)) root.style.setProperty(name, value);
-  }
-  // `data-theme` too: Jaren's component stylesheets follow it, so its Markdown, diagrams and charts turn with the desktop
-  if (theme.scheme) { root.style.colorScheme = theme.scheme; if (root.dataset) { root.dataset.scheme = theme.scheme; root.dataset.theme = theme.scheme; } }
-}
-
-export function applyLocale(root: any, locale: { locale: string, dir: 'ltr' | 'rtl' }) {
-  if (!root?.setAttribute) return;
-  root.setAttribute('lang', locale.locale);
-  root.setAttribute('dir', locale.dir);
-}
+export { applyTheme, applyLocale } from './apply.ts';
 
 /**
  * Join the desktop that frames this page. Resolves once the shell has handed

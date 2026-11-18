@@ -7,8 +7,7 @@
 import { applyJSONPatch, createJSONPatch } from '@jarenjs/json/patch';
 import { cloneJson } from '@jarenjs/core/object';
 import { compileContract } from '@jarenjs/contract';
-import { servePort } from '@jarenjs/contract/port';
-import { openPortClient } from '@jarenjs/contract/port';
+import { servePortLazily, openPortClientLazily } from './ports.ts';
 import { openLocalClient } from '@jarenjs/contract/local';
 import { validateManifest, type ModuleManifest, type ManifestIssue } from './manifest.ts';
 import { JarenValidator } from '@jarenjs/validate';
@@ -902,7 +901,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
      */
     serveModule(module: string, port: any, hooks: { setTitle?: (title: string) => void, openSettings?: () => void, window?: string } = {}): ServedContract {
       const { os } = systemContracts();
-      return servePort(os, {
+      return servePortLazily(os, {
         'os.call': async ({ contract, op, input }: any) => kernel.call(module, contract, op, input ?? {}),
         'mail.send': ({ to, subject, body, data }: any) => ({ id: kernel.sendMail(module, { to, subject, body, data }).id }),
         'mail.propose': (input: any) => { const outcome = kernel.propose(module, input); if (!outcome.ok) throw Object.assign(new Error(outcome.error.message), { code: outcome.error.code }); return outcome.value as { id: string }; },
@@ -918,7 +917,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
     connectProvider(module: string, contractDoc: unknown, port: any, timeoutMs = 10_000, owner = module): ContractClient {
       mayServe(module, (contractDoc as any)?.id);
       const contract = compileContract(contractDoc as any);
-      const client = openPortClient(contract, { channel: port, timeoutMs }) as unknown as ContractClient;
+      const client = openPortClientLazily(contract, { channel: port, timeoutMs });
       port.start?.();
       kernel.provide(module, contractDoc, client, owner);
       return client;

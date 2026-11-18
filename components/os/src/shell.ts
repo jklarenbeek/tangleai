@@ -4,13 +4,13 @@
  * so it may use the DOM directly; what it shows comes from the kernel's
  * manifests, the theme document and the message catalogue.
  */
-import { openPortClient } from '@jarenjs/contract/port';
+import { openPortClientLazily, loadPorts, portsLoaded } from './ports.ts';
 import { localized, type ModuleManifest } from './manifest.ts';
 import { CONNECT, FOCUS, HELLO, KEY, PROTOCOL, systemContracts, type ConnectMessage } from './contracts.ts';
 import { DEFAULT_THEMES, checkTheme, type ThemeDocument } from './theme.ts';
 import { patternBackground } from './wallpaper.ts';
 import { createOsMessages, type OsCatalogue } from './messages.ts';
-import { applyTheme, applyLocale } from './module.ts';
+import { applyTheme, applyLocale } from './apply.ts';
 import {
   closeWindow, emptyDesktop, focusWindow, isVisible, minimizeWindow, moveWindow, openWindow, resizeDesktop, resizeWindow, setTitle, stacked, toggleMaximize,
   type Desktop, type WindowState,
@@ -272,6 +272,14 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       if (event.source !== frame.contentWindow || (event.data as any)?.type !== HELLO) return;
       if (event.origin !== expected) { report(new Error(`${manifest.id}: a frame of origin ${event.origin} answered for ${expected}`)); return; }
       win.clearTimeout(deadline);
+      // the transport arrives with the first framed window; a failed fetch is this window's failure, and Retry fetches again
+      if (!portsLoaded()) {
+        loadPorts().then(() => { if (frame.isConnected) connect(); }, (error) => { report(error); if (frame.isConnected) unanswered(); });
+        return;
+      }
+      connect();
+    };
+    const connect = () => {
       // a frame that reloaded says hello again: it starts over on fresh ports
       if (entry.connected || entry.ports.length) release();
       notice?.remove(); notice = null; entry.el.classList.remove('is-failed');
@@ -279,7 +287,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       const provided = (manifest.provides ?? []).map(contract => ({ contract, channel: new MessageChannel() }));
       entry.served = kernel.serveModule(manifest.id, os.port1, { setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)), openSettings: () => openSettings(manifest.id), window: w.id });
       os.port1.start();
-      const moduleClient = openPortClient(systemContracts().module, { channel: control.port1, timeoutMs: 10_000 });
+      const moduleClient = openPortClientLazily(systemContracts().module, { channel: control.port1, timeoutMs: 10_000 });
       control.port1.start();
       for (const { contract, channel } of provided) {
         try { kernel.connectProvider(manifest.id, contract, channel.port1, 10_000, w.id); }
@@ -348,6 +356,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       lifecycle('ready', w.id);
       return () => { visibility.delete(w.id); dispose?.(); kernel.withdraw(manifest.id, w.id); entry.releaseDecider?.(); };
     }
+    // a framed module talks over ports: fetch that transport while its page loads
+    loadPorts().catch(() => { /* the hello retries the fetch and reports it */ });
     const frame = doc.createElement('iframe');
     frame.className = 'tos-frame';
     frame.title = localized(manifest.title, locale.locale);

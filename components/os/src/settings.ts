@@ -18,7 +18,7 @@
  */
 import { createApp, createFormActions, createFormView, formEventFields } from '@jarenjs/app';
 import { buildFormModel, buildFormViewModel, createInitialData } from '@jarenjs/forms';
-import { openPortClient } from '@jarenjs/contract/port';
+import { openPortClientLazily, loadPorts, portsLoaded } from './ports.ts';
 import { localized, type LocalizedText, type ModuleManifest } from './manifest.ts';
 import { CONNECT, HELLO, PROTOCOL, systemContracts, type ConnectMessage } from './contracts.ts';
 import { createOsMessages, type OsCatalogue } from './messages.ts';
@@ -165,6 +165,7 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
   /** An application's settings page, from its own origin: joined for theme and language, given no contract ports. */
   function pageSection(manifest: ModuleManifest) {
     const url = (manifest.settings as { url: string }).url, origin = new URL(url).origin;
+    loadPorts().catch(() => { /* the hello retries the fetch and reports it */ });
     const frame = el('iframe', { class: 'tos-frame tos-settings-frame', title: localized(manifest.settings!.title ?? manifest.title, locale) }) as HTMLIFrameElement;
     frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups');
     frame.setAttribute('referrerpolicy', 'strict-origin');
@@ -183,11 +184,19 @@ function mountSettings(node: HTMLElement, context: ShippedContext, options: Sett
     }
     const onHello = (event: MessageEvent) => {
       if (event.source !== frame.contentWindow || (event.data as any)?.type !== HELLO || event.origin !== origin) return;
-      win.clearTimeout(deadline); release(); notice?.remove(); notice = null;
+      win.clearTimeout(deadline);
+      if (!portsLoaded()) {
+        loadPorts().then(() => { if (frame.isConnected) connect(); }, () => { if (frame.isConnected) unanswered(); });
+        return;
+      }
+      connect();
+    };
+    const connect = () => {
+      release(); notice?.remove(); notice = null;
       const os = new MessageChannel(), control = new MessageChannel();
       served = kernel.serveModule(manifest.id, os.port1, { openSettings: () => show(`module:${manifest.id}`) });
       os.port1.start();
-      openPortClient(systemContracts().module, { channel: control.port1, timeoutMs: 10_000 }); control.port1.start();
+      openPortClientLazily(systemContracts().module, { channel: control.port1, timeoutMs: 10_000 }); control.port1.start();
       ports.push(os.port1, control.port1);
       const theme = context.theme;
       const message: ConnectMessage = { type: CONNECT, protocol: PROTOCOL, module: manifest.id, ports: ['os', 'module'], theme: { tokens: theme.tokens, scheme: theme.scheme ?? 'light' }, locale: { locale: context.locale, dir: context.dir } };

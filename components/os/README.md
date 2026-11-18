@@ -79,6 +79,10 @@ desktop.subscribe((event) => save(event));           // opened, focused, minimiz
   `connectTimeoutMs` (15 s by default). A window whose module did not answer
   says so and offers to try again, and the shell holds no port or listener
   for it meanwhile.
+- **Transport.** The port transport a framed module talks over is a dynamic
+  import, loaded when the first framed window opens: a host whose bundler
+  splits chunks ships a desktop of in-page modules without it. A failed
+  fetch fails that window, and its Retry fetches again.
 - **Visibility.** A shipped module's context carries `visible` and
   `onVisibility(listener)`: a window is visible when it is not minimized and,
   on a compact desktop, focused; a module pauses its polling while hidden.
