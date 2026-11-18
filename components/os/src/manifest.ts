@@ -51,6 +51,8 @@ export type ModuleManifest = {
    * location's title, and `assistant: false` to keep the assistant out of it.
    */
   files?: { contract: string, title?: LocalizedText, assistant?: boolean };
+  /** The capabilities it files proposals for: their kinds and review policies are this module's too. */
+  capabilities?: string[];
   /** The kinds of file it opens (`text/calendar`, `image/*`): Files offers it for them, and hands it the file. */
   opens?: { type: string, title?: LocalizedText }[];
 };

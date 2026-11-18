@@ -17,6 +17,7 @@ import { HEADER_CONTRACT, HEADER_SCHEMA, activateHeader, duplicateHeaderId, head
 import { DOCK_SCHEMA, arrangeDock, dockChanges, dockIcons, folderTitles, normalizeDock, type DockLayout } from './dock.ts';
 import { STATE_CONTRACT, contractStore, memoryStore, type DesktopStore, type StateDocument, type StateScope } from './state.ts';
 import { fileAnswer, fileBase64ToBytes, type FileEntry } from './files.ts';
+import { CAPABILITY_SCHEMA, capabilityIssues, type CapabilityDocument } from './capability.ts';
 
 export type Layer = 'shipped' | 'suite' | 'user';
 export type JournalEntry = { seq: number, at: number, layer: Layer, module: string, kind: 'install' | 'patch' | 'remove', patch?: unknown[], inverse?: unknown[] };
@@ -36,7 +37,7 @@ export type Proposal = {
 };
 export type MailEnvelope = { id: string, at: number, from: string, to: string, subject: string, body?: string, data?: unknown, read: boolean, proposal?: Proposal };
 /** How a decision reaches the module that filed the proposal: its own control channel, never the bus. */
-export type Decider = (decision: { id: string, kind: string, decision: 'accept' | 'reject' | 'answer', revision?: string, payload?: unknown, response?: unknown }) => Promise<{ refused?: string } | void> | { refused?: string } | void;
+export type Decider = (decision: { id: string, kind: string, decision: 'accept' | 'reject' | 'answer', revision?: string, payload?: unknown, response?: unknown, roles?: string[] }) => Promise<{ refused?: string } | void> | { refused?: string } | void;
 export type Outcome = { ok: true, value: unknown } | { ok: false, error: { code: string, message: string } };
 /**
  * `header`: a window's header bar changed (`window`), or one of its items was
@@ -162,6 +163,19 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   const deciders = new Map<string, { owner: string, decide: Decider }[]>();
   let proposalCheck: ((value: unknown) => any) | null = null;
   const answerCheckers = new Map<string, (value: unknown) => any>();
+  /** The installed capabilities, by id: the kinds their modules file and those kinds' review policies. */
+  const capabilities = new Map<string, CapabilityDocument>();
+  let capabilityCheck: ((value: unknown) => any) | null = null;
+  const rolesOf = (module: string, kind: string) => { const manifest = kernel.effective(module); return (manifest && kindOf(manifest, kind)?.review?.roles) ?? []; };
+  /** A kind a module may file, and its review policy: its own `proposals`, or a capability its manifest names. */
+  function kindOf(manifest: ModuleManifest, kind: string): { review?: { origins?: string[], roles?: string[] } } | null {
+    if ((manifest.proposals ?? []).some(d => d.kind === kind)) return {};
+    for (const id of manifest.capabilities ?? []) {
+      const declared = capabilities.get(id)?.proposals?.find(p => p.kind === kind);
+      if (declared) return { ...(declared.review ? { review: declared.review } : {}) };
+    }
+    return null;
+  }
   /** The compiled check of an answer schema, kept by its text. */
   function answerChecker(schema: unknown) {
     const key = JSON.stringify(schema);
@@ -590,7 +604,10 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         return refusal('OS0108', `the proposal is refused${first ? `: ${first.instancePath || '/'} ${first.message ?? ''}`.trimEnd() : ''}`);
       }
       const p = input as { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string, origin?: Proposal['origin'], answer?: Proposal['answer'] };
-      if (!(manifest.proposals ?? []).some(d => d.kind === p.kind)) return refusal('OS0107', `'${module}' declares no proposals of kind '${p.kind}'`);
+      const declared = kindOf(manifest, p.kind);
+      if (!declared) return refusal('OS0107', `'${module}' declares no proposals of kind '${p.kind}'`);
+      const origins = declared.review?.origins;
+      if (origins && !origins.includes(p.origin ?? '')) return refusal('OS0133', `a '${p.kind}' proposal is filed by ${origins.join(', ')}${p.origin ? `, not ${p.origin}` : '; say who files it (origin)'}`);
       if (p.answer) {
         // the answer's form is drawn from its schema: bounded, compilable, and never asking for a secret
         const text = JSON.stringify(p.answer.schema);
@@ -608,6 +625,38 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       else mail.push({ id: `m${++mailSeq}`, at: now(), from: module, to: 'person', subject: p.title, read: false, proposal });
       emit({ kind: 'mail', module });
       return { ok: true, value: { id: p.id } };
+    },
+
+    /**
+     * Install a capability (`CAPABILITY_SCHEMA`): its kinds and their review
+     * policies become those of every module whose manifest names it. Only the
+     * shipped and suite layers install one (`OS0130`): its prompt pack becomes
+     * the assistant's system text, so a person's or the assistant's own layer
+     * never writes it. Refused when it does not match (`OS0130`) or does not
+     * agree with itself (`OS0131`).
+     */
+    installCapability(doc: unknown, layer: Layer = 'shipped'): Outcome {
+      if (layer === 'user') return refusal('OS0130', 'a capability is installed by the host (shipped or suite), never in the user layer');
+      capabilityCheck ??= new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' }).compile(CAPABILITY_SCHEMA as any) as any;
+      const outcome = capabilityCheck!(doc);
+      if (!(typeof outcome === 'object' && outcome !== null ? outcome.valid : outcome === true)) {
+        const first = (outcome?.errors ?? [])[0];
+        return refusal('OS0130', `the capability is refused${first ? `: ${first.instancePath || '/'} ${first.message ?? ''}`.trimEnd() : ''}`);
+      }
+      const issues = capabilityIssues(doc as CapabilityDocument);
+      if (issues.length) return refusal(issues[0].code, `the capability is refused: ${issues[0].path} ${issues[0].message}`);
+      capabilities.set((doc as CapabilityDocument).id, cloneJson(doc) as CapabilityDocument);
+      emit({ kind: 'modules' });
+      return { ok: true, value: { id: (doc as CapabilityDocument).id } };
+    },
+
+    /** The installed capabilities. */
+    capabilities(): CapabilityDocument[] { return [...capabilities.values()].map(c => cloneJson(c) as CapabilityDocument); },
+
+    /** The review policy of a module's kind: who may file it, and the roles that may decide it (a hint the module enforces). */
+    reviewOf(module: string, kind: string): { origins?: string[], roles?: string[] } | null {
+      const manifest = kernel.effective(module);
+      return manifest ? kindOf(manifest, kind)?.review ?? {} : null;
     },
 
     /** Take back a module's pending proposal. */
@@ -672,7 +721,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       if (!target) { settle('pending', { code: 'OS0110', message: `'${item.from}' is not running` }); return refusal('OS0110', `'${item.from}' is not running`); }
       settle('deciding');
       try {
-        const answer = await target.decide({ id: p.id, kind: p.kind, decision, ...(p.revision !== undefined ? { revision: p.revision } : {}), ...(p.payload !== undefined ? { payload: cloneJson(p.payload) } : {}), ...(decision === 'answer' ? { response: cloneJson(response ?? null) } : {}) });
+        const answer = await target.decide({ id: p.id, kind: p.kind, decision, ...(p.revision !== undefined ? { revision: p.revision } : {}), ...(p.payload !== undefined ? { payload: cloneJson(p.payload) } : {}), ...(decision === 'answer' ? { response: cloneJson(response ?? null) } : {}), ...(rolesOf(item.from, p.kind).length ? { roles: rolesOf(item.from, p.kind) } : {}) });
         if (answer && typeof answer.refused === 'string') { settle('pending', { code: 'OS0112', message: answer.refused }); return refusal('OS0112', answer.refused); }
       } catch (error: any) {
         const message = String(error?.message ?? error);

@@ -20,6 +20,8 @@
  *   ?files=1     the desktop's Files with "This browser" (a folder of OPFS), and
  *                (with ?framed=1) Echo's read-only file location
  *   ?pause=1     (with ?framed=1) Echo also files a paused run that asks for an answer
+ *   ?caps=1      two capabilities (purchasing for screen 1, warehouse for Echo); the host
+ *                files a paused purchasing run at boot, with no window open
  * Everything the browser test needs is on `window.harness`.
  */
 import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract } from '../../../components/os/src/index.ts';
@@ -34,8 +36,9 @@ const count = Number(query.get('modules') ?? 16);
 const withHeader = query.get('header') === '1';
 const withFiles = query.get('files') === '1';
 const withPause = query.get('pause') === '1';
+const withCaps = query.get('caps') === '1';
 // what the framed Echo turns on, from the host's own switches
-const echoFlags = [withHeader && 'header', withFiles && 'files', withPause && 'pause'].filter(Boolean);
+const echoFlags = [withHeader && 'header', withFiles && 'files', withPause && 'pause', withCaps && 'caps'].filter(Boolean);
 const echoQuery = echoFlags.length ? `?${echoFlags.join('&')}` : '';
 const withDock = query.get('dock') === '1';
 // ?state=server keeps the desktop's state on the test server (as an application keeps it in its database)
@@ -56,6 +59,7 @@ for (let i = 1; i <= count; i++) {
   const id = `screen-${i}`;
   kernel.install({
     ...(withSettings && i === 1 ? { settings: { kind: 'mount', mount: 'screen-1-settings', keywords: ['labels'] } } : {}),
+    ...(withCaps && i === 1 ? { capabilities: ['purchasing'] } : {}),
     $module: '0.1', id, version: '1.0.0', title: { en: `Screen ${i}` },
     icon: { glyph: i === 1 ? 'tag' : 'records', hue: (i * 23) % 360 },
     host: { kind: 'shipped', mount: id },
@@ -72,11 +76,20 @@ for (let i = 1; i <= count; i++) {
 if (query.get('framed') === '1') {
   const other = `http://localhost:${location.port}`;
   kernel.install({ $module: '0.1', id: 'silent', version: '1.0.0', title: { en: 'Silent' }, host: { kind: 'origin', url: `${other}/silent.html` } }, 'shipped');
-  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html${echoQuery}` }, provides: [ECHO, ...(withFiles ? [fileLocationContract('echo_files') as any] : [])], ...(withFiles ? { files: { contract: 'echo_files', title: { en: 'Echo files' } }, opens: [{ type: 'text/plain' }] } : {}), proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
+  kernel.install({ $module: '0.1', id: 'echo-app', version: '1.0.0', title: { en: 'Echo' }, host: { kind: 'origin', url: `${other}/echo.html${echoQuery}` }, provides: [ECHO, ...(withFiles ? [fileLocationContract('echo_files') as any] : [])], ...(withFiles ? { files: { contract: 'echo_files', title: { en: 'Echo files' } }, opens: [{ type: 'text/plain' }] } : {}), ...(withCaps ? { capabilities: ['warehouse'] } : {}), proposals: [{ kind: 'echo.reply', title: { en: 'Echo reply' } }],
     ...(withSettings ? { settings: { kind: 'page', url: `${other}/echo.html?settings` } } : {}) }, 'shipped');
   // an application that joins with the 0.49.2 release's one-file module side
   kernel.install({ $module: '0.1', id: 'old-echo', version: '1.0.0', title: { en: 'Old echo' }, host: { kind: 'origin', url: `${other}/old.html` },
     provides: [{ $contract: '0.1', id: 'echo_old', operations: { 'echo.say': { kind: 'read', input: { type: 'object', properties: { text: { type: 'string' } } }, output: { type: 'object' } } } }] }, 'shipped');
+}
+const decided: unknown[] = [];
+if (withCaps) {
+  for (const capability of [
+    { $capability: '0.1', id: 'purchasing', title: { en: 'Purchasing' }, contracts: [], prompts: { en: { system: 'You help the buyer.' } },
+      proposals: [{ kind: 'purchase.order', title: { en: 'Purchase order' }, review: { origins: ['human', 'ai'], roles: ['buyer'] } }, { kind: 'run.pause', title: { en: 'A run waits' }, review: { origins: ['ai'] } }] },
+    { $capability: '0.1', id: 'warehouse', title: { en: 'Warehouse' }, contracts: [], prompts: { en: { system: 'You help count stock.' } },
+      proposals: [{ kind: 'stock.count', title: { en: 'Stock count' }, review: { origins: ['human', 'import'] } }] },
+  ]) { const installed = kernel.installCapability(capability, 'suite'); if (!installed.ok) throw new Error(installed.error.message); }
 }
 if (withDock) {
   // one page, five screens: four in two folders, one on its own
@@ -124,7 +137,16 @@ const desktop = mountDesktop(document.getElementById('desktop')!, {
   ...(query.get('dir') === 'rtl' ? { locale: 'ar', dir: 'rtl' as const } : {}),
 });
 desktop.subscribe((event) => events.push(event));
+// the scheduled run paused overnight: the host files it at boot, before any window opens, and takes the answer itself
+if (withCaps) {
+  kernel.registerDecider('screen-1', 'host', (decision) => { decided.push(decision); });
+  const filed = kernel.propose('screen-1', { id: 'weekly-order', kind: 'run.pause', title: 'How many crates of cola this week?', origin: 'ai', revision: '0',
+    answer: { label: 'Send', schema: { type: 'object', required: ['crates'], properties: { crates: { type: 'integer', minimum: 0, title: 'Crates' } } } } });
+  if (!filed.ok) throw new Error(filed.error.message);
+  kernel.propose('screen-1', { id: 'po-cola', kind: 'purchase.order', title: 'Order 12 crates of cola', origin: 'ai' });
+}
 (window as any).harness = {
+  decided,
   kernel, desktop, events, visibility, contexts, screens,
   // the conformance suite against a fresh OPFS folder of its own
   conformOpfs: async () => {

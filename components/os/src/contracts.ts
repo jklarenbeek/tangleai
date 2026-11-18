@@ -46,7 +46,9 @@ export const PROPOSAL_SCHEMA = {
 /** What the desktop carries back to the module that filed a proposal. */
 export const DECISION_SCHEMA = {
   type: 'object', additionalProperties: false, required: ['id', 'kind', 'decision'],
-  properties: { id: PROPOSAL_SCHEMA.properties.id, kind: PROPOSAL_SCHEMA.properties.kind, decision: { enum: ['accept', 'reject', 'answer'] }, revision: { type: 'string', maxLength: 128 }, payload: json, response: json },
+  properties: { id: PROPOSAL_SCHEMA.properties.id, kind: PROPOSAL_SCHEMA.properties.kind, decision: { enum: ['accept', 'reject', 'answer'] }, revision: { type: 'string', maxLength: 128 }, payload: json, response: json,
+    /** The roles the kind's review policy names: the module checks the person against them before it applies. */
+    roles: { type: 'array', maxItems: 16, items: { type: 'string', maxLength: 64 } } },
 } as const;
 
 export const OS_CONTRACT = {

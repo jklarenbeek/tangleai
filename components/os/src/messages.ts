@@ -33,6 +33,7 @@ export const osMessagesEn = {
   'mail/origin-rule': 'Proposed by a rule',
   'mail/origin-import': 'From an import',
   'mail/origin-ai': 'Proposed by the assistant',
+  'mail/roles': 'For: {roles}',
   'dock/edit': 'Edit the dock',
   'dock/done': 'Done',
   'dock/hide': 'Hide {title}',

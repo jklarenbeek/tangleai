@@ -156,6 +156,45 @@ decision; the protocol stays 1. A run of `@tangleai/mas` that pauses for a
 person files such a proposal from the application's server with
 `@tangleai/mas/inbox`.
 
+## Capabilities: a domain declared once
+
+A capability is what an application's domain offers the assistant and the
+inbox, as one JSON document instead of hand-kept lists:
+
+```json
+{ "$capability": "0.1", "id": "purchasing", "title": { "en": "Purchasing", "nl": "Inkoop" },
+  "contracts": [ { "$contract": "0.1", "id": "purchasing", "operations": { … } } ],
+  "context": [ { "id": "open", "contract": "purchasing", "op": "orders.open" } ],
+  "proposals": [ { "kind": "purchase.order", "title": { "en": "Purchase order" },
+                   "review": { "origins": ["human", "ai"], "roles": ["buyer"] } } ],
+  "prompts": { "en": { "system": "You help the buyer order stock.", "kinds": { "purchase.order": "One order per supplier." } },
+               "nl": { "system": "Je helpt de inkoper voorraad te bestellen." } } }
+```
+
+- **The inbox.** The host installs capabilities (`kernel.installCapability(doc,
+  'suite')`; never in the user layer, `OS0130`), and a module's manifest names
+  the ones it files for (`"capabilities": ["purchasing"]`): every module of the
+  domain then files its kinds, with no list of its own. A kind's review policy
+  says which origins may file it, which the kernel enforces (`OS0133`), and
+  which roles may decide it, which the inbox shows ("For: buyer") and hands to
+  the module with the decision as `roles`: the application knows who the
+  person is and checks before it applies.
+- **The assistant.** `composeCapabilities(capabilities, { locale, tools,
+  compile, client, call })` gives an assistant its system text (each
+  capability's title, prompt and kinds in the person's language, English when
+  the pack has none; deterministic text), a toolbox of the capabilities'
+  contract operations through the host's tool builder and clients, and
+  `context()`, which runs the declared reads (read operations of the
+  capability's own contracts, `OS0131` otherwise) through the host's `call`.
+  The capability module imports nothing of an agent runtime: a browser reads
+  it with no model client, and a server composes from it.
+- **Agreement.** `checkCapabilities(capabilities, manifests)` reports a named
+  capability that is not installed and a kind declared twice (`OS0132`).
+
+A run that pauses for a person is a proposal like any other: its application
+files it with `origin: 'ai'` under a kind its capability declares, from its
+server at boot or from its window.
+
 ## Settings: one place for every application
 
 `@tangleai/os/settings` is the desktop's Settings. It is the one place a

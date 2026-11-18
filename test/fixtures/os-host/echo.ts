@@ -62,6 +62,8 @@ connectToOs({
   if (window.name === 'settings' || new URLSearchParams(location.search).has('settings')) return;
   await desktop.propose({ id: 'echo-1', kind: 'echo.reply', title: 'Send the echo', summary: 'Answer the last call with its own words.', evidence: [{ label: 'The call', href: 'https://example.com/call' }], revision: 'r1' });
   await desktop.propose({ id: 'echo-2', kind: 'echo.reply', title: 'Send the second echo', revision: 'r1' });
+  // the warehouse capability's count, from an import
+  if (new URLSearchParams(location.search).has('caps')) await desktop.propose({ id: 'count-1', kind: 'stock.count', title: 'Count of shelf B differs by 3', origin: 'import' });
   // a paused run that asks the person something: filed again on every load, as the server still has it
   if (new URLSearchParams(location.search).has('pause')) await desktop.propose({
     id: 'echo-pause', kind: 'echo.reply', title: 'How many crates for the weekly order?', origin: 'ai', revision: '0',

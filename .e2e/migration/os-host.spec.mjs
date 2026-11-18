@@ -592,3 +592,26 @@ test('a paused run waits in the inbox as a form; the answer reaches its applicat
   await page.evaluate(() => window.harness.desktop.open('echo-app'));
   await expect.poll(() => page.evaluate(() => window.harness.kernel.mail().find(m => m.proposal?.id === 'echo-pause')?.proposal?.status)).toBe('pending');
 });
+
+test("two capabilities' proposals and pauses wait in one inbox, one filed with no window open, and no model client in the page", async ({ page }) => {
+  await host(page, 'modules=1&framed=1&caps=1', { width: 1280, height: 800 });
+  // no window is open: the host filed the paused run at boot
+  expect(await page.evaluate(() => window.harness.desktop.state().windows.length)).toBe(0);
+  await page.evaluate(() => window.harness.desktop.open('echo-app'));
+  await expect.poll(() => page.evaluate(() => window.harness.kernel.mail().filter(m => m.proposal?.status === 'pending').map(m => m.proposal.id).sort())).toEqual(['count-1', 'echo-1', 'echo-2', 'po-cola', 'weekly-order']);
+  await page.locator('.tos-dock-mail').click();
+  const mail = page.locator('.tos-mail');
+  await expect(mail.locator('.tos-proposal', { hasText: 'Order 12 crates of cola' }).locator('.tos-proposal-roles')).toHaveText('For: buyer');
+  await expect(mail.locator('.tos-proposal', { hasText: 'Count of shelf B differs by 3' }).locator('.tos-proposal-origin')).toHaveText('From an import');
+  const pause = mail.locator('.tos-proposal', { hasText: 'How many crates of cola this week?' });
+  await pause.getByLabel('Crates').fill('20');
+  await pause.getByRole('button', { name: 'Send' }).click();
+  await expect.poll(() => page.evaluate(() => window.harness.decided)).toEqual([{ id: 'weekly-order', kind: 'run.pause', decision: 'answer', revision: '0', response: { crates: 20 } }]);
+  // the capability decides who may file: an import may not propose a purchase order
+  const refused = await page.evaluate(() => window.harness.kernel.propose('screen-1', { id: 'po-import', kind: 'purchase.order', title: 'x', origin: 'import' }));
+  expect(refused.error.code).toBe('OS0133');
+  // the page that shows all this carries no model client
+  const bundle = await (await page.request.get(`${origin}/main.js`)).text();
+  expect(bundle).not.toContain('chat/completions');
+  expect(bundle).not.toContain('createChatClient');
+});

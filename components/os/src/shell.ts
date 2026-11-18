@@ -1166,6 +1166,9 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       reason.textContent = p.reason.code === 'OS0110' ? t('mail/not-running', { app }) : t('mail/refused', { detail: p.reason.message });
       li.append(reason);
     }
+    // the roles the kind's policy names: shown here, checked by the application that applies it
+    const roles = kernel.reviewOf(item.from, p.kind)?.roles ?? [];
+    if (roles.length) { const hint = doc.createElement('span'); hint.className = 'tos-proposal-origin tos-proposal-roles'; hint.textContent = t('mail/roles', { roles: roles.join(', ') }); li.insertBefore(hint, from.nextSibling); }
     if (p.origin) { const origin = doc.createElement('span'); origin.className = 'tos-proposal-origin'; origin.textContent = { human: t('mail/origin-human'), rule: t('mail/origin-rule'), import: t('mail/origin-import'), ai: t('mail/origin-ai') }[p.origin]; li.insertBefore(origin, from.nextSibling); }
     const actions = doc.createElement('div'); actions.className = 'tos-proposal-actions';
     const deciding = p.status === 'deciding';
