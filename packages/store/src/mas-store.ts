@@ -137,7 +137,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
     });
   }
 
-  async function activateHead(collection: string, id: string, nextVersion: string, expectedActiveVersion: string | null, versionsCollection: string): Promise<ActivationOutcome> {
+  async function activateHead(collection: string, id: string, nextVersion: string, expectedActiveVersion: string | null, versionsCollection: string, expectedRevision?: number): Promise<ActivationOutcome> {
     return atomically(async (txn) => {
       const version = await txn.collection<Record<string, unknown>>(versionsCollection).get(nextVersion);
       if (version === undefined) {
@@ -152,13 +152,18 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
           conflict: masIssue('TMAS2001', '/activeVersion', `the expected active version does not hold (expected ${expectedActiveVersion === null ? 'none' : `${expectedActiveVersion.slice(0, 12)}…`}, found ${active === null ? 'none' : `${active.slice(0, 12)}…`})`),
         };
       }
+      // the same version again after the head moved away and back (A→B→A) is a different head
+      const revision = current?.revision ?? 0;
+      if (expectedRevision !== undefined && revision !== expectedRevision) {
+        return { applied: false as const, conflict: masIssue('TMAS2001', '/revision', `the head moved since it was read (expected revision ${expectedRevision}, found ${revision})`) };
+      }
       await heads.put({
         id,
         activeVersion: nextVersion,
         archived: current?.archived ?? false,
-        revision: (current?.revision ?? 0) + 1,
+        revision: revision + 1,
       });
-      return { applied: true as const, activeVersion: nextVersion };
+      return { applied: true as const, activeVersion: nextVersion, revision: revision + 1 };
     });
   }
 
@@ -248,17 +253,17 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
       return row === undefined ? undefined : structuredClone(row.template);
     },
 
-    activateWorkflow(workflowId, nextVersion, expectedActiveVersion) {
-      return activateHead('mas_workflows', workflowId, nextVersion, expectedActiveVersion, 'mas_workflow_versions');
+    activateWorkflow(workflowId, nextVersion, expectedActiveVersion, expectedRevision) {
+      return activateHead('mas_workflows', workflowId, nextVersion, expectedActiveVersion, 'mas_workflow_versions', expectedRevision);
     },
 
     async getActiveWorkflow(workflowId) {
       const row = await db.collection<HeadRow>('mas_workflows').get(workflowId);
-      return row === undefined ? undefined : { workflowId: row.id, activeVersion: row.activeVersion };
+      return row === undefined ? undefined : { workflowId: row.id, activeVersion: row.activeVersion, revision: row.revision };
     },
 
-    activateTemplate(templateId, nextVersion, expectedActiveVersion) {
-      return activateHead('mas_templates', templateId, nextVersion, expectedActiveVersion, 'mas_template_versions');
+    activateTemplate(templateId, nextVersion, expectedActiveVersion, expectedRevision) {
+      return activateHead('mas_templates', templateId, nextVersion, expectedActiveVersion, 'mas_template_versions', expectedRevision);
     },
 
     async createRun(plan: CreateRunPlan) {

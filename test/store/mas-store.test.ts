@@ -105,6 +105,35 @@ for (const mode of ['memory', 'file'] as const) {
       assert.equal(reread?.title, workflow.title, 'reads are deeply isolated');
     });
 
+    it('fences an activation by the head\'s revision too, so an A→B→A token read before the swap no longer holds', async () => {
+      const { store } = await harness(path === undefined ? undefined : `${path}.aba`);
+      const A = 'a'.repeat(64), B = 'b'.repeat(64);
+      assert.ok((await store.putTemplateVersion({ name: 'A' }, A, 'weekly')).ok);
+      assert.ok((await store.putTemplateVersion({ name: 'B' }, B, 'weekly')).ok);
+      const first = await store.activateTemplate('weekly', A, null, 0);
+      assert.deepEqual(first, { applied: true, activeVersion: A, revision: 1 });
+      // a reader takes its token now: A at revision 1
+      const token = { version: A, revision: 1 };
+      assert.ok((await store.activateTemplate('weekly', B, A, 1)).applied);
+      assert.ok((await store.activateTemplate('weekly', A, B, 2)).applied);
+      // the head says A again, but it is not the A the token saw
+      const stale = await store.activateTemplate('weekly', B, token.version, token.revision);
+      assert.equal(stale.applied, false);
+      if (!stale.applied) { assert.equal(stale.conflict.code, 'TMAS2001'); assert.equal(stale.conflict.path, '/revision'); }
+      // without a revision the version alone still decides, as before
+      assert.ok((await store.activateTemplate('weekly', B, A)).applied);
+    });
+
+    it('reports the head\'s revision with the active workflow', async () => {
+      const { store } = await harness(path === undefined ? undefined : `${path}.rev`);
+      assert.ok((await store.putWorkflowVersion(workflow)).ok);
+      const applied = await store.activateWorkflow(workflow.workflowId, workflow.versionId, null, 0);
+      assert.ok(applied.applied);
+      assert.deepEqual(await store.getActiveWorkflow(workflow.workflowId), { workflowId: workflow.workflowId, activeVersion: workflow.versionId, revision: 1 });
+      const stale = await store.activateWorkflow(workflow.workflowId, workflow.versionId, workflow.versionId, 0);
+      assert.equal(stale.applied, false);
+    });
+
     it('twenty concurrent activation attempts apply exactly once', async () => {
       const { store } = await harness(path === undefined ? undefined : `${path}.cas`);
       assert.ok((await store.putWorkflowVersion(workflow)).ok);

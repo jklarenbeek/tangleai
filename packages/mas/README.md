@@ -102,6 +102,12 @@ await store.respondInteraction(interactionId, response, revision, key);
 await ensurePendingMasSegments(db, store);                            // idempotent resume outbox
 ```
 
+Activating a workflow or template version is a compare-and-swap on its head:
+`activateWorkflow(id, next, expectedActiveVersion, expectedRevision?)`. Pass the
+`revision` `getActiveWorkflow` (or the last activation) returned, and a token
+read before the head moved away and back to the same version (A→B→A) no longer
+holds (`TMAS2001` at `/revision`); without it the version alone decides.
+
 ## Paused runs in a review inbox
 
 A run that reaches an interaction node waits durably for a typed response.

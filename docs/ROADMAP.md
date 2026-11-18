@@ -153,13 +153,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   refusals, losses and full retrieval cost beside the quality result and unchanged
   canonical LoCoMo controls. No fixture result is a LoCoMo spatial score.
 
-- [ ] **MAS head revision fencing.** `packages/store/src/mas-store.ts`
-  `activateHead` stores a revision but currently compares only the expected active
-  version. Inspect and reproduce A→B→A with an old activation token, then bind
-  workflow/template activation to both version and revision with compatibility
-  tests. This is a source-level concern, not a reported production incident.
-  Outcome heads already use both fields; this task concerns the separate MAS API.
-
 ## Learning from outcomes and traces
 
 - [ ] **The skill loop, live.** *Wanted:* the evolved skill directory measured

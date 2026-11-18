@@ -24,7 +24,7 @@ import type {
 export type StoreOutcome<T> = { ok: true, value: T } | { ok: false, issue: MasIssue };
 
 export type ActivationOutcome =
-  | { applied: true, activeVersion: string }
+  | { applied: true, activeVersion: string, revision: number }
   | { applied: false, conflict: MasIssue };
 
 export type BeginOutcome =
@@ -119,10 +119,11 @@ export interface MasStore {
   putTemplateVersion(template: Record<string, unknown>, versionId: string, templateId: string): Promise<StoreOutcome<{ versionId: string }>>;
   getTemplateVersion(versionId: string): Promise<Record<string, unknown> | undefined>;
 
-  // activation — compare-and-swap heads
-  activateWorkflow(workflowId: string, nextVersion: string, expectedActiveVersion: string | null): Promise<ActivationOutcome>;
-  getActiveWorkflow(workflowId: string): Promise<{ workflowId: string, activeVersion: string | null } | undefined>;
-  activateTemplate(templateId: string, nextVersion: string, expectedActiveVersion: string | null): Promise<ActivationOutcome>;
+  // activation — compare-and-swap heads. `expectedRevision` (the head's revision as read) also fences an
+  // A→B→A swap: an activation token read before the head moved away and back no longer holds.
+  activateWorkflow(workflowId: string, nextVersion: string, expectedActiveVersion: string | null, expectedRevision?: number): Promise<ActivationOutcome>;
+  getActiveWorkflow(workflowId: string): Promise<{ workflowId: string, activeVersion: string | null, revision: number } | undefined>;
+  activateTemplate(templateId: string, nextVersion: string, expectedActiveVersion: string | null, expectedRevision?: number): Promise<ActivationOutcome>;
 
   // runs
   createRun(plan: CreateRunPlan): Promise<StoreOutcome<MasRun>>;
