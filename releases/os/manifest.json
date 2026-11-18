@@ -1,13 +1,13 @@
 {
   "$osRelease": "0.1",
-  "version": "0.58.1",
+  "version": "0.59.0",
   "protocol": 1,
   "package": {
     "name": "@tangleai/os",
-    "file": "tangleai-os-0.58.1.tgz",
-    "size": 196502,
-    "sha256": "b906e478ad89e41495b3210247100aa0ba7f5815c4d35a879017e1ec89f46e1b",
-    "integrity": "sha512-LfDuFBQtKS7y2eWaaZ6M1OmtIZ0UY0UleEStk1HdtSOKVOxFSmCKdp/Vc4XImCyTT31d6px9xSJg41tIyzAN2A==",
+    "file": "tangleai-os-0.59.0.tgz",
+    "size": 203557,
+    "sha256": "b9bc6664c26382fb56eddbd5f1ab72d406c29a4f99a7aab35ba6e4477d42593e",
+    "integrity": "sha512-vmATiRyDifRH7fCENFzPh8OU6sTdGApfP/u4LH1/mIITJw6ZlW8gcBigN5WY947U/ZjJfyXYowuQawZWVIoiyg==",
     "dependencies": {
       "@jarenjs/core": "0.220.0",
       "@jarenjs/json": "0.220.0",
@@ -26,6 +26,7 @@
       "./files",
       "./state-server",
       "./testing",
+      "./authoring",
       "./messages",
       "./messages/ar",
       "./messages/de",
