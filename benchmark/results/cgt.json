@@ -2,7 +2,7 @@
   "benchmark": "cgt",
   "schemaVersion": 1,
   "source": {
-    "head": "1be3aecdff15ecc2b37382ddad3fa3966587d422",
+    "head": "a285816f300448a2b5af8e89fb879893b69cf2ce",
     "clean": false,
     "files": [
       {
@@ -91,7 +91,7 @@
       },
       {
         "path": "benchmark/lib/source-manifest.ts",
-        "sha256": "1ef15c822791160d23f1b97e80f4dc7d91558b65575aedd8c96e45aaac118367"
+        "sha256": "bb2128a25aa3e66d3f2f7fba8041dac98bd3de30d4cc5a7a0b76c55cb33fd92a"
       },
       {
         "path": "benchmark/lib/table.ts",
@@ -111,15 +111,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "cff85551418c77a3ab372bad535de5102b9c35b3cbe274e0d90f7f0dc6461187"
+        "sha256": "a7aad500aabc39ad2303dd646baf4399437b9034acadb4be25f6a9ef0277e08c"
       },
       {
         "path": "package.json",
-        "sha256": "12d56404949fa2b630c2dfa59a185af928d4e680e1d9ea142574bbc8e1943f5c"
+        "sha256": "5acacc65c18b323a80ec389fac7fcace3873f31234e03db853227be99f0a5bd4"
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "b5301c98ce5700a04f5fcd832157e1710bf79ba4759f5a8429d8c52df9934677"
+        "sha256": "354f9778777d5e11e3ee745e8a967b1f4fc4f70f1b3b560de11810656a25cff6"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -155,7 +155,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "818043ecdcd3438f04338fe0f298e91f86b9eba241eb338592e9480ddb1c77f4"
+        "sha256": "c6b309fcf5ec5839f119d93203f507befe6f8cda6f203b9706194dbb24b50836"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -175,7 +175,7 @@
       },
       {
         "path": "packages/context/src/ledger.ts",
-        "sha256": "fbdd94f729d742cf403999251f1e07521386a4c1e1ed635d7700816a2333dd8a"
+        "sha256": "c456ec63a105f0a07d3945139b5ccf59d99b627a5e6e9f76f4061a543595f651"
       },
       {
         "path": "packages/context/src/recall.ts",
@@ -183,7 +183,7 @@
       },
       {
         "path": "packages/context/src/retention.ts",
-        "sha256": "35ef60355a48108c6cc80020180610ac264351302a8e390332a076d25a36f29f"
+        "sha256": "52fd938c78d58b40de8b80037b9554347f74ae5e274d28bec65e0b0050972fce"
       },
       {
         "path": "packages/context/src/schemas/evidence.ts",
@@ -211,7 +211,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "8d9f65c4a97d8afc58c666e7f59344bda02d0a684befea9318396de3a41750e1"
+        "sha256": "098065d790cf41472d71ff6e7ed7c97d818284d43b7780d32e70dea40fd4c2c2"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -287,7 +287,7 @@
       },
       {
         "path": "packages/experiential/package.json",
-        "sha256": "3c38dcc3b0f7c48859fdab0a1fa1529c59d12662508e4193f35a34eb1127d070"
+        "sha256": "1bf14e7b20563e505061f26f2fb24ebc1c71bc1df10a0108b931a219fc12b7f9"
       },
       {
         "path": "packages/experiential/schemas/experiential.contract.json",
@@ -307,11 +307,11 @@
       },
       {
         "path": "packages/experiential/src/backend-http.ts",
-        "sha256": "e2059d397bdd8dcce3386e3328aea7b5240073144600e8c6ce71073f1adeebf3"
+        "sha256": "5eaeb969f3bd09a93bcabac7d93aff0db84672404d13b5163fb9101e77807665"
       },
       {
         "path": "packages/experiential/src/backend.ts",
-        "sha256": "cf8ea0a37c0433e6c56f8679273fdd0f4383ca4e15b42418b69eef3237f88ed0"
+        "sha256": "4a2578f11026ed33ad4c3756dea4cf42349770b70c4a5946d581a4b5e2e6a80d"
       },
       {
         "path": "packages/experiential/src/canary.ts",
@@ -327,11 +327,11 @@
       },
       {
         "path": "packages/experiential/src/dataset.ts",
-        "sha256": "bb1aca6a0467a4d6b587d44df6e569109539a768a0d17261aa820124595a7fe9"
+        "sha256": "0f3aa87100cde6c2527abd5c8fbe19d6d42805b51b27fd29469de337ceef71a7"
       },
       {
         "path": "packages/experiential/src/deployment.ts",
-        "sha256": "afdbda3bf09da1195fcd8051b07a69eb55cd6ae3d6a39034fbcb5d3b615d3730"
+        "sha256": "2da264e641beae618455b7baf493a9ef6dc195ace08c9cc42bfa06776b427c18"
       },
       {
         "path": "packages/experiential/src/errors.ts",
@@ -351,7 +351,7 @@
       },
       {
         "path": "packages/experiential/src/identity.ts",
-        "sha256": "69780a6026ec0c8210b8a8d32dc439b6e3670a034189c1174596830bd03055af"
+        "sha256": "5267546717473741ced4802d4e285ac2f06c1739246b7fdeb6024573d5335e15"
       },
       {
         "path": "packages/experiential/src/index.ts",
@@ -359,7 +359,7 @@
       },
       {
         "path": "packages/experiential/src/inference.ts",
-        "sha256": "6cff97c715272fe61d218228dd0e3c233243fe0a4dc8ba8997de6ea80b61682b"
+        "sha256": "a0fb25aaa94dd51c63fdfd9a5dbe88533a77888957c210d817e0fc8f7eac3107"
       },
       {
         "path": "packages/experiential/src/lifecycle.ts",
@@ -375,7 +375,7 @@
       },
       {
         "path": "packages/experiential/src/pipeline.ts",
-        "sha256": "554d0dc56c7f10c122938d0f8b1934733c366672be1ee524693b2431ceef3853"
+        "sha256": "6fa4cc5f9806aff9a16a261f9f27497eb3bf87aaf61e49f8dd7203165b5a7e17"
       },
       {
         "path": "packages/experiential/src/policy.ts",
@@ -387,19 +387,19 @@
       },
       {
         "path": "packages/experiential/src/redact.ts",
-        "sha256": "7d067b7e1d57bc630f6e6ad52a983bc254eff79e0aa68518ffefef31b3f49e52"
+        "sha256": "319347b0f8eee01513df6cc025cd0c6acf45310e109ddfc793c83cc30ea82580"
       },
       {
         "path": "packages/experiential/src/retention.ts",
-        "sha256": "229f8dd44e03833d6c3f8a84514eaacc7e339745c8d090b197c262f3e03015dc"
+        "sha256": "0b16c78c4890fcd1b472201316f3b7133a2f20b12116bdedba25e7988dc90dbb"
       },
       {
         "path": "packages/experiential/src/schema.ts",
-        "sha256": "2a4be36e80021ee7ae46e540d3803cb57da51571943d652e0c89e0b3af430c88"
+        "sha256": "b3229b6850f4539cf66a53fefa37bbabc4ea71591c16e06481982935c1c66c96"
       },
       {
         "path": "packages/experiential/src/selection.ts",
-        "sha256": "c8f7b0f9a074cccfe0053742630e6f04a655b0ab965e9c1254ff8c0b2f74a711"
+        "sha256": "74c18730437a2ce31feec8199d7b7881b31878d51659973dd32b64c2645165c6"
       },
       {
         "path": "packages/experiential/src/store-types.ts",
@@ -407,7 +407,7 @@
       },
       {
         "path": "packages/experiential/src/store.ts",
-        "sha256": "f58550d4aaff5dff4c39a15cdee3e9a4db5ce668fcf76f90529dc0539204bd10"
+        "sha256": "1c8b2f0f4947e7cfbf980e3c4659b15a6f10a1cfcba2141c395342f7d9d34c41"
       },
       {
         "path": "packages/experiential/src/training-env.ts",
@@ -431,7 +431,7 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "f33dc1d6148f8e5f66a4616e93e51d05e2ce0728fba683ff1913cc728d7ac018"
+        "sha256": "172f216931922a575bfb4d6b9dfa359e7e698b539db73910050dc3513b3ce729"
       },
       {
         "path": "packages/memory/schemas/policy.contract.json",
@@ -483,7 +483,7 @@
       },
       {
         "path": "packages/memory/src/contradiction.ts",
-        "sha256": "0f06285de1500a0d72960f00344c87a1950cc9529646cfadfb57aba630de3b67"
+        "sha256": "a8e35d3ca2879ddb1cb02e5558f5189155145504fde13894965cf0b97bcda387"
       },
       {
         "path": "packages/memory/src/crystallize.ts",
@@ -575,7 +575,7 @@
       },
       {
         "path": "packages/memory/src/store.ts",
-        "sha256": "15fd261b91b6d7e1c5ba302142c30022f64746f7fcd8a1848b712db7332e383c"
+        "sha256": "c25b4a28a971dd421916e341240675dcd3b073ee0294ecb5ea4ecfcad6be4bd1"
       },
       {
         "path": "packages/memory/src/temporal/answer.ts",
@@ -599,7 +599,7 @@
       },
       {
         "path": "packages/memory/src/temporal/operations.ts",
-        "sha256": "f1918dc1e1d961bd56329fbaf51cefd0713bca4daa36894b98df7f42efe2250c"
+        "sha256": "0695205b471663b9df5cea32a9bcf33761ad08d6a0cf22b168f4abe32fc83b2f"
       },
       {
         "path": "packages/memory/src/temporal/prepare.ts",
@@ -651,11 +651,11 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "ef0a6d01b4e779fe4bd6c8750dd1c4daa71033bc6037881c71e80f6dfea2e86e"
+        "sha256": "dbe092a6c05d3f363aaf000e94206bc8bfc38167b085c4a2bff87e1ca4c03eef"
       },
       {
         "path": "packages/models/src/bundle.ts",
-        "sha256": "cfa04df91ff343cc40912e49ed95c9335da738bcecbed8219de81104729316dd"
+        "sha256": "ad548e7588d0e9ce3729ee472df7a7c2c813e900ae92d6283465be93c4225bfd"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -663,7 +663,7 @@
       },
       {
         "path": "packages/models/src/client.ts",
-        "sha256": "23c44219e012c2539307bdd923c85b3ba55fa8298c52d22096faf78b8d430198"
+        "sha256": "7000589d1c6a514713a3d8fab10744bb390629e36dad7a860769a055298d37d7"
       },
       {
         "path": "packages/models/src/embed.ts",
@@ -675,7 +675,7 @@
       },
       {
         "path": "packages/models/src/errors.ts",
-        "sha256": "7ec877e5a7dfee3e2c57606ac98c6d3819a4e186029d6e811fbd1f774010e3e8"
+        "sha256": "a54a21a32458465090607ceedea37032f3c573911c33c4dcc53813fdcbc0af66"
       },
       {
         "path": "packages/models/src/grammar.ts",
@@ -691,7 +691,7 @@
       },
       {
         "path": "packages/models/src/replay-file.ts",
-        "sha256": "12412ce3f2587520432ac5510a4689b8ad988d4b37869fc0e6f257f3675d210f"
+        "sha256": "88186ef5d07cb1bbb8a06fb1a376982f1f9d3bc797e89f0352162509fc923beb"
       },
       {
         "path": "packages/models/src/replay.ts",
@@ -699,11 +699,11 @@
       },
       {
         "path": "packages/models/src/retry.ts",
-        "sha256": "23b21d55cdd84b4848d9e06eb6a9414fe31378e3d3e47acaeae3f32a4af4b489"
+        "sha256": "d95396f7d228566ea71ebd340f9af06fdeeb068abaf267f40ecc7642ace1b139"
       },
       {
         "path": "packages/models/src/routing.ts",
-        "sha256": "47cafcd4813a8d1d69bcd49c1bc04cb28abfc49e4fd2ef90791cf66edfa6f569"
+        "sha256": "3db112079bbf75d5aa97c2ad55040fbfaa0ab4deea0abba052fe12825499d86a"
       },
       {
         "path": "packages/models/src/sse.ts",
@@ -711,7 +711,7 @@
       },
       {
         "path": "packages/models/src/structured.ts",
-        "sha256": "0da8663c682711a2a5c8c8e38980e13c44488a5226327ba0afa8f9e2d0dd657d"
+        "sha256": "780c6477bdc467aab6e65355c361e07b2891532e925cec13bdd58cfc17f0e204"
       },
       {
         "path": "packages/models/src/testing.ts",
@@ -719,7 +719,7 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "7216744a77deeaa7dc1180371ce5f1dcc041522964f3aa3864131c37465de56c"
+        "sha256": "f26ba9d74c518645912a5329f731dcceb38641e7027361f65064be9cc896ae42"
       },
       {
         "path": "packages/outcomes/schemas/direction-delta.schema.json",
@@ -811,7 +811,7 @@
       },
       {
         "path": "packages/outcomes/src/proposal-operation.ts",
-        "sha256": "3f5dc47356c5f59990646040a90865b9767ac3dc74a3f91fecdb3c3f1f2e0f6a"
+        "sha256": "df4d82e638db7aa60ed3b8a8e02152a0e1f72cdab282a1fb59e9f8e9b427d1b8"
       },
       {
         "path": "packages/outcomes/src/proposer.ts",
@@ -819,7 +819,7 @@
       },
       {
         "path": "packages/outcomes/src/refinement.ts",
-        "sha256": "da429b0ce5c654a7478adc8b773af6c9af63f10c6a18f812b08bf1ba43b825a8"
+        "sha256": "04aeace88eb944caba9581745b0a8f3afa011fa70448d3263cedfb19794a0b39"
       },
       {
         "path": "packages/outcomes/src/resolution.ts",
@@ -827,7 +827,7 @@
       },
       {
         "path": "packages/outcomes/src/schema.ts",
-        "sha256": "7bf7bf3ec698d34bad5513d405455310414d79bfac4eea55dda52e4180457620"
+        "sha256": "958df7a2c025d0d215e4e3daf73f20bcc197882576d16ee0d85ac98f6826ec5a"
       },
       {
         "path": "packages/outcomes/src/scoring.ts",
@@ -851,7 +851,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "a908d8d1b65d901eb14cec6b0171dbbce2f21da96ca9a270c59952a40c8910ae"
+        "sha256": "989ea7c1a5c9db325dc866771d5244317378f26387d4464496f34bc4982cb814"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -891,7 +891,7 @@
       },
       {
         "path": "packages/store/src/experiential-jobs.ts",
-        "sha256": "8ae4a1c71fa28002c02f2f3f44f2ba3135a70002c4f6f51226794e7374d00b94"
+        "sha256": "99e706cf2a1d26ed98686c6220c82ec2bee02f251a98b46695de04bdad8e87fb"
       },
       {
         "path": "packages/store/src/experiential-model.ts",
@@ -991,7 +991,7 @@
       },
       {
         "path": "packages/store/src/mas-store.ts",
-        "sha256": "dc2d8844ab8351f7d10b193433b4db32666f96c1406678c0a995af9532137f29"
+        "sha256": "c90aa701989758c98f1dd81bc5f84fe72507ed0c96095f75bded01aba2ffae70"
       },
       {
         "path": "packages/store/src/memory-store.ts",
@@ -1023,7 +1023,7 @@
       },
       {
         "path": "packages/store/src/runs.ts",
-        "sha256": "148dbfbea9c65f5aff6fb89b654d6cf0dfaac1da39ec4cc80ad46781764c0deb"
+        "sha256": "ff4903b1c6b08aab1c09bc29fdb900ce56b3ef3ad5ca14505923027ba5c27464"
       },
       {
         "path": "packages/store/src/temporal-backfill.ts",
@@ -1070,7 +1070,7 @@
         "sha256": "30bbda9de7067320328bc07d30936df63fbf419f3e4642d8bc9867c3a8c5af75"
       }
     ],
-    "sha256": "8b2691aeef3c05bab4113292f6ce235e5044b257d99001491b8a64e8aa03590c"
+    "sha256": "8ab6758d29e0ac09af643d4f663972ec41e4149f57b9ed27f8ebf7a39f320f61"
   },
   "evaluations": [
     {
@@ -1085,13 +1085,13 @@
           "artifactId": "a39515d06a2c466d804b47eb6d922766fc4dce1ddafe5b31b315e6e1280d5646",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+          "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "d99153e05da692ebb313a7e26edcca87da2c279d0cd8d428bcd7c17f26912564",
+          "id": "53764ae958dacdbf334a34ab217c23d42d72673cb7e32d5427c2bd19518f2d0b",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -1121,7 +1121,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -1159,7 +1159,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "a02058595712370b1e6122b98eba01a297af89b4142920588d8e65d9e3a8a07a",
+        "id": "2e64e6bd02314f803ad63319559bd484d0b0355a47f66700c59b1255f8349bbb",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -1193,8 +1193,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "d99153e05da692ebb313a7e26edcca87da2c279d0cd8d428bcd7c17f26912564",
-        "reportId": "da15a89f0d80e7c48d4fa1e189f9e3f5d3aae09d94f136836920b0e69b7199b4",
+        "registrationId": "53764ae958dacdbf334a34ab217c23d42d72673cb7e32d5427c2bd19518f2d0b",
+        "reportId": "f23f17ce2060b05c5bf52f0b7432d433c7c0a00d1b2bfe38e134b49e92ef092a",
         "retention": [
           {
             "drop": 0.9609375,
@@ -1296,7 +1296,7 @@
       },
       "evidence": {
         "candidateId": "candidate-memorizer",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -40259,7 +40259,7 @@
           },
           "cost": null
         },
-        "reportId": "da15a89f0d80e7c48d4fa1e189f9e3f5d3aae09d94f136836920b0e69b7199b4"
+        "reportId": "f23f17ce2060b05c5bf52f0b7432d433c7c0a00d1b2bfe38e134b49e92ef092a"
       },
       "plannedState": "rejected"
     },
@@ -40275,13 +40275,13 @@
           "artifactId": "ced706a3dedcbcec1983328fba18b4b3c2b81b7d527d4048853129f1c35ae87b",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+          "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "a1733cd670780d46fb19dc34b3f22ccbd5ab51901261c71412cdeb5352f1c504",
+          "id": "da425d9b37a5b9e228282a56c07f9f65ddea07e86aad8b599be83f0c4dd556cf",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -40311,7 +40311,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -40337,7 +40337,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "caf419149fc71fa7ca420a4d6fa8df89fedecb1848cb9f372431f6b2c4138f4a",
+        "id": "f678ad55dbbb9266bddedf612b99ea92a3a3b19dc8e49fac33a62e48824dfc59",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -40371,8 +40371,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "a1733cd670780d46fb19dc34b3f22ccbd5ab51901261c71412cdeb5352f1c504",
-        "reportId": "c31a472a7666a3e16a58fa5d3693bc952defcfbceb2ef847bef953cf483c9139",
+        "registrationId": "da425d9b37a5b9e228282a56c07f9f65ddea07e86aad8b599be83f0c4dd556cf",
+        "reportId": "28810f7f71a83fe1cd88070f95a70bf5e6dd5dd810c1a76782c20184de48e84f",
         "retention": [
           {
             "drop": 0,
@@ -40474,7 +40474,7 @@
       },
       "evidence": {
         "candidateId": "candidate-rule-follower",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -79437,7 +79437,7 @@
           },
           "cost": null
         },
-        "reportId": "c31a472a7666a3e16a58fa5d3693bc952defcfbceb2ef847bef953cf483c9139"
+        "reportId": "28810f7f71a83fe1cd88070f95a70bf5e6dd5dd810c1a76782c20184de48e84f"
       },
       "plannedState": "rejected"
     },
@@ -79453,13 +79453,13 @@
           "artifactId": "72824a9c955a37b6ab07aa754ff5e17547215c262cba5912f7dee0d9e19a1237",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+          "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "666254e672824b6fa1221e7972866dbc0d38fc00beac18b1c5872c2c90c695ad",
+          "id": "32576962115ed745c1b000a96e4bbbcc1495ab1dbac9bbb577e405345425fee9",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -79489,7 +79489,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -79527,7 +79527,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "b446881948e0a0f97f4cb110a64024188d1d7bd230f311a87134797b4e2cb5bd",
+        "id": "e539d1ab0a73d9b58b0afb104fe0fbb66532876c662e494a3cf35a1c4add86a9",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -79561,8 +79561,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "666254e672824b6fa1221e7972866dbc0d38fc00beac18b1c5872c2c90c695ad",
-        "reportId": "b4b1899d383e3c9914249a99efd86d19c8aca5710f5ec9dac14da98582b40364",
+        "registrationId": "32576962115ed745c1b000a96e4bbbcc1495ab1dbac9bbb577e405345425fee9",
+        "reportId": "b5a55193b782bfdf418efce22cc885c34ad8ee7f45421b0c6805aeb292e37586",
         "retention": [
           {
             "drop": 0.9609375,
@@ -79664,7 +79664,7 @@
       },
       "evidence": {
         "candidateId": "candidate-forgetting",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -118627,7 +118627,7 @@
           },
           "cost": null
         },
-        "reportId": "b4b1899d383e3c9914249a99efd86d19c8aca5710f5ec9dac14da98582b40364"
+        "reportId": "b5a55193b782bfdf418efce22cc885c34ad8ee7f45421b0c6805aeb292e37586"
       },
       "plannedState": "rejected"
     },
@@ -118643,13 +118643,13 @@
           "artifactId": "2f25be04e9ce8102cc9bce91a41bd44a0bae23102ecbcabd98695ddce7f71350",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+          "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "df025a202ce4a157963084f72fd1b9e6c4b0e12d72b3021d75d8065aa57d3975",
+          "id": "c40327b382a306f147c1fd669f027580e8466dff102a6f6d9ff6256a7d5526de",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -118679,7 +118679,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -118735,7 +118735,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "2764e7033857ee927532a7cb5ba92e0199b2ad3b8f667b226a062137ccd2ff8f",
+        "id": "c91aaaf28d33b504995919def3b4f415dc12a95deb55267ea31765a46c1fa08e",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -118769,8 +118769,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "df025a202ce4a157963084f72fd1b9e6c4b0e12d72b3021d75d8065aa57d3975",
-        "reportId": "5b8743e60ffb6972b982c9dd752613375b412db47170607acab9835c9a4519d9",
+        "registrationId": "c40327b382a306f147c1fd669f027580e8466dff102a6f6d9ff6256a7d5526de",
+        "reportId": "43bd602b43eb76121fcf3f2a8c85318d44fd3d2fdc5830d93a20015a12caff01",
         "retention": [
           {
             "drop": 0,
@@ -118872,7 +118872,7 @@
       },
       "evidence": {
         "candidateId": "candidate-tainted",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -157835,7 +157835,7 @@
           },
           "cost": null
         },
-        "reportId": "5b8743e60ffb6972b982c9dd752613375b412db47170607acab9835c9a4519d9"
+        "reportId": "43bd602b43eb76121fcf3f2a8c85318d44fd3d2fdc5830d93a20015a12caff01"
       },
       "plannedState": "rejected"
     },
@@ -157851,13 +157851,13 @@
           "artifactId": "c73209476232920ad3141a0f7d2ef953c773511393d9f486e5c5fd84ff015c81",
           "baselineArtifactId": "4e977c011a28ca4199a628c58f908a11ab1bbbcc50b85e979ae15b3796224ae8",
           "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
-          "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+          "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
           "expectedHead": {
             "revision": 0,
             "versionId": null
           },
           "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-          "id": "dcfd288a001ce80aef9fe9f205f3503c0c309ca5064d73db12f38b74e17046f3",
+          "id": "835675964d5e2a0a34b17d2cdcfe20be5dc95d8d1cc17a519c847ff5e9525bda",
           "migrationExperiment": false,
           "profile": "cgt-scripted-evaluation",
           "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
@@ -157887,7 +157887,7 @@
         "cost": null,
         "datasetId": "35f3547b0b70fc9c9de33f7d1a4ba4498a810a7911064342db3f68752a96765a",
         "document": "experiential-evaluation",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "expectedHead": {
           "revision": 0,
           "versionId": null
@@ -157919,7 +157919,7 @@
           }
         ],
         "gatePolicyId": "af0f60ba27ed33199e5d9c7e367168ef7a97332fbe14470e6f3bca7c3418ffb7",
-        "id": "090712adb5392b2ca057de1af5bce19ee576345f443b57f03e84fae3d732ca3f",
+        "id": "13cca88efdc541097c5c139381b3a0dcc26946a219f24a4fadfa388cee5e5ca1",
         "interval": [
           {
             "control": "frozen-retrieval",
@@ -157953,8 +157953,8 @@
         "passed": false,
         "profile": "cgt-scripted-evaluation",
         "recordedAt": "2026-09-13T00:00:00.000Z",
-        "registrationId": "dcfd288a001ce80aef9fe9f205f3503c0c309ca5064d73db12f38b74e17046f3",
-        "reportId": "fe4309435dbebb7b450bfeb05f56172bcbd2116aea25ca88aa85daae8b7e57a3",
+        "registrationId": "835675964d5e2a0a34b17d2cdcfe20be5dc95d8d1cc17a519c847ff5e9525bda",
+        "reportId": "0bce0fed6210c13395ab6f1f5d665f569b26ee4604cf9a3956877caedc056960",
         "retention": [
           {
             "drop": 0,
@@ -158056,7 +158056,7 @@
       },
       "evidence": {
         "candidateId": "candidate-oversized",
-        "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+        "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
         "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
         "settings": {
           "seed": 17753,
@@ -197019,7 +197019,7 @@
           },
           "cost": null
         },
-        "reportId": "fe4309435dbebb7b450bfeb05f56172bcbd2116aea25ca88aa85daae8b7e57a3"
+        "reportId": "0bce0fed6210c13395ab6f1f5d665f569b26ee4604cf9a3956877caedc056960"
       },
       "plannedState": "rejected"
     }
@@ -213012,7 +213012,7 @@
       "storageUri": "memory:cgt/scripted-base",
       "trainingRunId": null
     },
-    "evaluatorRevision": "98fa10d404e85b1f39b644c5523b885ca195f52c60b5368cf84b3f57ff6b812a",
+    "evaluatorRevision": "a4fd00ca1eca158df27aca246892e3aa9847fb5a03144af4184a72c4b21084bc",
     "questionSetId": "59c822fa6b90fd7cbb94cc227bb47606c2aadd88b9017261bff1a02d22db2163",
     "live": {
       "status": "not-run",
@@ -213136,8 +213136,8 @@
   "runtime": {
     "node": "24.20.0",
     "bun": null,
-    "tangle": "0.45.2",
-    "jaren": "0.184.2"
+    "tangle": "0.62.3",
+    "jaren": "0.220.0"
   },
   "rows": [
     {
@@ -323574,5 +323574,5 @@
     "Scripted operations use an injected fixed clock and zero training submissions: their zero milliseconds and zero external spend are fixture accounting, not measured trainer or model performance.",
     "Each evaluation reportId addresses its retained candidate evidence block, avoiding a circular identity with this enclosing report. All paired bootstrap intervals use the shared instrument implementation."
   ],
-  "reportId": "5afd0a4239da578a75b08ba4bdba3907383cfe9a863c2fa3a95f1cfaa0a441be"
+  "reportId": "d582928f8dd71e8a5700ef85803222155dfcfc5721287cccb9704b6abe108a53"
 }

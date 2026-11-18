@@ -136,7 +136,7 @@
       },
       {
         "path": "benchmark/lib/source-manifest.ts",
-        "sha256": "1ef15c822791160d23f1b97e80f4dc7d91558b65575aedd8c96e45aaac118367"
+        "sha256": "bb2128a25aa3e66d3f2f7fba8041dac98bd3de30d4cc5a7a0b76c55cb33fd92a"
       },
       {
         "path": "benchmark/lib/table.ts",
@@ -160,11 +160,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "cff85551418c77a3ab372bad535de5102b9c35b3cbe274e0d90f7f0dc6461187"
+        "sha256": "a7aad500aabc39ad2303dd646baf4399437b9034acadb4be25f6a9ef0277e08c"
       },
       {
         "path": "package.json",
-        "sha256": "12d56404949fa2b630c2dfa59a185af928d4e680e1d9ea142574bbc8e1943f5c"
+        "sha256": "5acacc65c18b323a80ec389fac7fcace3873f31234e03db853227be99f0a5bd4"
       },
       {
         "path": "packages/evolve/src/adapters/experiment.gen.ts",
@@ -240,7 +240,7 @@
       },
       {
         "path": "packages/evolve/src/host/index.ts",
-        "sha256": "c1b70dc8fb54ebd1105b09daeffc90c158dfedc93b1e7f9b29b755b32b4aa1b2"
+        "sha256": "e8488ea0a1e3014af4a6e705d03313784ec0028b9ccdcca238ffab60135e2729"
       },
       {
         "path": "packages/evolve/src/host/measure.ts",
@@ -252,7 +252,7 @@
       },
       {
         "path": "packages/evolve/src/host/settle.ts",
-        "sha256": "f33b0cd701eb0b3f90cf148635961fdb541ee113ec7cfab0c0c8ea73ce413c51"
+        "sha256": "9efcbf7e990c2a573644c2f56b5687eae10a6de8c195156aa40494ca0a253008"
       },
       {
         "path": "packages/evolve/src/host/worker.ts",
@@ -260,7 +260,7 @@
       },
       {
         "path": "packages/evolve/src/host/worktree.ts",
-        "sha256": "e37a009e4929078c462586e4328ace4efcbc3a3e8f6802c84ad7a05894561494"
+        "sha256": "0bc18e0949e7935b5d8d9d99977a727708414d3a343a7ce56c562e706f51586d"
       },
       {
         "path": "packages/evolve/src/identity.ts",
@@ -304,11 +304,11 @@
       },
       {
         "path": "packages/evolve/src/policy.ts",
-        "sha256": "eb08b9c437dab2642a1a659f985691934bb507f823d65f53d3b3abfe1d92d2d2"
+        "sha256": "9a8eb967cbd4074bbd5e2931dcd5333a787e72c8aba4b864c9ace4cd1e79adbf"
       },
       {
         "path": "packages/evolve/src/proposal.ts",
-        "sha256": "0622b6cf7f63ab3faa83251c5ef71c414e9edeb189326fa8cc33f84201cee9c3"
+        "sha256": "d71ebbae899bc9b401d27fa83045704027a80aa1fc598f90b345f83f1408a3f3"
       },
       {
         "path": "packages/evolve/src/proposer.ts",
@@ -343,7 +343,7 @@
         "sha256": "1b35b9772c50a55a3f2da2d76c5db2952662b5b70d9776e89c6a44a337d388d8"
       }
     ],
-    "sha256": "723de8bc7fd89afb4dd644ff3cf009f9f4a8ed7ef41cc0320c4c2656d9a7f073"
+    "sha256": "b80b0b3b81cbaeaf3efb5aee3cb57f6e7502d049a661cde25ae614ca3042c6ef"
   },
   "rounds": [
     {
@@ -2318,5 +2318,5 @@
   "protectedRefWrites": 0,
   "operatorWorktreeChanged": false,
   "liveModelCalls": 0,
-  "reportId": "19ad5d4fdbadbbaf515072a9b5088a10b2e4d836aac654de18d1dd0d74b9cde9"
+  "reportId": "7a1cd6db7d789bedd7025a92f819ad6100e82cde8ed3a7b4688f4851baab228a"
 }

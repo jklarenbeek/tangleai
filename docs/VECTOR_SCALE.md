@@ -1,6 +1,6 @@
 # Graph vector scale
 
-Report `3b619bc02c3b20f849997d135e2dda96b9a60e6a453ef3af979d63dcb61710cd`; dated receipt `754104dfea90d94463afdf036c32864c34091d84321ff6f9cfea81fd3217ba8a` (2026-11-06T15:31:48.268Z).
+Report `722ca3d42382f900b7270d2b6cb3df5cdd3007488f7fc22663ca90091406d91e`; dated receipt `79ead2404564b9104256690427b6e85de479c3664812cd0adca9bfe022f5f3f6` (2026-11-18T20:58:25.172Z).
 
 Released trigger: 0.40.0 at `2be71c633567e6f1e0598fdc6543259862318013`. The registered target remains complete hybrid p95 ≤ 250 ms at 10,000 source chunks, with 64-dimensional embeddings.
 
@@ -10,15 +10,15 @@ Status: **measured**. Native qualification: **parity-passed**. Decision: **resto
 
 | Source chunks | Entities | Relations | Backend | Complete p50 ms | Complete p95 ms | Peak process RSS bytes |
 | ---: | ---: | ---: | --- | ---: | ---: | ---: |
-| 100 | 200 | 100 | resident | 11.47 | 14.65 | 571121664 |
-| 100 | 200 | 100 | sqlite-sweep | 24.80 | 31.62 | 571121664 |
-| 100 | 200 | 100 | sqlite-native | 30.94 | 42.56 | 571121664 |
-| 1000 | 2000 | 1000 | resident | 80.40 | 83.78 | 1977839616 |
-| 1000 | 2000 | 1000 | sqlite-sweep | 176.24 | 185.22 | 1977839616 |
-| 1000 | 2000 | 1000 | sqlite-native | 204.56 | 216.25 | 1982406656 |
-| 10000 | 20000 | 10000 | resident | 1060.98 | 1261.98 | 8203251712 |
-| 10000 | 20000 | 10000 | sqlite-sweep | 2733.30 | 3292.97 | 8293072896 |
-| 10000 | 20000 | 10000 | sqlite-native | 3021.81 | 3925.50 | 8293072896 |
+| 100 | 200 | 100 | resident | 8.81 | 11.93 | 589307904 |
+| 100 | 200 | 100 | sqlite-sweep | 20.52 | 24.08 | 589307904 |
+| 100 | 200 | 100 | sqlite-native | 23.52 | 25.21 | 589307904 |
+| 1000 | 2000 | 1000 | resident | 70.90 | 73.49 | 1962598400 |
+| 1000 | 2000 | 1000 | sqlite-sweep | 156.87 | 191.27 | 1972928512 |
+| 1000 | 2000 | 1000 | sqlite-native | 185.01 | 190.81 | 1988395008 |
+| 10000 | 20000 | 10000 | resident | 870.92 | 1033.20 | 8403697664 |
+| 10000 | 20000 | 10000 | sqlite-sweep | 1847.07 | 2096.64 | 8696672256 |
+| 10000 | 20000 | 10000 | sqlite-native | 2100.28 | 2337.31 | 8696672256 |
 
 The resident oracle reads a detached snapshot of the exact same prepared corpus. Every result is compared, including ordered scores, all rejected candidates, context, citations and graph revision; only timing fields are excluded.
 
@@ -30,17 +30,17 @@ Every raw sample is retained in the dated receipt. Fetch time measures awaited s
 
 | Source chunks | Prepare ms | Promote ms | Resident snapshot ms | Sweep files bytes | Native files bytes | 64-D migration ms | Embedding calls | Embedded texts |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 100 | 969.05 | 5609.98 | 56.44 | 5836800 | 5836800 | 328.15 | 15 | 400 |
-| 1000 | 9104.71 | 61580.88 | 504.83 | 42639360 | 42639360 | 536.51 | 127 | 4000 |
-| 10000 | 315613.75 | 787133.18 | 6448.71 | 411860992 | 411860992 | 2286.60 | 1251 | 40000 |
+| 100 | 623.90 | 4364.50 | 42.78 | 5836800 | 5836800 | 266.96 | 15 | 400 |
+| 1000 | 8349.94 | 55883.62 | 455.60 | 42639360 | 42639360 | 393.32 | 127 | 4000 |
+| 10000 | 278405.44 | 650260.08 | 5198.26 | 411860992 | 411860992 | 2025.27 | 1251 | 40000 |
 
 Sweep and native storage are sampled with all database handles closed, before and after the 64-dimensional backfill. Sizes include any retained database, write-ahead log and shared-memory files. Native migrations include their real shadow validation, DDL and backfill; write counters and all physical samples remain in the receipt.
 
 | Source chunks | Add 128-D column ms | Initialize stage ms | Prepare full stage ms | Total stage ms | Copied rows | Stage writes | Stage embedding calls | Stage file bytes |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 100 | 346.41 | 7036.37 | 12902.35 | 20354.16 | 1003 | 2317 | 15 | 17672336 |
-| 1000 | 439.40 | 77731.44 | 151248.54 | 229487.93 | 10003 | 23017 | 127 | 158622344 |
-| 10000 | 2219.39 | 924183.17 | 1870774.45 | 2797299.99 | 100003 | 230017 | 1251 | 1568586512 |
+| 100 | 283.23 | 5594.64 | 10044.74 | 15987.12 | 1003 | 2317 | 15 | 17672336 |
+| 1000 | 426.22 | 70471.27 | 137911.16 | 208873.35 | 10003 | 23017 | 127 | 158622344 |
+| 10000 | 1927.52 | 861772.38 | 1836622.50 | 2700420.27 | 100003 | 230017 | 1251 | 1568586512 |
 
 The isolated 128-dimensional stage prepares every source through the existing document and graph owners, then explicitly abandons its primary reservation. It does not swap the live benchmark corpus. Staging file sizes are sampled before the staging handle closes and include its journal files; the receipt retains the full operation counters and journal digest. Atomic swap, exact zero-embedding rollback and disposal are separately qualified by the migration tests and disposable example.
 

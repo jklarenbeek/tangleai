@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
+import {identityBytes} from '../../benchmark/lib/source-manifest.ts';
 import {canonicalSha256} from '@jarenjs/json/canonical';
 import {authorForecastFixture} from './forecast-fixture.ts';
 import {loadForecastFixtures} from '../../benchmark/lib/forecast-fixtures.ts';
@@ -123,7 +124,8 @@ describe('registered forecasting measurement',()=>{
     const live=JSON.parse(await readFile('benchmark/results/forecast-live.json','utf8')) as ForecastLive;
     assert.deepEqual(live.plan.source,{head:report.source.head,sha256:report.source.sha256,files:report.source.files});
     await assertRetainedLivePlan(live,await buildForecastLive());
-    for(const file of report.source.files)assert.equal(createHash('sha256').update(await readFile(file.path)).digest('hex'),file.sha256,file.path);
+    // hashed as the source manifest hashes it: a package manifest without Tangle's own version strings
+    for(const file of report.source.files)assert.equal(createHash('sha256').update(identityBytes(file.path,await readFile(file.path))).digest('hex'),file.sha256,file.path);
     assert.ok(report.source.files.every(f=>!f.path.includes('benchmark/results/')));
   });
   it('retains measured live provenance across a source-identical commit and rejects changed source bytes',async()=>{
