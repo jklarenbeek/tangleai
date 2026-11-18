@@ -140,8 +140,9 @@ edge and the panel's own layout mirrors. A Markdown reply mirrors too: Jaren's
 Markdown stylesheet sets logical sides only, so a right-to-left reply indents
 its lists, rules its quotes and starts its table cells on the right (checked in
 Chromium and Firefox); diagram source stays left to right, as code. A column the
-Markdown aligns itself (`:---`, `---:`) keeps the physical side Jaren's
-renderer writes for it.
+Markdown aligns itself (`:---`, `---:`) aligns to the reply's reading start and
+end: the assistant maps the `left` and `right` Jaren's renderer writes to
+`start` and `end` (`logicalAlignment`).
 
 The accessible names Jaren's Markdown renderer writes into a reply (the
 footnotes heading, page breaks, heading permalinks and footnote

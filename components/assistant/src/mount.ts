@@ -52,9 +52,26 @@ export function replyMarkdown(id: string, messages: AssistantMessages) {
   const labels = Object.fromEntries(Object.entries(MD_LABELS).map(([name, key]) => [name, messages[key]]));
   const md = createMdComponent({ plugins: [highlightPlugin(), mermaidPlugin({ theme: 'host' })], headingIds: true, headingAnchors: true, footnotesLabel: messages['md/footnotes'](), labels });
   return {
-    render: (source: string) => md.view(source, { slugPrefix: `user-content-${id}-` }),
+    render: (source: string) => logicalAlignment(md.view(source, { slugPrefix: `user-content-${id}-` })),
     hydrate: (node: any) => { if (node?.querySelectorAll) md.hydrate(node); },
   };
+}
+
+/**
+ * A table column the Markdown aligns itself (`:---`, `---:`) follows the
+ * reply's direction: Jaren's renderer writes `text-align:left|right`, which
+ * stays on that physical side in a right-to-left reply; the reading start and
+ * end are what the alignment marks mean. @param vnode @returns the same tree
+ */
+export function logicalAlignment(vnode: any): any {
+  if (!Array.isArray(vnode)) return vnode;
+  if (typeof vnode[0] === 'string' && vnode[1] && typeof vnode[1] === 'object' && !Array.isArray(vnode[1])) {
+    const [tag, props, ...children] = vnode;
+    const style = (tag === 'th' || tag === 'td') && typeof props.style === 'string'
+      ? props.style.replace(/text-align:\s*left/, 'text-align:start').replace(/text-align:\s*right/, 'text-align:end') : props.style;
+    return [tag, style === props.style ? props : { ...props, style }, ...children.map(logicalAlignment)];
+  }
+  return vnode.map(logicalAlignment);
 }
 
 /** A Markdown fragment belongs to this assistant, not to its host's hash router. @param node @returns the detach */
