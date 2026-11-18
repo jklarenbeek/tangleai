@@ -36,7 +36,27 @@ describe('the published authoring run', () => {
       const task = tasks.find((t: any) => t.id === row.task);
       assert.equal((await checkAuthoredApp(row.doc, task.probes)).ok, row.works, `${row.task} trial ${row.trial}`);
     }
-    const doc = readFileSync(new URL('../../docs/AUTHORING_BENCHMARK.md', import.meta.url), 'utf8');
+    const doc = readFileSync(new URL('../../docs/AUTHORING_BENCHMARK.md', import.meta.url), 'utf8').replace(/\s+/g, ' ');
     assert.ok(doc.includes(`${report.summary.works} of ${report.summary.runs}`), 'the document states the published rate');
   });
+});
+
+describe('the published conversation runs', () => {
+  for (const lang of ['en', 'nl']) {
+    it(`${lang}: adds up, and every document that reached the inbox gets the verdict it was given`, async () => {
+      const report = read(`benchmark/results/authoring-conversation-${lang}.json`);
+      assert.equal(report.generated.mode, 'conversation');
+      assert.equal(report.generated.lang, lang);
+      assert.equal(report.summary.runs, report.rows.length);
+      assert.equal(report.summary.works, report.rows.filter((r: any) => r.works).length);
+      assert.equal(report.summary.suggested, report.rows.filter((r: any) => r.suggested).length);
+      assert.equal(report.summary.calls, report.rows.reduce((n: number, r: any) => n + r.calls, 0));
+      for (const row of report.rows) {
+        assert.ok(row.tools.includes('apps.crib') && row.tools.includes('apps.suggest'), `${row.task} trial ${row.trial} read the crib and suggested`);
+        if (row.doc) assert.equal((await checkAuthoredApp(row.doc, tasks.find((t: any) => t.id === row.task).probes)).ok, row.works, `${row.task} trial ${row.trial}`);
+      }
+      const doc = readFileSync(new URL('../../docs/AUTHORING_BENCHMARK.md', import.meta.url), 'utf8').replace(/\s+/g, ' ');
+      assert.ok(doc.includes(`${report.summary.works} of ${report.summary.runs} in ${lang === 'en' ? 'English' : 'Dutch'}`), 'the document states the rate');
+    });
+  }
 });

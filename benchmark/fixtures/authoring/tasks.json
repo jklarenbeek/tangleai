@@ -1,105 +1,435 @@
 {
   "$comment": "Plain requests for the authoring instrument. The author sees only `request`; it chooses its own state, actions and layout. Each probe uses the application as a person would (a field or button found by its words) and checks text any correct application shows. A probe is the judge; the author's own checks never are.",
-  "version": 2,
-  "$history": ["2: the shopping request says the list starts empty; version 1 left it open, and three applications that began with sample items were judged wrong for counting them (run of 2026-11-18, 21 of 24)."],
+  "version": 3,
+  "$history": [
+    "2: the shopping request says the list starts empty; version 1 left it open, and three applications that began with sample items were judged wrong for counting them (run of 2026-11-18, 21 of 24).",
+    "3: each task has a Dutch request (`requests.nl`) and its probes also find Dutch labels; the English requests and every expected text are unchanged."
+  ],
   "tasks": [
     {
       "id": "bill",
       "request": "Make me a bill splitter. I type the bill amount, a tip percentage and how many people are paying; it shows the tip, the total and what each person pays.",
       "probes": [
-        { "steps": [
-          { "find": { "role": "field", "name": "amount|bill" }, "type": "100" },
-          { "find": { "role": "field", "name": "tip" }, "type": "10" },
-          { "find": { "role": "field", "name": "people|persons|person|split|guests" }, "type": "4" }
-        ], "expect": { "text": ["110", "27.5"] } }
-      ]
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "amount|bill|bedrag|rekening"
+              },
+              "type": "100"
+            },
+            {
+              "find": {
+                "role": "field",
+                "name": "tip|fooi"
+              },
+              "type": "10"
+            },
+            {
+              "find": {
+                "role": "field",
+                "name": "people|persons|person|split|guests|mensen|personen|aantal"
+              },
+              "type": "4"
+            }
+          ],
+          "expect": {
+            "text": [
+              "110",
+              "27.5"
+            ]
+          }
+        }
+      ],
+      "requests": {
+        "nl": "Maak een rekeningsplitser voor me. Ik typ het bedrag van de rekening, een fooipercentage en met hoeveel mensen we betalen; hij toont de fooi, het totaal en wat ieder betaalt."
+      }
     },
     {
       "id": "templog",
       "request": "A temperature log: I type a reading and add it to the log. Show every reading, and the average (one decimal), the lowest and the highest.",
       "probes": [
-        { "steps": [
-          { "find": { "role": "field", "name": "reading|temperature|temp|°" }, "type": "12" },
-          { "find": { "role": "button", "name": "add|log|save|record" } },
-          { "find": { "role": "field", "name": "reading|temperature|temp|°" }, "type": "18" },
-          { "find": { "role": "button", "name": "add|log|save|record" } },
-          { "find": { "role": "field", "name": "reading|temperature|temp|°" }, "type": "15.5" },
-          { "find": { "role": "button", "name": "add|log|save|record" } }
-        ], "expect": { "text": ["15.2", "12", "18"] } }
-      ]
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "reading|temperature|temp|°|meting|temperatuur"
+              },
+              "type": "12"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "add|log|save|record|toevoeg|voeg|opslaan|bewaar"
+              }
+            },
+            {
+              "find": {
+                "role": "field",
+                "name": "reading|temperature|temp|°|meting|temperatuur"
+              },
+              "type": "18"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "add|log|save|record|toevoeg|voeg|opslaan|bewaar"
+              }
+            },
+            {
+              "find": {
+                "role": "field",
+                "name": "reading|temperature|temp|°|meting|temperatuur"
+              },
+              "type": "15.5"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "add|log|save|record|toevoeg|voeg|opslaan|bewaar"
+              }
+            }
+          ],
+          "expect": {
+            "text": [
+              "15.2",
+              "12",
+              "18"
+            ]
+          }
+        }
+      ],
+      "requests": {
+        "nl": "Een temperatuurlogboek: ik typ een meting en voeg die toe aan het logboek. Toon elke meting, en het gemiddelde (één decimaal), de laagste en de hoogste."
+      }
     },
     {
       "id": "contacts",
       "request": "A contact list with these five people: Ada (ada@example.org, Amsterdam), Bram (bram@example.org, Utrecht), Chen (chen@example.org, Amsterdam), Dana (dana@example.org, Rotterdam) and Emre (emre@example.org, Utrecht). A search box shows only the contacts whose name or city contains what I type, ignoring upper and lower case.",
       "probes": [
-        { "steps": [{ "find": { "role": "field", "name": "search|filter|find" }, "type": "amster" }],
-          "expect": { "text": ["Ada", "Chen"], "absent": ["Bram", "Dana", "Emre"] } },
-        { "steps": [{ "find": { "role": "field", "name": "search|filter|find" }, "type": "UTRECHT" }],
-          "expect": { "text": ["Bram", "Emre"], "absent": ["Ada", "Chen", "Dana"] } }
-      ]
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "search|filter|find|zoek"
+              },
+              "type": "amster"
+            }
+          ],
+          "expect": {
+            "text": [
+              "Ada",
+              "Chen"
+            ],
+            "absent": [
+              "Bram",
+              "Dana",
+              "Emre"
+            ]
+          }
+        },
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "search|filter|find|zoek"
+              },
+              "type": "UTRECHT"
+            }
+          ],
+          "expect": {
+            "text": [
+              "Bram",
+              "Emre"
+            ],
+            "absent": [
+              "Ada",
+              "Chen",
+              "Dana"
+            ]
+          }
+        }
+      ],
+      "requests": {
+        "nl": "Een contactenlijst met deze vijf mensen: Ada (ada@example.org, Amsterdam), Bram (bram@example.org, Utrecht), Chen (chen@example.org, Amsterdam), Dana (dana@example.org, Rotterdam) en Emre (emre@example.org, Utrecht). Een zoekveld toont alleen de contacten waarvan de naam of de stad bevat wat ik typ, ongeacht hoofdletters."
+      }
     },
     {
       "id": "counter",
       "request": "A counter with a plus and a minus button, a field for the step size, and a reset button that sets it back to zero.",
       "probes": [
-        { "steps": [
-          { "find": { "role": "field", "name": "step" }, "type": "7" },
-          { "find": { "role": "button", "name": "^\\s*\\+|plus|increase|increment|add|up" } },
-          { "find": { "role": "button", "name": "^\\s*\\+|plus|increase|increment|add|up" } }
-        ], "expect": { "text": ["14"] } },
-        { "steps": [
-          { "find": { "role": "field", "name": "step" }, "type": "7" },
-          { "find": { "role": "button", "name": "^\\s*\\+|plus|increase|increment|add|up" } },
-          { "find": { "role": "button", "name": "^\\s*\\+|plus|increase|increment|add|up" } },
-          { "find": { "role": "button", "name": "reset|clear|zero" } }
-        ], "expect": { "absent": ["14"] } }
-      ]
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "step|stap"
+              },
+              "type": "7"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "^\\s*\\+|plus|increase|increment|add|up|verhoog|meer"
+              }
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "^\\s*\\+|plus|increase|increment|add|up|verhoog|meer"
+              }
+            }
+          ],
+          "expect": {
+            "text": [
+              "14"
+            ]
+          }
+        },
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "step|stap"
+              },
+              "type": "7"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "^\\s*\\+|plus|increase|increment|add|up|verhoog|meer"
+              }
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "^\\s*\\+|plus|increase|increment|add|up|verhoog|meer"
+              }
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "reset|clear|zero|wis|nul"
+              }
+            }
+          ],
+          "expect": {
+            "absent": [
+              "14"
+            ]
+          }
+        }
+      ],
+      "requests": {
+        "nl": "Een teller met een plus- en een minknop, een veld voor de stapgrootte en een resetknop die hem terugzet op nul."
+      }
     },
     {
       "id": "distance",
       "request": "Convert kilometres to miles: I type a distance in kilometres and see it in miles with two decimals.",
       "probes": [
-        { "steps": [{ "find": { "role": "field", "name": "km|kilomet|distance" }, "type": "10" }], "expect": { "text": ["6.21"] } },
-        { "steps": [{ "find": { "role": "field", "name": "km|kilomet|distance" }, "type": "42.195" }], "expect": { "text": ["26.22"] } }
-      ]
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "km|kilomet|distance|afstand"
+              },
+              "type": "10"
+            }
+          ],
+          "expect": {
+            "text": [
+              "6.21"
+            ]
+          }
+        },
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "km|kilomet|distance|afstand"
+              },
+              "type": "42.195"
+            }
+          ],
+          "expect": {
+            "text": [
+              "26.22"
+            ]
+          }
+        }
+      ],
+      "requests": {
+        "nl": "Reken kilometers om naar mijlen: ik typ een afstand in kilometers en zie die in mijlen met twee decimalen."
+      }
     },
     {
       "id": "shopping",
       "request": "A shopping list that starts empty: I type an item and add it, and I can tick items off. It shows how many items are still to buy.",
       "probes": [
-        { "steps": [
-          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Milk" },
-          { "find": { "role": "button", "name": "add" } },
-          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Bread" },
-          { "find": { "role": "button", "name": "add" } }
-        ], "expect": { "text": ["Milk", "Bread", "2"] } },
-        { "steps": [
-          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Milk" },
-          { "find": { "role": "button", "name": "add" } },
-          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Bread" },
-          { "find": { "role": "button", "name": "add" } },
-          { "find": { "role": "field", "name": "item|add|new|product|what" }, "type": "Eggs" },
-          { "find": { "role": "button", "name": "add" } },
-          { "find": { "role": "checkbox", "nth": 0 } }
-        ], "expect": { "text": ["Milk", "Bread", "Eggs", "2"] } }
-      ]
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "item|add|new|product|what|artikel|nieuw|toevoeg"
+              },
+              "type": "Milk"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "add|toevoeg|voeg"
+              }
+            },
+            {
+              "find": {
+                "role": "field",
+                "name": "item|add|new|product|what|artikel|nieuw|toevoeg"
+              },
+              "type": "Bread"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "add|toevoeg|voeg"
+              }
+            }
+          ],
+          "expect": {
+            "text": [
+              "Milk",
+              "Bread",
+              "2"
+            ]
+          }
+        },
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "item|add|new|product|what|artikel|nieuw|toevoeg"
+              },
+              "type": "Milk"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "add|toevoeg|voeg"
+              }
+            },
+            {
+              "find": {
+                "role": "field",
+                "name": "item|add|new|product|what|artikel|nieuw|toevoeg"
+              },
+              "type": "Bread"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "add|toevoeg|voeg"
+              }
+            },
+            {
+              "find": {
+                "role": "field",
+                "name": "item|add|new|product|what|artikel|nieuw|toevoeg"
+              },
+              "type": "Eggs"
+            },
+            {
+              "find": {
+                "role": "button",
+                "name": "add|toevoeg|voeg"
+              }
+            },
+            {
+              "find": {
+                "role": "checkbox",
+                "nth": 0
+              }
+            }
+          ],
+          "expect": {
+            "text": [
+              "Milk",
+              "Bread",
+              "Eggs",
+              "2"
+            ]
+          }
+        }
+      ],
+      "requests": {
+        "nl": "Een boodschappenlijst die leeg begint: ik typ een artikel en voeg het toe, en ik kan artikelen afvinken. Hij toont hoeveel artikelen ik nog moet kopen."
+      }
     },
     {
       "id": "bmi",
       "request": "A body mass index calculator: I type my weight in kilograms and my height in centimetres, and it shows my BMI with one decimal.",
       "probes": [
-        { "steps": [
-          { "find": { "role": "field", "name": "weight|kg|kilo" }, "type": "70" },
-          { "find": { "role": "field", "name": "height|cm|centi" }, "type": "175" }
-        ], "expect": { "text": ["22.9"] } }
-      ]
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "weight|kg|kilo|gewicht"
+              },
+              "type": "70"
+            },
+            {
+              "find": {
+                "role": "field",
+                "name": "height|cm|centi|lengte"
+              },
+              "type": "175"
+            }
+          ],
+          "expect": {
+            "text": [
+              "22.9"
+            ]
+          }
+        }
+      ],
+      "requests": {
+        "nl": "Een BMI-calculator: ik typ mijn gewicht in kilogram en mijn lengte in centimeters, en hij toont mijn BMI met één decimaal."
+      }
     },
     {
       "id": "words",
       "request": "A word counter: a text box where I write, with the number of words and the number of characters shown below it.",
       "probes": [
-        { "steps": [{ "find": { "role": "field", "name": "text|write|type|words|content|here" }, "type": "one two three" }], "expect": { "text": ["3", "13"] } }
-      ]
+        {
+          "steps": [
+            {
+              "find": {
+                "role": "field",
+                "name": "text|write|type|words|content|here|tekst|schrijf"
+              },
+              "type": "one two three"
+            }
+          ],
+          "expect": {
+            "text": [
+              "3",
+              "13"
+            ]
+          }
+        }
+      ],
+      "requests": {
+        "nl": "Een woordenteller: een tekstvak waarin ik schrijf, met daaronder het aantal woorden en het aantal tekens."
+      }
     }
   ]
 }

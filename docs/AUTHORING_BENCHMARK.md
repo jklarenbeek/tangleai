@@ -1,8 +1,11 @@
 # Authoring — a plain request, an application that works
 
-**22 of 24 plain requests became an application that works when a person
-uses it (91.7%), with `anthropic/claude-haiku-5.5` through OpenRouter, three
-trials of eight tasks, 28 requests in all, on 2026-11-18.**
+**Through the desktop's assistant, every one of 32 plain requests ended with an
+application in the person's inbox that works when they use it: 16 of 16 in
+English and 16 of 16 in Dutch (150 requests). The author alone, against the
+desktop's gate, made 22 of 24 work (91.7%, 28 requests).** All runs used
+`anthropic/claude-haiku-5.5` through OpenRouter, on 2026-11-18, over the same
+eight tasks.
 
 The question is the one the desktop's assistant faces: a person asks in plain
 words ("a bill splitter", "a word counter") and the assistant writes the
@@ -35,7 +38,39 @@ spends, planned up front against `TANGLE_AI_MAX_CALLS` (at most 72 requests
 for this table). The report is `benchmark/results/authoring-live.json`; tests
 validate it and never regenerate it.
 
-## The table
+## Through the assistant's conversation
+
+`--conversation` measures the assistant a person talks to: a headless desktop
+kernel, the Pages assistant's own system prompt and the kernel's tools under
+the same grants as the Pages desktop (`tangle_os_apps` among them), and one
+turn with the person's request. The assistant reads the crib, checks its
+drafts with its own probes and suggests the finished application; whatever
+reached the inbox is judged with the task's hidden probes, exactly as the
+author's documents are. A turn may take up to 8 tool rounds.
+
+| task | English | Dutch |
+|---|---|---|
+| bill | 2 of 2 | 2 of 2 |
+| templog | 2 of 2 | 2 of 2 |
+| contacts | 2 of 2 | 2 of 2 |
+| counter | 2 of 2 | 2 of 2 |
+| distance | 2 of 2 | 2 of 2 |
+| shopping | 2 of 2 | 2 of 2 |
+| bmi | 2 of 2 | 2 of 2 |
+| words | 2 of 2 | 2 of 2 |
+
+Every conversation read the crib, checked at least once (ten checked twice)
+and suggested once, in 3 to 7 requests; the Dutch applications are Dutch on
+screen ("Rekeningsplitser", "Gemiddelde: 15.2", "Woorden: 3 Tekens: 13") and
+were found by their Dutch labels. The assistant's own check is what the bare
+author lacks: it sees the screen after its probes before it suggests. Reports:
+`benchmark/results/authoring-conversation-en.json` and `-nl.json` (task file
+version 3). Token counts are not recorded for these runs: the agent's replies
+stream, and the counting reads only whole JSON bodies.
+
+## The author alone
+
+### The table
 
 | task | the request, in short | works |
 |---|---|---|
@@ -55,7 +90,7 @@ three, so the average was wrong). Every document of the 24 passed the gate.
 
 ## What changed on the way
 
-- The first run (task file version 1) had 21 of 24: three shopping lists
+- The first author run (task file version 1) had 21 of 24: three shopping lists
   began with sample items, and counting them was judged wrong. The request
   now says the list starts empty (version 2); the judge did not change.
 - Building the instrument fixed the crib it measures: it offered `$ceil`,
@@ -68,7 +103,8 @@ three, so the average was wrong). Every document of the 24 passed the gate.
 
 ## What this does not show
 
-The assistant's own conversation around the document is not measured: the
-desktop's tools for it (checking a draft, proposing the application in the
-inbox for the person to add) build on this gate and crib, and a person's
-request in another language is not among the tasks.
+Eight tasks are small applications; a request that needs several screens,
+data from another application or a file is not among them. One turn is
+measured: a person who corrects the result in a second turn is not. Dutch is
+the one other language measured, and the probes find Dutch labels only for
+these tasks' words.

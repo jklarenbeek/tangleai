@@ -396,21 +396,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   without opening another; a generated formula compiling and evaluating
   against sample rows, and a proposed app version refused on a stale revision.
 
-- [ ] **Applications authored on the desktop, measured in conversation.**
-  The assistant writes an application for the person on the desktop:
-  `@tangleai/os/authoring` gives it a crib of Jaren's own operators, a gate and
-  probes, the desktop's `tangle_os_apps` contract lets it check drafts and
-  suggest the finished one, and the person adds it from the inbox as a
-  document module that asks for nothing (see the OS
-  [README](../components/os/README.md)). [AUTHORING_BENCHMARK.md](AUTHORING_BENCHMARK.md)
-  measures the author against the gate: 22 of 24 plain requests became an
-  application that works. *Wanted:* the same rate measured through the
-  assistant's own conversation (its tools, its turns, its probes), and for
-  requests in the eleven other languages. *Constraint:* the live tier's
-  ceiling per run; probes run outside the desktop's origin. *Closes on:* the
-  conversation's rate published beside the author's, in English and at least
-  one other language.
-
 ## Reuse of the suite
 
 
