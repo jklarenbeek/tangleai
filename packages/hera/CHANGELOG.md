@@ -1,5 +1,21 @@
 # @tangleai/hera
 
+## 0.62.2
+
+### Patch Changes
+
+- 0548b16: A settle records a cleanup receipt, so a terminal experiment no longer stands for a cleaned workspace by itself. `settleExperiment` writes a `cleanup-intent` key before its swap (the revision and status the swap produces, the workspace's instance token, whether the branch goes) and `cleanup-done` once the workspace is gone; `reconcileCleanups({ store, host })` finishes every intent without completion, only while the experiment sits where the swap left it and only for the workspace instance the intent names, finishing each git step only if it is still needed. A workspace recreated at the same path is refused and left alone, and a completed cleanup is never reapplied. The worktree host gains `instance`, `pathOf` and an idempotent `finish`; `create` writes the instance token into the worktree's git administration directory, outside the tracked tree.
+- Updated dependencies [0548b16]
+  - @tangleai/models@0.62.2
+  - @tangleai/context@0.62.2
+  - @tangleai/agents@0.62.2
+  - @tangleai/config@0.62.2
+  - @tangleai/mas@0.62.2
+  - @tangleai/documents@0.62.2
+  - @tangleai/memory@0.62.2
+  - @tangleai/outcomes@0.62.2
+  - @tangleai/gmpl@0.62.2
+
 ## 0.62.1
 
 ### Patch Changes
