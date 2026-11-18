@@ -747,3 +747,13 @@ cover the three hosts, the contract bus, mail, assistant tools, the document
 frame's isolation (origin `null`, storage refused, no access to the desktop's
 DOM), raising a window by a press inside its frame, and dragging a window
 across a frame.
+
+## Working on the desktop
+
+`node scripts/os-loop.ts` is the loop for a change to this package or the Pages
+desktop: the typecheck, `test/os` and `test/pages`, the Pages build and every
+`.e2e/migration/os-*.spec.mjs` in Chromium and Firefox on a private port,
+about four minutes (`--unit` stops after the unit tests, under a minute;
+`--browser chromium` and `--grep <title>` narrow the browser run). No benchmark
+artifact hashes `components/os`, `apps/pages` or their tests, so an OS change
+never needs a regeneration; the release gate runs once for a batch.
