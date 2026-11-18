@@ -1,0 +1,447 @@
+{
+  "schemaVersion": 1,
+  "version": "0.61.1",
+  "baseVersion": "0.61.0",
+  "baseCommit": "dccb1f2ca8c06394dd18e3037f99a8985c41ad67",
+  "preparationCommit": "0542a6ba3aa2d40d3133a12c78184889e8af27c3",
+  "initial": false,
+  "inputHash": "6018178418c3f951df2f5a662e7cab7d1022447f42ad88f996fb29147bf5f352",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "A contradiction is resolved as one operation: `MemoryStore` gains an optional atomic `mutate({ put, delete })` (the in-memory store has it), which `resolveContradictions` uses to write the superseded loser and its synthesized resolution together; on a store without it the resolution is written first and taken back if the loser cannot be written. A loser already superseded, by the same winner in a replayed pass or by another in a concurrent one, is counted as an application skip and never written again, so a replay no longer stores a second resolution.",
+      "id": "atomic-contradiction"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "MAS head activation is fenced by revision as well as version: `activateWorkflow` and `activateTemplate` take an optional `expectedRevision`, an applied activation and `getActiveWorkflow` return the head's `revision`, and a token read before the head moved away and back to the same version (A→B→A) is refused (`TMAS2001` at `/revision`). Without the revision the version alone decides, as before.",
+      "id": "mas-head-revision"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/linq",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/search",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trace2skill",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/hera",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/forecast",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/trading",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/research",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/experiential",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "A ledger recall by meaning through a storage adapter's `rank` counts a record the adapter ranked but that was deleted before the ledger read it: the result carries `missing` (when there is one) and counts it among the `skipped`, instead of dropping it silently.",
+      "id": "missing-ranked"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.61.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.61.1"
+    }
+  ]
+}

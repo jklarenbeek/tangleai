@@ -1,5 +1,17 @@
 # @tangleai/gmpl
 
+## 0.61.1
+
+### Patch Changes
+
+- 0542a6b: A contradiction is resolved as one operation: `MemoryStore` gains an optional atomic `mutate({ put, delete })` (the in-memory store has it), which `resolveContradictions` uses to write the superseded loser and its synthesized resolution together; on a store without it the resolution is written first and taken back if the loser cannot be written. A loser already superseded, by the same winner in a replayed pass or by another in a concurrent one, is counted as an application skip and never written again, so a replay no longer stores a second resolution.
+- a9a39ff: MAS head activation is fenced by revision as well as version: `activateWorkflow` and `activateTemplate` take an optional `expectedRevision`, an applied activation and `getActiveWorkflow` return the head's `revision`, and a token read before the head moved away and back to the same version (A→B→A) is refused (`TMAS2001` at `/revision`). Without the revision the version alone decides, as before.
+- f92314c: A ledger recall by meaning through a storage adapter's `rank` counts a record the adapter ranked but that was deleted before the ledger read it: the result carries `missing` (when there is one) and counts it among the `skipped`, instead of dropping it silently.
+- Updated dependencies [0542a6b]
+- Updated dependencies [a9a39ff]
+- Updated dependencies [f92314c]
+  - @tangleai/mas@0.61.1
+
 ## 0.61.0
 
 ### Minor Changes
