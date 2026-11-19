@@ -96,6 +96,6 @@ export async function forecastEditingProbes(fixture: ForecastFixtures, measured:
   const outcome = await refiner.commitGuidance([{ component: 'evidenceHandling',text: captured.harness.document.evidenceHandling,sources: ['note:' + captured.note.id] }]);
   add('no-op-revision-writes-nothing',outcome.ok && equalsJson(outcome.value,{ status: 'deferred',writes: 0 }) && writes === 0,'An unchanged guarded proposal is counted as deferred and invokes no harness publication. A host can still retain the revision and its spent receipt.');
   const recovery = await measureForecastRevisionResume();
-  add('revision-resume-identity',recovery.stages.every(s => s.stops === 2 && s.extraCalls === 0 && s.artifactDigest === recovery.artifactDigest),`${recovery.stages.length} atomic revision publication observations, four stops and resumes; ${recovery.logicalCalls} logical calls, zero extra calls, ${recovery.physicalRequests} physical requests. Artifact digest ${recovery.artifactDigest}; executable ${recovery.executableRevision}.`);
+  add('revision-resume-identity',recovery.stages.every(s => s.stops === 2 && s.extraCalls === 0 && s.artifactDigest === recovery.artifactDigest),`${recovery.stages.length} atomic revision publication observations, four stops and resumes; ${recovery.logicalCalls} logical calls, zero extra calls, ${recovery.physicalRequests} physical requests. Artifact digest ${recovery.artifactDigest}.`);
   return probes;
 }

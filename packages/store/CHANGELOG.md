@@ -1,5 +1,27 @@
 # @tangleai/store
 
+## 0.62.4
+
+### Patch Changes
+
+- a285816: A benchmark report records the Tangle release it was measured with, and no longer has to equal the current one: the trading and trace2skill rebuilds take the committed report's suite, and their checks require only that the Jaren foundation is this one; CGT compares its runtime without the release. Every source-bound benchmark artifact is regenerated once under the identity that leaves Tangle's version strings out, so a version-only release now regenerates none.
+- Updated dependencies [a285816]
+  - @tangleai/core@0.62.4
+  - @tangleai/config@0.62.4
+  - @tangleai/mas@0.62.4
+  - @tangleai/documents@0.62.4
+  - @tangleai/memory@0.62.4
+  - @tangleai/outcomes@0.62.4
+  - @tangleai/trace2skill@0.62.4
+  - @tangleai/evolve@0.62.4
+  - @tangleai/hera@0.62.4
+  - @tangleai/forecast@0.62.4
+  - @tangleai/grounding@0.62.4
+  - @tangleai/lightrag@0.62.4
+  - @tangleai/trading@0.62.4
+  - @tangleai/research@0.62.4
+  - @tangleai/experiential@0.62.4
+
 ## 0.62.3
 
 ### Patch Changes

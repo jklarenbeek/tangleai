@@ -43,6 +43,11 @@ export async function researchContext(root = process.cwd()): Promise<ResearchCon
   suite: await installedSuitePackages(root, ['core', 'models', 'documents', 'search', 'context', 'config', 'research', 'gmpl', 'mas', 'store', 'agents', 'evolve', 'trace2skill', 'outcomes']) };
 }
 const same = (left: unknown, right: unknown): boolean => canonicalizeJson(left) === canonicalizeJson(right);
+/** The suite a report was measured with matches the installed one: the same packages, and the same Jaren
+ * foundation. Tangle's own versions are the release it was measured with, not a requirement on this one. */
+const sameFoundation = (measured: ResearchReport['suite'], installed: ResearchReport['suite']): boolean =>
+  same(measured.packages.map(pkg => pkg.name), installed.packages.map(pkg => pkg.name))
+  && same(measured.packages.filter(pkg => pkg.name.startsWith('@jarenjs/')), installed.packages.filter(pkg => pkg.name.startsWith('@jarenjs/')));
 const ratio = (values: readonly boolean[]): ResearchScore => researchScore(values.filter(Boolean).length, values.length);
 export async function scoreResearchBundle(loaded: LoadedResearchFixture, topic: ResearchFixtureTopic, bundle: ResearchBundle,
   probes: ResearchReport['bundles']): Promise<ResearchTopicResult> {
@@ -323,9 +328,9 @@ export async function validateResearchReport(value: unknown, context?: ResearchC
   if (!validateResearchReportShape(value).valid) return false;
   const report = value as ResearchReport, current = context ?? await researchContext();
   const { reportId, ...payload } = report;
-  if (reportId !== await canonicalSha256(payload) || !same(report.source.files, current.source.files) || !same(report.suite, current.suite)
+  if (reportId !== await canonicalSha256(payload) || !same(report.source.files, current.source.files) || !sameFoundation(report.suite, current.suite)
     || report.source.sha256 !== await canonicalSha256({ head: report.source.head, files: report.source.files })) return false;
-  const rebuilt = await buildReport({ context: { ...current, source: report.source },
+  const rebuilt = await buildReport({ context: { ...current, source: report.source, suite: report.suite },
     rows: report.rows.filter(row => row.state !== 'not-run').map(row => row.id) });
   return same(rebuilt, report);
 }

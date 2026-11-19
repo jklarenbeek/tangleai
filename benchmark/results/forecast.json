@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "a285816f300448a2b5af8e89fb879893b69cf2ce",
+    "head": "b55049ad24fe652c9b168fd6e9e1582c1b24ae64",
     "clean": false,
     "files": [
       {
@@ -203,7 +203,7 @@
       },
       {
         "path": "benchmark/lib/forecast-evolving.ts",
-        "sha256": "72b8574bba42dbc43660b11f8e50cc865ce8c75323bd1971fca542d333344dc3"
+        "sha256": "e888065ae15b5eb5fd884b85830826b4eaafd875d038a6c1cb311c14d5141141"
       },
       {
         "path": "benchmark/lib/forecast-fixtures.ts",
@@ -247,7 +247,7 @@
       },
       {
         "path": "benchmark/lib/forecast-report.ts",
-        "sha256": "795fefda69a481b48f7bbb17abf30caab8aa29159f8e3d32e6eeb87b6ecdba52"
+        "sha256": "6a69edd09c148104784b1b164c7612aa3aa614b5f52d2988309376dfeef3b5b7"
       },
       {
         "path": "benchmark/lib/forecast-resume.ts",
@@ -899,7 +899,7 @@
       },
       {
         "path": "benchmark/lib/research.ts",
-        "sha256": "c833ee686534e2c41c60dfda6da2729591db1d3a27aa3829fc3477fb6d75be1f"
+        "sha256": "1429cc98d2a9aa9acb51f469bc9877da6f99fd654e4a83684f75c1370f4fec15"
       },
       {
         "path": "benchmark/lib/research.types.ts",
@@ -1926,7 +1926,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "28655c78f8f682657963b87b65b305f20e28ba2d707fa9bae0ab7b8c90ff2985"
+    "sha256": "ba030181ea0a83979873fcfac6b0bce2642405562d704134b7e0f0161ba7a1b7"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44257,7 +44257,7 @@
         {
           "id": "revision-resume-identity",
           "holds": true,
-          "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable d8ad3fa915a82a57d82808b99f2235a0434b56f9f44b0c819d6ce58500ea1438."
+          "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc."
         },
         {
           "id": "adapter-score-parity",
@@ -45253,7 +45253,7 @@
     {
       "id": "resume-identity",
       "holds": true,
-      "detail": "27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable d8ad3fa915a82a57d82808b99f2235a0434b56f9f44b0c819d6ce58500ea1438. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3."
+      "detail": "27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3."
     },
     {
       "id": "duplicate-delivery",
@@ -45298,7 +45298,7 @@
     {
       "id": "revision-resume-identity",
       "holds": true,
-      "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable d8ad3fa915a82a57d82808b99f2235a0434b56f9f44b0c819d6ce58500ea1438."
+      "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc."
     },
     {
       "id": "adapter-score-parity",
@@ -45391,5 +45391,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "aade8899c7cf7b9d38d97223744a15de7a6a129d4dc7e6e7a195963b3f77163a"
+  "reportId": "06a0f527234213da892197115060a214229fa3910cfb366fdc772e16f89258ff"
 }

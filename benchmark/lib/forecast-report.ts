@@ -84,7 +84,7 @@ async function executionProbes(fixture:ForecastFixtures):Promise<Probe[]>{
 }
 async function orchestrationProbes():Promise<Probe[]>{
   const r=await measureForecastResume(),stops=r.stages.reduce((n,s)=>n+s.stops,0);
-  return [probe('resume-identity',r.stages.every(s=>s.extraCalls===0&&s.stops===s.resumed&&s.artifactDigest===r.artifactDigest),`${stops} stops and resumes across ${r.stages.length} committed stages; ${r.logicalCalls} calls, zero extra calls, ${r.physicalRequests} physical requests. Artifact digest ${r.artifactDigest}; executable ${r.executableRevision}. Stages: ${r.stages.map(s=>s.stage+'='+s.stops).join(', ')}.`),
+  return [probe('resume-identity',r.stages.every(s=>s.extraCalls===0&&s.stops===s.resumed&&s.artifactDigest===r.artifactDigest),`${stops} stops and resumes across ${r.stages.length} committed stages; ${r.logicalCalls} calls, zero extra calls, ${r.physicalRequests} physical requests. Artifact digest ${r.artifactDigest}. Stages: ${r.stages.map(s=>s.stage+'='+s.stops).join(', ')}.`),
     probe('duplicate-delivery',r.duplicateDeliveries===3,`${r.duplicateDeliveries} ${r.duplicateCause} deliveries create no extra forecast artifact or spend; second ticks start zero runs.`),
     probe('ordinal-discipline',r.ordinalRefusals===1,'One out-of-order ordinal is refused as TFCT1004 before any model purchase.'),
     probe('revision-skipped-at-ordinal-1',r.firstRevisionSkipped,'Checkpoint one takes revision-skip; later checkpoints return a counted not-implemented revision value.')];

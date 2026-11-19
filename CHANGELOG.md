@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.62.4
+
+A benchmark report records the Tangle release it was measured with, and no longer has to equal the current one: the trading and trace2skill rebuilds take the committed report's suite, and their checks require only that the Jaren foundation is this one; CGT compares its runtime without the release. Every source-bound benchmark artifact is regenerated once under the identity that leaves Tangle's version strings out, so a version-only release now regenerates none.
+
 ## 0.62.3
 
 Source receipts hash a package manifest and the lockfile without Tangle's own version strings (each package's `version` and every `@tangleai/*` pin), so a version-only release no longer re-identifies the benchmark artifacts that list them; every other byte, Jaren's pins included, still counts.

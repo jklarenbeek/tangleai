@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/documents",
-  "version": "0.62.3",
+  "version": "0.62.4",
   "description": "Safe, versioned document ingestion and retrieval for TangleAI",
   "license": "MIT",
   "type": "module",
@@ -26,11 +26,11 @@
   "sideEffects": false,
   "dependencies": {
     "@jarenjs/core": "0.220.0",
-    "@tangleai/core": "0.62.3",
+    "@tangleai/core": "0.62.4",
     "linkedom": "0.18.12",
     "unpdf": "1.6.2",
-    "@tangleai/models": "0.62.3",
-    "@tangleai/context": "0.62.3"
+    "@tangleai/models": "0.62.4",
+    "@tangleai/context": "0.62.4"
   },
   "private": false,
   "types": "./src/index.ts",

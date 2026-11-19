@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "a285816f300448a2b5af8e89fb879893b69cf2ce",
-      "sha256": "28655c78f8f682657963b87b65b305f20e28ba2d707fa9bae0ab7b8c90ff2985",
+      "head": "b55049ad24fe652c9b168fd6e9e1582c1b24ae64",
+      "sha256": "ba030181ea0a83979873fcfac6b0bce2642405562d704134b7e0f0161ba7a1b7",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -206,7 +206,7 @@
         },
         {
           "path": "benchmark/lib/forecast-evolving.ts",
-          "sha256": "72b8574bba42dbc43660b11f8e50cc865ce8c75323bd1971fca542d333344dc3"
+          "sha256": "e888065ae15b5eb5fd884b85830826b4eaafd875d038a6c1cb311c14d5141141"
         },
         {
           "path": "benchmark/lib/forecast-fixtures.ts",
@@ -250,7 +250,7 @@
         },
         {
           "path": "benchmark/lib/forecast-report.ts",
-          "sha256": "795fefda69a481b48f7bbb17abf30caab8aa29159f8e3d32e6eeb87b6ecdba52"
+          "sha256": "6a69edd09c148104784b1b164c7612aa3aa614b5f52d2988309376dfeef3b5b7"
         },
         {
           "path": "benchmark/lib/forecast-resume.ts",
@@ -902,7 +902,7 @@
         },
         {
           "path": "benchmark/lib/research.ts",
-          "sha256": "c833ee686534e2c41c60dfda6da2729591db1d3a27aa3829fc3477fb6d75be1f"
+          "sha256": "1429cc98d2a9aa9acb51f469bc9877da6f99fd654e4a83684f75c1370f4fec15"
         },
         {
           "path": "benchmark/lib/research.types.ts",
@@ -2165,7 +2165,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "03cd8fc057f7e5d70a2cb29bd22b752915260a3aa0b735c2ddbfc88885ff20ad",
+    "planId": "3a163f7cf235dc5f90a09fd2f521247bc59a07c64a4151b895ef47dade18cc73",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

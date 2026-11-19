@@ -10,7 +10,7 @@ it('the committed report and document reproduce with their original source ident
     const context = await researchContext();
     const prior: ResearchReport = JSON.parse(await readFile(REPORT_PATH, 'utf8'));
     assert.equal(await validateResearchReport(prior, context), true);
-    const rebuilt = await buildReport({ context: { ...context, source: prior.source } });
+    const rebuilt = await buildReport({ context: { ...context, source: prior.source, suite: prior.suite } });
     assert.equal(renderReport(rebuilt), await readFile(REPORT_PATH, 'utf8'));
     assert.equal(renderDocument(rebuilt), await readFile(DOCUMENT_PATH, 'utf8'));
   });
