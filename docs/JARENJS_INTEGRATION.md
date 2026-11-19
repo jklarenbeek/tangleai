@@ -42,8 +42,16 @@ can tick recurring schedules itself (`jobs.schedules`), a schedule can bound
 its lateness (`latenessMs`), and a linq chain takes the store's zone provider.
 Unit factors are held as exact definitions and numbers format without padded
 digits. No table, column, index or CHECK changes. Tangle declares no calendar
-members, runs no scheduled worker and keeps every store's DDL, so it adopts
-nothing beyond the new packages.
+members, runs no scheduled worker and keeps every store's DDL. What a person
+sees moves in two desktop applications without a Tangle change. The Calculator
+and Converter windows take the keyboard inside their key pad, read `200+10%` as
+220, and name their operator keys for assistive technology (Multiply, Equals,
+Sine; the faces still show the symbols). The Calendar's iCalendar import
+still takes PUBLISH and REQUEST files as events; a CANCEL or REPLY file is now
+read as a scheduling message and adds no event, where it used to add the
+cancelled event. A model-written document that calls `$instant` or `$wall`
+is refused at compile time with `JQ0003` (no host here installs the calendar
+seam), a precise reason the repair loop can act on.
 
 ## Changes from 0.219.1 to 0.220.0 and current adoption
 
