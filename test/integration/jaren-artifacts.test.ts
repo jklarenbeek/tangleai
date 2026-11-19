@@ -18,14 +18,14 @@ function fixture(run: (root: string, manifest: any, write: (path: string, data: 
     source:{ commit:'a'.repeat(40), version:'0.83.3', node:process.versions.node, npm:'11.12.1', patchSha256:hash(''), state:'uncommitted candidate' },
     packages:[{ name:'@jarenjs/core', version:'0.83.3', directory:'packages/core', filename:'jarenjs-core-0.83.3.tgz', sha256:hash(bytes),
       integrity:'sha512-'+createHash('sha512').update(bytes).digest('base64'), edges:{}, files:{ 'package.json':hash(packageJson), 'src/index.js':hash('export const value = 1;') } }] };
-  write('docs/migrations/jaren-ai/foundations.patch', '');
-  write('docs/migrations/jaren-ai/foundations.json', JSON.stringify(manifest));
+  write('jaren/foundations.patch', '');
+  write('jaren/foundations.json', JSON.stringify(manifest));
   write('dist/jaren/jarenjs-core-0.83.3.tgz', bytes.toString());
   write('node_modules/@jarenjs/core/package.json', packageJson);
   write('node_modules/@jarenjs/core/src/index.js', 'export const value = 1;');
   try { run(root, manifest, write); } finally { rmSync(root, { recursive:true, force:true }); }
 }
-const update = (write: (p:string,d:string)=>void, manifest: any) => write('docs/migrations/jaren-ai/foundations.json', JSON.stringify(manifest));
+const update = (write: (p:string,d:string)=>void, manifest: any) => write('jaren/foundations.json', JSON.stringify(manifest));
 
 test('qualified installed files pass twice without mutation', () => fixture(root => {
   const before = readFileSync(resolve(root, foundations.ARTIFACT_MANIFEST));
@@ -37,11 +37,11 @@ test('committed foundation source needs no patch and retains immutable installed
   assert.deepEqual(foundations.readFoundationArtifacts(root), manifest);
   foundations.verifyFoundationArtifacts(root, true);
   foundations.verifyFoundationArtifacts(root, true);
-  assert.equal(readFileSync(resolve(root, 'docs/migrations/jaren-ai/foundations.patch'), 'utf8'), '');
+  assert.equal(readFileSync(resolve(root, 'jaren/foundations.patch'), 'utf8'), '');
 }));
 test('a committed source receipt refuses an additional patch even with a matching digest', () => fixture((root, manifest, write) => {
   manifest.source.state = 'committed'; manifest.source.patchSha256 = hash('uncommitted change');
-  write('docs/migrations/jaren-ai/foundations.patch', 'uncommitted change'); update(write, manifest);
+  write('jaren/foundations.patch', 'uncommitted change'); update(write, manifest);
   assert.throws(() => foundations.readFoundationArtifacts(root), /Committed foundation source cannot include a patch/);
 }));
 for (const alteration of ['missing archive','altered archive','altered installed file','extra installed file','unrecorded archive','unrecorded installed foundation','nested legacy AI']) {

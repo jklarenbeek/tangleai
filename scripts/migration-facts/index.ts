@@ -8,6 +8,6 @@ import { readFileSync } from 'node:fs';
 const bundleFacts = {
   name: 'program pen bundle',
   docs: () => ['packages/linq/docs/PROGRAM-PEN.md'],
-  facts: () => ({ 'bundle.program': () => JSON.parse(readFileSync(new URL('../../docs/migrations/jaren-ai/program-bundle.json', import.meta.url), 'utf8')).bytes.toLocaleString('en-US') }),
+  facts: () => ({ 'bundle.program': () => JSON.parse(readFileSync(new URL('../../jaren/program-bundle.json', import.meta.url), 'utf8')).bytes.toLocaleString('en-US') }),
 };
 process.exitCode = main({ root: fileURLToPath(new URL('../../', import.meta.url)), registries: [horizonFacts, programFacts, ledgerFacts, recallFacts, bundleFacts], argv: process.argv.slice(2) });

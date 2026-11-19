@@ -42,7 +42,7 @@ dag run — proposed, isolated, gated, measured, then kept or abandoned —
 and the record of what worked feeds back into what gets proposed next.
 The self-evolving research-pipeline shape (see
 `docs/refs/AutoResearchClaw.pdf`, and Milkyway's versioned-harness
-pattern in `docs/attic/memflow-modules/evolution.md` at tag `v0.62.5`) with the fitness
+pattern) with the fitness
 signal this repo insists on.
 
 ## The experiment loop (one dag run)

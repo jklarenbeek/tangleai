@@ -46,11 +46,11 @@ export function measureAssistantBundles(directory: string) {
 export function checkProgramBundle(directory: string, root = ROOT, write = false) {
   const result = measureProgramBundle(directory);
   assert.equal(result.bun,config(root).bun);
-  const path = resolve(root,'docs/migrations/jaren-ai/program-bundle.json');
+  const path = resolve(root,'jaren/program-bundle.json');
   if (write) writeJson(path,result);
   else assert.deepEqual(result,readJson(path),'Program bundle measurement changed; remeasure and review its documentation');
   console.log(`Program pen: ${result.bytes} bytes, ${result.retainedModules} retained modules, zero excluded engine bytes (Bun ${result.bun}).`);
-  const assistant = measureAssistantBundles(directory), assistantPath = resolve(root,'docs/migrations/jaren-ai/assistant-bundles.json');
+  const assistant = measureAssistantBundles(directory), assistantPath = resolve(root,'jaren/assistant-bundles.json');
   if (write) writeJson(assistantPath,assistant);
   else assert.deepEqual(assistant,readJson(assistantPath),'Assistant bundle measurement changed; remeasure and review its documentation');
   for (const row of assistant.entries) console.log(`Assistant ${row.entry}: ${row.bytes} bytes, ${row.inputModules} parsed modules, mechanisms ${row.mechanisms.join(', ') || 'none'}.`);

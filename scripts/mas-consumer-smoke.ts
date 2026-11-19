@@ -4,7 +4,7 @@
  *
  * Proves the runtime is consumable exactly as a downstream campaign
  * would consume it: import `@tangleai/mas` and `@tangleai/store` (no
- * `/src`, test helper or attic path), author a small Tangle-authored
+ * `/src` or test helper path), author a small Tangle-authored
  * collaboration workflow imperatively, validate it against a registry
  * snapshot and CONFIG catalog, lower it, store and activate it, run it
  * through the public durable host over a temporary SQLite FILE with the

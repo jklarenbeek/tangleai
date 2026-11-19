@@ -2,7 +2,7 @@
  * Registry snapshots are immutable validated capability data with set
  * semantics per section, plus the package import census: one canonical
  * hash path, one validator factory, and no local DAG/FSM/query/patch
- * engine or attic import anywhere under packages/mas/src.
+ * engine anywhere under packages/mas/src.
  */
 
 import { describe, it } from 'node:test';
@@ -58,7 +58,7 @@ describe('the registry snapshot', () => {
 });
 
 describe('the package import census', () => {
-  it('uses the published suite and contains no local engine twin or attic import', async () => {
+  it('uses the published suite and contains no local engine twin', async () => {
     const sources: string[] = [];
     for (const name of await readdir('packages/mas/src')) {
       if (name.endsWith('.ts')) sources.push(`packages/mas/src/${name}`);
@@ -76,7 +76,6 @@ describe('the package import census', () => {
     const validatorConstructions = all.split('new JarenValidator').length - 1;
     assert.equal(validatorConstructions, 1, 'one schema validator factory (schema.ts)');
     for (const [name, forbidden] of [
-      ['an attic import', /docs\/attic/],
       ['a local scheduler', /kahn|topoSort|readyQueue/i],
       ['a clock reading', /\bDate\.now\b|\bnew Date\b/],
       ['runtime randomness', /\bMath\.random\b/],

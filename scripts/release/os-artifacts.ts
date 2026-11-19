@@ -52,7 +52,7 @@ function fresh(root: string): Map<string, Buffer> {
   const pkg = readJson<{ dependencies?: Record<string, string> }>(resolve(root, 'components/os/package.json'));
   const dependencies = pkg.dependencies ?? {};
   for (const name of Object.keys(dependencies)) assert.match(name, /^@jarenjs\//, `The desktop package must depend on Jaren alone: ${name}`);
-  const foundation = readJson<{ source: { version: string, commit: string } }>(resolve(root, 'docs/migrations/jaren-ai/foundations.json')).source;
+  const foundation = readJson<{ source: { version: string, commit: string } }>(resolve(root, 'jaren/foundations.json')).source;
   const manifest: OsManifest = {
     $osRelease: '0.1', version, protocol: PROTOCOL,
     package: { name: '@tangleai/os', file: os.filename, size: tarball.length, sha256: sha256(tarball), integrity: os.integrity, dependencies, exports: Object.keys(os.exports) },

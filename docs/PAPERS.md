@@ -3,9 +3,7 @@
 All reference PDFs are archived in [`docs/refs/`](refs/) for offline access and traceability
 (carried over from the memflow prototype, where these designs were first implemented).
 Each entry states where the idea stands in THIS codebase — ported, planned (its
-[`ROADMAP.md`](ROADMAP.md) entry named), or reference-only. memflow's original paper-to-module mapping and its per-module design docs (the tuned
-thresholds and fallbacks each implementation earned) are kept in git at tag `v0.62.5`
-under `docs/attic/` (`git show v0.62.5:docs/attic/SALVAGE.md` is the manifest).
+[`ROADMAP.md`](ROADMAP.md) entry named), or reference-only.
 
 ## Ported — running in this repo
 

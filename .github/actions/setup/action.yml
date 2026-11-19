@@ -23,7 +23,7 @@ runs:
         assert.match(npm, /^npm@\d+\.\d+\.\d+$/);
         assert.match(bun, /^\d+\.\d+\.\d+$/);
         appendFileSync(process.env.GITHUB_OUTPUT, `npm=${npm.slice(4)}\nbun=${bun}\n`);
-        const path = 'docs/migrations/jaren-ai/foundations.json';
+        const path = 'jaren/foundations.json';
         if (existsSync(path)) {
           const { source } = JSON.parse(readFileSync(path));
           assert.match(source.node, /^\d+\.\d+\.\d+$/);

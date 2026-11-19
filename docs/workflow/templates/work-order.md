@@ -22,9 +22,6 @@ that matter, whose conventions the new code must match; restate any
 context the executor cannot infer — including the row of
 `docs/ARCHITECTURE.md` §"What the suite already has" this order consumes>.
 
-Salvage: <where in `docs/attic/` (tag `v0.62.5`) the tuned knowledge for this order lives —
-thresholds, specs, seed data — or "none">.
-
 ## Goal
 
 <One or two sentences: the observable end state, not the activity.>
@@ -88,10 +85,6 @@ recall scorer's style: pure functions, fixtures under `test/fixtures/`,
 one `describe` per function); `test/benchmark/locomo-recall.test.ts`
 (the pinned-fixture convention to match). The suite has no tokenizer,
 stemmer or string-similarity metric — `docs/ARCHITECTURE.md` §"What the suite already has" — so this order writes them once, in `benchmark/lib/`.
-
-Salvage: `docs/attic/memflow-PLAN_LOCOMO_INTEGRATION.md` (tag `v0.62.5`) §3 (the
-category table and the evaluator's known asymmetries); nothing else —
-memflow never reached the scorer.
 
 ## Goal
 

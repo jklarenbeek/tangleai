@@ -79,12 +79,12 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     });
     npm(['install', '--ignore-scripts', '--no-audit', '--no-fund', '--registry', cfg.registry], { root, cwd: directory });
     if (foundations) {
-      cpSync(resolve(root, 'docs/migrations/jaren-ai'), resolve(directory, 'docs/migrations/jaren-ai'), { recursive: true });
+      cpSync(resolve(root, 'jaren'), resolve(directory, 'jaren'), { recursive: true });
       cpSync(resolve(root, 'dist/jaren'), resolve(directory, 'dist/jaren'), { recursive: true });
       verifyFoundationArtifacts(directory, true);
     }
     writeJson(resolve(directory, 'artifacts.json'), artifacts);
-    const migrationPath = resolve(root, 'docs/migrations/jaren-ai/manifest.json');
+    const migrationPath = resolve(root, 'jaren/manifest.json');
     const migration = existsSync(migrationPath) ? readJson<{ declarations: Array<{ symbols: Array<{ name: string; destination: { entry: string } }> }>; rootSymbols: Array<{ name: string; destination: { entry: string } }> }>(migrationPath) : null;
     if (migration) writeJson(resolve(directory, 'migration.json'), migration);
     const exampleSource = readFileSync(resolve(root, 'examples/gmpl.ts'), 'utf8');

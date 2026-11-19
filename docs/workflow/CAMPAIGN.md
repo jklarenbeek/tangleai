@@ -264,10 +264,8 @@ campaign-specific obligations:
 
 - **A router pointer and the binding D-numbers**, first line. Then **"Read
   first:"** — the specific files, with the functions and line references that
-  matter, whose conventions the new code must match; and **"Salvage:"** — where
-  in `docs/attic/` (tag `v0.62.5`) the tuned knowledge for this order lives (thresholds, specs,
-  seed data), or "none". A fresh session cannot infer either, and an order that
-  ignores its salvage re-derives what the predecessor already paid for.
+  matter, whose conventions the new code must match. A fresh session cannot
+  infer them.
 - **Goal** — the observable end state, not the activity.
 - **Design** — the intended shape: module boundaries, data shapes, error surfaces,
   edge rules, and **the reasoning behind any non-obvious choice**. Decisions made
@@ -417,7 +415,7 @@ Record work-order commits separately from the final release receipt.
 - [ ] Every order is **self-contained**: a fresh session with the bootstrap, the
       router, that order and the repo could execute it — no conversation context,
       no reference to another order's internals, no pointer to a scratch file.
-- [ ] Every order names its "Read first" files and its salvage, carries its
+- [ ] Every order names its "Read first" files, carries its
       diagnosis in full, ends in a checklist of independently checkable assertions
       plus the gate, and names the measurement that closes it.
 - [ ] Orders whose target an earlier order moves open with **Step 0 — re-measure**.

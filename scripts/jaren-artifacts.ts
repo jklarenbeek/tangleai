@@ -9,8 +9,8 @@ import { fileURLToPath } from 'node:url';
 import { gunzipSync, gzipSync } from 'node:zlib';
 
 export const ROOT = fileURLToPath(new URL('../', import.meta.url));
-export const ARTIFACT_MANIFEST = 'docs/migrations/jaren-ai/foundations.json';
-const PATCH = 'docs/migrations/jaren-ai/foundations.patch';
+export const ARTIFACT_MANIFEST = 'jaren/foundations.json';
+const PATCH = 'jaren/foundations.patch';
 export interface FoundationArtifact {
   name: string; version: string; directory: string; filename: string;
   sha256: string; integrity: string; files: Record<string, string>;

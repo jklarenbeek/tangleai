@@ -40,7 +40,7 @@ this sequence; npm publication remains a separate manual author action.
 
 The checkout consumes Jaren as candidate artifacts: tarballs packed from the
 committed `vendor/jarenjs` source, which npm does not serve. The active
-`docs/migrations/jaren-ai/foundations.json` records each tarball's hashes,
+`jaren/foundations.json` records each tarball's hashes,
 member inventory and dependency edges, so `npm ci --ignore-scripts` requires the
 bootstrap below first. Publication refuses candidate foundations; registry mode returns once the same
 Jaren release is published and the lock is moved onto its registry archives.
@@ -48,7 +48,7 @@ Jaren release is published and the lock is moved onto its registry archives.
 Use the Node version in `.nvmrc`, npm from the root `packageManager`, and Bun from
 `release.config.json`. CI reads those same pins. In candidate foundation mode,
 initialize `vendor/jarenjs` and run `node scripts/jaren-artifacts.ts --bootstrap`
-with the Node/npm pins in `docs/migrations/jaren-ai/foundations.json`, then
+with the Node/npm pins in `jaren/foundations.json`, then
 restore Tangle's toolchain before `npm ci --ignore-scripts`. CI performs these
 steps in the same order, including its minimum-Node job. The source
 patch is applied only in a disposable build checkout; no installed package is

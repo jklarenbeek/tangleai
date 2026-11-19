@@ -24,9 +24,7 @@ style.
 
 1. Read the router (the program's charter, measured baseline and fixed
    D-number decisions) and your work order, fully, before touching
-   anything — including every file in the order's "Read first" list and
-   the salvage it names under `docs/attic/` at tag `v0.62.5` (read it with
-   `git show v0.62.5:docs/attic/…`; port out of it, never import from it).
+   anything — including every file in the order's "Read first" list.
 2. Fixed decisions (D-numbers) are settled. Do not reopen them; if the
    code contradicts one, stop and record the conflict in your session
    record instead of improvising.

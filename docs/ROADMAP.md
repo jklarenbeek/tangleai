@@ -1,7 +1,7 @@
 # 📅 Tangle Roadmap
 
 The substrate is Jaren, pinned in
-[`foundations.json`](migrations/jaren-ai/foundations.json). Before building
+[`foundations.json`](../jaren/foundations.json). Before building
 anything below, check what the suite already publishes
 ([ARCHITECTURE.md](ARCHITECTURE.md#what-the-suite-already-has)): the open
 entries need their own corpus and quality measurements, not new plumbing.

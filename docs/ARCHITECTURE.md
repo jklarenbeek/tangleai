@@ -272,8 +272,8 @@ components; Tangle owns routes, seeds, storage identities, downloads and worker
 bootstraps, and uses no private Jaren site code. The private Pages build pins
 `@sqlite.org/sqlite-wasm` and only initializes the official driver; that
 initializer never enters a published package. Storage is origin-scoped, and
-moving data between origins is the explicit, idempotent procedure in
-[BROWSER_DATA.md](migrations/jaren-ai/BROWSER_DATA.md); credentials never move.
+moving data between origins is an explicit, idempotent export and import
+(`.e2e/migration/transfer.spec.mjs` runs it); credentials never move.
 
 Model tools reach the page through the one `@jarenjs/contract/webmcp` adapter.
 Tool names are stable so saved callers keep working. Discovery prefers a usable
@@ -289,7 +289,7 @@ recorded separately from the injected compatibility matrix.
 Jaren is consumed from the source submodule `vendor/jarenjs` as candidate
 tarballs, because the registry does not serve current releases.
 `node scripts/jaren-artifacts.ts --capture vendor/jarenjs` packs them into the
-gitignored `dist/jaren/`; `docs/migrations/jaren-ai/foundations.json` records
+gitignored `dist/jaren/`; `jaren/foundations.json` records
 each archive's hash, member inventory and dependency edges and is the source of
 truth for the version. A fresh checkout runs `--bootstrap` before
 `npm ci --ignore-scripts`, which rebuilds the tarballs byte for byte from the

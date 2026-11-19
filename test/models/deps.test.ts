@@ -36,7 +36,7 @@ describe('mechanism ownership includes static, dynamic and declaration imports',
         assert.ok(!specifier.includes('/src/'), `${file}: private package import ${specifier}`);
       }
     }
-    const receipt = JSON.parse(read('docs/migrations/jaren-ai/manifest.json'));
+    const receipt = JSON.parse(read('jaren/manifest.json'));
     const expected = receipt.rootSymbols.filter((symbol: { destination: { entry: string } }) => symbol.destination.entry.startsWith(`@tangleai/${owner}/`)).map((symbol: { name: string }) => symbol.name).sort();
     assert.deepEqual(Object.keys(await import(`@tangleai/${owner}`)).sort(), expected);
   });

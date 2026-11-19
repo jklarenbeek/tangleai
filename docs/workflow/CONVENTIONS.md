@@ -100,9 +100,6 @@ before it is believed.
   instrument degrades to a stated skip when its submodule is absent — see
   [`benchmark/README.md`](../../benchmark/README.md) for the six rules one
   follows.
-- **`docs/attic/`** (removed after tag `v0.62.5`; read it with
-  `git show v0.62.5:docs/attic/…`) is salvage: source material from the
-  predecessors. Never import from it; port out of it.
 - **`.e2e/`** holds the browser-verification scripts (committed) and
   their screenshots (gitignored).
 - Generated, never committed: `apps/desktop/public/app.js`,

@@ -505,7 +505,7 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 Tangle consumes Jaren as candidate tarballs packed from the source submodule
 `vendor/jarenjs`, recorded in
-[`foundations.json`](docs/migrations/jaren-ai/foundations.json). Run
+[`foundations.json`](jaren/foundations.json). Run
 `node scripts/jaren-artifacts.ts --bootstrap` before `npm ci --ignore-scripts`;
 `npm run jaren:check` verifies the pins. How the foundation and its gates work:
 [ARCHITECTURE.md](docs/ARCHITECTURE.md#the-jaren-foundation-and-the-consumer-gate).

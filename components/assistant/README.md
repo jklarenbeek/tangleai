@@ -27,7 +27,7 @@ settings hint. The host supplies its toolbox, system prompt, provider fetch and
 settings/transcript slots; omitted slots and ledger are in memory. Slot writes
 must throw or return false on failure. An injected ledger remains host-owned
 unless `onDispose` explicitly closes it. Never put provider settings in a data
-export. See [browser data transfer](../../docs/migrations/jaren-ai/BROWSER_DATA.md).
+export.
 
 The root exports state/actions/controller without rendering dependencies.
 `/component` imports the Jaren app, Markdown and Mermaid renderers. CSS selectors
@@ -95,7 +95,7 @@ The view's static imports reach no `@tangleai/models`, `@tangleai/agents` or
 `@tangleai/context` module, and its browser bundle parses none.
 `test/assistant/import-graph.test.ts` walks the source graph, and
 `npm run test:tree-shaking` bundles every entry, counting each parsed input, against the sizes
-pinned in `docs/migrations/jaren-ai/assistant-bundles.json`. Both checks are
+pinned in `jaren/assistant-bundles.json`. Both checks are
 needed: those packages declare `"sideEffects": false`, so a bundler may skip a
 module that is imported but unused. The bundle shows that no such module is
 loaded, the graph that none is imported.
