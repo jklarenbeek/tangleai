@@ -108,7 +108,7 @@ Tangle policy refuse to compare vectors from two models.
 | `@tangleai/outcomes` | independently resolved decisions, deterministic scores, atomic confidence projection, bounded artifact proposals, held-out checks and explicit CAS promotion/rollback ([API](packages/outcomes/README.md)) |
 | `@tangleai/forecast` | ordered forecasts, cutoff-audited evidence, guarded local revisions and outcome-gated promotion ([API](packages/forecast/README.md)); scripted claim gate is not demonstrated |
 | `@tangleai/grounding` | durable governed local/web retrieval, typed clarification and claim-level citations ([API](packages/grounding/README.md)); scripted ablations retain the experimental default |
-| `@tangleai/config` | the capability-profile registry and effective-run-identity contract: schema-generated types, a pure resolver (single-parent RFC 7396 inheritance, stable `TCFG1xxx` refusals), canonical content-addressed identities — every host resolves through it and every new result references the exact stack that ran ([docs/CONFIGURATION.md](docs/CONFIGURATION.md)) |
+| `@tangleai/config` | the capability-profile registry and effective-run-identity contract: schema-generated types, a pure resolver (single-parent RFC 7396 inheritance, stable `TCFG1xxx` refusals), canonical content-addressed identities — every host resolves through it and every new result references the exact stack that ran ([configuration identity](docs/ARCHITECTURE.md#configuration-identity)) |
 | `@tangleai/search` | zero-dependency SearxNG JSON client; `docker compose -f compose/searxng.yml up -d` serves SearxNG on `http://127.0.0.1:8888` from the settings in `compose/searxng/` |
 | `@tangleai/documents` | static-first HTTP(S) fetching with URL/DNS/redirect/stream budgets, typed HTML/Markdown/PDF extraction, recursive/semantic/S2 chunkers, versioned corpus contracts, optional browser adapters, and identity-gated chunk retrieval |
 | `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite plus atomic outcome records/projection and transactional source/version/element/chunk activation, the run/event log, and the MAS host — eleven semantic collections, compare-and-swap activation, atomic node completion, and durable run segments over `@jarenjs/db`'s own job queue and flow checkpoints (never a queue or checkpoint twin) |
@@ -503,30 +503,13 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-Tangle consumes 23 AI-free Jaren **0.221.0** packages as candidate tarballs
-packed from the source submodule at `vendor/jarenjs`, which pins
-`f41f5cbbd1fd83d6a5bd344bd58966304a0bfb7a` (tag `v0.221.0`); npm does not serve
-that release. Run `node scripts/jaren-artifacts.ts --bootstrap` before
-`npm ci --ignore-scripts`: it rebuilds the tarballs from the pinned source and
-refuses any byte that differs from the
-[recorded closure](docs/migrations/jaren-ai/foundations.json).
-`npm run jaren:check` verifies source, manifests, installed bytes and lock
-entries. Installed packages are never patched or source-linked. The existing
-storage seam accepts supervised Node processes; `npm run store:supervised:smoke`
-runs both outcome domains and proves zero-effect replay after reopening.
-Native SQLite schema plans, column references and JSON type inspection are
-qualified alongside Tangle records on Node and Bun. The current document model
-requires no schema migration; host-owned physical entities use Jaren's bounded
-mutation statement cache directly.
-See the [migration handoff](docs/JAREN_AI_MIGRATION.md) for ownership and
-historical source/archive qualification. Tangle publication remains manually
-author-owned.
-See [the integration audit](docs/JARENJS_INTEGRATION.md) for adopted APIs,
-compatibility details and benchmark-based strategy choices, and
-[the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.
-[The consumer gate](docs/CONSUMER_GATE.md) documents the exact-pin check, the
-packed-tarball consumer verification and the pinned CI toolchain as a pattern
-other applications consuming the suite can adopt, including the pnpm variant.
+Tangle consumes Jaren as candidate tarballs packed from the source submodule
+`vendor/jarenjs`, recorded in
+[`foundations.json`](docs/migrations/jaren-ai/foundations.json). Run
+`node scripts/jaren-artifacts.ts --bootstrap` before `npm ci --ignore-scripts`;
+`npm run jaren:check` verifies the pins. How the foundation and its gates work:
+[ARCHITECTURE.md](docs/ARCHITECTURE.md#the-jaren-foundation-and-the-consumer-gate).
+[The Node/Bun comparison](docs/JARENJS_BENCHMARK.md) measures history reads.
 The [paid refresh](docs/PAID_REFRESH.md) records fresh OpenRouter answer,
 grounding and desktop checks, with their losses, coverage and request counts.
 The [bounded-agent repair](docs/BOUNDED_AGENT_BENCHMARK.md) measures whole-corpus
@@ -597,10 +580,9 @@ are excluded from every public distribution.
   hard and the measurement that would close it; the LoCoMo instrument
   ([docs/LOCOMO_BENCHMARK.md](docs/LOCOMO_BENCHMARK.md)) gates every
   policy entry
-- [docs/BOUNDARY.md](docs/BOUNDARY.md) — where generic Jaren foundations, Tangle mechanisms and host policies belong
-  versus here, and the one test-pinned contract between them
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the loop, the two
-  load-bearing ordering rules, the house style
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — what the source cannot say:
+  the boundary with Jaren, what the suite already has, the invariants, and
+  configuration identity
 - [docs/PAPERS.md](docs/PAPERS.md) — the research this implements, with
   per-paper status; PDFs archived in [docs/refs/](docs/refs/)
 - [docs/workflow/](docs/workflow/README.md) — how this repo is changed and

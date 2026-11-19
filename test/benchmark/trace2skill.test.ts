@@ -692,7 +692,7 @@ describe('skill-evolution instrument', () => {
     // The product documents say what IS. The roadmap is open work by
     // definition and is excluded deliberately: every sentence in it names
     // something the repository does not have yet.
-    const documents = ['packages/trace2skill/README.md', 'docs/PAPERS.md', 'docs/ARCHITECTURE.md', 'docs/BOUNDARY.md'];
+    const documents = ['packages/trace2skill/README.md', 'docs/PAPERS.md', 'docs/ARCHITECTURE.md'];
     const unmeasured = /\bnot[- ]run\b|\bunmeasured\b|\bnot\b/i;
     let hits = 0;
     for (const path of documents) {

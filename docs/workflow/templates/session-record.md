@@ -155,7 +155,7 @@ a row until it holds.
 
 - The stemmer and normalizer are the only string metrics in the repo and
   are benchmark-only; if a product path ever needs a tokenizer, that is a
-  boundary question for `docs/BOUNDARY.md`, not a copy.
+  boundary question for `docs/ARCHITECTURE.md`, not a copy.
 
 ## Handoff
 

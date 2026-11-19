@@ -34,6 +34,5 @@ for their own definitions and denominators. The separately dated
 [paid refresh](PAID_REFRESH.md) exercises the configured OpenRouter models;
 historical paid runs retain their original identities and results.
 
-The [integration audit](JARENJS_INTEGRATION.md) explains why the upstream
-labelled retrieval measurements keep exact search and recursive chunking as
-the defaults, and which published facilities apply to this host.
+[ARCHITECTURE.md](ARCHITECTURE.md#what-the-suite-already-has) lists which
+published Jaren facilities this host uses.

@@ -155,7 +155,7 @@ function view(state: any): any {
       ['nav', { class: 'links' },
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/BOUNDED_AGENT_BENCHMARK.md' }, 'Bounded-agent repair and comparison'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/PAID_REFRESH.md' }, 'Paid checks and limitations'],
-        ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/JARENJS_INTEGRATION.md' }, 'Integration audit'],
+        ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/ARCHITECTURE.md' }, 'Architecture and boundary'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/JARENJS_BENCHMARK.md' }, 'Methods and raw results'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/LOCOMO_RECALL.md' }, 'Retrieval wins and losses']]],
 

@@ -20,9 +20,9 @@ Router: `TODO_<PROGRAM>.md`. **Binding: D<n>, D<m>.** **Depends on <orders>.**
 Read first: <the specific files, with the functions and line references
 that matter, whose conventions the new code must match; restate any
 context the executor cannot infer — including the row of
-`docs/BOUNDARY.md` §"What the suite already has" this order consumes>.
+`docs/ARCHITECTURE.md` §"What the suite already has" this order consumes>.
 
-Salvage: <where in `docs/attic/` the tuned knowledge for this order lives —
+Salvage: <where in `docs/attic/` (tag `v0.62.5`) the tuned knowledge for this order lives —
 thresholds, specs, seed data — or "none">.
 
 ## Goal
@@ -87,10 +87,9 @@ the category-3 cut at the first `;`); `benchmark/lib/recall.ts` (the
 recall scorer's style: pure functions, fixtures under `test/fixtures/`,
 one `describe` per function); `test/benchmark/locomo-recall.test.ts`
 (the pinned-fixture convention to match). The suite has no tokenizer,
-stemmer or string-similarity metric — `docs/BOUNDARY.md` §"Build it
-here" — so this order writes them once, in `benchmark/lib/`.
+stemmer or string-similarity metric — `docs/ARCHITECTURE.md` §"What the suite already has" — so this order writes them once, in `benchmark/lib/`.
 
-Salvage: `docs/attic/memflow-PLAN_LOCOMO_INTEGRATION.md` §3 (the
+Salvage: `docs/attic/memflow-PLAN_LOCOMO_INTEGRATION.md` (tag `v0.62.5`) §3 (the
 category table and the evaluator's known asymmetries); nothing else —
 memflow never reached the scorer.
 

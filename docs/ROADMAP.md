@@ -1,22 +1,17 @@
 # 📅 Tangle Roadmap
 
-The current substrate is [JarenJS 0.221.0](JARENJS_INTEGRATION.md): atomic
-ledger storage, retention options, verified DAG checkpoints, bounded history
-reads, scheduled document transport and supervised Node SQLite execution are
-available. Native relational migrations and revision-aware collection drag are
-upstream mechanisms for future consumers, with host policy still required. Paired
-bootstrap and permutation tests, rank fusion, a named-process executor,
-asynchronous guarded validation, a line-anchored text-edit compiler, safe-read
-provider capture/replay and the wider finance indicator and risk family are
-published for the entries below to consume rather than rebuild. The open policies below
-still require their own corpus and quality measurements.
+The substrate is Jaren, pinned in
+[`foundations.json`](migrations/jaren-ai/foundations.json). Before building
+anything below, check what the suite already publishes
+([ARCHITECTURE.md](ARCHITECTURE.md#what-the-suite-already-has)): the open
+entries need their own corpus and quality measurements, not new plumbing.
 
 This is the single roadmap for the repository: what Tangle wants to have and
 does not yet.
 
 **It lists only what is still open.** When something ships, its knowledge moves
 into the document a reader would actually reach for — the package `README`,
-[`ARCHITECTURE.md`](ARCHITECTURE.md), [`BOUNDARY.md`](BOUNDARY.md), the
+[`ARCHITECTURE.md`](ARCHITECTURE.md), the
 benchmark document that carries its number — and the entry leaves this file.
 The record of *when* something shipped is the git history; what a shipped thing
 *does* is its documentation's job. Nothing here is a status ledger, an order or
@@ -35,7 +30,7 @@ before the instrument that can call it an improvement.** The instrument exists.
 [`LOCOMO_REFRESH.md`](LOCOMO_REFRESH.md) the refreshed paid F1 beside it, for Tangle and for
 every rival over one corpus, one scorer and one sample — and Tangle loses to every
 rival that answered the whole sample, which is the number most of this file exists
-to move. Before authoring anything below, read [`BOUNDARY.md`](BOUNDARY.md)
+to move. Before authoring anything below, read [`ARCHITECTURE.md`](ARCHITECTURE.md#what-the-suite-already-has)
 §"What the suite already has": the expensive mistake here is not putting a
 capability on the wrong side of the boundary, it is building one the boundary
 already has.
@@ -319,7 +314,7 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   as an operation whose report is kept by identity, the breaking-change gate on
   the surface's shape and named profile selection all shipped; what they do is
   described in [ARCHITECTURE.md](ARCHITECTURE.md) §"The operator control plane"
-  and [CONFIGURATION.md](CONFIGURATION.md). *Wanted:* the two ends still open.
+  and §"Configuration identity". *Wanted:* the two ends still open.
   (1) **macOS and Windows verification of the compiled desktop.** The WebView
   lifecycle and the compiled document path are Linux x64 facts; the other
   platforms are unverified, not known broken, and the documentation names them
@@ -421,6 +416,34 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   does not authorize a default change. ARC-Bench remains unadopted until a
   licensed, checksummed slice and its independent evaluator are admitted;
   adapter availability establishes no external parity.
+
+## Models, context and agents
+
+The missing piece in each entry is a measurement, not an implementation: no
+ranker, evictor or de-duplicator is added before the number that says whether
+it helps.
+
+- [ ] **Program reuse beyond the scripted question stream.** Verified opt-in
+  reuse ships; its frontier is calibrated only on a hash embedder and fixture
+  labels. *Closes on:* calibration with real language and a real provider.
+- [ ] **Depth on live models.** Scripted traversal is correct at depths 0–3 while
+  cost rises; live rows fail before a correct final answer. *Closes on:* the
+  predeclared correctness/cost gain on live models before any deeper default.
+- [ ] **Authoring under provider-enforced budgets.** Failures are retained with
+  route identity, deadlines and usage; separate author/subcall routes exist, but
+  no measurement supports a dense-first policy, and some providers exceed the
+  requested reasoning ceiling. *Closes on:* a measured routing policy.
+- [ ] **Retrieval beyond the reference corpus.** The SciFact instrument
+  ([benchmark](../benchmark/README.md#labelled-recall-and-repeated-refinement))
+  keeps exact search; the sparse contender lost. *Closes on:* a larger external
+  labelled corpus showing a quality-preserving crossover past the exact ceiling.
+- [ ] **WebKit multi-writer storage.** Web Locks still lose updates in WebKit, so
+  the site elects one writer tab there. *Closes on:* a storage host with
+  demonstrated coherent reads; timing delays are not evidence.
+- [ ] **The spatial authoring profile on a live model.** Its three refusals are
+  proven on recorded fixtures only, and its intent reader is an English word
+  list (hosts can pass their own `gates`). *Closes on:* a first live row beside
+  the stylesheet author's measurements in `@tangleai/jaren`.
 
 ## The gate
 

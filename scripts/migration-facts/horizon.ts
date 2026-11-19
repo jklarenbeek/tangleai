@@ -26,7 +26,7 @@ const horizonCompacting = (variant: any, task = 'needle') => data('long-horizon'
   .filter((r: any) => r.variant === variant && r.task === task && r.compacted);
 
 export const horizonFacts = {
-  name: 'historical horizon and retrieval measurements', docs: () => ['benchmark/MIGRATED-JAREN.md', 'docs/AI-MECHANISM-ROADMAP.md', 'packages/models/README.md', 'packages/context/README.md', 'packages/agents/README.md', 'packages/jaren/README.md', 'packages/jaren/docs/AUTHORING.md'], facts: () => ({
+  name: 'historical horizon and retrieval measurements', docs: () => ['benchmark/MIGRATED-JAREN.md', 'packages/models/README.md', 'packages/context/README.md', 'packages/agents/README.md', 'packages/jaren/README.md', 'packages/jaren/docs/AUTHORING.md'], facts: () => ({
     'horizon.measured': () => {
       const meta = data('long-horizon').meta;
       return `${String(meta.date).slice(0, 10)}, Node ${meta.node}, ${meta.n} tool rounds`;

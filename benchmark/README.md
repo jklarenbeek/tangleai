@@ -53,8 +53,7 @@ sqlite-vec, ajv, XState and a dozen others live in its benchmark workspace and
 nowhere else.
 
 The [JarenJS integration comparison](../docs/JARENJS_BENCHMARK.md) records
-Node/Bun history strategies; the [integration audit](../docs/JARENJS_INTEGRATION.md)
-explains choices against the pinned upstream benchmarks. Reproduce it with
+Node/Bun history strategies. Reproduce it with
 `npm run benchmark:jaren` (keyless).
 The current foundation is Jaren 0.220.0. Its native migration, validation and rendering changes
 are qualified by the [schema consumer](../test/store/native-foundation.test.ts),

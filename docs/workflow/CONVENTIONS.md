@@ -27,7 +27,7 @@ Every other workflow file points here instead of restating these.
   not dependencies. Dev-only tooling that never ships (typescript,
   @types/node) is exempt; a new exemption is a decision to record in
   the README, not a default.
-- **The boundary** (`docs/BOUNDARY.md`): contracts and seams live in
+- **The boundary** (`docs/ARCHITECTURE.md`): contracts and seams live in
   jarenjs; policies and infrastructure live here. Friction with the
   suite's published types is not worked around silently — it is recorded in
   the local gitignored upstream brief with the upstream fix path.
@@ -100,7 +100,8 @@ before it is believed.
   instrument degrades to a stated skip when its submodule is absent — see
   [`benchmark/README.md`](../../benchmark/README.md) for the six rules one
   follows.
-- **`docs/attic/`** is salvage: read-only source material from the
+- **`docs/attic/`** (removed after tag `v0.62.5`; read it with
+  `git show v0.62.5:docs/attic/…`) is salvage: source material from the
   predecessors. Never import from it; port out of it.
 - **`.e2e/`** holds the browser-verification scripts (committed) and
   their screenshots (gitignored).

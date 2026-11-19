@@ -146,7 +146,7 @@ How to do it well:
   scratch script. The instruments in `benchmark/` are the recipes this repo
   already has — a campaign that measures memory quality runs them, and a
   campaign that needs a new number writes a new instrument as its early order.
-- **Audit the suite before you design anything.** [`docs/BOUNDARY.md`](../BOUNDARY.md)
+- **Audit the suite before you design anything.** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md#what-the-suite-already-has)
   §"What the suite already has" is the dated inventory of what `@jarenjs/*`
   publishes at the pinned version. The expensive mistake in this repo is not
   putting a capability on the wrong side of the boundary; it is building one the
@@ -265,7 +265,7 @@ campaign-specific obligations:
 - **A router pointer and the binding D-numbers**, first line. Then **"Read
   first:"** — the specific files, with the functions and line references that
   matter, whose conventions the new code must match; and **"Salvage:"** — where
-  in `docs/attic/` the tuned knowledge for this order lives (thresholds, specs,
+  in `docs/attic/` (tag `v0.62.5`) the tuned knowledge for this order lives (thresholds, specs,
   seed data), or "none". A fresh session cannot infer either, and an order that
   ignores its salvage re-derives what the predecessor already paid for.
 - **Goal** — the observable end state, not the activity.
@@ -436,7 +436,7 @@ Record work-order commits separately from the final release receipt.
 - [ ] The roadmap entry the campaign targeted is retired, or narrowed to
       accurately-stated open decisions.
 - [ ] Capability is documented where a stranger would look: the package `README`,
-      `docs/ARCHITECTURE.md`, `docs/BOUNDARY.md` where the seam moved, and the
+      `docs/ARCHITECTURE.md` where the seam moved, and the
       benchmark document for anything measured.
 - [ ] Measurements regenerated through the instruments and re-derived into the
       prose; the pinned-document tests pass.
@@ -467,7 +467,7 @@ Record work-order commits separately from the final release receipt.
   "stages": [
     { "id": "pick", "run": "operator picks a docs/ROADMAP.md entry (or ratifies a drafted basis)" },
     { "id": "preflight", "needs": ["pick"], "run": "git status --porcelain; no other campaign in flight", "pass": "output empty" },
-    { "id": "measure", "needs": ["preflight"], "run": "re-derive every number from a run; audit the suite (BOUNDARY §what-the-suite-has); scoped HEALTH hunt", "pass": "baseline table dated + runtime + three quirk lists" },
+    { "id": "measure", "needs": ["preflight"], "run": "re-derive every number from a run; audit the suite (ARCHITECTURE §what-the-suite-already-has); scoped HEALTH hunt", "pass": "baseline table dated + runtime + three quirk lists" },
     { "id": "forks", "needs": ["measure"], "run": "put every campaign-shaping fork to the operator", "pass": "each answer is a D-number" },
     { "id": "author", "needs": ["forks"], "run": "router (nine sections) + TODO_<PROGRAM>_NN.md orders per templates/work-order.md; register in local TODO.md", "pass": "authoring checklist all ticked" },
     { "id": "review", "needs": ["author"], "run": "publish concrete plan; confirm execution falls within existing operator authorization or obtain missing authorization" },

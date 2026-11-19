@@ -55,8 +55,7 @@ native JSON type inspection. A host can extend `TANGLE_DB_MODEL` for `openStore`
 and pass the resulting Store to these adapters. Schema operations require an
 available synchronous connection; their source-bound plans do not replace a
 host's durable migration receipt. The current Tangle model needs no schema
-change for the foundation update. See the [integration audit](../../docs/JARENJS_INTEGRATION.md)
-for ownership, compatibility and available mechanisms.
+change for the foundation update. See [what the suite already has](../../docs/ARCHITECTURE.md#what-the-suite-already-has).
 
 ## Reviewed host migrations
 

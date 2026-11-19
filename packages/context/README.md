@@ -23,8 +23,8 @@ exports and emitted npm JavaScript share one implementation.
 - `@tangleai/context/archive`
 - `@tangleai/context/package.json`
 
-See [ownership and verification](../../docs/JAREN_AI_MIGRATION.md) for source
-provenance, installation mode, unchanged serialized identities and qualification.
+See [the Jaren foundation](../../docs/ARCHITECTURE.md#the-jaren-foundation-and-the-consumer-gate) for how
+the suite is pinned and verified.
 
 ## A goal that outlives the tab
 

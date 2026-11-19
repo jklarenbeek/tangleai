@@ -4,7 +4,7 @@ const table = (head: any, rows: any) => '\n\n' + [head, head.replace(/[^|]/g, '-
 /** Authored-program measurements share the repository's fact namespace and runner. */
 export const programFacts = {
   name: 'program measurements',
-  docs: () => ['benchmark/MIGRATED-JAREN.md', 'docs/AI-MECHANISM-ROADMAP.md', 'packages/models/README.md', 'packages/context/README.md', 'packages/agents/README.md', 'packages/jaren/README.md', 'packages/jaren/docs/AUTHORING.md'],
+  docs: () => ['benchmark/MIGRATED-JAREN.md', 'packages/models/README.md', 'packages/context/README.md', 'packages/agents/README.md', 'packages/jaren/README.md', 'packages/jaren/docs/AUTHORING.md'],
   facts: () => ({
     'program.reuse': () => {
       const { baseline, runtime, selected } = read('reuse');

@@ -1,7 +1,7 @@
 # The workflow — how this repository is changed and proved
 
 Process lives here; product documentation lives one level up in `docs/`
-(`ARCHITECTURE.md`, `BOUNDARY.md`, `ROADMAP.md`, `PAPERS.md`, the benchmark
+(`ARCHITECTURE.md`, `ROADMAP.md`, `PAPERS.md`, the benchmark
 documents).
 
 Each implemented, green work order receives a local commit. Versioned closeout,

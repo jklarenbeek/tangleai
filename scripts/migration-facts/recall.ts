@@ -5,7 +5,7 @@ const table = (head: any, rows: any) => '\n\n' + [head, head.replace(/[^|]/g, '-
 /** Measured retrieval facts share the standard document derivation registry. */
 export const recallFacts = {
   name: 'recall quality measurements',
-  docs: () => ['benchmark/MIGRATED-JAREN.md', 'docs/AI-MECHANISM-ROADMAP.md', 'packages/models/README.md', 'packages/context/README.md', 'packages/agents/README.md', 'packages/jaren/README.md', 'packages/jaren/docs/AUTHORING.md'],
+  docs: () => ['benchmark/MIGRATED-JAREN.md', 'packages/models/README.md', 'packages/context/README.md', 'packages/agents/README.md', 'packages/jaren/README.md', 'packages/jaren/docs/AUTHORING.md'],
   facts: () => ({
     'recall.quality': () => table('| documents | policy | recall@10 | MRR@10 | nDCG@10 | p95 ms |',
       read('scifact-live').rows.map((r: any) => `| ${r.size} | ${r.policy} | ${fmt(r.recall[10])} | ${fmt(r.mrr)} | ${fmt(r.ndcg10)} | ${fmt(r.latencyMs.p95)} |`)),

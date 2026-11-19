@@ -30,7 +30,7 @@ the second time, and "found nothing" is a valid, reportable outcome.
    that jarenjs already ships (vector kernels, the embed wire) is deleted
    here, not collapsed here.
 3. **Doc drift**: every number and command in README, ARCHITECTURE,
-   BOUNDARY, PAPERS, this folder — re-derive from the repo. Fix the doc
+   PAPERS, this folder — re-derive from the repo. Fix the doc
    or the code, whichever lies.
 4. **Dead code**: exports nothing imports (outside tests), branches no
    input reaches. Delete; the git history is the archive.

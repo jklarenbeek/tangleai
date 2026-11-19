@@ -3,7 +3,7 @@ const read = (name: any) => JSON.parse(readFileSync(new URL(`../../benchmark/${n
 /** Ledger policy evidence participates in the shared derivation gate. */
 export const ledgerFacts = {
   name: 'ledger lifecycle measurements',
-  docs: () => ['benchmark/MIGRATED-JAREN.md', 'docs/AI-MECHANISM-ROADMAP.md', 'packages/models/README.md', 'packages/context/README.md', 'packages/agents/README.md', 'packages/jaren/README.md', 'packages/jaren/docs/AUTHORING.md'],
+  docs: () => ['benchmark/MIGRATED-JAREN.md', 'packages/models/README.md', 'packages/context/README.md', 'packages/agents/README.md', 'packages/jaren/README.md', 'packages/jaren/docs/AUTHORING.md'],
   facts: () => ({
     'ledger.retention': () => {
       const data = read('retention-result');

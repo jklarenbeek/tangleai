@@ -13,7 +13,7 @@ suite — a TypeScript-only npm workspace (`packages/*`, `apps/*`,
 `node --test` under repo-root `test/`, mirroring package names. The
 invariants an executor must preserve are `CONVENTIONS.md` §1 (this
 folder) and are binding: runtime dependencies are `@jarenjs/*` and
-`@tangleai/*` only; the boundary in `docs/BOUNDARY.md` (contracts and
+`@tangleai/*` only; the boundary in `docs/ARCHITECTURE.md` (contracts and
 seams below, policies and infrastructure here — and **use what the suite
 already publishes, do not write it again**); dependency injection at
 every seam; errors as values at content boundaries; evidence mandatory on
@@ -25,8 +25,8 @@ style.
 1. Read the router (the program's charter, measured baseline and fixed
    D-number decisions) and your work order, fully, before touching
    anything — including every file in the order's "Read first" list and
-   the salvage it names under `docs/attic/` (read-only: port out of it,
-   never import from it).
+   the salvage it names under `docs/attic/` at tag `v0.62.5` (read it with
+   `git show v0.62.5:docs/attic/…`; port out of it, never import from it).
 2. Fixed decisions (D-numbers) are settled. Do not reopen them; if the
    code contradicts one, stop and record the conflict in your session
    record instead of improvising.
