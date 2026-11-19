@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.62.5
+
+### Patch Changes
+
+- Build on Jaren 0.221.0: calendar members and sub-daily recurrence in the store, scheduled job workers, exact unit factors. No store's tables change.
+- @tangleai/context@0.62.5
+
 ## 0.62.4
 
 ### Patch Changes

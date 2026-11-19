@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/experiential",
-  "version": "0.62.4",
+  "version": "0.62.5",
   "description": "Closed records and validation for evidence-bound experiential learning",
   "license": "MIT",
   "type": "module",
@@ -19,14 +19,14 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.220.0",
-    "@jarenjs/json": "0.220.0",
-    "@jarenjs/validate": "0.220.0",
-    "@tangleai/outcomes": "0.62.4",
-    "@jarenjs/contract": "0.220.0",
-    "@tangleai/documents": "0.62.4",
-    "@tangleai/config": "0.62.4",
-    "@tangleai/models": "0.62.4"
+    "@jarenjs/core": "0.221.0",
+    "@jarenjs/json": "0.221.0",
+    "@jarenjs/validate": "0.221.0",
+    "@tangleai/outcomes": "0.62.5",
+    "@jarenjs/contract": "0.221.0",
+    "@tangleai/documents": "0.62.5",
+    "@tangleai/config": "0.62.5",
+    "@tangleai/models": "0.62.5"
   },
   "private": false,
   "types": "./src/index.ts",

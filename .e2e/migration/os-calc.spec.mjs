@@ -18,10 +18,11 @@ test('Calculator computes and changes mode in its window', async ({ page }) => {
   await desktop(page);
   await page.evaluate(() => window.tangleOs.desktop.open('calculator'));
   const calc = page.locator('.tos-window[data-module="calculator"]');
-  for (const key of ['7', '×', '6', '=']) await calc.getByRole('button', { name: key, exact: true }).first().click();
+  // the operator keys carry spoken names since Jaren 0.221.0; their faces stay the symbols
+  for (const key of ['7', 'Multiply', '6', 'Equals']) await calc.getByRole('button', { name: key, exact: true }).first().click();
   await expect(calc.locator('.tos-content')).toContainText('42');
   await calc.getByRole('button', { name: 'Scientific' }).click();
-  await expect(calc.getByRole('button', { name: 'sin', exact: true })).toBeVisible();
+  await expect(calc.getByRole('button', { name: 'Sine', exact: true })).toBeVisible();
   await expect(page.locator('.tos-dock-item[data-module="calculator"]')).toHaveClass(/is-running/);
 });
 

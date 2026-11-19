@@ -1,13 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.220.0**, tag `v0.220.0`, source commit
-`5bf8985f569e61ff27df9f0ef44f5f3b810601b3`. Upstream `main` and the tag agreed
-when checked on 2026-11-17; npm still served 0.91.4. Runtime imports therefore
+Tangle consumes **Jaren 0.221.0**, tag `v0.221.0`, source commit
+`f41f5cbbd1fd83d6a5bd344bd58966304a0bfb7a`. Upstream `main` and the tag agreed
+when checked on 2026-11-19; npm still served 0.91.4. Runtime imports therefore
 resolve to 23 candidate tarballs packed from that committed source with an empty
 patch. The active [foundation manifest](migrations/jaren-ai/foundations.json)
 records each tarball's SHA-256, integrity, complete member inventory and
 dependency edges. Root dependencies name the tarballs; every workspace
-reference is an exact `0.220.0` pin. A clean reconstruction from the pinned
+reference is an exact `0.221.0` pin. A clean reconstruction from the pinned
 source reproduced all 23 tarballs byte for byte, and a repeated bootstrap made
 no writes. [The consumer gate](CONSUMER_GATE.md) describes these checks as a
 reusable pattern for other suite consumers. Installed packages are neither
@@ -28,6 +28,22 @@ checked together. Bootstrap requires the source submodule; it does not
 initialize upstream benchmark datasets, and an application build must not
 either. The [0.91.4 registry receipt](integration/jaren-0.91.4-registry.json)
 records the previous registry foundation.
+
+## Changes from 0.220.0 to 0.221.0 and current adoption
+
+One release, mostly in `@jarenjs/db`, `core`, `linq`, `json`, `locales` and
+`josl`, and all additive for Tangle. Calendars grow throughout: sub-daily
+recurrence (`SECONDLY`, `MINUTELY`, `HOURLY`) walked exactly through offset
+changes, range overrides, VAVAILABILITY and the iTIP scheduling methods, and
+calendar members on entities and collections that both SQL engines key, refuse
+and compare alike, with `$instant` and `$wall` in the query language and the
+calendar seam carried into JSLT, JTLT, formulas and `queryJson`. A job worker
+can tick recurring schedules itself (`jobs.schedules`), a schedule can bound
+its lateness (`latenessMs`), and a linq chain takes the store's zone provider.
+Unit factors are held as exact definitions and numbers format without padded
+digits. No table, column, index or CHECK changes. Tangle declares no calendar
+members, runs no scheduled worker and keeps every store's DDL, so it adopts
+nothing beyond the new packages.
 
 ## Changes from 0.219.1 to 0.220.0 and current adoption
 
@@ -586,7 +602,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.161.0 or earlier must not silently resume as 0.220.0 executions; the identity
+checkpoints from 0.161.0 or earlier must not silently resume as 0.221.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The versioned-task overload and the LINQ
 coded-error constructor are now declared upstream, so neither local declaration

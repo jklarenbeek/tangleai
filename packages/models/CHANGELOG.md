@@ -1,5 +1,9 @@
 # @tangleai/models
 
+## 0.62.5
+
+No changes in this release.
+
 ## 0.62.4
 
 ### Patch Changes

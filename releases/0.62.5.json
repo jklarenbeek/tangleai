@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.62.5",
+  "baseVersion": "0.62.4",
+  "baseCommit": "260c31b1b542f56505b7421c6bde5f69908aaf85",
+  "preparationCommit": "260c31b1b542f56505b7421c6bde5f69908aaf85",
+  "initial": false,
+  "inputHash": "9764b925a76cbe96b341a1db13bbbb5b25b1155ad67a8e0a4875d4baedb184cc",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        }
+      ],
+      "summary": "Build on Jaren 0.221.0: calendar members and sub-daily recurrence in the store, scheduled job workers, exact unit factors. No store's tables change.",
+      "id": "jaren-0-221-0"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.62.5"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.62.5"
+    }
+  ]
+}

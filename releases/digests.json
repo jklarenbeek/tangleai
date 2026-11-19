@@ -1,188 +1,188 @@
 {
-  "version": "0.62.4",
-  "inputHash": "7ece3d52434278990a000489e3d822a8bcaf32648f0101b45c2494ecc89efe2b",
+  "version": "0.62.5",
+  "inputHash": "740495653d401fdd5a3d176d1655d502fb0b4836c0a3ad7e07df3baa87475631",
   "packages": [
     {
       "name": "@tangleai/models",
-      "file": "tangleai-models-0.62.4.tgz",
-      "size": 76179,
-      "sha256": "be8715d5795ab08af38cd6fe87013432dbcf018bc007ca641d1d45ba6f3baaae",
-      "integrity": "sha512-QaC6Dsr7sNlCZW1z39ShokgBPnVKaQhZAM9JiNvdmRas7GIoFNwcxiU0qTsVs1QnotmbCbI+rzZ0AYkkHG8l1w=="
+      "file": "tangleai-models-0.62.5.tgz",
+      "size": 76191,
+      "sha256": "2fd27b1d520c4ed9c5ebd02a59959a8fc401ebd0ed2628111b99f97e33622449",
+      "integrity": "sha512-UBmc1A5R0C6B/EEqU0Hsa76WfZXBWt9KP2JdEnvckLq2lqjadoufFy/i1KClMpkktx4sqSzIo59beS+T/7bhtg=="
     },
     {
       "name": "@tangleai/context",
-      "file": "tangleai-context-0.62.4.tgz",
-      "size": 87099,
-      "sha256": "362a8c14353cbe4e0fd3305d0ec1f95d72ec189027756f069fdff28359f7ef6f",
-      "integrity": "sha512-cSuB5U/yZrMazteQYwHkX/uLZSn4QWmz+xwT/2Ko7WWS+zRndZXOR0Yekigxp03sU3eyKDffZbDZFLpAVexIYA=="
+      "file": "tangleai-context-0.62.5.tgz",
+      "size": 87115,
+      "sha256": "956b9a7e778a8af443375b3141e856b746ebcf90b35bd252b94fd08ac6bc6623",
+      "integrity": "sha512-qGtdBW1yuI1MNtqv7hnQttzGOKXLYV3Zgg9cpZuJceJJndSnQ1v5/eBYfgRuagVpCGv/WBt28lukEx+KMkionw=="
     },
     {
       "name": "@tangleai/agents",
-      "file": "tangleai-agents-0.62.4.tgz",
-      "size": 109146,
-      "sha256": "60393fcf159853f623f0527d15b85eefdc66eeafa2fc7660171193fb01056fa8",
-      "integrity": "sha512-eqN0qDXwYhugxCWce4oxe7tiJh8Oy67/SlB6CHYfzq7Zc4Fc68OBJm68pFA3bdD99aC/y45I/dENaaQeK4hNJA=="
+      "file": "tangleai-agents-0.62.5.tgz",
+      "size": 109157,
+      "sha256": "26c4af111e79541e2cbe26696e958b9bfab08c31e7ee119d812b47d84a74b1d2",
+      "integrity": "sha512-zIRFFO5mPAogK6kBK9p9T11Cwf1fOQ3A9QrIFTlLEIm5hTQ6qMaC6xWCrqjqa7hpj50EM8imNswMNhL905+O7Q=="
     },
     {
       "name": "@tangleai/linq",
-      "file": "tangleai-linq-0.62.4.tgz",
-      "size": 21559,
-      "sha256": "9bdf192bfea746b118b8d8efba564cb0a92554843ffb40259700d94ef5ff8cec",
-      "integrity": "sha512-mCwuRByxPpfdmsX5O0PI9nO3lPi/BlI5xP72DBnX7+BMdkab2gcipN7m0NfDeOUWL14/btkr4/F9BfIA5hYs5g=="
+      "file": "tangleai-linq-0.62.5.tgz",
+      "size": 21579,
+      "sha256": "4f26480763d6b0ef14254128334e37b6866594e1eeca964231e0d03619f181e6",
+      "integrity": "sha512-NkD2IOm2yYMs8bvrCRQY3rteLGI5td76tXXNYil1uJI2VX2SsCLLxXuuTD3vy40CEMF1pMwwn9EjK09kPPdByQ=="
     },
     {
       "name": "@tangleai/jaren",
-      "file": "tangleai-jaren-0.62.4.tgz",
-      "size": 61418,
-      "sha256": "848a6544d3948b61b6593751265b7cbb608cb2fee4aa3b6be22e78db8d231644",
-      "integrity": "sha512-9S/wPZT+apdVqyU6Yu+XaTgB9FC4s4hh1MkD5KejTVIM0ieGaYqGCpYupshx/9+Lhd/umfDYGFXx3ezmd1W+QQ=="
+      "file": "tangleai-jaren-0.62.5.tgz",
+      "size": 61447,
+      "sha256": "876549eb904602c24b30315e20097183e8032319475d1e76dc53ca8fa99a648f",
+      "integrity": "sha512-gfkwGTSchkHpa+5+lOI9oMDJcjWfF0N6OHtoRvYywWMRUnqm2AaU0eheqmyU4RDhggaapxRREAbd9VXfsHbuzA=="
     },
     {
       "name": "@tangleai/assistant",
-      "file": "tangleai-assistant-0.62.4.tgz",
-      "size": 68851,
-      "sha256": "cd86e2986019e9631bd811d4c2dd910931e9ad6047f79e24f89d5007a6ecd69f",
-      "integrity": "sha512-wJf9issWK3+dCSZ65dEYH5DHei+ZHUiO1OqyeibolRItTD7ZPSCOf0cSM0PlXjYP8XXd/LtxBkrv1DA6JOpcFg=="
+      "file": "tangleai-assistant-0.62.5.tgz",
+      "size": 68869,
+      "sha256": "045da26d3be378c80c8e45c49a728e7d17cddc470e4bc20c91bdc87da97c0034",
+      "integrity": "sha512-fEpimRwUSqzKDdM3Dl2D5H44wj4nwd1aGf+E4PKK1RmfcaAif7A7c47iTiPBtuYTxv99Yc+SastdvZamW/Cwrw=="
     },
     {
       "name": "@tangleai/os",
-      "file": "tangleai-os-0.62.4.tgz",
-      "size": 212369,
-      "sha256": "8686f739226916c52db7b79a3eac9eeeac2a033506120730932dd0e815338845",
-      "integrity": "sha512-rBvYllKnXqTYGcmCXSjEBnMTwZt/JPjOsMVv8/7cp0WStprAZHL5yHPzjggVEMDA7MsX09DPdFK8qZaXO/+kOw=="
+      "file": "tangleai-os-0.62.5.tgz",
+      "size": 212388,
+      "sha256": "4f08bd31755026f8224f5b5be6dcc618f6e9cf2dc3f7036f01627c147eb134f0",
+      "integrity": "sha512-V8/ghV7Ewib8jC0pBq6PVfZsjZCLJspOdWSJvTdSYY4jbo2cSuj6sh/dgvJ086X2F5lGueYY9gOMl8xHaMEgdA=="
     },
     {
       "name": "@tangleai/core",
-      "file": "tangleai-core-0.62.4.tgz",
-      "size": 54935,
-      "sha256": "d100fea8afa46b49189b412c9a9f77be8c074553f7e9453ef4aa58885d74356e",
-      "integrity": "sha512-UXWtro5pIfzJiVNW4vtqWooxVkoJ26S5UeyzrK9BkFY+q8YE2sPK3po/Fc3OsuSdZ4ICyBi+PZAmlR0ACAtAXg=="
+      "file": "tangleai-core-0.62.5.tgz",
+      "size": 55018,
+      "sha256": "310f2277b820467e1e4b3063ba8cb7b3b4323594c97ea5d422c49d48485cc270",
+      "integrity": "sha512-VlN9U/HAz4KResWGV8BSFbyUrcDc+8O1kVdeP1RMuKb5BmArQ9t2r49GKHy/alkpBGGdvELCQJBp9/PJNM2bOQ=="
     },
     {
       "name": "@tangleai/config",
-      "file": "tangleai-config-0.62.4.tgz",
-      "size": 43487,
-      "sha256": "9615c0fc070e68c3aea5d0e8b5217fe7c7f151fc16ef5f8b065d4448719cd876",
-      "integrity": "sha512-+MSdxjFlC87T7IHmnkawb3Rmn9WHsCmA+XbNspVf9GGoIPWGbDiCJSBH5Flb3c5iycWzgEPReJ6oyTd5NWR0JA=="
+      "file": "tangleai-config-0.62.5.tgz",
+      "size": 43497,
+      "sha256": "bef3b6d8386d60b4d86bf277a51c6578662aaae74dc2bf8c8f260a53afad70a0",
+      "integrity": "sha512-tOAox4+C1rQjEc124nt7P5lfuy7oxT7cn9/DxieX5eNRN2JR+cdaWF37UZxVnlGs45cO+cC01o6weIRETMoZvA=="
     },
     {
       "name": "@tangleai/mas",
-      "file": "tangleai-mas-0.62.4.tgz",
-      "size": 108842,
-      "sha256": "90cc2722eb74db68666db094ec84c2fe6f92325d12940ebda7bf233a4b6b612f",
-      "integrity": "sha512-65dIZZP1sWBx+exLapo9Gzdv0XIWV8Kbcxvu5ux3UHFGvekteIxzsuExZoC/bt0gKElojtqh3VqWYvF3k/YY1Q=="
+      "file": "tangleai-mas-0.62.5.tgz",
+      "size": 108858,
+      "sha256": "4766e82cf2a1390cd50d41689130ebc1da58778753379df8fbe3d72af6cc88e7",
+      "integrity": "sha512-Tr54Q2voEilbZd36QhAweMJeaE0xtGDYVnsvmcJ4lXB4sfOJdwserEgOCbDHAuNPVG8lI+Nk16kMimCErzKFEQ=="
     },
     {
       "name": "@tangleai/documents",
-      "file": "tangleai-documents-0.62.4.tgz",
-      "size": 57317,
-      "sha256": "7645970b5ecba53c01f043aa24014cafa4d408144146ad30614e1d94ff6e99ee",
-      "integrity": "sha512-VwHB5Vf8tOpV7K/DdPbg2U0ciRGN57kY/xip1dnRIKfkIpRptNzI6cLQ8FiU4dYz5GmFX0xPR2TGhUGTuumWVA=="
+      "file": "tangleai-documents-0.62.5.tgz",
+      "size": 57334,
+      "sha256": "03d988fedf3cab979eaefdc7d78a1861de4b3bf48996500a6969845bb9ac7024",
+      "integrity": "sha512-gRo7ifqpsh47wrlEp3Kg3/3Y7jaXEYnH1domsjGeCrD5Fl7ImPzPZdhCVnODzhKtgM49R9MQAWIRc9T3YVy02w=="
     },
     {
       "name": "@tangleai/memory",
-      "file": "tangleai-memory-0.62.4.tgz",
-      "size": 114906,
-      "sha256": "bc38e97d3a9248bb3a924b7b0b787510e12b99558c63df70dbb50439a965a208",
-      "integrity": "sha512-MzEjxt2eaEDU1pUd7CZp91mP9b11DYnjbfPGL1/kP6SCW6u4lCWEYIslI1zZ033J0ZOZt79y0mGZC9OTxoAWig=="
+      "file": "tangleai-memory-0.62.5.tgz",
+      "size": 114924,
+      "sha256": "f7e8317dbdafb7f7a5231962fc3714f8c0685203c350830c53274dd27723b116",
+      "integrity": "sha512-H+4gxR+RnT6NppZpAHhrab/eY77++z1SXWIasUSKtdEc5yBI8yRB7tS9RwP1oRQRHla4C5glt3NV66KXROAiWA=="
     },
     {
       "name": "@tangleai/search",
-      "file": "tangleai-search-0.62.4.tgz",
-      "size": 18001,
-      "sha256": "efdbc84b468452f77534fe0a0e13552263f67f161c53724c4eba9207a3469e68",
-      "integrity": "sha512-kkK30CMzFIfJ4rHZZYMYLwjwSFgd5/hCgt2zhK6B7mvTZw1YpWZyBL1R8EuZMaRp4hnPUMnQyE1Uwqw7QNIPsA=="
+      "file": "tangleai-search-0.62.5.tgz",
+      "size": 18004,
+      "sha256": "98f3782da370acad7010ed5b9d25644ed444739add45a8301706257214678446",
+      "integrity": "sha512-UB2vNPduJpmBJsQpGIrVwin+Aa1ED1QQKePPp8c+Toq3ANvXagzerSyEXX4gipSD8VqmWY9c+Nvylx5sVVnYZQ=="
     },
     {
       "name": "@tangleai/pipeline",
-      "file": "tangleai-pipeline-0.62.4.tgz",
-      "size": 23193,
-      "sha256": "4825fc98f5471d791bb6bfb5e9f5eab41b470b627c67b918390f0ce196715e02",
-      "integrity": "sha512-6eWzOJJC6h9KWAZiHMzhw+5vtW7te1OxmtcuJ5pd1wb0NTkDmYi3q8fXVo28MHIMjBc5SjJO/uQj2PYcXIlwaA=="
+      "file": "tangleai-pipeline-0.62.5.tgz",
+      "size": 23211,
+      "sha256": "719b91f61095050f59a57a77c597ddf870986fce2361c957957ffa4af7349a9d",
+      "integrity": "sha512-3gAn+53y1kUk4g8V72V/wOEIYLWi53ko4oMpByUk3YBNGvYWwEAMORq3u+2nA35RD4sOe8w1gJUlVHvyDYkC1A=="
     },
     {
       "name": "@tangleai/outcomes",
-      "file": "tangleai-outcomes-0.62.4.tgz",
-      "size": 76386,
-      "sha256": "c008a25ccb5bafcd80595b9603c0c169c0f793314bdfa921c0ba4bdb63d7ded7",
-      "integrity": "sha512-S1N1u4ybpEdUULmkUFWqBB7HU2cEtQf7gp5wjklwOBsWaDQVNoB0t+opWZbGMQEGxgY7JdTaFxnTQmrfUC8qgQ=="
+      "file": "tangleai-outcomes-0.62.5.tgz",
+      "size": 76407,
+      "sha256": "00c6813690dc4c013d3a2766ffe4a2addee36960cffb1a1cd725a03d645d452e",
+      "integrity": "sha512-X+zyfALoYFRaZInvSTHDG0y5lb23PQJkQMxtYmbTQpbzXtGXkzqTSlboO+X9d8+Fzxj5rfL8f/2CxWRRbfZXOA=="
     },
     {
       "name": "@tangleai/trace2skill",
-      "file": "tangleai-trace2skill-0.62.4.tgz",
-      "size": 114020,
-      "sha256": "b8c1309d9bc2070f1fb8081cffe4eaea0fcb6c068cf9f117eb62bb3b29bfc2ea",
-      "integrity": "sha512-X/Qll7fNI5OgToKp3RDWGTK1TXEcmLCPnwGYp64B6zezd2S54S4+8rJDDsbFG2gmpSOwreZH+3mh+VwbreFSIQ=="
+      "file": "tangleai-trace2skill-0.62.5.tgz",
+      "size": 114037,
+      "sha256": "26b030ba42f7777b58631192cccbfde217c8c0a77460092198c203ec625b69c9",
+      "integrity": "sha512-Dc2MJ/6CPbxChpIdqkV2cqTQ0nrm3FShJ9iZ4a2rFIV5ZLbPjPJz48OXkU+sxorQCZQSRESeC3So/i2MTwGtZg=="
     },
     {
       "name": "@tangleai/evolve",
-      "file": "tangleai-evolve-0.62.4.tgz",
-      "size": 140622,
-      "sha256": "4f8f0f62e92523cc0da2bd651c025cc39ca9e3ceb11f07a313f382bf32b3e82a",
-      "integrity": "sha512-XX82Y13+KlYd7Fd7zNoiE92ktYRD0260ej7mnXEVBOo3GoGxmJgAqNq2ew4JMV05b5XR4IoL7j34fWgPHtcASQ=="
+      "file": "tangleai-evolve-0.62.5.tgz",
+      "size": 140643,
+      "sha256": "74365329522fd658f49212a19c430b9248bb37ac3806eb66e1586dba5ff83182",
+      "integrity": "sha512-E8hWYSXP0DZ90CA2GFyGaGoqASgUZsDIZQQHpw6NkdAAvaKw7b92QDeaqu5P5TQoa01zLT8KTQmuXqfnulcKKQ=="
     },
     {
       "name": "@tangleai/gmpl",
-      "file": "tangleai-gmpl-0.62.4.tgz",
-      "size": 58421,
-      "sha256": "4a5bac8ba21a9289e109588b475ad7fc196ee6042d371b610c5c19332240a9b8",
-      "integrity": "sha512-cDNkSwwH/P+Wt04nTfjwEHTi9LEj8ZQ8v1XWkWy0P6kqcMOVbgVR9QqRhOqYQAOTB1U6+tTuCMAmJ6+XlN7DGw=="
+      "file": "tangleai-gmpl-0.62.5.tgz",
+      "size": 58434,
+      "sha256": "5f5432afc4a5ca6ee5850c1d21dfafce62136c0a88d50943d87ac5e69d51ea10",
+      "integrity": "sha512-biOz4YnFhDZbFXB7/mO0kK8j2rJQtyPH4avCSqmNa4iI3vFW15hPcpbYyAvMVel/rBbLupXbQ3PRFFKGZ56TXA=="
     },
     {
       "name": "@tangleai/hera",
-      "file": "tangleai-hera-0.62.4.tgz",
-      "size": 142791,
-      "sha256": "b9e625040ff4122d0fa7b97fd5eea050846a104e38ffc8ddaf9e5c28e9f0f8a2",
-      "integrity": "sha512-/2BzODp5nxPuFBrZW+jojW/Q17bCPR31ualGJqZ8MnY7IR2Cr8DHqnS7UUIx7pRzY+I8o2UQ3KaVsqz3DPjQPw=="
+      "file": "tangleai-hera-0.62.5.tgz",
+      "size": 142822,
+      "sha256": "3433b83d5ad4a052a2a3edfb6fccb1d65b64e78fb20889b06fd6a4170c2cf6ea",
+      "integrity": "sha512-4CsPShnssXxfq5qaZVfQW5AhoHAspGcOWDZKAia+h2RDaY9S7f6KyvckDFKOt1k7N8bPyTE+RPsGBlk46NWL0w=="
     },
     {
       "name": "@tangleai/forecast",
-      "file": "tangleai-forecast-0.62.4.tgz",
-      "size": 125874,
-      "sha256": "c6663524e6e5b52c41c194690238c3dd3f8f7ab821f99613a2f3e4dcbc339378",
-      "integrity": "sha512-s8+Vwh7eHcoPgzMZY/y/YGuGdcNyDdpr1v4Tlic4l4d8sv9u1ZNwsZeFVfyn8oqAVmcR41WbQ+QeAuzB0rnTfw=="
+      "file": "tangleai-forecast-0.62.5.tgz",
+      "size": 125900,
+      "sha256": "efa39464a888161e7c7abc6ae9d9e99721ffca056621d180174f62555455ebbd",
+      "integrity": "sha512-Clsag/XDOZ9UV3oo4F/TP5dRAJlVMwRcWX0ZPMKLLlRc6zwzpdKMjEvrLn3oxJ0O6GOlIxR2WFjIGDUXJdPCmw=="
     },
     {
       "name": "@tangleai/grounding",
-      "file": "tangleai-grounding-0.62.4.tgz",
-      "size": 109791,
-      "sha256": "404b374affcd61557c5bbb875a4f67719fbbb8b9664fa4b7a647c21c51e85977",
-      "integrity": "sha512-UaJkRYdkqheMv72kdLErGOJnaNqXyo+GJ9okyBbGDQOGLO5ntERy5SCqXjpXO+amcXmyYQTP2cuTeChFPkMZvw=="
+      "file": "tangleai-grounding-0.62.5.tgz",
+      "size": 109833,
+      "sha256": "44935c810784172f24f293213a430f59e4bfa9e08dc84146935fd7ee84087fd5",
+      "integrity": "sha512-59u3l8jbnDT3gaMsNBi2RAmbJg4t0ZZsXY7iry90eOM4iz4h0sP+Kn7JlBhr+vS1DcUV33G5t2uurQMx+ps0Pg=="
     },
     {
       "name": "@tangleai/lightrag",
-      "file": "tangleai-lightrag-0.62.4.tgz",
-      "size": 80739,
-      "sha256": "feee732d02d138a616dfdc6592d66664fd8459b800daf3db68f857a2f0116457",
-      "integrity": "sha512-Rn1K7miuKmaN55IKqzUtJU2mrem3uo3gl0L8y6qt42LXdjq9ctwnyyMnUpn7rce2AgY/6vFaenzaqqS9QmWS8g=="
+      "file": "tangleai-lightrag-0.62.5.tgz",
+      "size": 80780,
+      "sha256": "054826d6df0c15493942de1310853beca5a623a3725be1bd32e8d3e03c36806b",
+      "integrity": "sha512-KbvhGn+XGvubum+hXPNmPoGUXkeavW0JzSGNaCo9/z1VD7AwCiNRhKqyG89/b2LC3kExv6IexFhTnhbqCUmgyw=="
     },
     {
       "name": "@tangleai/trading",
-      "file": "tangleai-trading-0.62.4.tgz",
-      "size": 138843,
-      "sha256": "8908218c8dcc01b76629a1ad114e09d67ba535f978776e991d811057d02961b5",
-      "integrity": "sha512-KNiaVFKZ19s5E4HZik0QIgmd3J7PbFktp3Sd7HHAc3znoK5Y0Dd/+PvrJYz/1/o/+7Y0APhdkE6mrrC7F+r7pA=="
+      "file": "tangleai-trading-0.62.5.tgz",
+      "size": 138849,
+      "sha256": "00c0b2f29ef3057e3438fd4c4884d72e70e4debc95716b92333d641e2f5c2252",
+      "integrity": "sha512-V3rzdCdUIem8ltudiLjuf5oQ85mvC+DemXmcYM0SQ57dUeBNW7RYHtSAX15P0Zcpy7h10X8t+xLHDq8cQ9Uy+A=="
     },
     {
       "name": "@tangleai/research",
-      "file": "tangleai-research-0.62.4.tgz",
-      "size": 365210,
-      "sha256": "de563927b2ee2477fae0411d0c9534503a374219e6e1ec43327e9090f1e4446d",
-      "integrity": "sha512-8TYBXGEbCiTyldcOUNrQXWyvCQZGoqi9c/TURNY49ZGb05Sw8BFNqsm7W+8RCLgGVEeqTHkkqytS5XS77drUNA=="
+      "file": "tangleai-research-0.62.5.tgz",
+      "size": 365262,
+      "sha256": "f7929078ddb4f4ad5d8890a31744bab0b3d69f5b0195c43b060899df6c6548d8",
+      "integrity": "sha512-T5YqJ0JsSVZvY7EJ3Z3QGVh8UU3nbouaFxE3DOOmH/dqKRUtM34ynij2RG0gwqSK93Go01ORkUqVvE0Lnx6HZw=="
     },
     {
       "name": "@tangleai/experiential",
-      "file": "tangleai-experiential-0.62.4.tgz",
-      "size": 140088,
-      "sha256": "026047e86172df81856fc7ff85a1c55dc766f0c091f2155c47596821a18534f0",
-      "integrity": "sha512-LB57laV6KZjIGwOQMNy2qU+PkjnU7rUTDqY7Ax0btxO+V/BQylK4RObaTqji2pKPREN0go/PBuR3qLORglzrtQ=="
+      "file": "tangleai-experiential-0.62.5.tgz",
+      "size": 140105,
+      "sha256": "02da9dfd415934a295e8576ac78aa68389f16027803949d151d25ba11a242d74",
+      "integrity": "sha512-b/RD88YFEl6afSJLQZFNM+jKToGpax5ifEvtgW0KssceKfzffFTwnyw3Jo0HrX9W5RaP5MnbhjP52mBRdUxIWg=="
     },
     {
       "name": "@tangleai/store",
-      "file": "tangleai-store-0.62.4.tgz",
-      "size": 125434,
-      "sha256": "072c04c2260be94609ae077f5938f82bad4ce36116d95df6f70659f8ebc0e542",
-      "integrity": "sha512-pyqKgLJaWKwnneo1BTpKDNNFBsOEFlkW1sT5cQFqgFFhvFyofjKb2vKfSOm+zEVszhR1volLfqgDUf4cVdDn7w=="
+      "file": "tangleai-store-0.62.5.tgz",
+      "size": 125491,
+      "sha256": "3481a93da8438536cc727a7c79712eb229db04b0639342fdc3264965d431d7bf",
+      "integrity": "sha512-v/G1CoyCrpBWrnCXbNQeHUMTv0by6N8sve5GmQmAVb3z9CA+7cLYyz8Sewknl6W/ijiRERmc0/t86bClZsIeoQ=="
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/agents",
-  "version": "0.62.4",
+  "version": "0.62.5",
   "description": "Validated tools, bounded agents, action programs, recursive execution and guarded refinement.",
   "license": "MIT",
   "type": "module",
@@ -23,12 +23,12 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.220.0",
-    "@jarenjs/validate": "0.220.0",
-    "@tangleai/models": "0.62.4",
-    "@tangleai/context": "0.62.4",
-    "@jarenjs/contract": "0.220.0",
-    "@jarenjs/json": "0.220.0"
+    "@jarenjs/core": "0.221.0",
+    "@jarenjs/validate": "0.221.0",
+    "@tangleai/models": "0.62.5",
+    "@tangleai/context": "0.62.5",
+    "@jarenjs/contract": "0.221.0",
+    "@jarenjs/json": "0.221.0"
   },
   "private": false,
   "files": [

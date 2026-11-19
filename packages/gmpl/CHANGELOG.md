@@ -1,5 +1,11 @@
 # @tangleai/gmpl
 
+## 0.62.5
+
+### Patch Changes
+
+- @tangleai/mas@0.62.5
+
 ## 0.62.4
 
 ### Patch Changes
