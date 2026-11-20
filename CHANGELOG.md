@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.62.6
+
+The release check refuses committed release digests built from other inputs, so a clean clone's release build leaves the tracked tree unchanged; this release's digests equal a fresh build's. The guides point to one architecture document, and the files the build reads live in `jaren/`.
+
 ## 0.62.5
 
 Build on Jaren 0.221.0: calendar members and sub-daily recurrence in the store, scheduled job workers, exact unit factors. No store's tables change.

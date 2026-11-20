@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "version": "0.62.6",
+  "baseVersion": "0.62.5",
+  "baseCommit": "725611c20ef3a9b056c4e03a014b75d7cc9dd82c",
+  "preparationCommit": "725611c20ef3a9b056c4e03a014b75d7cc9dd82c",
+  "initial": false,
+  "inputHash": "f119398fa63935bc63c68deb88e425d63e676ae0903a90124e49bbb605850084",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "The release check refuses committed release digests built from other inputs, so a clean clone's release build leaves the tracked tree unchanged; this release's digests equal a fresh build's. The guides point to one architecture document, and the files the build reads live in `jaren/`.",
+      "id": "release-digests"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.62.6"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.62.6"
+    }
+  ]
+}

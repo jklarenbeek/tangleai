@@ -1,5 +1,26 @@
 # @tangleai/store
 
+## 0.62.6
+
+### Patch Changes
+
+- The release check refuses committed release digests built from other inputs, so a clean clone's release build leaves the tracked tree unchanged; this release's digests equal a fresh build's. The guides point to one architecture document, and the files the build reads live in `jaren/`.
+- @tangleai/forecast@0.62.6
+  - @tangleai/grounding@0.62.6
+  - @tangleai/hera@0.62.6
+  - @tangleai/lightrag@0.62.6
+  - @tangleai/mas@0.62.6
+  - @tangleai/outcomes@0.62.6
+  - @tangleai/research@0.62.6
+  - @tangleai/trace2skill@0.62.6
+  - @tangleai/config@0.62.6
+  - @tangleai/core@0.62.6
+  - @tangleai/documents@0.62.6
+  - @tangleai/evolve@0.62.6
+  - @tangleai/memory@0.62.6
+  - @tangleai/experiential@0.62.6
+  - @tangleai/trading@0.62.6
+
 ## 0.62.5
 
 ### Patch Changes

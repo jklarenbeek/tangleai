@@ -1,5 +1,15 @@
 # @tangleai/memory
 
+## 0.62.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/context@0.62.6
+  - @tangleai/models@0.62.6
+  - @tangleai/jaren@0.62.6
+  - @tangleai/core@0.62.6
+
 ## 0.62.5
 
 ### Patch Changes

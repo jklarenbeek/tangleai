@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/jaren",
-  "version": "0.62.5",
+  "version": "0.62.6",
   "description": "Grammar authors and revision-checked editor adapters over public Jaren APIs.",
   "license": "MIT",
   "type": "module",
@@ -29,9 +29,9 @@
     "@jarenjs/db": "0.221.0",
     "@jarenjs/studio": "0.221.0",
     "@jarenjs/linq": "0.221.0",
-    "@tangleai/models": "0.62.5",
-    "@tangleai/context": "0.62.5",
-    "@tangleai/agents": "0.62.5"
+    "@tangleai/models": "0.62.6",
+    "@tangleai/context": "0.62.6",
+    "@tangleai/agents": "0.62.6"
   },
   "private": false,
   "files": [

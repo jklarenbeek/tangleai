@@ -82,6 +82,13 @@ it('rejects source changes after preparation', t => {
   writeFileSync(resolve(root, 'packages/core/src/index.ts'), 'export const value = 2;\n');
   assert.throws(() => checkRelease(root), /inputs changed/);
 });
+it('refuses committed digests built from other inputs, which a clean build would rewrite', t => {
+  const { root, record } = prepared(t);
+  writeJson(resolve(root, 'releases/digests.json'), { version: '0.20.0', inputHash: record.inputHash, packages: [] });
+  assert.equal(checkRelease(root)?.version, '0.20.0');
+  writeJson(resolve(root, 'releases/digests.json'), { version: '0.20.0', inputHash: 'f'.repeat(64), packages: [] });
+  assert.throws(() => checkRelease(root), /digests\.json was built from other inputs/);
+});
 it('refuses a tag on the wrong commit and a lightweight release tag', t => {
   const { root, base } = prepared(t);
   const head = commit(root);

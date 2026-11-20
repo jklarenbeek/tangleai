@@ -37,6 +37,11 @@ export function checkRelease(root = ROOT, options: { base?: string; structure?: 
   }
   assert.deepEqual(readdirSync(resolve(root, '.changeset')).filter(p => p.endsWith('.md') && p !== 'README.md'), [], 'Unconsumed changesets remain; prepare the release before committing');
   assert.equal(record.inputHash, inputHash(root), 'Release inputs changed after preparation; review and run release:prepare -- --refresh before committing');
+  // the committed digests must come from a build of these same inputs: an edit after the release build
+  // (a document in a package, say) leaves them stale, and a clean clone's build then rewrites a tracked file
+  const digestsPath = resolve(root, 'releases/digests.json');
+  if (existsSync(digestsPath)) assert.equal(readJson<{ inputHash: string }>(digestsPath).inputHash, record.inputHash,
+    'releases/digests.json was built from other inputs; run the release build again before committing');
   if (options.base) {
     assert.match(options.base, /^[a-f0-9]{40}$/, 'The CI base must be a full commit SHA');
     const previous = JSON.parse(git(root, 'show', `${options.base}:package.json`));

@@ -1,5 +1,15 @@
 # @tangleai/assistant
 
+## 0.62.6
+
+### Patch Changes
+
+- The release check refuses committed release digests built from other inputs, so a clean clone's release build leaves the tracked tree unchanged; this release's digests equal a fresh build's. The guides point to one architecture document, and the files the build reads live in `jaren/`.
+- Updated dependencies
+  - @tangleai/agents@0.62.6
+  - @tangleai/context@0.62.6
+  - @tangleai/models@0.62.6
+
 ## 0.62.5
 
 ### Patch Changes

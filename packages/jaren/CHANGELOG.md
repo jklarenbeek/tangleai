@@ -1,5 +1,14 @@
 # @tangleai/jaren
 
+## 0.62.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/agents@0.62.6
+  - @tangleai/context@0.62.6
+  - @tangleai/models@0.62.6
+
 ## 0.62.5
 
 ### Patch Changes
