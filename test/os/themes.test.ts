@@ -18,6 +18,17 @@ describe('theme kits', () => {
       assert.equal(theme.tokens['--os-desktop'], kit.pattern);
     }
   });
+  it('give the failure colour an ink that reads on it (a badge, a hovered close) in every kit and scheme', () => {
+    const channel = (c: number) => { const v = c / 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+    const luminance = (hex: string) => { const n = parseInt(hex.slice(1), 16); return 0.2126 * channel(n >> 16) + 0.7152 * channel((n >> 8) & 255) + 0.0722 * channel(n & 255); };
+    const contrast = (a: string, b: string) => { const [x, y] = [luminance(a), luminance(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+    for (const kit of THEME_KITS) for (const scheme of ['light', 'dark'] as const) {
+      const { tokens } = composeTheme(kit.id, scheme);
+      assert.match(tokens['--fail-fg'] ?? '', /^#[0-9a-f]{6}$/i, `${kit.id} ${scheme} names an ink for --fail`);
+      assert.ok(contrast(tokens['--fail'], tokens['--fail-fg']) >= 4.5, `${kit.id} ${scheme}: ${contrast(tokens['--fail'], tokens['--fail-fg']).toFixed(2)}:1`);
+    }
+  });
+
   it('apply an accent, a pattern, glass, corners and spacing, and ignore malformed changes', () => {
     const theme = composeTheme('loom', 'light', { accent: '#c81e64', pattern: 'moire', seed: 42, glass: 0, corners: 'sharp', spacing: 'compact' });
     assert.equal(theme.tokens['--accent'], '#c81e64');

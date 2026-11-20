@@ -739,12 +739,14 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     }
     const separator = doc.createElement('span'); separator.className = 'tos-dock-separator'; separator.setAttribute('aria-hidden', 'true');
     const brand = brandMark();
-    // the tiles shrink with the count before the dock overflows
-    dock.style.setProperty('--tos-dock-count', String(items.length + tray.length));
+    // the tiles shrink with the count before the dock overflows; a brand mark takes about two and a half tiles
+    dock.style.setProperty('--tos-dock-count', String(items.length + tray.length + (brand ? 2.5 : 0)));
     // a keyboard user stays on the tile they were on when the dock redraws
     const active = doc.activeElement as HTMLElement | null;
     const had = active && dock.contains(active) ? (active.dataset.icon ? `[data-icon="${active.dataset.icon}"]` : active.dataset.folder ? `[data-folder="${active.dataset.folder}"]` : active.dataset.module ? `[data-module="${active.dataset.module}"]` : active.classList.contains('tos-dock-mail') ? '.tos-dock-mail' : active.classList.contains('tos-dock-theme') ? '.tos-dock-theme' : active.classList.contains('tos-dock-done') ? '.tos-dock-done' : null) : null;
-    dock.replaceChildren(...(brand ? [brand] : []), ...items, ...(tray.length ? [separator, ...tray] : []));
+    // the tray keeps to the dock's visible end while the dock scrolls (a phone), so its mail and badge stay in view
+    const trayGroup = doc.createElement('span'); trayGroup.className = 'tos-dock-tray'; trayGroup.append(separator, ...tray);
+    dock.replaceChildren(...(brand ? [brand] : []), ...items, ...(tray.length ? [trayGroup] : []));
     if (had) dock.querySelector<HTMLElement>(had)?.focus({ preventScroll: true });
     if (openFolderId !== null) { if (view.items.some(i => i.kind === 'folder' && i.id === openFolderId)) openFolder(openFolderId, null, false); else closeFolder(); }
   }

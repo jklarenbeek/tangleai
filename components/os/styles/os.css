@@ -148,7 +148,7 @@
   transition: background 120ms ease, color 120ms ease;
 }
 .tos-control:hover { background: var(--accent-soft); color: var(--fg); }
-.tos-close:hover { background: var(--fail); color: #fff; }
+.tos-close:hover { background: var(--fail); color: var(--fail-fg, #fff); }
 .tos-control:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .tos-content { position: relative; min-block-size: 0; overflow: auto; background: var(--surface); }
@@ -174,7 +174,9 @@
   translate: -50% 0;
   display: flex; align-items: center; gap: 6px;
   padding: 8px;
-  /* never wider than the desktop: the tiles shrink to fit, then the dock scrolls */
+  /* never wider than the desktop: the tiles shrink to fit, then the dock scrolls; its own width is its
+     content's (an absolutely placed box at 50% would otherwise shrink to half the desktop and scroll early) */
+  inline-size: max-content;
   max-inline-size: calc(100% - 16px);
   overflow-x: auto; overflow-y: hidden;
   overscroll-behavior-inline: contain;
@@ -207,6 +209,7 @@
 }
 .tos-dock::-webkit-scrollbar { display: none; }
 .tos-dock-separator { flex: none; inline-size: 1px; block-size: 30px; margin-inline: 4px; background: var(--border); }
+.tos-dock-tray { flex: none; display: flex; align-items: center; gap: 6px; position: sticky; inset-inline-end: 0; border-radius: calc(var(--os-radius-window, 14px) - 2px); background: var(--os-dock-bg); }
 /* a folder: up to four of its icons in a small grid */
 .tos-dock-folder { background: var(--accent-soft); }
 .tos-dock-folder-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; inline-size: 70%; block-size: 70%; }
@@ -265,14 +268,15 @@
 .tos-answer input:focus-visible, .tos-answer select:focus-visible, .tos-answer textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .tos-dock-changes { margin: 6px 0 0; padding-inline-start: 18px; font-size: 13px; }
 .tos-dock-brand { flex: none; display: grid; place-items: center; block-size: var(--os-dock-size, 46px); max-inline-size: 120px; padding-inline: 4px 8px; overflow: hidden; }
-.tos-dock-brand > img { max-block-size: 70%; max-inline-size: 100%; object-fit: contain; }
+/* lengths, not percentages: a percentage sizes no box here, so a large raster would stretch the mark */
+.tos-dock-brand > img { block-size: calc(var(--os-dock-size, 46px) * 0.7); inline-size: auto; max-inline-size: 108px; min-inline-size: 0; object-fit: contain; }
 /* a compact desktop (a phone): every window is maximized, so it offers no maximize */
 .tos.is-compact .tos-maximize { display: none; }
 .tos-badge {
   position: absolute; inset-block-start: 2px; inset-inline-end: 2px;
   min-inline-size: 18px; block-size: 18px; padding-inline: 5px;
   display: grid; place-items: center;
-  border-radius: 9px; background: var(--fail); color: #fff;
+  border-radius: 9px; background: var(--fail); color: var(--fail-fg, #fff);
   font-size: 11px; font-weight: 700; line-height: 1;
 }
 

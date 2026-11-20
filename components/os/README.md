@@ -373,8 +373,11 @@ A framed page reads the screen it opened with as `connection.screen` and
 hears later ones at `onScreen(screen)`; a shipped module has `context.screen`
 and `context.onScreen(listener)`. A suite of many modules shares folder ids:
 each manifest says where its own icon goes (`dock.folder`) and may title the
-folders. A manifest places only its own icons, and only the first time they
-appear: once the person moves one, their dock wins. A launch entry or folder
+folders; `dock.hidden: true` starts its icons among the hidden ones (a
+utility a person rarely needs in view). A manifest places only its own icons, and only the first time they
+appear: once the person moves one, their dock wins. Saving an empty layout
+(`kernel.setDock(emptyDock())`) gives the person the default dock again; the
+Pages desktop offers it in Settings → Appearance. A launch entry or folder
 named twice in one manifest is refused (`OS0005`). An older desktop refuses
 a manifest with `entries` or `dock`, because the manifest is closed.
 
@@ -417,6 +420,10 @@ createKernel({ state: webStorageStore(localStorage) });          // a page with 
 createKernel({ state: contractStore(httpClient) });              // a desktop page signed in to its own server
 createKernel({ state: { module: 'suite' } });                    // the framed application that is signed in serves it
 ```
+
+Without `state` the desktop keeps nothing: the person's dock arrangement,
+the settings and the applications they joined last as long as the page, and
+a reload starts again from the manifests' defaults.
 
 The store is loaded once (`await kernel.ready()`), and every change shows at
 once and is saved in the background: one save at a time per document, the

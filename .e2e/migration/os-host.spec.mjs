@@ -102,6 +102,27 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 760, height: 640 }
   });
 }
 
+test('a large brand image keeps the mark within its bounds and the tiles in view; the tray stays at the dock\'s end on a phone', async ({ page }) => {
+  await host(page, 'modules=16&brand=large', { width: 1280, height: 800 });
+  const wide = await page.evaluate(() => {
+    const dock = document.querySelector('.tos-dock'), mark = document.querySelector('.tos-dock-brand');
+    return { mark: mark.getBoundingClientRect().width, scrolls: dock.scrollWidth > dock.clientWidth + 1 };
+  });
+  expect(wide.mark).toBeLessThanOrEqual(120);
+  expect(wide.scrolls, 'sixteen screens and a brand fit a wide desktop without scrolling').toBe(false);
+  await host(page, 'modules=16', { width: 390, height: 844 });
+  for (const end of ['start', 'end']) {
+    const seen = await page.evaluate((end) => {
+      const dock = document.querySelector('.tos-dock');
+      dock.scrollLeft = end === 'start' ? 0 : dock.scrollWidth;
+      const d = dock.getBoundingClientRect(), m = document.querySelector('.tos-dock-mail').getBoundingClientRect();
+      return { scrolls: dock.scrollWidth > dock.clientWidth + 1, inside: m.left >= d.left - 1 && m.right <= d.right + 1 };
+    }, end);
+    expect(seen.scrolls, 'the phone dock scrolls').toBe(true);
+    expect(seen.inside, `the mail tile is in view with the dock scrolled to its ${end}`).toBe(true);
+  }
+});
+
 test('the host decides the tray: no mail tile, a brand mark first that takes no keyboard stop', async ({ page }) => {
   await host(page, 'modules=3&mail=0&brand=1', { width: 1280, height: 800 });
   await expect(page.locator('.tos-dock-mail')).toHaveCount(0);

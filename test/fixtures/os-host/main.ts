@@ -4,7 +4,7 @@
  * sets. The page reads them from its query, so one fixture covers a phone and
  * a wide screen:
  *   ?modules=16  how many screens   ?compact=760  compact below this width
- *   ?mail=0      no mail tile       ?brand=1      a brand mark in the dock
+ *   ?mail=0      no mail tile       ?brand=1      a brand mark in the dock (large: a 1200×400 image)
  *   ?framed=1    two applications on a second origin (localhost): one that
  *                never says hello, one that serves `echo`; ?deadline=ms
  *   ?settings=1  the desktop's Settings: a host section, screen 1's own
@@ -147,7 +147,10 @@ if (withSettings) {
   kernel.install(settings.manifest, 'shipped');
   shipped.settings = settings.mount;
 }
-const brand = query.get('brand') === '1' ? { label: 'Example shop', src: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 16%22%3E%3Crect width=%2240%22 height=%2216%22 rx=%224%22/%3E%3C/svg%3E' } : undefined;
+const brand = query.get('brand') === '1' ? { label: 'Example shop', src: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 16%22%3E%3Crect width=%2240%22 height=%2216%22 rx=%224%22/%3E%3C/svg%3E' }
+  // an image with a large intrinsic size, as a raster logo has
+  : query.get('brand') === 'large' ? { label: 'Example shop', src: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22400%22 viewBox=%220 0 1200 400%22%3E%3Crect width=%221200%22 height=%22400%22 rx=%2240%22/%3E%3C/svg%3E' }
+  : undefined;
 const events: DesktopEvent[] = [];
 const desktop = mountDesktop(document.getElementById('desktop')!, {
   kernel, shipped,

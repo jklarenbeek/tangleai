@@ -21,7 +21,7 @@ export const AURORA = {
 const LIGHT: Record<string, string> = {
   '--bg': '#eef1f6', '--fg': '#161a2b', '--muted': '#596078', '--surface': '#ffffff', '--border': 'rgba(22, 26, 43, 0.12)',
   '--accent': '#0d8a83', '--accent-fg': '#ffffff', '--accent-soft': 'rgba(13, 138, 131, 0.12)', '--accent-hover': '#0a756f',
-  '--ok': '#1f8a4c', '--ok-soft': 'rgba(31, 138, 76, 0.12)', '--fail': '#c4314b', '--fail-soft': 'rgba(196, 49, 75, 0.12)', '--warn': '#a8670f', '--warn-soft': 'rgba(168, 103, 15, 0.14)',
+  '--ok': '#1f8a4c', '--ok-soft': 'rgba(31, 138, 76, 0.12)', '--fail': '#c4314b', '--fail-fg': '#ffffff', '--fail-soft': 'rgba(196, 49, 75, 0.12)', '--warn': '#a8670f', '--warn-soft': 'rgba(168, 103, 15, 0.14)',
   '--code-bg': '#f2f4f8', '--code-fg': '#161a2b',
   '--radius': '12px', '--radius-sm': '8px',
   '--space-1': '.25rem', '--space-2': '.5rem', '--space-3': '.75rem', '--space-4': '1rem', '--space-5': '1.25rem', '--space-6': '1.5rem', '--space-8': '2rem', '--space-10': '2.5rem', '--space-14': '3.5rem',
@@ -39,7 +39,7 @@ const DARK: Record<string, string> = {
   ...LIGHT,
   '--bg': '#0d1020', '--fg': '#e6e9f5', '--muted': '#98a0bc', '--surface': '#151a2e', '--border': 'rgba(230, 233, 245, 0.1)',
   '--accent': '#3cc8bd', '--accent-fg': '#05201d', '--accent-soft': 'rgba(60, 200, 189, 0.16)', '--accent-hover': '#5ad6cc',
-  '--ok': '#4cc38a', '--ok-soft': 'rgba(76, 195, 138, 0.14)', '--fail': '#ff6b81', '--fail-soft': 'rgba(255, 107, 129, 0.14)', '--warn': '#f0b04f', '--warn-soft': 'rgba(240, 176, 79, 0.14)',
+  '--ok': '#4cc38a', '--ok-soft': 'rgba(76, 195, 138, 0.14)', '--fail': '#ff6b81', '--fail-fg': '#2a0710', '--fail-soft': 'rgba(255, 107, 129, 0.14)', '--warn': '#f0b04f', '--warn-soft': 'rgba(240, 176, 79, 0.14)',
   '--code-bg': '#1a2036', '--code-fg': '#e6e9f5',
   '--os-ground-1': '#1b2550', '--os-ground-2': '#080a16',
   '--os-thread-1': '#2bb7ac', '--os-thread-2': '#5b79c9', '--os-thread-3': '#39426a', '--os-knot': '#e0568f',
