@@ -1,0 +1,39 @@
+/* Charts and Collections: the desktop's tokens only, logical properties only (Arabic mirrors). */
+.tos-engines { padding: 26px clamp(18px, 4%, 36px) 34px; display: grid; gap: 26px; color: var(--fg); }
+.tos-engines h1 { margin: 0; font-size: 26px; font-weight: 750; letter-spacing: -0.025em; }
+.tos-engines h2 { margin: 0; font-size: 17px; font-weight: 650; }
+.tos-engines p { margin: 0; }
+.tos-engines .engines-head { display: grid; gap: 6px; }
+.tos-engines .engines-head p, .tos-engines .engines-editor > p { color: var(--muted); line-height: 1.55; max-inline-size: 70ch; font-size: 14px; }
+.tos-engines section { display: grid; gap: 14px; }
+.tos-engines .engines-editor { padding-block-start: 20px; border-block-start: 1px solid var(--border); }
+
+.tos-engines .engines-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.tos-engines button { padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--fg); font: inherit; cursor: pointer; }
+.tos-engines button:hover:not(:disabled) { border-color: var(--accent); }
+.tos-engines button:disabled { opacity: 0.55; cursor: default; }
+.tos-engines button:focus-visible, .tos-engines textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tos-engines button.primary { border-color: transparent; background: var(--accent); color: var(--accent-fg); font-weight: 650; padding-inline: 18px; }
+.tos-engines button.primary:hover:not(:disabled) { background: var(--accent-hover, var(--accent)); }
+.tos-engines button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.tos-engines .engines-status { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.tos-engines .engines-probe { color: var(--muted); font-size: 13px; }
+
+.tos-engines .engines-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 16px; }
+.tos-engines .engines-chart { margin: 0; padding: 12px; min-block-size: 220px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); overflow: hidden; }
+.tos-engines .engines-chart svg { display: block; inline-size: 100%; block-size: auto; }
+
+.tos-engines .engines-editor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; align-items: start; }
+.tos-engines .engines-editor-source { display: grid; gap: 8px; }
+.tos-engines .engines-editor-source label { font-size: 13px; font-weight: 600; }
+.tos-engines textarea { box-sizing: border-box; inline-size: 100%; min-block-size: 260px; resize: vertical; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--fg);
+  font: 12.5px/1.5 var(--mono, ui-monospace, monospace); tab-size: 2; }
+.tos-engines .engines-check { font-size: 13px; color: var(--muted); }
+.tos-engines .engines-check.ok { color: var(--fg); }
+.tos-engines .engines-check.fail { color: var(--fail); }
+.tos-engines .engines-issues { margin: 0; padding-inline-start: 18px; font-size: 12px; color: var(--fail); display: grid; gap: 2px; }
+
+.tos-engines .engines-collection { min-block-size: 420px; }
+.tos-engines .engines-collection .jc-viewport { border-radius: var(--radius-sm); }
+.tos-engines .engines-collection .jc-cell { font-variant-numeric: tabular-nums; }

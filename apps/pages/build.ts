@@ -46,6 +46,8 @@ await writeFile(join(dist, 'app.js'), await built.outputs[0].text());
 const os = await Bun.build({ entrypoints: [join(here, 'src', 'os', 'main.ts')], target: 'browser', format: 'esm' });
 if (!os.success) throw new Error(os.logs.join('\n'));
 await writeFile(join(dist, 'os.js'), await os.outputs[0].text());
+// the Collections application's SQLite source, fetched only when a person picks it
+const sqliteSource = await Bun.build({ entrypoints: [join(here, 'src', 'os', 'sqlite-source.ts')], target: 'browser', format: 'esm' }); if (!sqliteSource.success) throw new Error(sqliteSource.logs.join('\n')); await writeFile(join(dist, 'os-sqlite.js'), await sqliteSource.outputs[0].text());
 const moduleHost = await Bun.build({ entrypoints: [join(repo, 'components', 'os', 'src', 'module-host.ts')], target: 'browser', format: 'iife' });
 if (!moduleHost.success) throw new Error(moduleHost.logs.join('\n'));
 await writeFile(join(dist, 'os-module-host.js'), await moduleHost.outputs[0].text());
@@ -76,6 +78,8 @@ await cp(join(repo, 'components/assistant/styles/assistant.css'), join(dist, 've
 css += ['studio/studio.css', 'studio/data.css', 'play/play.css', 'md/md.css', 'calc/calc.css', 'charts/charts.css', 'assistant.css']
   .map(path => `@import url('./vendor/${path}');\n`).join('');
 for (const path of vendor) css += await readFile(join(repo, path), 'utf8');
+// Charts and Collections: the chart tooltip and the collection grid
+for (const name of ['charts', 'collection']) css += await readFile(join(repo, `node_modules/@jarenjs/${name}/styles/${name}.css`), 'utf8');
 css += await readFile(join(here, 'src/demos/game/styles.css'), 'utf8');
 await writeFile(join(dist, 'vendor.css'), css);
 
