@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.63.1
+
+### Patch Changes
+
+- Build on Jaren 0.222.0: the validator reads every value one way and locates every failure by one rule, a compile reads only the held schemas it reaches, and strict profiles tell an empty map from an empty array.
+- @tangleai/context@0.63.1
+
 ## 0.63.0
 
 ### Patch Changes
