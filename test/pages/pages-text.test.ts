@@ -15,7 +15,7 @@ const read = (file: string) => readFileSync(new URL(file, dir), 'utf8');
 // every key the desktop's files render, wherever it is rendered
 const everything = readdirSync(dir).filter(file => file.endsWith('.ts') && file !== 'messages.ts' && file !== 'i18n.ts').map(read).join('\n');
 // the applications whose sentences live in the catalogue
-const source = ['settings-app.ts', 'welcome-app.ts', 'calendar-app.ts', 'calendar-model.ts', 'loop-app.ts', 'assistant-app.ts', 'surfaces.ts', 'modules.ts'].map(read).join('\n');
+const source = ['settings-app.ts', 'welcome-app.ts', 'calendar-app.ts', 'calendar-model.ts', 'loop-app.ts', 'assistant-app.ts', 'surfaces.ts', 'modules.ts', 'reader-app.ts'].map(read).join('\n');
 
 /** What a literal says once its `${…}` expressions are gone; a JSLT path (`$.draft`) says nothing. */
 const words = (text: string) => text.startsWith('$') ? '' : text.replace(/\$\{[^}]*\}/g, '');

@@ -1,0 +1,43 @@
+/* Docs and Benchmarks on the Pages desktop: a rail of documents beside a
+   reading pane, in the desktop's own tokens. Logical properties only, so an
+   Arabic desktop mirrors the rail without a rule of its own. */
+
+.tos-content:is(.tos-surface-docs, .tos-surface-benchmarks) { container-type: inline-size; }
+.tos-reader { display: grid; grid-template-columns: minmax(11rem, 15rem) 1fr; block-size: 100%; min-block-size: 0; }
+.tos-reader-rail {
+  overflow: auto; padding-block: 10px 14px; padding-inline: 10px 8px;
+  border-inline-end: 1px solid var(--border); background: var(--bg);
+}
+.tos-reader-group + .tos-reader-group { margin-block-start: 12px; }
+.tos-reader-group h3 { margin: 4px 6px 4px; font-size: 11.5px; font-weight: 600; letter-spacing: .02em; color: var(--muted); }
+.tos-reader-rail ul { list-style: none; margin: 0; padding: 0; }
+.tos-reader-rail ul ul { padding-inline-start: 12px; }
+.tos-reader-item {
+  display: block; inline-size: 100%; text-align: start; font: inherit; font-size: 13px; line-height: 1.35;
+  padding-block: 5px; padding-inline: 8px; border: 0; border-radius: var(--radius-sm);
+  background: transparent; color: var(--fg); cursor: pointer;
+}
+.tos-reader-item:hover { background: var(--accent-soft); }
+.tos-reader-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.tos-reader-item[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+.tos-reader-main { overflow: auto; min-inline-size: 0; padding-block: 14px 28px; padding-inline: 22px; background: var(--surface); }
+.tos-reader-status { margin: 0; color: var(--muted); font-size: 13px; }
+.tos-reader-status:empty { display: none; }
+.tos-reader-status .tos-btn { margin-inline-start: 6px; }
+.tos-reader-article { max-inline-size: 78ch; outline: none; }
+.tos-reader-article .md { color: var(--fg); }
+.tos-reader-article .md a { color: var(--accent); }
+.tos-reader-article .md :is(pre, table) { max-inline-size: 100%; overflow: auto; }
+.tos-reader-article .md img { max-inline-size: 100%; block-size: auto; }
+.tos-reader-chart { margin-block: 4px 18px; margin-inline: 0; max-inline-size: 78ch; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+.tos-reader-chart-svg svg { display: block; inline-size: 100%; block-size: auto; }
+.tos-reader-chart figcaption { margin-block-start: 6px; font-size: 12px; }
+.tos-reader-source { display: inline-block; margin-block-start: 18px; font-size: 13px; color: var(--accent); }
+
+/* a narrow window stacks the rail above the document */
+@container (max-width: 560px) {
+  .tos-reader { grid-template-columns: 1fr; grid-template-rows: minmax(0, 34%) 1fr; }
+  .tos-reader-rail { border-inline-end: 0; border-block-end: 1px solid var(--border); }
+  .tos-reader-main { padding-inline: 14px; }
+}
