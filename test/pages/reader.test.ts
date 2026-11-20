@@ -50,6 +50,15 @@ describe('the reader index', () => {
     ]);
   });
 
+  it('tells apart two reports that open with the same heading by their file names', () => {
+    const index = readerIndex([
+      { path: 'docs/GROUNDING_BENCHMARK.md', text: '# Document grounding benchmark' },
+      { path: 'docs/GROUNDING_REFRESH.md', text: '# Document grounding benchmark' },
+      { path: 'docs/A_BENCHMARK.md', text: '# A report' },
+    ]);
+    assert.deepEqual(index.documents.map(e => e.title).sort(), ['A report', 'Document grounding benchmark (Grounding benchmark)', 'Document grounding benchmark (Grounding refresh)']);
+  });
+
   it('is the same bytes whatever order the build finds the documents in', () => {
     const sources = [
       { path: 'docs/B.md', text: '# B' }, { path: 'docs/A.md', text: '# A' },

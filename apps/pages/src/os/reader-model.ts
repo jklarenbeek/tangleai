@@ -64,6 +64,13 @@ export function readerIndex(sources: readonly ReaderSource[]): ReaderIndex {
     const title = PACKAGE_README.test(source.path) && source.packageName ? source.packageName : titleOf(source.text, source.path);
     entries.push({ path: source.path, title, group: place.group, ...(place.parent && seen.has(place.parent) ? { parent: place.parent } : {}) });
   }
+  // two documents that open with the same heading are told apart by their file names
+  const titles = new Map<string, number>();
+  for (const e of entries) titles.set(`${e.group}\u0000${e.title}`, (titles.get(`${e.group}\u0000${e.title}`) ?? 0) + 1);
+  for (const e of entries) if ((titles.get(`${e.group}\u0000${e.title}`) ?? 0) > 1) {
+    const stem = e.path.slice(e.path.lastIndexOf('/') + 1).replace(/\.md$/, '').replace(/[_-]+/g, ' ').toLowerCase();
+    e.title = `${e.title} (${stem.charAt(0).toUpperCase()}${stem.slice(1)})`;
+  }
   const rank = (e: ReaderEntry) => {
     const overview = (OVERVIEW as readonly string[]).indexOf(e.path);
     return [READER_GROUPS.indexOf(e.group), overview < 0 ? OVERVIEW.length : overview, e.parent ?? e.path, e.parent ? 1 : 0, e.path] as const;

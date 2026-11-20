@@ -34,6 +34,7 @@
 .tos-engines .engines-check.fail { color: var(--fail); }
 .tos-engines .engines-issues { margin: 0; padding-inline-start: 18px; font-size: 12px; color: var(--fail); display: grid; gap: 2px; }
 
-.tos-engines .engines-collection { min-block-size: 420px; }
+/* the grid is as wide as its columns (2 × 220 px, plus room for the scrollbar and borders), so no empty band shows beside the rows */
+.tos-engines .engines-collection { min-block-size: 420px; inline-size: calc(440px + 24px); max-inline-size: 100%; }
 .tos-engines .engines-collection .jc-viewport { border-radius: var(--radius-sm); }
 .tos-engines .engines-collection .jc-cell { font-variant-numeric: tabular-nums; }

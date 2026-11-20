@@ -153,6 +153,9 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   const layer = doc.createElement('div'); layer.className = 'tos-windows';
   const shield = doc.createElement('div'); shield.className = 'tos-shield'; shield.hidden = true;
   const dock = doc.createElement('nav'); dock.className = 'tos-dock'; dock.setAttribute('aria-label', t('dock/label'));
+  /** The dock says when it scrolls (a phone, many modules), so its tray can cover the tiles that pass beneath. */
+  const syncDockScroll = () => dock.classList.toggle('is-scrolling', dock.scrollWidth > dock.clientWidth + 1);
+  win.addEventListener('resize', syncDockScroll);
   const mailPanel = doc.createElement('section'); mailPanel.className = 'tos-mail'; mailPanel.hidden = true; mailPanel.setAttribute('aria-label', t('mail/title'));
   node.replaceChildren(wallpaper, layer, shield, mailPanel, dock);
 
@@ -747,6 +750,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     // the tray keeps to the dock's visible end while the dock scrolls (a phone), so its mail and badge stay in view
     const trayGroup = doc.createElement('span'); trayGroup.className = 'tos-dock-tray'; trayGroup.append(separator, ...tray);
     dock.replaceChildren(...(brand ? [brand] : []), ...items, ...(tray.length ? [trayGroup] : []));
+    syncDockScroll();
     if (had) dock.querySelector<HTMLElement>(had)?.focus({ preventScroll: true });
     if (openFolderId !== null) { if (view.items.some(i => i.kind === 'folder' && i.id === openFolderId)) openFolder(openFolderId, null, false); else closeFolder(); }
   }
@@ -1546,7 +1550,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     dispose() {
       unsubscribe(); observer?.disconnect(); win.removeEventListener('message', onKey); win.removeEventListener('blur', onBlur); win.removeEventListener('pagehide', onPageHide);
       closeMenu(); node.removeEventListener('contextmenu', onContextMenu); doc.removeEventListener('pointerdown', onOutside, true);
-      win.removeEventListener('blur', onMenuBlur); win.removeEventListener('resize', onMenuBlur);
+      win.removeEventListener('blur', onMenuBlur); win.removeEventListener('resize', onMenuBlur); win.removeEventListener('resize', syncDockScroll);
       for (const id of [...mounted.keys()]) close(id);
       listeners.clear(); visibility.clear();
       node.replaceChildren(); node.classList.remove('tos', 'is-compact');

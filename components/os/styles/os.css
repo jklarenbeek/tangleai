@@ -209,7 +209,8 @@
 }
 .tos-dock::-webkit-scrollbar { display: none; }
 .tos-dock-separator { flex: none; inline-size: 1px; block-size: 30px; margin-inline: 4px; background: var(--border); }
-.tos-dock-tray { flex: none; display: flex; align-items: center; gap: 6px; position: sticky; inset-inline-end: 0; border-radius: calc(var(--os-radius-window, 14px) - 2px); background: var(--os-dock-bg); }
+.tos-dock-tray { flex: none; display: flex; align-items: center; gap: 6px; position: sticky; inset-inline-end: 0; border-radius: calc(var(--os-radius-window, 14px) - 2px); }
+.tos-dock.is-scrolling .tos-dock-tray { background: var(--os-dock-bg); }
 /* a folder: up to four of its icons in a small grid */
 .tos-dock-folder { background: var(--accent-soft); }
 .tos-dock-folder-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; inline-size: 70%; block-size: 70%; }
