@@ -1,5 +1,25 @@
 # @tangleai/store
 
+## 0.63.0
+
+### Patch Changes
+
+- @tangleai/config@0.63.0
+  - @tangleai/core@0.63.0
+  - @tangleai/documents@0.63.0
+  - @tangleai/evolve@0.63.0
+  - @tangleai/experiential@0.63.0
+  - @tangleai/forecast@0.63.0
+  - @tangleai/grounding@0.63.0
+  - @tangleai/hera@0.63.0
+  - @tangleai/lightrag@0.63.0
+  - @tangleai/mas@0.63.0
+  - @tangleai/memory@0.63.0
+  - @tangleai/outcomes@0.63.0
+  - @tangleai/research@0.63.0
+  - @tangleai/trace2skill@0.63.0
+  - @tangleai/trading@0.63.0
+
 ## 0.62.6
 
 ### Patch Changes
