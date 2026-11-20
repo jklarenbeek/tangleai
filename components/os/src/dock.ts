@@ -23,7 +23,7 @@ export type DockLayout = { $dock: '0.1', items: (string | DockFolder)[], hidden:
 /** One dock icon: a module, or one launch entry of a module (`<module>/<entry>`). */
 export type DockIcon = {
   id: string, module: string, entry?: string, screen?: string,
-  title: string, icon?: { glyph: string, hue?: number }, folder?: string,
+  title: string, icon?: { glyph: string, hue?: number }, folder?: string, hidden?: true,
 };
 export type DockView = {
   items: ({ kind: 'icon', icon: DockIcon } | { kind: 'folder', id: string, title: string, icons: DockIcon[] })[],
@@ -66,8 +66,9 @@ export function dockIcons(manifests: readonly ModuleManifest[], locale = 'en'): 
       for (const e of m.entries) out.push({
         id: `${m.id}/${e.id}`, module: m.id, entry: e.id, ...(e.screen !== undefined ? { screen: e.screen } : {}),
         title: localized(e.title, locale), ...(e.icon ?? m.icon ? { icon: e.icon ?? m.icon } : {}), ...(e.folder ? { folder: e.folder } : {}),
+        ...(m.dock?.hidden ? { hidden: true as const } : {}),
       });
-    } else out.push({ id: m.id, module: m.id, title: localized(m.title, locale), ...(m.icon ? { icon: m.icon } : {}), ...(m.dock?.folder ? { folder: m.dock.folder } : {}) });
+    } else out.push({ id: m.id, module: m.id, title: localized(m.title, locale), ...(m.icon ? { icon: m.icon } : {}), ...(m.dock?.folder ? { folder: m.dock.folder } : {}), ...(m.dock?.hidden ? { hidden: true as const } : {}) });
   }
   return out;
 }
@@ -106,8 +107,8 @@ export function normalizeDock(layout: DockLayout): DockLayout {
 }
 
 /**
- * The person's layout with every newly installed icon placed: into the
- * folder its manifest names (made at the end when it is not there yet, with
+ * The person's layout with every newly installed icon placed: among the
+ * hidden ones when its manifest says so, else into the folder its manifest names (made at the end when it is not there yet, with
  * every newcomer that names it), else at the end. An icon the layout already
  * holds, shown, foldered or hidden, stays where the person put it; one whose
  * module is gone stays in the layout (so it returns to its place when the
@@ -117,16 +118,18 @@ export function arrangeDock(saved: DockLayout | null | undefined, icons: readonl
   const base = normalizeDock(saved ?? emptyDock());
   const known = new Set(idsOf(base));
   const items = base.items.map(i => isFolder(i) ? { ...i, items: [...i.items] } : i);
+  const hidden = [...base.hidden];
   for (const icon of icons) {
     if (known.has(icon.id)) continue;
     known.add(icon.id);
-    if (icon.folder) {
+    if (icon.hidden) hidden.push(icon.id);
+    else if (icon.folder) {
       const folder = items.find((i): i is DockFolder => isFolder(i) && i.folder === icon.folder);
       if (folder) folder.items.push(icon.id);
       else items.push({ folder: icon.folder, items: [icon.id] });
     } else items.push(icon.id);
   }
-  const layout = normalizeDock({ $dock: '0.1', items, hidden: base.hidden });
+  const layout = normalizeDock({ $dock: '0.1', items, hidden });
   const byId = new Map(icons.map(i => [i.id, i]));
   const view: DockView = { items: [], hidden: layout.hidden.flatMap(id => byId.get(id) ?? []) };
   for (const item of layout.items) {

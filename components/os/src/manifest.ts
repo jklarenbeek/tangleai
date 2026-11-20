@@ -42,9 +42,10 @@ export type ModuleManifest = {
   /**
    * Where its icons go in a dock the person has not arranged yet: `folder`
    * for the module's own icon, and the titles of the folders it (or its
-   * entries) name. A suite's manifests share folder ids.
+   * entries) name. A suite's manifests share folder ids. `hidden` starts its
+   * icons among the hidden ones (a utility a person rarely needs in view).
    */
-  dock?: { folder?: string, folders?: { id: string, title: LocalizedText }[] };
+  dock?: { folder?: string, folders?: { id: string, title: LocalizedText }[], hidden?: boolean };
   /**
    * Its files, for the desktop's Files: the contract it serves as a file
    * location (built with `fileLocationContract`, declared in `provides`), the

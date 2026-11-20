@@ -7,7 +7,7 @@
  */
 import { PROVIDERS, probeProvider } from '@tangleai/models/providers';
 import type { SettingsSection } from '@tangleai/os/settings';
-import { THEME_KITS, composeTheme, patternBackground } from '@tangleai/os';
+import { THEME_KITS, composeTheme, emptyDock, patternBackground, type Kernel } from '@tangleai/os';
 
 import {
   ACCENT_SWATCHES, PROVIDER_KINDS, RECOMMENDED_MODELS, VENICE_BASE, cleanCustom, toAiSettings,
@@ -100,18 +100,18 @@ const keyReady = (prefs: Preferences) => { const k = prefs.active(); return !PRO
  * providers and keys, models, appearance, privacy. Each draws into the pane
  * Settings gives it and redraws itself when its preferences change.
  */
-export function settingsSections(prefs: Preferences): SettingsSection[] {
+export function settingsSections(prefs: Preferences, kernel?: Kernel): SettingsSection[] {
   return [
     { id: 'providers', title: localizedText(englishOf('providers/title'), t('providers/title')), keywords: localizedKeywords(englishOf('providers/keywords'), t('providers/keywords')), mount: sectionMount(prefs, 'providers') },
     { id: 'model', title: localizedText(englishOf('models/title'), t('models/title')), keywords: localizedKeywords(englishOf('models/keywords'), t('models/keywords')), mount: sectionMount(prefs, 'model') },
-    { id: 'appearance', title: localizedText(englishOf('appearance/title'), t('appearance/title')), keywords: localizedKeywords(englishOf('appearance/keywords'), t('appearance/keywords')), mount: sectionMount(prefs, 'appearance') },
+    { id: 'appearance', title: localizedText(englishOf('appearance/title'), t('appearance/title')), keywords: localizedKeywords(englishOf('appearance/keywords'), t('appearance/keywords')), mount: sectionMount(prefs, 'appearance', kernel) },
     { id: 'privacy', title: localizedText(englishOf('privacy/title'), t('privacy/title')), keywords: localizedKeywords(englishOf('privacy/keywords'), t('privacy/keywords')), mount: sectionMount(prefs, 'privacy') },
   ];
 }
 /** Settings opens on the models once a provider is ready, on the providers before. */
 export const initialSection = (prefs: Preferences): SectionId => keyReady(prefs) ? 'model' : 'providers';
 
-function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount'] {
+function sectionMount(prefs: Preferences, id: SectionId, kernel?: Kernel): SettingsSection['mount'] {
   return (node) => {
     const doc = node.ownerDocument;
     const win = doc.defaultView!;
@@ -454,6 +454,13 @@ function sectionMount(prefs: Preferences, id: SectionId): SettingsSection['mount
           h('button', { type: 'button', class: 'tos-btn', onclick: () => file.click() }, t('appearance/import')),
           h('button', { type: 'button', class: 'tos-btn', onclick: () => { prefs.writeDesktop({ custom: {} }); redraw(); } }, t('appearance/reset'))),
         file, status,
+        kernel && h('h3', {}, t('appearance/dock')),
+        kernel && h('p', { class: 'tos-muted' }, t('appearance/dock-note')),
+        // an empty layout is the default: every icon is placed again as its manifest says
+        kernel && h('div', { class: 'tos-row' }, h('button', { type: 'button', class: 'tos-btn', id: 'tos-dock-reset', onclick: () => {
+          const outcome = kernel.setDock(emptyDock());
+          status.textContent = outcome.ok ? t('appearance/dock-reset-done') : t('appearance/dock-reset-failed');
+        } }, t('appearance/dock-reset'))),
       );
     }
 

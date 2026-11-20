@@ -15,6 +15,8 @@ import { welcomeMount } from './welcome-app.ts';
 import { loopMount } from './loop-app.ts';
 import { calendarMount, calendarSettingsMount, CALENDAR_CONTRACT } from './calendar-app.ts';
 import { calcMount } from './calc-app.ts';
+import { docsMount, benchmarksMount } from './reader-app.ts';
+import { chartsMount, collectionsMount } from './engines-app.ts';
 import { englishOf, localizedKeywords, localizedText, t } from './i18n.ts';
 
 /** The translations of a title shipped with the desktop; the English comes from the catalogue, and an active pack's own sentence wins. */
@@ -48,6 +50,10 @@ export function builtinModules(): ModuleManifest[] {
   const LOOP = app('loop', localizedText(englishOf('apps/loop'), t('apps/loop'), shipped('Geheugenlus', 'Gedächtnisschleife', 'Boucle de mémoire', 'Bucle de memoria', 'Ciclo de memória', 'حلقة الذاكرة', 'メモリーループ', '메모리 루프', 'Цикл памяти', 'Bellek döngüsü', '記憶迴圈')), 'loop', 178, { width: 820, height: 700, minWidth: 380, minHeight: 360 }, 'productivity');
   const ADVENTURE = app('adventure', localizedText(englishOf('apps/adventure'), t('apps/adventure'), shipped('Avontuur', 'Abenteuer', 'Aventure', 'Aventura', 'Aventura', 'المغامرة', 'アドベンチャー', '어드벤처', 'Приключение', 'Macera', '冒險')), 'adventure', 12, { width: 980, height: 720, minWidth: 420, minHeight: 420 }, 'play');
   const TRANSFER = app('transfer', localizedText(englishOf('apps/transfer'), t('apps/transfer'), shipped('Gegevens verplaatsen', 'Daten übertragen', 'Déplacer les données', 'Mover datos', 'Mover dados', 'نقل البيانات', 'データの移動', '데이터 이동', 'Перенос данных', 'Verileri taşı', '移動資料')), 'transfer', 160, { width: 560, height: 360, minWidth: 360, minHeight: 240 }, 'system');
+  const CHARTS = app('charts', localizedText(englishOf('apps/charts'), t('apps/charts'), shipped('Grafieken', 'Diagramme', 'Graphiques', 'Gráficos', 'Gráficos', 'المخططات البيانية', 'チャート', '차트', 'Диаграммы', 'Grafikler', '圖表')), 'charts', 140, { width: 1040, height: 720, minWidth: 420, minHeight: 380 });
+  const COLLECTIONS = app('collections', localizedText(englishOf('apps/collections'), t('apps/collections'), shipped('Collecties', 'Sammlungen', 'Collections', 'Colecciones', 'Coleções', 'المجموعات', 'コレクション', '컬렉션', 'Коллекции', 'Koleksiyonlar', '集合')), 'collections', 90, { width: 980, height: 700, minWidth: 380, minHeight: 360 });
+  const DOCS = app('docs', localizedText(englishOf('apps/docs'), t('apps/docs'), shipped('Documentatie', 'Dokumentation', 'Documentation', 'Documentación', 'Documentação', 'التوثيق', 'ドキュメント', '문서', 'Документация', 'Belgeler', '說明文件')), 'docs', 230, { width: 1080, height: 760, minWidth: 420, minHeight: 380 }, 'productivity');
+  const BENCHMARKS = app('benchmarks', localizedText(englishOf('apps/benchmarks'), t('apps/benchmarks'), shipped('Benchmarks', 'Benchmarks', 'Benchmarks', 'Benchmarks', 'Benchmarks', 'قياسات الأداء', 'ベンチマーク', '벤치마크', 'Бенчмарки', 'Kıyaslamalar', '基準測試')), 'benchmarks', 40, { width: 1080, height: 760, minWidth: 420, minHeight: 380 }, 'productivity');
 
   const ASSISTANT: ModuleManifest = {
     $module: '0.1', id: 'assistant', version: '1.0.0', category: 'system',
@@ -144,7 +150,25 @@ export function builtinModules(): ModuleManifest[] {
     },
   };
 
-  return [WELCOME, ASSISTANT, CALENDAR, CALCULATOR, CONVERTER, STUDIO, PLAYGROUND, FLOW, DATA, LOOP, ADVENTURE, TODO, SETTINGS, TRANSFER, ABOUT];
+  // The dock a person has not arranged yet mirrors the Jaren website's menu: Engines,
+  // Studios and Learn as folders, the everyday applications beside them, and the
+  // data transfer among the hidden icons. A folder sits where its first member is
+  // installed, so this order is the dock's order; a person's own arrangement wins.
+  const FOLDERS = [
+    { id: 'engines', title: localizedText(englishOf('dock/engines'), t('dock/engines'), shipped('Engines', 'Engines', 'Moteurs', 'Motores', 'Motores', 'المحركات', 'エンジン', '엔진', 'Движки', 'Motorlar', '引擎')) },
+    { id: 'studios', title: localizedText(englishOf('dock/studios'), t('dock/studios'), shipped("Studio's", 'Studios', 'Studios', 'Estudios', 'Estúdios', 'الاستوديوهات', 'スタジオ', '스튜디오', 'Студии', 'Stüdyolar', '工作室')) },
+    { id: 'learn', title: localizedText(englishOf('dock/learn'), t('dock/learn'), shipped('Leren', 'Lernen', 'Apprendre', 'Aprender', 'Aprender', 'تعلّم', '学ぶ', '알아보기', 'Обучение', 'Öğren', '學習')) },
+  ];
+  const into = (folder: string, ...manifests: ModuleManifest[]) =>
+    manifests.map((m, i) => ({ ...m, dock: { ...m.dock, folder, ...(i === 0 ? { folders: FOLDERS.filter(f => f.id === folder) } : {}) } }));
+  return [
+    ASSISTANT,
+    ...into('engines', PLAYGROUND, CHARTS, COLLECTIONS, ADVENTURE, LOOP),
+    ...into('studios', STUDIO, FLOW, DATA, CALCULATOR, CONVERTER),
+    ...into('learn', WELCOME, DOCS, BENCHMARKS, ABOUT),
+    CALENDAR, TODO, SETTINGS,
+    { ...TRANSFER, dock: { hidden: true } },
+  ];
 }
 
 /** The shipped components this desktop registers. */
@@ -157,6 +181,10 @@ export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel,
     calculator: calcMount('calculator'),
     converter: calcMount('converter'),
     loop: loopMount,
+    charts: chartsMount,
+    collections: collectionsMount,
+    docs: docsMount,
+    benchmarks: benchmarksMount,
     assistant: assistantMount(host.kernel, host.prefs, () => host.open('settings'), { toolbox: host.surfaces.toolbox, system: host.surfaces.system }),
     about(node, context) {
       const doc = node.ownerDocument;
@@ -183,6 +211,6 @@ export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel,
     },
   };
   // the desktop's Settings: the site's own sections, then every application's
-  mounts.settings = settingsModule({ kernel: host.kernel, shipped: mounts, ...(host.chrome ?? {}), sections: settingsSections(host.prefs), initial: () => initialSection(host.prefs) }).mount;
+  mounts.settings = settingsModule({ kernel: host.kernel, shipped: mounts, ...(host.chrome ?? {}), sections: settingsSections(host.prefs, host.kernel), initial: () => initialSection(host.prefs) }).mount;
   return mounts;
 }

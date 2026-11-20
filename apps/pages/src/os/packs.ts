@@ -11,5 +11,10 @@ import { pt } from './messages/pt.ts';
 import { ru } from './messages/ru.ts';
 import { tr } from './messages/tr.ts';
 import { zhTW } from './messages/zh-tw.ts';
+import { readerPacks } from './messages/reader.ts';
+import { enginesPacks } from './messages/engines.ts';
 
-export const PAGES_PACKS: Record<string, PagesCatalogue> = { ar, de, es, fr, ja, ko, nl, pt, ru, tr, 'zh-TW': zhTW };
+const BASE: Record<keyof typeof readerPacks, PagesCatalogue> = { ar, de, es, fr, ja, ko, nl, pt, ru, tr, 'zh-TW': zhTW };
+/** Each language's pack with the Docs/Benchmarks and Charts/Collections sentences merged in. */
+export const PAGES_PACKS: Record<string, PagesCatalogue> = Object.fromEntries(Object.entries(BASE)
+  .map(([lang, pack]) => [lang, { ...pack, ...readerPacks[lang as keyof typeof readerPacks], ...enginesPacks[lang as keyof typeof enginesPacks] } as PagesCatalogue]));

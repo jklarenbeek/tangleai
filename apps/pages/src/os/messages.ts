@@ -12,6 +12,9 @@
  * The comment beside each key says where it appears and what it is.
  */
 
+import { readerEn } from './messages/reader.ts';
+import { enginesEn } from './messages/engines.ts';
+
 export const pagesMessagesEn = {
   // ── manifests: the names of the desktop's applications (dock, window title, Settings) ──
   'apps/welcome': 'Welcome', // Dock and window title: the Welcome application
@@ -25,6 +28,13 @@ export const pagesMessagesEn = {
   'apps/calculator': 'Calculator', // Dock and window title: the Calculator application
   'apps/converter': 'Converter', // Dock and window title: the unit and currency Converter
   'apps/loop': 'Memory loop', // Dock and window title: the memory loop demonstration
+  'apps/charts': 'Charts', // Dock and window title: the Charts application
+  'apps/collections': 'Collections', // Dock and window title: the Collections application
+  'apps/docs': 'Docs', // Dock and window title: the Docs application
+  'apps/benchmarks': 'Benchmarks', // Dock and window title: the Benchmarks application
+  'dock/engines': 'Engines', // Dock folder: the engines (Jaren website menu "Engines")
+  'dock/studios': 'Studios', // Dock folder: the studios (Jaren website menu "Studios")
+  'dock/learn': 'Learn', // Dock folder: reading and measurements (Jaren website menu "Learn")
   'apps/adventure': 'Adventure', // Dock and window title: a small pirate story game
   'apps/transfer': 'Move data', // Dock and window title: export and import this browser's data
   'apps/settings': 'Settings', // Dock and window title: the desktop's Settings
@@ -215,6 +225,11 @@ export const pagesMessagesEn = {
   'appearance/export': 'Export theme', // Appearance section: button that saves the theme as a file
   'appearance/import': 'Import theme', // Appearance section: button that loads a theme file
   'appearance/reset': 'Reset to the theme', // Appearance section: button that drops every customisation
+  'appearance/dock': 'Dock', // Appearance section: heading above the dock options
+  'appearance/dock-note': 'A dock you have not arranged follows the menu of the Jaren website: Engines, Studios and Learn. Resetting puts every icon back in that place.', // Appearance section: what the default dock is and what resetting does
+  'appearance/dock-reset': 'Reset the dock to its default', // Appearance section: button that puts the dock back to its default arrangement
+  'appearance/dock-reset-done': 'The dock is back to its default arrangement.', // Appearance section: status after the dock was reset
+  'appearance/dock-reset-failed': 'The dock could not be reset; the desktop state is not available right now.', // Appearance section: status when the dock could not be reset
   'appearance/exported': 'Theme exported.', // Appearance section status: the theme file was saved
   'appearance/not-a-theme': 'This file is not a Tangle theme.', // Appearance section status detail: the chosen file is not a theme
   'appearance/import-failed': 'The theme was not imported: {detail}', // Appearance section status: the import failed; {detail} says why
@@ -351,6 +366,8 @@ export const pagesMessagesEn = {
 
   // ── Work surfaces ──
   'surfaces/transfer-lead': 'Export your projects, sessions, conversation and game to a file, or import such a file into empty places. Settings and keys never leave this browser. Close other Tangle tabs first.', // Move data window: the paragraph above the export and import controls
+  ...readerEn,
+  ...enginesEn,
 } as const;
 
 export type PagesMessageKey = keyof typeof pagesMessagesEn;
