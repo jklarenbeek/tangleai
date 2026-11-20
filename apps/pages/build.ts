@@ -78,8 +78,8 @@ await cp(join(repo, 'components/assistant/styles/assistant.css'), join(dist, 've
 css += ['studio/studio.css', 'studio/data.css', 'play/play.css', 'md/md.css', 'calc/calc.css', 'charts/charts.css', 'assistant.css']
   .map(path => `@import url('./vendor/${path}');\n`).join('');
 for (const path of vendor) css += await readFile(join(repo, path), 'utf8');
-// Charts and Collections: the chart tooltip and the collection grid
-for (const name of ['charts', 'collection']) css += await readFile(join(repo, `node_modules/@jarenjs/${name}/styles/${name}.css`), 'utf8');
+// Collections: the collection grid (the charts' stylesheet is imported above)
+css += await readFile(join(repo, 'node_modules/@jarenjs/collection/styles/collection.css'), 'utf8');
 css += await readFile(join(here, 'src/demos/game/styles.css'), 'utf8');
 await writeFile(join(dist, 'vendor.css'), css);
 

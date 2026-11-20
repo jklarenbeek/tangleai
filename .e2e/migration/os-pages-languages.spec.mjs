@@ -9,7 +9,7 @@ import { test, expect } from './playwright.mjs';
 import { pagesMessagesEn } from '../../apps/pages/src/os/messages.ts';
 
 /** Windows the Pages desktop draws itself (Jaren's applications bring their own catalogues). */
-const OWN = ['welcome', 'settings', 'about', 'todo', 'calendar', 'loop'];
+const OWN = ['welcome', 'settings', 'about', 'todo', 'calendar', 'loop', 'docs', 'benchmarks', 'charts', 'collections'];
 
 /** The day and month names `Intl` writes in a language: the browser's, never a catalogue's. */
 const intlNames = (page, lang) => page.evaluate((lang) => {
@@ -36,7 +36,9 @@ async function desktop(page, query) {
 /** The text of the desktop's chrome and of its own windows, visible now, attributes included. */
 const texts = (page) => page.evaluate((own) => {
   const out = new Set();
-  const mine = (el) => { const w = el.closest('.tos-window'); return !w || own.includes(w.dataset.module); };
+  // content a window marks as English (a repository document, its title) is content, not the desktop's sentences
+  const content = (el) => { const marked = el.closest('[lang="en"]'); return !!marked && !!marked.closest('.tos-content'); };
+  const mine = (el) => { if (content(el)) return false; const w = el.closest('.tos-window'); return !w || own.includes(w.dataset.module); };
   const walker = document.createTreeWalker(document.getElementById('desktop'), NodeFilter.SHOW_TEXT);
   for (let n = walker.nextNode(); n; n = walker.nextNode()) {
     const text = n.textContent.trim();
@@ -70,7 +72,8 @@ test('every sentence of the Pages desktop comes from a catalogue: a sentinel pac
 for (const lang of ['ar', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt', 'ru', 'tr', 'zh-TW']) {
   test(`the Pages desktop in ${lang}: its own windows, the shell and Settings in that language${lang === 'ar' ? ', mirrored' : ''}`, async ({ page }) => {
     const file = lang === 'zh-TW' ? 'zh-tw' : lang;
-    const pack = Object.values(await import(`../../apps/pages/src/os/messages/${file}.ts`))[0];
+    // the pack as the desktop merges it: the language's file with each application's sentences
+    const pack = (await import('../../apps/pages/src/os/packs.ts')).PAGES_PACKS[lang];
     const chrome = Object.values(await import(`../../components/os/src/messages/${file}.ts`))[0];
     await desktop(page, `lang=${lang}`);
     await expect(page.locator('html')).toHaveAttribute('lang', lang);
