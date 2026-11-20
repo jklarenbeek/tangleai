@@ -23,7 +23,8 @@ test('Calculator computes and changes mode in its window', async ({ page }) => {
   await expect(calc.locator('.tos-content')).toContainText('42');
   await calc.getByRole('button', { name: 'Scientific' }).click();
   await expect(calc.getByRole('button', { name: 'Sine', exact: true })).toBeVisible();
-  await expect(page.locator('.tos-dock-item[data-module="calculator"]')).toHaveClass(/is-running/);
+  // the Calculator sits in the Studios folder of the default dock, which shows it running
+  await expect(page.locator('.tos-dock-folder[data-folder="studios"]')).toHaveClass(/is-running/);
 });
 
 test('Converter opens in the converter mode alone and converts offline', async ({ page }) => {

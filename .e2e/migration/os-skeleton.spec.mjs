@@ -40,7 +40,14 @@ async function desktop(page) {
 test('three host kinds join one desktop and talk only through contracts', async ({ page }) => {
   await desktop(page);
   await expect(page.locator('.tos-window')).toHaveCount(3);
-  await expect(page.locator('.tos-dock-item[data-module]')).toHaveCount(await page.evaluate(() => window.tangleOs.kernel.modules().length));
+  // every module is in the dock: an icon of its own, in a folder, or hidden; the dock draws what its view holds
+  const dock = await page.evaluate(() => {
+    const view = window.tangleOs.kernel.dockView();
+    const placed = [...view.items.flatMap(i => i.icon ? [i.icon.id] : i.icons.map(x => x.id)), ...view.hidden.map(i => i.id)];
+    return { placed, top: view.items.length, modules: window.tangleOs.kernel.modules().map(m => m.id) };
+  });
+  for (const id of dock.modules) expect(dock.placed.some(p => p === id || p.startsWith(`${id}/`)), id).toBe(true);
+  await expect(page.locator('.tos-dock-item[data-icon], .tos-dock-folder')).toHaveCount(dock.top);
 
   const found = await page.evaluate(() => window.tangleOs.kernel.call('shell', 'records', 'records.search', { query: 'oak' }));
   expect(found).toEqual({ ok: true, value: [{ id: 'r1', name: 'Oak table', stock: 4 }] });
@@ -228,11 +235,13 @@ test('a right click opens the shell\'s menu on the desktop, a title bar and a do
   await expect(menu.getByRole('menuitem')).toHaveText(['To do', 'To do', 'New window', 'Close all windows', 'Edit the dock']);
   await page.keyboard.press('Escape');
   await expect(menu).toHaveCount(0);
-  // a singleton offers no second window
-  await page.locator('.tos-dock-item[data-module="about"]').click({ button: 'right' });
-  await expect(menu.getByRole('menuitem')).toHaveText([/About Tangle OS|Tangle OS/, 'Close', 'Edit the dock']);
-  await page.mouse.click(5, 5);
+  // a singleton offers no second window (Settings stands in the dock itself; About sits in a folder)
+  await page.evaluate(() => window.tangleOs.desktop.open('settings'));
+  await page.locator('.tos-dock-item[data-module="settings"]').click({ button: 'right' });
+  await expect(menu.getByRole('menuitem')).toHaveText(['Settings', 'Close', 'Edit the dock']);
+  await menu.getByRole('menuitem', { name: 'Close' }).click();
   await expect(menu).toHaveCount(0);
+  await expect(page.locator('.tos-window[data-module="settings"]')).toHaveCount(0);
 
   // the desktop: every application, the windows, mail and the theme; arrows move, Enter runs
   await page.evaluate(() => { for (const w of window.tangleOs.desktop.state().windows) window.tangleOs.desktop.minimize(w.id); });

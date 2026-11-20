@@ -56,6 +56,8 @@ test('every sentence of the Pages desktop comes from a catalogue: a sentinel pac
     // named owners: product and application names, numbers, dates and times `Intl` wrote, model and provider names
     const owned = new Set([
       ...await page.evaluate(() => window.tangleOs.kernel.modules().map(m => m.title.en)),
+      // the dock folders a manifest names are titled like applications: their English half stays English
+      ...await page.evaluate(() => window.tangleOs.kernel.modules().flatMap(m => (m.dock?.folders ?? []).map(f => f.title.en))),
       // a section's title is a localized text whose English half stays English under the sentinel
       ...Object.entries(pagesMessagesEn).filter(([k, v]) => typeof v === 'string' && k.endsWith('/title')).map(([, v]) => v),
       ...await intlNames(page, 'en'),

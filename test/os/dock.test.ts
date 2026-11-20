@@ -47,6 +47,19 @@ describe('icons and the first arrangement', () => {
     const moved = moveInDock(first.layout, 'warehouse', 0);
     assert.deepEqual(view([app('till'), stock('warehouse'), stock('purchasing')], moved).shown, ['warehouse', 'till', 'purchasing']);
   });
+  it('a manifest can start its icon hidden; once placed, the person decides, and an empty layout is the default again', () => {
+    const tools = [app('a'), app('b', { dock: { hidden: true } }), app('c')];
+    const first = view(tools);
+    assert.deepEqual(first.shown, ['a', 'c']);
+    assert.deepEqual(first.hidden, ['b']);
+    // the person shows it: their dock wins over the manifest from then on
+    const shown = showInDock(first.layout, 'b');
+    assert.deepEqual(view(tools, shown).hidden, []);
+    // a reset is an empty layout: every icon is placed again as its manifest says
+    assert.deepEqual(view(tools, emptyDock()), first);
+    assert.equal(validateManifest(app('d', { dock: { hidden: 'yes' as any } })).ok, false, 'hidden is a boolean');
+  });
+
   it('an icon whose module is gone stays in the layout, out of the view, and returns to its place', () => {
     const layout = normalizeDock({ $dock: '0.1', items: ['a', 'gone', 'b'], hidden: [] });
     assert.deepEqual(view([app('a'), app('b')], layout).shown, ['a', 'b']);
