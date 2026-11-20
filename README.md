@@ -8,8 +8,8 @@ First-party source, tests, benchmarks and migration scripts use
 **strict TypeScript**. The JavaScript received from Jaren has been converted. Vendor submodules and generated browser bundles keep their
 upstream or output formats; `.mjs` browser/release harnesses remain JavaScript. Node 24 runs workspace source and tests directly;
 public packages are built as ESM JavaScript with strict TypeScript declarations
-and their JSON schemas. The sixteen public packages share one version,
-starting at **0.20.0**. The major version remains zero during development.
+and their JSON schemas. All public packages (`release.config.json` lists them) share one version;
+the major version remains zero during development.
 `npm run check` validates source; `npm run release:verify` also installs and tests
 the actual publication tarballs outside this checkout.
 
@@ -526,8 +526,8 @@ This covers root README, docs Markdown, reference PDFs and static docs images;
 package docs, machine-readable receipts, source and toolchain changes still
 require a release. CI retains source checks and the Pages build for docs pushes.
 
-Changesets records patch or minor intent for one fixed group of sixteen public
-packages. `npm run release:prepare` updates their versions, all private workspace
+Changesets records patch or minor intent for one fixed group: every public
+package in `release.config.json`. `npm run release:prepare` updates their versions, all private workspace
 versions and references, the lockfile, changelogs, and a checked release record
 **before** the release commit is pushed. Major release intent is refused while
 the project remains at major zero. The root, applications and benchmark stay
