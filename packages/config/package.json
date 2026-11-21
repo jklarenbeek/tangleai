@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/config",
-  "version": "0.64.1",
+  "version": "0.64.2",
   "description": "Tangle AI configuration — the schema-owned capability-profile registry and effective-run-identity contract every host resolves through",
   "license": "MIT",
   "type": "module",
@@ -17,10 +17,10 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/json": "0.222.0",
-    "@jarenjs/core": "0.222.0",
-    "@jarenjs/validate": "0.222.0",
-    "@tangleai/context": "0.64.1"
+    "@jarenjs/json": "0.222.1",
+    "@jarenjs/core": "0.222.1",
+    "@jarenjs/validate": "0.222.1",
+    "@tangleai/context": "0.64.2"
   },
   "private": false,
   "types": "./src/index.ts",

@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.64.2",
+  "baseVersion": "0.64.1",
+  "baseCommit": "a03e58441f2af3c1a4db464c44285150d86bd8aa",
+  "preparationCommit": "a03e58441f2af3c1a4db464c44285150d86bd8aa",
+  "initial": false,
+  "inputHash": "44d3a86ece6476450412c095965ea33f26fae0db3f9b6da2de9a9517630586a6",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        }
+      ],
+      "summary": "Build on Jaren 0.222.1: a collecting validator keeps each distinct error once, in the order it first met it, so the errors a repair loop hands back to a model stay short on a broken document.",
+      "id": "jaren-0-222-1"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.64.2"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.64.2"
+    }
+  ]
+}

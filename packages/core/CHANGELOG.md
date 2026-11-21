@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.64.2
+
+### Patch Changes
+
+- Build on Jaren 0.222.1: a collecting validator keeps each distinct error once, in the order it first met it, so the errors a repair loop hands back to a model stay short on a broken document.
+- @tangleai/context@0.64.2
+
 ## 0.64.1
 
 ### Patch Changes
