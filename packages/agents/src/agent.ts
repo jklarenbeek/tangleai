@@ -446,9 +446,13 @@ export function createAgent(options: {
    * @param [hooks]
    */
   async function send(history: any[], hooks: AgentHooks = {}) {
-    const messages = system !== '' && history[0]?.role !== 'system'
-      ? [{ role: 'system', content: system }, ...history]
-      : [...history];
+    // a stored history may hold tool calls an older release replayed as the model sent them: send them as objects
+    const given = history.map((m: any) => m?.role === 'assistant' && Array.isArray(m.tool_calls) && m.tool_calls.some((c: any) => replayedArguments(c?.function?.arguments) !== c?.function?.arguments)
+      ? { ...m, tool_calls: m.tool_calls.map((c: any) => ({ ...c, function: { ...c.function, arguments: replayedArguments(c?.function?.arguments) } })) }
+      : m);
+    const messages = system !== '' && given[0]?.role !== 'system'
+      ? [{ role: 'system', content: system }, ...given]
+      : [...given];
     const hostTools = toolbox !== null ? toolbox.toFunctionTools() : [];
     // a host that registered its own `recall` keeps it: two definitions
     // of one function name is not a wire-legal request
@@ -592,7 +596,9 @@ export function createAgent(options: {
         tool_calls: reply.toolCalls.map((call: any) => ({
           id: call.id,
           type: 'function',
-          function: { name: call.name, arguments: call.arguments },
+          // replayed as the agent read it: providers that store tool input as an object (Anthropic's,
+          // through any router) refuse a later turn whose history holds '' or a non-object here
+          function: { name: call.name, arguments: replayedArguments(call.arguments) },
         })),
       });
 
@@ -649,6 +655,16 @@ export function createAgent(options: {
 /**
  * @param text - the model's argument string
  */
+/** A tool call's arguments as the history replays them: the object the model sent, else `{}`. */
+function replayedArguments(text: string): string {
+  if (typeof text !== 'string' || text.trim() === '') return '{}';
+  try {
+    const value = JSON.parse(text);
+    return value !== null && typeof value === 'object' && !Array.isArray(value) ? text : '{}';
+  }
+  catch { return '{}'; }
+}
+
 function parseArguments(text: string, words: AgentMessages): {
   value?: any;
   error?: string;

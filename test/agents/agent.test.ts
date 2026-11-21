@@ -46,6 +46,38 @@ function mathToolbox() {
 }
 
 describe('ai — the agent loop', function () {
+  it('replays every tool call with object arguments, so a provider that stores tool input as an object takes the next turn', async function () {
+    const toolbox = mathToolbox();
+    toolbox.add({ name: 'now', description: 'No input.', inputSchema: { type: 'object', properties: {} }, execute: () => ({ at: 'noon' }) });
+    const client = scriptedClient([
+      // '' for a tool without input (as some routers send it), an array, and text that is no JSON
+      toolTurn([{ id: 'c1', name: 'now', arguments: '' }, { id: 'c2', name: 'add', arguments: '[1,2]' }, { id: 'c3', name: 'add', arguments: '{"a":' }]),
+      toolTurn([{ id: 'c4', name: 'add', arguments: '{"a":2,"b":3}' }]),
+      final('done'),
+    ]);
+    const result = await createAgent({ client, toolbox }).send([{ role: 'user', content: 'go' }]);
+    assert.strictEqual(result.message.content, 'done');
+    // what the second and third requests carried back for the earlier calls
+    const replayed = client.requests[2].messages.filter((m: any) => m.role === 'assistant' && m.tool_calls)
+      .flatMap((m: any) => m.tool_calls.map((c: any) => [c.id, c.function.arguments]));
+    assert.deepStrictEqual(replayed, [['c1', '{}'], ['c2', '{}'], ['c3', '{}'], ['c4', '{"a":2,"b":3}']]);
+    assert.deepStrictEqual(result.steps[0].result, { at: 'noon' }, 'an empty argument string still runs the tool');
+  });
+
+  it('sends a stored history\'s tool calls with object arguments too, without changing the history it was given', async function () {
+    const client = scriptedClient([final('fine')]);
+    const stored = [
+      { role: 'user', content: 'go' },
+      { role: 'assistant', content: '', tool_calls: [{ id: 'old', type: 'function', function: { name: 'now', arguments: '' } }] },
+      { role: 'tool', tool_call_id: 'old', content: '{"at":"noon"}' },
+      { role: 'user', content: 'and now?' },
+    ];
+    await createAgent({ client, toolbox: mathToolbox() }).send(stored);
+    const sent = client.requests[0].messages.find((m: any) => m.tool_calls);
+    assert.strictEqual(sent.tool_calls[0].function.arguments, '{}');
+    assert.strictEqual((stored[1] as any).tool_calls[0].function.arguments, '', 'the given history is never mutated');
+  });
+
   it('runs a tool round-trip and returns the full transcript', async function () {
     const client = scriptedClient([
       toolTurn([{ id: 'c1', name: 'add', arguments: '{"a":2,"b":3}' }]),
