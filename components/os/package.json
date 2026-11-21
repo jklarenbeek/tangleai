@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/os",
-  "version": "0.63.2",
+  "version": "0.64.0",
   "description": "A browser operating system for Tangle suites: modules as JSON manifests and contracts, one desktop, one assistant.",
   "license": "MIT",
   "type": "module",

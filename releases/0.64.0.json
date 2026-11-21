@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.64.0",
+  "baseVersion": "0.63.2",
+  "baseCommit": "459d2bc2400728fc7744ded5a90a8401c8034648",
+  "preparationCommit": "769d2a3e2ffbdc5dda5be29e701dc6e33ea2fbc8",
+  "initial": false,
+  "inputHash": "e8f77518c97a2869eda527bad51feee68eb74d694f240fbedea5c8e83510a81b",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        }
+      ],
+      "summary": "Applications have right-click menus the desktop draws: a default menu for a window (`setContextMenu` and `onContextMenu`) and a menu for one target (`menu(items, at)`, answering the chosen id or null), for shipped modules and framed pages alike. Items are text and desktop glyphs with separators, disabled and checked items, a shortcut hint and one level of submenus; a document that does not match `MENU_SCHEMA` is refused with `OS0170`.",
+      "id": "app-menus"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.64.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.64.0"
+    }
+  ]
+}

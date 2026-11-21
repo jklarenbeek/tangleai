@@ -1,5 +1,21 @@
 # @tangleai/research
 
+## 0.64.0
+
+### Patch Changes
+
+- @tangleai/agents@0.64.0
+  - @tangleai/config@0.64.0
+  - @tangleai/context@0.64.0
+  - @tangleai/documents@0.64.0
+  - @tangleai/evolve@0.64.0
+  - @tangleai/gmpl@0.64.0
+  - @tangleai/mas@0.64.0
+  - @tangleai/models@0.64.0
+  - @tangleai/outcomes@0.64.0
+  - @tangleai/search@0.64.0
+  - @tangleai/trace2skill@0.64.0
+
 ## 0.63.2
 
 ### Patch Changes

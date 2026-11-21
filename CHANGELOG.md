@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.64.0
+
+Applications have right-click menus the desktop draws: a default menu for a window (`setContextMenu` and `onContextMenu`) and a menu for one target (`menu(items, at)`, answering the chosen id or null), for shipped modules and framed pages alike. Items are text and desktop glyphs with separators, disabled and checked items, a shortcut hint and one level of submenus; a document that does not match `MENU_SCHEMA` is refused with `OS0170`.
+
 ## 0.63.2
 
 A window resizes from all four sides and all four corners (`resizeWindowFrom(desktop, id, edge, start, dx, dy)`): the dragged edges follow the pointer, the opposite ones stay put, the window keeps its minimum and stops at the desktop's top. The edges are the same on screen in a right-to-left desktop, where the one corner grip used to grow the window from its other side.
