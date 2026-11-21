@@ -74,6 +74,7 @@ export function authoringCrib(): string {
     '- A string starting with "$" is a path into the current value ("$.amount", "$.items[*]"); any other string is literal text.',
     `- Expressions are objects with one "$operator" key, one of: ${AUTHORING_OPERATORS.join(', ')}. For example {"$add": [a, b]}, {"$round": [x, 2]}, {"$if": [cond, then, else]}, {"$count": "$.items[*]"}, {"$sum": "$.lines[*].total"}, {"$contains": [haystack, needle]}, {"$string-length": text} (characters), {"$count": {"$tokenize": [{"$normalize-space": text}, " "]}} (words).`,
     '- Filters: "$.items[?@.done == false]". Lists: a rule body uses [{"$apply": "$.items[*]"}] and a second rule {"match": "$.items[*]", "body": …} where "$" is the item.',
+    '- "$apply" takes a path ("$.items[*]"), never a $for: a computed item matches no "match" rule and shows nothing. To show ONE item by its position, build it in a $for: {"$for": {"x": {"$in": "$.items[*]", "$at": "n"}}, "$where": {"$eq": ["$n", "$.index"]}, "$return": ["p", {}, "$x.text"]}.',
     '- Events: {"on": {"click": "name"}} or {"on": {"input": {"action": "name", "with": {"id": "$.id"}}}}. In actions "$" is the state, "$event.value" the input\'s string value (read a number with {"$number": "$event.value"}), "$payload" the "with" value.',
     '- An action returns {"patch": [RFC 6902 ops whose "value" may be an expression]}. Rebuild a list with FLWOR: [{"$for": {"i": "$.items[*]"}, "$where": cond, "$return": expr}]; use {"$for": {"i": {"$in": "$.items[*]", "$at": "n"}}, …} for the 0-based position "$n".',
     '- Give every input a label or a placeholder, and every button its text, so a person can tell what each one does.',
@@ -98,6 +99,19 @@ export function lintAuthoredApp(doc: unknown): string[] {
   };
   walk((doc as any)?.view, '/view');
   walk((doc as any)?.actions, '/actions');
+  // `$apply` hands each item to the rule that matches it; a `match` rule matches by the item's place in
+  // the document, so an item a `$for` or another expression computed has no place, matches no such rule
+  // and shows nothing, silently. Only a rule that matches by `schema` takes computed items.
+  const rules: any[] = Array.isArray((doc as any)?.view?.rules) ? (doc as any).view.rules : [];
+  if (rules.length && rules.every(r => typeof r?.match === 'string' && r.schema === undefined)) {
+    const applies = (value: any, path: string) => {
+      if (Array.isArray(value)) { value.forEach((v, i) => applies(v, `${path}/${i}`)); return; }
+      if (!value || typeof value !== 'object') return;
+      if ('$apply' in value && typeof value.$apply !== 'string') problems.push(`${path}: $apply is given computed items (a $for or another expression), which have no place in the document, so no "match" rule matches them and nothing shows; select them by path ("$apply": "$.list[*]"), or build the elements in the $for's $return (["p", {}, "$item.text"])`);
+      for (const [k, v] of Object.entries(value)) applies(v, `${path}/${k}`);
+    };
+    applies((doc as any).view, '/view');
+  }
   return problems;
 }
 

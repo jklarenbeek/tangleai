@@ -56,6 +56,32 @@ export async function bootDocumentModule(options: ModuleHostOptions = {}) {
     eventFields: { ...formEventFields() },
     onError: report,
   });
+  // The frame has no form submission (its sandbox omits allow-forms, so an authored document cannot
+  // send a form anywhere), and the browser refuses a submission BEFORE it fires the form's submit
+  // event: a document's on.submit would never run. A submit button and Enter in a field dispatch the
+  // submit event instead, which never navigates, after the form's own validity check.
+  const submitButtons = (form: any) => [...form.elements].filter((el: any) => el.type === 'submit' || el.type === 'image');
+  const submitForm = (form: any, by: any) => {
+    if (!form.noValidate && !by?.formNoValidate && typeof form.checkValidity === 'function' && !form.checkValidity()) { form.reportValidity?.(); return; }
+    const Submit = win.SubmitEvent ?? win.Event;
+    form.dispatchEvent(new Submit('submit', { bubbles: true, cancelable: true, ...(by ? { submitter: by } : {}) }));
+  };
+  doc.addEventListener('click', (event: any) => {
+    const button = event.target?.closest?.('button, input[type="submit"], input[type="image"]');
+    if (!button?.form || button.disabled || (button.type !== 'submit' && button.type !== 'image')) return;
+    event.preventDefault();
+    submitForm(button.form, button);
+  }, true);
+  doc.addEventListener('keydown', (event: any) => {
+    if (event.key !== 'Enter' || event.isComposing || event.defaultPrevented) return;
+    const field = event.target;
+    if (field?.tagName !== 'INPUT' || !field.form || ['button', 'submit', 'reset', 'checkbox', 'radio', 'image', 'file', 'color', 'range', 'hidden'].includes(field.type)) return;
+    event.preventDefault();
+    // the form's default button decides, as the browser's implicit submission does: a disabled one submits nothing
+    const first = submitButtons(field.form)[0];
+    if (first?.disabled) return;
+    submitForm(field.form, first ?? null);
+  });
   // the desktop's own shortcuts still work while focus is inside the frame
   doc.addEventListener('keydown', (event: any) => {
     if ((event.ctrlKey || event.metaKey) && ['k', ' '].includes(String(event.key).toLowerCase())) {

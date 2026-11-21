@@ -61,6 +61,19 @@ describe('the authoring gate', () => {
     assert.match((await checkAuthoredApp(fails)).problems[0], /first frame fails/);
   });
 
+  it('refuses $apply over computed items that no rule can match, which would show nothing', async () => {
+    const rules = (apply: unknown, extra: any[] = []) => ({ $app: '0.1', state: { i: 0, jokes: [{ q: 'Why?' }, { q: 'How?' }] },
+      view: { $jslt: '0.1', rules: [{ match: '$', body: ['div', {}, apply] }, { match: '$.jokes[*]', body: ['p', {}, '$.q'] }, ...extra] }, actions: {} });
+    const computed = { $apply: { $for: { j: { $in: '$.jokes[*]', $at: 'n' } }, $where: { $eq: ['$n', '$.i'] }, $return: '$j' } };
+    const problems = lintAuthoredApp(rules(computed));
+    assert.equal(problems.length, 1);
+    assert.match(problems[0], /^\/view\/rules\/0\/body\/2: \$apply is given computed items/);
+    const verdict = await checkAuthoredApp(rules(computed), [{ steps: [], expect: { text: ['Why?'] } }]);
+    assert.equal(verdict.ok, false, 'the gate refuses it before anyone sees an empty section');
+    assert.deepEqual(lintAuthoredApp(rules({ $apply: '$.jokes[*]' })), [], 'a path selects items with their place');
+    assert.deepEqual(lintAuthoredApp(rules(computed, [{ schema: { type: 'object', required: ['q'] }, body: ['p', {}, '$.q'] }])), [], 'a rule that matches by schema takes computed items');
+  });
+
   it('refuses code written in strings and object-shaped vnodes', () => {
     const doc = { $app: '0.1', state: {}, view: { $jslt: '0.1', rules: [{ match: '$', body: ['p', {}, '${total}', { type: 'div', children: [] }] }] } };
     assert.equal(lintAuthoredApp(doc).length, 2);
