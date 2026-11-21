@@ -1,5 +1,11 @@
 # Tangle releases
 
+## 0.64.1
+
+The agent replays every tool call with object arguments, the ones it ran with: a call a model sent with empty, non-object or malformed arguments goes back as `{}`, in this turn and from a stored history. A provider that keeps tool input as an object (Anthropic's, through a router such as OpenRouter) refused the next turn of such a conversation with HTTP 400.
+
+A document module's form works in its sandboxed frame. The frame has no form submission (an authored document cannot send a form anywhere), and the browser refused a submission before the form's submit event, so a document's `on.submit` never ran: To do could not add an item. The module host now turns a submit button and Enter in a field into the form's submit event, after the form's own validity check; nothing navigates. The authoring gate refuses `$apply` over computed items when every rule matches by path (they match no rule and show nothing), and the crib says how to show one item by its position.
+
 ## 0.64.0
 
 Applications have right-click menus the desktop draws: a default menu for a window (`setContextMenu` and `onContextMenu`) and a menu for one target (`menu(items, at)`, answering the chosen id or null), for shipped modules and framed pages alike. Items are text and desktop glyphs with separators, disabled and checked items, a shortcut hint and one level of submenus; a document that does not match `MENU_SCHEMA` is refused with `OS0170`.

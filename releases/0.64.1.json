@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "version": "0.64.1",
+  "baseVersion": "0.64.0",
+  "baseCommit": "bd78ff37f7641f79631bf469f1be880987362c63",
+  "preparationCommit": "44b66a958e4b627bdc9e56342f2a7af3fc0def80",
+  "initial": false,
+  "inputHash": "b8622c6c293baa9ae2006de9aa647003b1931f53d07e21839e753937a1d282ce",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        }
+      ],
+      "summary": "The agent replays every tool call with object arguments, the ones it ran with: a call a model sent with empty, non-object or malformed arguments goes back as `{}`, in this turn and from a stored history. A provider that keeps tool input as an object (Anthropic's, through a router such as OpenRouter) refused the next turn of such a conversation with HTTP 400.",
+      "id": "replay-object-arguments"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        }
+      ],
+      "summary": "A document module's form works in its sandboxed frame. The frame has no form submission (an authored document cannot send a form anywhere), and the browser refused a submission before the form's submit event, so a document's `on.submit` never ran: To do could not add an item. The module host now turns a submit button and Enter in a field into the form's submit event, after the form's own validity check; nothing navigates. The authoring gate refuses `$apply` over computed items when every rule matches by path (they match no rule and show nothing), and the crib says how to show one item by its position.",
+      "id": "sandboxed-forms"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.64.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.64.1"
+    }
+  ]
+}

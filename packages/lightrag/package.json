@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/lightrag",
-  "version": "0.64.0",
+  "version": "0.64.1",
   "description": "Evidence-bound entity and relation projections for measured graph retrieval",
   "license": "MIT",
   "type": "module",
@@ -22,12 +22,12 @@
     "@jarenjs/josl": "0.222.0",
     "@jarenjs/validate": "0.222.0",
     "@jarenjs/formats": "0.222.0",
-    "@tangleai/core": "0.64.0",
-    "@tangleai/models": "0.64.0",
-    "@tangleai/context": "0.64.0",
-    "@tangleai/agents": "0.64.0",
-    "@tangleai/documents": "0.64.0",
-    "@tangleai/outcomes": "0.64.0"
+    "@tangleai/core": "0.64.1",
+    "@tangleai/models": "0.64.1",
+    "@tangleai/context": "0.64.1",
+    "@tangleai/agents": "0.64.1",
+    "@tangleai/documents": "0.64.1",
+    "@tangleai/outcomes": "0.64.1"
   },
   "private": false,
   "types": "./src/index.ts",

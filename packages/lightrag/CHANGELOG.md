@@ -1,5 +1,17 @@
 # @tangleai/lightrag
 
+## 0.64.1
+
+### Patch Changes
+
+- Updated dependencies [14d271c]
+  - @tangleai/agents@0.64.1
+  - @tangleai/outcomes@0.64.1
+  - @tangleai/context@0.64.1
+  - @tangleai/core@0.64.1
+  - @tangleai/documents@0.64.1
+  - @tangleai/models@0.64.1
+
 ## 0.64.0
 
 ### Patch Changes

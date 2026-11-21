@@ -1,5 +1,11 @@
 # @tangleai/core
 
+## 0.64.1
+
+### Patch Changes
+
+- @tangleai/context@0.64.1
+
 ## 0.64.0
 
 ### Patch Changes

@@ -1,13 +1,13 @@
 {
   "$osRelease": "0.1",
-  "version": "0.64.0",
+  "version": "0.64.1",
   "protocol": 1,
   "package": {
     "name": "@tangleai/os",
-    "file": "tangleai-os-0.64.0.tgz",
-    "size": 219317,
-    "sha256": "04be59b4f400dbce433fc1125eba5a7b3e1bba5cbd17ffd5288beeaf42911e9b",
-    "integrity": "sha512-xM5xqG5xPPKVRK5kwGRsD5LKo9tCEhYIoml6xr8xueFVN+QUZo8MZtaNpGu6lC79uWipSraQ6JFpo4m+zn9UiQ==",
+    "file": "tangleai-os-0.64.1.tgz",
+    "size": 220683,
+    "sha256": "630861af19230d5c52c7689f9a2083bbd0bf6266a45767bb11cd74a20b1385dc",
+    "integrity": "sha512-D5eqFTLVW8lG7kQOitJkNWjNFPjuIeKGmx9Amejoak8yew2BfhzjoZWs8i5SlBS338tWtERa8m9Ur9y3mnWFYQ==",
     "dependencies": {
       "@jarenjs/core": "0.222.0",
       "@jarenjs/json": "0.222.0",

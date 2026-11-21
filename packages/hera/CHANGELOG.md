@@ -1,5 +1,20 @@
 # @tangleai/hera
 
+## 0.64.1
+
+### Patch Changes
+
+- Updated dependencies [14d271c]
+  - @tangleai/agents@0.64.1
+  - @tangleai/mas@0.64.1
+  - @tangleai/outcomes@0.64.1
+  - @tangleai/memory@0.64.1
+  - @tangleai/gmpl@0.64.1
+  - @tangleai/config@0.64.1
+  - @tangleai/context@0.64.1
+  - @tangleai/documents@0.64.1
+  - @tangleai/models@0.64.1
+
 ## 0.64.0
 
 ### Patch Changes
