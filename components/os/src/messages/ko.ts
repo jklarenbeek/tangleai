@@ -88,6 +88,7 @@ export const ko: OsCatalogue = {
   'tray/theme-light': '밝은 테마로 전환',
   'tray/theme-dark': '어두운 테마로 전환',
   'menu/label': '{title} 메뉴',
+  'menu/back': '뒤로',
   'menu/new-window': '새 창',
   'menu/show-desktop': '데스크톱 보기',
   'menu/show-windows': '모든 창 보기',

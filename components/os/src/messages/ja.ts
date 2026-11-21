@@ -88,6 +88,7 @@ export const ja: OsCatalogue = {
   'tray/theme-light': 'ライト テーマに切り替える',
   'tray/theme-dark': 'ダーク テーマに切り替える',
   'menu/label': '{title} のメニュー',
+  'menu/back': '戻る',
   'menu/new-window': '新しいウィンドウ',
   'menu/show-desktop': 'デスクトップを表示',
   'menu/show-windows': 'すべてのウィンドウを表示',

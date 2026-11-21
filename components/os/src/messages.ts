@@ -90,6 +90,7 @@ export const osMessagesEn = {
   'tray/theme-light': 'Switch to the light theme',
   'tray/theme-dark': 'Switch to the dark theme',
   'menu/label': 'Menu for {title}',
+  'menu/back': 'Back', // An application's submenu: the item that returns to the menu it came from
   'menu/new-window': 'New window',
   'menu/show-desktop': 'Show the desktop',
   'menu/show-windows': 'Show all windows',

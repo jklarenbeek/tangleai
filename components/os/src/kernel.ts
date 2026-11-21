@@ -1199,7 +1199,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
      * Serve `tangle_os` to one module over its own port. The module's id is
      * bound here, by the port it was handed, never taken from its input.
      */
-    serveModule(module: string, port: any, hooks: { setTitle?: (title: string) => void, openSettings?: () => void, window?: string } = {}): ServedContract {
+    serveModule(module: string, port: any, hooks: { setTitle?: (title: string) => void, openSettings?: () => void, window?: string, menu?: (items: unknown, at: unknown, check: boolean) => Promise<{ id: string | null } | { refused: { code: string, message: string } }> } = {}): ServedContract {
       const { os } = systemContracts();
       return servePortLazily(os, {
         'os.call': async ({ contract, op, input }: any) => kernel.call(module, contract, op, input ?? {}),
@@ -1210,6 +1210,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         'settings.get': () => ({ values: kernel.settings(module) }),
         'settings.open': () => { hooks.openSettings?.(); return {}; },
         'window.header': ({ header }: any) => { const outcome = kernel.setHeader(module, hooks.window ?? module, header); return outcome.ok ? {} : { refused: outcome.error }; },
+        'window.menu': ({ items, at, check }: any) => hooks.menu ? hooks.menu(items, at, check === true) : { refused: { code: 'OS0170', message: 'this page has no window to draw a menu over' } },
       }, { channel: port }) as ServedContract;
     },
 

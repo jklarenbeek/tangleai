@@ -88,6 +88,7 @@ export const ru: OsCatalogue = {
   'tray/theme-light': 'Переключить на светлую тему',
   'tray/theme-dark': 'Переключить на тёмную тему',
   'menu/label': 'Меню: {title}',
+  'menu/back': 'Назад',
   'menu/new-window': 'Новое окно',
   'menu/show-desktop': 'Показать рабочий стол',
   'menu/show-windows': 'Показать все окна',

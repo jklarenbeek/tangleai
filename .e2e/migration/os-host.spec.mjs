@@ -692,3 +692,77 @@ for (const lang of ['ar', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt', 'ru', 'tr', 
     expect(english.filter(v => texts.has(v))).toEqual([]);
   });
 }
+
+test('an application registers a right-click menu, and asks for one per target; the desktop draws both and answers the choice', async ({ page }) => {
+  await host(page, 'modules=2', { width: 1280, height: 800 });
+  await page.evaluate(() => window.harness.desktop.open('screen-1'));
+  const content = page.locator('.tos-window[data-module="screen-1"] .tos-content');
+  const menu = page.locator('.tos-menu');
+  // no menu registered: a right-click inside a window is the page's, the desktop draws nothing
+  await content.locator('.screen').click({ button: 'right' });
+  await expect(menu).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  // the window's default menu, with a submenu
+  await page.evaluate(() => {
+    const context = window.harness.contexts['screen-1'];
+    window.choices = [];
+    context.setContextMenu([{ id: 'duplicate', label: 'Duplicate', hint: 'Ctrl+D' }, 'separator', { id: 'more', label: 'More', items: [{ id: 'archive', label: 'Archive' }] }]);
+    context.onContextMenu((id) => window.choices.push(id));
+  });
+  await content.locator('.screen').click({ button: 'right' });
+  await expect(menu.getByRole('menuitem')).toHaveText(['DuplicateCtrl+D', 'More›']);
+  await expect(menu.getByRole('menuitem', { name: 'Duplicate' })).toBeFocused();
+  await menu.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await expect(menu).toHaveCount(0);
+  await content.locator('.screen').click({ button: 'right' });
+  await menu.getByRole('menuitem', { name: 'More' }).click();
+  await expect(menu.getByRole('menuitem')).toHaveText(['Back‹', 'Archive']);
+  await menu.getByRole('menuitem', { name: 'Archive' }).click();
+  expect(await page.evaluate(() => window.choices)).toEqual(['duplicate', 'archive']);
+  // one target asks for its own menu; Escape dismisses it and answers null
+  await page.evaluate(() => {
+    const context = window.harness.contexts['screen-1'];
+    const row = document.createElement('p'); row.className = 'row'; row.textContent = 'A row';
+    row.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+      context.menu([{ id: 'row-open', label: 'Open the row' }], { x: event.clientX, y: event.clientY }).then((id) => { window.rowChoice = id; });
+    });
+    document.querySelector('.tos-window[data-module="screen-1"] .tos-content').append(row);
+  });
+  await content.locator('.row').click({ button: 'right' });
+  await expect(menu.getByRole('menuitem')).toHaveText(['Open the row']);
+  await menu.getByRole('menuitem', { name: 'Open the row' }).click();
+  await expect.poll(() => page.evaluate(() => window.rowChoice)).toBe('row-open');
+  await content.locator('.row').click({ button: 'right' });
+  await page.keyboard.press('Escape');
+  await expect.poll(() => page.evaluate(() => window.rowChoice)).toBe(null);
+  expect(await page.evaluate(() => window.choices), 'the row\'s own menu never shows the default one').toEqual(['duplicate', 'archive']);
+  // a menu the desktop cannot draw as its own is refused with its code
+  expect(await page.evaluate(() => { try { window.harness.contexts['screen-1'].setContextMenu([{ id: 'x', label: 'X', html: '<b>x</b>' }]); return 'set'; } catch (error) { return error.code; } })).toBe('OS0170');
+});
+
+test('a framed application\'s right-click menus are drawn by the desktop over the page, outside the frame', async ({ page }) => {
+  await host(page, 'modules=2&framed=1&menu=1', { width: 1280, height: 800 });
+  await page.evaluate(() => window.harness.desktop.open('echo-app'));
+  await expect(echoFrame(page).locator('body')).toHaveAttribute('data-joined', 'yes');
+  await expect(echoFrame(page).locator('.echo-row')).toBeVisible();
+  const menu = page.locator('.tos-menu');
+  // the default menu, anywhere else in the page; the menu sits where the pointer was
+  const frameBox = await echoWindow(page).locator('iframe').boundingBox();
+  await page.mouse.click(frameBox.x + 20, frameBox.y + 200, { button: 'right' });
+  await expect(menu.getByRole('menuitem')).toHaveText(['Refresh echoes', 'More›']);
+  const at = await menu.boundingBox();
+  expect(Math.abs(at.x - (frameBox.x + 20)) < 40 && Math.abs(at.y - (frameBox.y + 200)) < 40, `menu at ${JSON.stringify(at)}`).toBe(true);
+  await menu.getByRole('menuitem', { name: 'Refresh echoes' }).click();
+  await expect(echoFrame(page).locator('body')).toHaveAttribute('data-menu', 'refresh');
+  await page.mouse.click(frameBox.x + 20, frameBox.y + 200, { button: 'right' });
+  await menu.getByRole('menuitem', { name: 'More' }).click();
+  await menu.getByRole('menuitem', { name: 'Export echoes' }).click();
+  await expect(echoFrame(page).locator('body')).toHaveAttribute('data-menu', 'export');
+  // the row asks for its own
+  await echoFrame(page).locator('.echo-row').click({ button: 'right' });
+  await expect(menu.getByRole('menuitem')).toHaveText(['Open this echo', 'Delete this echoDel']);
+  await menu.getByRole('menuitem', { name: 'Delete this echo' }).click();
+  await expect(echoFrame(page).locator('body')).toHaveAttribute('data-row-menu', 'row-delete');
+  await expect(echoFrame(page).locator('body')).toHaveAttribute('data-menu', 'export');
+});

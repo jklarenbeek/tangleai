@@ -5,6 +5,7 @@
  * manifests, the theme document and the message catalogue.
  */
 import type { ResizeEdge } from './windows.ts';
+import { checkMenu, menuPoint, type MenuDocument, type MenuItem, type MenuPoint } from './menu.ts';
 import { openPortClientLazily, loadPorts, portsLoaded } from './ports.ts';
 import { joinSuite, type SuiteDocument, type JoinResult } from './install-sheet.ts';
 export type { SuiteDocument, JoinResult } from './install-sheet.ts';
@@ -56,6 +57,12 @@ export type ShippedContext = {
   readonly screen?: string;
   /** Called when the person opens one of the module's launch entries while this window is open. */
   onScreen(listener: (screen: string) => void): () => void;
+  /** The window's default right-click menu (`null` takes it away); refused with `OS0170` when it does not match the menu schema. A right-click the module handles itself (`preventDefault`) does not show it. */
+  setContextMenu(menu: MenuDocument | null): void;
+  /** Where a choice from the default right-click menu arrives. */
+  onContextMenu(handler: (id: string) => void): () => void;
+  /** Show a menu for one target at a point of the page; answers the chosen id, or null when the person dismissed it. */
+  menu(items: MenuDocument, at: MenuPoint): Promise<string | null>;
   /** Where files the person opens with this module arrive (from the desktop's Files); return `{ refused }` to say why not. */
   onOpen(handler: (file: OpenedFile) => { refused?: string } | void | Promise<{ refused?: string } | void>): () => void;
   /** Hand a file to another module, as the person asked (Files' "Open in …"): its window opens if it is not running. */
@@ -122,7 +129,7 @@ type HeaderBar = {
   items: Map<string, HTMLElement>, overflow: string[], fitted: number, search?: any,
 };
 type PendingOpen = { file: OpenedFile, settle: (answer: { refused?: string }) => void };
-type Mounted = { el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean, releaseDecider?: () => void, header: HeaderBar, releaseHeader?: () => void, screen?: string, screens: Set<(screen: string) => void>, opens: PendingOpen[], openHandler?: (file: OpenedFile) => unknown };
+type Mounted = { contextMenu?: MenuDocument | null, menuHandlers?: Set<(id: string) => void>, el: HTMLElement, content: HTMLElement, title: HTMLElement, dispose: () => void, frame?: HTMLIFrameElement, moduleClient?: any, ports: MessagePort[], served?: { close?: () => void }, connected?: boolean, releaseDecider?: () => void, header: HeaderBar, releaseHeader?: () => void, screen?: string, screens: Set<(screen: string) => void>, opens: PendingOpen[], openHandler?: (file: OpenedFile) => unknown };
 
 const svg = (path: string) => `<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path d="${path}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 const ICON = { close: svg('M4 4l8 8M12 4l-8 8'), minimize: svg('M4 8h8'), maximize: svg('M4.5 4.5h7v7h-7z'), restore: svg('M6 4h6v6M4 6h6v6H4z') };
@@ -287,7 +294,17 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       notice?.remove(); notice = null; entry.el.classList.remove('is-failed');
       const os = new MessageChannel(), control = new MessageChannel();
       const provided = (manifest.provides ?? []).map(contract => ({ contract, channel: new MessageChannel() }));
-      entry.served = kernel.serveModule(manifest.id, os.port1, { setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)), openSettings: () => openSettings(manifest.id), window: w.id });
+      entry.served = kernel.serveModule(manifest.id, os.port1, {
+        setTitle: (title) => setDesktop(setTitle(desktop, w.id, title)), openSettings: () => openSettings(manifest.id), window: w.id,
+        // a framed page's point is its own: the frame's place on the page turns it into the desktop's
+        menu: async (items, at, check) => {
+          const checked = checkMenu(items);
+          if (!checked.ok) return { refused: checked.error };
+          if (check) return { id: null };
+          const r = entry.frame?.getBoundingClientRect(), p = menuPoint(at);
+          return { id: await showAppMenu(w.id, checked.value, { x: p.x + (r?.left ?? 0), y: p.y + (r?.top ?? 0) }) };
+        },
+      });
       os.port1.start();
       const moduleClient = openPortClientLazily(systemContracts().module, { channel: control.port1, timeoutMs: 10_000 });
       control.port1.start();
@@ -353,6 +370,18 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
         onOpen: (handler) => { entry.openHandler = handler; deliverOpens(entry); return () => { if (entry.openHandler === handler) entry.openHandler = undefined; }; },
         openFile: (module, file) => openFile(module, file),
         provide: (contract, handlers) => kernel.provideLocal(manifest.id, contract, handlers, w.id),
+        setContextMenu: (items) => {
+          if (items === null) { entry.contextMenu = null; return; }
+          const checked = checkMenu(items);
+          if (!checked.ok) throw Object.assign(new Error(checked.error.message), { code: checked.error.code });
+          entry.contextMenu = checked.value;
+        },
+        onContextMenu: (handler) => { (entry.menuHandlers ??= new Set()).add(handler); return () => { entry.menuHandlers?.delete(handler); }; },
+        menu: (items, at) => {
+          const checked = checkMenu(items);
+          if (!checked.ok) return Promise.reject(Object.assign(new Error(checked.error.message), { code: checked.error.code }));
+          return showAppMenu(w.id, checked.value, menuPoint(at));
+        },
       });
       entry.el.classList.remove('is-loading');
       lifecycle('ready', w.id);
@@ -971,6 +1000,40 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     return { title: t('desktop/label'), entries: desktopMenu() };
   }
 
+  /**
+   * An application's menu, drawn as the desktop's own: the promise answers the
+   * chosen id, or null when the person dismissed it. A submenu replaces its
+   * parent at the same place, with a way back as its first item.
+   */
+  function showAppMenu(windowId: string, items: MenuDocument, at: MenuPoint): Promise<string | null> {
+    const title = desktop.windows.find(w => w.id === windowId)?.title ?? '';
+    const active = doc.activeElement;
+    const restore = active && active !== doc.body ? active as HTMLElement : null;
+    return new Promise((resolve) => {
+      let settled = false, generation = 0;
+      const done = (id: string | null) => { if (!settled) { settled = true; resolve(id); } };
+      const level = (list: MenuDocument, parent: MenuDocument | null) => {
+        const entries: MenuEntry[] = [];
+        if (parent) entries.push({ label: t('menu/back'), glyph: undefined, hint: locale.dir === 'rtl' ? '›' : '‹', run: () => level(parent, null) }, 'separator');
+        for (const item of list) {
+          if (item === 'separator') { entries.push('separator'); continue; }
+          const sub = (item as MenuItem).items;
+          entries.push({
+            label: item.label, disabled: item.disabled, checked: item.checked,
+            hint: sub ? (locale.dir === 'rtl' ? '‹' : '›') : item.hint,
+            ...(item.glyph ? { glyph: { glyph: item.glyph } } : {}),
+            run: () => { if (sub) level(sub, list); else done(item.id); },
+          });
+        }
+        // a choice runs after the menu closes: a dismissal is decided a moment later, and only while no
+        // other level has opened since (a submenu, or the way back), so a choice or a new level wins
+        const mine = ++generation;
+        openMenu(title, entries, at, restore, () => queueMicrotask(() => { if (generation === mine) done(null); }));
+      };
+      level(items, null);
+    });
+  }
+
   function closeMenu(returnFocus = false) {
     if (!menu) return;
     const { el, restore, onClose } = menu;
@@ -1040,6 +1103,20 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   const onContextMenu = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     if (menu?.el.contains(target)) { event.preventDefault(); return; }
+    // inside a window: the module's own (it handled the event), or the default menu it registered
+    const content = target.closest<HTMLElement>('.tos-content');
+    if (content) {
+      if (event.defaultPrevented) return;
+      const windowId = content.closest<HTMLElement>('.tos-window')?.dataset.window;
+      const entry = windowId ? mounted.get(windowId) : undefined;
+      if (windowId && entry?.contextMenu) {
+        event.preventDefault();
+        const handlers = entry.menuHandlers;
+        void showAppMenu(windowId, entry.contextMenu, { x: event.clientX, y: event.clientY })
+          .then(id => { if (id !== null) for (const handler of [...(handlers ?? [])]) { try { handler(id); } catch (error) { report(error); } } });
+        return;
+      }
+    }
     const offer = menuFor(target);
     if (!offer || offer.entries.length === 0) { closeMenu(); return; }
     event.preventDefault();

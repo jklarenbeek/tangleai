@@ -88,6 +88,7 @@ export const ar: OsCatalogue = {
   'tray/theme-light': 'التبديل إلى المظهر الفاتح',
   'tray/theme-dark': 'التبديل إلى المظهر الداكن',
   'menu/label': 'قائمة {title}',
+  'menu/back': 'رجوع',
   'menu/new-window': 'نافذة جديدة',
   'menu/show-desktop': 'إظهار سطح المكتب',
   'menu/show-windows': 'إظهار كل النوافذ',

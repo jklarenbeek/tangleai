@@ -57,8 +57,9 @@ const withHeader = query.get('header') === '1';
 const withFiles = query.get('files') === '1';
 const withPause = query.get('pause') === '1';
 const withCaps = query.get('caps') === '1';
+const withMenu = query.get('menu') === '1';
 // what the framed Echo turns on, from the host's own switches
-const echoFlags = [withHeader && 'header', withFiles && 'files', withPause && 'pause', withCaps && 'caps'].filter(Boolean);
+const echoFlags = [withHeader && 'header', withFiles && 'files', withPause && 'pause', withCaps && 'caps', withMenu && 'menu'].filter(Boolean);
 const echoQuery = echoFlags.length ? `?${echoFlags.join('&')}` : '';
 const withDock = query.get('dock') === '1';
 // ?state=server keeps the desktop's state on the test server (as an application keeps it in its database)

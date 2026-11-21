@@ -350,6 +350,35 @@ A shipped module calls `context.setHeader(header)` and `context.onHeader(handler
 - **Text.** The desktop adds one sentence of its own, `window/more`; a host's
   language pack translates it with the rest of its catalogue.
 
+## Right-click menus: drawn by the desktop, chosen by the application
+
+An application handles its own right-click, because only it knows what was
+clicked, and lets the desktop draw the menu: above the window and outside
+any frame, in the desktop's look, keyboard and direction. Items are text and
+glyphs from the desktop's set, never markup, so a sandboxed page gets a
+native menu without more access. Two ways, the same for a shipped module
+(`context`) and a framed page (`connectToOs`'s connection):
+
+```ts
+// a default menu for the window: any right-click the page does not handle itself
+context.setContextMenu([{ id: 'refresh', label: 'Refresh', hint: 'F5' }, 'separator',
+  { id: 'sort', label: 'Sort by', items: [{ id: 'name', label: 'Name' }, { id: 'date', label: 'Date', checked: true }] }]);
+context.onContextMenu((id) => { /* the chosen item */ });
+
+// a menu for one target: the page handles the right-click and asks
+row.addEventListener('contextmenu', async (event) => {
+  event.preventDefault();
+  const id = await context.menu([{ id: 'open', label: 'Open' }, { id: 'delete', label: 'Delete', glyph: 'check' }],
+    { x: event.clientX, y: event.clientY });                 // the chosen id, or null when dismissed
+});
+```
+
+A framed page gives a point in its own coordinates; the desktop places the
+menu over the frame. A menu holds up to 40 entries and one level of submenus
+(a submenu replaces its parent, with a way back); every id is used once. A
+document that does not match `MENU_SCHEMA` is refused (`OS0170`): a thrown
+error from a shipped module, a rejected promise from a framed page.
+
 ## The dock: the person's own arrangement
 
 The dock is a JSON document the person owns: the order of its icons and

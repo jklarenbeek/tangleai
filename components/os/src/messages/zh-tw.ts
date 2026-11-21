@@ -88,6 +88,7 @@ export const zhTW: OsCatalogue = {
   'tray/theme-light': '切換為淺色主題',
   'tray/theme-dark': '切換為深色主題',
   'menu/label': '{title} 的選單',
+  'menu/back': '返回',
   'menu/new-window': '新視窗',
   'menu/show-desktop': '顯示桌面',
   'menu/show-windows': '顯示所有視窗',

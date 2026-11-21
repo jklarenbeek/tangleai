@@ -88,6 +88,7 @@ export const fr: OsCatalogue = {
   'tray/theme-light': 'Passer au thème clair',
   'tray/theme-dark': 'Passer au thème sombre',
   'menu/label': 'Menu de {title}',
+  'menu/back': 'Retour',
   'menu/new-window': 'Nouvelle fenêtre',
   'menu/show-desktop': 'Afficher le bureau',
   'menu/show-windows': 'Afficher toutes les fenêtres',

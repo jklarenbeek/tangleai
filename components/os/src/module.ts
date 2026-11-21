@@ -6,6 +6,7 @@
  * language the shell pushes. An application on its own origin keeps its
  * server, its keys and its sign-in; the desktop sees only its contracts.
  */
+import type { MenuDocument, MenuPoint } from './menu.ts';
 import { compileContract } from '@jarenjs/contract';
 import { servePort, openPortClient } from '@jarenjs/contract/port';
 import { CONNECT, FOCUS, HELLO, PROTOCOL, systemContracts, type ConnectMessage } from './contracts.ts';
@@ -99,6 +100,15 @@ export type OsConnection = {
   propose(proposal: { id: string, kind: string, title: string, summary?: string, payload?: unknown, evidence?: { label: string, href?: string }[], revision?: string, origin?: 'human' | 'rule' | 'import' | 'ai', answer?: { schema: Record<string, unknown> | boolean, label?: string } }): Promise<void>;
   /** Take back a pending proposal. */
   withdraw(id: string): Promise<void>;
+  /**
+   * This window's default right-click menu, drawn by the desktop over the page (`null` takes it away);
+   * refused (`OS0170`) when it does not match the menu schema. A right-click the page handles itself
+   * (`preventDefault`) does not show it. Choices arrive at `onContextMenu`.
+   */
+  setContextMenu(menu: MenuDocument | null): Promise<void>;
+  onContextMenu(handler: (id: string) => void): () => void;
+  /** Show a menu for one target at a point of this page; answers the chosen id, or null when dismissed. */
+  menu(items: MenuDocument, at: MenuPoint): Promise<string | null>;
   close(): void;
 };
 
@@ -173,6 +183,25 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
       const raise = () => host.parent?.postMessage?.({ type: FOCUS }, '*');
       host.document?.addEventListener?.('pointerdown', raise, true);
       disposers.push(() => host.document?.removeEventListener?.('pointerdown', raise, true));
+      // the window's default right-click menu: shown by the desktop unless the page handled the right-click itself
+      let contextMenu: MenuDocument | null = null;
+      const menuHandlers = new Set<(id: string) => void>();
+      const askMenu = async (items: MenuDocument, at?: MenuPoint, check = false): Promise<string | null> => {
+        const outcome: any = await client.invoke('window.menu', { items, ...(at ? { at } : {}), ...(check ? { check: true } : {}) });
+        const value = outcome?.ok === true ? outcome.value : outcome;
+        const refused = outcome?.ok === false ? outcome.error : value?.refused;
+        if (refused) throw Object.assign(new Error(refused.message ?? 'window.menu failed'), { code: refused.code });
+        return value?.id ?? null;
+      };
+      const onRightClick = (event: MouseEvent) => {
+        if (event.defaultPrevented || !contextMenu) return;
+        event.preventDefault();
+        askMenu(contextMenu, { x: event.clientX, y: event.clientY })
+          .then(id => { if (id !== null) for (const handler of [...menuHandlers]) { try { handler(id); } catch { /* the page's own error */ } } })
+          .catch(() => { /* the desktop is gone */ });
+      };
+      host.document?.addEventListener?.('contextmenu', onRightClick);
+      disposers.push(() => host.document?.removeEventListener?.('contextmenu', onRightClick));
       applyTheme(root, data.theme);
       applyLocale(root, data.locale);
       options.onTheme?.(data.theme);
@@ -196,6 +225,12 @@ export function connectToOs(options: ConnectOptions): Promise<OsConnection> {
           return (outcome?.ok === true ? outcome.value : outcome)?.values ?? {};
         },
         openSettings: async () => { await client.invoke('settings.open', {}); },
+        setContextMenu: async (items) => {
+          if (items !== null) await askMenu(items, undefined, true);
+          contextMenu = items;
+        },
+        onContextMenu: (handler) => { menuHandlers.add(handler); return () => { menuHandlers.delete(handler); }; },
+        menu: (items, at) => askMenu(items, at),
         propose: async (proposal) => {
           const outcome: any = await client.invoke('mail.propose', proposal);
           if (outcome?.ok === false) throw Object.assign(new Error(outcome.error?.message ?? 'mail.propose failed'), { code: outcome.error?.code });

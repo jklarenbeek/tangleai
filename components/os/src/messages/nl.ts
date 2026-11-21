@@ -88,6 +88,7 @@ export const nl: OsCatalogue = {
   'tray/theme-light': 'Overschakelen naar het lichte thema',
   'tray/theme-dark': 'Overschakelen naar het donkere thema',
   'menu/label': 'Menu voor {title}',
+  'menu/back': 'Terug',
   'menu/new-window': 'Nieuw venster',
   'menu/show-desktop': 'Het bureaublad tonen',
   'menu/show-windows': 'Alle vensters tonen',

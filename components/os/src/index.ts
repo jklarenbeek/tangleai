@@ -36,3 +36,5 @@ export type { WeaveOptions, PatternOptions } from './wallpaper.ts';
 export type { ThemeDocument } from './theme.ts';
 export { osMessagesEn, createOsMessages, format } from './messages.ts';
 export type { OsMessageKey, OsCatalogue } from './messages.ts';
+export { MENU_SCHEMA, checkMenu } from './menu.ts';
+export type { MenuDocument, MenuItem, MenuPoint } from './menu.ts';

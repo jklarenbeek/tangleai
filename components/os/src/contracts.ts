@@ -91,6 +91,13 @@ export const OS_CONTRACT = {
       // a refusal is answered, not thrown, so the page learns its code and reason
       output: { type: 'object', properties: { refused: { type: 'object', required: ['code', 'message'], properties: { code: { type: 'string' }, message: { type: 'string' } } } } },
     },
+    'window.menu': {
+      kind: 'command',
+      doc: 'Show a right-click menu over this module\'s window at a point of the page (or, with check, only check the menu document); answers the chosen id, or null when the person dismissed it. The desktop draws it in its own look, outside the frame.',
+      input: { type: 'object', additionalProperties: false, required: ['items'], properties: { items: {}, at: { type: 'object', properties: { x: { type: 'number' }, y: { type: 'number' } } }, check: { type: 'boolean' } } },
+      // a refusal is answered, not thrown, so the page learns its code and reason
+      output: { type: 'object', properties: { id: { type: ['string', 'null'] }, refused: { type: 'object', required: ['code', 'message'], properties: { code: { type: 'string' }, message: { type: 'string' } } } } },
+    },
     'mail.propose': {
       kind: 'command',
       doc: 'File a proposal in the desktop\'s inbox for the person to accept or reject; filing the same id again replaces it.',

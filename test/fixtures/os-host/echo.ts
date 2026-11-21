@@ -58,6 +58,19 @@ connectToOs({
   connection = desktop;
   document.body.dataset.joined = 'yes';
   if (new URLSearchParams(location.search).has('header')) await showHeader();
+  if (new URLSearchParams(location.search).has('menu')) {
+    // a default menu for the window, and one row that asks for its own menu
+    await desktop.setContextMenu([{ id: 'refresh', label: 'Refresh echoes' }, 'separator', { id: 'more', label: 'More', items: [{ id: 'export', label: 'Export echoes' }] }]);
+    desktop.onContextMenu((id) => { document.body.dataset.menu = id; });
+    const row = document.createElement('p'); row.className = 'echo-row'; row.textContent = 'An echo row';
+    row.style.cssText = 'margin: 40px; padding: 12px; border: 1px solid';
+    row.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+      void desktop.menu([{ id: 'row-open', label: 'Open this echo' }, { id: 'row-delete', label: 'Delete this echo', hint: 'Del' }], { x: event.clientX, y: event.clientY })
+        .then((id) => { document.body.dataset.rowMenu = String(id); });
+    });
+    document.body.append(row);
+  }
   // a settings page joins too, but files nothing: proposals belong to the application's window
   if (window.name === 'settings' || new URLSearchParams(location.search).has('settings')) return;
   await desktop.propose({ id: 'echo-1', kind: 'echo.reply', title: 'Send the echo', summary: 'Answer the last call with its own words.', evidence: [{ label: 'The call', href: 'https://example.com/call' }], revision: 'r1' });

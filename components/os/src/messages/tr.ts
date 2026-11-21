@@ -88,6 +88,7 @@ export const tr: OsCatalogue = {
   'tray/theme-light': 'Açık temaya geç',
   'tray/theme-dark': 'Koyu temaya geç',
   'menu/label': '{title} menüsü',
+  'menu/back': 'Geri',
   'menu/new-window': 'Yeni pencere',
   'menu/show-desktop': 'Masaüstünü göster',
   'menu/show-windows': 'Tüm pencereleri göster',
