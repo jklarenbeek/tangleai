@@ -355,8 +355,10 @@ bundled exactly as a pointer to the same schema would be. `profile: 'strict'` se
 `json_schema` tier, the schema's strict profile (`deriveStrictProfile` from
 `@jarenjs/validate/strict-profile`) with `strict: true`, maps each answer back and validates
 it against the original schema; measured in
-[STRICT_PROFILE_BENCHMARK.md](../../docs/STRICT_PROFILE_BENCHMARK.md). `tier` overrides the
-client's structured-output tier for one generator.
+[STRICT_PROFILE_BENCHMARK.md](../../docs/STRICT_PROFILE_BENCHMARK.md). In a strict answer a
+`null` at a member the original schema does not require reads as left out (a strict profile
+makes every member required and nullable); to carry an explicit `null`, make the member
+required. `tier` overrides the client's structured-output tier for one generator.
 
 **Bounds and parsing.** `deadlineMs` (per generator, or per `generate` call) bounds a whole
 generation, repairs included, even over a client that ignores signals: past it, `generate`
