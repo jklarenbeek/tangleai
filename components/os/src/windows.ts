@@ -90,6 +90,30 @@ export function resizeWindow(d: Desktop, id: string, width: number, height: numb
   return { ...d, windows: d.windows.map(w => w.id === id && !w.maximized ? { ...w, rect: fit({ ...w.rect, w: width, h: height }, d.viewport, min ?? w.min) } : w) };
 }
 
+/** An edge or corner of a window a person drags, on screen (north is up, west is left, whatever the language's direction). */
+export type ResizeEdge = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
+
+/**
+ * Resize by dragging an edge or a corner of the window as it was when the drag
+ * began: the edges it names follow the pointer, the opposite ones stay put, and
+ * the window never goes below its minimum or above the desktop's top.
+ */
+export function resizeWindowFrom(d: Desktop, id: string, edge: ResizeEdge, start: Rect, dx: number, dy: number): Desktop {
+  return { ...d, windows: d.windows.map(w => {
+    if (w.id !== id || w.maximized) return w;
+    const min = w.min ?? { w: 200, h: 120 };
+    let { x, y, w: width, h: height } = start;
+    if (edge.includes('e')) width = start.w + dx;
+    if (edge.includes('w')) { width = Math.max(min.w, start.w - dx); x = start.x + start.w - width; }
+    if (edge.includes('s')) height = start.h + dy;
+    if (edge.includes('n')) {
+      height = Math.max(min.h, start.h - dy); y = start.y + start.h - height;
+      if (y < 0) { height += y; y = 0; }
+    }
+    return { ...w, rect: fit({ x, y, w: width, h: height }, d.viewport, min) };
+  }) };
+}
+
 /** Maximize or restore; on a compact desktop every window stays maximized. */
 export function toggleMaximize(d: Desktop, id: string): Desktop {
   if (d.compact) return focusWindow(d, id);

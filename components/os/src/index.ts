@@ -25,9 +25,9 @@ export type { DockLayout, DockFolder, DockIcon, DockView } from './dock.ts';
 export { HEADER_SCHEMA, HEADER_CONTRACT, HEADER_GLYPHS, headerItems, headerFor, activateHeader, duplicateHeaderId, fitHeader } from './header.ts';
 export type { Header, HeaderItem, HeaderButton, HeaderToggle, HeaderMenu, HeaderMenuEntry, HeaderSearch, HeaderTabs, HeaderGlyph, HeaderActivation, HeaderHandler } from './header.ts';
 export {
-  emptyDesktop, openWindow, focusWindow, closeWindow, moveWindow, resizeWindow, toggleMaximize, minimizeWindow, setTitle, setViewport, setCompact, resizeDesktop, isVisible, stacked, fit,
+  emptyDesktop, openWindow, focusWindow, closeWindow, moveWindow, resizeWindow, resizeWindowFrom, toggleMaximize, minimizeWindow, setTitle, setViewport, setCompact, resizeDesktop, isVisible, stacked, fit,
 } from './windows.ts';
-export type { Desktop, WindowState, WindowRequest, Rect } from './windows.ts';
+export type { Desktop, WindowState, WindowRequest, Rect, ResizeEdge } from './windows.ts';
 export { DEFAULT_THEMES, AURORA, checkTheme } from './theme.ts';
 export { weaveSvg, weaveBackground, PATTERNS, patternBackground } from './wallpaper.ts';
 export { THEME_KITS, composeTheme } from './themes.ts';

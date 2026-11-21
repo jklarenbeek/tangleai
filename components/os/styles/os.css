@@ -159,12 +159,17 @@
 }
 @keyframes tos-shimmer { to { background-position: -200% 0; } }
 .tos-frame { display: block; inline-size: 100%; block-size: 100%; border: 0; background: var(--surface); color-scheme: normal; }
-.tos-resize {
-  position: absolute; inset-block-end: 0; inset-inline-end: 0;
-  inline-size: 18px; block-size: 18px;
-  cursor: nwse-resize; touch-action: none;
-}
-[dir="rtl"] .tos-resize { cursor: nesw-resize; }
+.tos-resize { position: absolute; z-index: 2; touch-action: none; }
+/* the edges: a thin band inside each side (on screen, whatever the direction) and a larger square in each
+   corner; inside, because the window clips what overhangs its rounded border */
+.tos-resize[data-edge="n"] { top: 0; left: 12px; right: 12px; height: 5px; cursor: ns-resize; }
+.tos-resize[data-edge="s"] { bottom: 0; left: 12px; right: 12px; height: 5px; cursor: ns-resize; }
+.tos-resize[data-edge="e"] { right: 0; top: 12px; bottom: 12px; width: 5px; cursor: ew-resize; }
+.tos-resize[data-edge="w"] { left: 0; top: 12px; bottom: 12px; width: 5px; cursor: ew-resize; }
+.tos-resize[data-edge="ne"] { top: 0; right: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+.tos-resize[data-edge="sw"] { bottom: 0; left: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+.tos-resize[data-edge="nw"] { top: 0; left: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+.tos-resize[data-edge="se"] { bottom: 0; right: 0; width: 12px; height: 12px; cursor: nwse-resize; }
 .tos-window.is-maximized .tos-resize { display: none; }
 
 /* ── dock ──────────────────────────────────────────────────────────────── */

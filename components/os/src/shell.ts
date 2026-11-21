@@ -4,6 +4,7 @@
  * so it may use the DOM directly; what it shows comes from the kernel's
  * manifests, the theme document and the message catalogue.
  */
+import type { ResizeEdge } from './windows.ts';
 import { openPortClientLazily, loadPorts, portsLoaded } from './ports.ts';
 import { joinSuite, type SuiteDocument, type JoinResult } from './install-sheet.ts';
 export type { SuiteDocument, JoinResult } from './install-sheet.ts';
@@ -16,7 +17,7 @@ import { patternBackground } from './wallpaper.ts';
 import { createOsMessages, type OsCatalogue } from './messages.ts';
 import { applyTheme, applyLocale } from './apply.ts';
 import {
-  closeWindow, emptyDesktop, focusWindow, isVisible, minimizeWindow, moveWindow, openWindow, resizeDesktop, resizeWindow, setTitle, stacked, toggleMaximize,
+  closeWindow, emptyDesktop, focusWindow, isVisible, minimizeWindow, moveWindow, openWindow, resizeDesktop, resizeWindow, resizeWindowFrom, setTitle, stacked, toggleMaximize,
   type Desktop, type WindowState,
 } from './windows.ts';
 import type { Kernel, Decider } from './kernel.ts';
@@ -414,8 +415,12 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     bar.append(glyph, start, titleBox, center, end, more, controls);
     const header: HeaderBar = { bar, start, center, end, more, subtitle, titleBox, items: new Map(), overflow: [], fitted: -1 };
     const content = doc.createElement('div'); content.className = 'tos-content';
-    const grip = doc.createElement('div'); grip.className = 'tos-resize'; grip.setAttribute('aria-hidden', 'true');
-    el.append(bar, content, grip);
+    // every edge and corner resizes; the edges are on screen (north is up), whatever the language's direction
+    const grips = (['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'] as ResizeEdge[]).map(edge => {
+      const grip = doc.createElement('div'); grip.className = 'tos-resize'; grip.dataset.edge = edge; grip.setAttribute('aria-hidden', 'true');
+      return grip;
+    });
+    el.append(bar, content, ...grips);
     wireHeader(w.id, header);
 
     el.addEventListener('pointerdown', () => { if (desktop.focus !== w.id) setDesktop(focusWindow(desktop, w.id)); }, true);
@@ -427,24 +432,25 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     });
     bar.addEventListener('dblclick', (event) => { if (!(event.target as HTMLElement).closest(INTERACTIVE)) setDesktop(toggleMaximize(desktop, w.id)); });
     drag(bar, w.id, 'move');
-    drag(grip, w.id, 'resize');
+    for (const grip of grips) drag(grip, w.id, 'resize', grip.dataset.edge as ResizeEdge);
     return { el, content, title, dispose: () => {}, ports: [], header, screens: new Set(), opens: [] };
   }
 
   /** Pointer drags over frames: a shield takes the pointer for the drag's duration. */
-  function drag(handle: HTMLElement, id: string, mode: 'move' | 'resize') {
+  function drag(handle: HTMLElement, id: string, mode: 'move' | 'resize', edge: ResizeEdge = 'se') {
     handle.addEventListener('pointerdown', (event) => {
       if (event.button !== 0 || (event.target as HTMLElement).closest(INTERACTIVE)) return;
       const current = desktop.windows.find(w => w.id === id);
       if (!current || current.maximized) return;
       event.preventDefault();
       const start = { x: event.clientX, y: event.clientY, rect: { ...current.rect } };
-      const rtl = locale.dir === 'rtl' && mode === 'resize' ? -1 : 1;
       shield.hidden = false; shield.dataset.mode = mode;
+      // the pointer keeps the handle's own arrow over frames while it drags
+      shield.style.cursor = mode === 'resize' ? win.getComputedStyle(handle).cursor : '';
       const move = (e: PointerEvent) => {
         const dx = e.clientX - start.x, dy = e.clientY - start.y;
         if (mode === 'move') setDesktop(moveWindow(desktop, id, start.rect.x + dx, start.rect.y + dy));
-        else setDesktop(resizeWindow(desktop, id, start.rect.w + dx * rtl, start.rect.h + dy));
+        else setDesktop(resizeWindowFrom(desktop, id, edge, start.rect, dx, dy));
       };
       const up = () => { shield.hidden = true; shield.removeEventListener('pointermove', move); shield.removeEventListener('pointerup', up); shield.removeEventListener('pointercancel', up); };
       shield.addEventListener('pointermove', move);

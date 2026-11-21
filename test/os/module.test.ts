@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { connectToOs, OsConnectError } from '@tangleai/os/module';
 import {
   CONNECT, HELLO, PROTOCOL, createKernel, systemContracts, checkTheme, DEFAULT_THEMES,
-  emptyDesktop, openWindow, focusWindow, closeWindow, moveWindow, resizeWindow, toggleMaximize, minimizeWindow, setViewport, resizeDesktop, isVisible, stacked,
+  emptyDesktop, openWindow, focusWindow, closeWindow, moveWindow, resizeWindow, resizeWindowFrom, toggleMaximize, minimizeWindow, setViewport, resizeDesktop, isVisible, stacked,
 } from '@tangleai/os';
 import { openPortClient } from '@jarenjs/contract/port';
 
@@ -151,6 +151,24 @@ describe('the window document', () => {
     assert.ok(d.windows[0].rect.x + d.windows[0].rect.w >= 48 && d.windows[0].rect.y === 0);
     d = resizeWindow(d, 'w1', 10, 10);
     assert.deepEqual([d.windows[0].rect.w, d.windows[0].rect.h], [200, 120]);
+  });
+  it('resizes from every edge and corner: the dragged edges follow, the opposite ones stay, the minimum and the top hold', () => {
+    const d = openWindow(emptyDesktop({ w: 1200, h: 800 }), { module: 'a', title: 'A', width: 400, height: 300 });
+    const start = d.windows[0].rect;
+    const after = (edge: any, dx: number, dy: number) => resizeWindowFrom(d, 'w1', edge, start, dx, dy).windows[0].rect;
+    const right = start.x + start.w, bottom = start.y + start.h;
+    assert.deepEqual(after('e', 50, 99), { ...start, w: start.w + 50 }, 'east: wider, nothing else moves');
+    assert.deepEqual(after('s', 99, 40), { ...start, h: start.h + 40 }, 'south: taller');
+    const west = after('w', -60, 0);
+    assert.deepEqual([west.x, west.x + west.w], [start.x - 60, right], 'west: the left edge follows, the right stays');
+    const north = after('n', 0, -20);
+    assert.deepEqual([north.y, north.y + north.h], [start.y - 20, bottom], 'north: the top follows, the bottom stays');
+    const nw = after('nw', 30, 30);
+    assert.deepEqual([nw.x, nw.y, nw.x + nw.w, nw.y + nw.h], [start.x + 30, start.y + 30, right, bottom], 'a corner moves both of its edges');
+    const shrunk = after('w', 1000, 0);
+    assert.deepEqual([shrunk.w, shrunk.x + shrunk.w], [200, right], 'the minimum holds, and the right edge stays where it was');
+    const top = after('n', 0, -5000);
+    assert.deepEqual([top.y, top.y + top.h], [0, bottom], 'the top stops at the desktop, the bottom stays');
   });
   it('maximizes to the viewport and restores, and follows a new viewport', () => {
     let d = openWindow(emptyDesktop({ w: 1000, h: 700 }), { module: 'a', title: 'A', width: 400, height: 300 });
