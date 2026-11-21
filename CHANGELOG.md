@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.63.2
+
+A window resizes from all four sides and all four corners (`resizeWindowFrom(desktop, id, edge, start, dx, dy)`): the dragged edges follow the pointer, the opposite ones stay put, the window keeps its minimum and stops at the desktop's top. The edges are the same on screen in a right-to-left desktop, where the one corner grip used to grow the window from its other side.
+
 ## 0.63.1
 
 Build on Jaren 0.222.0: the validator reads every value one way and locates every failure by one rule, a compile reads only the held schemas it reaches, and strict profiles tell an empty map from an empty array.

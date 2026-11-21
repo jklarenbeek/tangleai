@@ -11,7 +11,10 @@ async function desktop(page, query = '') {
   await page.goto(`/${query}`);
   await page.waitForFunction(() => window.tangleOs?.kernel);
   await page.evaluate(() => window.tangleOs.desktop.open('todo'));
-  return page.locator('.tos-window[data-module="todo"]');
+  const win = page.locator('.tos-window[data-module="todo"]');
+  // a window animates once as it opens: measure it where it comes to rest
+  await win.evaluate(el => Promise.all(el.getAnimations({ subtree: true }).map(a => a.finished.catch(() => {}))));
+  return win;
 }
 const box = (win) => win.evaluate(el => { const r = el.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom }; });
 /** Drag the window's handle for an edge by (dx, dy), from the handle's middle. */
