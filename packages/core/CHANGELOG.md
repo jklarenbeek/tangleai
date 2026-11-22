@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.64.3
+
+### Patch Changes
+
+- Build on Jaren 0.223.0: PostgreSQL compares keys exactly and reports constraints a model does not declare, and a query whose row-decided pick reaches a `Date`, `Map` or `bigint` external is refused (`JD0041`) instead of answering empty.
+- @tangleai/context@0.64.3
+
 ## 0.64.2
 
 ### Patch Changes

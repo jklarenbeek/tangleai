@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.64.3
+
+Build on Jaren 0.223.0: PostgreSQL compares keys exactly and reports constraints a model does not declare, and a query whose row-decided pick reaches a `Date`, `Map` or `bigint` external is refused (`JD0041`) instead of answering empty.
+
 ## 0.64.2
 
 Build on Jaren 0.222.1: a collecting validator keeps each distinct error once, in the order it first met it, so the errors a repair loop hands back to a model stay short on a broken document.
