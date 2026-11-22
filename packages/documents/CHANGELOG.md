@@ -1,5 +1,14 @@
 # @tangleai/documents
 
+## 0.64.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/core@0.64.4
+  - @tangleai/context@0.64.4
+  - @tangleai/models@0.64.4
+
 ## 0.64.3
 
 ### Patch Changes

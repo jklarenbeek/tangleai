@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.64.4
+
+Build on Jaren 0.224.0: introspection reads a collection's conditional index and the store's SQLite rule programs back, a drifted store-owned program has a named repair, and a collection's first item over its bare root reads one row.
+
 ## 0.64.3
 
 Build on Jaren 0.223.0: PostgreSQL compares keys exactly and reports constraints a model does not declare, and a query whose row-decided pick reaches a `Date`, `Map` or `bigint` external is refused (`JD0041`) instead of answering empty.

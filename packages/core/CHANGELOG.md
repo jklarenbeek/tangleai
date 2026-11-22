@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.64.4
+
+### Patch Changes
+
+- Build on Jaren 0.224.0: introspection reads a collection's conditional index and the store's SQLite rule programs back, a drifted store-owned program has a named repair, and a collection's first item over its bare root reads one row.
+- @tangleai/context@0.64.4
+
 ## 0.64.3
 
 ### Patch Changes

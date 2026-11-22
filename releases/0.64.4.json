@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.64.4",
+  "baseVersion": "0.64.3",
+  "baseCommit": "070afb2204c59a055ea44241bf0d6dfcb4ff0815",
+  "preparationCommit": "070afb2204c59a055ea44241bf0d6dfcb4ff0815",
+  "initial": false,
+  "inputHash": "9e3dfd303f9ea01ca9211bb595dca619e41e2b3c392f1fe95d181d65897dc16e",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        }
+      ],
+      "summary": "Build on Jaren 0.224.0: introspection reads a collection's conditional index and the store's SQLite rule programs back, a drifted store-owned program has a named repair, and a collection's first item over its bare root reads one row.",
+      "id": "jaren-0-224-0"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.64.4"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.64.4"
+    }
+  ]
+}
