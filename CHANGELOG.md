@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.64.5
+
+Build on Jaren 0.225.0: a store whose job and capture tables exist reopens beside another process's live write without a lock, a store opens reading each catalog once, and a linq join takes an entity handle as its inner side.
+
 ## 0.64.4
 
 Build on Jaren 0.224.0: introspection reads a collection's conditional index and the store's SQLite rule programs back, a drifted store-owned program has a named repair, and a collection's first item over its bare root reads one row.

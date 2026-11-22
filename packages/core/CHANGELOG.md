@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.64.5
+
+### Patch Changes
+
+- Build on Jaren 0.225.0: a store whose job and capture tables exist reopens beside another process's live write without a lock, a store opens reading each catalog once, and a linq join takes an entity handle as its inner side.
+- @tangleai/context@0.64.5
+
 ## 0.64.4
 
 ### Patch Changes

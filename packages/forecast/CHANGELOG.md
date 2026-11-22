@@ -1,5 +1,17 @@
 # @tangleai/forecast
 
+## 0.64.5
+
+### Patch Changes
+
+- @tangleai/documents@0.64.5
+  - @tangleai/outcomes@0.64.5
+  - @tangleai/search@0.64.5
+  - @tangleai/agents@0.64.5
+  - @tangleai/context@0.64.5
+  - @tangleai/mas@0.64.5
+  - @tangleai/models@0.64.5
+
 ## 0.64.4
 
 ### Patch Changes
