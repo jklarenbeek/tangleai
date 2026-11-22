@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.64.6",
+  "baseVersion": "0.64.5",
+  "baseCommit": "4b0d49d2581a6b7c001e42810ee2876c2367dd64",
+  "preparationCommit": "4b0d49d2581a6b7c001e42810ee2876c2367dd64",
+  "initial": false,
+  "inputHash": "2e48c16fb95b928e93f94c5bef3658d0040f23bb899b939cac057a05ba8bfc9f",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        }
+      ],
+      "summary": "Build on Jaren 0.226.0: a migration that adds or changes a database rule checks the rows a table already holds and rolls back whole on a breaking row, and PostgreSQL indexes are kept in the order a statement reads. SQLite stores are unchanged.",
+      "id": "jaren-0-226-0"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.64.6"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.64.6"
+    }
+  ]
+}

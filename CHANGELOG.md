@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.64.6
+
+Build on Jaren 0.226.0: a migration that adds or changes a database rule checks the rows a table already holds and rolls back whole on a breaking row, and PostgreSQL indexes are kept in the order a statement reads. SQLite stores are unchanged.
+
 ## 0.64.5
 
 Build on Jaren 0.225.0: a store whose job and capture tables exist reopens beside another process's live write without a lock, a store opens reading each catalog once, and a linq join takes an entity handle as its inner side.

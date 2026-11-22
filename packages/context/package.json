@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/context",
-  "version": "0.64.5",
+  "version": "0.64.6",
   "description": "Evidence-backed ledgers, bounded environments, recall, retention and storage contracts.",
   "license": "MIT",
   "type": "module",
@@ -26,9 +26,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.225.0",
-    "@jarenjs/validate": "0.225.0",
-    "@tangleai/models": "0.64.5"
+    "@jarenjs/core": "0.226.0",
+    "@jarenjs/validate": "0.226.0",
+    "@tangleai/models": "0.64.6"
   },
   "private": false,
   "files": [

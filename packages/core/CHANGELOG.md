@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.64.6
+
+### Patch Changes
+
+- Build on Jaren 0.226.0: a migration that adds or changes a database rule checks the rows a table already holds and rolls back whole on a breaking row, and PostgreSQL indexes are kept in the order a statement reads. SQLite stores are unchanged.
+- @tangleai/context@0.64.6
+
 ## 0.64.5
 
 ### Patch Changes

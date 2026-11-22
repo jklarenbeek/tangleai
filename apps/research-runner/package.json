@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/research-runner",
-  "version": "0.64.5",
+  "version": "0.64.6",
   "private": true,
   "description": "Optional isolated container host for manifest-bound research experiments",
   "license": "MIT",
@@ -12,14 +12,14 @@
     "bun": ">=1.4.4"
   },
   "dependencies": {
-    "@jarenjs/core": "0.225.0",
-    "@jarenjs/flow": "0.225.0",
-    "@jarenjs/json": "0.225.0",
-    "@tangleai/research": "0.64.5",
-    "@tangleai/evolve": "0.64.5",
-    "@tangleai/store": "0.64.5",
-    "@tangleai/documents": "0.64.5",
-    "@tangleai/outcomes": "0.64.5",
-    "@tangleai/trace2skill": "0.64.5"
+    "@jarenjs/core": "0.226.0",
+    "@jarenjs/flow": "0.226.0",
+    "@jarenjs/json": "0.226.0",
+    "@tangleai/research": "0.64.6",
+    "@tangleai/evolve": "0.64.6",
+    "@tangleai/store": "0.64.6",
+    "@tangleai/documents": "0.64.6",
+    "@tangleai/outcomes": "0.64.6",
+    "@tangleai/trace2skill": "0.64.6"
   }
 }
