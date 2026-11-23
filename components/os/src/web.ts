@@ -8,8 +8,9 @@
  * page's extracted blocks, and "open original" is a new tab.
  *
  * The assistant reads through the kernel's `tangle_os_web` contract, under
- * grants, in the ledger and within a per-turn budget, and every answer it
- * gets frames the page's text as untrusted data, never instructions.
+ * grants, in the ledger and within a budget (a rolling window per caller),
+ * and every answer it gets frames the page's text as untrusted data, never
+ * instructions.
  */
 
 /** A link a page carries: its text and the absolute address it points to. */
@@ -42,7 +43,7 @@ export type WebReader = {
  * `OS0180` no web access is configured on this desktop; `OS0181` the address is
  * refused (not http(s), a private or local host, a policy, robots); `OS0182` the
  * site could not be read (unreachable, a timeout, an HTTP error, not a page it
- * can read); `OS0183` the per-turn budget of the assistant is spent.
+ * can read); `OS0183` the caller's web budget is spent (see `WebBudget`).
  */
 export const WEB_CODES = { unconfigured: 'OS0180', refused: 'OS0181', unreadable: 'OS0182', budget: 'OS0183' } as const;
 
@@ -60,6 +61,9 @@ export const WEB_PAGE_SCHEMA = {
   },
 } as const;
 
+/** What a reader refuses, by name: `refused` is the address, `unreadable` the site (the codes above). */
+const WEB_ERRORS = { refused: { status: 403 }, unreadable: { status: 502 } } as const;
+
 /** The provider contract a host serves (over HTTP from its server, or locally in a test). */
 export const WEB_READER_CONTRACT = {
   $contract: '0.1',
@@ -69,11 +73,13 @@ export const WEB_READER_CONTRACT = {
       kind: 'read', doc: 'Read one web page: its title, its readable blocks in order and its links, with the address the redirects ended at.',
       input: { type: 'object', additionalProperties: false, required: ['url'], properties: { url: URL_SCHEMA } },
       output: WEB_PAGE_SCHEMA,
+      errors: WEB_ERRORS,
     },
     'web.search': {
       kind: 'read', doc: 'Search the web: titles, addresses and snippets of the results, best first.',
       input: { type: 'object', additionalProperties: false, required: ['query'], properties: { query: { type: 'string', minLength: 1, maxLength: 400 }, limit: { type: 'integer', minimum: 1, maximum: 20 } } },
       output: { type: 'object', additionalProperties: false, required: ['results'], properties: { results: { type: 'array', maxItems: 20, items: { type: 'object', additionalProperties: false, required: ['title', 'url'], properties: { title: TEXT(500), url: URL_SCHEMA, snippet: TEXT(1000) } } } } },
+      errors: WEB_ERRORS,
     },
   },
 } as const;

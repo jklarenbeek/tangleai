@@ -14,6 +14,7 @@
 
 import { readerEn } from './messages/reader.ts';
 import { enginesEn } from './messages/engines.ts';
+import { webEn } from './messages/web.ts';
 
 export const pagesMessagesEn = {
   // ── manifests: the names of the desktop's applications (dock, window title, Settings) ──
@@ -368,6 +369,7 @@ export const pagesMessagesEn = {
   'surfaces/transfer-lead': 'Export your projects, sessions, conversation and game to a file, or import such a file into empty places. Settings and keys never leave this browser. Close other Tangle tabs first.', // Move data window: the paragraph above the export and import controls
   ...readerEn,
   ...enginesEn,
+  ...webEn,
 } as const;
 
 export type PagesMessageKey = keyof typeof pagesMessagesEn;

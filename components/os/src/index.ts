@@ -8,12 +8,12 @@
  */
 export { MODULE_MANIFEST_SCHEMA, validateManifest, localized } from './manifest.ts';
 export type { ModuleManifest, ModuleHost, ModuleSettings, ContractDocument, LocalizedText, ManifestIssue, ManifestVerdict } from './manifest.ts';
-export { createKernel, toolName, DOCK_CONTRACT, FILES_CONTRACT, RESERVED_IDS } from './kernel.ts';
+export { createKernel, toolName, DOCK_CONTRACT, FILES_CONTRACT, WEB_CONTRACT, webPageText, RESERVED_IDS } from './kernel.ts';
 export { CAPABILITY_SCHEMA, capabilityIssues, checkCapabilities, capabilityPrompt, capabilitiesPrompt, composeCapabilities } from './capability.ts';
 export type { CapabilityDocument, CapabilityPrompt, CapabilityOrigin, CapabilityIssue } from './capability.ts';
 export { fileLocationContract, memoryLocation, browserLocation, serveFileLocation, fileAnswer, typeOfName, MAX_INLINE_BYTES, FILE_ENTRY_SCHEMA, fileBytesToBase64, fileBase64ToBytes } from './files.ts';
 export type { FileEntry, FileContent, FileLocationHandlers } from './files.ts';
-export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore, StateOption, StateStatus, Proposal, Decider } from './kernel.ts';
+export type { Kernel, Layer, JournalEntry, LedgerEntry, MailEnvelope, Outcome, KernelEvent, ContractClient, ServedContract, GrantedOperation, ToolBuilder, SettingsStore, StateOption, StateStatus, Proposal, Decider, WebBudget } from './kernel.ts';
 export { STATE_CONTRACT, memoryStore, webStorageStore, contractStore } from './state.ts';
 export { APPS_KEY, scopesOf, originOf, isLocalOrigin, consentNeeded } from './consent.ts';
 export type { Consent, InstalledApp } from './consent.ts';
@@ -40,3 +40,4 @@ export { MENU_SCHEMA, checkMenu } from './menu.ts';
 export type { MenuDocument, MenuItem, MenuPoint } from './menu.ts';
 export { WEB_READER_CONTRACT, WEB_PAGE_SCHEMA, WEB_CODES, unconfiguredWebReader } from './web.ts';
 export type { WebReader, WebPage, WebBlock, WebLink, WebResult } from './web.ts';
+export { httpWebReader } from './web-client.ts';

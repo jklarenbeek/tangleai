@@ -559,6 +559,22 @@ Everything Files does goes through the location as the person's own hand, into
 the ledger. A manifest whose `files.contract` is not one it provides is
 refused (`OS0006`).
 
+## Web pages: read through a host
+
+A page in the browser cannot read most of the web, so a host serves the
+`web_reader` contract (`WEB_READER_CONTRACT`) from its server and the desktop
+calls it: `createKernel({ web: httpWebReader(address) })`. The Tangle
+desktop's reader (`apps/desktop/src/web-reader.ts`) answers at
+`/api/web-reader` to its own page, loopback pages and the published Pages
+desktop only, with the private-network preflight so a public page may reach
+`127.0.0.1`. Pages sets the address in Settings, Web access.
+
+The assistant reads through `tangle_os_web` (`web.search`, `web.read`). Each
+caller other than the shell has a rolling budget, by default 8 reads and 4
+searches a minute (`webBudget`). A failed call counts, and a spent budget is
+`OS0183`. The kernel has no turns, so the budget is a time window, not a
+per-turn count.
+
 ## Authoring: the assistant writes an application
 
 `@tangleai/os/authoring` is what a desktop gives an author model and what it
