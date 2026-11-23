@@ -20,6 +20,9 @@ export const webEn = {
   'web/testing': 'Testing the reader…', // Web access status: while Test waits for an answer
   'web/works': 'The reader answers.', // Web access status: Test reached a reader
   'web/no-answer': 'No reader answered: {detail}', // Web access status: Test reached nothing; {detail} is the reason
+  'web/local-ask': 'Your browser asks whether this page may reach devices on your local network. Allow it, so the desktop can use the reader on this computer. Testing the reader…', // Web access status: before Test, when the browser will ask the person to let this page reach this computer or the local network
+  'web/local-denied': 'Your browser does not let this page reach devices on your local network, so it cannot use a reader on this computer. Allow local network access for this site in the browser’s site settings, then test again.', // Web access status: the browser refuses this page the local network, so a reader on this computer cannot be used
+  'web/no-answer-local': 'No reader answered: {detail}. If your browser asked about devices on your local network, allow it and test again; otherwise check that the Tangle desktop is running.', // Web access status: Test of a reader on this computer reached nothing; {detail} is the reason
   'web/privacy': 'Every address you or the assistant read is sent to this reader, which fetches the page from the web.', // Web access: what leaves the browser when a page is read
 } as const;
 
@@ -39,6 +42,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': 'De lezer wordt getest…',
     'web/works': 'De lezer antwoordt.',
     'web/no-answer': 'Er antwoordde geen lezer: {detail}',
+    'web/local-ask': 'Uw browser vraagt of deze pagina apparaten in uw lokale netwerk mag bereiken. Sta dit toe, zodat de desktop de lezer op deze computer kan gebruiken. De lezer wordt getest…',
+    'web/local-denied': 'Uw browser staat deze pagina niet toe apparaten in uw lokale netwerk te bereiken, dus kan zij geen lezer op deze computer gebruiken. Sta toegang tot het lokale netwerk voor deze site toe in de site-instellingen van de browser en test daarna opnieuw.',
+    'web/no-answer-local': 'Er antwoordde geen lezer: {detail}. Als uw browser vroeg naar apparaten in uw lokale netwerk, sta dit dan toe en test opnieuw; controleer anders of de Tangle-desktop draait.',
     'web/privacy': 'Elk adres dat u of de assistent leest, wordt naar deze lezer gestuurd, die de pagina van het web ophaalt.',
   },
   de: {
@@ -55,6 +61,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': 'Der Leser wird getestet…',
     'web/works': 'Der Leser antwortet.',
     'web/no-answer': 'Kein Leser hat geantwortet: {detail}',
+    'web/local-ask': 'Ihr Browser fragt, ob diese Seite Geräte in Ihrem lokalen Netzwerk erreichen darf. Erlauben Sie es, damit der Desktop den Leser auf diesem Computer verwenden kann. Der Leser wird getestet…',
+    'web/local-denied': 'Ihr Browser erlaubt dieser Seite nicht, Geräte in Ihrem lokalen Netzwerk zu erreichen, daher kann sie keinen Leser auf diesem Computer verwenden. Erlauben Sie den Zugriff auf das lokale Netzwerk für diese Website in den Website-Einstellungen des Browsers und testen Sie dann erneut.',
+    'web/no-answer-local': 'Kein Leser hat geantwortet: {detail}. Falls Ihr Browser nach Geräten in Ihrem lokalen Netzwerk gefragt hat, erlauben Sie es und testen Sie erneut; prüfen Sie andernfalls, ob der Tangle-Desktop läuft.',
     'web/privacy': 'Jede Adresse, die Sie oder der Assistent lesen, wird an diesen Leser gesendet, der die Seite aus dem Web abruft.',
   },
   es: {
@@ -71,6 +80,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': 'Probando el lector…',
     'web/works': 'El lector responde.',
     'web/no-answer': 'Ningún lector ha respondido: {detail}',
+    'web/local-ask': 'Su navegador pregunta si esta página puede acceder a dispositivos de su red local. Permítalo para que el escritorio pueda usar el lector de este equipo. Probando el lector…',
+    'web/local-denied': 'Su navegador no permite que esta página acceda a dispositivos de su red local, por lo que no puede usar un lector en este equipo. Permita el acceso a la red local para este sitio en la configuración de sitios del navegador y vuelva a probar.',
+    'web/no-answer-local': 'Ningún lector ha respondido: {detail}. Si su navegador le preguntó por dispositivos de su red local, permítalo y vuelva a probar; de lo contrario, compruebe que el escritorio de Tangle está en ejecución.',
     'web/privacy': 'Cada dirección que usted o el asistente leen se envía a este lector, que obtiene la página de la web.',
   },
   fr: {
@@ -87,6 +99,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': 'Test du lecteur…',
     'web/works': 'Le lecteur répond.',
     'web/no-answer': 'Aucun lecteur n’a répondu : {detail}',
+    'web/local-ask': 'Votre navigateur demande si cette page peut accéder aux appareils de votre réseau local. Autorisez-le afin que le bureau puisse utiliser le lecteur de cet ordinateur. Test du lecteur…',
+    'web/local-denied': 'Votre navigateur n’autorise pas cette page à accéder aux appareils de votre réseau local ; elle ne peut donc pas utiliser un lecteur sur cet ordinateur. Autorisez l’accès au réseau local pour ce site dans les paramètres des sites du navigateur, puis testez à nouveau.',
+    'web/no-answer-local': 'Aucun lecteur n’a répondu : {detail}. Si votre navigateur vous a interrogé au sujet des appareils de votre réseau local, autorisez-le et testez à nouveau ; sinon, vérifiez que le bureau Tangle est en cours d’exécution.',
     'web/privacy': 'Chaque adresse que vous ou l’assistant lisez est envoyée à ce lecteur, qui récupère la page sur le web.',
   },
   pt: {
@@ -103,6 +118,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': 'Testando o leitor…',
     'web/works': 'O leitor responde.',
     'web/no-answer': 'Nenhum leitor respondeu: {detail}',
+    'web/local-ask': 'O seu navegador pergunta se esta página pode aceder a dispositivos da sua rede local. Permita-o para que o ambiente de trabalho possa utilizar o leitor deste computador. A testar o leitor…',
+    'web/local-denied': 'O seu navegador não permite que esta página aceda a dispositivos da sua rede local, pelo que não pode utilizar um leitor neste computador. Permita o acesso à rede local para este site nas definições de sites do navegador e volte a testar.',
+    'web/no-answer-local': 'Nenhum leitor respondeu: {detail}. Se o seu navegador perguntou sobre dispositivos da sua rede local, permita-o e volte a testar; caso contrário, verifique se o ambiente de trabalho Tangle está em execução.',
     'web/privacy': 'Cada endereço que você ou o assistente leem é enviado a este leitor, que busca a página na web.',
   },
   ru: {
@@ -119,6 +137,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': 'Проверка читателя…',
     'web/works': 'Читатель отвечает.',
     'web/no-answer': 'Ни один читатель не ответил: {detail}',
+    'web/local-ask': 'Ваш браузер спрашивает, может ли эта страница обращаться к устройствам вашей локальной сети. Разрешите это, чтобы рабочий стол мог использовать читатель на этом компьютере. Проверка читателя…',
+    'web/local-denied': 'Ваш браузер не разрешает этой странице обращаться к устройствам вашей локальной сети, поэтому она не может использовать читатель на этом компьютере. Разрешите доступ к локальной сети для этого сайта в настройках сайтов браузера и повторите проверку.',
+    'web/no-answer-local': 'Ни один читатель не ответил: {detail}. Если браузер спросил об устройствах вашей локальной сети, разрешите доступ и повторите проверку; иначе убедитесь, что рабочий стол Tangle запущен.',
     'web/privacy': 'Каждый адрес, который читаете Вы или ассистент, отправляется этому читателю, а он загружает страницу из веба.',
   },
   tr: {
@@ -135,6 +156,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': 'Okuyucu sınanıyor…',
     'web/works': 'Okuyucu yanıt veriyor.',
     'web/no-answer': 'Hiçbir okuyucu yanıt vermedi: {detail}',
+    'web/local-ask': 'Tarayıcınız bu sayfanın yerel ağınızdaki cihazlara erişip erişemeyeceğini soruyor. Masaüstünün bu bilgisayardaki okuyucuyu kullanabilmesi için izin verin. Okuyucu test ediliyor…',
+    'web/local-denied': 'Tarayıcınız bu sayfanın yerel ağınızdaki cihazlara erişmesine izin vermiyor, bu nedenle sayfa bu bilgisayardaki bir okuyucuyu kullanamaz. Tarayıcının site ayarlarında bu site için yerel ağ erişimine izin verin ve ardından yeniden test edin.',
+    'web/no-answer-local': 'Hiçbir okuyucu yanıt vermedi: {detail}. Tarayıcınız yerel ağınızdaki cihazlar hakkında soru sorduysa izin verin ve yeniden test edin; aksi takdirde Tangle masaüstünün çalıştığını denetleyin.',
     'web/privacy': 'Sizin veya asistanın okuduğu her adres bu okuyucuya gönderilir; okuyucu sayfayı web’den getirir.',
   },
   ar: {
@@ -151,6 +175,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': 'جارٍ اختبار القارئ…',
     'web/works': 'القارئ يستجيب.',
     'web/no-answer': 'لم يستجب أي قارئ: {detail}',
+    'web/local-ask': 'يسأل متصفحك عمّا إذا كان يُسمح لهذه الصفحة بالوصول إلى الأجهزة في شبكتك المحلية. اسمح بذلك حتى يتمكن سطح المكتب من استخدام القارئ على هذا الحاسوب. جارٍ اختبار القارئ…',
+    'web/local-denied': 'لا يسمح متصفحك لهذه الصفحة بالوصول إلى الأجهزة في شبكتك المحلية، لذا لا يمكنها استخدام قارئ على هذا الحاسوب. اسمح بالوصول إلى الشبكة المحلية لهذا الموقع في إعدادات المواقع في المتصفح، ثم أعد الاختبار.',
+    'web/no-answer-local': 'لم يستجب أي قارئ: {detail}. إذا سألك المتصفح عن الأجهزة في شبكتك المحلية فاسمح بذلك وأعد الاختبار؛ وإلا فتحقق من أن سطح مكتب Tangle قيد التشغيل.',
     'web/privacy': 'يُرسَل كل عنوان تقرؤونه أنتم أو المساعد إلى هذا القارئ، الذي يجلب الصفحة من الويب.',
   },
   ja: {
@@ -167,6 +194,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': 'リーダーをテストしています…',
     'web/works': 'リーダーが応答しました。',
     'web/no-answer': '応答したリーダーはありません: {detail}',
+    'web/local-ask': 'このページがローカルネットワーク上のデバイスにアクセスしてよいか、ブラウザーが確認しています。デスクトップがこのコンピューターのリーダーを使えるよう、許可してください。リーダーをテストしています…',
+    'web/local-denied': 'ブラウザーがこのページにローカルネットワーク上のデバイスへのアクセスを許可していないため、このコンピューターのリーダーを使用できません。ブラウザーのサイト設定でこのサイトのローカルネットワークへのアクセスを許可してから、もう一度テストしてください。',
+    'web/no-answer-local': '応答したリーダーはありません: {detail}。ブラウザーがローカルネットワーク上のデバイスについて確認した場合は、許可してからもう一度テストしてください。そうでない場合は、Tangle デスクトップが実行中であることを確認してください。',
     'web/privacy': 'お客様またはアシスタントが読むアドレスはすべてこのリーダーに送られ、リーダーがウェブからページを取得します。',
   },
   ko: {
@@ -183,6 +213,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': '리더를 테스트하는 중…',
     'web/works': '리더가 응답합니다.',
     'web/no-answer': '응답한 리더가 없습니다: {detail}',
+    'web/local-ask': '브라우저가 이 페이지에서 로컬 네트워크의 기기에 접근해도 되는지 묻고 있습니다. 데스크톱이 이 컴퓨터의 리더를 사용할 수 있도록 허용해 주십시오. 리더를 테스트하는 중…',
+    'web/local-denied': '브라우저가 이 페이지에서 로컬 네트워크의 기기에 접근하는 것을 허용하지 않으므로 이 컴퓨터의 리더를 사용할 수 없습니다. 브라우저의 사이트 설정에서 이 사이트의 로컬 네트워크 접근을 허용한 다음 다시 테스트해 주십시오.',
+    'web/no-answer-local': '응답한 리더가 없습니다: {detail}. 브라우저가 로컬 네트워크의 기기에 대해 물었다면 허용한 뒤 다시 테스트해 주십시오. 그렇지 않으면 Tangle 데스크톱이 실행 중인지 확인해 주십시오.',
     'web/privacy': '귀하나 어시스턴트가 읽는 모든 주소는 이 리더로 전송되며, 리더가 웹에서 페이지를 가져옵니다.',
   },
   'zh-TW': {
@@ -199,6 +232,9 @@ export const webPacks: Record<'ar' | 'de' | 'es' | 'fr' | 'ja' | 'ko' | 'nl' | '
     'web/testing': '正在測試讀取器…',
     'web/works': '讀取器有回應。',
     'web/no-answer': '沒有讀取器回應：{detail}',
+    'web/local-ask': '您的瀏覽器正在詢問此頁面是否可以存取您區域網路中的裝置。請允許，讓桌面可以使用這台電腦上的讀取器。正在測試讀取器…',
+    'web/local-denied': '您的瀏覽器不允許此頁面存取您區域網路中的裝置，因此無法使用這台電腦上的讀取器。請在瀏覽器的網站設定中允許此網站存取區域網路，然後再測試一次。',
+    'web/no-answer-local': '沒有讀取器回應：{detail}。如果瀏覽器詢問了您區域網路中的裝置，請允許後再測試一次；否則請確認 Tangle 桌面正在執行。',
     'web/privacy': '您或助理讀取的每個位址都會傳送到此讀取器，由它從網路取得頁面。',
   },
 };

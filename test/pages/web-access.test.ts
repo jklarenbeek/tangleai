@@ -12,7 +12,7 @@ import { compileContract } from '@jarenjs/contract';
 import { serveHttp } from '@jarenjs/contract/http';
 import { toNodeHandler } from '@jarenjs/contract/node';
 import { createKernel, WEB_READER_CONTRACT } from '@tangleai/os';
-import { pagesWebReader, testWebReader, webReaderAddress, WEB_READER_EXAMPLE } from '../../apps/pages/src/os/web-access.ts';
+import { isLocalAddress, localNetworkAccess, pagesWebReader, testWebReader, webReaderAddress, WEB_READER_EXAMPLE } from '../../apps/pages/src/os/web-access.ts';
 import { createPreferences } from '../../apps/pages/src/os/preferences.ts';
 
 const storage = () => { const map = new Map<string, string>(); return { getItem: (k: string) => map.get(k) ?? null, setItem: (k: string, v: string) => { map.set(k, String(v)); }, removeItem: (k: string) => { map.delete(k); } }; };
@@ -70,5 +70,24 @@ describe('the reader the kernel gets', () => {
     assert.deepEqual(await testWebReader(base), { ok: true });
     const silent = await testWebReader('http://127.0.0.1:1');
     assert.equal(silent.ok, false);
+  });
+});
+
+describe('a reader on this computer or the local network', () => {
+  it('is told by its host: loopback, the private ranges, localhost and .local', () => {
+    for (const at of ['http://127.0.0.1:4700/api/web-reader', 'http://localhost:4700', 'http://[::1]:4700', 'http://10.0.0.5', 'http://172.20.1.1', 'http://192.168.1.10', 'http://169.254.0.1', 'http://desk.local', 'http://[fd00::1]'])
+      assert.equal(isLocalAddress(at), true, at);
+    for (const at of ['https://reader.example', 'http://172.32.0.1', 'http://8.8.8.8', 'https://jklarenbeek.github.io', 'not an address'])
+      assert.equal(isLocalAddress(at), false, at);
+  });
+
+  it('needs the browser\'s leave only from a public page, and says what the browser answers', async () => {
+    const asking = (state: string) => ({ query: async () => ({ state }) });
+    const page = 'https://jklarenbeek.github.io';
+    assert.equal(await localNetworkAccess('https://reader.example', { origin: page, permissions: asking('denied') }), 'not-needed');
+    assert.equal(await localNetworkAccess(WEB_READER_EXAMPLE, { origin: 'http://127.0.0.1:4715', permissions: asking('denied') }), 'not-needed');
+    for (const state of ['granted', 'prompt', 'denied']) assert.equal(await localNetworkAccess(WEB_READER_EXAMPLE, { origin: page, permissions: asking(state) }), state);
+    assert.equal(await localNetworkAccess(WEB_READER_EXAMPLE, { origin: page, permissions: { query: async () => { throw new TypeError('unknown permission'); } } }), 'unknown');
+    assert.equal(await localNetworkAccess(WEB_READER_EXAMPLE, { origin: page }), 'unknown');
   });
 });

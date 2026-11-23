@@ -15,7 +15,7 @@ import {
 } from './preferences.ts';
 import { englishOf, localizedKeywords, localizedText, t } from './i18n.ts';
 import { LANGUAGES, resolveLanguage } from './language.ts';
-import { WEB_READER_EXAMPLE, testWebReader, webReaderAddress } from './web-access.ts';
+import { WEB_READER_EXAMPLE, localNetworkAccess, testWebReader, webReaderAddress } from './web-access.ts';
 
 /** The wallpaper patterns, by what they look like. */
 /** A theme kit's name and line in the desktop's language (a kit a host adds keeps its own). */
@@ -493,9 +493,14 @@ function sectionMount(prefs: Preferences, id: SectionId, kernel?: Kernel): Setti
       async function test() {
         const value = chosen();
         if (value === null) return;
-        say(t('web/testing'));
-        const answer = await testWebReader(value);
-        say(answer.ok ? t('web/works') : t('web/no-answer', { detail: answer.detail }), answer.ok ? 'ok' : 'fail');
+        // a public page reaching this computer needs the browser's leave: say so before it asks, and wait for the person
+        const access = await localNetworkAccess(value, { origin: win.location.origin, permissions: win.navigator.permissions });
+        if (access === 'denied') { say(t('web/local-denied'), 'fail'); return; }
+        const asking = access === 'prompt' || access === 'unknown';
+        say(access === 'prompt' ? t('web/local-ask') : t('web/testing'));
+        const answer = await testWebReader(value, asking ? { timeoutMs: 90_000 } : {});
+        if (answer.ok) say(t('web/works'), 'ok');
+        else say(asking ? t('web/no-answer-local', { detail: answer.detail }) : t('web/no-answer', { detail: answer.detail }), 'fail');
       }
       put(
         h('h2', {}, t('web/title')),
