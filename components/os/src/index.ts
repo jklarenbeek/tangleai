@@ -38,3 +38,5 @@ export { osMessagesEn, createOsMessages, format } from './messages.ts';
 export type { OsMessageKey, OsCatalogue } from './messages.ts';
 export { MENU_SCHEMA, checkMenu } from './menu.ts';
 export type { MenuDocument, MenuItem, MenuPoint } from './menu.ts';
+export { WEB_READER_CONTRACT, WEB_PAGE_SCHEMA, WEB_CODES, unconfiguredWebReader } from './web.ts';
+export type { WebReader, WebPage, WebBlock, WebLink, WebResult } from './web.ts';
