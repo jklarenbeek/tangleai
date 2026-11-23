@@ -6,8 +6,9 @@
  * application and the person adds what they choose, kept in their state.
  * `#recovery` boots without the person's own layer.
  */
-import { createKernel, webStorageStore, browserLocation } from '@tangleai/os';
+import { createKernel, webStorageStore, browserLocation, unconfiguredWebReader } from '@tangleai/os';
 import { filesModule } from '@tangleai/os/files';
+import { webModule } from '@tangleai/os/web';
 import { parseMarkdown, toHtml } from '@jarenjs/md';
 import * as toolbox from '@tangleai/agents/toolbox';
 import { mountDesktop, type SuiteDocument } from '@tangleai/os/shell';
@@ -56,6 +57,12 @@ const files = filesModule({
 });
 { const installed = kernel.install(files.manifest, 'shipped'); if (installed.ok) files.serve(); else console.error('files', installed.issues); }
 
+// Web: a reader of pages, beside Files in the dock. Pages has no server to read the web for it yet, so
+// the reader says no web access is configured (OS0180) and offers Settings.
+// TODO: pass `pagesWebReader()` (a configurable reader endpoint) once the host side lands.
+const web = webModule({ ...chrome, reader: unconfiguredWebReader() });
+{ const installed = kernel.install(web.manifest, 'shipped'); if (!installed.ok) console.error('web', installed.issues); }
+
 let buildInfo: Promise<any> | null = null;
 const json = (url: string) => fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null);
 const build = () => (buildInfo ??= Promise.all([json('./build.json'), json('./os-build.json')]).then(([release, os]) => release && { ...release, jaren: os?.jaren }));
@@ -66,7 +73,7 @@ const node = document.getElementById('desktop')!;
 const surfaces = createSurfaces(window, { settings: () => prefs.ai(), open: (id) => { desktop.open(id); } });
 const desktop = mountDesktop(node, {
   kernel,
-  shipped: { ...shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces, chrome }), files: files.mount },
+  shipped: { ...shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces, chrome }), files: files.mount, web: web.mount },
   documentHost: './os-module.html',
   // a phone gets one maximized window at a time
   compact: { below: 720 },

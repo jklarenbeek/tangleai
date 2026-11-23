@@ -14,6 +14,7 @@
     "./module-host": "./src/module-host.ts",
     "./settings": "./src/settings.ts",
     "./files": "./src/files-app.ts",
+    "./web": "./src/web-app.ts",
     "./state-server": "./src/state-server.ts",
     "./testing": "./src/testing.ts",
     "./authoring": "./src/authoring.ts",

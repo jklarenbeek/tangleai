@@ -85,6 +85,27 @@ export const osMessagesEn = {
   'files/cancel': 'Cancel',
   'files/delete-confirm': 'Delete {name}?',
   'files/too-large': '{name} is larger than 10 MB.',
+  'web/title': 'Web', // Window and dock title of the Web reader
+  'web/address': 'Address or search', // Web: the address bar's label and placeholder
+  'web/go': 'Go', // Web: the button that reads the address
+  'web/back': 'Back', // Web header bar: back
+  'web/forward': 'Forward', // Web header bar: forward
+  'web/reload': 'Reload', // Web header bar: read the page again
+  'web/open-original': 'Open original', // Web: link that opens the page itself in a new tab
+  'web/loading': 'Reading {address}…', // Web: status while a page is read
+  'web/searching': 'Searching for {query}…', // Web: status while searching
+  'web/results': '{count} results for {query}', // Web: how many search results
+  'web/result-one': '1 result for {query}', // Web: one search result
+  'web/no-results': 'No results for {query}.', // Web: a search with no results
+  'web/results-label': 'Search results', // Web: accessible name of the results list
+  'web/unconfigured': 'No web access is configured on this desktop.', // Web: no reader is configured
+  'web/unconfigured-detail': 'Web pages are read by a service the desktop connects to. Name one in Settings to read and search the web here.', // Web: what web access is and where to set it up
+  'web/configure': 'Open Settings', // Web: button to the desktop's Settings
+  'web/refused': 'This address is refused: {address}. {reason}', // Web: an address the reader refuses (private, not http, a policy)
+  'web/unreadable': 'This page could not be read: {address}. {reason}', // Web: a page that could not be read
+  'web/failed': 'Not done: {detail}', // Web: any other failure
+  'web/truncated': 'This page was cut at its size limit. Open the original to read the rest.', // Web: a page cut at the byte limit
+  'web/start': 'Type an address, or the words you are looking for.', // Web: what the empty reader asks for
   'state/unavailable': 'Your desktop could not be loaded, so changes are off until it is.',
   'state/failed': 'A change was not saved: {detail}.',
   'tray/theme-light': 'Switch to the light theme',

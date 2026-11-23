@@ -24,10 +24,15 @@
  *   ?pause=1     (with ?framed=1) Echo also files a paused run that asks for an answer
  *   ?caps=1      two capabilities (purchasing for screen 1, warehouse for Echo); the host
  *                files a paused purchasing run at boot, with no window open
+ *   ?web=1       the desktop's Web with a scripted reader: two pages that link each other, a
+ *                search that finds both, a refused and an unreadable address; ?web=none has no
+ *                web access configured (OS0180)
  * Everything the browser test needs is on `window.harness`.
  */
 import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract } from '../../../components/os/src/index.ts';
 import { filesModule } from '../../../components/os/src/files-app.ts';
+import { webModule } from '../../../components/os/src/web-app.ts';
+import { WEB_CODES, unconfiguredWebReader, type WebPage, type WebReader } from '../../../components/os/src/web.ts';
 import { conformLocation } from '../file-location-conformance.ts';
 import { mountDesktop, type DesktopEvent } from '../../../components/os/src/shell.ts';
 import { ECHO } from './echo.ts';
@@ -140,6 +145,46 @@ if (withFiles) {
   files.serve();
   shipped.files = files.mount;
 }
+// the Web: a scripted reader, as a host's server would answer
+const webMode = query.get('web');
+const webCalls: unknown[] = [];
+if (webMode) {
+  const at = (path: string) => `https://pages.example/${path}`;
+  const page = (path: string, title: string, lang: string, blocks: WebPage['blocks']): WebPage => ({
+    url: at(path), finalUrl: at(path), title, lang, blocks, links: blocks.flatMap(b => b.kind === 'paragraph' ? b.links ?? [] : []), fetchedAt: '2026-11-23T10:00:00Z', redirects: [],
+  });
+  const PAGES: Record<string, WebPage> = {
+    [at('alpha')]: page('alpha', 'Alpha page', 'en', [
+      { kind: 'heading', level: 2, text: 'About alpha' },
+      { kind: 'paragraph', text: 'Alpha links to the beta page, and never runs <script>alert(1)</script>.', links: [{ text: 'the beta page', href: '/beta' }, { text: 'a script', href: 'javascript:alert(1)' }] },
+      { kind: 'list', ordered: false, items: ['first', 'second'] },
+      { kind: 'code', text: 'const answer = 42;' },
+    ]),
+    [at('beta')]: { ...page('beta', 'Beta-Seite', 'de', [
+      { kind: 'paragraph', text: 'Zurück zur Alpha-Seite.', links: [{ text: 'Alpha-Seite', href: 'https://pages.example/alpha' }] },
+      { kind: 'table', rows: [['Name', 'Wert'], ['beta', '2']] },
+    ]), url: at('b'), redirects: [at('b')] },
+  };
+  const scripted: WebReader = {
+    read: async ({ url }) => {
+      webCalls.push({ read: url });
+      const known = PAGES[url === at('b') ? at('beta') : url];
+      if (known) return known;
+      if (url.includes('private')) throw Object.assign(new Error('a private host'), { code: WEB_CODES.refused });
+      throw Object.assign(new Error('HTTP 404'), { code: WEB_CODES.unreadable });
+    },
+    search: async ({ query: words }) => {
+      webCalls.push({ search: words });
+      return { results: words === 'nothing' ? [] : [
+        { title: 'Alpha page', url: at('alpha'), snippet: 'Alpha links to the beta page.' },
+        { title: 'Beta-Seite', url: at('b'), snippet: 'Zurück zur Alpha-Seite.' },
+      ] };
+    },
+  };
+  const web = webModule({ reader: webMode === 'none' ? unconfiguredWebReader() : scripted, ...(messages ? { messages, ...(lang !== 'sentinel' ? { locale: lang! } : {}) } : {}) });
+  kernel.install(web.manifest, 'shipped');
+  shipped.web = web.mount;
+}
 if (withSettings) {
   shipped['screen-1-settings'] = (node: HTMLElement, context: any) => { node.innerHTML = '<h2 class="screen-settings">Screen 1 settings</h2>'; contexts['screen-1-settings'] = context; };
   kernel.install({ $module: '0.1', id: 'notes-doc', version: '1.0.0', title: { en: 'Notes' }, host: { kind: 'document', app: { $app: '0.1', state: {}, view: [] } },
@@ -171,7 +216,7 @@ if (withCaps) {
   kernel.propose('screen-1', { id: 'po-cola', kind: 'purchase.order', title: 'Order 12 crates of cola', origin: 'ai' });
 }
 (window as any).harness = {
-  decided,
+  decided, webCalls,
   kernel, desktop, events, visibility, contexts, screens,
   // the conformance suite against a fresh OPFS folder of its own
   conformOpfs: async () => {
