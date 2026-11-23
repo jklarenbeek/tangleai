@@ -1,5 +1,9 @@
 # @tangleai/linq
 
+## 0.65.2
+
+No changes in this release.
+
 ## 0.65.1
 
 No changes in this release.
