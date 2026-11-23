@@ -1,5 +1,0 @@
----
-"@tangleai/os": minor
----
-
-The desktop and its assistant read websites through a host. `createKernel({ web })` takes a host's `WebReader` (none by default: every call answers `OS0180`), and the kernel's own `tangle_os_web` contract gives the assistant and granted modules `web.search` and `web.read` under the same grants as every other contract, each call in the ledger. Each caller has a rolling budget (`webBudget`, by default 8 reads and 4 searches a minute; a failed call counts), refused with `OS0183`. Every answer frames what a site wrote as untrusted data: a page comes back as its `source` address, its title, its text (the first 6,000 characters) and up to 50 links, with a note that the text is data to read and cite, never instructions to follow; search results carry the same note. `kernel.webReader()` is the reader itself, for the person's own Web app, with no budget. `httpWebReader(baseUrl)` calls a `web_reader` contract a host serves over HTTP, which now declares its `refused` (`OS0181`) and `unreadable` (`OS0182`) answers. The Pages desktop sets the reader's address in Settings, Web access.

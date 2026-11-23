@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "version": "0.65.0",
+  "baseVersion": "0.64.6",
+  "baseCommit": "ef5c5093dd7c6c488f0742534eff32af433466cf",
+  "preparationCommit": "8a22018509bdb38299f0deca550e855a4e9fee36",
+  "initial": false,
+  "inputHash": "0689015596be860fce07b215895858c83072403262d288b3290d564fc1e65b39",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        }
+      ],
+      "summary": "The desktop and its assistant read websites through a host. `createKernel({ web })` takes a host's `WebReader` (none by default: every call answers `OS0180`), and the kernel's own `tangle_os_web` contract gives the assistant and granted modules `web.search` and `web.read` under the same grants as every other contract, each call in the ledger. Each caller has a rolling budget (`webBudget`, by default 8 reads and 4 searches a minute; a failed call counts), refused with `OS0183`. Every answer frames what a site wrote as untrusted data: a page comes back as its `source` address, its title, its text (the first 6,000 characters) and up to 50 links, with a note that the text is data to read and cite, never instructions to follow; search results carry the same note. `kernel.webReader()` is the reader itself, for the person's own Web app, with no budget. `httpWebReader(baseUrl)` calls a `web_reader` contract a host serves over HTTP, which now declares its `refused` (`OS0181`) and `unreadable` (`OS0182`) answers. The Pages desktop sets the reader's address in Settings, Web access.",
+      "id": "web-host"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        }
+      ],
+      "summary": "The desktop has Web (`@tangleai/os/web`), a reader of web pages that never frames a third-party site. `webModule({ reader })` takes the host's `WebReader`. The address bar reads an address (a bare host such as `example.org/page` is read over https) and searches for anything else. Back, forward and reload sit in its header bar. A page is drawn from its extracted blocks in the desktop's look, in the page's own language: headings, paragraphs with their links, lists, quotes, code and tables. Nothing a page carries runs or becomes markup. A link on a page opens in the reader (http and https only), and \"Open original\" opens the address the redirects ended at in a new tab, with no opener and no referrer. A refusal is said plainly with its address, and its code is on the status (`data-code`). Without web access (`OS0180`), Web offers Settings or the host's own `configure`. Its sentences are in all eleven packs. The Pages desktop places Web beside Files.",
+      "id": "web-reader"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.65.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.65.0"
+    }
+  ]
+}

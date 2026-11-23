@@ -1,5 +1,11 @@
 # Tangle releases
 
+## 0.65.0
+
+The desktop and its assistant read websites through a host. `createKernel({ web })` takes a host's `WebReader` (none by default: every call answers `OS0180`), and the kernel's own `tangle_os_web` contract gives the assistant and granted modules `web.search` and `web.read` under the same grants as every other contract, each call in the ledger. Each caller has a rolling budget (`webBudget`, by default 8 reads and 4 searches a minute; a failed call counts), refused with `OS0183`. Every answer frames what a site wrote as untrusted data: a page comes back as its `source` address, its title, its text (the first 6,000 characters) and up to 50 links, with a note that the text is data to read and cite, never instructions to follow; search results carry the same note. `kernel.webReader()` is the reader itself, for the person's own Web app, with no budget. `httpWebReader(baseUrl)` calls a `web_reader` contract a host serves over HTTP, which now declares its `refused` (`OS0181`) and `unreadable` (`OS0182`) answers. The Pages desktop sets the reader's address in Settings, Web access.
+
+The desktop has Web (`@tangleai/os/web`), a reader of web pages that never frames a third-party site. `webModule({ reader })` takes the host's `WebReader`. The address bar reads an address (a bare host such as `example.org/page` is read over https) and searches for anything else. Back, forward and reload sit in its header bar. A page is drawn from its extracted blocks in the desktop's look, in the page's own language: headings, paragraphs with their links, lists, quotes, code and tables. Nothing a page carries runs or becomes markup. A link on a page opens in the reader (http and https only), and "Open original" opens the address the redirects ended at in a new tab, with no opener and no referrer. A refusal is said plainly with its address, and its code is on the status (`data-code`). Without web access (`OS0180`), Web offers Settings or the host's own `configure`. Its sentences are in all eleven packs. The Pages desktop places Web beside Files.
+
 ## 0.64.6
 
 Build on Jaren 0.226.0: a migration that adds or changes a database rule checks the rows a table already holds and rolls back whole on a breaking row, and PostgreSQL indexes are kept in the order a statement reads. SQLite stores are unchanged.
