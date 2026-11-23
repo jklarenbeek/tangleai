@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.65.1
+
+The Pages desktop's Web access test waits for the browser to let the page reach a reader on this computer. A page on the web that calls this computer or the local network needs the person's permission (Chrome asks for local network access and holds the request until the person answers), and the test gave up after 10 seconds with a timeout while the browser was still asking. Settings now asks the browser first. When the browser is about to ask, Settings says so and waits up to 90 seconds. When local network access is denied, it says how to allow it for the site. When a test of a local reader gets no answer, the message names both causes: the browser's question and a desktop that is not running. A reader on a public address is tested as before.
+
 ## 0.65.0
 
 The desktop and its assistant read websites through a host. `createKernel({ web })` takes a host's `WebReader` (none by default: every call answers `OS0180`), and the kernel's own `tangle_os_web` contract gives the assistant and granted modules `web.search` and `web.read` under the same grants as every other contract, each call in the ledger. Each caller has a rolling budget (`webBudget`, by default 8 reads and 4 searches a minute; a failed call counts), refused with `OS0183`. Every answer frames what a site wrote as untrusted data: a page comes back as its `source` address, its title, its text (the first 6,000 characters) and up to 50 links, with a note that the text is data to read and cite, never instructions to follow; search results carry the same note. `kernel.webReader()` is the reader itself, for the person's own Web app, with no budget. `httpWebReader(baseUrl)` calls a `web_reader` contract a host serves over HTTP, which now declares its `refused` (`OS0181`) and `unreadable` (`OS0182`) answers. The Pages desktop sets the reader's address in Settings, Web access.

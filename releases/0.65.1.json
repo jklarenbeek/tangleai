@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.65.1",
+  "baseVersion": "0.65.0",
+  "baseCommit": "2039b30290ad3a548784ba9f5178e249b1cceece",
+  "preparationCommit": "0de5f76705c974f2763ece43f6617e68623898ae",
+  "initial": false,
+  "inputHash": "aedebc8d6194f5fa8f66fb45fa0e9b3b4903e34d032879e42f13008841723086",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        }
+      ],
+      "summary": "The Pages desktop's Web access test waits for the browser to let the page reach a reader on this computer. A page on the web that calls this computer or the local network needs the person's permission (Chrome asks for local network access and holds the request until the person answers), and the test gave up after 10 seconds with a timeout while the browser was still asking. Settings now asks the browser first. When the browser is about to ask, Settings says so and waits up to 90 seconds. When local network access is denied, it says how to allow it for the site. When a test of a local reader gets no answer, the message names both causes: the browser's question and a desktop that is not running. A reader on a public address is tested as before.",
+      "id": "local-network-reader"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.65.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.65.1"
+    }
+  ]
+}
