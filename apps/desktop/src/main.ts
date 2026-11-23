@@ -18,6 +18,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createDesktop, staticFile, DESKTOP_VERSION } from './server.ts';
+import { desktopWebRoute, WEB_READER_PATH } from './web-reader.ts';
 import { createChildProcessRunner, type InstrumentRegistration, type InstrumentRunner } from './instruments.ts';
 
 /**
@@ -129,8 +130,12 @@ const desktop = await createDesktop({
   ...(instruments === undefined ? {} : { instruments }),
 });
 
+// the web reader a desktop page (this one, or the Pages desktop on this machine) reads websites through
+const webRoute = desktopWebRoute(desktop.db);
+
 const server = createServer((req, res) => {
   const path = (req.url ?? '/').split('?')[0];
+  if (path === WEB_READER_PATH || path.startsWith(`${WEB_READER_PATH}/`)) { webRoute(req, res); return; }
   if (path.startsWith('/api/') || path.startsWith('/.well-known/')) {
     desktop.nodeHandler(req, res);
     return;
@@ -167,7 +172,7 @@ server.listen(args.port, '127.0.0.1', () => {
 
 const shutdown = (): void => {
   server.close();
-  void desktop.close().then(() => process.exit(0));
+  void webRoute.close().then(() => desktop.close()).then(() => process.exit(0));
 };
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);

@@ -6,7 +6,7 @@
  * application and the person adds what they choose, kept in their state.
  * `#recovery` boots without the person's own layer.
  */
-import { createKernel, webStorageStore, browserLocation, unconfiguredWebReader } from '@tangleai/os';
+import { createKernel, webStorageStore, browserLocation } from '@tangleai/os';
 import { filesModule } from '@tangleai/os/files';
 import { webModule } from '@tangleai/os/web';
 import { parseMarkdown, toHtml } from '@jarenjs/md';
@@ -37,8 +37,8 @@ document.documentElement.lang = language;
 document.documentElement.dir = dirOf(language);
 const chrome = { ...(packs.os ? { messages: packs.os } : {}), ...(language !== 'en' ? { locale: language } : {}) };
 // web pages are read by the host's reader the person set in Settings, Web access (none: OS0180), read again on every call
-const web = pagesWebReader(() => prefs.desktop().webReader);
-const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox, web, ...(state ? { state } : {}) });
+const webReader = pagesWebReader(() => prefs.desktop().webReader);
+const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox, web: webReader, ...(state ? { state } : {}) });
 for (const manifest of builtinModules()) {
   const installed = kernel.install(manifest, 'shipped');
   if (!installed.ok) console.error(manifest.id, installed.issues);
@@ -60,10 +60,12 @@ const files = filesModule({
 });
 { const installed = kernel.install(files.manifest, 'shipped'); if (installed.ok) files.serve(); else console.error('files', installed.issues); }
 
-// Web: a reader of pages, beside Files in the dock. Pages has no server to read the web for it yet, so
-// the reader says no web access is configured (OS0180) and offers Settings.
-// TODO: pass `pagesWebReader()` (a configurable reader endpoint) once the host side lands.
-const web = webModule({ ...chrome, reader: unconfiguredWebReader() });
+// Web: a reader of pages, beside Files in the dock, reading through the host's reader the person named
+// in Settings, Web access; without one it says so (OS0180), and its button opens that section
+const web = webModule({ ...chrome, reader: kernel.webReader(), configure: () => {
+  desktop.openSettings();
+  void kernel.call('shell', 'tangle_os_settings', 'settings.show', { section: 'web' });
+} });
 { const installed = kernel.install(web.manifest, 'shipped'); if (!installed.ok) console.error('web', installed.issues); }
 
 let buildInfo: Promise<any> | null = null;

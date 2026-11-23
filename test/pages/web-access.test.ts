@@ -1,20 +1,19 @@
 /**
  * Web access on the Pages desktop: the reader address is a plain preference
  * (an http(s) address, loopback allowed, never a query), the reader the
- * kernel gets follows it on every call without a reload, Test tells a live
- * reader from silence, and the Settings section saves, tests and removes it.
+ * kernel gets follows it on every call without a reload, and Test tells a live
+ * reader from silence. The Settings section itself is driven in a browser
+ * (.e2e/migration/os-web-access.spec.mjs).
  */
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer, type Server } from 'node:http';
-import { parseHTML } from 'linkedom';
 import { compileContract } from '@jarenjs/contract';
 import { serveHttp } from '@jarenjs/contract/http';
 import { toNodeHandler } from '@jarenjs/contract/node';
 import { createKernel, WEB_READER_CONTRACT } from '@tangleai/os';
 import { pagesWebReader, testWebReader, webReaderAddress, WEB_READER_EXAMPLE } from '../../apps/pages/src/os/web-access.ts';
 import { createPreferences } from '../../apps/pages/src/os/preferences.ts';
-import { settingsSections } from '../../apps/pages/src/os/settings-app.ts';
 
 const storage = () => { const map = new Map<string, string>(); return { getItem: (k: string) => map.get(k) ?? null, setItem: (k: string, v: string) => { map.set(k, String(v)); }, removeItem: (k: string) => { map.delete(k); } }; };
 const fakeWindow = () => ({ localStorage: storage(), sessionStorage: storage(), matchMedia: () => ({ matches: false }) }) as any;
@@ -71,44 +70,5 @@ describe('the reader the kernel gets', () => {
     assert.deepEqual(await testWebReader(base), { ok: true });
     const silent = await testWebReader('http://127.0.0.1:1');
     assert.equal(silent.ok, false);
-  });
-});
-
-describe('the Web access section of Settings', () => {
-  it('saves, tests and removes the address, and refuses one that is not an address', async () => {
-    const { document } = parseHTML('<!doctype html><html><body><div id="pane"></div></body></html>');
-    const win = fakeWindow();
-    const prefs = createPreferences(win);
-    const section = settingsSections(prefs).find(s => s.id === 'web')!;
-    assert.ok(section, 'Settings has a Web access section');
-    const pane = document.getElementById('pane')!;
-    Object.defineProperty(pane.ownerDocument, 'defaultView', { value: { ...win, setTimeout, clearTimeout }, configurable: true });
-    const unmount = section.mount(pane as any, {} as any) as () => void;
-    const field = pane.querySelector('#tos-web-reader') as any;
-    const status = () => pane.querySelector('[role="status"]')!.textContent;
-    const button = (label: string) => [...pane.querySelectorAll('button')].find((b: any) => b.textContent === label) as any;
-    assert.equal(pane.querySelector('h2')!.textContent, 'Web access');
-    assert.equal(field.getAttribute('placeholder'), WEB_READER_EXAMPLE);
-    assert.match(status()!, /No reader is set/);
-
-    field.value = 'ftp://nowhere.example';
-    button('Save').click();
-    assert.match(status()!, /Enter an http or https address/);
-    assert.equal(prefs.desktop().webReader, '');
-
-    field.value = `${base}/`;
-    button('Save').click();
-    assert.equal(prefs.desktop().webReader, base);
-    assert.equal(status(), 'The reader address is saved.');
-
-    button('Test').click();
-    assert.equal(status(), 'Testing the reader…');
-    for (let i = 0; i < 50 && status() === 'Testing the reader…'; i++) await new Promise(r => setTimeout(r, 20));
-    assert.equal(status(), 'The reader answers.');
-
-    button('Remove').click();
-    assert.equal(prefs.desktop().webReader, '');
-    assert.match(status()!, /no web access/);
-    unmount();
   });
 });
