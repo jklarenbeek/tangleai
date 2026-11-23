@@ -18,6 +18,7 @@ on:
         default: ''
 
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -50,6 +51,19 @@ jobs:
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: apps/pages/dist
+      # deploy-pages looks the artifact up once, and the run's artifact list can
+      # lag the upload by more than a second: wait until it is listed
+      - name: Wait until the site artifact is listed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            listed=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=github-pages" --jq '.total_count')
+            if [ "$listed" -gt 0 ]; then exit 0; fi
+            sleep 5
+          done
+          echo "the github-pages artifact was not listed within 150 seconds" >&2
+          exit 1
       - id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
       - name: Verify the public deployment
