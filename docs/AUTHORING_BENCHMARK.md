@@ -1,11 +1,12 @@
 # Authoring — a plain request, an application that works
 
-**Through the desktop's assistant, every one of 32 plain requests ended with an
-application in the person's inbox that works when they use it: 16 of 16 in
-English and 16 of 16 in Dutch (150 requests). The author alone, against the
+**Through the desktop's assistant, 31 of 32 plain requests ended with an
+application in the person's inbox that works when they use it: 15 of 16 in
+English and 16 of 16 in Dutch (161 requests). The author alone, against the
 desktop's gate, made 22 of 24 work (91.7%, 28 requests).** All runs used
-`anthropic/claude-haiku-5.5` through OpenRouter, on 2026-11-18, over the same
-eight tasks.
+`anthropic/claude-haiku-5.5` through OpenRouter over the same eight tasks: the
+conversations on 2026-11-24, with the assistant's prompt asking for the formal
+form of address, the author alone on 2026-11-18.
 
 The question is the one the desktop's assistant faces: a person asks in plain
 words ("a bill splitter", "a word counter") and the assistant writes the
@@ -56,13 +57,16 @@ author's documents are. A turn may take up to 8 tool rounds.
 | counter | 2 of 2 | 2 of 2 |
 | distance | 2 of 2 | 2 of 2 |
 | shopping | 2 of 2 | 2 of 2 |
-| bmi | 2 of 2 | 2 of 2 |
+| bmi | 1 of 2 | 2 of 2 |
 | words | 2 of 2 | 2 of 2 |
 
-Every conversation read the crib, checked at least once (ten checked twice)
-and suggested once, in 3 to 7 requests; the Dutch applications are Dutch on
-screen ("Rekeningsplitser", "Gemiddelde: 15.2", "Woorden: 3 Tekens: 13") and
-were found by their Dutch labels. The assistant's own check is what the bare
+Every conversation read the crib and checked its draft; every working one
+suggested once, in 4 to 7 requests, after one check (20 of 31), two (7) or
+three (4). The one failure is an English BMI calculator that checked its draft
+six times and ran out of its 8 tool rounds before suggesting anything. The
+Dutch applications are Dutch on screen ("Rekeningsplitser", "Gemiddelde: 15.2",
+"Woorden: 3 Tekens: 13") and were found by their Dutch labels, and every Dutch
+reply and application addresses the person formally (u, never je). The assistant's own check is what the bare
 author lacks: it sees the screen after its probes before it suggests. Reports:
 `benchmark/results/authoring-conversation-en.json` and `-nl.json` (task file
 version 3). Token counts are not recorded for these runs: the agent's replies

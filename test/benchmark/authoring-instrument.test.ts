@@ -52,7 +52,8 @@ describe('the published conversation runs', () => {
       assert.equal(report.summary.suggested, report.rows.filter((r: any) => r.suggested).length);
       assert.equal(report.summary.calls, report.rows.reduce((n: number, r: any) => n + r.calls, 0));
       for (const row of report.rows) {
-        assert.ok(row.tools.includes('apps.crib') && row.tools.includes('apps.suggest'), `${row.task} trial ${row.trial} read the crib and suggested`);
+        assert.ok(row.tools.includes('apps.crib'), `${row.task} trial ${row.trial} read the crib`);
+        assert.equal(row.tools.includes('apps.suggest'), row.suggested, `${row.task} trial ${row.trial} suggested exactly when the report says it did`);
         if (row.doc) assert.equal((await checkAuthoredApp(row.doc, tasks.find((t: any) => t.id === row.task).probes)).ok, row.works, `${row.task} trial ${row.trial}`);
       }
       const doc = readFileSync(new URL('../../docs/AUTHORING_BENCHMARK.md', import.meta.url), 'utf8').replace(/\s+/g, ' ');
