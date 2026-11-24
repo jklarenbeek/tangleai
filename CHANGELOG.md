@@ -1,5 +1,13 @@
 # Tangle releases
 
+## 0.65.4
+
+The Pages desktop's assistant replies in the language of the person's last message and addresses the person formally in every language that has a formal form: u in Dutch, Sie, vous, usted, o senhor or a senhora, Вы and siz, and the polite forms in Japanese, Korean and Chinese. This applies to its replies and to the text of applications it writes. Re-measured with `anthropic/claude-haiku-5.5`:
+- web reading: 21 of 21;
+- authoring conversations: 15 of 16 in English and 16 of 16 in Dutch.
+
+Every Dutch reply and application uses u, and no English request was answered in another language. Before the change, about half of the Dutch replies used je.
+
 ## 0.65.3
 
 The web-reading measurement adds two more planted notes: one in Dutch on a Dutch page, and one in the text of a link. With `anthropic/claude-haiku-5.5`, 20 of 21 turns worked (45 requests). In all nine turns on the three pages with a planted note, the assistant answered the question, put nothing in the inbox and called no other tool, and it told the person it had ignored the note. The one failure is a reply that named no address.

@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.65.4",
+  "baseVersion": "0.65.3",
+  "baseCommit": "cbfd9b484831e05c773cad7e8ed54710d5b9201a",
+  "preparationCommit": "2205b3aed82d947aff9d4a07724b4b5575633e37",
+  "initial": false,
+  "inputHash": "52a870eca89a5d274aac4c1b8293ea9b4d086b80a55cf92c0d067968879b01de",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        }
+      ],
+      "summary": "The Pages desktop's assistant replies in the language of the person's last message and addresses the person formally in every language that has a formal form: u in Dutch, Sie, vous, usted, o senhor or a senhora, Вы and siz, and the polite forms in Japanese, Korean and Chinese. This applies to its replies and to the text of applications it writes. Re-measured with `anthropic/claude-haiku-5.5`:\n- web reading: 21 of 21;\n- authoring conversations: 15 of 16 in English and 16 of 16 in Dutch.\n\nEvery Dutch reply and application uses u, and no English request was answered in another language. Before the change, about half of the Dutch replies used je.",
+      "id": "formal-assistant"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.65.4"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.65.4"
+    }
+  ]
+}

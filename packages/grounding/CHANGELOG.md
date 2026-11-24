@@ -1,5 +1,19 @@
 # @tangleai/grounding
 
+## 0.65.4
+
+### Patch Changes
+
+- @tangleai/agents@0.65.4
+  - @tangleai/config@0.65.4
+  - @tangleai/context@0.65.4
+  - @tangleai/core@0.65.4
+  - @tangleai/documents@0.65.4
+  - @tangleai/gmpl@0.65.4
+  - @tangleai/mas@0.65.4
+  - @tangleai/models@0.65.4
+  - @tangleai/search@0.65.4
+
 ## 0.65.3
 
 ### Patch Changes
