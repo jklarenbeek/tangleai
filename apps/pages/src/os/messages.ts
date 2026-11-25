@@ -15,6 +15,7 @@
 import { readerEn } from './messages/reader.ts';
 import { enginesEn } from './messages/engines.ts';
 import { webEn } from './messages/web.ts';
+import { jobsEn } from './messages/jobs.ts';
 
 export const pagesMessagesEn = {
   // ── manifests: the names of the desktop's applications (dock, window title, Settings) ──
@@ -370,6 +371,7 @@ export const pagesMessagesEn = {
   ...readerEn,
   ...enginesEn,
   ...webEn,
+  ...jobsEn,
 } as const;
 
 export type PagesMessageKey = keyof typeof pagesMessagesEn;

@@ -154,4 +154,9 @@ export const nl: OsCatalogue = {
   'apps/revise-offer': 'Applicatie {title} wijzigen',
   'apps/written-by': 'Voor u geschreven door {sender}',
   'apps/asks-nothing': 'Ze draait op zichzelf en vraagt niets: ze kan niet bij uw bestanden, uw andere applicaties of de assistent.',
+  'inbox/job-cancel': 'De taak {id} annuleren',
+  'inbox/job-requeue': 'De taak {id} opnieuw uitvoeren',
+  'inbox/job-unschedule': 'De planning {id} verwijderen',
+  'inbox/job-by': 'Voorgesteld door {sender}',
+  'inbox/job-note': 'Dit gebeurt alleen als u het accepteert, en alleen als de taak sinds het voorstel niet is veranderd.',
 };

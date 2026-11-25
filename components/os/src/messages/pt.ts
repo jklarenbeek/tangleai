@@ -154,4 +154,9 @@ export const pt: OsCatalogue = {
   'apps/revise-offer': 'Alterar o aplicativo {title}',
   'apps/written-by': 'Escrito para você por {sender}',
   'apps/asks-nothing': 'Funciona sozinho e não pede nada: não acessa seus arquivos, seus outros aplicativos nem o assistente.',
+  'inbox/job-cancel': 'Cancelar o trabalho {id}',
+  'inbox/job-requeue': 'Voltar a executar o trabalho {id}',
+  'inbox/job-unschedule': 'Remover o agendamento {id}',
+  'inbox/job-by': 'Proposto por {sender}',
+  'inbox/job-note': 'Isto só acontece se o aceitar, e só se o trabalho não tiver mudado desde a proposta.',
 };

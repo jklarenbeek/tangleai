@@ -154,4 +154,9 @@ export const ko: OsCatalogue = {
   'apps/revise-offer': '{title} 애플리케이션 변경',
   'apps/written-by': '작성자: {sender}',
   'apps/asks-nothing': '단독으로 실행되며 아무것도 요청하지 않습니다. 파일, 다른 애플리케이션, 어시스턴트에 접근할 수 없습니다.',
+  'inbox/job-cancel': '작업 {id} 취소',
+  'inbox/job-requeue': '작업 {id} 다시 실행',
+  'inbox/job-unschedule': '일정 {id} 제거',
+  'inbox/job-by': '{sender}의 제안',
+  'inbox/job-note': '승인하신 경우에만, 그리고 제안 이후 작업이 변경되지 않은 경우에만 실행됩니다.',
 };

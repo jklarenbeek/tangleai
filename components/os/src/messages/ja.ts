@@ -154,4 +154,9 @@ export const ja: OsCatalogue = {
   'apps/revise-offer': 'アプリケーション「{title}」を変更',
   'apps/written-by': '{sender} があなたのために作成',
   'apps/asks-nothing': '単独で動作し、何も要求しません。ファイル、ほかのアプリケーション、アシスタントにはアクセスできません。',
+  'inbox/job-cancel': 'ジョブ {id} をキャンセル',
+  'inbox/job-requeue': 'ジョブ {id} を再実行',
+  'inbox/job-unschedule': 'スケジュール {id} を削除',
+  'inbox/job-by': '{sender} からの提案',
+  'inbox/job-note': 'これはお客様が承認した場合にのみ、また提案後にジョブが変わっていない場合にのみ実行されます。',
 };

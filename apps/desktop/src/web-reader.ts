@@ -233,12 +233,23 @@ export const admittedOrigin = (origin: string | undefined, origins: readonly str
  */
 export function webReaderRoute(reader: DesktopWebReader, options: { origins?: readonly string[] } = {}) {
   const dispatcher = serveHttp(compileContract(WEB_READER_CONTRACT as any), webReaderHandlers(reader) as any, { validateOutput: 'always' });
-  const handle = toNodeHandler(dispatcher);
-  const route = (req: IncomingMessage, res: ServerResponse) => {
+  const route = admittedRoute(WEB_READER_PATH, toNodeHandler(dispatcher), { origins: options.origins, refusal: 'this origin may not use the web reader' });
+  return Object.assign(route, { close: () => dispatcher.close() });
+}
+
+/**
+ * A contract served at `path` and below to the pages {@link admittedOrigin}
+ * admits: the preflight a cross-origin page sends (with private network
+ * access, so the published desktop may reach a desktop on this machine), then
+ * the contract's operations at `<path>/<operation>`. A page from any other
+ * origin is refused before the contract is reached.
+ */
+export function admittedRoute(path: string, handle: (req: IncomingMessage, res: ServerResponse) => void, options: { origins?: readonly string[], refusal: string }) {
+  return (req: IncomingMessage, res: ServerResponse) => {
     const origin = typeof req.headers.origin === 'string' ? req.headers.origin : undefined;
     if (!admittedOrigin(origin, options.origins)) {
       res.writeHead(403, { 'content-type': 'application/json', vary: 'Origin' });
-      res.end(JSON.stringify({ error: 'this origin may not use the web reader' }));
+      res.end(JSON.stringify({ error: options.refusal }));
       return;
     }
     if (origin !== undefined) {
@@ -255,10 +266,9 @@ export function webReaderRoute(reader: DesktopWebReader, options: { origins?: re
       res.end();
       return;
     }
-    req.url = (req.url ?? '').slice(WEB_READER_PATH.length) || '/';
+    req.url = (req.url ?? '').slice(path.length) || '/';
     handle(req, res);
   };
-  return Object.assign(route, { close: () => dispatcher.close() });
 }
 
 /**

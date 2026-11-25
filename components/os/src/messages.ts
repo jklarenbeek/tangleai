@@ -156,6 +156,11 @@ export const osMessagesEn = {
   'apps/revise-offer': 'Change the application {title}',
   'apps/written-by': 'Written for you by {sender}',
   'apps/asks-nothing': 'It runs on its own and asks for nothing: it cannot reach your files, your other applications or the assistant.',
+  'inbox/job-cancel': 'Cancel the job {id}',
+  'inbox/job-requeue': 'Run the job {id} again',
+  'inbox/job-unschedule': 'Remove the schedule {id}',
+  'inbox/job-by': 'Proposed by {sender}',
+  'inbox/job-note': 'This happens only when you accept, and only if the job has not changed since it was proposed.',
 } as const;
 
 export type OsMessageKey = keyof typeof osMessagesEn;

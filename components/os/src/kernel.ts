@@ -19,6 +19,7 @@ import { fileAnswer, fileBase64ToBytes, type FileEntry } from './files.ts';
 import { CAPABILITY_SCHEMA, capabilityIssues, type CapabilityDocument } from './capability.ts';
 import { APPS_KEY, consentNeeded, originOf, scopesOf, type Consent, type InstalledApp } from './consent.ts';
 import { WEB_CODES, unconfiguredWebReader, type WebBlock, type WebPage, type WebReader } from './web.ts';
+import { JOB_CODES, unconfiguredJobQueue, type JobQueue } from './jobs.ts';
 
 export type Layer = 'shipped' | 'suite' | 'user';
 export type JournalEntry = { seq: number, at: number, layer: Layer, module: string, kind: 'install' | 'patch' | 'remove', patch?: unknown[], inverse?: unknown[], consent?: Consent };
@@ -158,6 +159,43 @@ export const WEB_CONTRACT = {
   },
 } as const;
 /**
+ * `tangle_os_jobs`: the kernel's own contract over the host's job queue, for
+ * the assistant and granted modules. It reads the queue and the schedules as
+ * the host's records (a job's payload never crosses), and it changes nothing:
+ * `jobs.suggest` puts a change in the person's inbox, and the desktop carries
+ * it out only when they accept, and only if the job has not moved since.
+ */
+const JOBS_ID = { type: 'string', minLength: 1, maxLength: 512 } as const;
+const JOBS_STATE = { enum: ['pending', 'leased', 'done', 'failed', 'dead', 'cancelled'] } as const;
+export const JOBS_CONTRACT = {
+  $contract: '0.1',
+  id: 'tangle_os_jobs',
+  operations: {
+    'jobs.counts': {
+      kind: 'read', doc: 'How many background jobs the host has in each state (pending, leased = running, done, failed, dead, cancelled), and how many wait per kind.',
+      input: { type: 'object', additionalProperties: false, properties: {} }, output: { type: 'object' },
+    },
+    'jobs.page': {
+      kind: 'read', doc: 'A page of the host\'s background jobs by id, filtered by state and kind: each job\'s kind, state, attempts, run time and last error. Continue with `after` = the answer\'s `next`.',
+      input: { type: 'object', additionalProperties: false, properties: { state: JOBS_STATE, kind: { type: 'string', minLength: 1, maxLength: 200 }, after: JOBS_ID, limit: { type: 'integer', minimum: 1, maximum: 50 } } },
+      output: { type: 'object' },
+    },
+    'jobs.get': {
+      kind: 'read', doc: 'One background job by id: its kind, state, attempts, run time and last error.',
+      input: { type: 'object', additionalProperties: false, required: ['id'], properties: { id: JOBS_ID } }, output: { type: 'object' },
+    },
+    'jobs.schedules': {
+      kind: 'read', doc: 'Every recurring schedule of the host: its rule (an RFC 5545 recurrence), zone, state, next and last run, and how many runs it fired.',
+      input: { type: 'object', additionalProperties: false, properties: {} }, output: { type: 'object' },
+    },
+    'jobs.suggest': {
+      kind: 'command', doc: 'Suggest a change to the person: cancel or requeue a job, or remove a schedule. It goes to their inbox, and it happens only when they accept. Say why in `reason`.',
+      input: { type: 'object', additionalProperties: false, required: ['action', 'id', 'reason'], properties: { action: { enum: ['cancel', 'requeue', 'unschedule'] }, id: JOBS_ID, reason: { type: 'string', minLength: 1, maxLength: 1000 } } },
+      output: { type: 'object' },
+    },
+  },
+} as const;
+/**
  * How much of the web one caller may read: at most `reads` pages and
  * `searches` searches in any `windowMs` (8, 4 and one minute by default).
  * The kernel has no turn of its own, so the window rolls; a refused or
@@ -241,7 +279,7 @@ const scopeOf = (contract: string, op: string) => [`${contract}.${op}`, `${contr
  * `assistantGrants`: what the assistant may call — `'all'`, or scopes
  * (`contract.op`, `contract.*`). Nothing by default: a host decides.
  */
-export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[], tools?: ToolBuilder, settings?: SettingsStore, state?: StateOption, web?: WebReader, webBudget?: WebBudget } = {}) {
+export function createKernel(options: { recovery?: boolean, now?: () => number, assistantGrants?: 'all' | string[], tools?: ToolBuilder, settings?: SettingsStore, state?: StateOption, web?: WebReader, webBudget?: WebBudget, jobs?: JobQueue } = {}) {
   const now = options.now ?? (() => Date.now());
   const recovery = options.recovery === true;
   const entries = new Map<string, Entry>();
@@ -283,6 +321,8 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
   let filesContract: any = null;
   let webContract: any = null;
   const web = options.web ?? unconfiguredWebReader();
+  const jobs = options.jobs ?? unconfiguredJobQueue();
+  let jobsContract: any = null;
   const webLimits = { 'web.read': options.webBudget?.reads ?? 8, 'web.search': options.webBudget?.searches ?? 4 } as Record<string, number>;
   const webWindow = options.webBudget?.windowMs ?? 60_000;
   /** Per caller and operation, when each call in the window began. */
@@ -820,6 +860,32 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
           return write(refused ? refusal(refused.code, refused.message) : { ok: true, value: outcome.value });
         } catch (error: any) { return write(refusal(error?.code ?? 'OS0103', String(error?.message ?? error))); }
       }
+      if (contract === JOBS_CONTRACT.id) {
+        if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
+        jobsContract ??= compileContract(JOBS_CONTRACT as any);
+        const reach = async (run: () => Promise<unknown>) => {
+          try { return await run(); } catch (error: any) {
+            const code = Object.values(JOB_CODES).includes(error?.code) ? error.code : JOB_CODES.unconfigured;
+            return { [REFUSED]: { code, message: String(error?.message ?? error) } };
+          }
+        };
+        const client = openLocalClient(jobsContract, {
+          'jobs.counts': () => reach(async () => ({ source: 'job host', ...(await jobs.counts({})) })),
+          'jobs.page': (input: any) => reach(async () => ({ source: 'job host', ...(await jobs.page({ ...input, limit: input.limit ?? 20 })) })),
+          'jobs.get': ({ id }: any) => reach(async () => ({ source: 'job host', job: await jobs.get({ id }) })),
+          'jobs.schedules': () => reach(async () => ({ source: 'job host', ...(await jobs.schedules({})) })),
+          'jobs.suggest': (input: any) => reach(async () => {
+            const outcome = await kernel.proposeJobChange(caller, input);
+            return outcome.ok ? outcome.value : { [REFUSED]: outcome.error };
+          }),
+        } as any) as any;
+        try {
+          const outcome = await client.invoke(op, input);
+          if (!outcome?.ok) return write(refusal(outcome?.error?.code ?? 'OS0103', outcome?.error?.message ?? 'the operation failed'));
+          const refused = outcome.value?.[REFUSED];
+          return write(refused ? refusal(refused.code, refused.message) : { ok: true, value: outcome.value });
+        } catch (error: any) { return write(refusal(error?.code ?? 'OS0103', String(error?.message ?? error))); }
+      }
       if (contract === APPS_CONTRACT.id) {
         if (!kernel.allowed(caller, contract, op)) return write(refusal('OS0101', `'${caller}' is not granted ${contract}.${op}`));
         appsContract ??= compileContract(APPS_CONTRACT as any);
@@ -1055,6 +1121,27 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
         settle(decision === 'accept' ? 'accepted' : 'rejected');
         return { ok: true, value: { status: item.proposal!.status, ...(decision === 'accept' ? { module: payload.module, revised: true } : {}) } };
       }
+      // a change to a background job the assistant proposed, carried out only if the job has not moved since
+      if (item.from === 'desktop' && p.kind === 'job.change') {
+        const payload = p.payload as { action: 'cancel' | 'requeue' | 'unschedule', id: string, seen: string };
+        if (decision === 'accept') {
+          settle('deciding');
+          try {
+            const current = payload.action === 'unschedule'
+              ? (await jobs.schedules({})).schedules.find(x => x.id === payload.id)?.updatedAt
+              : (await jobs.get({ id: payload.id })).state;
+            if (current === undefined || String(current) !== payload.seen) { settle('pending', { code: 'OS0112', message: 'it changed since it was proposed' }); return refusal('OS0112', 'it changed since it was proposed'); }
+            if (payload.action === 'cancel') await jobs.cancel({ id: payload.id });
+            else if (payload.action === 'requeue') await jobs.requeue({ id: payload.id });
+            else await jobs.unschedule({ id: payload.id });
+          } catch (error: any) {
+            const code = error?.code ?? JOB_CODES.unconfigured, message = String(error?.message ?? error);
+            settle('pending', { code, message }); return refusal(code, message);
+          }
+        }
+        settle(decision === 'accept' ? 'accepted' : 'rejected');
+        return { ok: true, value: { status: item.proposal!.status } };
+      }
       // the desktop's own proposal (a suggested dock) is carried out here, against the revision it was made for
       if (item.from === 'desktop' && p.kind === 'dock.layout') {
         const payload = p.payload as { layout: DockLayout, revision: number };
@@ -1202,6 +1289,31 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       return { ok: true, value: { id } };
     },
 
+    /**
+     * File a change to a background job or schedule in the person's inbox, as
+     * the desktop's own proposal `job.change`. What the job (or schedule) looked
+     * like now is kept as `seen`: the change happens on accept only if it still
+     * does. One pending proposal per caller, action and id; a new one replaces it.
+     */
+    async proposeJobChange(caller: string, input: { action: 'cancel' | 'requeue' | 'unschedule', id: string, reason: string }): Promise<Outcome> {
+      let seen: string;
+      try {
+        if (input.action === 'unschedule') {
+          const schedule = (await jobs.schedules({})).schedules.find(x => x.id === input.id);
+          if (!schedule) return refusal(JOB_CODES.unknown, `there is no schedule ${input.id}`);
+          seen = String(schedule.updatedAt);
+        } else seen = (await jobs.get({ id: input.id })).state;
+      } catch (error: any) { return refusal(error?.code ?? JOB_CODES.unconfigured, String(error?.message ?? error)); }
+      const id = `job-${caller}-${input.action}-${input.id}`.replace(/[^A-Za-z0-9._:-]/g, '_').slice(0, 128);
+      const proposal: Proposal = { id, kind: 'job.change', status: 'pending', payload: { action: input.action, id: input.id, reason: input.reason, by: caller, seen } };
+      const existing = mail.find(m => m.from === 'desktop' && m.proposal?.id === id);
+      if (existing?.proposal?.status === 'deciding') return refusal('OS0111', 'the last proposal is being decided');
+      if (existing) { existing.proposal = proposal; existing.read = false; existing.at = now(); }
+      else mail.push({ id: `m${++mailSeq}`, at: now(), from: 'desktop', to: 'person', subject: 'job.change', read: false, proposal });
+      emit({ kind: 'mail', module: 'desktop' });
+      return { ok: true, value: { id, status: 'pending' } };
+    },
+
     suggestDock(caller: string, layout: unknown): Outcome {
       const checked = checkDock(layout);
       if (!checked) return refusal('OS0119', 'the dock layout is refused: it does not match the dock schema');
@@ -1335,7 +1447,7 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
           out.push({ tool: toolName(id, op), contract: id, op, kind: spec?.kind ?? 'read', ...(spec?.doc ? { doc: spec.doc } : {}), ...(spec?.input ? { input: spec.input } : {}), ...(spec?.output ? { output: spec.output } : {}) });
       }
       // the kernel's own contracts, under the same grants
-      for (const builtin of [HEADER_CONTRACT, DOCK_CONTRACT, FILES_CONTRACT, APPS_CONTRACT, WEB_CONTRACT] as const)
+      for (const builtin of [HEADER_CONTRACT, DOCK_CONTRACT, FILES_CONTRACT, APPS_CONTRACT, WEB_CONTRACT, JOBS_CONTRACT] as const)
         for (const [op, spec] of Object.entries<any>(builtin.operations)) if (kernel.allowed(caller, builtin.id, op))
           out.push({ tool: toolName(builtin.id, op), contract: builtin.id, op, kind: spec.kind, doc: spec.doc, input: spec.input, output: spec.output });
       return out;
@@ -1361,7 +1473,8 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
       filesContract ??= compileContract(FILES_CONTRACT as any);
       appsContract ??= compileContract(APPS_CONTRACT as any);
       webContract ??= compileContract(WEB_CONTRACT as any);
-      for (const [doc, compiled] of [[HEADER_CONTRACT, headerContract], [DOCK_CONTRACT, dockContract], [FILES_CONTRACT, filesContract], [APPS_CONTRACT, appsContract], [WEB_CONTRACT, webContract]] as const) {
+      jobsContract ??= compileContract(JOBS_CONTRACT as any);
+      for (const [doc, compiled] of [[HEADER_CONTRACT, headerContract], [DOCK_CONTRACT, dockContract], [FILES_CONTRACT, filesContract], [APPS_CONTRACT, appsContract], [WEB_CONTRACT, webContract], [JOBS_CONTRACT, jobsContract]] as const) {
         const ops = Object.keys(doc.operations).filter(op => kernel.allowed(caller, doc.id, op));
         if (!ops.length) continue;
         const client = { invoke: (op: string, input: unknown) => kernel.call(caller, doc.id, op, input) };
@@ -1372,6 +1485,9 @@ export function createKernel(options: { recovery?: boolean, now?: () => number, 
 
     /** The host's web reader as it is, for the person's own Web app: no grant, no budget, no framing. */
     webReader(): WebReader { return web; },
+
+    /** The host's job queue as it is, for the person's own Jobs app: the person steers it directly. */
+    jobQueue(): JobQueue { return jobs; },
 
     subscribe(listener: (event: KernelEvent) => void) { listeners.add(listener); return () => listeners.delete(listener); },
   };

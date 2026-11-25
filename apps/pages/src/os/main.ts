@@ -15,6 +15,7 @@ import { mountDesktop, type SuiteDocument } from '@tangleai/os/shell';
 import { builtinModules, shippedMounts } from './modules.ts';
 import { createPreferences } from './preferences.ts';
 import { pagesWebReader } from './web-access.ts';
+import { pagesJobQueue } from './job-access.ts';
 import { createSurfaces } from './surfaces.ts';
 import { setPagesLanguage, setPagesMessages } from './i18n.ts';
 import { catalogues, dirOf, resolveLanguage, setActiveLanguage } from './language.ts';
@@ -38,7 +39,9 @@ document.documentElement.dir = dirOf(language);
 const chrome = { ...(packs.os ? { messages: packs.os } : {}), ...(language !== 'en' ? { locale: language } : {}) };
 // web pages are read by the host's reader the person set in Settings, Web access (none: OS0180), read again on every call
 const webReader = pagesWebReader(() => prefs.desktop().webReader);
-const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox, web: webReader, ...(state ? { state } : {}) });
+// the host's background work, read at the address Settings, Background work names
+const jobQueue = pagesJobQueue(() => prefs.desktop().jobQueue);
+const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox, web: webReader, jobs: jobQueue, ...(state ? { state } : {}) });
 for (const manifest of builtinModules()) {
   const installed = kernel.install(manifest, 'shipped');
   if (!installed.ok) console.error(manifest.id, installed.issues);

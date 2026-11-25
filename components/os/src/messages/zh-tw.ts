@@ -154,4 +154,9 @@ export const zhTW: OsCatalogue = {
   'apps/revise-offer': '變更應用程式「{title}」',
   'apps/written-by': '由 {sender} 為您撰寫',
   'apps/asks-nothing': '它獨立執行，不要求任何權限：無法存取您的檔案、其他應用程式或助理。',
+  'inbox/job-cancel': '取消工作 {id}',
+  'inbox/job-requeue': '重新執行工作 {id}',
+  'inbox/job-unschedule': '移除排程 {id}',
+  'inbox/job-by': '{sender} 提議',
+  'inbox/job-note': '只有在您接受時才會執行，而且只有在工作自提議後未變更時才會執行。',
 };

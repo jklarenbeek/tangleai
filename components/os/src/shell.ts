@@ -1250,6 +1250,17 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     li.append(note);
   }
 
+  /** A change to a background job the assistant proposed: what would happen, who proposed it, why, and when it would not. */
+  function jobChange(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { action?: string, id?: string, reason?: string, by?: string }) {
+    const id = payload.id ?? '';
+    subject.textContent = payload.action === 'cancel' ? t('inbox/job-cancel', { id }) : payload.action === 'requeue' ? t('inbox/job-requeue', { id }) : t('inbox/job-unschedule', { id });
+    const by = payload.by && kernel.effective(payload.by) ? localized(kernel.effective(payload.by)!.title, locale.locale) : payload.by ?? t('desktop/label');
+    from.textContent = t('inbox/job-by', { sender: by });
+    if (payload.reason) { const reason = doc.createElement('p'); reason.textContent = payload.reason; li.append(reason); }
+    const note = doc.createElement('p'); note.className = 'tos-muted'; note.textContent = t('inbox/job-note');
+    li.append(note);
+  }
+
   function proposalItem(item: ReturnType<Kernel['mail']>[number], app: string) {
     const p = item.proposal!;
     const li = doc.createElement('li'); li.className = 'tos-proposal'; li.dataset.proposal = p.id; li.dataset.module = item.from;
@@ -1259,6 +1270,7 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     if (item.from === 'desktop' && p.kind === 'dock.layout') dockSuggestion(li, subject, from, p.payload as any);
     else if (item.from === 'desktop' && p.kind === 'app.add') appOffer(li, subject, from, p.payload as any);
     else if (item.from === 'desktop' && p.kind === 'app.revise') appOffer(li, subject, from, p.payload as any, true);
+    else if (item.from === 'desktop' && p.kind === 'job.change') jobChange(li, subject, from, p.payload as any);
     else if (p.summary) { const summary = doc.createElement('p'); summary.textContent = p.summary; li.append(summary); }
     if (p.evidence?.length) {
       const evidence = doc.createElement('ul'); evidence.className = 'tos-evidence'; evidence.setAttribute('aria-label', t('mail/evidence'));

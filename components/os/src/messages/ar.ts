@@ -154,4 +154,9 @@ export const ar: OsCatalogue = {
   'apps/revise-offer': 'تغيير التطبيق {title}',
   'apps/written-by': 'كتبه لك: {sender}',
   'apps/asks-nothing': 'يعمل وحده ولا يطلب شيئًا: لا يمكنه الوصول إلى ملفاتك أو تطبيقاتك الأخرى أو المساعد.',
+  'inbox/job-cancel': 'إلغاء المهمة {id}',
+  'inbox/job-requeue': 'تشغيل المهمة {id} مرة أخرى',
+  'inbox/job-unschedule': 'إزالة الجدول {id}',
+  'inbox/job-by': 'اقتراح من {sender}',
+  'inbox/job-note': 'لا يحدث هذا إلا إذا قبلته، وفقط إذا لم تتغير المهمة منذ اقتراحها.',
 };

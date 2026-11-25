@@ -16,6 +16,7 @@ import {
 import { englishOf, localizedKeywords, localizedText, t } from './i18n.ts';
 import { LANGUAGES, resolveLanguage } from './language.ts';
 import { WEB_READER_EXAMPLE, localNetworkAccess, testWebReader, webReaderAddress } from './web-access.ts';
+import { JOB_QUEUE_EXAMPLE, jobQueueAddress, testJobQueue } from './job-access.ts';
 
 /** The wallpaper patterns, by what they look like. */
 /** A theme kit's name and line in the desktop's language (a kit a host adds keeps its own). */
@@ -93,12 +94,12 @@ const money = (perMillion?: number) => perMillion === undefined ? '' : perMillio
 const privacyLabel = (mark: string) => mark === 'private' ? t('models/private') : mark === 'anonymized' ? t('models/anonymized') : mark;
 const tokens = (n?: number) => n === undefined ? '' : n >= 1_000_000 ? `${Math.round(n / 100_000) / 10}M` : `${Math.round(n / 1000)}k`;
 
-type SectionId = 'providers' | 'model' | 'appearance' | 'web' | 'privacy';
+type SectionId = 'providers' | 'model' | 'appearance' | 'web' | 'jobs' | 'privacy';
 const keyReady = (prefs: Preferences) => { const k = prefs.active(); return !PROVIDER_KINDS[k].needsKey || prefs.connection(k).apiKey !== ''; };
 
 /**
  * The site's own sections of the desktop's Settings (`@tangleai/os/settings`):
- * providers and keys, models, appearance, web access, privacy. Each draws into the pane
+ * providers and keys, models, appearance, web access, background work, privacy. Each draws into the pane
  * Settings gives it and redraws itself when its preferences change.
  */
 export function settingsSections(prefs: Preferences, kernel?: Kernel): SettingsSection[] {
@@ -107,6 +108,7 @@ export function settingsSections(prefs: Preferences, kernel?: Kernel): SettingsS
     { id: 'model', title: localizedText(englishOf('models/title'), t('models/title')), keywords: localizedKeywords(englishOf('models/keywords'), t('models/keywords')), mount: sectionMount(prefs, 'model') },
     { id: 'appearance', title: localizedText(englishOf('appearance/title'), t('appearance/title')), keywords: localizedKeywords(englishOf('appearance/keywords'), t('appearance/keywords')), mount: sectionMount(prefs, 'appearance', kernel) },
     { id: 'web', title: localizedText(englishOf('web/title'), t('web/title')), keywords: localizedKeywords(englishOf('web/keywords'), t('web/keywords')), mount: sectionMount(prefs, 'web') },
+    { id: 'jobs', title: localizedText(englishOf('jobhost/title'), t('jobhost/title')), keywords: localizedKeywords(englishOf('jobhost/keywords'), t('jobhost/keywords')), mount: sectionMount(prefs, 'jobs') },
     { id: 'privacy', title: localizedText(englishOf('privacy/title'), t('privacy/title')), keywords: localizedKeywords(englishOf('privacy/keywords'), t('privacy/keywords')), mount: sectionMount(prefs, 'privacy') },
   ];
 }
@@ -137,7 +139,7 @@ function sectionMount(prefs: Preferences, id: SectionId, kernel?: Kernel): Setti
     /** Append to the pane, skipping the `false` a conditional row leaves. */
     const put = (...items: Child[]) => { for (const item of items) if (item !== null && item !== undefined && item !== false) pane.append(item); };
     const current: SectionId = id;
-    const renders: Record<SectionId, () => void> = { providers: () => renderProviders(), model: () => renderModel(), appearance: () => renderAppearance(), web: () => renderWeb(), privacy: () => renderPrivacy() };
+    const renders: Record<SectionId, () => void> = { providers: () => renderProviders(), model: () => renderModel(), appearance: () => renderAppearance(), web: () => renderWeb(), jobs: () => renderJobs(), privacy: () => renderPrivacy() };
     /** Every change this section makes redraws this section. */
     function show(_section: SectionId) {
       pane.replaceChildren();
@@ -516,6 +518,55 @@ function sectionMount(prefs: Preferences, id: SectionId, kernel?: Kernel): Setti
       if (stored) say(t('web/in-use', { address: stored })); else say(t('web/none'));
     }
 
+    // ── background work ────────────────────────────────────────────────────
+    function renderJobs() {
+      const status = h('p', { class: 'tos-settings-status', role: 'status' });
+      const say = (text: string, tone: 'ok' | 'fail' | 'muted' = 'muted') => { status.textContent = text; status.dataset.tone = tone; };
+      const stored = prefs.desktop().jobQueue;
+      const address = h('input', {
+        id: 'tos-job-queue', type: 'url', inputmode: 'url', autocomplete: 'off', spellcheck: 'false', autocapitalize: 'off',
+        placeholder: JOB_QUEUE_EXAMPLE, value: stored, dir: 'ltr',
+        onkeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault(); save(); } },
+      }) as HTMLInputElement;
+      /** The address in the field, held to what a job host address may be; `null` (and a refusal said) when it is not one. */
+      function chosen(): string | null {
+        const value = jobQueueAddress(address.value);
+        if (value === null || value === '') { say(t('jobhost/invalid', { address: JOB_QUEUE_EXAMPLE }), 'fail'); return null; }
+        return value;
+      }
+      function save() {
+        const value = chosen();
+        if (value === null) return;
+        address.value = value;
+        prefs.writeDesktop({ jobQueue: value });
+        say(t('jobhost/saved'), 'ok');
+      }
+      async function test() {
+        const value = chosen();
+        if (value === null) return;
+        // a public page reaching this computer needs the browser's leave: say so before it asks, and wait for the person
+        const access = await localNetworkAccess(value, { origin: win.location.origin, permissions: win.navigator.permissions });
+        if (access === 'denied') { say(t('jobhost/local-denied'), 'fail'); return; }
+        const asking = access === 'prompt' || access === 'unknown';
+        say(access === 'prompt' ? t('jobhost/local-ask') : t('jobhost/testing'));
+        const answer = await testJobQueue(value, asking ? { timeoutMs: 90_000 } : {});
+        if (answer.ok) say(t('jobhost/works'), 'ok');
+        else say(asking ? t('jobhost/no-answer-local', { detail: answer.detail }) : t('jobhost/no-answer', { detail: answer.detail }), 'fail');
+      }
+      put(
+        h('h2', {}, t('jobhost/title')),
+        h('p', { class: 'tos-muted' }, t('jobhost/lead', { address: JOB_QUEUE_EXAMPLE })),
+        h('div', { class: 'tos-field' }, h('label', { for: 'tos-job-queue' }, t('jobhost/address')), address),
+        h('div', { class: 'tos-row tos-wrap' },
+          h('button', { type: 'button', class: 'tos-btn primary', onclick: save }, t('jobhost/save')),
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => { void test(); } }, t('jobhost/test')),
+          h('button', { type: 'button', class: 'tos-btn', onclick: () => { address.value = ''; prefs.writeDesktop({ jobQueue: '' }); say(t('jobhost/removed'), 'ok'); } }, t('jobhost/remove'))),
+        status,
+        h('p', { class: 'tos-muted' }, t('jobhost/privacy')),
+      );
+      if (stored) say(t('jobhost/in-use', { address: stored })); else say(t('jobhost/none'));
+    }
+
     function renderPrivacy() {
       const status = h('p', { class: 'tos-settings-status', role: 'status' });
       const done = (text: string) => { status.textContent = text; status.dataset.tone = 'ok'; };
@@ -543,7 +594,7 @@ function sectionMount(prefs: Preferences, id: SectionId, kernel?: Kernel): Setti
     const unsubscribe = prefs.subscribe((what, source) => {
       // a change made elsewhere (the dock's theme switch, the assistant window) shows here
       if (source === 'settings') return;
-      if (source === 'reset' || (what === 'desktop' ? current === 'appearance' || current === 'web' : current === 'providers' || current === 'model')) show(current);
+      if (source === 'reset' || (what === 'desktop' ? current === 'appearance' || current === 'web' || current === 'jobs' : current === 'providers' || current === 'model')) show(current);
     });
     show(current);
     return () => { unsubscribe(); lifetime.abort(); pane.replaceChildren(); };

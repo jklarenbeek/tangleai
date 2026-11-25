@@ -154,4 +154,9 @@ export const tr: OsCatalogue = {
   'apps/revise-offer': '{title} uygulamasını değiştir',
   'apps/written-by': 'Sizin için yazan: {sender}',
   'apps/asks-nothing': 'Kendi başına çalışır ve hiçbir şey istemez: dosyalarınıza, diğer uygulamalarınıza veya asistana erişemez.',
+  'inbox/job-cancel': '{id} işini iptal et',
+  'inbox/job-requeue': '{id} işini yeniden çalıştır',
+  'inbox/job-unschedule': '{id} zamanlamasını kaldır',
+  'inbox/job-by': 'Öneren: {sender}',
+  'inbox/job-note': 'Bu yalnızca kabul ederseniz ve iş önerildiğinden beri değişmediyse gerçekleşir.',
 };

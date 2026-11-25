@@ -154,4 +154,9 @@ export const de: OsCatalogue = {
   'apps/revise-offer': 'Anwendung {title} ändern',
   'apps/written-by': 'Für Sie geschrieben von {sender}',
   'apps/asks-nothing': 'Sie läuft für sich allein und verlangt nichts: Sie erreicht weder Ihre Dateien noch Ihre anderen Anwendungen noch den Assistenten.',
+  'inbox/job-cancel': 'Den Auftrag {id} abbrechen',
+  'inbox/job-requeue': 'Den Auftrag {id} erneut ausführen',
+  'inbox/job-unschedule': 'Den Zeitplan {id} entfernen',
+  'inbox/job-by': 'Vorgeschlagen von {sender}',
+  'inbox/job-note': 'Dies geschieht nur, wenn Sie es annehmen, und nur, wenn sich der Auftrag seit dem Vorschlag nicht geändert hat.',
 };

@@ -21,11 +21,12 @@
  */
 import { THEME_KITS, composeTheme, type ThemeCustom, type ThemeDocument } from '@tangleai/os';
 import { webReaderAddress } from './web-access.ts';
+import { jobQueueAddress } from './job-access.ts';
 
 export type AiSettings = { provider: string, baseUrl: string, model: string, apiKey: string };
 export type Scheme = 'system' | 'light' | 'dark';
 /** The desktop's look: a theme kit and what the person changed on it, plus the scheme. */
-export type DesktopPreferences = { scheme: Scheme, kit: string, custom: ThemeCustom, rememberKey: boolean, /** `system` follows the browser; otherwise a language code. */ language: string, /** The host's web reader (`''` for none): see `web-access.ts`. */ webReader: string };
+export type DesktopPreferences = { scheme: Scheme, kit: string, custom: ThemeCustom, rememberKey: boolean, /** `system` follows the browser; otherwise a language code. */ language: string, /** The host's web reader (`''` for none): see `web-access.ts`. */ webReader: string, /** The host's job queue (`''` for none): see `job-access.ts`. */ jobQueue: string };
 export type ProviderKind = 'openrouter' | 'venice' | 'ollama' | 'lmstudio' | 'custom';
 export type Connection = { apiKey: string, baseUrl: string, model: string };
 export type Favourite = { kind: ProviderKind, model: string };
@@ -67,7 +68,7 @@ export function kindOf(s: Pick<AiSettings, 'provider' | 'baseUrl'>): ProviderKin
   return isKind(s.provider) ? s.provider : 'openrouter';
 }
 
-const DEFAULT_PREFS: DesktopPreferences = { scheme: 'system', kit: 'loom', custom: {}, rememberKey: true, language: 'system', webReader: '' };
+const DEFAULT_PREFS: DesktopPreferences = { scheme: 'system', kit: 'loom', custom: {}, rememberKey: true, language: 'system', webReader: '', jobQueue: '' };
 
 /** Accent colours offered beside the colour picker. */
 export const ACCENT_SWATCHES = ['#0d8a83', '#2f6f5e', '#c81e64', '#1f5fa8', '#1f7a99', '#7c3aed', '#b45309', '#334155'];
@@ -115,6 +116,7 @@ export function createPreferences(win: Window) {
       rememberKey: raw.rememberKey !== false,
       language: typeof raw.language === 'string' && /^[a-z]{2}(-[A-Z]{2})?$|^system$/.test(raw.language) ? raw.language : 'system',
       webReader: webReaderAddress(raw.webReader) ?? '',
+      jobQueue: jobQueueAddress(raw.jobQueue) ?? '',
     };
   }
 

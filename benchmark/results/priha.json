@@ -254,6 +254,10 @@
         "sha256": "364eae59c7d260bdd6fa4994dfdb05383fca9850784173560adf9fff04a86690"
       },
       {
+        "path": "apps/desktop/src/job-queue.ts",
+        "sha256": "0872ae3f52782f929859977256ca68ad820f47d012e748c79b8bcf5629987434"
+      },
+      {
         "path": "apps/desktop/src/lightrag-contract.ts",
         "sha256": "3c5741e65d40cfe35fba3e22ee9520e34404b033ab92b0719a68cd6b0336f301"
       },
@@ -263,7 +267,7 @@
       },
       {
         "path": "apps/desktop/src/main.ts",
-        "sha256": "9fc42c4b220d11e9a9c33dc63c909332f85fa1cf6c3bddd884d7f0ead4be6467"
+        "sha256": "67819ba63bf052ece87afadf6d501b1008f8a60cf18a67952f6fd4f7b23b49df"
       },
       {
         "path": "apps/desktop/src/reports.ts",
@@ -323,7 +327,7 @@
       },
       {
         "path": "apps/desktop/src/web-reader.ts",
-        "sha256": "51e539a21cb2b2af1d7af913ca3389791b6ad9825689936c41e61346e6aeba0b"
+        "sha256": "0045a1981c1f3e22c632c4ac6990269c01b3dbe5a18baa05c2212e1183a317ef"
       },
       {
         "path": "benchmark/lib/ai-env.ts",
@@ -1439,11 +1443,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "2a2c7d4f4b17f17e9d449c6d73ea5c221cfb7f15a9381d739986add510ab4ec4"
+        "sha256": "f3c57d8587504018af005d5a9a44c4bd510979aadea5a6dc6c34fd88506c7877"
       },
       {
         "path": "package.json",
-        "sha256": "5f319421c0beca5ae96fbf752d350d57e94c25c3818ffd2e9cdff04b62f1f586"
+        "sha256": "6da3f3ced3aea783af5d74ca321d5109e4a78a16585feb88ac5587cf4246ec8f"
       },
       {
         "path": "packages/agents/package.json",
@@ -3274,6 +3278,18 @@
         "sha256": "3aa88707ae0e981f4251d0e110f4f40f900d18cfc692b1a83fd2eb8cfd3dbfb3"
       },
       {
+        "path": "packages/ops/package.json",
+        "sha256": "d5bedbe1d3c690e0ff816db04e86a7f34a9f098fa7cd1d23711d1af9061f9965"
+      },
+      {
+        "path": "packages/ops/src/index.ts",
+        "sha256": "f7ab10f97c66a34652fa96899a0ae00da295f2b348358886af57f391856bd4af"
+      },
+      {
+        "path": "packages/ops/src/provider.ts",
+        "sha256": "7c2f01f3811abd9a0c13bb0524241e42b864121d47a20404a2aad5d7bdf97037"
+      },
+      {
         "path": "packages/outcomes/package.json",
         "sha256": "645cc506b69b002fcea80a712497f839463b74e24666491259dffec843173d85"
       },
@@ -4366,7 +4382,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "b8862bac5cdd3b2767453c4ea6bc849b5dbd0ffd37c5687dc956c6d99c0ac3f0"
+    "sha256": "3ef9265fe6c4b85221999b9327dc00a84c2bbf648b9b095d39aa65450f2668ee"
   },
   "fixtureSource": {
     "files": [
@@ -69556,7 +69572,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "46a22a6e31eb256cb4a2b5a58346037f50601bb527dbf64bf76013a26ecc45ca",
-      "sourceSha256": "b8862bac5cdd3b2767453c4ea6bc849b5dbd0ffd37c5687dc956c6d99c0ac3f0",
+      "sourceSha256": "3ef9265fe6c4b85221999b9327dc00a84c2bbf648b9b095d39aa65450f2668ee",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69640,7 +69656,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "274d37b045f83d2cba600b8944087dc6d07e8c3dea385ffc3a458c1c74449aa4"
+      "planId": "ca2602c25ad391ac4ddf1f92b73fc47dbf4908d8653ef4fbb5c54cce096446dc"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69887,5 +69903,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "72b78fa950d90fbe36203100b2f57388e7dc3ad8d2816f871f82fa29ac3fa43e"
+  "reportId": "a500845ffdabead3317bbbf62627f283d82f644aa3a6a910c62f90e46e754dea"
 }

@@ -14,8 +14,9 @@ import { zhTW } from './messages/zh-tw.ts';
 import { readerPacks } from './messages/reader.ts';
 import { enginesPacks } from './messages/engines.ts';
 import { webPacks } from './messages/web.ts';
+import { jobsPacks } from './messages/jobs.ts';
 
 const BASE: Record<keyof typeof readerPacks, PagesCatalogue> = { ar, de, es, fr, ja, ko, nl, pt, ru, tr, 'zh-TW': zhTW };
 /** Each language's pack with the Docs/Benchmarks, Charts/Collections and Web access sentences merged in. */
 export const PAGES_PACKS: Record<string, PagesCatalogue> = Object.fromEntries(Object.entries(BASE)
-  .map(([lang, pack]) => [lang, { ...pack, ...readerPacks[lang as keyof typeof readerPacks], ...enginesPacks[lang as keyof typeof enginesPacks], ...webPacks[lang as keyof typeof webPacks] } as PagesCatalogue]));
+  .map(([lang, pack]) => [lang, { ...pack, ...readerPacks[lang as keyof typeof readerPacks], ...enginesPacks[lang as keyof typeof enginesPacks], ...webPacks[lang as keyof typeof webPacks], ...jobsPacks[lang as keyof typeof jobsPacks] } as PagesCatalogue]));
