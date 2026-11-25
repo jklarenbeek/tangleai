@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "version": "0.73.0",
+  "baseVersion": "0.72.0",
+  "baseCommit": "36de8bea7f2e7f1b7e8defcf27d2b417dae0f321",
+  "preparationCommit": "41c27ac9af298725b310c0a07e9d6111d21b0884",
+  "initial": false,
+  "inputHash": "59f6139030eb0bf01e88d9c040dacf1f683c3a58a60b7a7fba345933881ceb04",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        }
+      ],
+      "summary": "The Pages desktop's Calendar shows the background work's upcoming runs as a quiet, read-only layer under the person's own events. A run shows by its registered job's title. A schedule that runs more often than daily is one line a day with its count: every minute is \"1,440 runs\", never 1,440 items, and a 23-hour clock-change day counts 1,380. A run the spring clock change moved is marked as moved. A month cell with several runs shows a compact count, with the runs in its tooltip, and the selected day lists them under \"Background work\". The Calendar's menu, and its section in Settings, hide and show the layer. \"Export upcoming runs (.ics)\" writes the next 30 days as an iCalendar file with only each run's title, UTC start and identity (`<schedule>@<recurrence>`), and a frequent schedule as one all-day count a day. Runs are never the person's busy time. Without a job host, or while it starts, the Calendar draws no runs and offers no run export.\n\n`scheduledRuns(schedules, registry, from, to)` in `@tangleai/os/jobs-app` gives a range of runs as a calendar shows them. `nextRuns` now compiles a schedule's series again from its JSON. A series that crossed a contract is JSON, which Jaren's calendar does not expand as it is, so Jobs showed no next runs for a real host's floating schedule. Each run also carries Jaren's recurrence id.",
+      "id": "calendar-background-runs"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.73.0"
+    },
+    {
+      "name": "@tangleai/ops",
+      "version": "0.73.0"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/memory",
-  "version": "0.72.0",
+  "version": "0.73.0",
   "description": "Tangle AI memory policies — novelty gating, crystallization, contradiction resolution, outcome learning — over an injected store",
   "license": "MIT",
   "type": "module",
@@ -32,10 +32,10 @@
     "@jarenjs/json": "0.226.0",
     "@jarenjs/locales": "0.226.0",
     "@jarenjs/validate": "0.226.0",
-    "@tangleai/context": "0.72.0",
-    "@tangleai/core": "0.72.0",
-    "@tangleai/models": "0.72.0",
-    "@tangleai/jaren": "0.72.0"
+    "@tangleai/context": "0.73.0",
+    "@tangleai/core": "0.73.0",
+    "@tangleai/models": "0.73.0",
+    "@tangleai/jaren": "0.73.0"
   },
   "private": false,
   "types": "./src/index.ts",

@@ -1,5 +1,12 @@
 # @tangleai/ops
 
+## 0.73.0
+
+### Patch Changes
+
+- Updated dependencies [41c27ac]
+  - @tangleai/os@0.73.0
+
 ## 0.72.0
 
 ### Patch Changes

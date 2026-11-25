@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/pages",
-  "version": "0.72.0",
+  "version": "0.73.0",
   "private": true,
   "description": "Tangle AI website for GitHub Pages — an app document with a live in-browser run of the memory loop",
   "license": "MIT",
@@ -9,19 +9,19 @@
     "node": ">=24"
   },
   "dependencies": {
-    "@tangleai/core": "0.72.0",
-    "@tangleai/memory": "0.72.0",
-    "@tangleai/pipeline": "0.72.0",
+    "@tangleai/core": "0.73.0",
+    "@tangleai/memory": "0.73.0",
+    "@tangleai/pipeline": "0.73.0",
     "@jarenjs/app": "0.226.0",
     "@jarenjs/md": "0.226.0",
     "@jarenjs/mermaid": "0.226.0",
     "@jarenjs/view": "0.226.0",
-    "@tangleai/models": "0.72.0",
-    "@tangleai/context": "0.72.0",
-    "@tangleai/agents": "0.72.0",
-    "@tangleai/jaren": "0.72.0",
-    "@tangleai/assistant": "0.72.0",
-    "@tangleai/os": "0.72.0",
+    "@tangleai/models": "0.73.0",
+    "@tangleai/context": "0.73.0",
+    "@tangleai/agents": "0.73.0",
+    "@tangleai/jaren": "0.73.0",
+    "@tangleai/assistant": "0.73.0",
+    "@tangleai/os": "0.73.0",
     "@jarenjs/studio": "0.226.0",
     "@jarenjs/play": "0.226.0",
     "@jarenjs/json": "0.226.0",
@@ -37,7 +37,7 @@
     "@jarenjs/core": "0.226.0",
     "@jarenjs/linq": "0.226.0",
     "@jarenjs/calc": "0.226.0",
-    "@tangleai/ops": "0.72.0"
+    "@tangleai/ops": "0.73.0"
   },
   "devDependencies": {
     "@sqlite.org/sqlite-wasm": "3.53.0-build1"
