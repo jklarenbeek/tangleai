@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "version": "0.70.0",
+  "baseVersion": "0.69.1",
+  "baseCommit": "c8654b76579317975017c4f0a37ab4f6ce508cf7",
+  "preparationCommit": "2399ae2610b2604d739197e123bafd9027e390c2",
+  "initial": false,
+  "inputHash": "70c2d3adb712eb81672055e7a996967e6c7e395e16064129a5eacd9342c0f459",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/ops",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        }
+      ],
+      "summary": "`@tangleai/ops/browser` runs the operations runtime in a browser, in a dedicated worker of the page and never in the page itself. Every tab starts one with `startTwin`. The workers queue on one Web Lock, and the worker holding it owns the store: SQLite on OPFS, else an IndexedDB snapshot, else memory. A handle the previous owner still holds is waited for, never read as missing. The owner runs the registry and serves the `job_queue` contract on a BroadcastChannel that every tab reads through `browserJobQueue`.\n\nA job whose handler is `{ contract: 'desktop', operation }` calls the owner's own page. The page serves its tasks under `desktopTaskContract`, and each call receives the job it runs for. A runtime contract client with `invokeJob` is given the job's id, attempt and kind. A page ends its worker on the document's `freeze` event and on `pagehide`, because a frozen tab keeps its lock (measured), and starts a new one when it resumes. `forgetBrowserOps` deletes the runtime's OPFS pool and IndexedDB snapshot.\n\nMeasured in Chromium and Firefox over 10 reloads, 20 closes of the owner's tab, 100 concurrent requests from two tabs and a frozen owner: no single-send task was called twice and no answer crossed. Every takeover kept the same OPFS store, with a median of 141 to 217 ms, and the frozen owner in Chromium handed over in 216 ms.\n\n`@tangleai/os/jobs` adds `OS0195`, meaning the background runtime is starting or changing tabs. `jobs.health` now says where a browser runtime keeps its store and which tab owns it.",
+      "id": "ops-browser"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        }
+      ],
+      "summary": "The Pages desktop runs its background work in the browser when no job host address is set. The jobs run in a worker of an open desktop tab, and that tab's worker serves them to every tab. Under automation this browser twin is off unless a page asks for it with `?twin=1`, and `?twin=0` turns it off. A twin that cannot start never stops the desktop. Jobs then says it could not start in this browser, and why.\n\nThe showcase registry is a document with two jobs. Calendar reminders runs every minute and files one inbox message per calendar event starting within 15 minutes, keyed by the event's occurrence, so a run in another tab sends nothing twice. Inbox tidy count runs daily at 03:00 in the person's own time zone and counts the read messages older than 30 days. It deletes nothing. Watching a web page is not scheduled by default.\n\nSettings → Background work says where the work runs. Forget everything also deletes the store the twin keeps in this browser, and the privacy text names it.\n\nJobs keeps the schedules' own enqueue jobs (`ops.fire`) out of its list and out of the waiting count, and says in one quiet line how many there were. While the browser twin has not answered yet (`OS0195`), Jobs says it is starting instead of offering Settings. The heartbeat line says whether the runtime's store is kept in this browser and whether this tab runs it.",
+      "id": "ops-pages-twin"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.70.0"
+    },
+    {
+      "name": "@tangleai/ops",
+      "version": "0.70.0"
+    }
+  ]
+}

@@ -1,5 +1,16 @@
 # @tangleai/evolve
 
+## 0.70.0
+
+### Patch Changes
+
+- @tangleai/config@0.70.0
+  - @tangleai/context@0.70.0
+  - @tangleai/core@0.70.0
+  - @tangleai/mas@0.70.0
+  - @tangleai/models@0.70.0
+  - @tangleai/outcomes@0.70.0
+
 ## 0.69.1
 
 ### Patch Changes
