@@ -106,6 +106,79 @@ export const osMessagesEn = {
   'web/failed': 'Not done: {detail}', // Web: any other failure
   'web/truncated': 'This page was cut at its size limit. Open the original to read the rest.', // Web: a page cut at the byte limit
   'web/start': 'Type an address, or the words you are looking for.', // Web: what the empty reader asks for
+  'jobs/title': 'Jobs', // Window and dock title of the Jobs application: the background work a host runs
+  'jobs/views': 'Views', // Jobs header bar: accessible name of the Schedules/Queue tabs
+  'jobs/schedules': 'Schedules', // Jobs: tab and list of the recurring schedules
+  'jobs/queue': 'Queue', // Jobs: tab with the jobs by state
+  'jobs/refresh': 'Refresh', // Jobs header bar: read the host again
+  'jobs/states': 'Jobs by state', // Jobs: accessible name of the row of state counts
+  'jobs/state-pending': 'Waiting', // Jobs: state of a job that waits for its turn
+  'jobs/state-leased': 'Running', // Jobs: state of a job a worker runs now
+  'jobs/state-done': 'Done', // Jobs: state of a finished job
+  'jobs/state-failed': 'Failed', // Jobs: state of a job that failed and will be tried again
+  'jobs/state-dead': 'Given up', // Jobs: state of a job that failed every attempt
+  'jobs/state-cancelled': 'Cancelled', // Jobs: state of a cancelled job
+  'jobs/schedule-active': 'Active', // Jobs: a schedule that runs
+  'jobs/schedule-unresolved': 'No time zone', // Jobs: a schedule that never runs because it has no time zone
+  'jobs/schedule-stalled': 'Stalled', // Jobs: a schedule stopped at a run it could not compute
+  'jobs/schedule-ended': 'Ended', // Jobs: a schedule with no runs left
+  'jobs/stalled-detail': 'It stopped at a run it could not compute ({code}). The host resumes it by saving the schedule again.', // Jobs: why a schedule is stalled; {code} is the reason code
+  'jobs/unresolved-detail': 'It does not run until the host gives it a time zone.', // Jobs: why a schedule without a zone never runs
+  'jobs/next-runs': 'Next runs', // Jobs: heading of a schedule's upcoming runs
+  'jobs/no-next': 'No further runs.', // Jobs: a schedule with no runs ahead
+  'jobs/next-unknown': 'The next runs need time zone data this desktop does not have.', // Jobs: the runs of a wall-clock rule cannot be computed here
+  'jobs/moved': 'moved by the clock change', // Jobs: a run the daylight-saving change moved to a later time
+  'jobs/repeated': 'in the repeated hour, runs once', // Jobs: a run whose wall time occurs twice when the clocks go back
+  'jobs/last-run': 'Last run {when}', // Jobs: when a schedule last ran; {when} is a relative and absolute time
+  'jobs/never-run': 'Not run yet', // Jobs: a schedule that has not run
+  'jobs/fired': 'Runs so far: {count}', // Jobs: how many jobs a schedule started
+  'jobs/skipped': 'Skipped: {skipped}; passed while stopped: {uncounted}', // Jobs: runs a schedule skipped, and runs that went by while the host was stopped
+  'jobs/remove': 'Remove', // Jobs: button that removes a schedule, and its confirmation
+  'jobs/remove-confirm': 'Remove the schedule {title}? The jobs it ran stay.', // Jobs: the question before a schedule is removed
+  'jobs/keep': 'Keep', // Jobs: button that takes a pending action back
+  'jobs/removed': 'The schedule {title} is removed.', // Jobs: after a schedule was removed
+  'jobs/no-schedules': 'No schedules.', // Jobs: the host has no recurring schedules
+  'jobs/no-jobs': 'No jobs in this state.', // Jobs: an empty state of the queue
+  'jobs/list': 'Jobs', // Jobs: accessible name of the list of jobs
+  'jobs/more': 'Show more', // Jobs: button that loads the next page of jobs
+  'jobs/attempts': 'Attempt {attempts} of {max}', // Jobs: how often a job was tried, of how often it may be
+  'jobs/run-at': 'Due {when}', // Jobs: when a job is or was due; {when} is a relative and absolute time
+  'jobs/detail': 'Job details', // Jobs: accessible name of a job's details
+  'jobs/field-id': 'Job', // Jobs details: the job's id
+  'jobs/field-kind': 'Kind', // Jobs details: what kind of work it is
+  'jobs/field-state': 'State', // Jobs details: its state
+  'jobs/field-attempts': 'Attempts', // Jobs details: its attempts
+  'jobs/field-run-at': 'Due', // Jobs details: when it is due
+  'jobs/field-lease': 'Held until', // Jobs details: until when a worker holds it
+  'jobs/field-created': 'Added', // Jobs details: when it was added to the queue
+  'jobs/field-updated': 'Last change', // Jobs details: when it last changed
+  'jobs/field-error': 'Last error', // Jobs details: the last error it met
+  'jobs/cancel': 'Cancel job', // Jobs: button that cancels a job, and its confirmation
+  'jobs/cancel-confirm': 'Cancel the job {id}?', // Jobs: the question before a job is cancelled
+  'jobs/requeue': 'Run again', // Jobs: button that puts a job back in the queue, and its confirmation
+  'jobs/requeue-confirm': 'Put the job {id} back in the queue? Its attempts so far are kept.', // Jobs: the question before a job is run again
+  'jobs/cancelled-ok': 'The job {id} is cancelled.', // Jobs: after a job was cancelled
+  'jobs/requeued-ok': 'The job {id} is back in the queue.', // Jobs: after a job was put back in the queue
+  'jobs/unchanged': 'Nothing changed: it already was so.', // Jobs: an action that found nothing to change
+  'jobs/unknown': 'It is no longer there.', // Jobs: the job or schedule no longer exists (OS0191)
+  'jobs/refused': 'Not possible in its current state: {detail}', // Jobs: the state forbids the action (OS0192)
+  'jobs/held': 'Another process is running this job, so it cannot be cancelled from here.', // Jobs: a job another process runs (OS0193)
+  'jobs/failed': 'Not done: {detail}', // Jobs: any other failure
+  'jobs/unconfigured': 'No job host is configured on this desktop.', // Jobs: no host serves background work to this desktop (OS0190)
+  'jobs/unconfigured-detail': 'Background work runs on a host the desktop connects to. Name it in Settings to see its schedules and jobs here.', // Jobs: what a job host is and where to set it up
+  'jobs/configure': 'Open Settings', // Jobs: button to the desktop's Settings
+  'jobs/loading': 'Reading the jobs…', // Jobs: status while the host is read
+  'jobs/in-zone': '{rule}, {zone} time', // Jobs: a rule on a wall clock in a time zone; {zone} is a zone name such as Europe/Amsterdam
+  'jobs/every-second': 'Every second', // Jobs: a rule that runs every second
+  'jobs/every-minute': 'Every minute', // Jobs: a rule that runs every minute
+  'jobs/every-hour': 'Every hour', // Jobs: a rule that runs every hour
+  'jobs/every-interval': 'Every {interval}', // Jobs: a rule that runs at a fixed interval; {interval} is a number with its unit, such as 15 minutes
+  'jobs/daily': 'Every day at {times}', // Jobs: a daily rule; {times} lists times of day
+  'jobs/every-days': 'Every {interval} at {times}', // Jobs: a rule every few days; {interval} is a number of days
+  'jobs/weekly': 'Every {days} at {times}', // Jobs: a weekly rule; {days} lists weekdays
+  'jobs/every-weeks': 'Every {interval} on {days} at {times}', // Jobs: a rule every few weeks
+  'jobs/monthly': 'Monthly on day {days} at {times}', // Jobs: a monthly rule; {days} lists days of the month
+  'jobs/rule': 'Rule: {rule}', // Jobs: a rule the desktop shows as its RRULE text
   'state/unavailable': 'Your desktop could not be loaded, so changes are off until it is.',
   'state/failed': 'A change was not saved: {detail}.',
   'tray/theme-light': 'Switch to the light theme',

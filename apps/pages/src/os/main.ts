@@ -9,6 +9,9 @@
 import { createKernel, webStorageStore, browserLocation } from '@tangleai/os';
 import { filesModule } from '@tangleai/os/files';
 import { webModule } from '@tangleai/os/web';
+import { jobsModule } from '@tangleai/os/jobs-app';
+import { unconfiguredJobQueue } from '@tangleai/os/jobs';
+import { createIntlZoneProvider } from '@jarenjs/locales/intl-zones';
 import { parseMarkdown, toHtml } from '@jarenjs/md';
 import * as toolbox from '@tangleai/agents/toolbox';
 import { mountDesktop, type SuiteDocument } from '@tangleai/os/shell';
@@ -71,6 +74,15 @@ const web = webModule({ ...chrome, reader: kernel.webReader(), configure: () => 
 } });
 { const installed = kernel.install(web.manifest, 'shipped'); if (!installed.ok) console.error('web', installed.issues); }
 
+// Jobs: the background work of the host the person named in Settings, Background work (none: OS0190),
+// beside Web; the runs of a wall-clock schedule are computed with the browser's own time zone data
+// merge: kernel.jobQueue() comes with the kernel's jobs option
+const jobs = jobsModule({ ...chrome, queue: (kernel as any).jobQueue?.() ?? unconfiguredJobQueue(), zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }), configure: () => {
+  desktop.openSettings();
+  void kernel.call('shell', 'tangle_os_settings', 'settings.show', { section: 'jobs' });
+} });
+{ const installed = kernel.install(jobs.manifest, 'shipped'); if (!installed.ok) console.error('jobs', installed.issues); }
+
 let buildInfo: Promise<any> | null = null;
 const json = (url: string) => fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null);
 const build = () => (buildInfo ??= Promise.all([json('./build.json'), json('./os-build.json')]).then(([release, os]) => release && { ...release, jaren: os?.jaren }));
@@ -81,7 +93,7 @@ const node = document.getElementById('desktop')!;
 const surfaces = createSurfaces(window, { settings: () => prefs.ai(), open: (id) => { desktop.open(id); } });
 const desktop = mountDesktop(node, {
   kernel,
-  shipped: { ...shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces, chrome }), files: files.mount, web: web.mount },
+  shipped: { ...shippedMounts(build, { kernel, prefs, open: (id) => { desktop.open(id); }, surfaces, chrome }), files: files.mount, web: web.mount, jobs: jobs.mount },
   documentHost: './os-module.html',
   // a phone gets one maximized window at a time
   compact: { below: 720 },

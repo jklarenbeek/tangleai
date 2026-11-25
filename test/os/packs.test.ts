@@ -24,7 +24,7 @@ const holes = (text: string) => [...text.matchAll(/\{([a-z]+)\}/g)].map(m => m[1
 /** Sentences that are names in every language. */
 const NAMES = new Set(['OpenRouter', 'Tangle', 'Tangle OS']);
 /** Words a language writes as English does, by key. */
-const SAME: Record<string, string[]> = { nl: ['mail/title', 'web/title'], de: ['mail/title', 'web/title'], fr: ['dock/label', 'settings/applications', 'web/title'], es: ['web/title'], pt: ['web/title'], tr: ['web/title'] };
+const SAME: Record<string, string[]> = { nl: ['mail/title', 'web/title'], de: ['mail/title', 'web/title'], fr: ['dock/label', 'settings/applications', 'web/title', 'jobs/schedule-active'], es: ['web/title'], pt: ['web/title'], tr: ['web/title'] };
 
 describe('the desktop chrome packs', () => {
   for (const [lang, pack] of Object.entries(PACKS)) {

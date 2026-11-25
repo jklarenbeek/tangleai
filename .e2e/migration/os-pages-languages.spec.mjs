@@ -9,7 +9,7 @@ import { test, expect } from './playwright.mjs';
 import { pagesMessagesEn } from '../../apps/pages/src/os/messages.ts';
 
 /** Windows the Pages desktop draws itself (Jaren's applications bring their own catalogues). */
-const OWN = ['welcome', 'settings', 'about', 'todo', 'calendar', 'loop', 'docs', 'benchmarks', 'charts', 'collections', 'web'];
+const OWN = ['welcome', 'settings', 'about', 'todo', 'calendar', 'loop', 'docs', 'benchmarks', 'charts', 'collections', 'web', 'jobs'];
 
 /** The day and month names `Intl` writes in a language: the browser's, never a catalogue's. */
 const intlNames = (page, lang) => page.evaluate((lang) => {

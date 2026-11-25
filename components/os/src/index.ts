@@ -43,3 +43,5 @@ export type { WebReader, WebPage, WebBlock, WebLink, WebResult } from './web.ts'
 export { httpWebReader } from './web-client.ts';
 export { JOB_QUEUE_CONTRACT, JOB_ITEM_SCHEMA, JOB_CODES, unconfiguredJobQueue, httpJobQueue } from './jobs.ts';
 export type { JobQueue, JobItem, JobCounts, JobSchedule, JobState } from './jobs.ts';
+export { jobsModule, describeRule, nextRuns, STATE_ORDER } from './jobs-app.ts';
+export type { JobsOptions, NextRun } from './jobs-app.ts';

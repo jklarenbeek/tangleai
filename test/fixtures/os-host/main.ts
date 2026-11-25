@@ -27,12 +27,19 @@
  *   ?web=1       the desktop's Web with a scripted reader: two pages that link each other, a
  *                search that finds both, a refused and an unreadable address; ?web=none has no
  *                web access configured (OS0180)
+ *   ?jobs=1      the desktop's Jobs over a scripted host queue: two schedules (every 15 minutes,
+ *                and daily at 03:00 Amsterdam time), jobs in every state with a dead one's error,
+ *                one job held by another process (OS0193); ?jobs=none has no job host (OS0190)
  * Everything the browser test needs is on `window.harness`.
  */
 import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract } from '../../../components/os/src/index.ts';
 import { filesModule } from '../../../components/os/src/files-app.ts';
 import { webModule } from '../../../components/os/src/web-app.ts';
 import { WEB_CODES, unconfiguredWebReader, type WebPage, type WebReader } from '../../../components/os/src/web.ts';
+import { jobsModule } from '../../../components/os/src/jobs-app.ts';
+import { JOB_CODES, unconfiguredJobQueue, type JobItem, type JobQueue, type JobSchedule, type JobState } from '../../../components/os/src/jobs.ts';
+import { compileRecurrence, floatingValue, utcValue } from '@jarenjs/core/calendar';
+import { createIntlZoneProvider } from '@jarenjs/locales/intl-zones';
 import { conformLocation } from '../file-location-conformance.ts';
 import { mountDesktop, type DesktopEvent } from '../../../components/os/src/shell.ts';
 import { ECHO } from './echo.ts';
@@ -185,6 +192,79 @@ if (webMode) {
   kernel.install(web.manifest, 'shipped');
   shipped.web = web.mount;
 }
+// Jobs: a scripted host queue, answering as the job_queue provider over a store does
+const jobsMode = query.get('jobs');
+const jobCalls: unknown[] = [];
+if (jobsMode) {
+  const t0 = Date.now();
+  const coded = (code: string, message: string) => Object.assign(new Error(message), { code });
+  const job = (id: string, kind: string, state: JobState, extra: Partial<JobItem> = {}): JobItem => ({
+    id, kind, state, runAt: t0 + 60_000, attempts: state === 'pending' ? 0 : 1, maxAttempts: 5, leaseUntil: state === 'leased' ? t0 + 30_000 : null,
+    lastError: null, createdAt: t0 - 3_600_000, updatedAt: t0 - 60_000, ...extra,
+  });
+  const jobs: JobItem[] = [
+    job('push-0001', 'orders.push', 'failed', { attempts: 2, runAt: t0 + 120_000, lastError: { message: 'the warehouse answered 503\nretry later', code: 'HTTP503' } }),
+    job('push-0002', 'orders.push', 'failed', { attempts: 3, lastError: { message: 'timed out after 30 s' } }),
+    job('push-0003', 'orders.push', 'failed', { attempts: 1, lastError: { message: 'the connection was reset' } }),
+    job('mail-0001', 'mail.send', 'dead', { attempts: 5, runAt: t0 - 600_000, lastError: { message: 'the courier refused the parcel' } }),
+    job('mail-0002', 'mail.send', 'dead', { attempts: 5, runAt: t0 - 900_000, lastError: { message: 'mailbox unavailable' } }),
+    job('sync-held-here', 'stock.sync', 'leased'),
+    job('sync-held-other', 'stock.sync', 'leased'),
+    ...Array.from({ length: 60 }, (_, i) => job(`wait-${String(i).padStart(3, '0')}`, i % 2 ? 'mail.send' : 'orders.push', 'pending', { runAt: t0 + (i + 1) * 60_000 })),
+    ...Array.from({ length: 6 }, (_, i) => job(`done-${i}`, 'stock.sync', 'done', { runAt: t0 - (i + 1) * 900_000 })),
+    job('old-0001', 'report.build', 'cancelled'), job('old-0002', 'report.build', 'cancelled'),
+  ];
+  const schedules: JobSchedule[] = [
+    { id: 'stock', kind: 'stock.sync', series: compileRecurrence({ dtstart: utcValue('2026-01-01T00:00:00Z'), rrule: 'FREQ=MINUTELY;INTERVAL=15' }) as any, zone: null, policy: 'rfc5545', missed: 'skip', latenessMs: null,
+      state: 'active', nextRunAt: null, nextRecurrenceId: null, lastRunAt: t0 - 300_000, lastRecurrenceId: null, counts: { fired: 412, skipped: 0 }, stall: null, createdAt: t0 - 86_400_000, updatedAt: t0 - 300_000 },
+    { id: 'full', kind: 'stock.full', series: compileRecurrence({ dtstart: floatingValue('2026-01-01', '03:00'), rrule: 'FREQ=DAILY' }) as any, zone: 'Europe/Amsterdam', policy: 'rfc5545', missed: 'skip', latenessMs: null,
+      state: 'active', nextRunAt: null, nextRecurrenceId: null, lastRunAt: t0 - 32_400_000, lastRecurrenceId: null, counts: { fired: 30, skipped: 1, uncounted: 2 }, stall: null, createdAt: t0 - 86_400_000 * 30, updatedAt: t0 - 32_400_000 },
+  ];
+  const find = (id: string) => { const found = jobs.find(j => j.id === id); if (!found) throw coded(JOB_CODES.unknown, `there is no job ${id}`); return found; };
+  const scripted: JobQueue = {
+    counts: async () => {
+      jobCalls.push({ counts: true });
+      const by = (state: JobState) => jobs.filter(j => j.state === state).length;
+      const pendingKinds: Record<string, number> = {};
+      for (const j of jobs) if (j.state === 'pending') pendingKinds[j.kind] = (pendingKinds[j.kind] ?? 0) + 1;
+      return { pending: by('pending'), leased: by('leased'), done: by('done'), failed: by('failed'), dead: by('dead'), cancelled: by('cancelled'), pendingKinds };
+    },
+    page: async (input = {}) => {
+      jobCalls.push({ page: input });
+      const limit = input.limit ?? 100;
+      const all = jobs.filter(j => (!input.state || j.state === input.state) && (!input.kind || j.kind === input.kind)).sort((a, b) => a.id.localeCompare(b.id)).filter(j => !input.after || j.id > input.after);
+      const items = all.slice(0, limit);
+      return all.length > limit ? { items, next: items[items.length - 1].id } : { items };
+    },
+    get: async ({ id }) => { jobCalls.push({ get: id }); return find(id); },
+    schedules: async () => { jobCalls.push({ schedules: true }); return { schedules: [...schedules] }; },
+    cancel: async ({ id }) => {
+      jobCalls.push({ cancel: id });
+      const j = find(id);
+      if (j.state === 'cancelled') return { changed: false };
+      if (j.state === 'done' || j.state === 'dead') throw coded(JOB_CODES.refused, `job ${id} is ${j.state}`);
+      if (id === 'sync-held-other') throw coded(JOB_CODES.held, `job ${id} is running in another process`);
+      j.state = 'cancelled'; j.updatedAt = Date.now(); return { changed: true };
+    },
+    requeue: async ({ id }) => {
+      jobCalls.push({ requeue: id });
+      const j = find(id);
+      if (j.state === 'pending') return { changed: false };
+      if (j.state === 'done' || j.state === 'leased') throw coded(JOB_CODES.refused, `job ${id} is ${j.state}`);
+      j.state = 'pending'; j.runAt = Date.now(); j.updatedAt = Date.now(); return { changed: true };
+    },
+    unschedule: async ({ id }) => {
+      jobCalls.push({ unschedule: id });
+      const at = schedules.findIndex(s => s.id === id);
+      if (at < 0) throw coded(JOB_CODES.unknown, `there is no schedule ${id}`);
+      schedules.splice(at, 1); return { changed: true };
+    },
+  };
+  const jobsApp = jobsModule({ queue: jobsMode === 'none' ? unconfiguredJobQueue() : scripted, zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }),
+    ...(messages ? { messages, ...(lang !== 'sentinel' ? { locale: lang! } : {}) } : {}) });
+  kernel.install(jobsApp.manifest, 'shipped');
+  shipped.jobs = jobsApp.mount;
+}
 if (withSettings) {
   shipped['screen-1-settings'] = (node: HTMLElement, context: any) => { node.innerHTML = '<h2 class="screen-settings">Screen 1 settings</h2>'; contexts['screen-1-settings'] = context; };
   kernel.install({ $module: '0.1', id: 'notes-doc', version: '1.0.0', title: { en: 'Notes' }, host: { kind: 'document', app: { $app: '0.1', state: {}, view: [] } },
@@ -216,7 +296,7 @@ if (withCaps) {
   kernel.propose('screen-1', { id: 'po-cola', kind: 'purchase.order', title: 'Order 12 crates of cola', origin: 'ai' });
 }
 (window as any).harness = {
-  decided, webCalls,
+  decided, webCalls, jobCalls,
   kernel, desktop, events, visibility, contexts, screens,
   // the conformance suite against a fresh OPFS folder of its own
   conformOpfs: async () => {
