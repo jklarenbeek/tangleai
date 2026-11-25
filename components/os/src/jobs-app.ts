@@ -336,7 +336,7 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
     const dl = el('dl', '');
     const idValue = el('span', '', job.id); idValue.dir = 'ltr';
     field(dl, t('jobs/field-id'), idValue); field(dl, t('jobs/field-kind'), job.kind); field(dl, t('jobs/field-state'), stateName(job.state));
-    field(dl, t('jobs/field-attempts'), t('jobs/attempts', { attempts: job.attempts, max: job.maxAttempts }));
+    field(dl, t('jobs/field-attempts'), `${new Intl.NumberFormat(locale).format(job.attempts)} / ${new Intl.NumberFormat(locale).format(job.maxAttempts)}`);
     field(dl, t('jobs/field-run-at'), time(job.runAt));
     if (job.leaseUntil) field(dl, t('jobs/field-lease'), time(job.leaseUntil));
     field(dl, t('jobs/field-created'), time(job.createdAt)); field(dl, t('jobs/field-updated'), time(job.updatedAt));

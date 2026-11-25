@@ -10,7 +10,6 @@ import { createKernel, webStorageStore, browserLocation } from '@tangleai/os';
 import { filesModule } from '@tangleai/os/files';
 import { webModule } from '@tangleai/os/web';
 import { jobsModule } from '@tangleai/os/jobs-app';
-import { unconfiguredJobQueue } from '@tangleai/os/jobs';
 import { createIntlZoneProvider } from '@jarenjs/locales/intl-zones';
 import { parseMarkdown, toHtml } from '@jarenjs/md';
 import * as toolbox from '@tangleai/agents/toolbox';
@@ -76,8 +75,7 @@ const web = webModule({ ...chrome, reader: kernel.webReader(), configure: () => 
 
 // Jobs: the background work of the host the person named in Settings, Background work (none: OS0190),
 // beside Web; the runs of a wall-clock schedule are computed with the browser's own time zone data
-// merge: kernel.jobQueue() comes with the kernel's jobs option
-const jobs = jobsModule({ ...chrome, queue: (kernel as any).jobQueue?.() ?? unconfiguredJobQueue(), zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }), configure: () => {
+const jobs = jobsModule({ ...chrome, queue: kernel.jobQueue(), zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }), configure: () => {
   desktop.openSettings();
   void kernel.call('shell', 'tangle_os_settings', 'settings.show', { section: 'jobs' });
 } });

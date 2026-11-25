@@ -90,7 +90,7 @@ test('the queue opens on the failures, pages the waiting jobs and shows a job\'s
   await list.locator('[data-id="push-0001"]').click();
   const detail = win.getByRole('region', { name: 'Job details' });
   await expect(detail).toContainText('orders.push');
-  await expect(detail).toContainText('Attempt 2 of 5');
+  await expect(detail).toContainText('2 / 5');
   await expect(detail.locator('.tos-jobs-error-text')).toHaveText('the warehouse answered 503\nretry later');
   await expect(detail.locator('.tos-jobs-error-text')).toHaveAttribute('data-code', 'HTTP503');
   await expect(win).not.toContainText('payload');
