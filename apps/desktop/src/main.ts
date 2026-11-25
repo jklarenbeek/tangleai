@@ -3,7 +3,7 @@
  *
  *   node apps/desktop/src/main.ts [--port 4700] [--data <file.db>]
  *                                 [--folder <dir>] [--no-open]
- *                                 [--ops <host module>]   (or TANGLE_OPS_MODULE)
+ *                                 [--ops <host module>[,<host module>…]]   (or TANGLE_OPS_MODULE)
  *
  * Same file under Bun, and the target of `bun build --compile`. The
  * server is node:http (Bun implements it); SQLite arrives through
@@ -15,8 +15,8 @@ import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
 import { mkdir, stat } from 'node:fs/promises';
 import { homedir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { basename, dirname, join, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { createDesktop, staticFile, DESKTOP_VERSION } from './server.ts';
 import { desktopWebRoute, WEB_READER_PATH } from './web-reader.ts';
@@ -91,8 +91,13 @@ interface Args {
   data: string;
   folder: string | null;
   open: boolean;
-  /** A host module naming the background jobs the app runs (`{ registry, handlers?, contracts? }`), or none. */
-  ops: string | null;
+  /** Host modules naming the background jobs the app runs (each `{ registry, handlers?, contracts?, scope?, title? }`); none for none. */
+  ops: string[];
+}
+
+/** `a.ts,b.ts` → their absolute paths (empty for none). */
+function modulePaths(list: string | undefined): string[] {
+  return (list ?? '').split(',').map(p => p.trim()).filter(Boolean).map(p => resolve(p));
 }
 
 function parseArgs(argv: string[]): Args {
@@ -101,7 +106,7 @@ function parseArgs(argv: string[]): Args {
     data: join(homedir(), '.tangle', 'tangle.db'),
     folder: null,
     open: true,
-    ops: process.env.TANGLE_OPS_MODULE ? resolve(process.env.TANGLE_OPS_MODULE) : null,
+    ops: modulePaths(process.env.TANGLE_OPS_MODULE),
   };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -109,7 +114,7 @@ function parseArgs(argv: string[]): Args {
     else if (arg === '--data') args.data = resolve(String(argv[++i]));
     else if (arg === '--folder') args.folder = resolve(String(argv[++i]));
     else if (arg === '--no-open') args.open = false;
-    else if (arg === '--ops') args.ops = resolve(String(argv[++i]));
+    else if (arg === '--ops') args.ops = modulePaths(String(argv[++i]));
   }
   return args;
 }
@@ -139,14 +144,25 @@ const desktop = await createDesktop({
 
 // the web reader a desktop page (this one, or the Pages desktop on this machine) reads websites through
 const webRoute = desktopWebRoute(desktop.db);
-// the background runtime a host module names, in its own worker thread with its own store (ops.db beside the data)
-const ops = args.ops === null ? null : superviseOps({
+// the background runtimes the host modules name, each in its own worker thread with its own store. One module is
+// scope `ops` with `ops.db` beside the data (as it always was); several are each the scope the module exports
+// (`scope`, else the file's base name) with `ops-<scope>.db`. A host module keeps its top level free of side effects:
+// this thread imports it only to read its scope and title, and its worker imports it to run it.
+const hosts = await Promise.all(args.ops.map(async (path, i) => {
+  if (args.ops.length === 1) return { path, scope: 'ops', title: undefined as Record<string, string> | undefined, store: join(dirname(args.data), 'ops.db') };
+  const exported: any = await import(pathToFileURL(path).href).catch(() => ({}));
+  const scope = typeof exported.scope === 'string' && /^[a-z][a-z0-9-]{0,39}$/.test(exported.scope) ? exported.scope : basename(path).replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9-]+/g, '-') || `ops-${i + 1}`;
+  return { path, scope, title: exported.title as Record<string, string> | undefined, store: join(dirname(args.data), `ops-${scope}.db`) };
+}));
+const scopes = new Set<string>();
+for (const host of hosts) { if (scopes.has(host.scope) || host.scope === 'desktop') throw new Error(`two host modules (or one and the desktop) share the scope '${host.scope}'`); scopes.add(host.scope); }
+const supervisors = hosts.map(host => ({ ...host, ops: superviseOps({
   workerUrl: new URL('./ops-worker.ts', import.meta.url),
-  workerData: { module: args.ops, storePath: join(dirname(args.data), 'ops.db') },
-  onState: (state) => { if (state.state === 'restarting') console.error(`  ops:    restarting (${state.last?.reason}${state.last?.message ? `: ${state.last.message}` : ''})`); },
-});
-// the job queues for the Jobs app of a desktop page: the runtime's (scope ops) and the store's own (scope desktop)
-const jobRoute = desktopJobRoute(desktop.db, ops ? { runtime: ops.queue() } : {});
+  workerData: { module: host.path, storePath: host.store },
+  onState: (state) => { if (state.state === 'restarting') console.error(`  ops:    ${host.scope} restarting (${state.last?.reason}${state.last?.message ? `: ${state.last.message}` : ''})`); },
+}) }));
+// the job queues for the Jobs app of a desktop page: each runtime's (by its scope) and the store's own (scope desktop)
+const jobRoute = desktopJobRoute(desktop.db, { runtimes: Object.fromEntries(supervisors.map(s => [s.scope, s.ops.queue()])) });
 
 const server = createServer((req, res) => {
   const path = (req.url ?? '/').split('?')[0];
@@ -183,13 +199,13 @@ server.listen(args.port, '127.0.0.1', () => {
   // with no measurement workspace beside it registers nothing
   const registered = instruments?.list() ?? [];
   console.log(`  reports: ${registered.length === 0 ? 'no instrument registered on this build' : registered.map((entry) => entry.id).join(', ')}`);
-  console.log(`  ops:    ${args.ops === null ? 'no host module (--ops)' : args.ops}`);
+  console.log(`  ops:    ${hosts.length ? hosts.map(h => `${h.scope} = ${h.path}`).join(', ') : 'no host module (--ops)'}`);
   if (args.open) openBrowser(url);
 });
 
 const shutdown = (): void => {
   server.close();
-  void Promise.all([webRoute.close(), jobRoute.close(), ops?.stop()]).then(() => desktop.close()).then(() => process.exit(0));
+  void Promise.all([webRoute.close(), jobRoute.close(), ...supervisors.map(s => s.ops.stop())]).then(() => desktop.close()).then(() => process.exit(0));
 };
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);

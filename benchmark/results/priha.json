@@ -255,7 +255,7 @@
       },
       {
         "path": "apps/desktop/src/job-queue.ts",
-        "sha256": "4cc00c7d47b2626d756f331fd119102e3285bc645fc7acac36813037a048a38c"
+        "sha256": "f3ea8443f7ff0fe88493cadee89faef5aa0e140fee5911fbfe8bc238961fcc2d"
       },
       {
         "path": "apps/desktop/src/lightrag-contract.ts",
@@ -267,7 +267,7 @@
       },
       {
         "path": "apps/desktop/src/main.ts",
-        "sha256": "79c3858c73626d85cb2fe93032d478a7b7cce10e4ca6024a33a2242051116cb3"
+        "sha256": "2efac472e281ab72cf8ee501eb02a4194f6c175fb699dfe6cf67c91ab746e1f0"
       },
       {
         "path": "apps/desktop/src/ops-worker.ts",
@@ -3283,7 +3283,7 @@
       },
       {
         "path": "packages/ops/package.json",
-        "sha256": "d497596258229b4c0dd545745b52b075b69442640c50a3d5c907b1aa68704f92"
+        "sha256": "7d48e656b3d79a393d5771e56b07496fe0ccba03e2aa81164ce46103385d0971"
       },
       {
         "path": "packages/ops/src/browser.ts",
@@ -3300,6 +3300,10 @@
       {
         "path": "packages/ops/src/port-queue.ts",
         "sha256": "328abdd7b6549de312359cfe136e6f5a7e936557da4ce2d8c5a7e976118fad74"
+      },
+      {
+        "path": "packages/ops/src/product.ts",
+        "sha256": "f45a4e1bac58c754e52f8b2766d81b75e135642f6473841b3dfa85736cf918af"
       },
       {
         "path": "packages/ops/src/provider.ts",
@@ -4414,7 +4418,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "ac3bffb5405d8b1fe329da8d0b1ccfbec3520c898a693b6a6bd2f0dbe5e1ad6d"
+    "sha256": "538eedf29b28642e78f2aba2bd354c419e9d92e55b8979da7950b1fc3e1722f8"
   },
   "fixtureSource": {
     "files": [
@@ -69604,7 +69608,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "46a22a6e31eb256cb4a2b5a58346037f50601bb527dbf64bf76013a26ecc45ca",
-      "sourceSha256": "ac3bffb5405d8b1fe329da8d0b1ccfbec3520c898a693b6a6bd2f0dbe5e1ad6d",
+      "sourceSha256": "538eedf29b28642e78f2aba2bd354c419e9d92e55b8979da7950b1fc3e1722f8",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69688,7 +69692,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "734ccfc111ccc04748c3a43542f0fdda8f5b664d9f4f2154b18ad7bd4499f5ef"
+      "planId": "e52835d3afcaa6d7f429068e7d180a1a700a74bd699655507f8b16788d24fc6c"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69935,5 +69939,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "97b3a9e039b9bdce2c580270096ef72ba2fbe054da65302b2f539e67d43b93e1"
+  "reportId": "aab272becd3f3d3230033a162bbfd5e635d84eb8038ad0d9d813e17d7efc6c61"
 }

@@ -85,3 +85,28 @@ describe('the route with a supervised runtime', () => {
     }
   });
 });
+
+describe('the route with several host modules', () => {
+  it('serves each runtime under its own scope, the first for a call without one, and keeps `desktop` the store\'s own', async () => {
+    const { openStore } = await import('@jarenjs/db');
+    const { jobQueueProvider } = await import('@tangleai/ops');
+    const model = { $model: '0.1', collections: { notes: { schema: { type: 'object', required: ['id'], properties: { id: { type: 'string' } } }, key: '/id' } } };
+    const [a, b] = [await openStore(model as any, { driver: nodeDriver(), jobs: true } as any) as any, await openStore(model as any, { driver: nodeDriver(), jobs: true } as any) as any];
+    await a.jobs.enqueue('alpha.kind', {}, { id: 'only-alpha', runAt: Date.now() + 60_000 });
+    await b.jobs.enqueue('beta.kind', {}, { id: 'only-beta', runAt: Date.now() + 60_000 });
+    const multi = desktopJobRoute(desktop.db, { runtimes: { alpha: jobQueueProvider(a), beta: jobQueueProvider(b) } });
+    const srv = createServer((req, res) => multi(req, res));
+    await new Promise<void>(done => srv.listen(0, '127.0.0.1', done));
+    try {
+      const queue = httpJobQueue(`http://127.0.0.1:${(srv.address() as any).port}${JOB_QUEUE_PATH}`);
+      assert.equal((await queue.get({ scope: 'alpha', id: 'only-alpha' })).kind, 'alpha.kind');
+      assert.equal((await queue.get({ scope: 'beta', id: 'only-beta' })).kind, 'beta.kind');
+      await assert.rejects(queue.get({ scope: 'alpha', id: 'only-beta' }), { code: 'OS0191' });
+      assert.equal((await queue.get({ id: 'only-alpha' })).kind, 'alpha.kind', 'a call without a scope reads the first runtime');
+      assert.equal((await queue.counts({ scope: 'desktop' })).pendingKinds.report >= 1, true);
+      assert.throws(() => desktopJobRoute(desktop.db, { runtimes: { desktop: jobQueueProvider(a) } }), TypeError);
+    } finally {
+      srv.close(); await multi.close(); await a.close(); await b.close();
+    }
+  });
+});

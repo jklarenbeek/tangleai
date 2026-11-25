@@ -188,3 +188,39 @@ export function httpJobQueue(baseUrl: string, options: { fetch?: typeof globalTh
     registry: (input) => invoke('jobs.registry', input), run: (input) => invoke('jobs.run', input),
   };
 }
+
+/** A part of a host the desktop shows on its own: a product, or the host's own runtime. */
+export type JobScope = { scope: string, title: Record<string, string> };
+
+/**
+ * One queue over several: each entry is a scope (a product's queue at its own address, the host's own runtime) and
+ * every call goes to the entry its `scope` names. With several entries a call without a scope, or with one no entry
+ * has, is refused `OS0194`; with one entry the scope is optional. `scopes()` answers the entries, in order, for a
+ * picker. The scope travels on to the entry's queue, which may check it too.
+ */
+export function combinedJobQueue(entries: readonly { scope: string, title: Record<string, string>, queue: JobQueue }[]): JobQueue & { scopes(): JobScope[] } {
+  if (!entries.length) throw new TypeError('combinedJobQueue needs at least one scope');
+  const byScope = new Map<string, JobQueue>();
+  for (const entry of entries) {
+    if (byScope.has(entry.scope)) throw new TypeError(`the scope '${entry.scope}' is given twice`);
+    byScope.set(entry.scope, entry.queue);
+  }
+  const route = (input: Scoped | undefined): JobQueue => {
+    const scope = input?.scope;
+    if (scope === undefined) {
+      if (entries.length === 1) return entries[0].queue;
+      throw coded(JOB_CODES.scope, `this desktop shows ${entries.length} scopes: say which (${entries.map(e => e.scope).join(', ')})`);
+    }
+    const queue = byScope.get(scope);
+    if (!queue) throw coded(JOB_CODES.scope, `this desktop shows no scope '${scope}'`);
+    return queue;
+  };
+  // a refusal is a rejected promise, as every queue's is
+  const via = <K extends keyof JobQueue>(name: K) => async (input?: any) => (route(input)[name] as any)(input);
+  return {
+    counts: via('counts'), page: via('page'), get: via('get'), schedules: via('schedules'),
+    cancel: via('cancel'), requeue: via('requeue'), unschedule: via('unschedule'),
+    events: via('events'), health: via('health'), registry: via('registry'), run: via('run'),
+    scopes: () => entries.map(({ scope, title }) => ({ scope, title: { ...title } })),
+  };
+}

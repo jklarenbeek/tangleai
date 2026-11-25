@@ -5,13 +5,14 @@
  * (`@tangleai/os/jobs`), told apart by the call's `scope`:
  *
  *   - `ops` — the runtime this app supervises in a worker thread, when a host
- *     module names its jobs (`--ops <module>`); its steering reaches the
- *     worker, where the leases live, so a running job can be cancelled;
+ *     module names its jobs (`--ops <module>`); with several host modules
+ *     (`--ops a.ts,b.ts`) each runtime is the scope its module names. Steering
+ *     reaches the worker, where the leases live, so a running job can be cancelled;
  *   - `desktop` — the desktop store's own queue (its pipeline's jobs), read
  *     here; this process runs no worker for it, so a running job there is
  *     refused as held, never stolen.
  *
- * A call without a scope reads the runtime when there is one, else the
+ * A call without a scope reads the (first) runtime when there is one, else the
  * desktop store.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -45,9 +46,13 @@ export function scopedJobQueue(queues: Record<string, JobQueue>, fallback: strin
  * The job queue as a node:http handler for {@link JOB_QUEUE_PATH} and below: the desktop store's queue, and the
  * supervised runtime's (`runtime`) when there is one.
  */
-export function desktopJobRoute(db: TangleDb, options: { origins?: readonly string[], runtime?: JobQueue } = {}) {
-  const queues: Record<string, JobQueue> = { desktop: jobQueueProvider(db as any), ...(options.runtime ? { ops: options.runtime } : {}) };
-  const dispatcher = serveHttp(compileContract(JOB_QUEUE_CONTRACT as any), jobQueueHandlers(scopedJobQueue(queues, options.runtime ? 'ops' : 'desktop')) as any, { validateOutput: 'always' });
+export function desktopJobRoute(db: TangleDb, options: { origins?: readonly string[], runtime?: JobQueue, runtimes?: Record<string, JobQueue> } = {}) {
+  // `runtime` is one runtime under the scope `ops`; `runtimes` several, each under its own scope (the first answers a call without one)
+  const runtimes: Record<string, JobQueue> = { ...(options.runtime ? { ops: options.runtime } : {}), ...(options.runtimes ?? {}) };
+  if ('desktop' in runtimes) throw new TypeError("the scope 'desktop' is the desktop store's own");
+  const queues: Record<string, JobQueue> = { desktop: jobQueueProvider(db as any), ...runtimes };
+  const fallback = Object.keys(runtimes)[0] ?? 'desktop';
+  const dispatcher = serveHttp(compileContract(JOB_QUEUE_CONTRACT as any), jobQueueHandlers(scopedJobQueue(queues, fallback)) as any, { validateOutput: 'always' });
   const route = admittedRoute(JOB_QUEUE_PATH, toNodeHandler(dispatcher), { origins: options.origins, refusal: 'this origin may not read the job queue' });
   return Object.assign((req: IncomingMessage, res: ServerResponse) => route(req, res), { close: () => dispatcher.close() });
 }

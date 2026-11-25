@@ -68,6 +68,35 @@ the same store with 0 claim errors; 13 single-send pushes were called 13 times (
 jobs carry `not-repeated`. Starting over a history of 86,000 events takes about 250 ms (start-up reconciles only the
 last `keepDays`).
 
+## A product's background work
+
+A product runs its jobs where it runs: in its own server process, on its own store, because it enqueues jobs inside
+its own transactions and fences its pushes with its own effect stores. A suite's server module starts them in its
+`start(context)` and answers its requests with their `handle`:
+
+```js
+import { productJobs } from '@tangleai/ops/product';
+
+async start(context) {
+  const store = await openProductStore(context);   // the product's own store, with OPS_EVENTS_COLLECTIONS and jobSchedules()
+  const jobs = productJobs({ scope: 'my-product', title: { en: 'My product' }, store, registry, handlers });
+  await jobs.start();
+  return {
+    handle: (req, res) => jobs.handle(req, res) || productRoutes(req, res),
+    close: () => jobs.stop(),
+  };
+}
+```
+
+The product's queue answers at `/<scope>/api/job-queue` only, so the host's authorization by path guards each
+product's jobs — reads and steers alike — with that product's rights. The work runs on the product's worker loop, off
+the request path; it shares the product's process, so a native crash of the product takes its jobs with it. A desktop
+shows several products in one Jobs app through `combinedJobQueue` (`@tangleai/os/jobs`), one `httpJobQueue` per
+product's address; every call then names its product's scope.
+
+The Tangle desktop app is its own host: `--ops a.ts,b.ts` runs each host module (`{ registry, handlers?, contracts?,
+scope?, title? }`, top level free of side effects) in its own supervised worker with its own store, each under its scope.
+
 Install with `npm install @tangleai/ops`. The npm distribution provides ESM JavaScript, TypeScript declarations, and the documented package subpaths for Node 24 and Bun 1.4 or newer.
 
 See the [Tangle documentation](https://github.com/jklarenbeek/tangleai#readme) for architecture, examples, and runtime requirements. All public Tangle packages use one coordinated version.

@@ -97,6 +97,10 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'trading-consumer.mjs']);
     await sqliteFixture('bun', ['trading-consumer.mjs']);
     writeFileSync(resolve(directory, 'research-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/research.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
+    // a product's server: its background work on its own store, its queue at its own address (@tangleai/ops/product)
+    cpSync(resolve(root, 'test/release/fixtures/ops-consumer.mjs'), resolve(directory, 'ops-consumer.mjs'));
+    await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'ops-consumer.mjs']);
+    await sqliteFixture('bun', ['ops-consumer.mjs']);
     for (const file of ['research-consumer.mjs', 'research-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'research-consumer.mjs']);
     await sqliteFixture('bun', ['research-consumer.mjs']);
