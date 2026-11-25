@@ -1,5 +1,9 @@
 # @tangleai/os
 
+## 0.69.1
+
+No changes in this release.
+
 ## 0.69.0
 
 ### Minor Changes

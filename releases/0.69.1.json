@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "version": "0.69.1",
+  "baseVersion": "0.69.0",
+  "baseCommit": "3ccfeee9bd971838b37ad5bb799e30214bd49efa",
+  "preparationCommit": "e396468443d60ed2ca6355db069af28c5d189dc8",
+  "initial": false,
+  "inputHash": "7697dd7982858f6cc99576cb9c591357ed4df8b300e02d42e2e8a29d1708f54a",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/ops",
+          "type": "patch"
+        }
+      ],
+      "summary": "The runtime now records an attempt a takeover cut off inside its lease. Before, a crashed attempt was recorded as `lost`, and as `not-repeated` for a single-send job, only when a runtime started after the attempt's lease had run out. A standby that took over within the lease never recorded it at all. The runtime now checks the attempts of the last two hours on every heartbeat, so such an attempt is recorded once its lease runs out. A failed check is counted as `reconcileErrors` in `health()` instead of being dropped silently. Settled jobs and their history are now swept after `keepDays` (30 by default) with Jaren's own `sweep`; before, nothing removed settled jobs.",
+      "id": "ops-takeover-lost"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.69.1"
+    },
+    {
+      "name": "@tangleai/ops",
+      "version": "0.69.1"
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.69.1
+
+The runtime now records an attempt a takeover cut off inside its lease. Before, a crashed attempt was recorded as `lost`, and as `not-repeated` for a single-send job, only when a runtime started after the attempt's lease had run out. A standby that took over within the lease never recorded it at all. The runtime now checks the attempts of the last two hours on every heartbeat, so such an attempt is recorded once its lease runs out. A failed check is counted as `reconcileErrors` in `health()` instead of being dropped silently. Settled jobs and their history are now swept after `keepDays` (30 by default) with Jaren's own `sweep`; before, nothing removed settled jobs.
+
 ## 0.69.0
 
 Jobs shows what a host's operations runtime did. A schedule the host's registry set shows the registered job's title in the person's language and a Run now button instead of Remove: the registry owns that schedule. A job that must never run twice is first asked once in place ("This sends once; it is not repeated."), and a run refused because one already waits or runs is said with its code. A job's detail lists its attempts, oldest first, each with when it started, how it ended, how long it took and the first line of its error. An attempt a crash cut off is said to be lost and not repeated, and one a daily budget refused is said plainly. While the runtime reports, a quiet line says when it was last seen; when it has been silent for more than 90 seconds, a warning says for how long. A host without these operations answers nothing for them, and Jobs then shows none of it. Every sentence is in all twelve languages.
