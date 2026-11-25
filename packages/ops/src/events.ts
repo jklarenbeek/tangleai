@@ -62,9 +62,9 @@ export function opsEvents(store: { collection(name: string): Collection }) {
     async startedOn(kind: string, day: string): Promise<number> {
       return rows(await c().execute(where({ $eq: ['$it.kind', kind] }, { $eq: ['$it.event', 'started'] }, { $eq: ['$it.day', day] }))).length;
     },
-    /** `started` events with no outcome after them (crashed attempts the queue settled without telling anyone). */
-    async orphans(): Promise<OpsEvent[]> {
-      const all: OpsEvent[] = rows(await c().execute(where({ $ne: ['$it.event', 'heartbeat'] })));
+    /** `started` events with no outcome after them (crashed attempts the queue settled without telling anyone), from `since` when given. */
+    async orphans(since?: number): Promise<OpsEvent[]> {
+      const all: OpsEvent[] = rows(await c().execute(since === undefined ? where({ $ne: ['$it.event', 'heartbeat'] }) : where({ $ne: ['$it.event', 'heartbeat'] }, { $ge: ['$it.at', since] })));
       const settled = new Set(all.filter(r => r.event !== 'started').map(r => `${r.jobId}#${r.attempt}`));
       return all.filter(r => r.event === 'started' && !settled.has(`${r.jobId}#${r.attempt}`));
     },

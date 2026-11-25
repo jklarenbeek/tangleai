@@ -22,8 +22,9 @@ const provider = jobQueueProvider(store, { leases: ops.leases });
   no catch-up: a schedule fires a small job that enqueues the real one by id, so Jaren itself dead-letters an attempt a
   crash cut off, the history records `not-repeated`, and the person's requeue gives exactly one more attempt.
 - **History:** `started` is committed before the operation is called (so "never sent" and "maybe sent" stay apart),
-  each outcome after it with its duration; an attempt whose process died is recorded as `lost` at the next start. No
-  event carries a payload or a result.
+  each outcome after it with its duration; an attempt whose process died is recorded as `lost` (and `not-repeated` for a
+  single-send job) at the next start, or within one heartbeat once its lease runs out when another runtime took over
+  inside the lease. Settled jobs and their history are swept after `keepDays` (30). No event carries a payload or a result.
 - **Budgets:** a job with `budget.runsPerDay` stops calling once the day's runs are spent.
 - **Heartbeat:** the runtime writes one row with its stats every 30 s; a watcher outside it judges it.
 

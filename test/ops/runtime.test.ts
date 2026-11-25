@@ -98,6 +98,49 @@ describe('the operations runtime', () => {
     await store.close();
   });
 
+  it('records an attempt a takeover cut off inside its lease as lost once the lease runs out, without another restart', async () => {
+    const clock = { t: Date.parse('2027-03-01T08:00:00Z') };
+    const store = await open('takeover', clock);
+    let calls = 0;
+    const contract: OpsContract = { invoke: async () => { calls++; await new Promise(() => {}); return { ok: true, value: {} }; } };
+    const PUSH = { kind: 'sales.push', title: { en: 'Send the sales' }, handler: { contract: 'stock', operation: 'sales.post' }, safety: 'single-send' as const, limits: { leaseMs: 30_000 } };
+    const first = createOpsRuntime({ store, registry: registry([PUSH]), contracts: { stock: contract }, now: () => clock.t, worker: { pollInterval: 1, leaseMs: 30_000 } });
+    await first.start();
+    const { id } = await first.runNow('sales.push');
+    await until(() => calls === 1);
+    await first.stop({ graceMs: 10 });
+    clock.t += 200;   // the standby takes over inside the lease: nothing is lost yet
+    const second = createOpsRuntime({ store, registry: registry([PUSH]), contracts: { stock: contract }, now: () => clock.t, heartbeatMs: 20, worker: { pollInterval: 1, leaseMs: 30_000 } });
+    await second.start();
+    assert.deepEqual((await opsEvents(store).ofJob(id)).map(e => e.event), ['started']);
+    clock.t += 31_000;   // the lease runs out while the second runtime keeps running
+    await until(async () => (await opsEvents(store).ofJob(id)).some(e => e.event === 'not-repeated'));
+    assert.deepEqual((await opsEvents(store).ofJob(id)).map(e => e.event), ['started', 'lost', 'not-repeated']);
+    assert.equal(calls, 1);
+    await second.stop({ graceMs: 10 });
+    await store.close();
+  });
+
+  it('sweeps settled jobs and their history past the retention period', async () => {
+    const clock = { t: Date.parse('2027-03-01T08:00:00Z') };
+    const store = await open('retain', clock);
+    const JOB = { kind: 'note.send', title: { en: 'Send a note' }, handler: { code: 'note' }, safety: 'safe-read' as const };
+    const options = { store, registry: registry([JOB]), handlers: { note: async () => {} }, now: () => clock.t, keepDays: 30, worker: { pollInterval: 1 } };
+    let rt = createOpsRuntime(options);
+    await rt.start();
+    const { id } = await rt.runNow('note.send');
+    await idle(store);
+    await rt.stop();
+    assert.equal((await store.jobs.get(id))?.state, 'done');
+    clock.t += 31 * 86_400_000;
+    rt = createOpsRuntime(options);
+    await rt.start();
+    await rt.stop();
+    assert.equal(await store.jobs.get(id), undefined, 'the settled job is swept');
+    assert.deepEqual(await opsEvents(store).ofJob(id), [], 'and its history pruned');
+    await store.close();
+  });
+
   it('refuses to run a kind now while one waits, and spends no more than its budget', async () => {
     const clock = { t: Date.parse('2027-03-01T08:00:00Z') };
     const store = await open('budget', clock);

@@ -77,6 +77,7 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
   const zoneOf = (job: RegistryJob) => job.schedule?.utc ? undefined : job.schedule?.zone ?? registry.zone;
   const pending = new Set<Promise<unknown>>();
   const startedAt = new Map<string, number>();
+  let reconcileErrors = 0;
   let worker: any = null, beat: ReturnType<typeof setInterval> | null = null, prune: ReturnType<typeof setInterval> | null = null, running = false;
 
   const record = (event: OpsEvent) => {
@@ -111,8 +112,11 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
     for (const gone of mine.keys()) await jobs.unschedule(gone);
   }
 
-  async function reconcile() {
-    for (const orphan of await events.orphans()) {
+  /** Record each attempt whose process died as `lost` (and `not-repeated` for a single-send job) once its lease is gone.
+   * At start every attempt in the history is checked; on every heartbeat, those of the last two hours, so an attempt
+   * cut off by a takeover inside its lease is recorded once the lease runs out, without another restart. */
+  async function reconcile(since?: number) {
+    for (const orphan of await events.orphans(since)) {
       if (!orphan.jobId || orphan.attempt === undefined) continue;
       const job = await jobs.get(orphan.jobId);
       if (job?.state === 'leased' && (job.leaseUntil ?? 0) > now()) continue;   // still running elsewhere
@@ -120,6 +124,14 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
       if (orphan.kind && byKind.get(orphan.kind)?.safety === 'single-send')
         await record({ id: eventId(orphan.jobId, orphan.attempt, 'not-repeated'), at: now(), event: 'not-repeated', kind: orphan.kind, jobId: orphan.jobId, attempt: orphan.attempt });
     }
+  }
+
+  /** Retention: history and settled jobs older than `keepDays` go (Jaren's own sweep for the jobs). */
+  async function retain() {
+    const before = now() - (options.keepDays ?? 30) * 86_400_000;
+    await events.prune(before);
+    try { for (let more = true; more;) { const { removed } = await jobs.sweep({ settledBefore: before, limit: 500 }); more = removed === 500; } }
+    catch { /* a store whose jobs cannot be swept keeps them; the history is still bounded */ }
   }
 
   const heartbeat = () => record({ id: `heartbeat:${id}`, at: now(), event: 'heartbeat', runtime: id, stats: worker?.stats() ?? {} });
@@ -153,7 +165,7 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
       if (running) return;
       await syncSchedules();
       await reconcile();
-      await events.prune(now() - (options.keepDays ?? 30) * 86_400_000);
+      await retain();
       const handlers: Record<string, OpsHandler> = {
         [FIRE_KIND]: async (payload: any, { job }) => {
           const target = byKind.get(payload?.kind);
@@ -184,8 +196,8 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
       worker.start();
       running = true;
       await heartbeat();
-      beat = setInterval(() => { void heartbeat(); }, options.heartbeatMs ?? 30_000);
-      prune = setInterval(() => { void events.prune(now() - (options.keepDays ?? 30) * 86_400_000); }, 86_400_000);
+      beat = setInterval(() => { void heartbeat(); void reconcile(now() - 2 * 3_600_000).catch(() => { reconcileErrors++; }); }, options.heartbeatMs ?? 30_000);
+      prune = setInterval(() => { void retain(); }, 86_400_000);
       (beat as any).unref?.(); (prune as any).unref?.();
     },
     async stop({ graceMs = 5_000 } = {}) {
@@ -205,7 +217,7 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
       await jobs.enqueue(kind, job.payload ?? {}, { id: jobId, maxAttempts: maxAttemptsOf(job) });
       return { id: jobId };
     },
-    health: () => ({ runtime: id, at: now(), running, stats: worker?.stats() ?? null }),
+    health: () => ({ runtime: id, at: now(), running, stats: worker ? { ...worker.stats(), reconcileErrors } : null }),
     leases: () => worker?.leases() ?? [],
   };
   return runtime;
