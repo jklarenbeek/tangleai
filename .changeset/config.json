@@ -29,7 +29,8 @@
       "@tangleai/trading",
       "@tangleai/research",
       "@tangleai/experiential",
-      "@tangleai/store"
+      "@tangleai/store",
+      "@tangleai/ops"
     ]
   ],
   "linked": [],

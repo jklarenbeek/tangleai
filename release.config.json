@@ -32,7 +32,8 @@
     "packages/trading",
     "packages/research",
     "packages/experiential",
-    "packages/store"
+    "packages/store",
+    "packages/ops"
   ],
   "privateWorkspaces": [
     "apps/desktop",

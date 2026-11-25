@@ -344,6 +344,25 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   their pinned screens finding no literal outside a catalogue, and a render in
   each language finding no English beyond named owners.
 
+- [ ] **An operations desktop for background work.** A business depends on
+  work that runs unattended — syncs, imports, pushes to other systems,
+  sweeps — and today that work is invisible until someone notices it did not
+  happen. *Wanted:* every job and recurring schedule a host registers with
+  Jaren's durable queue running in a background process (in a browser, a
+  worker owning the page's own store), shown on the desktop — a Jobs app, the
+  upcoming runs in the Calendar, the assistant reading both and proposing
+  changes through the inbox — and a failure reaching the person who owns it at
+  a time they work. *Constraint:* Jaren owns the queue and the schedules;
+  Tangle keeps no queue of its own; a job's payload never reaches the desktop
+  unasked; a scheduled operation declares whether it is safe to repeat, and one
+  that is not is never retried; the runtime side is built to move into the
+  shared product suite. *Stands on:* `@jarenjs/db` jobs and
+  `@jarenjs/db/schedules`, the `job_queue` contract (`@tangleai/os/jobs`) and
+  its provider over a store (`@tangleai/ops`). *Closes on:* a host's jobs
+  running in a background process and visible in the Jobs app and the
+  Calendar; a dead job reaching its owner's inbox within one tick; a browser
+  twin replaying a simulated week with no doubled or lost fire.
+
 - [ ] **A host's own database and formula authoring.** *Wanted:* the MAS store and the run log running on a
   host-supplied `@jarenjs/db` Store and inside a host transaction, over a
   published model fragment of Tangle's collections, with the run log in an

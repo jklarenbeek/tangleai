@@ -1,0 +1,43 @@
+{
+  "name": "@tangleai/ops",
+  "version": "0.65.4",
+  "description": "Tangle AI operations — a Jaren store's job queue and schedules served to the desktop through the job_queue contract.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./provider": "./src/provider.ts",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@tangleai/os": "0.65.4"
+  },
+  "private": false,
+  "types": "./src/index.ts",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "schemas/**/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "packages/ops"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
+  }
+}

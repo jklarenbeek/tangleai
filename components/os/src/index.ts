@@ -41,3 +41,5 @@ export type { MenuDocument, MenuItem, MenuPoint } from './menu.ts';
 export { WEB_READER_CONTRACT, WEB_PAGE_SCHEMA, WEB_CODES, unconfiguredWebReader } from './web.ts';
 export type { WebReader, WebPage, WebBlock, WebLink, WebResult } from './web.ts';
 export { httpWebReader } from './web-client.ts';
+export { JOB_QUEUE_CONTRACT, JOB_ITEM_SCHEMA, JOB_CODES, unconfiguredJobQueue, httpJobQueue } from './jobs.ts';
+export type { JobQueue, JobItem, JobCounts, JobSchedule, JobState } from './jobs.ts';
