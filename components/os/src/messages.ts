@@ -179,6 +179,22 @@ export const osMessagesEn = {
   'jobs/every-weeks': 'Every {interval} on {days} at {times}', // Jobs: a rule every few weeks
   'jobs/monthly': 'Monthly on day {days} at {times}', // Jobs: a monthly rule; {days} lists days of the month
   'jobs/rule': 'Rule: {rule}', // Jobs: a rule the desktop shows as its RRULE text
+  'jobs/run-now': 'Run now', // Jobs: button that runs a registered job at once
+  'jobs/run-single-confirm': 'This sends once; it is not repeated. Run {title} now?', // Jobs: the in-place question before running a job that must never run twice; {title} is the job
+  'jobs/run-ok': '{title} will run now.', // Jobs status: a registered job was queued to run at once
+  'jobs/run-busy': 'A run of {title} is already waiting or under way.', // Jobs status: Run now refused because one waits or runs
+  'jobs/attempts-title': 'Attempts', // Jobs: heading of a job's attempt history
+  'jobs/attempt-n': 'Attempt {n}', // Jobs: one attempt in the history; {n} counts from 1
+  'jobs/outcome-started': 'Under way', // Jobs: an attempt that has started and not finished
+  'jobs/outcome-completed': 'Completed', // Jobs: an attempt that finished
+  'jobs/outcome-failed': 'Failed', // Jobs: an attempt that failed
+  'jobs/outcome-lost': 'Lost: the process running it stopped', // Jobs: an attempt cut off by a crash or restart
+  'jobs/outcome-cancelled': 'Cancelled', // Jobs: an attempt that was cancelled
+  'jobs/took': 'took {duration}', // Jobs: how long an attempt took; {duration} is a formatted duration
+  'jobs/not-repeated': 'Not repeated: it may already have been sent; run it again only if it did not arrive.', // Jobs: a job that must never run twice was cut off and is not retried
+  'jobs/budget-spent': 'Not run: the day\'s budget for this job is spent.', // Jobs: an attempt refused because its daily budget is used up
+  'jobs/runtime-seen': 'Background runtime seen {when}', // Jobs: when the host's background runtime last reported; {when} is relative
+  'jobs/runtime-stale': 'The background runtime has not reported for {duration}.', // Jobs warning: the host's background runtime stopped reporting; {duration} is formatted
   'state/unavailable': 'Your desktop could not be loaded, so changes are off until it is.',
   'state/failed': 'A change was not saved: {detail}.',
   'tray/theme-light': 'Switch to the light theme',

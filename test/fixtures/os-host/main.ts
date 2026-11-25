@@ -27,9 +27,11 @@
  *   ?web=1       the desktop's Web with a scripted reader: two pages that link each other, a
  *                search that finds both, a refused and an unreadable address; ?web=none has no
  *                web access configured (OS0180)
- *   ?jobs=1      the desktop's Jobs over a scripted host queue: two schedules (every 15 minutes,
- *                and daily at 03:00 Amsterdam time), jobs in every state with a dead one's error,
- *                one job held by another process (OS0193); ?jobs=none has no job host (OS0190)
+ *   ?jobs=1      the desktop's Jobs over a scripted host queue: three schedules (every 15 minutes;
+ *                daily at 03:00 Amsterdam time and Mondays at 06:00, both set by the host's
+ *                registry, the second single-send), jobs in every state with a dead one's error,
+ *                one job held by another process (OS0193), recorded attempts and a runtime
+ *                heartbeat (&stale=1 makes it five minutes old); ?jobs=none has no job host (OS0190)
  * Everything the browser test needs is on `window.harness`.
  */
 import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract } from '../../../components/os/src/index.ts';
@@ -37,7 +39,7 @@ import { filesModule } from '../../../components/os/src/files-app.ts';
 import { webModule } from '../../../components/os/src/web-app.ts';
 import { WEB_CODES, unconfiguredWebReader, type WebPage, type WebReader } from '../../../components/os/src/web.ts';
 import { jobsModule } from '../../../components/os/src/jobs-app.ts';
-import { JOB_CODES, unconfiguredJobQueue, type JobItem, type JobQueue, type JobSchedule, type JobState } from '../../../components/os/src/jobs.ts';
+import { JOB_CODES, unconfiguredJobQueue, type JobEvent, type JobItem, type JobQueue, type JobSchedule, type JobState, type RegisteredJob } from '../../../components/os/src/jobs.ts';
 import { compileRecurrence, floatingValue, utcValue } from '@jarenjs/core/calendar';
 import { createIntlZoneProvider } from '@jarenjs/locales/intl-zones';
 import { conformLocation } from '../file-location-conformance.ts';
@@ -217,9 +219,29 @@ if (jobsMode) {
   const schedules: JobSchedule[] = [
     { id: 'stock', kind: 'stock.sync', series: compileRecurrence({ dtstart: utcValue('2026-01-01T00:00:00Z'), rrule: 'FREQ=MINUTELY;INTERVAL=15' }) as any, zone: null, policy: 'rfc5545', missed: 'skip', latenessMs: null,
       state: 'active', nextRunAt: null, nextRecurrenceId: null, lastRunAt: t0 - 300_000, lastRecurrenceId: null, counts: { fired: 412, skipped: 0 }, stall: null, createdAt: t0 - 86_400_000, updatedAt: t0 - 300_000 },
-    { id: 'full', kind: 'stock.full', series: compileRecurrence({ dtstart: floatingValue('2026-01-01', '03:00'), rrule: 'FREQ=DAILY' }) as any, zone: 'Europe/Amsterdam', policy: 'rfc5545', missed: 'skip', latenessMs: null,
+    { id: 'ops:fixture:stock.full', kind: 'ops.fire', series: compileRecurrence({ dtstart: floatingValue('2026-01-01', '03:00'), rrule: 'FREQ=DAILY' }) as any, zone: 'Europe/Amsterdam', policy: 'rfc5545', missed: 'skip', latenessMs: null,
       state: 'active', nextRunAt: null, nextRecurrenceId: null, lastRunAt: t0 - 32_400_000, lastRecurrenceId: null, counts: { fired: 30, skipped: 1, uncounted: 2 }, stall: null, createdAt: t0 - 86_400_000 * 30, updatedAt: t0 - 32_400_000 },
+    { id: 'ops:fixture:orders.push', kind: 'ops.fire', series: compileRecurrence({ dtstart: floatingValue('2026-01-05', '06:00'), rrule: 'FREQ=WEEKLY;BYDAY=MO' }) as any, zone: 'Europe/Amsterdam', policy: 'rfc5545', missed: 'skip', latenessMs: null,
+      state: 'active', nextRunAt: null, nextRecurrenceId: null, lastRunAt: t0 - 86_400_000 * 2, lastRecurrenceId: null, counts: { fired: 12, skipped: 0 }, stall: null, createdAt: t0 - 86_400_000 * 90, updatedAt: t0 - 86_400_000 * 2 },
   ];
+  // the host's registry: the two schedules it set, one of them a job that must never run twice
+  const registry: RegisteredJob[] = [
+    { kind: 'stock.full', title: { en: 'Read all stock', nl: 'Alle voorraad lezen' }, safety: 'safe-read', scheduled: true, schedule: 'ops:fixture:stock.full' },
+    { kind: 'orders.push', title: { en: 'Send the orders', nl: 'De orders verzenden' }, safety: 'single-send', scheduled: true, schedule: 'ops:fixture:orders.push' },
+  ];
+  // what the runtime recorded: two failed attempts, a completed one, and an attempt a crash cut off and that is not repeated
+  const events: JobEvent[] = [
+    { id: 'push-0001#1:started', at: t0 - 1_800_000, event: 'started', kind: 'orders.push', jobId: 'push-0001', attempt: 1 },
+    { id: 'push-0001#1:failed', at: t0 - 1_799_000, event: 'failed', kind: 'orders.push', jobId: 'push-0001', attempt: 1, durationMs: 1012, code: 'HTTP503', message: 'the warehouse answered 503\nretry later' },
+    { id: 'push-0001#2:started', at: t0 - 120_000, event: 'started', kind: 'orders.push', jobId: 'push-0001', attempt: 2 },
+    { id: 'push-0001#2:failed', at: t0 - 119_500, event: 'failed', kind: 'orders.push', jobId: 'push-0001', attempt: 2, durationMs: 480, code: 'HTTP503', message: 'the warehouse answered 503' },
+    { id: 'done-0#1:started', at: t0 - 900_000, event: 'started', kind: 'stock.sync', jobId: 'done-0', attempt: 1 },
+    { id: 'done-0#1:completed', at: t0 - 898_166, event: 'completed', kind: 'stock.sync', jobId: 'done-0', attempt: 1, durationMs: 1834 },
+    { id: 'mail-0002#5:started', at: t0 - 900_000, event: 'started', kind: 'mail.send', jobId: 'mail-0002', attempt: 5 },
+    { id: 'mail-0002#5:lost', at: t0 - 600_000, event: 'lost', kind: 'mail.send', jobId: 'mail-0002', attempt: 5, message: 'the process running this attempt stopped' },
+    { id: 'mail-0002#5:not-repeated', at: t0 - 600_000, event: 'not-repeated', kind: 'mail.send', jobId: 'mail-0002', attempt: 5 },
+  ];
+  const stale = query.get('stale') === '1';
   const find = (id: string) => { const found = jobs.find(j => j.id === id); if (!found) throw coded(JOB_CODES.unknown, `there is no job ${id}`); return found; };
   const scripted: JobQueue = {
     counts: async () => {
@@ -257,7 +279,21 @@ if (jobsMode) {
       jobCalls.push({ unschedule: id });
       const at = schedules.findIndex(s => s.id === id);
       if (at < 0) throw coded(JOB_CODES.unknown, `there is no schedule ${id}`);
+      if (id.startsWith('ops:')) throw coded(JOB_CODES.refused, 'set by the host\'s registry');
       schedules.splice(at, 1); return { changed: true };
+    },
+    events: async (input = {}) => {
+      jobCalls.push({ events: input });
+      return { events: events.filter(e => (!input.jobId || e.jobId === input.jobId) && (!input.kind || e.kind === input.kind)) };
+    },
+    health: async () => { jobCalls.push({ health: true }); const at = Date.now(); return { now: at, runtimes: [{ runtime: 'fixture@host', at: stale ? at - 300_000 : at - 20_000, stats: { claims: 12, ticks: 340 } }] }; },
+    registry: async () => { jobCalls.push({ registry: true }); return { jobs: registry }; },
+    run: async ({ kind }) => {
+      jobCalls.push({ run: kind });
+      if (!registry.some(r => r.kind === kind)) throw coded(JOB_CODES.unknown, `the registry has no job '${kind}'`);
+      if (jobs.some(j => j.kind === kind && (j.state === 'pending' || j.state === 'leased'))) throw coded(JOB_CODES.refused, `a '${kind}' job is already waiting`);
+      const id = `run:fixture:${kind}@now-${new Date().toISOString()}`;
+      jobs.push(job(id, kind, 'pending', { runAt: Date.now() })); return { id };
     },
   };
   const jobsApp = jobsModule({ queue: jobsMode === 'none' ? unconfiguredJobQueue() : scripted, zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }),

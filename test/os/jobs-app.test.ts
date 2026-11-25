@@ -13,7 +13,7 @@ import { compileRecurrence, floatingValue, utcValue } from '@jarenjs/core/calend
 import { createIntlZoneProvider } from '@jarenjs/locales/intl-zones';
 import { validateManifest, createOsMessages } from '@tangleai/os';
 import { nl } from '@tangleai/os/messages/nl';
-import { describeRule, nextRuns, jobsModule, STATE_ORDER } from '@tangleai/os/jobs-app';
+import { describeRule, nextRuns, jobsModule, STATE_ORDER, attemptRows, runtimeAge, STALE_AFTER_MS } from '@tangleai/os/jobs-app';
 import { unconfiguredJobQueue } from '@tangleai/os/jobs';
 
 const en = createOsMessages();
@@ -94,3 +94,31 @@ describe('the Jobs application', () => {
     assert.equal(manifest.icon?.glyph, 'jobs');
   });
 });
+
+describe('what the runtime recorded', () => {
+  it('tells a job\'s attempts oldest first, each with its start and outcome, and whether it was not repeated or refused by a budget', () => {
+    const rows = attemptRows([
+      { id: 'j#2:failed', at: 50, event: 'failed', jobId: 'j', attempt: 2, durationMs: 480 },
+      { id: 'j#1:started', at: 10, event: 'started', jobId: 'j', attempt: 1 },
+      { id: 'j#1:lost', at: 20, event: 'lost', jobId: 'j', attempt: 1 },
+      { id: 'j#1:not-repeated', at: 20, event: 'not-repeated', jobId: 'j', attempt: 1 },
+      { id: 'j#2:started', at: 40, event: 'started', jobId: 'j', attempt: 2 },
+      { id: 'j#3:budget', at: 60, event: 'budget', jobId: 'j', attempt: 3 },
+    ]);
+    assert.deepEqual(rows.map(r => [r.attempt, r.started?.at ?? null, r.outcome?.event ?? null, r.notRepeated, r.budget]),
+      [[1, 10, 'lost', true, false], [2, 40, 'failed', false, false], [3, null, null, false, true]]);
+  });
+
+  it('knows how long ago the runtime reported, by the host\'s clock, and nothing when no runtime reports', () => {
+    assert.equal(runtimeAge(null), null);
+    assert.equal(runtimeAge({ now: 1_000_000, runtimes: [] }), null);
+    assert.equal(runtimeAge({ now: 1_000_000, runtimes: [{ runtime: 'a', at: 900_000, stats: {} }, { runtime: 'b', at: 990_000, stats: {} }] }), 10_000);
+    assert.equal(STALE_AFTER_MS, 90_000);
+  });
+
+  it('says a lost attempt that is not repeated and a refused budget plainly, in every language', () => {
+    assert.equal(en('jobs/not-repeated'), 'Not repeated: it may already have been sent; run it again only if it did not arrive.');
+    assert.equal(dutch('jobs/run-single-confirm', { title: 'De orders verzenden' }), 'Dit wordt één keer verzonden en niet herhaald. De orders verzenden nu uitvoeren?');
+  });
+});
+

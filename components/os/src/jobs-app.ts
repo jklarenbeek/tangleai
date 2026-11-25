@@ -11,10 +11,15 @@
  * moved and a wall time the autumn change repeats are marked. A floating rule
  * needs the host's zone data (`zoneProvider`); without it the rule is still
  * said, and the runs are not guessed.
+ *
+ * Where the host runs Tangle's operations runtime, Jobs shows more: a
+ * registered job by its title with Run now (asked once in place when it must
+ * never run twice), each job's attempts, and whether the runtime still
+ * reports. A host without them answers nothing for these, and Jobs shows none.
  */
 import { classifyLocal, floatingValue, formatRRule, nextOccurrences, resolveLocal, utcValue } from '@jarenjs/core/calendar';
 import { createOsMessages, type OsCatalogue, type OsMessageKey } from './messages.ts';
-import { JOB_CODES, type JobCounts, type JobItem, type JobQueue, type JobSchedule, type JobState } from './jobs.ts';
+import { JOB_CODES, type JobCounts, type JobEvent, type JobItem, type JobQueue, type JobRuntimeHealth, type JobSchedule, type JobState, type RegisteredJob } from './jobs.ts';
 import type { ModuleManifest } from './manifest.ts';
 import type { ShippedContext, ShippedMount } from './shell.ts';
 
@@ -150,6 +155,33 @@ export function nextRuns(series: Series, zone: string | null, n: number, from: n
   } catch { return null; }
 }
 
+/** How long the runtime may be silent before Jobs warns: three missed 30-second heartbeats. */
+export const STALE_AFTER_MS = 90_000;
+
+/** One attempt of a job as the history tells it: its start, its outcome, and whether it was not repeated or refused by a budget. */
+export type AttemptRow = { attempt: number, started?: JobEvent, outcome?: JobEvent, notRepeated: boolean, budget: boolean };
+
+/** A job's events as its attempts, oldest first. */
+export function attemptRows(events: readonly JobEvent[]): AttemptRow[] {
+  const rows = new Map<number, AttemptRow>();
+  for (const e of [...events].sort((a, b) => a.at - b.at)) {
+    const n = e.attempt ?? 0;
+    const row = rows.get(n) ?? { attempt: n, notRepeated: false, budget: false };
+    if (e.event === 'started') row.started = e;
+    else if (e.event === 'not-repeated') row.notRepeated = true;
+    else if (e.event === 'budget') row.budget = true;
+    else row.outcome = e;
+    rows.set(n, row);
+  }
+  return [...rows.values()].sort((a, b) => a.attempt - b.attempt);
+}
+
+/** How long ago the freshest runtime reported, by the host's clock; `null` when no runtime reports. */
+export function runtimeAge(health: { now: number, runtimes: readonly JobRuntimeHealth[] } | null): number | null {
+  if (!health?.runtimes.length) return null;
+  return Math.max(0, health.now - Math.max(...health.runtimes.map(r => r.at)));
+}
+
 /** The Jobs module: its manifest and its mount. */
 export function jobsModule(options: JobsOptions): { manifest: ModuleManifest, mount: ShippedMount } {
   const id = options.id ?? 'jobs';
@@ -180,12 +212,17 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
   states.setAttribute('role', 'group'); states.setAttribute('aria-label', t('jobs/states'));
   const status = el('p', 'tos-jobs-status'); status.setAttribute('role', 'status');
   const view = el('div', 'tos-jobs-view');
-  root.append(states, status, view);
+  const pulse = el('p', 'tos-jobs-pulse');
+  root.append(states, pulse, status, view);
   node.append(root);
 
   let current: View = 'schedules', counts: JobCounts | null = null, schedules: JobSchedule[] = [];
   let filter: JobState | null = null, items: JobItem[] = [], next: string | undefined, selected: string | null = null;
   let ticket = 0, unconfigured = false, closed = false;
+  let registry: RegisteredJob[] = [], health: { now: number, runtimes: JobRuntimeHealth[] } | null = null;
+  const attempts = new Map<string, JobEvent[] | null>();
+  /** An optional operation (an older host has none, or refuses it): its answer, or `fallback`. */
+  const optional = async <T>(call: (() => Promise<T>) | undefined, fallback: T): Promise<T> => { if (!call) return fallback; try { return await call(); } catch { return fallback; } };
 
   const say = (text: string, tone: '' | 'ok' | 'fail' = '', code = '') => { status.textContent = text; status.dataset.tone = tone; if (code) status.dataset.code = code; else delete status.dataset.code; };
   const stateName = (state: JobState) => state === 'pending' ? t('jobs/state-pending') : state === 'leased' ? t('jobs/state-leased') : state === 'done' ? t('jobs/state-done')
@@ -206,6 +243,20 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
   };
   const when = (at: number, zone?: string | null) => `${relative(at)} · ${absolute(at, zone)}`;
   const time = (at: number, zone?: string | null) => { const e = el('time', '', when(at, zone)); e.dateTime = new Date(at).toISOString(); return e; };
+  const duration = (ms: number) => ms < 1000 ? unit(locale, Math.round(ms), 'millisecond')
+    : ms < 60_000 ? new Intl.NumberFormat(locale, { style: 'unit', unit: 'second', unitDisplay: 'long', maximumFractionDigits: 1 }).format(ms / 1000)
+    : ms < 3_600_000 ? unit(locale, Math.round(ms / 60_000), 'minute') : unit(locale, Math.round(ms / 3_600_000), 'hour');
+  const titleOf = (job: RegisteredJob) => job.title[locale] ?? job.title[locale.split('-')[0]] ?? job.title.en ?? job.kind;
+  const registered = (schedule: JobSchedule) => registry.find(r => r.schedule === schedule.id);
+  /** Whether the host's runtime still reports: quiet when it does, a warning when every runtime has been silent past 90 s. */
+  const drawPulse = () => {
+    pulse.replaceChildren(); delete pulse.dataset.tone;
+    const age = runtimeAge(health);
+    if (age === null) { pulse.hidden = true; return; }
+    pulse.hidden = false;
+    if (age > STALE_AFTER_MS) { pulse.dataset.tone = 'danger'; pulse.textContent = t('jobs/runtime-stale', { duration: duration(age) }); }
+    else pulse.textContent = t('jobs/runtime-seen', { when: relative(now() - age) });
+  };
 
   const header = () => context.setHeader({
     center: { kind: 'tabs', id: 'view', label: t('jobs/views'), selected: current, items: [{ id: 'schedules', label: t('jobs/schedules') }, { id: 'queue', label: t('jobs/queue') }] },
@@ -223,7 +274,7 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
   };
   const showUnconfigured = (code: string) => {
     unconfigured = true; header();
-    states.replaceChildren();
+    states.replaceChildren(); pulse.hidden = true;
     say(t('jobs/unconfigured'), 'fail', code);
     const box = el('div', 'tos-jobs-empty');
     box.append(el('p', '', t('jobs/unconfigured-detail')), button('tos-jobs-configure', t('jobs/configure'), () => (options.configure ?? (() => context.openSettings()))()));
@@ -262,6 +313,17 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
     } catch (error) { refusal(error); }
     await load();
   };
+  const runNow = async (job: RegisteredJob, title: string) => {
+    try {
+      if (!queue.run) throw Object.assign(new Error('this host cannot run a job now'), { code: JOB_CODES.unknown });
+      await queue.run({ kind: job.kind });
+      say(t('jobs/run-ok', { title }), 'ok');
+    } catch (error: any) {
+      if (error?.code === JOB_CODES.refused) say(t('jobs/run-busy', { title }), 'fail', error.code);
+      else refusal(error);
+    }
+    await load();
+  };
 
   const drawSchedules = () => {
     if (!schedules.length) { view.replaceChildren(el('p', 'tos-jobs-none', t('jobs/no-schedules'))); return; }
@@ -271,7 +333,9 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
       const li = el('li', 'tos-jobs-schedule'); li.dataset.id = s.id;
       const top = el('div', 'tos-jobs-schedule-top');
       const badge = el('span', 'tos-jobs-badge', scheduleState(s.state)); badge.dataset.state = s.state;
-      top.append(el('h3', 'tos-jobs-kind', s.kind), badge);
+      const reg = registered(s), title = reg ? titleOf(reg) : s.kind;
+      if (reg) li.dataset.kind = reg.kind;
+      top.append(el('h3', 'tos-jobs-kind', title), badge);
       li.append(top, el('p', 'tos-jobs-rule', describeRule(s.series as Series, s.zone, t, locale)));
       if (s.state === 'stalled') li.append(el('p', 'tos-jobs-note', t('jobs/stalled-detail', { code: String((s.stall as any)?.code ?? (s.stall as any)?.limit ?? '') })));
       if (s.state === 'unresolved') li.append(el('p', 'tos-jobs-note', t('jobs/unresolved-detail')));
@@ -299,7 +363,14 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
       if (typeof s.counts.uncounted === 'number') facts.append(' · ', t('jobs/skipped', { skipped: s.counts.skipped, uncounted: s.counts.uncounted }));
       li.append(facts);
       const actions = el('div', 'tos-jobs-actions');
-      actions.append(button('tos-jobs-plain', t('jobs/remove'), () => confirmIn(actions, t('jobs/remove-confirm', { title: s.kind }), t('jobs/remove'),
+      if (reg) {
+        // a registered job runs now; one that must never run twice is asked once, in place
+        const go = () => runNow(reg, title);
+        actions.append(button('tos-jobs-plain', t('jobs/run-now'), () => reg.safety === 'single-send'
+          ? confirmIn(actions, t('jobs/run-single-confirm', { title }), t('jobs/run-now'), go) : void go()));
+      }
+      // the host's registry owns its schedules: they are not removed from here
+      else actions.append(button('tos-jobs-plain', t('jobs/remove'), () => confirmIn(actions, t('jobs/remove-confirm', { title: s.kind }), t('jobs/remove'),
         () => steer(() => queue.unschedule({ id: s.id }), t('jobs/removed', { title: s.kind })))));
       li.append(actions);
       ul.append(li);
@@ -342,6 +413,7 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
     field(dl, t('jobs/field-created'), time(job.createdAt)); field(dl, t('jobs/field-updated'), time(job.updatedAt));
     if (job.lastError) { const pre = el('pre', 'tos-jobs-error-text', job.lastError.message); field(dl, t('jobs/field-error'), pre); if (job.lastError.code) pre.dataset.code = job.lastError.code; }
     section.append(dl);
+    section.append(history(job));
     const actions = el('div', 'tos-jobs-actions');
     if (job.state === 'pending' || job.state === 'failed' || job.state === 'leased')
       actions.append(button('tos-jobs-plain', t('jobs/cancel'), () => confirmIn(actions, t('jobs/cancel-confirm', { id: job.id }), t('jobs/cancel'), () => steer(() => queue.cancel({ id: job.id }), t('jobs/cancelled-ok', { id: job.id })))));
@@ -351,7 +423,53 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
     return section;
   };
 
-  const render = () => { if (unconfigured || closed) return; drawStates(); if (current === 'schedules') drawSchedules(); else drawQueue(); };
+  /** Read a job's attempts again, keeping what is shown until the answer comes. */
+  const refreshAttempts = (jobId: string) => {
+    if (!queue.events || !attempts.has(jobId)) return;
+    void optional(() => queue.events!({ jobId, limit: 200 }), null as { events: JobEvent[] } | null).then((answer) => {
+      if (closed || !answer) return;
+      attempts.set(jobId, answer.events);
+      if (selected === jobId) render();
+    });
+  };
+  /** A job's attempts as the runtime recorded them, oldest first; nothing when the host keeps none. */
+  const history = (job: JobItem) => {
+    const box = el('div', 'tos-jobs-history');
+    const events = attempts.get(job.id);
+    if (events === undefined) {
+      attempts.set(job.id, null);
+      void optional(queue.events ? () => queue.events!({ jobId: job.id, limit: 200 }) : undefined, { events: [] as JobEvent[] })
+        .then(({ events: found }) => { if (closed) return; attempts.set(job.id, found); if (selected === job.id) render(); });
+      return box;
+    }
+    if (!events?.length) return box;
+    box.append(el('h4', '', t('jobs/attempts-title')));
+    const ol = el('ol', 'tos-jobs-attempt-list');
+    for (const { attempt: n, started, outcome, notRepeated, budget } of attemptRows(events)) {
+      const li = el('li', 'tos-jobs-attempt'); li.dataset.attempt = String(n);
+      const head = el('div', 'tos-jobs-attempt-head');
+      head.append(el('span', 'tos-jobs-attempt-n', t('jobs/attempt-n', { n })));
+      if (started) head.append(time(started.at));
+      if (started || outcome) {
+        const label = !outcome ? t('jobs/outcome-started') : outcome.event === 'completed' ? t('jobs/outcome-completed') : outcome.event === 'failed' ? t('jobs/outcome-failed')
+          : outcome.event === 'lost' ? t('jobs/outcome-lost') : t('jobs/outcome-cancelled');
+        const badge = el('span', 'tos-jobs-outcome', label); badge.dataset.outcome = outcome?.event ?? 'started';
+        head.append(badge);
+        if (outcome?.durationMs !== undefined) head.append(el('span', 'tos-muted', t('jobs/took', { duration: duration(outcome.durationMs) })));
+      }
+      li.append(head);
+      // a lost attempt's label already says why; any other outcome shows the first line of what the host said
+      const reason = outcome?.event === 'lost' ? undefined : outcome?.message?.split('\n')[0];
+      if (reason || (outcome?.code && outcome.event !== 'lost')) { const p = el('p', 'tos-jobs-attempt-error', reason ?? ''); if (outcome?.code) p.dataset.code = outcome.code; li.append(p); }
+      if (notRepeated) { const p = el('p', 'tos-jobs-note', t('jobs/not-repeated')); p.dataset.event = 'not-repeated'; li.append(p); }
+      if (budget) { const p = el('p', 'tos-jobs-note', t('jobs/budget-spent')); p.dataset.event = 'budget'; li.append(p); }
+      ol.append(li);
+    }
+    box.append(ol);
+    return box;
+  };
+
+  const render = () => { if (unconfigured || closed) return; drawStates(); drawPulse(); if (current === 'schedules') drawSchedules(); else drawQueue(); };
 
   async function loadQueue(reset: boolean) {
     const mine = ++ticket;
@@ -367,9 +485,12 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
     const mine = ++ticket;
     if (!counts) say(t('jobs/loading'));
     try {
-      const [c, s] = await Promise.all([queue.counts(), queue.schedules()]);
+      const [c, s, r, h] = await Promise.all([queue.counts(), queue.schedules(),
+        optional(queue.registry ? () => queue.registry!() : undefined, { jobs: [] as RegisteredJob[] }),
+        optional(queue.health ? () => queue.health!() : undefined, null as { now: number, runtimes: JobRuntimeHealth[] } | null)]);
       if (mine !== ticket || closed) return;
-      unconfigured = false; counts = c; schedules = s.schedules;
+      unconfigured = false; counts = c; schedules = s.schedules; registry = r.jobs; health = h;
+      if (selected) refreshAttempts(selected);
       if (filter === null) filter = STATE_ORDER.find(state => (c[state] ?? 0) > 0) ?? 'pending';
       if (status.textContent === t('jobs/loading')) say('');
       header();

@@ -59,7 +59,7 @@ test('Jobs counts the queue with failures first and says each schedule\'s rule a
 
   const schedules = win.getByRole('list', { name: 'Schedules' });
   const stock = schedules.locator('[data-id="stock"]');
-  const full = schedules.locator('[data-id="full"]');
+  const full = schedules.locator('[data-id="ops:fixture:stock.full"]');
   await expect(stock.locator('.tos-jobs-rule')).toHaveText('Every 15 minutes');
   await expect(full.locator('.tos-jobs-rule')).toHaveText('Every day at 3:00 AM, Europe/Amsterdam time');
   await expect(stock.locator('.tos-jobs-next li')).toHaveCount(3);
@@ -147,7 +147,7 @@ test('the person removes a schedule; the jobs it ran stay', async ({ page }) => 
   await schedules.locator('[data-id="stock"]').getByRole('button', { name: 'Remove' }).click();
   await win.getByRole('group', { name: 'Remove the schedule stock.sync? The jobs it ran stay.' }).getByRole('button', { name: 'Remove' }).click();
   await expect(win.locator('.tos-jobs-status')).toHaveText('The schedule stock.sync is removed.');
-  await expect(schedules.locator('.tos-jobs-schedule')).toHaveCount(1);
+  await expect(schedules.locator('.tos-jobs-schedule')).toHaveCount(2);
   expect(await calls(page)).toContainEqual({ unschedule: 'stock' });
 });
 
@@ -159,3 +159,62 @@ test('without a job host, Jobs says so and offers Settings', async ({ page }) =>
   await expect(win.getByRole('button', { name: 'Open Settings' })).toBeVisible();
   await expect(win.locator('.tos-titlebar').getByRole('button', { name: 'Refresh' })).toBeDisabled();
 });
+
+test('a registered job shows its title and runs now; one that must never run twice is asked once, and a waiting one is refused', async ({ page }) => {
+  const win = await openJobs(page, 'jobs=1');
+  const schedules = win.getByRole('list', { name: 'Schedules' });
+  const full = schedules.locator('[data-id="ops:fixture:stock.full"]');
+  const push = schedules.locator('[data-id="ops:fixture:orders.push"]');
+  await expect(full.locator('.tos-jobs-kind')).toHaveText('Read all stock');
+  await expect(push.locator('.tos-jobs-kind')).toHaveText('Send the orders');
+  // the host's registry owns these schedules: Run now, no Remove; a schedule of its own keeps Remove
+  await expect(full.getByRole('button', { name: 'Remove' })).toHaveCount(0);
+  await expect(schedules.locator('[data-id="stock"]').getByRole('button', { name: 'Run now' })).toHaveCount(0);
+
+  await full.getByRole('button', { name: 'Run now' }).click();
+  await expect(win.locator('.tos-jobs-status')).toHaveText('Read all stock will run now.');
+  expect(await calls(page)).toContainEqual({ run: 'stock.full' });
+
+  await push.getByRole('button', { name: 'Run now' }).click();
+  const ask = win.getByRole('group', { name: 'This sends once; it is not repeated. Run Send the orders now?' });
+  await expect(ask).toBeVisible();
+  expect(await calls(page)).not.toContainEqual({ run: 'orders.push' });
+  await ask.getByRole('button', { name: 'Run now' }).click();
+  await expect(win.locator('.tos-jobs-status')).toHaveText('A run of Send the orders is already waiting or under way.');
+  await expect(win.locator('.tos-jobs-status')).toHaveAttribute('data-code', 'OS0192');
+});
+
+test('a job\'s detail shows its attempts, says plainly a lost one is not repeated, and shows no payload', async ({ page }) => {
+  const win = await openJobs(page, 'jobs=1');
+  await win.locator('.tos-titlebar').getByRole('tab', { name: 'Queue' }).click();
+  const list = win.getByRole('list', { name: 'Jobs' });
+  await list.locator('[data-id="push-0001"]').click();
+  const detail = win.getByRole('region', { name: 'Job details' });
+  const tries = detail.locator('.tos-jobs-attempt');
+  await expect(tries).toHaveCount(2);
+  await expect(tries.nth(0)).toContainText('Attempt 1');
+  await expect(tries.nth(0).locator('.tos-jobs-outcome')).toHaveText('Failed');
+  await expect(tries.nth(0)).toContainText('took 1 second');
+  await expect(tries.nth(0).locator('.tos-jobs-attempt-error')).toHaveText('the warehouse answered 503');
+  await expect(tries.nth(0).locator('.tos-jobs-attempt-error')).toHaveAttribute('data-code', 'HTTP503');
+  await expect(tries.nth(1)).toContainText('took 480 milliseconds');
+
+  await win.getByRole('group', { name: 'Jobs by state' }).getByRole('button', { name: /^Given up/ }).click();
+  await list.locator('[data-id="mail-0002"]').click();
+  const lost = win.getByRole('region', { name: 'Job details' }).locator('.tos-jobs-attempt');
+  await expect(lost.locator('.tos-jobs-outcome')).toHaveText('Lost: the process running it stopped');
+  await expect(lost).toContainText('Attempt 5');
+  await expect(lost.locator('.tos-jobs-attempt-error')).toHaveCount(0);
+  await expect(lost.locator('[data-event="not-repeated"]')).toHaveText('Not repeated: it may already have been sent; run it again only if it did not arrive.');
+  await expect(win).not.toContainText('payload');
+});
+
+test('the runtime\'s heartbeat is a quiet line, and a warning when it has been silent', async ({ page }) => {
+  let win = await openJobs(page, 'jobs=1');
+  await expect(win.locator('.tos-jobs-pulse')).toHaveText(/^Background runtime seen \d+ seconds ago$/);
+  await expect(win.locator('.tos-jobs-pulse')).not.toHaveAttribute('data-tone', 'danger');
+  win = await openJobs(page, 'jobs=1&stale=1');
+  await expect(win.locator('.tos-jobs-pulse')).toHaveText('The background runtime has not reported for 5 minutes.');
+  await expect(win.locator('.tos-jobs-pulse')).toHaveAttribute('data-tone', 'danger');
+});
+
