@@ -259,6 +259,18 @@ export const osMessagesEn = {
   'inbox/job-note': 'This happens only when you accept, and only if the job has not changed since it was proposed.',
   'inbox/job-run': 'Run the job {kind} now', // Inbox: the subject of the assistant's suggestion to run a registered background job now; {kind} is the job's kind
   'inbox/job-run-note': 'It runs once when you accept; it is refused while a job of this kind waits or runs.', // Inbox: what happens when the person accepts a suggestion to run a job now
+  'mail/attention': 'needs your attention', // Dock: added to the mail button's name while a desktop item asks for the person now
+  'inbox/job-failed-dead': '{title} stopped after {attempts} attempts', // Inbox: subject of a background job that gave up; {title} the job, {attempts} a number
+  'inbox/job-failed-not-repeated': '{title} was cut off and is not repeated', // Inbox: subject of a send-once job a crash cut off; {title} the job
+  'inbox/job-failed-not-repeated-note': 'It may already have been sent. Run it again only if it did not arrive.', // Inbox: what the person should check before running a cut-off send-once job again
+  'inbox/job-failed-failing': '{title} keeps failing ({attempts} attempts so far)', // Inbox: subject of a background job that failed three times or more; {attempts} a number
+  'inbox/job-failed-error': 'Last error, as the other system wrote it: {error}', // Inbox: the job's last error, quoted from another system; {error} the text
+  'inbox/job-failed-by': 'From the background work', // Inbox: the sender line of the desktop's own items about background work
+  'inbox/job-failed-run': 'Run again', // Inbox: button that runs a failed background job once more
+  'inbox/dismiss': 'Dismiss', // Inbox: button that sets an item about background work aside without doing anything
+  'inbox/job-open': 'Open Jobs', // Inbox: button that opens the Jobs app
+  'inbox/runtime-silent': 'The background work has not reported since {when}', // Inbox: subject when the background runtime stopped reporting; {when} a date and time
+  'inbox/runtime-silent-note': 'Jobs may not be running. Open Jobs to see where it stands; the desktop app or its tab may need to be started again.', // Inbox: what a silent background runtime means and what to do
 } as const;
 
 export type OsMessageKey = keyof typeof osMessagesEn;

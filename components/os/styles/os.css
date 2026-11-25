@@ -385,6 +385,13 @@
 .tos-mail .tos-evidence li { display: list-item; padding: 0; border: 0; border-radius: 0; background: none; }
 .tos-evidence a { color: var(--accent); }
 .tos-mail .tos-proposal-reason { margin: 2px 0 0; color: var(--fail); font-size: 12.5px; }
+.tos-mail .tos-proposal-error { margin: 2px 0 0; color: var(--fail); font-size: 12.5px; overflow-wrap: anywhere; }
+.tos-mail .tos-link-button { justify-self: start; margin: 2px 0 0; padding: 0; border: 0; background: none; color: var(--accent); font: inherit; font-size: 12.5px; text-decoration: underline; cursor: pointer; }
+.tos-mail .tos-link-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* a desktop item that asks for the person now (a failed job in working hours): the mail button is ringed */
+.tos-dock-mail.has-attention { box-shadow: 0 0 0 2px var(--fail); }
+@media (prefers-reduced-motion: no-preference) { .tos-dock-mail.has-attention { animation: tos-attention 1.6s ease-in-out 3; } }
+@keyframes tos-attention { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--fail) 35%, transparent); } }
 .tos-proposal-actions { display: flex; gap: 8px; }
 .tos-proposal-actions { margin-block-start: 4px; }
 .tos-proposal-actions button { padding: 5px 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); color: var(--fg); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }

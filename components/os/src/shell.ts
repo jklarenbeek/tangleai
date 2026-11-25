@@ -755,6 +755,10 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     mailButton.setAttribute('aria-label', t('mail/title')); mailButton.title = t('mail/title');
     mailButton.innerHTML = '<span class="tos-glyph" data-glyph="mail"></span>';
     if (unread) { const badge = doc.createElement('span'); badge.className = 'tos-badge'; badge.textContent = String(unread); mailButton.append(badge); }
+    // the desktop's own item that asks for the person now (a failed job in working hours): the button says so
+    const attention = kernel.mail().some(m => m.attention && m.proposal && (m.proposal.status === 'pending' || m.proposal.status === 'deciding'));
+    mailButton.classList.toggle('has-attention', attention);
+    if (attention) { mailButton.setAttribute('aria-label', `${t('mail/title')} — ${t('mail/attention')}`); mailButton.title = `${t('mail/title')} — ${t('mail/attention')}`; }
     mailButton.addEventListener('click', toggleMail);
     const themeButton = doc.createElement('button');
     themeButton.type = 'button'; themeButton.className = 'tos-dock-item tos-dock-theme';
@@ -1262,6 +1266,31 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     li.append(note);
   }
 
+  /** A background job that needs the person: what happened, the error as the other system wrote it, and a way to Jobs. */
+  function jobFailed(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { jobId?: string, kind?: string, titles?: Record<string, string>, reason?: string, attempts?: number, lastError?: string }) {
+    const title = payload.titles?.en ? localized(payload.titles as { en: string }, locale.locale) : payload.kind ?? payload.jobId ?? '';
+    const attempts = new Intl.NumberFormat(locale.locale).format(payload.attempts ?? 0);
+    subject.textContent = payload.reason === 'not-repeated' ? t('inbox/job-failed-not-repeated', { title })
+      : payload.reason === 'failing' ? t('inbox/job-failed-failing', { title, attempts }) : t('inbox/job-failed-dead', { title, attempts });
+    from.textContent = t('inbox/job-failed-by');
+    const id = doc.createElement('p'); id.className = 'tos-muted'; id.dir = 'ltr'; id.textContent = payload.jobId ?? ''; li.append(id);
+    if (payload.lastError) { const error = doc.createElement('p'); error.className = 'tos-proposal-error'; error.textContent = t('inbox/job-failed-error', { error: payload.lastError.split('\n')[0] }); li.append(error); }
+    if (payload.reason === 'not-repeated') { const note = doc.createElement('p'); note.className = 'tos-muted'; note.textContent = t('inbox/job-failed-not-repeated-note'); li.append(note); }
+    if (kernel.effective('jobs')) {
+      const openJobs = doc.createElement('button'); openJobs.type = 'button'; openJobs.className = 'tos-link-button'; openJobs.textContent = t('inbox/job-open');
+      openJobs.addEventListener('click', () => open('jobs'));
+      li.append(openJobs);
+    }
+  }
+
+  /** A background runtime that stopped reporting: since when, and what to do. */
+  function runtimeSilent(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { runtime?: string, lastSeen?: number }) {
+    const when = payload.lastSeen ? new Intl.DateTimeFormat(locale.locale, { dateStyle: 'medium', timeStyle: 'short' }).format(payload.lastSeen) : '';
+    subject.textContent = t('inbox/runtime-silent', { when });
+    from.textContent = t('inbox/job-failed-by');
+    const note = doc.createElement('p'); note.className = 'tos-muted'; note.textContent = t('inbox/runtime-silent-note'); li.append(note);
+  }
+
   function proposalItem(item: ReturnType<Kernel['mail']>[number], app: string) {
     const p = item.proposal!;
     const li = doc.createElement('li'); li.className = 'tos-proposal'; li.dataset.proposal = p.id; li.dataset.module = item.from;
@@ -1272,6 +1301,8 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
     else if (item.from === 'desktop' && p.kind === 'app.add') appOffer(li, subject, from, p.payload as any);
     else if (item.from === 'desktop' && p.kind === 'app.revise') appOffer(li, subject, from, p.payload as any, true);
     else if (item.from === 'desktop' && p.kind === 'job.change') jobChange(li, subject, from, p.payload as any);
+    else if (item.from === 'desktop' && p.kind === 'job.failed') jobFailed(li, subject, from, p.payload as any);
+    else if (item.from === 'desktop' && p.kind === 'runtime.silent') runtimeSilent(li, subject, from, p.payload as any);
     else if (p.summary) { const summary = doc.createElement('p'); summary.textContent = p.summary; li.append(summary); }
     if (p.evidence?.length) {
       const evidence = doc.createElement('ul'); evidence.className = 'tos-evidence'; evidence.setAttribute('aria-label', t('mail/evidence'));
@@ -1315,7 +1346,11 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
       li.append(form.el);
       return li;
     }
-    for (const [decision, label] of [['accept', t('mail/accept')], ['reject', t('mail/reject')]] as const) {
+    // the desktop's own items name what accepting does
+    const labels = item.from === 'desktop' && p.kind === 'job.failed' ? [t('inbox/job-failed-run'), t('inbox/dismiss')]
+      : item.from === 'desktop' && p.kind === 'runtime.silent' ? [t('inbox/job-open'), t('inbox/dismiss')]
+      : [t('mail/accept'), t('mail/reject')];
+    for (const [decision, label] of [['accept', labels[0]], ['reject', labels[1]]] as const) {
       const b = doc.createElement('button'); b.type = 'button'; b.dataset.decision = decision; b.textContent = deciding ? t('mail/deciding') : label;
       b.disabled = deciding;
       b.addEventListener('click', () => {

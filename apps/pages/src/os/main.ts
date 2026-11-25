@@ -6,7 +6,7 @@
  * application and the person adds what they choose, kept in their state.
  * `#recovery` boots without the person's own layer.
  */
-import { createKernel, webStorageStore, browserLocation } from '@tangleai/os';
+import { createKernel, webStorageStore, browserLocation, watchJobs, type WorkingHours } from '@tangleai/os';
 import { filesModule } from '@tangleai/os/files';
 import { webModule } from '@tangleai/os/web';
 import { jobsModule } from '@tangleai/os/jobs-app';
@@ -15,7 +15,7 @@ import { parseMarkdown, toHtml } from '@jarenjs/md';
 import * as toolbox from '@tangleai/agents/toolbox';
 import { mountDesktop, type SuiteDocument } from '@tangleai/os/shell';
 import { builtinModules, shippedMounts } from './modules.ts';
-import { createPreferences } from './preferences.ts';
+import { createPreferences, JOBS_DECIDED_SLOT } from './preferences.ts';
 import { pagesWebReader } from './web-access.ts';
 import { pagesJobQueue, twinWanted, failedTwinQueue } from './job-access.ts';
 import type { JobQueue } from '@tangleai/os/jobs';
@@ -111,6 +111,18 @@ const jobs = jobsModule({ ...chrome, queue: kernel.jobQueue(), ownsRuntime: () =
   void kernel.call('shell', 'tangle_os_settings', 'settings.show', { section: 'jobs' });
 } });
 { const installed = kernel.install(jobs.manifest, 'shipped'); if (!installed.ok) console.error('jobs', installed.issues); }
+// background work that needs the person reaches them: one inbox item per failed job or silent runtime, noticed in the
+// working hours the Calendar keeps (none kept yet: never noticed, still filed), and what they decided is remembered
+{
+  const local = (() => { try { return localStorage; } catch { return null; } })();
+  const hours = (): WorkingHours | undefined => {
+    try { const doc = JSON.parse(local?.getItem('tangle-calendar') ?? 'null'); return doc?.$calendar === '0.1' && doc.hours ? doc.hours : undefined; } catch { return undefined; }
+  };
+  watchJobs({ kernel, queue: kernel.jobQueue(), hours, remember: {
+    load: () => { try { return JSON.parse(local?.getItem(JOBS_DECIDED_SLOT) ?? '{}') ?? {}; } catch { return {}; } },
+    save: (decided) => { try { local?.setItem(JOBS_DECIDED_SLOT, JSON.stringify(decided)); } catch { /* kept for this page */ } },
+  } });
+}
 
 let buildInfo: Promise<any> | null = null;
 const json = (url: string) => fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null);

@@ -36,6 +36,8 @@ export const PROVIDERS_SLOT = 'tangle-os-providers';
 export const SESSION_KEYS_SLOT = 'tangle-os-session-keys';
 export const OS_SLOT = 'tangle-os';
 export const CHAT_SLOT = 'tangle-os-chat';
+/** What the person decided on failed background jobs (the job watcher's memory). */
+export const JOBS_DECIDED_SLOT = 'tangle-os-jobs-decided';
 /** The slot an earlier build of this page kept a tab-only key in. */
 const LEGACY_SESSION_KEY = 'tangle-ai-session-key';
 
@@ -221,7 +223,7 @@ export function createPreferences(win: Window) {
 
   /** Remove everything this desktop and its assistant keep in this browser. */
   function forgetEverything() {
-    for (const key of [AI_SLOT, PROVIDERS_SLOT, OS_SLOT, CHAT_SLOT]) remove(local, key);
+    for (const key of [AI_SLOT, PROVIDERS_SLOT, OS_SLOT, CHAT_SLOT, JOBS_DECIDED_SLOT]) remove(local, key);
     for (const key of [SESSION_KEYS_SLOT, LEGACY_SESSION_KEY]) remove(session, key);
     emit('ai', 'reset'); emit('desktop', 'reset');
   }

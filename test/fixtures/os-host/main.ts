@@ -36,7 +36,7 @@
  *                (OS0190), ?jobs=starting a twin that has not answered (OS0195), ?jobs=twinfail one that could not start
  * Everything the browser test needs is on `window.harness`.
  */
-import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract } from '../../../components/os/src/index.ts';
+import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract, watchJobs } from '../../../components/os/src/index.ts';
 import { filesModule } from '../../../components/os/src/files-app.ts';
 import { webModule } from '../../../components/os/src/web-app.ts';
 import { WEB_CODES, unconfiguredWebReader, type WebPage, type WebReader } from '../../../components/os/src/web.ts';
@@ -86,7 +86,10 @@ const httpClient = { invoke: async (op: string, input: unknown) => {
   return { ok: true, value: await response.json() };
 } };
 const state = serverState ? contractStore(httpClient) : withDock ? webStorageStore(sessionStorage) : undefined;
-const kernel = createKernel({ ...(withHeader || withDock || withFiles ? { assistantGrants: [...(withHeader ? ['tangle_os_header.*'] : []), ...(withDock ? ['tangle_os_dock.*'] : []), ...(withFiles ? ['tangle_os_files.*', 'tangle_os_files_browser.*', 'echo_files.*'] : [])] } : {}), ...(state ? { state } : {}) });
+// the kernel's job queue is the scripted one below once `?jobs=` sets it up (its decisions, Run again, call it)
+let fixtureJobs: JobQueue = unconfiguredJobQueue();
+const delegatingJobs = new Proxy({} as JobQueue, { get: (_t, op: string) => (input: unknown) => (fixtureJobs as any)[op](input) });
+const kernel = createKernel({ jobs: delegatingJobs, ...(withHeader || withDock || withFiles ? { assistantGrants: [...(withHeader ? ['tangle_os_header.*'] : []), ...(withDock ? ['tangle_os_dock.*'] : []), ...(withFiles ? ['tangle_os_files.*', 'tangle_os_files_browser.*', 'echo_files.*'] : [])] } : {}), ...(state ? { state } : {}) });
 const screens: string[] = [];
 const visibility: Record<string, boolean[]> = {};
 const shipped: Record<string, any> = {};
@@ -313,6 +316,9 @@ if (jobsMode) {
     ...(messages ? { messages, ...(lang !== 'sentinel' ? { locale: lang! } : {}) } : {}) });
   kernel.install(jobsApp.manifest, 'shipped');
   shipped.jobs = jobsApp.mount;
+  fixtureJobs = queueFor;
+  // `&watch=1`: the desktop's job watcher files what needs the person into the inbox (always working hours here)
+  if (query.get('watch') === '1') watchJobs({ kernel, queue: queueFor, hours: () => ({ days: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'], start: '00:00', end: '23:59' }), intervalMs: 2_000 });
 }
 if (withSettings) {
   shipped['screen-1-settings'] = (node: HTMLElement, context: any) => { node.innerHTML = '<h2 class="screen-settings">Screen 1 settings</h2>'; contexts['screen-1-settings'] = context; };
