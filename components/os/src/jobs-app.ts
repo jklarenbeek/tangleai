@@ -17,7 +17,7 @@
  * never run twice), each job's attempts, and whether the runtime still
  * reports. A host without them answers nothing for these, and Jobs shows none.
  */
-import { classifyLocal, floatingValue, formatRRule, nextOccurrences, resolveLocal, utcValue } from '@jarenjs/core/calendar';
+import { classifyLocal, compileRecurrence, floatingValue, formatRRule, nextOccurrences, resolveLocal, utcValue } from '@jarenjs/core/calendar';
 import { createOsMessages, type OsCatalogue, type OsMessageKey } from './messages.ts';
 import { JOB_CODES, type JobCounts, type JobEvent, type JobItem, type JobQueue, type JobRuntimeHealth, type JobSchedule, type JobState, type RegisteredJob } from './jobs.ts';
 import type { ModuleManifest } from './manifest.ts';
@@ -110,8 +110,25 @@ export function describeRule(series: Series, zone: string | null, t: Translate, 
   return floating && zone ? t('jobs/in-zone', { rule: words, zone }) : words;
 }
 
-/** One run as the desktop shows it: its instant, and whether a clock change moved it (`gap`) or it falls in a repeated hour (`fold`). */
-export type NextRun = { at: number, mark?: 'gap' | 'fold' };
+/** One run as the desktop shows it: its instant, its identity in the schedule (Jaren's recurrence id), and whether a clock change moved it (`gap`) or it falls in a repeated hour (`fold`). */
+export type NextRun = { at: number, recurrenceId?: string, mark?: 'gap' | 'fold' };
+
+/**
+ * The compiled recurrence of a schedule's rule document. A series that crossed a contract is its JSON, which Jaren's
+ * calendar does not expand as it is; it is compiled again (once per text) from its own members.
+ */
+const compiledSeries = new Map<string, unknown>();
+function compiled(series: Series): any {
+  const text = JSON.stringify(series);
+  let found = compiledSeries.get(text);
+  if (found === undefined) {
+    const { kind: _kind, ...definition } = JSON.parse(text);
+    found = compileRecurrence(definition);
+    if (compiledSeries.size > 256) compiledSeries.clear();
+    compiledSeries.set(text, found);
+  }
+  return found;
+}
 
 const wallParts = (instant: number, zone: string) => {
   const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: zone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' })
@@ -131,14 +148,14 @@ export function nextRuns(series: Series, zone: string | null, n: number, from: n
   try {
     if (kind === 'utc' || kind === 'zoned') {
       const start = utcValue(new Date(from + 1).toISOString().replace(/\.\d{3}Z$/, 'Z'));
-      const found: any = nextOccurrences(series as any, kind === 'utc' ? start : start, n + 1, zoneProvider ? { zoneProvider } as any : undefined);
-      return found.occurrences.map((o: any) => ({ at: o.instants?.start })).filter((r: NextRun) => Number.isFinite(r.at) && r.at > from).slice(0, n);
+      const found: any = nextOccurrences(compiled(series), start, n + 1, zoneProvider ? { zoneProvider } as any : undefined);
+      return found.occurrences.map((o: any) => ({ at: o.instants?.start, recurrenceId: o.recurrenceId })).filter((r: NextRun) => Number.isFinite(r.at) && r.at > from).slice(0, n);
     }
     if (!zone || !zoneProvider) return null;
     const wall = wallParts(from, zone);
     // a day back, so a run the clock change moved past `from` is still found
     const back = wallParts(from - 86_400_000, zone);
-    const found: any = nextOccurrences(series as any, floatingValue(back.date, back.time), n * 3 + 24, { zoneProvider } as any);
+    const found: any = nextOccurrences(compiled(series), floatingValue(back.date, back.time), n * 3 + 24, { zoneProvider } as any);
     const runs: NextRun[] = [];
     const seen = new Set<number>();
     for (const o of found.occurrences) {
@@ -149,7 +166,7 @@ export function nextRuns(series: Series, zone: string | null, n: number, from: n
       const { instant } = resolveLocal(parts as any, zone, { policy: (series.policy ?? 'rfc5545') as any, zoneProvider } as any) as any;
       if (!(instant > from) || seen.has(instant)) continue;
       seen.add(instant);
-      runs.push(kindHere === 'gap' ? { at: instant, mark: 'gap' } : kindHere === 'fold' ? { at: instant, mark: 'fold' } : { at: instant });
+      runs.push({ at: instant, ...(o.recurrenceId ? { recurrenceId: o.recurrenceId } : {}), ...(kindHere === 'gap' ? { mark: 'gap' as const } : kindHere === 'fold' ? { mark: 'fold' as const } : {}) });
       if (runs.length === n) break;
     }
     void wall;
@@ -187,6 +204,84 @@ export function attemptRows(events: readonly JobEvent[]): AttemptRow[] {
 export function runtimeAge(health: { now: number, runtimes: readonly JobRuntimeHealth[] } | null): number | null {
   if (!health?.runtimes.length) return null;
   return Math.max(0, health.now - Math.max(...health.runtimes.map(r => r.at)));
+}
+
+/**
+ * A schedule's runs in a range, as a calendar shows them. A run is one item at its instant; a schedule that runs more
+ * often than daily (every so many seconds, minutes or hours) is one summary item a day with its number of runs — a
+ * calendar shows "every minute, 1,440 runs", never 1,440 items. `date` is the day in the viewer's zone. `recurrenceId`
+ * is the run's identity in its schedule (the wall time Jaren names it by), so `<scheduleId>@<recurrenceId>` names one run.
+ */
+export type ScheduledRun =
+  | { type: 'run', at: number, date: string, title: string, scheduleId: string, kind: string, recurrenceId: string, mark?: 'gap' | 'fold' }
+  | { type: 'summary', date: string, count: number, title: string, scheduleId: string, kind: string };
+
+const SUB_DAILY: Record<string, number> = { SECONDLY: 1_000, MINUTELY: 60_000, HOURLY: 3_600_000 };
+const dayFormats = new Map<string, Intl.DateTimeFormat>();
+/** The day of an instant in a zone (the viewer's when none is given), `YYYY-MM-DD`. */
+const dayIn = (at: number, zone: string | undefined) => {
+  let format = dayFormats.get(zone ?? '');
+  if (!format) { format = new Intl.DateTimeFormat('en-CA', { timeZone: zone, year: 'numeric', month: '2-digit', day: '2-digit' }); dayFormats.set(zone ?? '', format); }
+  return format.format(at);
+};
+/** A run's identity when the calendar did not name it: the wall time a floating rule fires at, the UTC instant otherwise. */
+const recurrenceOf = (at: number, series: Series, zone: string | null) => {
+  if (series.dtstart?.kind === 'floating' && zone) { const w = wallParts(at, zone); return `${w.date}T${w.time}`; }
+  return `${new Date(at).toISOString().slice(0, 19)}Z`;
+};
+
+/**
+ * The runs of the host's active schedules between `from` and `to` (instants), each by the registered job's title in
+ * `locale` (falling back to English, then the schedule's kind). A schedule whose runs cannot be computed (a floating
+ * rule without zone data) and a schedule that is not active have no runs here.
+ */
+export function scheduledRuns(schedules: readonly JobSchedule[], registry: readonly RegisteredJob[], from: number, to: number,
+  options: { locale?: string, zoneProvider?: unknown, viewZone?: string } = {}): ScheduledRun[] {
+  const locale = options.locale ?? 'en';
+  const titles = new Map(registry.filter(j => j.schedule).map(j => [j.schedule!, j.title[locale] ?? j.title[locale.split('-')[0]] ?? j.title.en ?? j.kind]));
+  const out: ScheduledRun[] = [];
+  for (const s of schedules) {
+    if (s.state !== 'active') continue;
+    const series = s.series as Series;
+    const title = titles.get(s.id) ?? s.kind;
+    const rule = series?.rrule ?? {};
+    const step = SUB_DAILY[String(rule.FREQ)];
+    if (step !== undefined) {
+      // a run more often than daily: count each day's runs instead of listing them
+      const plain = Object.keys(rule).every(k => k === 'FREQ' || k === 'INTERVAL') && series.dtstart?.kind === 'utc';
+      const counts = new Map<string, number>();
+      if (plain) {
+        const anchor = Date.parse(String(series.dtstart?.instant ?? ''));
+        const every = step * Number(rule.INTERVAL ?? 1);
+        if (!Number.isFinite(anchor) || !(every > 0)) continue;
+        let at = Math.max(anchor, anchor + Math.ceil((from - anchor) / every) * every);
+        // one cheap step per run, capped so a range of seconds stays bounded
+        for (let n = 0; at < to && n < 2_000_000; at += every, n++) { const d = dayIn(at, options.viewZone); counts.set(d, (counts.get(d) ?? 0) + 1); }
+      }
+      else {
+        let cursor = from - 1;
+        for (let guard = 0; guard < 200 && cursor < to; guard++) {
+          const runs = nextRuns(series, s.zone, 1_000, cursor, options.zoneProvider);
+          if (!runs?.length) break;
+          for (const r of runs) if (r.at >= from && r.at < to) { const d = dayIn(r.at, options.viewZone); counts.set(d, (counts.get(d) ?? 0) + 1); }
+          cursor = runs[runs.length - 1].at;
+          if (runs.length < 1_000) break;
+        }
+      }
+      for (const [date, count] of [...counts].sort(([a], [b]) => a.localeCompare(b))) out.push({ type: 'summary', date, count, title, scheduleId: s.id, kind: s.kind });
+      continue;
+    }
+    let cursor = from - 1;
+    for (let guard = 0; guard < 50 && cursor < to; guard++) {
+      const runs = nextRuns(series, s.zone, 200, cursor, options.zoneProvider);
+      if (!runs?.length) break;
+      for (const r of runs) if (r.at >= from && r.at < to)
+        out.push({ type: 'run', at: r.at, date: dayIn(r.at, options.viewZone), title, scheduleId: s.id, kind: s.kind, recurrenceId: r.recurrenceId ?? recurrenceOf(r.at, series, s.zone), ...(r.mark ? { mark: r.mark } : {}) });
+      cursor = runs[runs.length - 1].at;
+      if (runs.length < 200) break;
+    }
+  }
+  return out.sort((a, b) => a.date.localeCompare(b.date) || (a.type === 'run' ? a.at : 0) - (b.type === 'run' ? b.at : 0));
 }
 
 /** The Jobs module: its manifest and its mount. */

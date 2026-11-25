@@ -227,3 +227,10 @@
 .tos-calc .calc { box-sizing: border-box; }
 /* Converter is the calculator in its converter mode alone */
 .tos-surface-converter .calc-modes { display: none; }
+
+/* the background work's runs: a quiet layer under the person's own events */
+.cal-runs { display: block; min-inline-size: 0; padding: 1px 6px; font-size: 11px; line-height: 1.35; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-inline-start: 2px dotted var(--border); }
+.cal-runs-day { display: grid; gap: 6px; padding: 10px 12px; border: 1px dashed var(--border); border-radius: var(--radius-sm); }
+.cal-runs-day h3 { margin: 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+.cal-runs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: 12.5px; color: var(--fg); }
+.cal-runs-note { margin: 0; font-size: 11.5px; color: var(--muted); line-height: 1.45; }

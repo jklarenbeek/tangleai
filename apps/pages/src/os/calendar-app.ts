@@ -3,10 +3,17 @@
  * day beside it, an editor that stays in place, and "find a time" over your
  * working hours. It serves a `calendar` contract (agenda, add, free), so the
  * assistant and other applications can read and book it like any service.
+ *
+ * The background work's upcoming runs are a quiet, read-only layer the person
+ * can hide: each run by its job's title, a schedule that runs more often than
+ * daily as one line a day with its count. Runs are never busy time, and they
+ * export on their own (titles and times only).
  */
 import type { ShippedMount } from '@tangleai/os/shell';
+import type { JobQueue, JobSchedule, RegisteredJob } from '@tangleai/os/jobs';
+import { scheduledRuns, type ScheduledRun } from '@tangleai/os/jobs-app';
 import {
-  COLOURS, WEEKDAYS, addDays, checkEvent, emptyCalendar, exportIcal, importIcal, freeSlots, isoDate, occurrences, parseDate, repeatHint, seed, supportedRepeats,
+  COLOURS, WEEKDAYS, addDays, calendarZoneProvider, checkEvent, emptyCalendar, exportIcal, exportRunsIcal, importIcal, freeSlots, isoDate, occurrences, parseDate, repeatHint, seed, supportedRepeats,
   type CalendarDocument, type CalendarEvent, type Colour, type Occurrence, type Repeat,
 } from './calendar-model.ts';
 import { t } from './i18n.ts';
@@ -45,7 +52,14 @@ export const CALENDAR_CONTRACT = {
   },
 };
 
-export function calendarMount(): ShippedMount {
+export type CalendarOptions = {
+  /** The desktop's job queue (`kernel.jobQueue()`): its schedules are drawn as the background-work layer. */
+  jobs?: () => JobQueue,
+  /** Zone data for floating schedule rules (the Calendar's own by default). */
+  zoneProvider?: unknown,
+};
+
+export function calendarMount(options: CalendarOptions = {}): ShippedMount {
   return (node, context) => {
     const doc = node.ownerDocument;
     const win = doc.defaultView!;
@@ -74,6 +88,24 @@ export function calendarMount(): ShippedMount {
     let slots: { start: number, end: number }[] | null = null;
     let findMinutes = 60;
     const repeats = supportedRepeats();
+    // the background work's schedules, read from the job host; none while there is no host or it starts
+    let background: { schedules: JobSchedule[], registry: RegisteredJob[] } | null = null;
+    let live = true;
+    const zones = options.zoneProvider ?? calendarZoneProvider();
+    const showRuns = () => cal.background !== false;
+    async function loadBackground() {
+      const queue = options.jobs?.();
+      if (!queue) return;
+      try {
+        const [{ schedules }, registry] = await Promise.all([queue.schedules(), queue.registry ? queue.registry().catch(() => ({ jobs: [] as RegisteredJob[] })) : { jobs: [] as RegisteredJob[] }]);
+        background = { schedules, registry: registry.jobs };
+      } catch { background = null; }   // OS0190 (no host), OS0195 (starting): nothing to draw
+      if (live) render();
+    }
+    const runsBetween = (from: string, to: string): ScheduledRun[] => !showRuns() || !background ? []
+      // upcoming only: a planned run on a day gone by would read as history it is not
+      : scheduledRuns(background.schedules, background.registry, Math.max(parseDate(from).getTime(), Date.now()), parseDate(to).getTime(), { locale, zoneProvider: zones });
+    const count = (n: number) => new Intl.NumberFormat(locale).format(n);
 
     const fmt = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, options);
     const monthTitle = (ym: string) => fmt({ month: 'long', year: 'numeric' }).format(parseDate(`${ym}-01`));
@@ -96,6 +128,8 @@ export function calendarMount(): ShippedMount {
       const all = occurrences(cal, gridStart, gridEnd);
       const byDay = new Map<string, Occurrence[]>();
       for (const o of all) byDay.set(o.date, [...(byDay.get(o.date) ?? []), o]);
+      const runsByDay = new Map<string, ScheduledRun[]>();
+      for (const r of runsBetween(gridStart, gridEnd)) runsByDay.set(r.date, [...(runsByDay.get(r.date) ?? []), r]);
 
       // the month's controls live in the window's header bar: one row less, and the assistant can use them too
       showHeader();
@@ -116,14 +150,26 @@ export function calendarMount(): ShippedMount {
         for (const o of items.slice(0, 3)) cell.append(h('span', { class: `cal-chip c-${o.colour}${o.allDay ? ' is-allday' : ''}`, title: o.title },
           o.allDay ? null : h('span', { class: 'cal-chip-time' }, chipTime(o.start)), o.title));
         if (items.length > 3) cell.append(h('span', { class: 'cal-more' }, t('calendar/more', { count: items.length - 3 })));
+        // the background work: one quiet line under the person's own events
+        const runs = runsByDay.get(date) ?? [];
+        if (runs.length === 1) cell.append(h('span', { class: 'cal-runs', title: runText(runs[0]) }, runs[0].type === 'run' ? `${chipTime(hhmm(new Date(runs[0].at)))} ${runs[0].title}` : runs[0].title));
+        // several: a compact count that fits any cell, the sentence in its name and the runs in its tooltip
+        else if (runs.length > 1) cell.append(h('span', { class: 'cal-runs', title: runs.map(runText).join('\n'), 'aria-label': t('calendar/runs-cell', { count: runs.length }) }, `↻ ${count(runs.length)}`));
         grid.append(cell);
       }
 
-      root.replaceChildren(head, h('div', { class: 'cal-body' }, grid, side(byDay.get(selected) ?? occurrences(cal, selected, addDays(selected, 1)))));
+      root.replaceChildren(head, h('div', { class: 'cal-body' }, grid, side(byDay.get(selected) ?? occurrences(cal, selected, addDays(selected, 1)), runsByDay.get(selected) ?? runsBetween(selected, addDays(selected, 1)))));
       (root.querySelector('.cal-day.is-selected') as HTMLElement | null)?.setAttribute('tabindex', '0');
     }
 
-    function side(items: Occurrence[]) {
+    /** A run as one line: its time and title (and why a clock change touched it), or a schedule's runs that day. */
+    function runText(r: ScheduledRun): string {
+      if (r.type === 'summary') return t('calendar/run-summary', { title: r.title, count: count(r.count) });
+      const at = fmt({ hour: 'numeric', minute: '2-digit' }).format(new Date(r.at));
+      return r.mark === 'gap' ? `${at} ${r.title} · ${t('calendar/run-moved')}` : r.mark === 'fold' ? `${at} ${r.title} · ${t('calendar/run-repeated')}` : `${at} ${r.title}`;
+    }
+
+    function side(items: Occurrence[], runs: ScheduledRun[] = []) {
       const panel = h('aside', { class: 'cal-side' });
       if (editing) { panel.append(editor()); return panel; }
       panel.append(h('h2', { class: 'cal-side-title' }, dayTitle(selected)));
@@ -136,6 +182,10 @@ export function calendarMount(): ShippedMount {
           h('button', { type: 'button', class: 'cal-link', onclick: () => openEditor(cal.events.find(e => e.uid === o.uid)!) }, t('calendar/edit')),
           o.repeat !== 'none' ? h('button', { type: 'button', class: 'cal-link', onclick: () => skipOne(o) }, t('calendar/skip-day')) : null,
           h('button', { type: 'button', class: 'cal-link is-danger', onclick: () => remove(o.uid) }, o.repeat !== 'none' ? t('calendar/delete-all') : t('calendar/delete')))))));
+      if (runs.length) panel.append(h('section', { class: 'cal-runs-day' },
+        h('h3', {}, t('calendar/runs-title')),
+        h('ul', { class: 'cal-runs-list' }, ...runs.map(r => h('li', {}, runText(r)))),
+        h('p', { class: 'cal-runs-note' }, t('calendar/runs-note'))));
       panel.append(finder());
       return panel;
     }
@@ -213,7 +263,10 @@ export function calendarMount(): ShippedMount {
         subtitle: monthTitle(month),
         end: [
           { kind: 'button' as const, id: 'new', label: t('calendar/new-event'), primary: true },
-          { kind: 'menu' as const, id: 'menu', label: t('calendar/menu'), glyph: 'menu' as const, entries: [{ id: 'export', label: t('calendar/export') }] },
+          { kind: 'menu' as const, id: 'menu', label: t('calendar/menu'), glyph: 'menu' as const, entries: [
+            { id: 'export', label: t('calendar/export') },
+            ...(background ? [{ id: 'export-runs', label: t('calendar/export-runs') }, { separator: true as const }, { id: 'runs', label: t('calendar/show-runs'), checked: showRuns() }] : []),
+          ] },
         ],
       };
       const text = JSON.stringify(header);
@@ -225,6 +278,8 @@ export function calendarMount(): ShippedMount {
       else if (item === 'today') { month = today.slice(0, 7); selected = today; }
       else if (item === 'new') { openEditor({ date: selected }); return; }
       else if (item === 'menu' && value === 'export') { download(); return; }
+      else if (item === 'menu' && value === 'export-runs') { downloadRuns(); return; }
+      else if (item === 'menu' && value === 'runs') write({ ...cal, background: !showRuns() });
       else return { refused: t('calendar/no-item', { item }) };
       render();
     });
@@ -239,6 +294,16 @@ export function calendarMount(): ShippedMount {
       const text = exportIcal(cal);
       const url = URL.createObjectURL(new Blob([text], { type: 'text/calendar' }));
       const link = h('a', { href: url, download: 'tangle-calendar.ics' }); doc.body.append(link); link.click(); link.remove();
+      win.setTimeout(() => URL.revokeObjectURL(url), 0);
+    }
+    /** The next 30 days of background runs as their own iCalendar file: titles and times only. */
+    function downloadRuns() {
+      if (!background) return;
+      const from = Date.now();
+      const runs = scheduledRuns(background.schedules, background.registry, from, from + 30 * 86_400_000, { locale, zoneProvider: zones });
+      const text = exportRunsIcal(runs as any, { summary: (title, n) => t('calendar/run-summary', { title, count: count(n) }) });
+      const url = URL.createObjectURL(new Blob([text], { type: 'text/calendar' }));
+      const link = h('a', { href: url, download: 'tangle-background-work.ics' }); doc.body.append(link); link.click(); link.remove();
       win.setTimeout(() => URL.revokeObjectURL(url), 0);
     }
     function keyNav(e: KeyboardEvent, date: string) {
@@ -278,7 +343,10 @@ export function calendarMount(): ShippedMount {
     const onHours = () => { cal = read(); slots = null; render(); };
     win.addEventListener(CHANGED, onHours);
     render();
-    return () => { win.removeEventListener(CHANGED, onHours); root.remove(); };
+    void loadBackground();
+    // the schedules change rarely: read them again every minute while the Calendar is open
+    const reread = win.setInterval(() => { void loadBackground(); }, 60_000);
+    return () => { live = false; win.clearInterval(reread); win.removeEventListener(CHANGED, onHours); root.remove(); };
   };
 }
 
@@ -327,8 +395,18 @@ export function calendarSettingsMount(): ShippedMount {
     };
     const times = el('div', { class: 'tos-row' });
     times.append(time(t('calendar/starts'), hours.start, 'start'), time(t('calendar/ends'), hours.end, 'end'));
-    node.append(heading, lead, days, times, status);
-    return () => { heading.remove(); lead.remove(); days.remove(); times.remove(); status.remove(); };
+    // the background-work layer: shown unless the person hides it
+    const runs = el('label', { class: 'tos-check' });
+    const runsBox = el('input', { type: 'checkbox', name: 'background' }) as HTMLInputElement;
+    runsBox.checked = read().background !== false;
+    runsBox.addEventListener('change', () => {
+      try { win.localStorage.setItem(SLOT, JSON.stringify({ ...read(), background: runsBox.checked })); } catch { /* kept for this session */ }
+      win.dispatchEvent(new Event(CHANGED));
+      status.textContent = t('calendar/settings-saved'); status.dataset.tone = 'ok';
+    });
+    runs.append(runsBox, t('calendar/show-runs'));
+    node.append(heading, lead, days, times, runs, status);
+    return () => { heading.remove(); lead.remove(); days.remove(); times.remove(); runs.remove(); status.remove(); };
   };
 }
 

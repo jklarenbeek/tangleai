@@ -176,7 +176,7 @@ export function shippedMounts(build: () => Promise<any>, host: { kernel: Kernel,
   const mounts: Record<string, ShippedMount> = {
     ...host.surfaces.mounts,
     welcome: welcomeMount(host.open),
-    calendar: calendarMount(),
+    calendar: calendarMount({ jobs: () => host.kernel.jobQueue() }),
     'calendar-settings': calendarSettingsMount(),
     calculator: calcMount('calculator'),
     converter: calcMount('converter'),

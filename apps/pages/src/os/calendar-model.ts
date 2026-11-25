@@ -19,7 +19,7 @@ export type CalendarEvent = {
   allDay: boolean; repeat: Repeat; colour: Colour; exdates: string[]; notes?: string;
 };
 export type WorkingHours = { days: ('mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun')[], start: string, end: string };
-export type CalendarDocument = { $calendar: '0.1', events: CalendarEvent[], hours: WorkingHours, seeded?: boolean };
+export type CalendarDocument = { $calendar: '0.1', events: CalendarEvent[], hours: WorkingHours, seeded?: boolean, /** Whether the background work's runs are drawn (default yes). */ background?: boolean };
 export type Occurrence = { uid: string, title: string, colour: Colour, allDay: boolean, repeat: Repeat, date: string, start: string, end: string, recurrenceId: string, notes?: string };
 
 export const COLOURS: Colour[] = ['teal', 'blue', 'violet', 'rose', 'amber', 'slate'];
@@ -105,6 +105,8 @@ export function occurrences(doc: CalendarDocument, from: string, to: string): Oc
 
 let zones: any = null;
 const provider = () => (zones ??= createIntlZoneProvider({ revision: 'host' }));
+/** The zone data the calendar computes wall-clock times with (a floating schedule's runs too). */
+export const calendarZoneProvider = () => provider();
 export const localZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
 /**
@@ -144,6 +146,23 @@ export function exportIcal(doc: CalendarDocument): string {
       ...(event.allDay ? { duration: 'P1D' } : { end: floatingValue(event.date, event.end) }) }
     : { type: 'event', series: seriesOf(event), summary: event.title, ...(event.notes ? { description: event.notes } : {}) });
   return stringifyIcal({ prodId: '-//Tangle OS//Calendar//EN', components } as any, { zones: 'utc', provider: provider(), runtime: { now: () => Date.now() } } as any);
+}
+
+/** One upcoming run of the background work, as `scheduledRuns` (`@tangleai/os/jobs-app`) gives it. */
+export type BackgroundRun =
+  | { type: 'run', at: number, date: string, title: string, scheduleId: string, recurrenceId: string }
+  | { type: 'summary', date: string, count: number, title: string, scheduleId: string };
+
+/**
+ * The background work's upcoming runs as an iCalendar file: each run its title (SUMMARY), its UTC start (DTSTART) and
+ * its identity in its schedule (UID `<schedule>@<recurrence>`); a schedule that runs more often than daily is one
+ * all-day event a day with its count. Nothing else of a job leaves: no description, payload, kind or error text.
+ */
+export function exportRunsIcal(runs: readonly BackgroundRun[], options: { summary: (title: string, count: number) => string, now?: () => number }): string {
+  const components = runs.map(run => run.type === 'run'
+    ? { type: 'event', uid: `${run.scheduleId}@${run.recurrenceId}`, summary: run.title, start: utcValue(new Date(run.at).toISOString().replace(/\.\d{3}Z$/, 'Z')) }
+    : { type: 'event', uid: `${run.scheduleId}@${run.date}`, summary: options.summary(run.title, run.count), start: dateValue(run.date), duration: 'P1D' });
+  return stringifyIcal({ prodId: '-//Tangle OS//Background work//EN', components } as any, { zones: 'utc', provider: provider(), runtime: { now: options.now ?? (() => Date.now()) } } as any);
 }
 
 /**

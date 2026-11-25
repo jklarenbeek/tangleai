@@ -298,6 +298,14 @@ export const pagesMessagesEn = {
   'calendar/today': 'Today', // Calendar header: button that returns to today
   'calendar/menu': 'Calendar menu', // Calendar header: accessible name of the menu
   'calendar/export': 'Export .ics', // Calendar menu: saves the calendar as an iCalendar (.ics) file
+  'calendar/export-runs': 'Export upcoming runs (.ics)', // Calendar menu: saves the background work's runs of the next 30 days as an iCalendar (.ics) file, titles and times only
+  'calendar/show-runs': 'Show background work', // Calendar menu and Calendar settings: whether the background work's upcoming runs are drawn in the Calendar
+  'calendar/runs-title': 'Background work', // Calendar: heading of the selected day's background runs
+  'calendar/runs-cell': '{count} in the background', // Calendar month cell: several background runs on a day; {count} is how many lines
+  'calendar/run-summary': '{title}: {count} runs', // Calendar: a schedule that runs more often than daily, as one line a day; {title} is the job, {count} how many runs that day
+  'calendar/run-moved': 'moved by the clock change', // Calendar: a background run the spring clock change moved to a later time
+  'calendar/run-repeated': 'in the repeated hour', // Calendar: a background run in the hour the autumn clock change repeats
+  'calendar/runs-note': 'Planned by the background work. These runs never count as busy time.', // Calendar: under the selected day's background runs
   'calendar/no-item': 'Calendar has no \'{item}\'', // Calendar: refusal when asked for a header control it does not have
   'calendar/unreadable': '{name} is not a calendar this one can read: {detail}', // Calendar: refusal when a file opened from Files is not iCalendar; {name} is the file
   'calendar/no-events': '{name} holds no event this calendar can keep', // Calendar: refusal when an opened file has no usable event; {name} is the file

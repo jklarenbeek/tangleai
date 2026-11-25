@@ -45,5 +45,5 @@ export { JOB_QUEUE_CONTRACT, JOB_ITEM_SCHEMA, JOB_CODES, unconfiguredJobQueue, h
 export type { JobQueue, JobItem, JobCounts, JobSchedule, JobState, JobEvent, JobRuntimeHealth, RegisteredJob } from './jobs.ts';
 export { watchJobs, withinHours, SILENT_AFTER_MS } from './job-watch.ts';
 export type { JobWatchOptions, WorkingHours, Weekday } from './job-watch.ts';
-export { jobsModule, describeRule, nextRuns, STATE_ORDER } from './jobs-app.ts';
-export type { JobsOptions, NextRun } from './jobs-app.ts';
+export { jobsModule, describeRule, nextRuns, scheduledRuns, STATE_ORDER } from './jobs-app.ts';
+export type { JobsOptions, NextRun, ScheduledRun } from './jobs-app.ts';
