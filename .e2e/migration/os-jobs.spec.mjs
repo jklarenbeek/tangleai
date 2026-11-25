@@ -218,3 +218,30 @@ test('the runtime\'s heartbeat is a quiet line, and a warning when it has been s
   await expect(win.locator('.tos-jobs-pulse')).toHaveAttribute('data-tone', 'danger');
 });
 
+
+test('the schedules\' own enqueue jobs stay out of the list and are said once in a quiet line', async ({ page }) => {
+  const win = await openJobs(page, 'jobs=1');
+  await expect(win.locator('.tos-jobs-ticks')).toHaveText('42 schedule ticks so far, kept out of the list');
+  await win.getByRole('group', { name: 'Jobs by state' }).getByRole('button', { name: /^Done/ }).click();
+  const list = win.locator('.tos-jobs-list');
+  await expect(list.locator('.tos-jobs-item')).toHaveCount(6);
+  await expect(list).not.toContainText('ops.fire');
+});
+
+test('a background runtime in this browser says where it keeps its store and that this tab runs it', async ({ page }) => {
+  const win = await openJobs(page, 'jobs=1&twin=1');
+  await expect(win.locator('.tos-jobs-pulse')).toHaveText(/^Background runtime seen \d+ seconds ago · kept in this browser · runs in this tab$/);
+});
+
+test('a runtime that is starting is said as such, without sending the person to Settings', async ({ page }) => {
+  const win = await openJobs(page, 'jobs=starting');
+  await expect(win.locator('.tos-jobs-status')).toHaveText('Background work is starting…');
+  await expect(win.locator('.tos-jobs-status')).toHaveAttribute('data-code', 'OS0195');
+  await expect(win.getByRole('button', { name: 'Open Settings' })).toHaveCount(0);
+});
+
+test('a runtime that could not start in this browser says why, and still offers a host in Settings', async ({ page }) => {
+  const win = await openJobs(page, 'jobs=twinfail');
+  await expect(win.locator('.tos-jobs-status')).toHaveText('Background work could not start in this browser: the worker script could not load');
+  await expect(win.locator('.tos-jobs-configure')).toHaveCount(1);
+});

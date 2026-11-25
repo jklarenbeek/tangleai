@@ -36,6 +36,8 @@ export type JobsOptions = {
   id?: string,
   /** The clock (tests). */
   now?: () => number,
+  /** Whether this tab's own worker runs the host's background runtime (the browser twin); said on the heartbeat line. */
+  ownsRuntime?: () => boolean,
   /** How often an open, visible Jobs window reads again, in milliseconds (default 10 s). */
   refreshMs?: number,
 };
@@ -155,6 +157,11 @@ export function nextRuns(series: Series, zone: string | null, n: number, from: n
   } catch { return null; }
 }
 
+/** The small job a schedule fires to enqueue the real one: kept out of the list and the waiting count. */
+export const FIRE_KIND = 'ops.fire';
+/** The code of a background runtime that has not answered yet (the browser twin starting or changing tabs). */
+export const STARTING = 'OS0195';
+
 /** How long the runtime may be silent before Jobs warns: three missed 30-second heartbeats. */
 export const STALE_AFTER_MS = 90_000;
 
@@ -255,7 +262,13 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
     if (age === null) { pulse.hidden = true; return; }
     pulse.hidden = false;
     if (age > STALE_AFTER_MS) { pulse.dataset.tone = 'danger'; pulse.textContent = t('jobs/runtime-stale', { duration: duration(age) }); }
-    else pulse.textContent = t('jobs/runtime-seen', { when: relative(now() - age) });
+    else {
+      const parts = [t('jobs/runtime-seen', { when: relative(now() - age) })];
+      const storage = (health?.runtimes ?? []).map(r => (r as { storage?: string }).storage).find(Boolean);
+      if (storage) parts.push(storage === 'memory' ? t('jobs/storage-memory') : t('jobs/storage-durable'));
+      if (options.ownsRuntime?.()) parts.push(t('jobs/runs-here'));
+      pulse.textContent = parts.join(' · ');
+    }
   };
 
   const header = () => context.setHeader({
@@ -272,10 +285,18 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
     else if (code === JOB_CODES.held) say(t('jobs/held'), 'fail', code);
     else say(t('jobs/failed', { detail }), 'fail', code);
   };
-  const showUnconfigured = (code: string) => {
+  const showStarting = () => {
     unconfigured = true; header();
     states.replaceChildren(); pulse.hidden = true;
-    say(t('jobs/unconfigured'), 'fail', code);
+    say(t('jobs/starting'), '', STARTING);
+    const box = el('div', 'tos-jobs-empty');
+    box.append(el('p', '', t('jobs/starting-detail')));
+    view.replaceChildren(box);
+  };
+  const showUnconfigured = (code: string, error?: any) => {
+    unconfigured = true; header();
+    states.replaceChildren(); pulse.hidden = true;
+    say(error?.twin ? t('jobs/twin-failed', { detail: String(error.message ?? '') }) : t('jobs/unconfigured'), 'fail', code);
     const box = el('div', 'tos-jobs-empty');
     box.append(el('p', '', t('jobs/unconfigured-detail')), button('tos-jobs-configure', t('jobs/configure'), () => (options.configure ?? (() => context.openSettings()))()));
     view.replaceChildren(box);
@@ -285,7 +306,8 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
     states.replaceChildren();
     if (!counts) return;
     for (const state of STATE_ORDER) {
-      const count = counts[state] ?? 0;
+      // the schedules' own enqueue jobs are not the person's work: they are said once below, not counted here
+      const count = Math.max(0, (counts[state] ?? 0) - (state === 'pending' ? counts.pendingKinds?.[FIRE_KIND] ?? 0 : 0));
       const b = button('tos-jobs-state-count', '', () => { current = 'queue'; filter = state; selected = null; header(); void loadQueue(true); });
       b.dataset.state = state;
       if (DANGER.has(state) && count > 0) b.dataset.tone = 'danger';
@@ -375,7 +397,9 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
       li.append(actions);
       ul.append(li);
     }
-    view.replaceChildren(ul);
+    const ticks = schedules.filter(s => s.id.startsWith('ops:')).reduce((n, s) => n + (s.counts?.fired ?? 0), 0);
+    if (ticks > 0) { const note = el('p', 'tos-jobs-ticks', t('jobs/ticks', { count: new Intl.NumberFormat(locale).format(ticks) })); view.replaceChildren(ul, note); }
+    else view.replaceChildren(ul);
   };
 
   const field = (dl: HTMLElement, label: string, value: string | Node) => { const dd = el('dd', ''); dd.append(value); dl.append(el('dt', '', label), dd); };
@@ -474,11 +498,17 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
   async function loadQueue(reset: boolean) {
     const mine = ++ticket;
     try {
-      const page = await queue.page({ ...(filter ? { state: filter } : {}), limit: 50, ...(!reset && next ? { after: next } : {}) });
+      let page = await queue.page({ ...(filter ? { state: filter } : {}), limit: 50, ...(!reset && next ? { after: next } : {}) });
+      let shown = page.items.filter(job => job.kind !== FIRE_KIND);
+      // a page of only schedule ticks says nothing: read on, a few pages at most
+      for (let more = 0; !shown.length && page.next && more < 4; more++) {
+        page = await queue.page({ ...(filter ? { state: filter } : {}), limit: 50, after: page.next });
+        shown = page.items.filter(job => job.kind !== FIRE_KIND);
+      }
       if (mine !== ticket || closed) return;
-      items = reset ? page.items : [...items, ...page.items]; next = page.next;
+      items = reset ? shown : [...items, ...shown]; next = page.next;
       render();
-    } catch (error: any) { if (mine === ticket && !closed) { if (error?.code === JOB_CODES.unconfigured) showUnconfigured(error.code); else refusal(error); } }
+    } catch (error: any) { if (mine === ticket && !closed) { if (error?.code === STARTING) showStarting(); else if (error?.code === JOB_CODES.unconfigured) showUnconfigured(error.code, error); else refusal(error); } }
   }
 
   async function load() {
@@ -498,7 +528,8 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
       render();
     } catch (error: any) {
       if (mine !== ticket || closed) return;
-      if (error?.code === JOB_CODES.unconfigured) showUnconfigured(error.code); else refusal(error);
+      if (error?.code === STARTING) showStarting();
+      else if (error?.code === JOB_CODES.unconfigured) showUnconfigured(error.code, error); else refusal(error);
     }
   }
 

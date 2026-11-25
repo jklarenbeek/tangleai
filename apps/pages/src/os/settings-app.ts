@@ -16,6 +16,7 @@ import {
 import { englishOf, localizedKeywords, localizedText, t } from './i18n.ts';
 import { LANGUAGES, resolveLanguage } from './language.ts';
 import { WEB_READER_EXAMPLE, localNetworkAccess, testWebReader, webReaderAddress } from './web-access.ts';
+import { background as backgroundWork } from './background.ts';
 import { JOB_QUEUE_EXAMPLE, jobQueueAddress, testJobQueue } from './job-access.ts';
 
 /** The wallpaper patterns, by what they look like. */
@@ -575,6 +576,8 @@ function sectionMount(prefs: Preferences, id: SectionId, kernel?: Kernel): Setti
         if (!armed) { armed = true; everything.textContent = t('privacy/confirm'); timer = win.setTimeout(() => { armed = false; everything.textContent = t('privacy/forget-everything'); }, 4000); return; }
         win.clearTimeout(timer); armed = false; everything.textContent = t('privacy/forget-everything');
         prefs.forgetEverything(); done(t('privacy/everything-removed'));
+        // the background work this browser keeps goes too (the twin's store), said once it is gone
+        void backgroundWork.forget().then((removed) => { if (removed) done(`${t('privacy/everything-removed')} ${t('jobhost/forgotten')}`); }, () => {});
       } }, t('privacy/forget-everything'));
       put(
         h('h2', {}, t('privacy/title')),
@@ -582,7 +585,8 @@ function sectionMount(prefs: Preferences, id: SectionId, kernel?: Kernel): Setti
           h('li', {}, t('privacy/fact-storage')),
           h('li', {}, t('privacy/fact-header')),
           h('li', {}, t('privacy/fact-frames')),
-          h('li', {}, t('privacy/fact-shared'))),
+          h('li', {}, t('privacy/fact-shared')),
+          h('li', {}, t('jobhost/privacy-fact'))),
         h('div', { class: 'tos-row tos-wrap' },
           h('button', { type: 'button', class: 'tos-btn', onclick: () => { for (const k of Object.keys(PROVIDER_KINDS) as ProviderKind[]) prefs.forgetKey(k); done(t('privacy/keys-removed')); } }, t('privacy/forget-keys')),
           h('button', { type: 'button', class: 'tos-btn', onclick: () => { prefs.chat.clear(); prefs.use(prefs.active(), undefined, 'chat'); done(t('privacy/chat-cleared')); } }, t('privacy/clear-chat')),

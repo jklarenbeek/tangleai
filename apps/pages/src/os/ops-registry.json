@@ -1,0 +1,23 @@
+{
+  "$registry": "0.1",
+  "name": "pages",
+  "zone": "UTC",
+  "jobs": [
+    {
+      "kind": "calendar.reminders",
+      "title": { "en": "Calendar reminders", "nl": "Agendaherinneringen", "de": "Kalendererinnerungen", "es": "Recordatorios del calendario", "fr": "Rappels du calendrier", "pt": "Lembretes do calendário", "ru": "Напоминания календаря", "tr": "Takvim hatırlatmaları", "ar": "تذكيرات التقويم", "ja": "カレンダーのリマインダー", "ko": "캘린더 알림", "zh-TW": "行事曆提醒" },
+      "description": { "en": "Every minute, a message in the inbox for each calendar event that starts within 15 minutes, once per event.", "nl": "Elke minuut een bericht in de inbox voor elke agenda-afspraak die binnen 15 minuten begint, één keer per afspraak.", "de": "Jede Minute eine Nachricht im Posteingang für jeden Kalendertermin, der innerhalb von 15 Minuten beginnt, einmal pro Termin.", "es": "Cada minuto, un mensaje en la bandeja de entrada por cada evento del calendario que empieza en menos de 15 minutos, una vez por evento.", "fr": "Chaque minute, un message dans la boîte de réception pour chaque événement du calendrier qui commence dans moins de 15 minutes, une fois par événement.", "pt": "A cada minuto, uma mensagem na caixa de entrada para cada evento do calendário que começa dentro de 15 minutos, uma vez por evento.", "ru": "Каждую минуту — сообщение во входящих о каждом событии календаря, которое начнётся в течение 15 минут, по одному на событие.", "tr": "Her dakika, 15 dakika içinde başlayan her takvim etkinliği için gelen kutusunda bir ileti, etkinlik başına bir kez.", "ar": "كل دقيقة، رسالة في البريد الوارد لكل حدث في التقويم يبدأ خلال 15 دقيقة، مرة واحدة لكل حدث.", "ja": "毎分、15 分以内に始まるカレンダーの予定ごとに受信トレイへメッセージを 1 通送ります（予定ごとに 1 回）。", "ko": "매분 15분 이내에 시작하는 캘린더 일정마다 받은편지함에 메시지를 보냅니다(일정당 한 번).", "zh-TW": "每分鐘為每個將在 15 分鐘內開始的行事曆活動在收件匣放一則訊息，每個活動一次。" },
+      "handler": { "contract": "desktop", "operation": "reminders.notify" },
+      "safety": "safe-read",
+      "schedule": { "utc": "2026-01-01T00:00:00Z", "rrule": "FREQ=MINUTELY" }
+    },
+    {
+      "kind": "desktop.tidy",
+      "title": { "en": "Inbox tidy count", "nl": "Inbox opruimtelling", "de": "Posteingang-Aufräumzählung", "es": "Recuento de limpieza de la bandeja", "fr": "Décompte de rangement de la boîte", "pt": "Contagem de arrumação da caixa", "ru": "Подсчёт для уборки входящих", "tr": "Gelen kutusu toplama sayımı", "ar": "عدّ تنظيف البريد الوارد", "ja": "受信トレイ整理のカウント", "ko": "받은편지함 정리 집계", "zh-TW": "收件匣整理統計" },
+      "description": { "en": "Every day at 03:00, counts the read messages older than 30 days. It deletes nothing.", "nl": "Elke dag om 03:00 telt deze de gelezen berichten die ouder zijn dan 30 dagen. Er wordt niets verwijderd.", "de": "Jeden Tag um 03:00 werden die gelesenen Nachrichten gezählt, die älter als 30 Tage sind. Nichts wird gelöscht.", "es": "Cada día a las 03:00 cuenta los mensajes leídos de más de 30 días. No elimina nada.", "fr": "Chaque jour à 03:00, compte les messages lus de plus de 30 jours. Rien n’est supprimé.", "pt": "Todos os dias às 03:00, conta as mensagens lidas com mais de 30 dias. Não elimina nada.", "ru": "Каждый день в 03:00 подсчитывает прочитанные сообщения старше 30 дней. Ничего не удаляет.", "tr": "Her gün 03:00'te 30 günden eski okunmuş iletileri sayar. Hiçbir şeyi silmez.", "ar": "كل يوم في الساعة 03:00 يعدّ الرسائل المقروءة الأقدم من 30 يوماً. لا يحذف شيئاً.", "ja": "毎日 03:00 に、30 日より古い既読メッセージを数えます。何も削除しません。", "ko": "매일 03:00에 30일이 지난 읽은 메시지를 셉니다. 아무것도 삭제하지 않습니다.", "zh-TW": "每天 03:00 計算超過 30 天的已讀訊息。不會刪除任何內容。" },
+      "handler": { "contract": "desktop", "operation": "tidy.count" },
+      "safety": "safe-read",
+      "schedule": { "at": { "date": "2026-01-05", "time": "03:00" }, "rrule": "FREQ=DAILY" }
+    }
+  ]
+}

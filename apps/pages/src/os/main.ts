@@ -17,7 +17,12 @@ import { mountDesktop, type SuiteDocument } from '@tangleai/os/shell';
 import { builtinModules, shippedMounts } from './modules.ts';
 import { createPreferences } from './preferences.ts';
 import { pagesWebReader } from './web-access.ts';
-import { pagesJobQueue } from './job-access.ts';
+import { pagesJobQueue, twinWanted, failedTwinQueue } from './job-access.ts';
+import type { JobQueue } from '@tangleai/os/jobs';
+import { browserJobQueue, startTwin, forgetBrowserOps } from './ops-browser-stub.ts'; // merge: @tangleai/ops/browser
+import { desktopTasks } from './ops-tasks.ts';
+import { TWIN } from './ops-twin.ts';
+import { setBackground } from './background.ts';
 import { createSurfaces } from './surfaces.ts';
 import { setPagesLanguage, setPagesMessages } from './i18n.ts';
 import { catalogues, dirOf, resolveLanguage, setActiveLanguage } from './language.ts';
@@ -41,9 +46,33 @@ document.documentElement.dir = dirOf(language);
 const chrome = { ...(packs.os ? { messages: packs.os } : {}), ...(language !== 'en' ? { locale: language } : {}) };
 // web pages are read by the host's reader the person set in Settings, Web access (none: OS0180), read again on every call
 const webReader = pagesWebReader(() => prefs.desktop().webReader);
-// the host's background work, read at the address Settings, Background work names
-const jobQueue = pagesJobQueue(() => prefs.desktop().jobQueue);
+// background work: a host's, at the address Settings, Background work names; without one, the browser twin's —
+// the jobs run in a worker of an open desktop tab, never this page (off under automation unless `?twin=1`)
+const twinOn = twinWanted(location.search, navigator.webdriver === true);
+let twinQueue: JobQueue | null = null, twin: { stop(): void } | null = null, ownsRuntime = false;
+const jobQueue = pagesJobQueue(() => prefs.desktop().jobQueue, { twin: () => twinQueue });
 const kernel = createKernel({ recovery: location.hash.includes('recovery'), assistantGrants: 'all', tools: toolbox, web: webReader, jobs: jobQueue, ...(state ? { state } : {}) });
+if (twinOn) {
+  try {
+    twinQueue = browserJobQueue({ channelName: TWIN.channel });
+    const storage = (() => { try { return localStorage; } catch { return null; } })();
+    twin = startTwin({
+      workerUrl: new URL('./os-ops-worker.js', import.meta.url), channelName: TWIN.channel, lockName: TWIN.lock,
+      tasks: desktopTasks({ kernel, storage }),
+      onState: (state: any) => { ownsRuntime = state?.ops === 'owner'; if (state?.ops === 'error') console.error('background work', state.message); },
+    });
+  } catch (error: any) {
+    // the twin never stops the desktop: Jobs says it could not start here, and why
+    twinQueue = failedTwinQueue(String(error?.message ?? error));
+    console.error('background work', error);
+  }
+}
+setBackground({ forget: async () => {
+  if (!twinOn) return false;
+  twin?.stop(); twin = null;
+  await forgetBrowserOps({ databaseName: TWIN.database, pool: TWIN.pool });
+  return true;
+} });
 for (const manifest of builtinModules()) {
   const installed = kernel.install(manifest, 'shipped');
   if (!installed.ok) console.error(manifest.id, installed.issues);
@@ -75,7 +104,7 @@ const web = webModule({ ...chrome, reader: kernel.webReader(), configure: () => 
 
 // Jobs: the background work of the host the person named in Settings, Background work (none: OS0190),
 // beside Web; the runs of a wall-clock schedule are computed with the browser's own time zone data
-const jobs = jobsModule({ ...chrome, queue: kernel.jobQueue(), zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }), configure: () => {
+const jobs = jobsModule({ ...chrome, queue: kernel.jobQueue(), ownsRuntime: () => ownsRuntime, zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }), configure: () => {
   desktop.openSettings();
   void kernel.call('shell', 'tangle_os_settings', 'settings.show', { section: 'jobs' });
 } });
@@ -132,4 +161,4 @@ if (!(arrival.startsWith('/') && surfaces.follow(location.hash)) && !location.ha
 window.addEventListener('hashchange', () => { surfaces.follow(location.hash); });
 
 // for scripted checks and the browser tests
-(window as any).tangleOs = { kernel, desktop, suites, surfaces };
+(window as any).tangleOs = { kernel, desktop, suites, surfaces, twin: { on: twinOn, owns: () => ownsRuntime } };

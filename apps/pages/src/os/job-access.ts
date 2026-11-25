@@ -1,11 +1,13 @@
 /**
- * Background work on the Pages desktop: a page on GitHub Pages has no store
- * and runs no jobs, so it reads a host's job queue (the Tangle desktop serves
- * its own at {@link JOB_QUEUE_EXAMPLE}) at the address the person set in
- * Settings, Background work. The queue the kernel gets reads that preference
- * on every call, so a new address works at once; with none set it answers
- * `OS0190`. An address follows the web reader's rule, and a reader on this
- * computer needs the browser's local-network permission just the same.
+ * Background work on the Pages desktop. With an address in Settings,
+ * Background work, the desktop reads that host's job queue (the Tangle
+ * desktop serves its own at {@link JOB_QUEUE_EXAMPLE}); without one it runs
+ * the browser twin: the jobs run in a worker of an open desktop tab, the tab
+ * holding the owner lock serves them to every tab. The queue the kernel gets
+ * reads that preference on every call, so a new address works at once and
+ * removing it returns to the browser. An address follows the web reader's
+ * rule, and a host on this computer needs the browser's local-network
+ * permission just the same.
  */
 import { httpJobQueue, unconfiguredJobQueue, type JobQueue } from '@tangleai/os/jobs';
 import { webReaderAddress } from './web-access.ts';
@@ -16,13 +18,25 @@ export const JOB_QUEUE_EXAMPLE = 'http://127.0.0.1:4700/api/job-queue';
 /** A job host address as stored: an http(s) address without a query or fragment, `''` for none, `null` when it is not one. */
 export const jobQueueAddress = (value: unknown): string | null => webReaderAddress(value);
 
-/** The desktop's job queue: the one at the address `address()` answers now, or none. */
-export function pagesJobQueue(address: () => string, options: { fetch?: typeof globalThis.fetch } = {}): JobQueue {
+/**
+ * Whether this page runs the browser twin: yes, unless `?twin=0`; a browser
+ * driven by automation (the test suites) runs it only when asked with `?twin=1`,
+ * so the desktop's other specs never start a worker and a store.
+ */
+export function twinWanted(search: string, automated: boolean): boolean {
+  const asked = new URLSearchParams(search).get('twin');
+  if (asked === '0') return false;
+  if (asked === '1') return true;
+  return !automated;
+}
+
+/** The desktop's job queue: the one at the address `address()` answers now, else the browser twin's, else none. */
+export function pagesJobQueue(address: () => string, options: { fetch?: typeof globalThis.fetch, twin?: () => JobQueue | null } = {}): JobQueue {
   let cached: { at: string, queue: JobQueue } | null = null;
   const none = unconfiguredJobQueue();
   const current = () => {
     const at = address();
-    if (!at) return none;
+    if (!at) return options.twin?.() ?? none;
     if (cached?.at !== at) cached = { at, queue: httpJobQueue(at, options) };
     return cached.queue;
   };
@@ -41,4 +55,14 @@ export async function testJobQueue(at: string, options: { fetch?: typeof globalT
   catch (error: any) {
     return error?.unanswered === true || !error?.code ? { ok: false, detail: String(error?.message ?? error) } : { ok: true };
   }
+}
+
+/**
+ * The queue of a browser twin that could not start: every call answers `OS0190`
+ * marked `twin`, so Jobs says the background work could not start here (and
+ * why) instead of asking for a host; the desktop itself boots as always.
+ */
+export function failedTwinQueue(detail: string): JobQueue {
+  const refuse = async (): Promise<never> => { throw Object.assign(new Error(detail), { code: 'OS0190', twin: true }); };
+  return { counts: refuse, page: refuse, get: refuse, schedules: refuse, cancel: refuse, requeue: refuse, unschedule: refuse, events: refuse, health: refuse, registry: refuse, run: refuse };
 }

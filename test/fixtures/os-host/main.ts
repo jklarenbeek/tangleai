@@ -31,7 +31,9 @@
  *                daily at 03:00 Amsterdam time and Mondays at 06:00, both set by the host's
  *                registry, the second single-send), jobs in every state with a dead one's error,
  *                one job held by another process (OS0193), recorded attempts and a runtime
- *                heartbeat (&stale=1 makes it five minutes old); ?jobs=none has no job host (OS0190)
+ *                heartbeat (&stale=1 makes it five minutes old; &twin=1 reports a durable store this tab owns),
+ *                three schedule ticks among the done jobs (kept out of the list); ?jobs=none has no job host
+ *                (OS0190), ?jobs=starting a twin that has not answered (OS0195), ?jobs=twinfail one that could not start
  * Everything the browser test needs is on `window.harness`.
  */
 import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract } from '../../../components/os/src/index.ts';
@@ -215,6 +217,8 @@ if (jobsMode) {
     ...Array.from({ length: 60 }, (_, i) => job(`wait-${String(i).padStart(3, '0')}`, i % 2 ? 'mail.send' : 'orders.push', 'pending', { runAt: t0 + (i + 1) * 60_000 })),
     ...Array.from({ length: 6 }, (_, i) => job(`done-${i}`, 'stock.sync', 'done', { runAt: t0 - (i + 1) * 900_000 })),
     job('old-0001', 'report.build', 'cancelled'), job('old-0002', 'report.build', 'cancelled'),
+    // the schedules' own enqueue jobs: done at once, and never shown as the person's work
+    ...Array.from({ length: 3 }, (_, i) => job(`ops:fixture:stock.full@2026-11-2${i}T03:00:00`, 'ops.fire', 'done', { runAt: t0 - (i + 1) * 86_400_000 })),
   ];
   const schedules: JobSchedule[] = [
     { id: 'stock', kind: 'stock.sync', series: compileRecurrence({ dtstart: utcValue('2026-01-01T00:00:00Z'), rrule: 'FREQ=MINUTELY;INTERVAL=15' }) as any, zone: null, policy: 'rfc5545', missed: 'skip', latenessMs: null,
@@ -242,6 +246,7 @@ if (jobsMode) {
     { id: 'mail-0002#5:not-repeated', at: t0 - 600_000, event: 'not-repeated', kind: 'mail.send', jobId: 'mail-0002', attempt: 5 },
   ];
   const stale = query.get('stale') === '1';
+  const twinHere = query.get('twin') === '1';
   const find = (id: string) => { const found = jobs.find(j => j.id === id); if (!found) throw coded(JOB_CODES.unknown, `there is no job ${id}`); return found; };
   const scripted: JobQueue = {
     counts: async () => {
@@ -286,7 +291,7 @@ if (jobsMode) {
       jobCalls.push({ events: input });
       return { events: events.filter(e => (!input.jobId || e.jobId === input.jobId) && (!input.kind || e.kind === input.kind)) };
     },
-    health: async () => { jobCalls.push({ health: true }); const at = Date.now(); return { now: at, runtimes: [{ runtime: 'fixture@host', at: stale ? at - 300_000 : at - 20_000, stats: { claims: 12, ticks: 340 } }] }; },
+    health: async () => { jobCalls.push({ health: true }); const at = Date.now(); return { now: at, runtimes: [{ runtime: 'fixture@host', at: stale ? at - 300_000 : at - 20_000, stats: { claims: 12, ticks: 340 }, ...(twinHere ? { storage: 'opfs-sahpool', owner: 'this-tab' } : {}) }] }; },
     registry: async () => { jobCalls.push({ registry: true }); return { jobs: registry }; },
     run: async ({ kind }) => {
       jobCalls.push({ run: kind });
@@ -296,7 +301,15 @@ if (jobsMode) {
       jobs.push(job(id, kind, 'pending', { runAt: Date.now() })); return { id };
     },
   };
-  const jobsApp = jobsModule({ queue: jobsMode === 'none' ? unconfiguredJobQueue() : scripted, zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }),
+  const refusing = (error: Error): JobQueue => {
+    const refuse = async (): Promise<never> => { throw error; };
+    return { counts: refuse, page: refuse, get: refuse, schedules: refuse, cancel: refuse, requeue: refuse, unschedule: refuse, events: refuse, health: refuse, registry: refuse, run: refuse };
+  };
+  const queueFor = jobsMode === 'none' ? unconfiguredJobQueue()
+    : jobsMode === 'starting' ? refusing(Object.assign(new Error('the background runtime is starting'), { code: 'OS0195' }))
+    : jobsMode === 'twinfail' ? refusing(Object.assign(new Error('the worker script could not load'), { code: JOB_CODES.unconfigured, twin: true }))
+    : scripted;
+  const jobsApp = jobsModule({ queue: queueFor, ...(twinHere ? { ownsRuntime: () => true } : {}), zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }),
     ...(messages ? { messages, ...(lang !== 'sentinel' ? { locale: lang! } : {}) } : {}) });
   kernel.install(jobsApp.manifest, 'shipped');
   shipped.jobs = jobsApp.mount;

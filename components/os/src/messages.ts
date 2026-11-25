@@ -195,6 +195,13 @@ export const osMessagesEn = {
   'jobs/budget-spent': 'Not run: the day\'s budget for this job is spent.', // Jobs: an attempt refused because its daily budget is used up
   'jobs/runtime-seen': 'Background runtime seen {when}', // Jobs: when the host's background runtime last reported; {when} is relative
   'jobs/runtime-stale': 'The background runtime has not reported for {duration}.', // Jobs warning: the host's background runtime stopped reporting; {duration} is formatted
+  'jobs/starting': 'Background work is starting…', // Jobs: the background runtime in this browser has not answered yet (OS0195)
+  'jobs/starting-detail': 'The runtime opens its store in a worker of an open desktop tab. Jobs reads it again in a moment.', // Jobs: below the starting message
+  'jobs/twin-failed': 'Background work could not start in this browser: {detail}', // Jobs: the browser's background runtime failed to start; {detail} is the reason
+  'jobs/ticks': '{count} schedule ticks so far, kept out of the list', // Jobs: how many times the schedules fired their small enqueue job; those jobs are not listed
+  'jobs/storage-durable': 'kept in this browser', // Jobs heartbeat line: the runtime's store survives a reload
+  'jobs/storage-memory': 'not kept: this browser gives it no lasting storage', // Jobs heartbeat line: the runtime's store is in memory only
+  'jobs/runs-here': 'runs in this tab', // Jobs heartbeat line: this tab's worker owns the runtime
   'state/unavailable': 'Your desktop could not be loaded, so changes are off until it is.',
   'state/failed': 'A change was not saved: {detail}.',
   'tray/theme-light': 'Switch to the light theme',
