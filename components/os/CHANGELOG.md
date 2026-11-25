@@ -1,5 +1,16 @@
 # @tangleai/os
 
+## 0.67.0
+
+### Minor Changes
+
+- e9859ce: The desktop has Jobs (`@tangleai/os/jobs-app`), the background work of a host read through the `job_queue` contract. `jobsModule({ queue, zoneProvider })` shows the counts per state with failed and given-up jobs first. Its Schedules view says each schedule's rule in words in the person's language (every so many seconds, minutes or hours; a day, weekdays or days of the month at their times; any other rule as its RRULE text) with the next three runs, computed from the rule with Jaren's calendar in the schedule's own time zone, marking a run the spring clock change moves and a wall time the autumn change repeats. Its Queue view lists the jobs of a state, fifty at a time, with their attempts, when they are due and the first line of their last error, and a job's details on selection. Skipped runs are shown only beside the runs that passed while the host was stopped, because skipped alone undercounts a downtime. The person cancels, runs a job again or removes a schedule, each asked once in place, and the answer or the coded refusal (`OS0191`, `OS0192`, `OS0193`) is said in the status line. Without a job host (`OS0190`) Jobs says so and opens Settings. Every sentence is in all eleven packs. The Pages desktop places Jobs beside Web.
+- c1fca28: The desktop and its assistant read a host's background work. `createKernel({ jobs })` takes a host's `JobQueue`; without one, every call answers `OS0190`. `kernel.jobQueue()` gives the person's own Jobs app the queue itself. The kernel's contract `tangle_os_jobs` gives the assistant and granted modules `jobs.counts`, `jobs.page`, `jobs.get` and `jobs.schedules` under the same grants as every other contract, each call in the ledger. A job's payload never reaches them.
+
+  The assistant changes nothing itself. `jobs.suggest` (cancel, requeue or remove a schedule, with a reason) files the desktop's own proposal `job.change` in the person's inbox. The desktop carries it out once when the person accepts, and only if the job's state, or the schedule, has not changed since it was suggested; otherwise the proposal stays pending with `OS0112`.
+
+  The Pages desktop sets the job host's address in Settings, Background work, with the same local-network handling as Web access. The Tangle desktop app serves its own store's queue at `/api/job-queue` to the pages the web reader admits.
+
 ## 0.66.0
 
 ### Minor Changes

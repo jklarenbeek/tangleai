@@ -1,5 +1,19 @@
 # @tangleai/hera
 
+## 0.67.0
+
+### Patch Changes
+
+- @tangleai/agents@0.67.0
+  - @tangleai/config@0.67.0
+  - @tangleai/context@0.67.0
+  - @tangleai/documents@0.67.0
+  - @tangleai/gmpl@0.67.0
+  - @tangleai/mas@0.67.0
+  - @tangleai/memory@0.67.0
+  - @tangleai/models@0.67.0
+  - @tangleai/outcomes@0.67.0
+
 ## 0.66.0
 
 ### Patch Changes

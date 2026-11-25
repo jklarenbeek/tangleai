@@ -1,5 +1,16 @@
 # @tangleai/lightrag
 
+## 0.67.0
+
+### Patch Changes
+
+- @tangleai/agents@0.67.0
+  - @tangleai/context@0.67.0
+  - @tangleai/core@0.67.0
+  - @tangleai/documents@0.67.0
+  - @tangleai/models@0.67.0
+  - @tangleai/outcomes@0.67.0
+
 ## 0.66.0
 
 ### Patch Changes

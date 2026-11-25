@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "version": "0.67.0",
+  "baseVersion": "0.66.0",
+  "baseCommit": "5156ec0bd32639f907f0aa183941fdf5f3747860",
+  "preparationCommit": "5283cf358936627c49855e0717353b4245ea3427",
+  "initial": false,
+  "inputHash": "eda422532d5b8dc08389aeacedf4af0b843b16e746ed3299aff375e54e1db337",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        }
+      ],
+      "summary": "The desktop has Jobs (`@tangleai/os/jobs-app`), the background work of a host read through the `job_queue` contract. `jobsModule({ queue, zoneProvider })` shows the counts per state with failed and given-up jobs first. Its Schedules view says each schedule's rule in words in the person's language (every so many seconds, minutes or hours; a day, weekdays or days of the month at their times; any other rule as its RRULE text) with the next three runs, computed from the rule with Jaren's calendar in the schedule's own time zone, marking a run the spring clock change moves and a wall time the autumn change repeats. Its Queue view lists the jobs of a state, fifty at a time, with their attempts, when they are due and the first line of their last error, and a job's details on selection. Skipped runs are shown only beside the runs that passed while the host was stopped, because skipped alone undercounts a downtime. The person cancels, runs a job again or removes a schedule, each asked once in place, and the answer or the coded refusal (`OS0191`, `OS0192`, `OS0193`) is said in the status line. Without a job host (`OS0190`) Jobs says so and opens Settings. Every sentence is in all eleven packs. The Pages desktop places Jobs beside Web.",
+      "id": "jobs-app"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        }
+      ],
+      "summary": "The desktop and its assistant read a host's background work. `createKernel({ jobs })` takes a host's `JobQueue`; without one, every call answers `OS0190`. `kernel.jobQueue()` gives the person's own Jobs app the queue itself. The kernel's contract `tangle_os_jobs` gives the assistant and granted modules `jobs.counts`, `jobs.page`, `jobs.get` and `jobs.schedules` under the same grants as every other contract, each call in the ledger. A job's payload never reaches them.\n\nThe assistant changes nothing itself. `jobs.suggest` (cancel, requeue or remove a schedule, with a reason) files the desktop's own proposal `job.change` in the person's inbox. The desktop carries it out once when the person accepts, and only if the job's state, or the schedule, has not changed since it was suggested; otherwise the proposal stays pending with `OS0112`.\n\nThe Pages desktop sets the job host's address in Settings, Background work, with the same local-network handling as Web access. The Tangle desktop app serves its own store's queue at `/api/job-queue` to the pages the web reader admits.",
+      "id": "jobs-host"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.67.0"
+    },
+    {
+      "name": "@tangleai/ops",
+      "version": "0.67.0"
+    }
+  ]
+}

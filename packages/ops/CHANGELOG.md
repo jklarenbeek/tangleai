@@ -1,5 +1,13 @@
 # @tangleai/ops
 
+## 0.67.0
+
+### Patch Changes
+
+- Updated dependencies [e9859ce]
+- Updated dependencies [c1fca28]
+  - @tangleai/os@0.67.0
+
 ## 0.66.0
 
 ### Minor Changes
