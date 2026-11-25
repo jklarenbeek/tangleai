@@ -1,5 +1,15 @@
 # Tangle releases
 
+## 0.66.0
+
+The desktop can read a host's background work. `@tangleai/os/jobs` defines the `job_queue` contract:
+- reads: how many jobs are in each state and how many wait per kind, a page of jobs by state and kind, one job with its attempts and last error, and every recurring schedule with its rule, zone, state, and next and last run;
+- steers: cancel, requeue and unschedule.
+
+A job's payload and result never cross the contract. Every call takes an optional `scope`. `httpJobQueue(baseUrl)` calls a host that serves the contract, and `unconfiguredJobQueue()` answers `OS0190`. The other refusals are `OS0191` (no such job or schedule), `OS0192` (its state forbids the call), `OS0193` (another process runs the job) and `OS0194` (a scope the host does not serve).
+
+The new package `@tangleai/ops` serves the contract over any Jaren store opened with `jobs`. Each call maps onto Jaren's own fenced operation: a running job is cancelled only with the lease the host's worker holds, so a job another process runs is refused rather than stolen.
+
 ## 0.65.4
 
 The Pages desktop's assistant replies in the language of the person's last message and addresses the person formally in every language that has a formal form: u in Dutch, Sie, vous, usted, o senhor or a senhora, Вы and siz, and the polite forms in Japanese, Korean and Chinese. This applies to its replies and to the text of applications it writes. Re-measured with `anthropic/claude-haiku-5.5`:
