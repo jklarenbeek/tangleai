@@ -1,5 +1,12 @@
 # @tangleai/trading
 
+## 0.68.0
+
+### Patch Changes
+
+- @tangleai/gmpl@0.68.0
+  - @tangleai/mas@0.68.0
+
 ## 0.67.0
 
 ### Patch Changes

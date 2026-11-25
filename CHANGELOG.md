@@ -1,5 +1,13 @@
 # Tangle releases
 
+## 0.68.0
+
+`@tangleai/ops` runs a host's background jobs. A job registry is a JSON document checked by `checkRegistry`, with every problem reported at its JSON Pointer. Each job declares how safe it is to repeat: `safe-read`, `provider-idempotent` or `single-send`. `createOpsRuntime` keeps the registry's schedules in the Jaren store, under ids `ops:<registry>:<kind>`, rewriting one only when the registry changed it and never touching another's. It runs every job in a Jaren worker, either as a contract operation or as a code handler. A `provider-idempotent` operation receives the job id as its idempotency key.
+
+A `single-send` job is fired through a small job that enqueues the real one by id with one attempt. Jaren dead-letters an attempt a crash cut off, and the person's requeue gives exactly one more. Measured under 40 kills: 47 pushes, 47 calls, none twice. All 23 lost pushes were recorded as `not-repeated` and called exactly once more after a requeue.
+
+Every attempt is kept in one collection of the host's store (`OPS_EVENTS_COLLECTIONS`). `started` is committed before the call, and each outcome follows with its duration. A crashed attempt is recorded as `lost` at the next start, and no event holds a payload. A job with `budget.runsPerDay` stops calling once the day's runs are spent. The runtime writes a heartbeat row, and `runNow` refuses while a job of that kind waits or runs.
+
 ## 0.67.0
 
 The desktop has Jobs (`@tangleai/os/jobs-app`), the background work of a host read through the `job_queue` contract. `jobsModule({ queue, zoneProvider })` shows the counts per state with failed and given-up jobs first. Its Schedules view says each schedule's rule in words in the person's language (every so many seconds, minutes or hours; a day, weekdays or days of the month at their times; any other rule as its RRULE text) with the next three runs, computed from the rule with Jaren's calendar in the schedule's own time zone, marking a run the spring clock change moves and a wall time the autumn change repeats. Its Queue view lists the jobs of a state, fifty at a time, with their attempts, when they are due and the first line of their last error, and a job's details on selection. Skipped runs are shown only beside the runs that passed while the host was stopped, because skipped alone undercounts a downtime. The person cancels, runs a job again or removes a schedule, each asked once in place, and the answer or the coded refusal (`OS0191`, `OS0192`, `OS0193`) is said in the status line. Without a job host (`OS0190`) Jobs says so and opens Settings. Every sentence is in all eleven packs. The Pages desktop places Jobs beside Web.

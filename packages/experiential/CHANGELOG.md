@@ -1,5 +1,14 @@
 # @tangleai/experiential
 
+## 0.68.0
+
+### Patch Changes
+
+- @tangleai/config@0.68.0
+  - @tangleai/documents@0.68.0
+  - @tangleai/models@0.68.0
+  - @tangleai/outcomes@0.68.0
+
 ## 0.67.0
 
 ### Patch Changes
