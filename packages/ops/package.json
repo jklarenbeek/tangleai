@@ -11,6 +11,7 @@
     "./registry": "./src/registry.ts",
     "./runtime": "./src/runtime.ts",
     "./events": "./src/events.ts",
+    "./browser": "./src/browser.ts",
     "./package.json": "./package.json"
   },
   "engines": {
@@ -19,7 +20,10 @@
   "sideEffects": false,
   "dependencies": {
     "@tangleai/os": "0.69.1",
-    "@jarenjs/core": "0.226.0"
+    "@jarenjs/core": "0.226.0",
+    "@jarenjs/contract": "0.226.0",
+    "@jarenjs/db": "0.226.0",
+    "@jarenjs/locales": "0.226.0"
   },
   "private": false,
   "types": "./src/index.ts",

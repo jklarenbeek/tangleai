@@ -44,7 +44,8 @@ type Scoped = { scope?: string };
 export type JobEvent = { id: string, at: number, event: 'started' | 'completed' | 'failed' | 'lost' | 'cancelled' | 'not-repeated' | 'budget',
   kind?: string, jobId?: string, attempt?: number, durationMs?: number, code?: string, message?: string, simulated?: boolean };
 /** A runtime's last heartbeat: when it reported and its worker's counts. */
-export type JobRuntimeHealth = { runtime: string, at: number, stats: Record<string, number> };
+/** A runtime's last heartbeat; a browser twin also says where it keeps its store and which tab owns it. */
+export type JobRuntimeHealth = { runtime: string, at: number, stats: Record<string, number>, storage?: string, owner?: string };
 /** A job the host's registry declares: its title, how safe it is to repeat, and its schedule's id when it has one. */
 export type RegisteredJob = { kind: string, title: Record<string, string>, description?: Record<string, string>,
   safety: 'safe-read' | 'provider-idempotent' | 'single-send', scheduled: boolean, schedule?: string, owner?: string };
@@ -68,9 +69,10 @@ export type JobQueue = {
  * Refusals, each a coded error: `OS0190` no job host is configured; `OS0191`
  * no such job or schedule; `OS0192` its state forbids the call (a done job, a
  * live lease on requeue); `OS0193` a claimed job whose lease this host does not
- * hold (another process runs it); `OS0194` a scope this host does not serve.
+ * hold (another process runs it); `OS0194` a scope this host does not serve; `OS0195` the background
+ * runtime is starting or changing tabs (a browser twin between owners), not missing.
  */
-export const JOB_CODES = { unconfigured: 'OS0190', unknown: 'OS0191', refused: 'OS0192', held: 'OS0193', scope: 'OS0194' } as const;
+export const JOB_CODES = { unconfigured: 'OS0190', unknown: 'OS0191', refused: 'OS0192', held: 'OS0193', scope: 'OS0194', starting: 'OS0195' } as const;
 
 const ID = { type: 'string', minLength: 1, maxLength: 512 } as const;
 const SCOPE = { type: 'string', minLength: 1, maxLength: 120 } as const;
@@ -115,7 +117,7 @@ const EVENT_SCHEMA = {
     code: { type: 'string', maxLength: 40 }, message: { type: 'string', maxLength: 500 }, simulated: { type: 'boolean' },
   },
 } as const;
-const HEALTH_SCHEMA = { type: 'object', additionalProperties: false, required: ['runtime', 'at', 'stats'], properties: { runtime: { type: 'string', minLength: 1, maxLength: 200 }, at: MS, stats: { type: 'object', additionalProperties: { type: 'number' } } } } as const;
+const HEALTH_SCHEMA = { type: 'object', additionalProperties: false, required: ['runtime', 'at', 'stats'], properties: { runtime: { type: 'string', minLength: 1, maxLength: 200 }, at: MS, stats: { type: 'object', additionalProperties: { type: 'number' } }, storage: { type: 'string', maxLength: 40 }, owner: { type: 'string', maxLength: 120 } } } as const;
 const REGISTERED_SCHEMA = {
   type: 'object', additionalProperties: false, required: ['kind', 'title', 'safety', 'scheduled'],
   properties: { kind: KIND, title: TEXTS, description: TEXTS, safety: { enum: ['safe-read', 'provider-idempotent', 'single-send'] }, scheduled: { type: 'boolean' }, schedule: ID, owner: { type: 'string', maxLength: 200 } },

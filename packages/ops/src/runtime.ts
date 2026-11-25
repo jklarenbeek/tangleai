@@ -21,7 +21,17 @@ import { FIRE_KIND, maxAttemptsOf, seriesOf, type JobRegistry, type RegistryJob 
 import { eventId, opsEvents, type OpsEvent } from './events.ts';
 
 /** A contract the runtime calls a job's operation on: an `openHttpClient`, or an in-process dispatcher. */
-export type OpsContract = { invoke(operation: string, input: unknown, ctx?: { idempotencyKey?: string, signal?: AbortSignal }): Promise<unknown> };
+/** The job a contract call runs for, for a client that can carry it (`invokeJob`). */
+export type OpsJobRef = { id: string, attempt: number, kind: string };
+/**
+ * A contract the runtime calls a job's operation on: an `openHttpClient`, or an in-process dispatcher. A client
+ * that also has `invokeJob` is given the job itself (its id, attempt and kind) — a browser page's tasks use it to
+ * key what they do by the job; a plain client gets only the idempotency key its transport carries.
+ */
+export type OpsContract = {
+  invoke(operation: string, input: unknown, ctx?: { idempotencyKey?: string, signal?: AbortSignal }): Promise<unknown>,
+  invokeJob?(operation: string, input: unknown, ctx: { job: OpsJobRef, idempotencyKey?: string, signal?: AbortSignal }): Promise<unknown>,
+};
 export type OpsHandler = (payload: unknown, ctx: { job: any, signal?: AbortSignal }) => Promise<unknown>;
 export type OpsRuntimeOptions = {
   /** A Jaren store opened with `jobs: { schedules: jobSchedules() }` whose model holds `OPS_EVENTS_COLLECTIONS`. */
@@ -36,6 +46,8 @@ export type OpsRuntimeOptions = {
   keepDays?: number,
   heartbeatMs?: number,
   worker?: { concurrency?: number, pollInterval?: number, leaseMs?: number },
+  /** What the heartbeat also says: where the store is kept and which tab owns it (a browser twin). */
+  about?: { storage?: string, owner?: string },
   /** Marks every event as simulated (the browser twin's moved clock). */
   simulated?: boolean,
   onEvent?: (event: OpsEvent) => void,
@@ -134,7 +146,7 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
     catch { /* a store whose jobs cannot be swept keeps them; the history is still bounded */ }
   }
 
-  const heartbeat = () => record({ id: `heartbeat:${id}`, at: now(), event: 'heartbeat', runtime: id, stats: worker?.stats() ?? {} });
+  const heartbeat = () => record({ id: `heartbeat:${id}`, at: now(), event: 'heartbeat', runtime: id, stats: worker?.stats() ?? {}, ...(options.about?.storage ? { storage: options.about.storage } : {}), ...(options.about?.owner ? { owner: options.about.owner } : {}) });
 
   function handlerFor(job: RegistryJob): OpsHandler {
     return async (payload, { job: record_, signal }) => {
@@ -149,9 +161,10 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
       if ('contract' in job.handler) {
         const client = options.contracts?.[job.handler.contract];
         if (!client) throw coded('OPS0002', `no contract client '${job.handler.contract}' is given to the runtime`);
-        return outcomeOf(await client.invoke(job.handler.operation, payload ?? {}, {
-          ...(job.safety === 'provider-idempotent' ? { idempotencyKey: record_.id } : {}), ...(signal ? { signal } : {}),
-        }));
+        const ctx = { ...(job.safety === 'provider-idempotent' ? { idempotencyKey: record_.id } : {}), ...(signal ? { signal } : {}) };
+        return outcomeOf(client.invokeJob
+          ? await client.invokeJob(job.handler.operation, payload ?? {}, { ...ctx, job: { id: record_.id, attempt, kind: job.kind } })
+          : await client.invoke(job.handler.operation, payload ?? {}, ctx));
       }
       const fn = options.handlers?.[job.handler.code];
       if (!fn) throw coded('OPS0002', `no handler '${job.handler.code}' is given to the runtime`);
