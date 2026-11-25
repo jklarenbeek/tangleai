@@ -634,3 +634,17 @@
 .tos-access-calls { list-style: none; margin: 6px 0 0; padding-inline-start: 14px; display: grid; gap: 2px; font-size: 12px; font-variant-numeric: tabular-nums; }
 .tos-access-calls .is-refused { color: var(--fail, #c0392b); }
 @media (prefers-reduced-motion: reduce) { .tos-sheet { animation: none; } }
+.tos-jobs-sim { margin-block-start: 16px; padding: 12px 14px; border: 1px dashed var(--border); border-radius: 10px; display: grid; gap: 10px; }
+.tos-jobs-sim h3 { margin: 0; font-size: 14px; }
+.tos-jobs-sim-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 14px; }
+.tos-jobs-sim-choice { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+.tos-jobs-sim-scroll { overflow-x: auto; }
+.tos-jobs-sim-table { border-collapse: collapse; font-size: 12px; }
+.tos-jobs-sim-table th, .tos-jobs-sim-table td { padding: 4px 8px; border-block-end: 1px solid var(--border); text-align: start; vertical-align: top; white-space: nowrap; }
+.tos-jobs-sim-table thead th { color: var(--muted); font-weight: 500; }
+.tos-jobs-sim-table td { display: table-cell; }
+.tos-jobs-sim-runs { font-variant-numeric: tabular-nums; }
+.tos-jobs-sim-extra { display: block; color: var(--fail, #c0392b); }
+.tos-jobs-sim-total { margin: 0; font-size: 12px; }
+.tos-jobs-sim-note { margin: 0; font-size: 12px; color: var(--muted); }
+.tos-jobs-sim-error { margin: 0; color: var(--fail, #c0392b); }

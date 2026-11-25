@@ -21,6 +21,7 @@ import { pagesJobQueue, twinWanted, failedTwinQueue } from './job-access.ts';
 import type { JobQueue } from '@tangleai/os/jobs';
 import { browserJobQueue, startTwin, forgetBrowserOps } from '@tangleai/ops/browser';
 import { desktopTasks } from './ops-tasks.ts';
+import { pagesSimulate } from './ops-simulate.ts';
 import { TWIN, DESKTOP_TASKS_CONTRACT } from './ops-twin.ts';
 import { setBackground } from './background.ts';
 import { createSurfaces } from './surfaces.ts';
@@ -106,7 +107,10 @@ const web = webModule({ ...chrome, reader: kernel.webReader(), configure: () => 
 
 // Jobs: the background work of the host the person named in Settings, Background work (none: OS0190),
 // beside Web; the runs of a wall-clock schedule are computed with the browser's own time zone data
-const jobs = jobsModule({ ...chrome, queue: kernel.jobQueue(), ownsRuntime: () => ownsRuntime, zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }), configure: () => {
+const jobs = jobsModule({ ...chrome, queue: kernel.jobQueue(), ownsRuntime: () => ownsRuntime, zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }),
+  // what will happen: the registered schedules simulated in a worker of their own, on a separate copy
+  simulate: pagesSimulate(new URL('./os-ops-sim-worker.js', import.meta.url), { zone: (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return undefined; } })() }),
+  configure: () => {
   desktop.openSettings();
   void kernel.call('shell', 'tangle_os_settings', 'settings.show', { section: 'jobs' });
 } });

@@ -3283,7 +3283,7 @@
       },
       {
         "path": "packages/ops/package.json",
-        "sha256": "9b1694de6ea7e176f891f85cb750a0d5ab648417cd8732a4d7f445e657858a1b"
+        "sha256": "d497596258229b4c0dd545745b52b075b69442640c50a3d5c907b1aa68704f92"
       },
       {
         "path": "packages/ops/src/browser.ts",
@@ -3312,6 +3312,10 @@
       {
         "path": "packages/ops/src/runtime.ts",
         "sha256": "837b096667eeaf6df28d6d77193b6612b5b47afc849844e9b7283944d1604765"
+      },
+      {
+        "path": "packages/ops/src/simulate.ts",
+        "sha256": "0b532728614603df4b6b0247052b73ee8f3ac5f9dac4a518bf1b15ce37c066a0"
       },
       {
         "path": "packages/ops/src/supervisor.ts",
@@ -4410,7 +4414,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "c74e7aeba0904737c519cfca0f9d14f80d5b7c33729bb5edb8d91955e4c2154e"
+    "sha256": "ac3bffb5405d8b1fe329da8d0b1ccfbec3520c898a693b6a6bd2f0dbe5e1ad6d"
   },
   "fixtureSource": {
     "files": [
@@ -69600,7 +69604,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "46a22a6e31eb256cb4a2b5a58346037f50601bb527dbf64bf76013a26ecc45ca",
-      "sourceSha256": "c74e7aeba0904737c519cfca0f9d14f80d5b7c33729bb5edb8d91955e4c2154e",
+      "sourceSha256": "ac3bffb5405d8b1fe329da8d0b1ccfbec3520c898a693b6a6bd2f0dbe5e1ad6d",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -69684,7 +69688,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "1d73aa4f032298e9a537703cbcfde708c1aafea54f90496468ac7026ecee2bb4"
+      "planId": "734ccfc111ccc04748c3a43542f0fdda8f5b664d9f4f2154b18ad7bd4499f5ef"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -69931,5 +69935,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "bc24233cf780d4f8e7ef49282c3f042edbc8be6ba87181f6d9448ac372d0dbbe"
+  "reportId": "97b3a9e039b9bdce2c580270096ef72ba2fbe054da65302b2f539e67d43b93e1"
 }

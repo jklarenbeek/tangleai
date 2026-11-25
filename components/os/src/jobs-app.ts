@@ -40,6 +40,20 @@ export type JobsOptions = {
   ownsRuntime?: () => boolean,
   /** How often an open, visible Jobs window reads again, in milliseconds (default 10 s). */
   refreshMs?: number,
+  /**
+   * Simulate the registered schedules over the next days on a separate copy with its own clock (the host's page
+   * supplies it, for example in a worker of its own); absent, Jobs offers no simulation. Nothing real runs.
+   */
+  simulate?: (input: { registry: RegisteredJob[], schedules: JobSchedule[], days: number, failRate: number }) => Promise<JobsSimulation>,
+};
+
+/** What a simulation answers: per day and job, the runs and what became of them; every number simulated. */
+export type JobsSimulation = {
+  days: { date: string, jobs: { kind: string, fired: number, completed: number, retried: number, failed: number, dead: number, notRepeated: number, skipped: number, marks: ('gap' | 'fold')[] }[] }[],
+  totals: { fired: number, retried: number, dead: number, notRepeated: number, skipped: number },
+  wallMs: number,
+  /** Registered jobs whose rule could not be rebuilt, left out. */
+  left?: string[],
 };
 
 type Translate = (key: OsMessageKey, values?: Record<string, string | number>) => string;
@@ -323,6 +337,8 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
   let ticket = 0, unconfigured = false, closed = false;
   let registry: RegisteredJob[] = [], health: { now: number, runtimes: JobRuntimeHealth[] } | null = null;
   const attempts = new Map<string, JobEvent[] | null>();
+  // the simulation panel's choices and its last answer survive the window's refreshes
+  let simDays = 7, simRate = 0, simRan = 7, simBusy = false, simResult: JobsSimulation | null = null, simError: string | null = null;
   /** An optional operation (an older host has none, or refuses it): its answer, or `fallback`. */
   const optional = async <T>(call: (() => Promise<T>) | undefined, fallback: T): Promise<T> => { if (!call) return fallback; try { return await call(); } catch { return fallback; } };
 
@@ -493,8 +509,80 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
       ul.append(li);
     }
     const ticks = schedules.filter(s => s.id.startsWith('ops:')).reduce((n, s) => n + (s.counts?.fired ?? 0), 0);
-    if (ticks > 0) { const note = el('p', 'tos-jobs-ticks', t('jobs/ticks', { count: new Intl.NumberFormat(locale).format(ticks) })); view.replaceChildren(ul, note); }
-    else view.replaceChildren(ul);
+    const tail: Node[] = [];
+    if (ticks > 0) tail.push(el('p', 'tos-jobs-ticks', t('jobs/ticks', { count: new Intl.NumberFormat(locale).format(ticks) })));
+    if (options.simulate && registry.some(r => r.scheduled)) tail.push(simulationPanel());
+    view.replaceChildren(ul, ...tail);
+  };
+
+  const runSimulation = async () => {
+    if (simBusy || !options.simulate) return;
+    simBusy = true; simError = null; render();
+    try { simRan = simDays; simResult = await options.simulate({ registry, schedules, days: simDays, failRate: simRate }); }
+    catch (error: any) { simError = String(error?.message ?? error); }
+    finally { simBusy = false; render(); }
+  };
+  const choice = (label: string, values: readonly number[], current: number, name: (n: number) => string, set: (n: number) => void) => {
+    const wrap = el('label', 'tos-jobs-sim-choice');
+    const select = el('select', '');
+    for (const v of values) { const o = el('option', '', name(v)); o.value = String(v); o.selected = v === current; select.append(o); }
+    select.addEventListener('change', () => set(Number(select.value)));
+    wrap.append(el('span', '', label), select);
+    return wrap;
+  };
+  const simulationPanel = () => {
+    const panel = el('section', 'tos-jobs-sim'); panel.setAttribute('aria-label', t('jobs/sim-title'));
+    panel.append(el('h3', '', t('jobs/sim-title')));
+    const controls = el('div', 'tos-jobs-sim-controls');
+    const percent = (n: number) => new Intl.NumberFormat(locale, { style: 'percent' }).format(n);
+    const go = button('tos-jobs-plain', simBusy ? t('jobs/sim-running') : t('jobs/sim-run'), () => void runSimulation());
+    go.disabled = simBusy;
+    controls.append(
+      choice(t('jobs/sim-days'), [1, 7, 30], simDays, n => unit(locale, n, 'day'), n => { simDays = n; }),
+      choice(t('jobs/sim-failures'), [0, 0.05, 0.2], simRate, percent, n => { simRate = n; }),
+      go);
+    panel.append(controls);
+    if (simError) { const p = el('p', 'tos-jobs-sim-error', t('jobs/sim-failed', { message: simError })); p.setAttribute('role', 'alert'); panel.append(p); }
+    if (simResult && !simBusy) {
+      const number = (n: number) => new Intl.NumberFormat(locale).format(n);
+      const kinds = [...new Set(simResult.days.flatMap(d => d.jobs.map(j => j.kind)))];
+      const scroll = el('div', 'tos-jobs-sim-scroll');
+      const table = el('table', 'tos-jobs-sim-table');
+      const head = el('tr', '');
+      head.append(el('th', '', t('jobs/sim-job')));
+      for (const d of simResult.days) {
+        const th = el('th', '', new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'short', day: 'numeric' }).format(Date.parse(`${d.date}T12:00:00Z`)));
+        th.dataset.date = d.date; head.append(th);
+      }
+      const thead = el('thead', ''); thead.append(head);
+      const tbody = el('tbody', '');
+      for (const kind of kinds) {
+        const reg = registry.find(r => r.kind === kind);
+        const row = el('tr', ''); row.dataset.kind = kind;
+        row.append(el('th', '', reg ? titleOf(reg) : kind));
+        for (const d of simResult.days) {
+          const j = d.jobs.find(x => x.kind === kind);
+          const td = el('td', '');
+          if (j) {
+            td.append(el('span', 'tos-jobs-sim-runs', number(j.fired)));
+            const extra = (text: string) => td.append(el('span', 'tos-jobs-sim-extra', text));
+            if (j.retried > 0) extra(t('jobs/sim-retried', { count: number(j.retried) }));
+            if (j.dead - j.notRepeated > 0) extra(t('jobs/sim-given-up', { count: number(j.dead - j.notRepeated) }));
+            if (j.notRepeated > 0) extra(t('jobs/sim-not-repeated', { count: number(j.notRepeated) }));
+            if (j.skipped > 0) extra(t('jobs/sim-skipped', { count: number(j.skipped) }));
+            for (const mark of j.marks) { const m = el('span', 'tos-jobs-mark', mark === 'gap' ? t('jobs/moved') : t('jobs/repeated')); m.dataset.mark = mark; td.append(m); }
+          }
+          row.append(td);
+        }
+        tbody.append(row);
+      }
+      table.append(thead, tbody); scroll.append(table);
+      panel.append(scroll,
+        el('p', 'tos-jobs-sim-total', t('jobs/sim-total', { runs: number(simResult.totals.fired), days: number(simRan), seconds: new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(simResult.wallMs / 1000) })),
+        el('p', 'tos-jobs-sim-note', t('jobs/sim-note')));
+      if (simResult.left?.length) panel.append(el('p', 'tos-muted', t('jobs/sim-left', { kinds: simResult.left.join(', ') })));
+    }
+    return panel;
   };
 
   const field = (dl: HTMLElement, label: string, value: string | Node) => { const dd = el('dd', ''); dd.append(value); dl.append(el('dt', '', label), dd); };

@@ -199,6 +199,20 @@ export const osMessagesEn = {
   'jobs/starting-detail': 'The runtime opens its store in a worker of an open desktop tab. Jobs reads it again in a moment.', // Jobs: below the starting message
   'jobs/twin-failed': 'Background work could not start in this browser: {detail}', // Jobs: the browser's background runtime failed to start; {detail} is the reason
   'jobs/ticks': '{count} schedule ticks so far, kept out of the list', // Jobs: how many times the schedules fired their small enqueue job; those jobs are not listed
+  'jobs/sim-title': 'What will happen', // Jobs: heading of the panel that simulates the next days
+  'jobs/sim-days': 'Days', // Jobs simulation: label of the number of days
+  'jobs/sim-failures': 'Failure rate', // Jobs simulation: label of the share of attempts that fail
+  'jobs/sim-run': 'Simulate', // Jobs simulation: button that runs it
+  'jobs/sim-running': 'Simulating…', // Jobs simulation: while it runs
+  'jobs/sim-note': 'Simulated on a separate copy with its own clock: nothing ran and nothing was sent.', // Jobs simulation: note under every result
+  'jobs/sim-total': '{runs} runs over {days} days, simulated in {seconds} s', // Jobs simulation: summary; {runs} and {days} are numbers, {seconds} a decimal
+  'jobs/sim-retried': '{count} retried', // Jobs simulation: attempts that were tried again
+  'jobs/sim-given-up': '{count} given up', // Jobs simulation: jobs that failed every attempt
+  'jobs/sim-not-repeated': '{count} not repeated', // Jobs simulation: single-send jobs that failed and are not repeated
+  'jobs/sim-skipped': '{count} skipped by the budget', // Jobs simulation: runs refused by the job's daily budget
+  'jobs/sim-left': 'Not simulated: {kinds}', // Jobs simulation: jobs it could not rebuild; {kinds} a list
+  'jobs/sim-failed': 'The simulation could not run: {message}', // Jobs simulation: it failed; {message} the reason
+  'jobs/sim-job': 'Job', // Jobs simulation: header of the job column
   'jobs/storage-durable': 'kept in this browser', // Jobs heartbeat line: the runtime's store survives a reload
   'jobs/storage-memory': 'not kept: this browser gives it no lasting storage', // Jobs heartbeat line: the runtime's store is in memory only
   'jobs/runs-here': 'runs in this tab', // Jobs heartbeat line: this tab's worker owns the runtime

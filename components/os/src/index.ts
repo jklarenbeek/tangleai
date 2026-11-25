@@ -46,4 +46,4 @@ export type { JobQueue, JobItem, JobCounts, JobSchedule, JobState, JobEvent, Job
 export { watchJobs, withinHours, SILENT_AFTER_MS } from './job-watch.ts';
 export type { JobWatchOptions, WorkingHours, Weekday } from './job-watch.ts';
 export { jobsModule, describeRule, nextRuns, scheduledRuns, STATE_ORDER } from './jobs-app.ts';
-export type { JobsOptions, NextRun, ScheduledRun } from './jobs-app.ts';
+export type { JobsOptions, JobsSimulation, NextRun, ScheduledRun } from './jobs-app.ts';

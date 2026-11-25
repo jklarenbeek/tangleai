@@ -50,6 +50,7 @@ await writeFile(join(dist, 'os.js'), await os.outputs[0].text());
 const sqliteSource = await Bun.build({ entrypoints: [join(here, 'src', 'os', 'sqlite-source.ts')], target: 'browser', format: 'esm' }); if (!sqliteSource.success) throw new Error(sqliteSource.logs.join('\n')); await writeFile(join(dist, 'os-sqlite.js'), await sqliteSource.outputs[0].text());
 // the browser twin's worker: the desktop's background work, run off the page in a worker of an open tab
 const opsWorker = await Bun.build({ entrypoints: [join(here, 'src', 'os', 'ops-worker.ts')], target: 'browser', format: 'esm' }); if (!opsWorker.success) throw new Error(opsWorker.logs.join('\n')); await writeFile(join(dist, 'os-ops-worker.js'), await opsWorker.outputs[0].text());
+const simWorker = await Bun.build({ entrypoints: [join(here, 'src', 'os', 'ops-sim-worker.ts')], target: 'browser', format: 'esm' }); if (!simWorker.success) throw new Error(simWorker.logs.join('\n')); await writeFile(join(dist, 'os-ops-sim-worker.js'), await simWorker.outputs[0].text());
 const moduleHost = await Bun.build({ entrypoints: [join(repo, 'components', 'os', 'src', 'module-host.ts')], target: 'browser', format: 'iife' });
 if (!moduleHost.success) throw new Error(moduleHost.logs.join('\n'));
 await writeFile(join(dist, 'os-module-host.js'), await moduleHost.outputs[0].text());
