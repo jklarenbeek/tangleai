@@ -1,5 +1,11 @@
 # @tangleai/context
 
+## 0.71.0
+
+### Patch Changes
+
+- @tangleai/models@0.71.0
+
 ## 0.70.0
 
 ### Patch Changes

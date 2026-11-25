@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "version": "0.71.0",
+  "baseVersion": "0.70.0",
+  "baseCommit": "e11024e72935678dc3070e2f868cad45d1abf562",
+  "preparationCommit": "397bdeb2b7ecfe5df0ec59beca42a1004af0780d",
+  "initial": false,
+  "inputHash": "5a982cde74e11e31ec7454898764f085511177ee6bcf275cb3608f19c33cc837",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/ops",
+          "type": "minor"
+        }
+      ],
+      "summary": "`@tangleai/ops/supervisor` runs the operations runtime in a `worker_threads` worker with its own store. `superviseOps` starts the worker and reads it through the `job_queue` contract over a MessageChannel, so the person's cancel reaches the thread where the leases live. The worker entry calls `runOpsWorker`. A worker that exits or throws is restarted after a backoff of 1 s doubling to 60 s. One that does not answer its health call is restarted as hung, and one whose heartbeat is old is restarted only after two consecutive old readings, so a clock jump or a slow start is not taken for a death. While it starts the queue answers `OS0195`, which is now a declared answer of the contract. `stop()` drains the history first. Measured over ten deaths of the worker: each was running again within 0.3–1.3 s with no claim error, no single-send operation was called twice, and every lost single-send job is recorded as `not-repeated`. Start-up reconciles only the last `keepDays`, about 250 ms over 86,000 events. The browser runtime polls once a second instead of four times. The Tangle desktop app, started with `--ops <host module>` or `TANGLE_OPS_MODULE`, runs the module's registry in such a worker, with its own `ops.db` beside the desktop's database. Its `/api/job-queue` serves the runtime under scope `ops` and the desktop store's own queue under scope `desktop`.",
+      "id": "ops-supervisor"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.71.0"
+    },
+    {
+      "name": "@tangleai/ops",
+      "version": "0.71.0"
+    }
+  ]
+}
