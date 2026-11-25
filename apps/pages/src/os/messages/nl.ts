@@ -276,6 +276,7 @@ export const nl: PagesCatalogue = {
   'calendar/export-runs': 'Komende uitvoeringen exporteren (.ics)',
   'calendar/show-runs': 'Achtergrondwerk tonen',
   'calendar/runs-title': 'Achtergrondwerk',
+  'calendar/run-of-product': '{product}: {title}',
   'calendar/runs-cell': '{count} op de achtergrond',
   'calendar/run-summary': '{title}: {count} keer',
   'calendar/run-moved': 'verschoven door de klokwijziging',

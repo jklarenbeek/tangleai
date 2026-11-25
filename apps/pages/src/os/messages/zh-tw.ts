@@ -278,6 +278,7 @@ export const zhTW: PagesCatalogue = {
   'calendar/export-runs': '匯出即將執行的項目（.ics）',
   'calendar/show-runs': '顯示背景工作',
   'calendar/runs-title': '背景工作',
+  'calendar/run-of-product': '{product}：{title}',
   'calendar/runs-cell': '背景中 {count} 項',
   'calendar/run-summary': '{title}：{count} 次',
   'calendar/run-moved': '因時間調整而移動',

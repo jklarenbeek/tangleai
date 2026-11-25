@@ -520,6 +520,11 @@
 .tos-web-configure:hover { background: var(--accent-soft); }
 .tos-jobs { display: grid; grid-template-rows: auto auto auto minmax(0, 1fr); block-size: 100%; min-block-size: 0; }
 .tos-jobs-states { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px 0; }
+.tos-jobs-products { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 10px 14px 0; }
+.tos-jobs-product { padding: 2px 0; border: 0; border-block-end: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; }
+.tos-jobs-product[aria-pressed="true"] { color: var(--fg); border-block-end-color: var(--accent); }
+.tos-jobs-product[data-tone="fail"] { color: var(--fail, #c0392b); }
+.tos-jobs-product:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .tos-jobs-state-count { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--fg); font: inherit; font-size: 13px; cursor: pointer; }
 .tos-jobs-state-number { font-variant-numeric: tabular-nums; font-weight: 600; }
 .tos-jobs-state-count[data-tone="danger"] { border-color: color-mix(in srgb, var(--fail, #c0392b) 55%, var(--border)); color: var(--fail, #c0392b); }

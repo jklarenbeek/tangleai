@@ -19,7 +19,7 @@
  */
 import { classifyLocal, compileRecurrence, floatingValue, formatRRule, nextOccurrences, resolveLocal, utcValue } from '@jarenjs/core/calendar';
 import { createOsMessages, type OsCatalogue, type OsMessageKey } from './messages.ts';
-import { JOB_CODES, type JobCounts, type JobEvent, type JobItem, type JobQueue, type JobRuntimeHealth, type JobSchedule, type JobState, type RegisteredJob } from './jobs.ts';
+import { JOB_CODES, type JobCounts, type JobEvent, type JobItem, type JobQueue, type JobRuntimeHealth, type JobSchedule, type JobScope, type JobState, type RegisteredJob } from './jobs.ts';
 import type { ModuleManifest } from './manifest.ts';
 import type { ShippedContext, ShippedMount } from './shell.ts';
 
@@ -319,22 +319,47 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
   const t = createOsMessages(options.messages);
   const locale = options.locale ?? context.locale ?? 'en';
   const now = options.now ?? (() => Date.now());
-  const queue = options.queue;
+  const base = options.queue;
+  /** The products this queue answers for (a combined queue); a plain queue is one unnamed product. */
+  const scopeList = (): JobScope[] => {
+    let answer: unknown;
+    try { answer = base.scopes?.(); } catch { answer = undefined; }
+    if (answer && typeof (answer as any).then === 'function') (answer as Promise<unknown>).catch(() => {});
+    return Array.isArray(answer) ? answer as JobScope[] : [];
+  };
+  let scope: string | null = null;
+  /** The product shown now: the chosen one while it is still there, else the first. */
+  const products = () => {
+    const list = scopeList();
+    if (!list.length) scope = null;
+    else if (!scope || !list.some(x => x.scope === scope)) scope = list[0].scope;
+    return list;
+  };
+  /** The queue as this window asks it: every call carries the product shown. */
+  const queue = new Proxy(base, { get(target, prop) {
+    const value = (target as any)[prop];
+    if (typeof value !== 'function' || prop === 'scopes') return value;
+    return (input?: any) => value.call(target, scope ? { ...(input ?? {}), scope } : input);
+  } }) as JobQueue;
   const el = <K extends keyof HTMLElementTagNameMap>(tag: K, className = '', text?: string) => { const e = doc.createElement(tag); if (className) e.className = className; if (text !== undefined) e.textContent = text; return e; };
   const button = (className: string, text: string, onClick: () => void) => { const b = el('button', className, text); b.type = 'button'; b.addEventListener('click', onClick); return b; };
 
   const root = el('div', 'tos-jobs');
+  // with several products: one quiet line each (its failures and waiting jobs), which also chooses it
+  const productRow = el('div', 'tos-jobs-products');
+  productRow.setAttribute('role', 'group'); productRow.setAttribute('aria-label', t('jobs/products'));
   const states = el('div', 'tos-jobs-states');
   states.setAttribute('role', 'group'); states.setAttribute('aria-label', t('jobs/states'));
   const status = el('p', 'tos-jobs-status'); status.setAttribute('role', 'status');
   const view = el('div', 'tos-jobs-view');
   const pulse = el('p', 'tos-jobs-pulse');
-  root.append(states, pulse, status, view);
+  root.append(productRow, states, pulse, status, view);
   node.append(root);
 
   let current: View = 'schedules', counts: JobCounts | null = null, schedules: JobSchedule[] = [];
   let filter: JobState | null = null, items: JobItem[] = [], next: string | undefined, selected: string | null = null;
   let ticket = 0, unconfigured = false, closed = false;
+  let productCounts: { product: JobScope, counts: JobCounts | null }[] = [];
   let registry: RegisteredJob[] = [], health: { now: number, runtimes: JobRuntimeHealth[] } | null = null;
   const attempts = new Map<string, JobEvent[] | null>();
   // the simulation panel's choices and its last answer survive the window's refreshes
@@ -382,10 +407,40 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
     }
   };
 
-  const header = () => context.setHeader({
-    center: { kind: 'tabs', id: 'view', label: t('jobs/views'), selected: current, items: [{ id: 'schedules', label: t('jobs/schedules') }, { id: 'queue', label: t('jobs/queue') }] },
-    end: [{ kind: 'button', id: 'refresh', label: t('jobs/refresh'), glyph: 'refresh', disabled: unconfigured }],
-  });
+  const productTitle = (product: JobScope) => product.title[locale] ?? product.title[locale.split('-')[0]] ?? product.title.en ?? product.scope;
+  /** The menu entry of a product (an id the header accepts, whatever the scope is spelled with). */
+  const entryOf = (index: number) => `product-${index}`;
+  const header = () => {
+    const list = products();
+    context.setHeader({
+      ...(list.length > 1 ? { start: [{ kind: 'menu', id: 'product', label: t('jobs/product', { product: productTitle(list.find(x => x.scope === scope) ?? list[0]).slice(0, 48) }),
+        entries: list.map((x, index) => ({ id: entryOf(index), label: productTitle(x).slice(0, 64), checked: x.scope === scope })) }] } : {}),
+      center: { kind: 'tabs', id: 'view', label: t('jobs/views'), selected: current, items: [{ id: 'schedules', label: t('jobs/schedules') }, { id: 'queue', label: t('jobs/queue') }] },
+      end: [{ kind: 'button', id: 'refresh', label: t('jobs/refresh'), glyph: 'refresh', disabled: unconfigured }],
+    } as any);
+  };
+  /** Show another product: what was shown of the last one is set aside, and the new one is read. */
+  const choose = (target: string) => {
+    if (target === scope) return;
+    scope = target; counts = null; schedules = []; items = []; next = undefined; filter = null; selected = null; registry = []; health = null; attempts.clear();
+    header(); drawProducts(); void load();
+  };
+  /** One quiet button per product with its failures and waiting jobs; nothing with one product. */
+  const drawProducts = () => {
+    const list = products();
+    if (list.length < 2) { productRow.replaceChildren(); productRow.hidden = true; return; }
+    productRow.hidden = false;
+    const number = new Intl.NumberFormat(locale);
+    productRow.replaceChildren(...list.map(product => {
+      const c = productCounts.find(x => x.product.scope === product.scope)?.counts;
+      const failed = c ? (c.failed ?? 0) + (c.dead ?? 0) : null;
+      const text = c ? t('jobs/product-summary', { product: productTitle(product), failed: number.format(failed!), waiting: number.format(c.pending ?? 0) }) : productTitle(product);
+      const b = button('tos-jobs-product', text, () => choose(product.scope));
+      b.setAttribute('aria-pressed', String(product.scope === scope));
+      if (failed) b.dataset.tone = 'fail';
+      return b;
+    }));
+  };
 
   /** A refusal said plainly, with its code on the status line. */
   const refusal = (error: any) => {
@@ -702,7 +757,11 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
         optional(queue.registry ? () => queue.registry!() : undefined, { jobs: [] as RegisteredJob[] }),
         optional(queue.health ? () => queue.health!() : undefined, null as { now: number, runtimes: JobRuntimeHealth[] } | null)]);
       if (mine !== ticket || closed) return;
+      const list = products();
+      if (list.length > 1) productCounts = await Promise.all(list.map(product => base.counts({ scope: product.scope }).then(counts => ({ product, counts }), () => ({ product, counts: null as JobCounts | null }))));
+      if (mine !== ticket || closed) return;
       unconfigured = false; counts = c; schedules = s.schedules; registry = r.jobs; health = h;
+      drawProducts();
       if (selected) refreshAttempts(selected);
       if (filter === null) filter = STATE_ORDER.find(state => (c[state] ?? 0) > 0) ?? 'pending';
       if (status.textContent === t('jobs/loading')) say('');
@@ -722,6 +781,11 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
       if (current === 'queue') void loadQueue(true); else render();
     }
     else if (item === 'refresh') void load();
+    else if (item === 'product' && typeof value === 'string') {
+      const product = products()[Number(value.replace(/^product-/, ''))];
+      if (!product) return { refused: `Jobs has no product '${value}'` };
+      choose(product.scope);
+    }
     else return { refused: `Jobs has no '${item}'` };
   });
   // read again while it is on screen, and when it comes back

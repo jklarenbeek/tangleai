@@ -301,6 +301,7 @@ export const ar: PagesCatalogue = {
   'calendar/export-runs': 'تصدير عمليات التشغيل القادمة (.ics)',
   'calendar/show-runs': 'إظهار العمل في الخلفية',
   'calendar/runs-title': 'العمل في الخلفية',
+  'calendar/run-of-product': '{product}: {title}',
   'calendar/runs-cell': '{count} في الخلفية',
   'calendar/run-summary': '{title}: {count} عملية تشغيل',
   'calendar/run-moved': 'نقلها تغيير التوقيت',

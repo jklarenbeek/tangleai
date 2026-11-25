@@ -278,6 +278,7 @@ export const ja: PagesCatalogue = {
   'calendar/export-runs': '今後の実行を書き出す（.ics）',
   'calendar/show-runs': 'バックグラウンド処理を表示',
   'calendar/runs-title': 'バックグラウンド処理',
+  'calendar/run-of-product': '{product}：{title}',
   'calendar/runs-cell': 'バックグラウンドで {count} 件',
   'calendar/run-summary': '{title}：{count} 回',
   'calendar/run-moved': '時刻の切り替えで移動',

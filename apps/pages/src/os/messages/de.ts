@@ -277,6 +277,7 @@ export const de: PagesCatalogue = {
   'calendar/export-runs': 'Anstehende Ausführungen exportieren (.ics)',
   'calendar/show-runs': 'Hintergrundarbeit anzeigen',
   'calendar/runs-title': 'Hintergrundarbeit',
+  'calendar/run-of-product': '{product}: {title}',
   'calendar/runs-cell': '{count} im Hintergrund',
   'calendar/run-summary': '{title}: {count} Ausführungen',
   'calendar/run-moved': 'durch die Zeitumstellung verschoben',

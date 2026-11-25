@@ -16,8 +16,13 @@
  * period begins every item still open is noticed again. What the person
  * decided is remembered (`remember`), so a dismissed failure is not filed
  * again after a reload unless the job failed anew.
+ *
+ * A queue that answers for several products (`scopes()`, a combined queue)
+ * is looked at product by product: every item names its product and is keyed
+ * by it, and a product whose host is not there or is starting is passed over
+ * quietly while the others are still looked at.
  */
-import { JOB_CODES, type JobQueue, type RegisteredJob } from './jobs.ts';
+import { JOB_CODES, type JobQueue, type RegisteredJob, type JobScope } from './jobs.ts';
 
 /** The weekdays the Calendar's working hours name. */
 export type Weekday = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
@@ -27,8 +32,8 @@ export type WorkingHours = { days: Weekday[], start: string, end: string };
 export const SILENT_AFTER_MS = 90_000;
 
 type WatchKernel = {
-  fileJobFailure(input: { jobId: string, kind: string, titles?: Record<string, string>, reason: 'dead' | 'not-repeated' | 'failing', lastError?: string, attempts: number, attention: boolean, owner?: string }): unknown,
-  fileRuntimeSilent(input: { runtime: string, lastSeen: number, attention: boolean }): unknown,
+  fileJobFailure(input: { jobId: string, kind: string, titles?: Record<string, string>, reason: 'dead' | 'not-repeated' | 'failing', lastError?: string, attempts: number, attention: boolean, owner?: string, scope?: string, scopeTitles?: Record<string, string> }): unknown,
+  fileRuntimeSilent(input: { runtime: string, lastSeen: number, attention: boolean, scope?: string, scopeTitles?: Record<string, string> }): unknown,
   withdrawDesktop(id: string): unknown,
   noticeMail(id: string): unknown,
   mail(): readonly { from: string, attention?: boolean, proposal?: { id: string, kind: string, status: string, payload?: unknown } }[],
@@ -43,7 +48,7 @@ export type JobWatchOptions = {
   now?: () => number,
   intervalMs?: number,
   silentAfterMs?: number,
-  /** What the person decided, kept across reloads: job id → the attempts of the failure they decided on. */
+  /** What the person decided, kept across reloads: job id (with its product's scope, when it has one) → the attempts of the failure they decided on. */
   remember?: { load(): Record<string, number>, save(decided: Record<string, number>): void },
   setTimer?: (run: () => void, ms: number) => unknown,
   clearTimer?: (handle: unknown) => void,
@@ -62,6 +67,12 @@ export function withinHours(at: number, hours: WorkingHours | undefined, zone?: 
   return hours.days.includes(day) && time >= hours.start && time < hours.end;
 }
 
+/** The key a decision is remembered by: the job id, with its product's scope in front when it has one. */
+export const decisionKey = (jobId: string, scope?: string) => scope ? `${scope}\u001f${jobId}` : jobId;
+/** The id the kernel gives a runtime's silence item, so the watcher can take it back. */
+const silentId = (runtime: string, scope?: string) => `runtime-silent-${scope ? `${scope}-` : ''}${runtime}`.replace(/[^A-Za-z0-9._:-]/g, '_').slice(0, 128);
+const quiet = (error: any) => error?.code === JOB_CODES.unconfigured || error?.code === JOB_CODES.starting;
+
 /** Start watching; the first look is immediate. `tick()` looks once (tests drive it); `stop()` ends the watch. */
 export function watchJobs(options: JobWatchOptions): { tick(): Promise<void>, stop(): void } {
   const { kernel, queue } = options;
@@ -69,10 +80,52 @@ export function watchJobs(options: JobWatchOptions): { tick(): Promise<void>, st
   const silentAfter = options.silentAfterMs ?? SILENT_AFTER_MS;
   const setTimer = options.setTimer ?? ((run, ms) => setInterval(run, ms));
   const clearTimer = options.clearTimer ?? ((handle) => clearInterval(handle as any));
-  let after: number | undefined, titles: Map<string, RegisteredJob> | null = null, wasWorking: boolean | null = null, stopped = false;
-  const notRepeated = new Set<string>();
+  let wasWorking: boolean | null = null, stopped = false;
+  // each product's own reading: its history cursor, its registered titles, its single-sends a crash cut off
+  const parts = new Map<string, { after?: number, titles: Map<string, RegisteredJob> | null, notRepeated: Set<string> }>();
+  const partOf = (scope: string) => { let part = parts.get(scope); if (!part) parts.set(scope, part = { titles: null, notRepeated: new Set() }); return part; };
   const decided: Record<string, number> = (() => { try { return { ...(options.remember?.load() ?? {}) }; } catch { return {}; } })();
   const ours = () => kernel.mail().filter(m => m.from === 'desktop' && (m.proposal?.kind === 'job.failed' || m.proposal?.kind === 'runtime.silent'));
+  /** The products to look at: a plain queue is one unnamed product. */
+  const scopes = (): (JobScope | null)[] => {
+    let answer: unknown;
+    try { answer = queue.scopes?.(); } catch { answer = undefined; }
+    if (answer && typeof (answer as any).then === 'function') (answer as Promise<unknown>).catch(() => {});   // not a combined queue
+    return Array.isArray(answer) && answer.length ? answer as JobScope[] : [null];
+  };
+
+  async function lookAt(part: JobScope | null, working: boolean) {
+    const where = part ? { scope: part.scope } : {};
+    const state = partOf(part?.scope ?? '');
+    if (!state.titles) state.titles = await queue.registry(where).then(r => new Map(r.jobs.map(j => [j.kind, j])), () => null);
+    const file = (jobId: string, kind: string, reason: 'dead' | 'not-repeated' | 'failing', attempts: number, lastError?: string) => {
+      if (decided[decisionKey(jobId, part?.scope)] === attempts) return;
+      const registered = state.titles?.get(kind);
+      kernel.fileJobFailure({ jobId, kind, reason, attempts, attention: working,
+        ...(part ? { scope: part.scope, scopeTitles: part.title } : {}),
+        ...(registered ? { titles: registered.title, ...(registered.owner ? { owner: registered.owner } : {}) } : {}), ...(lastError ? { lastError } : {}) });
+    };
+    // the history since the last look: a single-send job a crash cut off, a job on its third failed attempt
+    const { events } = await queue.events({ ...where, ...(state.after !== undefined ? { after: state.after } : {}), limit: 200 });
+    for (const e of events) {
+      state.after = Math.max(state.after ?? 0, e.at);
+      if (e.event === 'not-repeated' && e.jobId) state.notRepeated.add(e.jobId);
+    }
+    for (const e of events) {
+      if (e.event !== 'failed' || !e.jobId || (e.attempt ?? 0) < 3) continue;
+      const job = await queue.get({ ...where, id: e.jobId }).catch(() => null);
+      if (job?.state === 'failed') file(job.id, job.kind, 'failing', job.attempts, job.lastError?.message);
+    }
+    // the dead jobs
+    const { items } = await queue.page({ ...where, state: 'dead', limit: 200 });
+    for (const job of items) file(job.id, job.kind, state.notRepeated.has(job.id) ? 'not-repeated' : 'dead', job.attempts, job.lastError?.message);
+    // runtimes that stopped reporting, and those that report again
+    const health = await queue.health(where);
+    for (const r of health.runtimes) {
+      if (health.now - r.at > silentAfter) kernel.fileRuntimeSilent({ runtime: r.runtime, lastSeen: r.at, attention: working, ...(part ? { scope: part.scope, scopeTitles: part.title } : {}) });
+      else kernel.withdrawDesktop(silentId(r.runtime, part?.scope));
+    }
+  }
 
   async function look() {
     const at = now();
@@ -83,36 +136,19 @@ export function watchJobs(options: JobWatchOptions): { tick(): Promise<void>, st
     // what the person decided is remembered, so a reload does not file it again
     let changed = false;
     for (const m of ours()) {
-      const p = m.proposal!, payload = p.payload as { jobId?: string, attempts?: number } | undefined;
-      if (p.kind === 'job.failed' && (p.status === 'accepted' || p.status === 'rejected') && payload?.jobId && decided[payload.jobId] !== payload.attempts) { decided[payload.jobId] = payload.attempts ?? 0; changed = true; }
+      const p = m.proposal!, payload = p.payload as { jobId?: string, attempts?: number, scope?: string } | undefined;
+      if (p.kind !== 'job.failed' || (p.status !== 'accepted' && p.status !== 'rejected') || !payload?.jobId) continue;
+      const key = decisionKey(payload.jobId, payload.scope);
+      if (decided[key] !== payload.attempts) { decided[key] = payload.attempts ?? 0; changed = true; }
     }
     if (changed) try { options.remember?.save(decided); } catch { /* kept for this page */ }
-    if (!titles) titles = await queue.registry().then(r => new Map(r.jobs.map(j => [j.kind, j])), () => null);
-    const file = (jobId: string, kind: string, reason: 'dead' | 'not-repeated' | 'failing', attempts: number, lastError?: string) => {
-      if (decided[jobId] === attempts) return;
-      const registered = titles?.get(kind);
-      kernel.fileJobFailure({ jobId, kind, reason, attempts, attention: working, ...(registered ? { titles: registered.title, ...(registered.owner ? { owner: registered.owner } : {}) } : {}), ...(lastError ? { lastError } : {}) });
-    };
-    // the history since the last look: a single-send job a crash cut off, a job on its third failed attempt
-    const { events } = await queue.events({ ...(after !== undefined ? { after } : {}), limit: 200 });
-    for (const e of events) {
-      after = Math.max(after ?? 0, e.at);
-      if (e.event === 'not-repeated' && e.jobId) notRepeated.add(e.jobId);
+    // product by product: one that is not there or is starting is passed over, the others are still looked at
+    let failure: unknown = null;
+    for (const part of scopes()) {
+      try { await lookAt(part, working); }
+      catch (error) { if (!quiet(error)) failure ??= error; }
     }
-    for (const e of events) {
-      if (e.event !== 'failed' || !e.jobId || (e.attempt ?? 0) < 3) continue;
-      const job = await queue.get({ id: e.jobId }).catch(() => null);
-      if (job?.state === 'failed') file(job.id, job.kind, 'failing', job.attempts, job.lastError?.message);
-    }
-    // the dead jobs
-    const { items } = await queue.page({ state: 'dead', limit: 200 });
-    for (const job of items) file(job.id, job.kind, notRepeated.has(job.id) ? 'not-repeated' : 'dead', job.attempts, job.lastError?.message);
-    // runtimes that stopped reporting, and those that report again
-    const health = await queue.health();
-    for (const r of health.runtimes) {
-      if (health.now - r.at > silentAfter) kernel.fileRuntimeSilent({ runtime: r.runtime, lastSeen: r.at, attention: working });
-      else kernel.withdrawDesktop(`runtime-silent-${r.runtime}`.replace(/[^A-Za-z0-9._:-]/g, '_').slice(0, 128));
-    }
+    if (failure) throw failure;
   }
 
   let running: Promise<void> | null = null;

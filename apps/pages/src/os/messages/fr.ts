@@ -283,6 +283,7 @@ export const fr: PagesCatalogue = {
   'calendar/export-runs': 'Exporter les exécutions à venir (.ics)',
   'calendar/show-runs': 'Afficher le travail en arrière-plan',
   'calendar/runs-title': 'Travail en arrière-plan',
+  'calendar/run-of-product': '{product} : {title}',
   'calendar/runs-cell': '{count} en arrière-plan',
   'calendar/run-summary': '{title} : {count} exécutions',
   'calendar/run-moved': 'décalée par le changement d’heure',

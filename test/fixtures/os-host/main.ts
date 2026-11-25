@@ -33,7 +33,8 @@
  *                one job held by another process (OS0193), recorded attempts and a runtime
  *                heartbeat (&stale=1 makes it five minutes old; &twin=1 reports a durable store this tab owns),
  *                three schedule ticks among the done jobs (kept out of the list); ?jobs=none has no job host
- *                (OS0190), ?jobs=starting a twin that has not answered (OS0195), ?jobs=twinfail one that could not start
+ *                (OS0190), ?jobs=starting a twin that has not answered (OS0195), ?jobs=twinfail one that could not start,
+ *                ?jobs=2 a host running two products (Orders: the scripted queue; Printing: a dead job of its own)
  * Everything the browser test needs is on `window.harness`.
  */
 import { createKernel, webStorageStore, contractStore, browserLocation, fileLocationContract, watchJobs } from '../../../components/os/src/index.ts';
@@ -60,6 +61,7 @@ import { pt } from '../../../components/os/src/messages/pt.ts';
 import { ru } from '../../../components/os/src/messages/ru.ts';
 import { tr } from '../../../components/os/src/messages/tr.ts';
 import { zhTW } from '../../../components/os/src/messages/zh-tw.ts';
+import { fixtureCombinedQueue } from './combined.ts';
 
 const query = new URLSearchParams(location.search);
 const PACKS: Record<string, OsCatalogue> = { ar, de, es, fr, ja, ko, nl, pt, ru, tr, 'zh-TW': zhTW };
@@ -88,7 +90,7 @@ const httpClient = { invoke: async (op: string, input: unknown) => {
 const state = serverState ? contractStore(httpClient) : withDock ? webStorageStore(sessionStorage) : undefined;
 // the kernel's job queue is the scripted one below once `?jobs=` sets it up (its decisions, Run again, call it)
 let fixtureJobs: JobQueue = unconfiguredJobQueue();
-const delegatingJobs = new Proxy({} as JobQueue, { get: (_t, op: string) => (input: unknown) => (fixtureJobs as any)[op](input) });
+const delegatingJobs = new Proxy({} as JobQueue, { get: (_t, op: string) => op === 'scopes' ? (fixtureJobs as any).scopes?.bind(fixtureJobs) : (input: unknown) => (fixtureJobs as any)[op](input) });
 const kernel = createKernel({ jobs: delegatingJobs, ...(withHeader || withDock || withFiles ? { assistantGrants: [...(withHeader ? ['tangle_os_header.*'] : []), ...(withDock ? ['tangle_os_dock.*'] : []), ...(withFiles ? ['tangle_os_files.*', 'tangle_os_files_browser.*', 'echo_files.*'] : [])] } : {}), ...(state ? { state } : {}) });
 const screens: string[] = [];
 const visibility: Record<string, boolean[]> = {};
@@ -308,7 +310,34 @@ if (jobsMode) {
     const refuse = async (): Promise<never> => { throw error; };
     return { counts: refuse, page: refuse, get: refuse, schedules: refuse, cancel: refuse, requeue: refuse, unschedule: refuse, events: refuse, health: refuse, registry: refuse, run: refuse };
   };
+  // `?jobs=2`: a host running two products — the scripted queue above, and a second with a dead job of its own
+  const second = (): JobQueue => {
+    const own: JobItem[] = [
+      job('print-0001', 'labels.print', 'dead', { attempts: 3, maxAttempts: 3, lastError: { message: 'the printer is out of labels' } }),
+      job('print-0002', 'labels.print', 'pending'),
+    ];
+    const findOwn = (id: string) => { const found = own.find(j => j.id === id); if (!found) throw coded(JOB_CODES.unknown, `there is no job ${id}`); return found; };
+    const note = (call: Record<string, unknown>) => jobCalls.push({ scope: 'printing', ...call });
+    return {
+      counts: async () => { note({ counts: true }); const by = (st: JobState) => own.filter(j => j.state === st).length;
+        return { pending: by('pending'), leased: by('leased'), done: by('done'), failed: by('failed'), dead: by('dead'), cancelled: by('cancelled'), pendingKinds: { 'labels.print': by('pending') } }; },
+      page: async (input = {}) => { note({ page: input }); return { items: own.filter(j => !input.state || j.state === input.state) }; },
+      get: async ({ id }) => { note({ get: id }); return findOwn(id); },
+      schedules: async () => { note({ schedules: true }); return { schedules: [] }; },
+      cancel: async ({ id }) => { note({ cancel: id }); const j = findOwn(id); if (j.state === 'dead' || j.state === 'done') throw coded(JOB_CODES.refused, `job ${id} is ${j.state}`); j.state = 'cancelled'; return { changed: true }; },
+      requeue: async ({ id }) => { note({ requeue: id }); const j = findOwn(id); if (j.state === 'pending') return { changed: false }; j.state = 'pending'; return { changed: true }; },
+      unschedule: async ({ id }) => { note({ unschedule: id }); throw coded(JOB_CODES.unknown, `there is no schedule ${id}`); },
+      events: async () => { note({ events: true }); return { events: [] }; },
+      health: async () => { note({ health: true }); const at = Date.now(); return { now: at, runtimes: [{ runtime: 'printing@host', at: at - 10_000, stats: { claims: 2, ticks: 90 } }] }; },
+      registry: async () => { note({ registry: true }); return { jobs: [{ kind: 'labels.print', title: { en: 'Print the labels', nl: 'De etiketten afdrukken' }, safety: 'single-send', scheduled: false }] }; },
+      run: async ({ kind }) => { note({ run: kind }); throw coded(JOB_CODES.unknown, `the registry has no job '${kind}'`); },
+    };
+  };
   const queueFor = jobsMode === 'none' ? unconfiguredJobQueue()
+    : jobsMode === '2' ? fixtureCombinedQueue([
+      { scope: 'orders', title: { en: 'Orders', nl: 'Bestellingen' }, queue: scripted },
+      { scope: 'printing', title: { en: 'Printing', nl: 'Afdrukken' }, queue: second() },
+    ])
     : jobsMode === 'starting' ? refusing(Object.assign(new Error('the background runtime is starting'), { code: 'OS0195' }))
     : jobsMode === 'twinfail' ? refusing(Object.assign(new Error('the worker script could not load'), { code: JOB_CODES.unconfigured, twin: true }))
     : scripted;

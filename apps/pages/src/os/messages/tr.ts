@@ -276,6 +276,7 @@ export const tr: PagesCatalogue = {
   'calendar/export-runs': 'Yaklaşan çalıştırmaları dışa aktar (.ics)',
   'calendar/show-runs': 'Arka plan işlerini göster',
   'calendar/runs-title': 'Arka plan işleri',
+  'calendar/run-of-product': '{product}: {title}',
   'calendar/runs-cell': 'Arka planda {count}',
   'calendar/run-summary': '{title}: {count} çalıştırma',
   'calendar/run-moved': 'saat değişikliğiyle kaydırıldı',

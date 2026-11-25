@@ -108,6 +108,9 @@ export const osMessagesEn = {
   'web/start': 'Type an address, or the words you are looking for.', // Web: what the empty reader asks for
   'jobs/title': 'Jobs', // Window and dock title of the Jobs application: the background work a host runs
   'jobs/views': 'Views', // Jobs header bar: accessible name of the Schedules/Queue tabs
+  'jobs/products': 'Products', // Jobs: name of the row of products a host runs background work for
+  'jobs/product': 'Product: {product}', // Jobs: the header menu that chooses which product is shown; {product} is its title
+  'jobs/product-summary': '{product}: {failed} failed, {waiting} waiting', // Jobs: one product's line in the products row; {failed} counts failed and given-up jobs
   'jobs/schedules': 'Schedules', // Jobs: tab and list of the recurring schedules
   'jobs/queue': 'Queue', // Jobs: tab with the jobs by state
   'jobs/refresh': 'Refresh', // Jobs header bar: read the host again
@@ -280,6 +283,8 @@ export const osMessagesEn = {
   'inbox/job-failed-failing': '{title} keeps failing ({attempts} attempts so far)', // Inbox: subject of a background job that failed three times or more; {attempts} a number
   'inbox/job-failed-error': 'Last error, as the other system wrote it: {error}', // Inbox: the job's last error, quoted from another system; {error} the text
   'inbox/job-failed-by': 'From the background work', // Inbox: the sender line of the desktop's own items about background work
+  'inbox/job-failed-by-product': 'From the background work of {product}', // Inbox: the sender line of an item about one product's background work; {product} is its title
+  'inbox/job-for-product': 'For {product}', // Inbox: under a suggested change to a background job, which product it is for; {product} is its title
   'inbox/job-failed-run': 'Run again', // Inbox: button that runs a failed background job once more
   'inbox/dismiss': 'Dismiss', // Inbox: button that sets an item about background work aside without doing anything
   'inbox/job-open': 'Open Jobs', // Inbox: button that opens the Jobs app

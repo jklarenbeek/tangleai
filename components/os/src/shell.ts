@@ -1255,24 +1255,25 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   }
 
   /** A change to a background job the assistant proposed: what would happen, who proposed it, why, and when it would not. */
-  function jobChange(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { action?: string, id?: string, kind?: string, reason?: string, by?: string }) {
+  function jobChange(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { action?: string, id?: string, kind?: string, reason?: string, by?: string, scopeTitles?: Record<string, string> }) {
     const id = payload.id ?? '';
     subject.textContent = payload.action === 'run' ? t('inbox/job-run', { kind: payload.kind ?? '' })
       : payload.action === 'cancel' ? t('inbox/job-cancel', { id }) : payload.action === 'requeue' ? t('inbox/job-requeue', { id }) : t('inbox/job-unschedule', { id });
     const by = payload.by && kernel.effective(payload.by) ? localized(kernel.effective(payload.by)!.title, locale.locale) : payload.by ?? t('desktop/label');
     from.textContent = t('inbox/job-by', { sender: by });
+    if (payload.scopeTitles?.en) { const product = doc.createElement('p'); product.className = 'tos-muted'; product.textContent = t('inbox/job-for-product', { product: localized(payload.scopeTitles as { en: string }, locale.locale) }); li.append(product); }
     if (payload.reason) { const reason = doc.createElement('p'); reason.textContent = payload.reason; li.append(reason); }
     const note = doc.createElement('p'); note.className = 'tos-muted'; note.textContent = payload.action === 'run' ? t('inbox/job-run-note') : t('inbox/job-note');
     li.append(note);
   }
 
   /** A background job that needs the person: what happened, the error as the other system wrote it, and a way to Jobs. */
-  function jobFailed(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { jobId?: string, kind?: string, titles?: Record<string, string>, reason?: string, attempts?: number, lastError?: string }) {
+  function jobFailed(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { jobId?: string, kind?: string, titles?: Record<string, string>, reason?: string, attempts?: number, lastError?: string, scopeTitles?: Record<string, string> }) {
     const title = payload.titles?.en ? localized(payload.titles as { en: string }, locale.locale) : payload.kind ?? payload.jobId ?? '';
     const attempts = new Intl.NumberFormat(locale.locale).format(payload.attempts ?? 0);
     subject.textContent = payload.reason === 'not-repeated' ? t('inbox/job-failed-not-repeated', { title })
       : payload.reason === 'failing' ? t('inbox/job-failed-failing', { title, attempts }) : t('inbox/job-failed-dead', { title, attempts });
-    from.textContent = t('inbox/job-failed-by');
+    from.textContent = payload.scopeTitles?.en ? t('inbox/job-failed-by-product', { product: localized(payload.scopeTitles as { en: string }, locale.locale) }) : t('inbox/job-failed-by');
     const id = doc.createElement('p'); id.className = 'tos-muted'; id.dir = 'ltr'; id.textContent = payload.jobId ?? ''; li.append(id);
     if (payload.lastError) { const error = doc.createElement('p'); error.className = 'tos-proposal-error'; error.textContent = t('inbox/job-failed-error', { error: payload.lastError.split('\n')[0] }); li.append(error); }
     if (payload.reason === 'not-repeated') { const note = doc.createElement('p'); note.className = 'tos-muted'; note.textContent = t('inbox/job-failed-not-repeated-note'); li.append(note); }
@@ -1284,10 +1285,10 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   }
 
   /** A background runtime that stopped reporting: since when, and what to do. */
-  function runtimeSilent(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { runtime?: string, lastSeen?: number }) {
+  function runtimeSilent(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { runtime?: string, lastSeen?: number, scopeTitles?: Record<string, string> }) {
     const when = payload.lastSeen ? new Intl.DateTimeFormat(locale.locale, { dateStyle: 'medium', timeStyle: 'short' }).format(payload.lastSeen) : '';
     subject.textContent = t('inbox/runtime-silent', { when });
-    from.textContent = t('inbox/job-failed-by');
+    from.textContent = payload.scopeTitles?.en ? t('inbox/job-failed-by-product', { product: localized(payload.scopeTitles as { en: string }, locale.locale) }) : t('inbox/job-failed-by');
     const note = doc.createElement('p'); note.className = 'tos-muted'; note.textContent = t('inbox/runtime-silent-note'); li.append(note);
   }
 

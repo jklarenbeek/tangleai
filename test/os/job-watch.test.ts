@@ -159,3 +159,71 @@ describe('the desktop\'s job watcher', () => {
     assert.equal(kernel.mail().length, 0);
   });
 });
+
+/** Two products behind one queue, as `combinedJobQueue` routes them: each call goes to its scope's queue. */
+function twoProducts(clock: { t: number }) {
+  const orders = fakeQueue(clock), printing = fakeQueue(clock);
+  const parts = [{ scope: 'orders', title: { en: 'Orders', nl: 'Bestellingen' }, fake: orders }, { scope: 'printing', title: { en: 'Printing', nl: 'Afdrukken' }, fake: printing }];
+  const route = (op: string) => async (input: any = {}) => {
+    const part = parts.find(p => p.scope === input.scope);
+    if (!part) throw Object.assign(new Error('name a product'), { code: 'OS0194' });
+    const { scope: _s, ...rest } = input;
+    return (part.fake.queue as any)[op](rest);
+  };
+  const queue = Object.assign(Object.fromEntries(['counts', 'page', 'get', 'schedules', 'cancel', 'requeue', 'unschedule', 'events', 'health', 'registry', 'run'].map(op => [op, route(op)])),
+    { scopes: () => parts.map(p => ({ scope: p.scope, title: p.title })) }) as unknown as JobQueue;
+  return { orders, printing, queue, parts };
+}
+
+describe('the job watcher over several products', () => {
+  it('files a dead job of the SECOND product, named by its product, with its own id', async () => {
+    const clock = { t: MON_1000 };
+    const two = twoProducts(clock);
+    const kernel = createKernel({ jobs: two.queue, now: () => clock.t } as any);
+    const watch = watchJobs({ kernel: kernel as any, queue: two.queue, now: () => clock.t, hours: () => HOURS, zone: 'UTC', setTimer: () => 0, clearTimer: () => {} });
+    two.printing.jobs.set('push-1', two.printing.job('push-1', 'dead'));
+    await watch.tick();
+    const items = kernel.mail().filter(m => m.proposal?.kind === 'job.failed');
+    assert.equal(items.length, 1);
+    assert.equal(items[0].proposal!.id, 'job-failed-printing-push-1');
+    assert.equal((items[0].proposal!.payload as any).scope, 'printing');
+    assert.deepEqual((items[0].proposal!.payload as any).scopeTitles, { en: 'Printing', nl: 'Afdrukken' });
+    // the same job id in the first product is another item
+    two.orders.jobs.set('push-1', two.orders.job('push-1', 'dead'));
+    await watch.tick();
+    assert.deepEqual(kernel.mail().filter(m => m.proposal?.kind === 'job.failed').map(m => m.proposal!.id).sort(), ['job-failed-orders-push-1', 'job-failed-printing-push-1']);
+    // Run again on the second product's item requeues it there, and only there
+    await kernel.decide(items[0].id, 'accept');
+    assert.deepEqual(two.printing.requeued, ['push-1']);
+    assert.deepEqual(two.orders.requeued, []);
+    watch.stop();
+  });
+
+  it('remembers a dismissal per product, and looks at the others when one has no host', async () => {
+    const clock = { t: MON_1000 };
+    const two = twoProducts(clock);
+    const saved: Record<string, number>[] = [];
+    const kernel = createKernel({ jobs: two.queue, now: () => clock.t } as any);
+    const memory = { load: () => saved.at(-1) ?? {}, save: (d: Record<string, number>) => { saved.push({ ...d }); } };
+    two.orders.jobs.set('mail-9', two.orders.job('mail-9', 'dead'));
+    two.printing.jobs.set('mail-9', two.printing.job('mail-9', 'dead'));
+    let watch = watchJobs({ kernel: kernel as any, queue: two.queue, now: () => clock.t, hours: () => HOURS, zone: 'UTC', remember: memory, setTimer: () => 0, clearTimer: () => {} });
+    await watch.tick();
+    const printingItem = kernel.mail().find(m => m.proposal?.id === 'job-failed-printing-mail-9')!;
+    await kernel.decide(printingItem.id, 'reject');
+    await watch.tick();
+    watch.stop();
+    assert.deepEqual(Object.keys(saved.at(-1)!), ['printing\u001fmail-9']);
+    // a reload: the dismissed one stays dismissed, the other product's item is still filed
+    const fresh = createKernel({ jobs: two.queue, now: () => clock.t } as any);
+    // one product has no host now: the other is still looked at
+    (two.orders.queue as any).page = async () => { throw Object.assign(new Error('no host'), { code: 'OS0190' }); };
+    watch = watchJobs({ kernel: fresh as any, queue: two.queue, now: () => clock.t, hours: () => HOURS, zone: 'UTC', remember: memory, setTimer: () => 0, clearTimer: () => {} });
+    await watch.tick();
+    assert.deepEqual(fresh.mail().filter(m => m.proposal?.kind === 'job.failed').map(m => m.proposal!.id), []);
+    (two.orders.queue as any).page = async ({ state }: any = {}) => ({ items: [...two.orders.jobs.values()].filter(j => !state || j.state === state) });
+    await watch.tick();
+    assert.deepEqual(fresh.mail().filter(m => m.proposal?.kind === 'job.failed').map(m => m.proposal!.id), ['job-failed-orders-mail-9']);
+    watch.stop();
+  });
+});

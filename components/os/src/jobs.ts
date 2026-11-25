@@ -50,6 +50,9 @@ export type JobRuntimeHealth = { runtime: string, at: number, stats: Record<stri
 export type RegisteredJob = { kind: string, title: Record<string, string>, description?: Record<string, string>,
   safety: 'safe-read' | 'provider-idempotent' | 'single-send', scheduled: boolean, schedule?: string, owner?: string };
 
+/** A part of a host the desktop shows on its own (a product): its scope and its title per language. */
+export type JobScope = { scope: string, title: Record<string, string> };
+
 /** What a host's job queue does: the desktop's Jobs app and the assistant's contract call it. */
 export type JobQueue = {
   counts(input?: Scoped): Promise<JobCounts>,
@@ -63,6 +66,8 @@ export type JobQueue = {
   health(input?: Scoped): Promise<{ now: number, runtimes: JobRuntimeHealth[] }>,
   registry(input?: Scoped): Promise<{ jobs: RegisteredJob[] }>,
   run(input: Scoped & { kind: string }): Promise<{ id: string }>,
+  /** The parts a combined queue answers for (`combinedJobQueue`); a plain queue is one unnamed scope. */
+  scopes?(): JobScope[],
 };
 
 /**

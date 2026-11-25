@@ -10,7 +10,7 @@
  * export on their own (titles and times only).
  */
 import type { ShippedMount } from '@tangleai/os/shell';
-import type { JobQueue, JobSchedule, RegisteredJob } from '@tangleai/os/jobs';
+import type { JobQueue, JobSchedule, JobScope, RegisteredJob } from '@tangleai/os/jobs';
 import { scheduledRuns, type ScheduledRun } from '@tangleai/os/jobs-app';
 import {
   COLOURS, WEEKDAYS, addDays, calendarZoneProvider, checkEvent, emptyCalendar, exportIcal, exportRunsIcal, importIcal, freeSlots, isoDate, occurrences, parseDate, repeatHint, seed, supportedRepeats,
@@ -89,22 +89,39 @@ export function calendarMount(options: CalendarOptions = {}): ShippedMount {
     let findMinutes = 60;
     const repeats = supportedRepeats();
     // the background work's schedules, read from the job host; none while there is no host or it starts
-    let background: { schedules: JobSchedule[], registry: RegisteredJob[] } | null = null;
+    /** The background work by product (one unnamed entry for a host of one): its schedules and its registered jobs. */
+    let background: { product?: JobScope, schedules: JobSchedule[], registry: RegisteredJob[] }[] | null = null;
     let live = true;
     const zones = options.zoneProvider ?? calendarZoneProvider();
     const showRuns = () => cal.background !== false;
     async function loadBackground() {
       const queue = options.jobs?.();
       if (!queue) return;
-      try {
-        const [{ schedules }, registry] = await Promise.all([queue.schedules(), queue.registry ? queue.registry().catch(() => ({ jobs: [] as RegisteredJob[] })) : { jobs: [] as RegisteredJob[] }]);
-        background = { schedules, registry: registry.jobs };
-      } catch { background = null; }   // OS0190 (no host), OS0195 (starting): nothing to draw
+      let listed: unknown;
+      try { listed = queue.scopes?.(); } catch { listed = undefined; }
+      if (listed && typeof (listed as any).then === 'function') (listed as Promise<unknown>).catch(() => {});
+      const parts: (JobScope | undefined)[] = Array.isArray(listed) && listed.length ? listed as JobScope[] : [undefined];
+      // product by product: one with no host or still starting draws nothing, the others still do
+      const read = await Promise.all(parts.map(async product => {
+        const where = product ? { scope: product.scope } : {};
+        try {
+          const [{ schedules }, registry] = await Promise.all([queue.schedules(where), queue.registry ? queue.registry(where).catch(() => ({ jobs: [] as RegisteredJob[] })) : { jobs: [] as RegisteredJob[] }]);
+          return { ...(product ? { product } : {}), schedules, registry: registry.jobs };
+        } catch { return null; }   // OS0190 (no host), OS0195 (starting): nothing to draw
+      }));
+      const found = read.filter((x): x is NonNullable<typeof x> => x !== null);
+      background = found.length ? found : null;
       if (live) render();
     }
+    const productTitle = (product: JobScope) => product.title[locale] ?? product.title[locale.split('-')[0]] ?? product.title.en ?? product.scope;
+    /** Every product's runs between two instants; with several products each run is named with its product. */
+    const allRuns = (from: number, to: number): ScheduledRun[] => !background ? [] : background.flatMap(part => {
+      const runs = scheduledRuns(part.schedules, part.registry, from, to, { locale, zoneProvider: zones });
+      return part.product && background!.length > 1 ? runs.map(r => ({ ...r, title: t('calendar/run-of-product', { product: productTitle(part.product!), title: r.title }) })) : runs;
+    }).sort((a, b) => a.date.localeCompare(b.date) || (a.type === 'run' ? a.at : 0) - (b.type === 'run' ? b.at : 0));
     const runsBetween = (from: string, to: string): ScheduledRun[] => !showRuns() || !background ? []
       // upcoming only: a planned run on a day gone by would read as history it is not
-      : scheduledRuns(background.schedules, background.registry, Math.max(parseDate(from).getTime(), Date.now()), parseDate(to).getTime(), { locale, zoneProvider: zones });
+      : allRuns(Math.max(parseDate(from).getTime(), Date.now()), parseDate(to).getTime());
     const count = (n: number) => new Intl.NumberFormat(locale).format(n);
 
     const fmt = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, options);
@@ -300,7 +317,7 @@ export function calendarMount(options: CalendarOptions = {}): ShippedMount {
     function downloadRuns() {
       if (!background) return;
       const from = Date.now();
-      const runs = scheduledRuns(background.schedules, background.registry, from, from + 30 * 86_400_000, { locale, zoneProvider: zones });
+      const runs = allRuns(from, from + 30 * 86_400_000);
       const text = exportRunsIcal(runs as any, { summary: (title, n) => t('calendar/run-summary', { title, count: count(n) }) });
       const url = URL.createObjectURL(new Blob([text], { type: 'text/calendar' }));
       const link = h('a', { href: url, download: 'tangle-background-work.ics' }); doc.body.append(link); link.click(); link.remove();

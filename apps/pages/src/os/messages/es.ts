@@ -278,6 +278,7 @@ export const es: PagesCatalogue = {
   'calendar/export-runs': 'Exportar las próximas ejecuciones (.ics)',
   'calendar/show-runs': 'Mostrar el trabajo en segundo plano',
   'calendar/runs-title': 'Trabajo en segundo plano',
+  'calendar/run-of-product': '{product}: {title}',
   'calendar/runs-cell': '{count} en segundo plano',
   'calendar/run-summary': '{title}: {count} ejecuciones',
   'calendar/run-moved': 'movida por el cambio de hora',

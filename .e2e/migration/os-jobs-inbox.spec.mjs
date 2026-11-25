@@ -75,3 +75,36 @@ test('the items speak the person\'s language', async ({ page }) => {
   await expect(dead.getByRole('button', { name: 'Negeren' })).toBeVisible();
   await expect(dead.getByRole('button', { name: 'Taken openen' })).toBeVisible();
 });
+
+test('a host running two products: a dead job of the second reaches the inbox named by its product, and Run again goes to that product', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 860 });
+  await page.goto(`${origin}/?modules=1&jobs=2&watch=1`);
+  await page.waitForFunction(() => window.harness);
+  await expect(page.locator('.tos-dock-mail.has-attention')).toBeVisible();
+  await page.locator('.tos-dock-mail').click();
+  const mail = page.locator('.tos-mail');
+  const printing = mail.locator('.tos-proposal[data-proposal="job-failed-printing-print-0001"]');
+  await expect(printing).toContainText('From the background work of Printing');
+  await expect(mail.locator('.tos-proposal[data-proposal="job-failed-orders-mail-0001"]')).toContainText('From the background work of Orders');
+  await printing.getByRole('button', { name: 'Run again' }).click();
+  await expect.poll(async () => (await page.evaluate(() => window.harness.jobCalls)).filter(c => c.scope === 'printing' && c.requeue === 'print-0001').length).toBe(1);
+  expect((await page.evaluate(() => window.harness.jobCalls)).filter(c => c.requeue && c.scope !== 'printing')).toEqual([]);
+});
+
+test('Jobs shows one product at a time: the products row and the header menu switch it', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 860 });
+  await page.goto(`${origin}/?modules=1&jobs=2&lang=nl`);
+  await page.waitForFunction(() => window.harness);
+  await page.evaluate(() => window.harness.desktop.open('jobs'));
+  const win = page.locator('.tos-window[data-module="jobs"]');
+  const row = win.locator('.tos-jobs-products');
+  await expect(row.locator('.tos-jobs-product')).toHaveCount(2);
+  await expect(row.locator('.tos-jobs-product').nth(0)).toHaveAttribute('aria-pressed', 'true');
+  await expect(row.locator('.tos-jobs-product').nth(1)).toContainText('Afdrukken: 1 mislukt, 1 wachtend');
+  await expect(win.locator('.tos-titlebar')).toContainText('Productkeuze: Bestellingen');
+  await row.locator('.tos-jobs-product').nth(1).click();
+  await expect(win.locator('.tos-titlebar')).toContainText('Productkeuze: Afdrukken');
+  await expect(row.locator('.tos-jobs-product').nth(1)).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(async () => (await page.evaluate(() => window.harness.jobCalls)).some(c => c.scope === 'printing' && c.counts)).toBe(true);
+  await page.screenshot({ path: process.env.PICKER_SHOT ?? join(tmpdir(), 'jobs-picker.png') });
+});

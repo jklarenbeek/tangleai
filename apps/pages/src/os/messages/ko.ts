@@ -278,6 +278,7 @@ export const ko: PagesCatalogue = {
   'calendar/export-runs': '예정된 실행 내보내기(.ics)',
   'calendar/show-runs': '백그라운드 작업 표시',
   'calendar/runs-title': '백그라운드 작업',
+  'calendar/run-of-product': '{product}: {title}',
   'calendar/runs-cell': '백그라운드 {count}건',
   'calendar/run-summary': '{title}: {count}회',
   'calendar/run-moved': '시간 변경으로 이동됨',

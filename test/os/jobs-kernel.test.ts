@@ -50,7 +50,7 @@ describe('tangle_os_jobs', () => {
     assert.equal(failed(await kernel.call('assistant', 'tangle_os_jobs', 'jobs.get', { id: 'nope' })), JOB_CODES.unknown);
     assert.equal(((await kernel.call('assistant', 'tangle_os_jobs', 'jobs.schedules', {})) as any).value.schedules[0].id, 'daily');
     assert.deepEqual(kernel.ledger().filter(e => e.contract === 'tangle_os_jobs').map(e => `${e.op}${e.ok ? '' : ` ${e.code}`}`), ['jobs.counts', 'jobs.get', 'jobs.get OS0191', 'jobs.schedules']);
-    assert.deepEqual(kernel.operations().filter(o => o.contract === JOBS_CONTRACT.id).map(o => o.op), ['jobs.counts', 'jobs.page', 'jobs.get', 'jobs.schedules', 'jobs.events', 'jobs.health', 'jobs.registry', 'jobs.suggest']);
+    assert.deepEqual(kernel.operations().filter(o => o.contract === JOBS_CONTRACT.id).map(o => o.op), ['jobs.scopes', 'jobs.counts', 'jobs.page', 'jobs.get', 'jobs.schedules', 'jobs.events', 'jobs.health', 'jobs.registry', 'jobs.suggest']);
   });
 
   it('answers OS0190 everywhere without a job host, and gives the person\'s app the queue itself', async () => {
@@ -135,5 +135,47 @@ describe('tangle_os_jobs', () => {
     await kernel.call('assistant', 'tangle_os_jobs', 'jobs.suggest', { action: 'run', kind: 'push', reason: 'again' });
     await kernel.decide(proposals(kernel)[0].id, 'reject');
     assert.equal(calls.filter(c => c === 'run push').length, 2, 'a rejected suggestion runs nothing');
+  });
+});
+
+describe('tangle_os_jobs over several products', () => {
+  /** Two products behind one queue: each call goes to its scope's queue, a call without one is refused OS0194. */
+  function twoProducts() {
+    const orders = fakeQueue(), printing = fakeQueue();
+    const parts: Record<string, ReturnType<typeof fakeQueue>> = { orders, printing };
+    const route = (op: string) => async (input: any = {}) => {
+      const part = parts[input.scope];
+      if (!part) throw Object.assign(new Error('name a product'), { code: JOB_CODES.scope });
+      const { scope: _s, ...rest } = input;
+      return (part.queue as any)[op](rest);
+    };
+    const queue = Object.assign(Object.fromEntries(['counts', 'page', 'get', 'schedules', 'cancel', 'requeue', 'unschedule', 'events', 'health', 'registry', 'run'].map(op => [op, route(op)])),
+      { scopes: () => [{ scope: 'orders', title: { en: 'Orders' } }, { scope: 'printing', title: { en: 'Printing' } }] }) as unknown as JobQueue;
+    return { orders, printing, queue };
+  }
+
+  it('lists the products, reads one by its scope, and refuses a read without one', async () => {
+    const two = twoProducts();
+    const kernel = createKernel({ assistantGrants: 'all', jobs: two.queue });
+    const scopes: any = ((await kernel.call('assistant', 'tangle_os_jobs', 'jobs.scopes', {})) as any).value;
+    assert.deepEqual(scopes.scopes.map((s: any) => s.scope), ['orders', 'printing']);
+    const counts: any = ((await kernel.call('assistant', 'tangle_os_jobs', 'jobs.counts', { scope: 'printing' })) as any).value;
+    assert.equal(counts.scope, 'printing');
+    const refused: any = await kernel.call('assistant', 'tangle_os_jobs', 'jobs.counts', {});
+    assert.equal(refused.error.code, JOB_CODES.scope);
+  });
+
+  it('carries a suggestion\'s product into the inbox and into the change the person accepts', async () => {
+    const two = twoProducts();
+    const kernel = createKernel({ assistantGrants: 'all', jobs: two.queue });
+    const dead = [...(await two.printing.queue.page({ state: 'dead' })).items][0];
+    assert.ok(dead, 'the fake has a dead job');
+    const filed: any = await kernel.call('assistant', 'tangle_os_jobs', 'jobs.suggest', { scope: 'printing', action: 'requeue', id: dead.id, reason: 'the printer has labels again' });
+    assert.equal(filed.ok, true);
+    const item = kernel.mail().find(m => m.proposal?.kind === 'job.change')!;
+    assert.equal((item.proposal!.payload as any).scope, 'printing');
+    assert.deepEqual((item.proposal!.payload as any).scopeTitles, { en: 'Printing' });
+    await kernel.decide(item.id, 'accept');
+    assert.equal((await two.printing.queue.get({ id: dead.id })).state, 'pending');
   });
 });

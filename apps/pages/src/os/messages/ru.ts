@@ -298,6 +298,7 @@ export const ru: PagesCatalogue = {
   'calendar/export-runs': 'Экспортировать предстоящие запуски (.ics)',
   'calendar/show-runs': 'Показывать фоновую работу',
   'calendar/runs-title': 'Фоновая работа',
+  'calendar/run-of-product': '{product}: {title}',
   'calendar/runs-cell': 'В фоне: {count}',
   'calendar/run-summary': '{title}: запусков — {count}',
   'calendar/run-moved': 'сдвинут переводом часов',
