@@ -232,4 +232,6 @@ export const de: OsCatalogue = {
   'inbox/job-unschedule': 'Den Zeitplan {id} entfernen',
   'inbox/job-by': 'Vorgeschlagen von {sender}',
   'inbox/job-note': 'Dies geschieht nur, wenn Sie es annehmen, und nur, wenn sich der Auftrag seit dem Vorschlag nicht geändert hat.',
+  'inbox/job-run': 'Den Auftrag {kind} jetzt ausführen',
+  'inbox/job-run-note': 'Er wird einmal ausgeführt, wenn Sie annehmen; solange ein Auftrag dieser Art wartet oder läuft, wird dies abgelehnt.',
 };

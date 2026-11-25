@@ -20,6 +20,7 @@ test.beforeAll(async () => {
     'jobs.get': async (_input, ctx) => ctx.fail('unknown', {}, { detail: 'no such job' }),
     'jobs.schedules': async () => ({ schedules: [] }),
     'jobs.cancel': async () => ({ changed: true }), 'jobs.requeue': async () => ({ changed: true }), 'jobs.unschedule': async () => ({ changed: true }),
+    'jobs.events': async () => ({ events: [] }), 'jobs.health': async () => ({ now: Date.now(), runtimes: [] }), 'jobs.registry': async () => ({ jobs: [] }), 'jobs.run': async () => ({ id: 'run:test:none@now' }),
   }, { validateOutput: 'always' });
   const handle = toNodeHandler(dispatcher);
   // the host admits the desktop's origin, as the desktop app's route does

@@ -9,7 +9,9 @@
  * worker's `leases()`, when this process runs the worker); a job another
  * process runs is refused as held, not stolen.
  */
-import { JOB_CODES, type JobCounts, type JobItem, type JobQueue, type JobSchedule, type JobState } from '@tangleai/os/jobs';
+import { JOB_CODES, type JobCounts, type JobEvent, type JobItem, type JobQueue, type JobSchedule, type JobState, type RegisteredJob } from '@tangleai/os/jobs';
+import { OPS_EVENTS, oldestFirst, opsEvents } from './events.ts';
+import type { OpsRuntime } from './runtime.ts';
 
 /** The part of a Jaren store this provider reads: `store.jobs`, opened with `jobs` (and `jobs.schedules` for schedules). */
 export type JobStore = { jobs: any };
@@ -18,8 +20,10 @@ export type JobLease = { jobId: string, [key: string]: unknown };
 export type JobQueueProviderOptions = {
   /** The scope this provider answers for; another scope is refused (`OS0194`). Absent: any scope is this store. */
   scope?: string,
-  /** The leases of the worker this process runs, so a running job can be cancelled through its fence. */
+  /** The leases of the worker this process runs, so a running job can be cancelled through its fence (default: the runtime's). */
   leases?: () => readonly JobLease[],
+  /** The runtime this host runs: its registry and Run now. Without one the registry is empty and `run` is unknown. */
+  runtime?: OpsRuntime,
 };
 
 const coded = (code: string, message: string) => Object.assign(new Error(message), { code });
@@ -52,6 +56,14 @@ function scheduleOf(record: any): JobSchedule {
 export function jobQueueProvider(store: JobStore, options: JobQueueProviderOptions = {}): JobQueue {
   const jobs = store.jobs;
   if (!jobs) throw new TypeError('jobQueueProvider needs a store opened with jobs');
+  const runtime = options.runtime;
+  const leases = options.leases ?? (runtime ? () => runtime.leases() as readonly JobLease[] : undefined);
+  const registryPrefix = runtime ? `ops:${runtime.registry.name}:` : 'ops:';
+  /** The history, when the host's model holds its collection. */
+  const history = () => {
+    try { (store as any).collection(OPS_EVENTS); return opsEvents(store as any); }
+    catch { return null; }
+  };
   const inScope = (input: { scope?: string } | undefined) => {
     if (options.scope !== undefined && input?.scope !== undefined && input.scope !== options.scope)
       throw coded(JOB_CODES.scope, `this host serves the scope ${options.scope}, not ${input.scope}`);
@@ -90,7 +102,7 @@ export function jobQueueProvider(store: JobStore, options: JobQueueProviderOptio
       if (job.state === 'cancelled') return { changed: false };
       if (job.state === 'done' || job.state === 'dead') throw coded(JOB_CODES.refused, `job ${input.id} is ${job.state}`);
       if (job.state === 'leased') {
-        const lease = options.leases?.().find(l => l.jobId === input.id);
+        const lease = leases?.().find(l => l.jobId === input.id);
         if (!lease) throw coded(JOB_CODES.held, `job ${input.id} is running in another process`);
         return { changed: await jobs.cancel(input.id, { lease }) };
       }
@@ -106,12 +118,63 @@ export function jobQueueProvider(store: JobStore, options: JobQueueProviderOptio
     },
     async unschedule(input) {
       inScope(input);
+      if (input.id.startsWith(registryPrefix)) throw coded(JOB_CODES.refused, `the schedule ${input.id} is set by the host's registry`);
       let removed = false;
       try { removed = await jobs.unschedule(input.id); }
       catch (error) { if (codeOf(error) !== 'JD0016') throw error; }
       if (!removed) throw coded(JOB_CODES.unknown, `there is no schedule ${input.id}`);
       return { changed: true };
     },
+    async events(input = {}) {
+      inScope(input);
+      const h = history();
+      if (!h) return { events: [] };
+      const limit = input.limit ?? 50;
+      let rows: any[];
+      try { rows = input.jobId ? await h.ofJob(input.jobId) : await h.all(); }
+      catch { return { events: [] }; }
+      const events = rows
+        .filter(e => e.event !== 'heartbeat' && (!input.kind || e.kind === input.kind) && (input.after === undefined || e.at > input.after))
+        .sort((a, b) => oldestFirst(b, a))
+        .slice(0, limit)
+        .map(eventOf);
+      return { events };
+    },
+    async health(input) {
+      inScope(input);
+      const h = history();
+      let rows: any[] = [];
+      if (h) { try { rows = await h.heartbeats(); } catch { rows = []; } }
+      return { now: (runtime?.health().at) ?? Date.now(), runtimes: rows.map(r => ({ runtime: String(r.runtime ?? r.id), at: r.at, stats: numbers(r.stats) })) };
+    },
+    async registry(input) {
+      inScope(input);
+      if (!runtime) return { jobs: [] };
+      return { jobs: runtime.registry.jobs.map((job): RegisteredJob => ({
+        kind: job.kind, title: job.title, ...(job.description ? { description: job.description } : {}), safety: job.safety,
+        scheduled: !!job.schedule, ...(job.schedule ? { schedule: `ops:${runtime.registry.name}:${job.kind}` } : {}), ...(job.owner ? { owner: job.owner } : {}),
+      })) };
+    },
+    async run(input) {
+      inScope(input);
+      if (!runtime) throw coded(JOB_CODES.unknown, `this host runs no registry: there is no job '${input.kind}'`);
+      return runtime.runNow(input.kind);
+    },
+  };
+}
+
+const numbers = (value: unknown): Record<string, number> => {
+  const out: Record<string, number> = {};
+  if (value && typeof value === 'object') for (const [k, v] of Object.entries(value)) if (typeof v === 'number' && Number.isFinite(v)) out[k] = v;
+  return out;
+};
+function eventOf(e: any): JobEvent {
+  return {
+    id: e.id, at: e.at, event: e.event,
+    ...(typeof e.kind === 'string' ? { kind: e.kind } : {}), ...(typeof e.jobId === 'string' ? { jobId: e.jobId } : {}),
+    ...(Number.isInteger(e.attempt) ? { attempt: e.attempt } : {}), ...(typeof e.durationMs === 'number' ? { durationMs: e.durationMs } : {}),
+    ...(typeof e.code === 'string' ? { code: e.code.slice(0, 40) } : {}), ...(typeof e.message === 'string' ? { message: e.message.slice(0, 500) } : {}),
+    ...(e.simulated === true ? { simulated: true } : {}),
   };
 }
 
@@ -131,5 +194,7 @@ export function jobQueueHandlers(queue: JobQueue): Record<string, (input: any, c
     'jobs.counts': wrap((i) => queue.counts(i)), 'jobs.page': wrap((i) => queue.page(i)), 'jobs.get': wrap((i) => queue.get(i)),
     'jobs.schedules': wrap((i) => queue.schedules(i)), 'jobs.cancel': wrap((i) => queue.cancel(i)),
     'jobs.requeue': wrap((i) => queue.requeue(i)), 'jobs.unschedule': wrap((i) => queue.unschedule(i)),
+    'jobs.events': wrap((i) => queue.events(i)), 'jobs.health': wrap((i) => queue.health(i)),
+    'jobs.registry': wrap((i) => queue.registry(i)), 'jobs.run': wrap((i) => queue.run(i)),
   };
 }

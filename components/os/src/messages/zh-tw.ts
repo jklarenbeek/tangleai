@@ -232,4 +232,6 @@ export const zhTW: OsCatalogue = {
   'inbox/job-unschedule': '移除排程 {id}',
   'inbox/job-by': '{sender} 提議',
   'inbox/job-note': '只有在您接受時才會執行，而且只有在工作自提議後未變更時才會執行。',
+  'inbox/job-run': '立即執行工作 {kind}',
+  'inbox/job-run-note': '您接受後會執行一次；若有此類工作正在等待或執行，則會被拒絕。',
 };

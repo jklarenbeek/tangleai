@@ -232,4 +232,6 @@ export const ko: OsCatalogue = {
   'inbox/job-unschedule': '일정 {id} 제거',
   'inbox/job-by': '{sender}의 제안',
   'inbox/job-note': '승인하신 경우에만, 그리고 제안 이후 작업이 변경되지 않은 경우에만 실행됩니다.',
+  'inbox/job-run': '작업 {kind}을(를) 지금 실행',
+  'inbox/job-run-note': '승인하시면 한 번 실행됩니다. 이 종류의 작업이 대기 중이거나 실행 중이면 거부됩니다.',
 };

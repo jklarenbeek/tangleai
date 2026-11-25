@@ -41,6 +41,8 @@ type Collection = { put(doc: unknown): Promise<unknown>, get(key: string): Promi
 const where = (...clauses: unknown[]) => ({ $for: { it: '$[*]' }, $where: clauses.length === 1 ? clauses[0] : { $and: clauses }, $return: '$it' });
 /** The order of an attempt's steps, for events written in the same millisecond. */
 const STEP: Record<string, number> = { budget: 0, started: 1, completed: 2, failed: 2, lost: 2, cancelled: 2, 'not-repeated': 3, heartbeat: 4 };
+/** Events in the order they happened: by time, then attempt, then step. */
+export const oldestFirst = (a: OpsEvent, b: OpsEvent) => a.at - b.at || (a.attempt ?? 0) - (b.attempt ?? 0) || STEP[a.event] - STEP[b.event];
 /** A query answers a sequence: nothing, one item, or several. */
 const rows = (answer: unknown): any[] => answer === undefined || answer === null ? [] : Array.isArray(answer) ? answer : [answer];
 
@@ -52,8 +54,10 @@ export function opsEvents(store: { collection(name: string): Collection }) {
     get: (id: string) => c().get(id),
     /** Every event of one job, oldest first. */
     async ofJob(jobId: string): Promise<OpsEvent[]> {
-      return rows(await c().execute(where({ $eq: ['$it.jobId', jobId] }))).sort((a: OpsEvent, b: OpsEvent) => a.at - b.at || (a.attempt ?? 0) - (b.attempt ?? 0) || STEP[a.event] - STEP[b.event]);
+      return rows(await c().execute(where({ $eq: ['$it.jobId', jobId] }))).sort(oldestFirst);
     },
+    /** Every event but the heartbeats. */
+    async all(): Promise<OpsEvent[]> { return rows(await c().execute(where({ $ne: ['$it.event', 'heartbeat'] }))); },
     /** Started attempts of a kind on a day (the budget's count). */
     async startedOn(kind: string, day: string): Promise<number> {
       return rows(await c().execute(where({ $eq: ['$it.kind', kind] }, { $eq: ['$it.event', 'started'] }, { $eq: ['$it.day', day] }))).length;

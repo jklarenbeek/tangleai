@@ -232,4 +232,6 @@ export const ja: OsCatalogue = {
   'inbox/job-unschedule': 'スケジュール {id} を削除',
   'inbox/job-by': '{sender} からの提案',
   'inbox/job-note': 'これはお客様が承認した場合にのみ、また提案後にジョブが変わっていない場合にのみ実行されます。',
+  'inbox/job-run': 'ジョブ {kind} を今すぐ実行',
+  'inbox/job-run-note': '承認すると一度だけ実行されます。この種類のジョブが待機中または実行中の間は拒否されます。',
 };

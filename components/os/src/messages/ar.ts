@@ -232,4 +232,6 @@ export const ar: OsCatalogue = {
   'inbox/job-unschedule': 'إزالة الجدول {id}',
   'inbox/job-by': 'اقتراح من {sender}',
   'inbox/job-note': 'لا يحدث هذا إلا إذا قبلته، وفقط إذا لم تتغير المهمة منذ اقتراحها.',
+  'inbox/job-run': 'تشغيل المهمة {kind} الآن',
+  'inbox/job-run-note': 'تُشغَّل مرة واحدة عند قبولك؛ ويُرفض ذلك ما دامت مهمة من هذا النوع تنتظر أو تعمل.',
 };

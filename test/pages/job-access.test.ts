@@ -27,6 +27,7 @@ before(async () => {
     'jobs.get': async (_i: any, ctx: any) => ctx.fail('unknown', {}, { detail: 'no such job' }),
     'jobs.schedules': async () => ({ schedules: [] }),
     'jobs.cancel': async () => ({ changed: true }), 'jobs.requeue': async () => ({ changed: true }), 'jobs.unschedule': async () => ({ changed: true }),
+    'jobs.events': async () => ({ events: [] }), 'jobs.health': async () => ({ now: Date.now(), runtimes: [] }), 'jobs.registry': async () => ({ jobs: [] }), 'jobs.run': async () => ({ id: 'run:test:none@now' }),
   } as any, { validateOutput: 'always' });
   server = createServer(toNodeHandler(dispatcher));
   await new Promise<void>(done => server.listen(0, '127.0.0.1', done));

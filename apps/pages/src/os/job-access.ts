@@ -30,6 +30,8 @@ export function pagesJobQueue(address: () => string, options: { fetch?: typeof g
     counts: (input) => current().counts(input), page: (input) => current().page(input), get: (input) => current().get(input),
     schedules: (input) => current().schedules(input), cancel: (input) => current().cancel(input),
     requeue: (input) => current().requeue(input), unschedule: (input) => current().unschedule(input),
+    events: (input) => current().events(input), health: (input) => current().health(input),
+    registry: (input) => current().registry(input), run: (input) => current().run(input),
   };
 }
 

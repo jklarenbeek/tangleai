@@ -1251,13 +1251,14 @@ export function mountDesktop(node: HTMLElement, options: DesktopOptions) {
   }
 
   /** A change to a background job the assistant proposed: what would happen, who proposed it, why, and when it would not. */
-  function jobChange(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { action?: string, id?: string, reason?: string, by?: string }) {
+  function jobChange(li: HTMLElement, subject: HTMLElement, from: HTMLElement, payload: { action?: string, id?: string, kind?: string, reason?: string, by?: string }) {
     const id = payload.id ?? '';
-    subject.textContent = payload.action === 'cancel' ? t('inbox/job-cancel', { id }) : payload.action === 'requeue' ? t('inbox/job-requeue', { id }) : t('inbox/job-unschedule', { id });
+    subject.textContent = payload.action === 'run' ? t('inbox/job-run', { kind: payload.kind ?? '' })
+      : payload.action === 'cancel' ? t('inbox/job-cancel', { id }) : payload.action === 'requeue' ? t('inbox/job-requeue', { id }) : t('inbox/job-unschedule', { id });
     const by = payload.by && kernel.effective(payload.by) ? localized(kernel.effective(payload.by)!.title, locale.locale) : payload.by ?? t('desktop/label');
     from.textContent = t('inbox/job-by', { sender: by });
     if (payload.reason) { const reason = doc.createElement('p'); reason.textContent = payload.reason; li.append(reason); }
-    const note = doc.createElement('p'); note.className = 'tos-muted'; note.textContent = t('inbox/job-note');
+    const note = doc.createElement('p'); note.className = 'tos-muted'; note.textContent = payload.action === 'run' ? t('inbox/job-run-note') : t('inbox/job-note');
     li.append(note);
   }
 

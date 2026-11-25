@@ -232,4 +232,6 @@ export const es: OsCatalogue = {
   'inbox/job-unschedule': 'Quitar la programación {id}',
   'inbox/job-by': 'Propuesto por {sender}',
   'inbox/job-note': 'Esto solo ocurre si usted lo acepta, y solo si el trabajo no ha cambiado desde que se propuso.',
+  'inbox/job-run': 'Ejecutar ahora el trabajo {kind}',
+  'inbox/job-run-note': 'Se ejecuta una vez cuando usted lo acepta; se rechaza mientras un trabajo de este tipo espera o se ejecuta.',
 };

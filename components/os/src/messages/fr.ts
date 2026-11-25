@@ -232,4 +232,6 @@ export const fr: OsCatalogue = {
   'inbox/job-unschedule': 'Retirer la planification {id}',
   'inbox/job-by': 'Proposé par {sender}',
   'inbox/job-note': 'Cela n’a lieu que si vous l’acceptez, et seulement si la tâche n’a pas changé depuis la proposition.',
+  'inbox/job-run': 'Exécuter maintenant la tâche {kind}',
+  'inbox/job-run-note': 'Elle s’exécute une fois lorsque vous acceptez ; c’est refusé tant qu’une tâche de ce type attend ou s’exécute.',
 };

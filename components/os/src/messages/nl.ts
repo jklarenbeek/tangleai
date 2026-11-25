@@ -232,4 +232,6 @@ export const nl: OsCatalogue = {
   'inbox/job-unschedule': 'De planning {id} verwijderen',
   'inbox/job-by': 'Voorgesteld door {sender}',
   'inbox/job-note': 'Dit gebeurt alleen als u het accepteert, en alleen als de taak sinds het voorstel niet is veranderd.',
+  'inbox/job-run': 'De taak {kind} nu uitvoeren',
+  'inbox/job-run-note': 'De taak wordt één keer uitgevoerd wanneer u accepteert; dit wordt geweigerd zolang een taak van deze soort wacht of loopt.',
 };

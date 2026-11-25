@@ -232,4 +232,6 @@ export const tr: OsCatalogue = {
   'inbox/job-unschedule': '{id} zamanlamasını kaldır',
   'inbox/job-by': 'Öneren: {sender}',
   'inbox/job-note': 'Bu yalnızca kabul ederseniz ve iş önerildiğinden beri değişmediyse gerçekleşir.',
+  'inbox/job-run': '{kind} işini şimdi çalıştır',
+  'inbox/job-run-note': 'Kabul ettiğinizde bir kez çalışır; bu türden bir iş beklerken veya çalışırken reddedilir.',
 };

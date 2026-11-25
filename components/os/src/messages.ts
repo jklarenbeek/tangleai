@@ -234,6 +234,8 @@ export const osMessagesEn = {
   'inbox/job-unschedule': 'Remove the schedule {id}',
   'inbox/job-by': 'Proposed by {sender}',
   'inbox/job-note': 'This happens only when you accept, and only if the job has not changed since it was proposed.',
+  'inbox/job-run': 'Run the job {kind} now', // Inbox: the subject of the assistant's suggestion to run a registered background job now; {kind} is the job's kind
+  'inbox/job-run-note': 'It runs once when you accept; it is refused while a job of this kind waits or runs.', // Inbox: what happens when the person accepts a suggestion to run a job now
 } as const;
 
 export type OsMessageKey = keyof typeof osMessagesEn;
