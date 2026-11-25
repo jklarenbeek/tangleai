@@ -1,5 +1,25 @@
 # @tangleai/os
 
+## 0.74.0
+
+### Minor Changes
+
+- 6051715: The desktop follows the background work of every product a host runs. A `JobQueue` may answer `scopes()` with the products it serves (`JobScope`: a scope and its title per language); a queue without it is one unnamed product, and every call site works with both. Every call to a queue with several products names its scope, since such a queue refuses a call without one (`OS0194`).
+
+  Jobs shows one product at a time. With more than one, the header offers a product choice and a quiet row above the states gives each product's failed and waiting counts; choosing one reloads the app for that product. With one product nothing changes.
+
+  `watchJobs` looks at every product in turn, so a job given up in the second product reaches the inbox as well as one in the first. Item ids carry the scope (`job-failed-<scope>-<job>`, `runtime-silent-<scope>-<runtime>`), a dismissal is remembered per product and job, and the inbox items name the product. A product the person may not read, or one whose host does not answer, is skipped quietly while the others are still watched.
+
+  The kernel's `tangle_os_jobs` tool gains the read `jobs.scopes`, every read takes an optional `scope`, and a suggested change or a failed-job item carries the scope and the product's title, so accepting it acts in that product. The Calendar shows each product's upcoming runs, titled with the product's name when there is more than one, and exports them together.
+- c21713a: A product runs its background work in its own process, on its own store. `productJobs` from `@tangleai/ops/product` starts the operations runtime on a product's store, which is where the product enqueues jobs inside its own transactions and fences its pushes. It serves the store's queue through the `job_queue` contract at the product's own address, `/<scope>/api/job-queue`. A suite's server module calls it in `start` and answers requests with its `handle`, and the host's authorization by path then guards each product's jobs with that product's rights.
+
+  A desktop shows several products through `combinedJobQueue` from `@tangleai/os/jobs`. Every call goes to the scope it names, a call without one is refused `OS0194` when there are several, and `scopes()` lists them for a picker. Measured in one process: two products with a job kind of the same name never answer for each other. One product failing five times left the other running every second, with its largest gap 1,006 ms. A single-send job in each is called once when its runtime is replaced inside a lease. The packed packages start `productJobs` under Node and Bun.
+
+  The Tangle desktop app takes several host modules (`--ops a.ts,b.ts`), each in its own supervised worker with its own store, under the scope the module exports or its file's name. One module behaves as before.
+- 632315c: `@tangleai/ops/simulate` shows what a job registry will do. `simulateRegistry` runs the registry over 1 to 31 days on its own in-memory store with its own clock: every handler is a recorder, so no operation, page task or host code is ever called, and every history event is marked simulated. The clock moves only while no attempt is in flight. It answers per day and job: the runs, those completed, retried, given up and not repeated (a failed single-send), those a budget skipped, and the runs a clock change moved or repeated. With a failure rate the failures are decided by a seed, so the same seed gives the same answer. The simulation assumes the host is up the whole time, so a lateness window, which only skips runs after downtime, never applies. `registryFromHost` rebuilds a registry from what the `job_queue` contract answers (the registered jobs and their schedules), and `ruleText` writes a stored rule back as RFC 5545 text. Measured: 30 days of a seven-job registry across the spring clock change reproduce the parity counts per day exactly (18,729 runs in about 12 s in Node).
+
+  Jobs takes a `simulate` option and then offers "What will happen" under the schedules. The person chooses 1, 7 or 30 days and a failure rate of 0, 5 or 20 %. The answer is a table of runs per job and day, with retries, given-up and not-repeated jobs and clock-change marks, and a note that nothing ran. The Pages desktop runs it in a worker of its own (`os-ops-sim-worker.js`) that is started for one answer and then ended. A week of the Pages registry, 10,087 runs, takes about 9 s in Chromium and 32 s in Firefox. The browser twin's own store holds nothing of a simulation.
+
 ## 0.73.0
 
 ### Minor Changes

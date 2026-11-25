@@ -1,8 +1,0 @@
----
-"@tangleai/ops": minor
-"@tangleai/os": minor
----
-
-`@tangleai/ops/simulate` shows what a job registry will do. `simulateRegistry` runs the registry over 1 to 31 days on its own in-memory store with its own clock: every handler is a recorder, so no operation, page task or host code is ever called, and every history event is marked simulated. The clock moves only while no attempt is in flight. It answers per day and job: the runs, those completed, retried, given up and not repeated (a failed single-send), those a budget skipped, and the runs a clock change moved or repeated. With a failure rate the failures are decided by a seed, so the same seed gives the same answer. The simulation assumes the host is up the whole time, so a lateness window, which only skips runs after downtime, never applies. `registryFromHost` rebuilds a registry from what the `job_queue` contract answers (the registered jobs and their schedules), and `ruleText` writes a stored rule back as RFC 5545 text. Measured: 30 days of a seven-job registry across the spring clock change reproduce the parity counts per day exactly (18,729 runs in about 12 s in Node).
-
-Jobs takes a `simulate` option and then offers "What will happen" under the schedules. The person chooses 1, 7 or 30 days and a failure rate of 0, 5 or 20 %. The answer is a table of runs per job and day, with retries, given-up and not-repeated jobs and clock-change marks, and a note that nothing ran. The Pages desktop runs it in a worker of its own (`os-ops-sim-worker.js`) that is started for one answer and then ended. A week of the Pages registry, 10,087 runs, takes about 9 s in Chromium and 32 s in Firefox. The browser twin's own store holds nothing of a simulation.

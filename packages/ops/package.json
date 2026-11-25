@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/ops",
-  "version": "0.73.0",
+  "version": "0.74.0",
   "description": "Tangle AI operations — a Jaren store's job queue and schedules served to the desktop through the job_queue contract.",
   "license": "MIT",
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@tangleai/os": "0.73.0",
+    "@tangleai/os": "0.74.0",
     "@jarenjs/core": "0.226.0",
     "@jarenjs/contract": "0.226.0",
     "@jarenjs/db": "0.226.0",
