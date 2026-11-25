@@ -22,7 +22,8 @@ import { wasmDriver, sqlite3Handle, indexedDbSnapshotHandle } from '@jarenjs/db/
 import { jobSchedules } from '@jarenjs/db/schedules';
 import { createRuntime } from '@jarenjs/core/runtime';
 import { createIntlZoneProvider } from '@jarenjs/locales/intl-zones';
-import { JOB_CODES, JOB_QUEUE_CONTRACT, type JobQueue } from '@tangleai/os/jobs';
+import { JOB_QUEUE_CONTRACT, type JobQueue } from '@tangleai/os/jobs';
+import { portJobQueue, jobQueuePortClient } from './port-queue.ts';
 import { OPS_EVENTS_COLLECTIONS } from './events.ts';
 import { createOpsRuntime, type OpsContract, type OpsJobRef } from './runtime.ts';
 import { jobQueueHandlers, jobQueueProvider } from './provider.ts';
@@ -38,7 +39,6 @@ export type TwinState =
   | { ops: 'stopped', tab?: string };
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-const coded = (code: string, message: string) => Object.assign(new Error(message), { code });
 
 /**
  * Whether an error means another context still holds the OPFS access handles
@@ -158,7 +158,7 @@ export function startBrowserOps(options: BrowserOpsOptions): { stop(): Promise<v
         store, registry: options.registry, contracts: tasks ? { desktop: desktopClient(tasks) } : {}, ...(options.handlers ? { handlers: options.handlers } : {}),
         id: `${options.registry.name}@browser`, about: { storage: opened.storage, ...(options.tab ? { owner: options.tab } : {}) },
         ...(options.now ? { now: options.now } : {}), ...(options.heartbeatMs ? { heartbeatMs: options.heartbeatMs } : {}),
-        worker: { pollInterval: 250 },
+        worker: { pollInterval: 1000 },
       });
       await runtime.start();
       channel = new scope.BroadcastChannel(options.channelName);
@@ -181,31 +181,12 @@ export function startBrowserOps(options: BrowserOpsOptions): { stop(): Promise<v
   };
 }
 
-let compiledQueue: any = null;
-const DECLARED: Record<string, string> = { unknown: JOB_CODES.unknown, refused: JOB_CODES.refused, held: JOB_CODES.held, scope: JOB_CODES.scope };
-
 /**
  * Page side: the queue the owning worker serves on `channelName`. No answer within `timeoutMs` is `OS0195`:
  * the background runtime is starting (or changing tabs), not missing.
  */
 export function browserJobQueue(options: { channelName: string, timeoutMs?: number, channel?: any }): JobQueue {
-  compiledQueue ??= compileContract(JOB_QUEUE_CONTRACT as any);
-  const client = openPortClient(compiledQueue, { channel: options.channel ?? new BroadcastChannel(options.channelName), timeoutMs: options.timeoutMs ?? 5_000 });
-  const invoke = async (op: string, input: unknown) => {
-    const outcome: any = await client.invoke(op, input ?? {});
-    if (outcome.ok) return outcome.value;
-    const code = outcome.error?.code;
-    const detail = String(outcome.error?.details?.detail ?? outcome.error?.message ?? outcome.kind);
-    if (outcome.kind === 'failure' && DECLARED[code]) throw coded(DECLARED[code], detail);
-    if (code === 'JC2072') throw coded(JOB_CODES.starting, 'the background runtime is starting');
-    throw coded(JOB_CODES.unconfigured, `the background runtime did not answer: ${detail}`);
-  };
-  return {
-    counts: (i) => invoke('jobs.counts', i), page: (i) => invoke('jobs.page', i), get: (i) => invoke('jobs.get', i),
-    schedules: (i) => invoke('jobs.schedules', i), cancel: (i) => invoke('jobs.cancel', i), requeue: (i) => invoke('jobs.requeue', i),
-    unschedule: (i) => invoke('jobs.unschedule', i), events: (i) => invoke('jobs.events', i), health: (i) => invoke('jobs.health', i),
-    registry: (i) => invoke('jobs.registry', i), run: (i) => invoke('jobs.run', i),
-  };
+  return portJobQueue(jobQueuePortClient(options.channel ?? new BroadcastChannel(options.channelName), options.timeoutMs ?? 5_000));
 }
 
 export type TwinOptions = {

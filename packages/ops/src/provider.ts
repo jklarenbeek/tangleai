@@ -178,7 +178,7 @@ function eventOf(e: any): JobEvent {
   };
 }
 
-const ERROR_NAMES: Record<string, string> = { [JOB_CODES.unknown]: 'unknown', [JOB_CODES.refused]: 'refused', [JOB_CODES.held]: 'held', [JOB_CODES.scope]: 'scope' };
+const ERROR_NAMES: Record<string, string> = { [JOB_CODES.unknown]: 'unknown', [JOB_CODES.refused]: 'refused', [JOB_CODES.held]: 'held', [JOB_CODES.scope]: 'scope', [JOB_CODES.starting]: 'starting' };
 
 /** The handlers `serveHttp` (or a port) takes for `JOB_QUEUE_CONTRACT`: a coded refusal becomes the contract's declared error. */
 export function jobQueueHandlers(queue: JobQueue): Record<string, (input: any, ctx: any) => Promise<unknown>> {

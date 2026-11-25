@@ -177,7 +177,7 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
     async start() {
       if (running) return;
       await syncSchedules();
-      await reconcile();
+      await reconcile(now() - (options.keepDays ?? 30) * 86_400_000);   // bounded: restarts do not slow as history grows
       await retain();
       const handlers: Record<string, OpsHandler> = {
         [FIRE_KIND]: async (payload: any, { job }) => {

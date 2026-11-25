@@ -3,13 +3,19 @@
  * pages the web reader admits (its own, loopback pages, the published
  * desktop), with the private-network preflight; any other origin is refused
  * before the queue is read. This process holds no lease, so a running job is
- * held by another process.
+ * held by another process. With a supervised runtime the route serves two
+ * scopes: `ops` (the runtime's queue, steered where its leases live) and
+ * `desktop` (the store's own).
  */
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer, type Server } from 'node:http';
 import { nodeDriver } from '@jarenjs/db/node';
 import { httpJobQueue } from '@tangleai/os/jobs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { superviseOps } from '@tangleai/ops/supervisor';
 import { desktopJobRoute, JOB_QUEUE_PATH } from '../../apps/desktop/src/job-queue.ts';
 import { createDesktop } from '../../apps/desktop/src/server.ts';
 
@@ -52,5 +58,30 @@ describe('the desktop\'s job queue route', () => {
     assert.equal(refused.status, 403);
     assert.equal(refused.headers.get('access-control-allow-origin'), null);
     assert.match(await refused.text(), /may not read the job queue/);
+  });
+});
+
+describe('the route with a supervised runtime', () => {
+  it('serves the runtime as the default scope and the store as `desktop`, refuses another scope, and cancels a running job where its lease lives', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'tangle-desktop-ops-'));
+    writeFileSync(join(dir, 'side.log'), '');
+    const ops = superviseOps({ workerUrl: new URL('../ops/fixtures/supervisor-worker.ts', import.meta.url), workerData: { storePath: join(dir, 'ops.db'), side: join(dir, 'side.log'), heartbeatMs: 500 }, restart: { minMs: 100, maxMs: 500 } });
+    const scoped = desktopJobRoute(desktop.db, { runtime: ops.queue() });
+    const srv = createServer((req, res) => scoped(req, res));
+    await new Promise<void>(done => srv.listen(0, '127.0.0.1', done));
+    try {
+      const queue = httpJobQueue(`http://127.0.0.1:${(srv.address() as any).port}${JOB_QUEUE_PATH}`);
+      const until = async (cond: () => Promise<boolean>) => { const t = Date.now(); while (!(await cond().catch(() => false))) { if (Date.now() - t > 15_000) throw new Error('timed out'); await new Promise(r => setTimeout(r, 20)); } };
+      await until(async () => (await queue.health()).runtimes.length > 0);
+      assert.deepEqual((await queue.registry()).jobs.map(j => j.kind), ['push.send', 'crash', 'hold']);
+      assert.equal((await queue.counts({ scope: 'desktop' })).pendingKinds.report >= 1, true);
+      await assert.rejects(queue.counts({ scope: 'labels' }), { code: 'OS0194' });
+      const { id } = await queue.run({ kind: 'hold' });
+      await until(async () => (await queue.get({ id })).state === 'leased');
+      assert.deepEqual(await queue.cancel({ id }), { changed: true });
+      assert.equal((await queue.get({ id })).state, 'cancelled');
+    } finally {
+      srv.close(); await scoped.close(); await ops.stop(); rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

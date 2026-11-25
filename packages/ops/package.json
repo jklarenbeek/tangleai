@@ -12,6 +12,7 @@
     "./runtime": "./src/runtime.ts",
     "./events": "./src/events.ts",
     "./browser": "./src/browser.ts",
+    "./supervisor": "./src/supervisor.ts",
     "./package.json": "./package.json"
   },
   "engines": {

@@ -123,7 +123,7 @@ const REGISTERED_SCHEMA = {
   properties: { kind: KIND, title: TEXTS, description: TEXTS, safety: { enum: ['safe-read', 'provider-idempotent', 'single-send'] }, scheduled: { type: 'boolean' }, schedule: ID, owner: { type: 'string', maxLength: 200 } },
 } as const;
 const CHANGED = { type: 'object', additionalProperties: false, required: ['changed'], properties: { changed: { type: 'boolean' } } } as const;
-const ERRORS = { unknown: { status: 404 }, refused: { status: 409 }, held: { status: 423 }, scope: { status: 400 } } as const;
+const ERRORS = { unknown: { status: 404 }, refused: { status: 409 }, held: { status: 423 }, scope: { status: 400 }, starting: { status: 503 } } as const;
 
 /** The provider contract a host serves (over HTTP from its server, or in a worker). */
 export const JOB_QUEUE_CONTRACT = {

@@ -3,6 +3,7 @@
  *
  *   node apps/desktop/src/main.ts [--port 4700] [--data <file.db>]
  *                                 [--folder <dir>] [--no-open]
+ *                                 [--ops <host module>]   (or TANGLE_OPS_MODULE)
  *
  * Same file under Bun, and the target of `bun build --compile`. The
  * server is node:http (Bun implements it); SQLite arrives through
@@ -20,6 +21,7 @@ import { fileURLToPath } from 'node:url';
 import { createDesktop, staticFile, DESKTOP_VERSION } from './server.ts';
 import { desktopWebRoute, WEB_READER_PATH } from './web-reader.ts';
 import { desktopJobRoute, JOB_QUEUE_PATH } from './job-queue.ts';
+import { superviseOps } from '@tangleai/ops/supervisor';
 import { createChildProcessRunner, type InstrumentRegistration, type InstrumentRunner } from './instruments.ts';
 
 /**
@@ -89,6 +91,8 @@ interface Args {
   data: string;
   folder: string | null;
   open: boolean;
+  /** A host module naming the background jobs the app runs (`{ registry, handlers?, contracts? }`), or none. */
+  ops: string | null;
 }
 
 function parseArgs(argv: string[]): Args {
@@ -97,6 +101,7 @@ function parseArgs(argv: string[]): Args {
     data: join(homedir(), '.tangle', 'tangle.db'),
     folder: null,
     open: true,
+    ops: process.env.TANGLE_OPS_MODULE ? resolve(process.env.TANGLE_OPS_MODULE) : null,
   };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -104,6 +109,7 @@ function parseArgs(argv: string[]): Args {
     else if (arg === '--data') args.data = resolve(String(argv[++i]));
     else if (arg === '--folder') args.folder = resolve(String(argv[++i]));
     else if (arg === '--no-open') args.open = false;
+    else if (arg === '--ops') args.ops = resolve(String(argv[++i]));
   }
   return args;
 }
@@ -133,8 +139,14 @@ const desktop = await createDesktop({
 
 // the web reader a desktop page (this one, or the Pages desktop on this machine) reads websites through
 const webRoute = desktopWebRoute(desktop.db);
-// the store's job queue and schedules, for the Jobs app of a desktop page
-const jobRoute = desktopJobRoute(desktop.db);
+// the background runtime a host module names, in its own worker thread with its own store (ops.db beside the data)
+const ops = args.ops === null ? null : superviseOps({
+  workerUrl: new URL('./ops-worker.ts', import.meta.url),
+  workerData: { module: args.ops, storePath: join(dirname(args.data), 'ops.db') },
+  onState: (state) => { if (state.state === 'restarting') console.error(`  ops:    restarting (${state.last?.reason}${state.last?.message ? `: ${state.last.message}` : ''})`); },
+});
+// the job queues for the Jobs app of a desktop page: the runtime's (scope ops) and the store's own (scope desktop)
+const jobRoute = desktopJobRoute(desktop.db, ops ? { runtime: ops.queue() } : {});
 
 const server = createServer((req, res) => {
   const path = (req.url ?? '/').split('?')[0];
@@ -171,12 +183,13 @@ server.listen(args.port, '127.0.0.1', () => {
   // with no measurement workspace beside it registers nothing
   const registered = instruments?.list() ?? [];
   console.log(`  reports: ${registered.length === 0 ? 'no instrument registered on this build' : registered.map((entry) => entry.id).join(', ')}`);
+  console.log(`  ops:    ${args.ops === null ? 'no host module (--ops)' : args.ops}`);
   if (args.open) openBrowser(url);
 });
 
 const shutdown = (): void => {
   server.close();
-  void Promise.all([webRoute.close(), jobRoute.close()]).then(() => desktop.close()).then(() => process.exit(0));
+  void Promise.all([webRoute.close(), jobRoute.close(), ops?.stop()]).then(() => desktop.close()).then(() => process.exit(0));
 };
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);

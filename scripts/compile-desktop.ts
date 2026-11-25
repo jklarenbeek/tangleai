@@ -28,6 +28,8 @@ try {
     'build',
     '--compile',
     'apps/desktop/src/main.ts',
+    // the background runtime's worker thread, started by `new URL('./ops-worker.ts', import.meta.url)`
+    'apps/desktop/src/ops-worker.ts',
     '--outfile',
     'dist/tangle',
   ]);

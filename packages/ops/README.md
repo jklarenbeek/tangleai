@@ -51,6 +51,23 @@ the same `opfs-sahpool` store, no task called twice; 100 concurrent requests fro
 crossed; a frozen owner (Chromium) handed over in 216 ms once its page saw `freeze` (the DevTools freeze command does
 not fire that event; the spec fires it). WebKit and a long-hidden tab are not measured.
 
+## In a host's background thread
+
+`@tangleai/ops/supervisor` runs the runtime in a `worker_threads` worker with its own store, never in the host's main
+thread. `superviseOps({ workerUrl, workerData })` starts the worker and reads it through the `job_queue` contract
+over a MessageChannel, so the person's steering reaches the thread where the leases live; the worker entry calls
+`runOpsWorker({ storePath, registry, handlers?, contracts? })`. A worker that exits or throws is started again after a
+backoff (1 s doubling to 60 s, reset after five quiet minutes); one that does not answer its health call is hung and
+restarted; one whose heartbeat is older than `staleAfterMs` (90 s) is restarted only after two consecutive old readings,
+so a sleep or a slow start is not a death. While a worker starts the queue answers `OS0195`. `stop()` drains the history
+before the thread ends. The Tangle desktop app runs one when started with `--ops <host module>`.
+
+Measured (`test/ops/supervisor.test.ts`): ten deaths of the worker — five terminations while a single-send push was in its
+operation, five uncaught throws in a handler — were each followed by a running worker within 0.3–1.3 s, every one opening
+the same store with 0 claim errors; 13 single-send pushes were called 13 times (none twice) and all 11 lost single-send
+jobs carry `not-repeated`. Starting over a history of 86,000 events takes about 250 ms (start-up reconciles only the
+last `keepDays`).
+
 Install with `npm install @tangleai/ops`. The npm distribution provides ESM JavaScript, TypeScript declarations, and the documented package subpaths for Node 24 and Bun 1.4 or newer.
 
 See the [Tangle documentation](https://github.com/jklarenbeek/tangleai#readme) for architecture, examples, and runtime requirements. All public Tangle packages use one coordinated version.
