@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "version": "0.72.0",
+  "baseVersion": "0.71.0",
+  "baseCommit": "969fe85573681f3c1a0ac461b6dcd3df9943bdaf",
+  "preparationCommit": "81c2c02ea82785455fca7137dad57dff4ea78646",
+  "initial": false,
+  "inputHash": "10c3670e3b0f307dabc7f24fd1e86d39eaaa4c01494a817dc6952cd75114e8a7",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        }
+      ],
+      "summary": "Background work that needs a person now reaches them. `watchJobs({ kernel, queue, hours, remember })` reads a host's job queue once an interval (30 s by default). It files one inbox item per job that died, per single-send job a crash cut off (not repeated), per job on its third failed attempt, and per background runtime that stopped reporting for 90 s. An item is updated in place, never duplicated, and a runtime that reports again takes its item back. Before this, a failed job was noticed only when someone opened the place that lists them.\n\nA failed job's item offers Run again, which requeues the job once and only if it still needs the person, otherwise answering `OS0112`. It also offers Dismiss, which does nothing, and Open Jobs. What the person decided is remembered (`remember`), so a dismissed failure is not filed again after a reload unless the job fails anew. A silent runtime's item offers Open Jobs and Dismiss. The other system's error text is quoted and marked as data, never instructions.\n\nThe item is filed at once, but its notice waits for the person's working hours. The notice is the item's `attention`, which rings the dock's mail button and adds \"needs your attention\" to its name. When the working hours are unknown, no notice is given. When a working period begins, every item still open is noticed again. The Pages desktop reads the working hours from the Calendar and starts the watcher over its job queue; Forget everything also removes what the watcher remembered. Every new sentence is in all eleven packs.",
+      "id": "job-failures-inbox"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.72.0"
+    },
+    {
+      "name": "@tangleai/ops",
+      "version": "0.72.0"
+    }
+  ]
+}
