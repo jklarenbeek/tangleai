@@ -8,6 +8,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./provider": "./src/provider.ts",
+    "./registry": "./src/registry.ts",
+    "./runtime": "./src/runtime.ts",
+    "./events": "./src/events.ts",
     "./package.json": "./package.json"
   },
   "engines": {
@@ -15,7 +18,8 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@tangleai/os": "0.67.0"
+    "@tangleai/os": "0.67.0",
+    "@jarenjs/core": "0.226.0"
   },
   "private": false,
   "types": "./src/index.ts",

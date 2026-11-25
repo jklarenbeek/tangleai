@@ -1,0 +1,23 @@
+{
+  "$comment": "The operations runtime under kills: a single-send operation is called at most once per job until the person requeues it, then exactly once more; a safe-read may repeat.",
+  "generated": {
+    "at": "2026-11-25T11:55:14.582Z",
+    "node": "v24.20.0",
+    "kills": 40,
+    "midCall": 20
+  },
+  "summary": {
+    "pushJobs": 47,
+    "pushCalls": 47,
+    "pushesCalledTwiceBeforeRequeue": 0,
+    "deadPushes": 23,
+    "deadPushesWithNotRepeated": 23,
+    "requeued": 23,
+    "requeuedCalledExactlyOnceMore": 23,
+    "requeuedCalledMoreThanOnceMore": 0,
+    "requeuedStates": {
+      "done": 23
+    },
+    "pullsRepeated": 20
+  }
+}
