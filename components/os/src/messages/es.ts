@@ -217,6 +217,7 @@ export const es: OsCatalogue = {
   'jobs/storage-durable': 'guardado en este navegador',
   'jobs/storage-memory': 'no guardado: este navegador no le da almacenamiento duradero',
   'jobs/runs-here': 'se ejecuta en esta pestaña',
+  'jobs/store-recovered': 'El trabajo en segundo plano guardado en este navegador estaba dañado y se reinició {when}; el historial anterior se ha perdido.',
   'state/unavailable': 'No se pudo cargar su escritorio, así que los cambios están desactivados hasta que se cargue.',
   'state/failed': 'Un cambio no se guardó: {detail}.',
   'tray/theme-light': 'Cambiar al tema claro',

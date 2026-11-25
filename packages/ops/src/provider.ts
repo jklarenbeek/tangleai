@@ -145,7 +145,7 @@ export function jobQueueProvider(store: JobStore, options: JobQueueProviderOptio
       const h = history();
       let rows: any[] = [];
       if (h) { try { rows = await h.heartbeats(); } catch { rows = []; } }
-      return { now: (runtime?.health().at) ?? Date.now(), runtimes: rows.map(r => ({ runtime: String(r.runtime ?? r.id), at: r.at, stats: numbers(r.stats), ...(typeof r.storage === 'string' ? { storage: r.storage.slice(0, 40) } : {}), ...(typeof r.owner === 'string' ? { owner: r.owner.slice(0, 120) } : {}) })) };
+      return { now: (runtime?.health().at) ?? Date.now(), runtimes: rows.map(r => ({ runtime: String(r.runtime ?? r.id), at: r.at, stats: numbers(r.stats), ...(typeof r.storage === 'string' ? { storage: r.storage.slice(0, 40) } : {}), ...(typeof r.owner === 'string' ? { owner: r.owner.slice(0, 120) } : {}), ...(typeof r.recovered === 'string' ? { recovered: r.recovered.slice(0, 40) } : {}) })) };
     },
     async registry(input) {
       inScope(input);

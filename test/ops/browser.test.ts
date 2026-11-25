@@ -52,3 +52,15 @@ describe('the browser runtime', () => {
     assert.deepEqual(Object.keys(op.input.properties.job.properties), ['id', 'attempt', 'kind']);
   });
 });
+
+describe('a damaged store', () => {
+  it('is recognised by the error the browser gave when a reload cut a write, and nothing else is', async () => {
+    const { damaged } = await import('../../packages/ops/src/browser.ts');
+    const seen = new Error('JD0002: the store could not be opened (the database file is corrupt or not a database): SQLITE_CORRUPT: sqlite3 result code 11: database disk image is malformed');
+    assert.equal(damaged(seen), true);
+    assert.equal(damaged(Object.assign(new Error('the store could not be opened'), { cause: new Error('SQLITE_NOTADB: file is not a database') })), true);
+    assert.equal(damaged(new Error('SQLITE_BUSY: database is locked')), false);
+    assert.equal(damaged(new Error('NoModificationAllowedError: access handle held')), false);
+    assert.equal(damaged(undefined), false);
+  });
+});

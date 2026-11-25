@@ -47,7 +47,7 @@ export type OpsRuntimeOptions = {
   heartbeatMs?: number,
   worker?: { concurrency?: number, pollInterval?: number, leaseMs?: number },
   /** What the heartbeat also says: where the store is kept and which tab owns it (a browser twin). */
-  about?: { storage?: string, owner?: string },
+  about?: { storage?: string, owner?: string, recovered?: string },
   /** Marks every event as simulated (the browser twin's moved clock). */
   simulated?: boolean,
   onEvent?: (event: OpsEvent) => void,
@@ -146,7 +146,7 @@ export function createOpsRuntime(options: OpsRuntimeOptions): OpsRuntime {
     catch { /* a store whose jobs cannot be swept keeps them; the history is still bounded */ }
   }
 
-  const heartbeat = () => record({ id: `heartbeat:${id}`, at: now(), event: 'heartbeat', runtime: id, stats: worker?.stats() ?? {}, ...(options.about?.storage ? { storage: options.about.storage } : {}), ...(options.about?.owner ? { owner: options.about.owner } : {}) });
+  const heartbeat = () => record({ id: `heartbeat:${id}`, at: now(), event: 'heartbeat', runtime: id, stats: worker?.stats() ?? {}, ...(options.about?.storage ? { storage: options.about.storage } : {}), ...(options.about?.owner ? { owner: options.about.owner } : {}), ...(options.about?.recovered ? { recovered: options.about.recovered } : {}) });
 
   function handlerFor(job: RegistryJob): OpsHandler {
     return async (payload, { job: record_, signal }) => {

@@ -104,3 +104,23 @@ describe('the job_queue contract over a running runtime', () => {
     assert.equal(await code(plain.queue.run({ kind: 'sales.push' })), JOB_CODES.unknown);
   });
 });
+
+describe('a runtime whose store was started fresh', () => {
+  it('says when in its heartbeat, and the health answer carries it', async () => {
+    const { mkdtempSync, rmSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const { openStore } = await import('@jarenjs/db');
+    const { nodeDriver } = await import('@jarenjs/db/node');
+    const { jobSchedules } = await import('@jarenjs/db/schedules');
+    const { createOpsRuntime, jobQueueProvider, OPS_EVENTS_COLLECTIONS } = await import('@tangleai/ops');
+    const dir = mkdtempSync(join(tmpdir(), 'tangle-ops-recovered-'));
+    const store: any = await openStore({ $model: '0.1', collections: { ...OPS_EVENTS_COLLECTIONS } } as any, { driver: nodeDriver(), path: join(dir, 'r.db'), jobs: { schedules: jobSchedules() } } as any);
+    const runtime = createOpsRuntime({ store, registry: { $registry: '0.1', name: 'twin', jobs: [] }, id: 'twin@browser', about: { storage: 'opfs-sahpool', recovered: '2027-03-01T08:00:00.000Z' }, worker: { pollInterval: 50 } });
+    await runtime.start();
+    const health = await jobQueueProvider(store, { runtime }).health();
+    await runtime.stop(); await store.close(); rmSync(dir, { recursive: true, force: true });
+    assert.equal(health.runtimes[0].recovered, '2027-03-01T08:00:00.000Z');
+    assert.equal(health.runtimes[0].storage, 'opfs-sahpool');
+  });
+});

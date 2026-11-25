@@ -57,6 +57,16 @@ export function accessHandleHeld(error: unknown): boolean {
 }
 
 /** The storage ladder: OPFS (a held handle retried up to `holdMs`), else an IndexedDB snapshot, else memory. */
+/** Whether opening failed because the database file is damaged (SQLite's CORRUPT or NOTADB), not for any other reason. */
+export function damaged(error: unknown): boolean {
+  const seen = new Set<unknown>();
+  for (let e: any = error; e && typeof e === 'object' && !seen.has(e); e = e.cause) {
+    seen.add(e);
+    if (/SQLITE_CORRUPT|SQLITE_NOTADB|database disk image is malformed|file is not a database|database file is corrupt/i.test(String(e.message ?? ''))) return true;
+  }
+  return false;
+}
+
 async function openDurable(sqlite3: any, scope: any, pool: string, databaseName: string, holdMs: number) {
   const failures: { storage: TwinStorage, reason: string }[] = [];
   const deadline = Date.now() + holdMs;
@@ -67,7 +77,8 @@ async function openDurable(sqlite3: any, scope: any, pool: string, databaseName:
       const db = new util.OpfsSAHPoolDb(probe, 'c');
       try { db.exec('CREATE TABLE IF NOT EXISTS probe(n); DELETE FROM probe; INSERT INTO probe VALUES(73)'); } finally { db.close(); }
       await util.unlink(probe);
-      return { storage: 'opfs-sahpool' as TwinStorage, handle: sqlite3Handle(sqlite3, { DbClass: util.OpfsSAHPoolDb }), failures };
+      return { storage: 'opfs-sahpool' as TwinStorage, handle: sqlite3Handle(sqlite3, { DbClass: util.OpfsSAHPoolDb }), failures,
+        remove: async () => { await util.unlink(databaseName); await util.unlink(`${databaseName}-journal`); } };
     } catch (error) {
       if (accessHandleHeld(error) && Date.now() + delay < deadline) { await sleep(delay); continue; }
       failures.push({ storage: 'opfs-sahpool', reason: String((error as any)?.message ?? error).slice(0, 200) });
@@ -76,11 +87,12 @@ async function openDurable(sqlite3: any, scope: any, pool: string, databaseName:
   }
   try {
     if (!scope.indexedDB) throw new Error('IndexedDB is unavailable');
-    return { storage: 'indexeddb-snapshot' as TwinStorage, handle: indexedDbSnapshotHandle(sqlite3, { name: `${databaseName}-snapshot`, indexedDB: scope.indexedDB }), failures };
+    return { storage: 'indexeddb-snapshot' as TwinStorage, handle: indexedDbSnapshotHandle(sqlite3, { name: `${databaseName}-snapshot`, indexedDB: scope.indexedDB }), failures,
+      remove: () => new Promise<void>(done => { const r = scope.indexedDB.deleteDatabase(`${databaseName}-snapshot`); r.onsuccess = r.onerror = r.onblocked = () => done(); }) };
   } catch (error) {
     failures.push({ storage: 'indexeddb-snapshot', reason: String((error as any)?.message ?? error).slice(0, 200) });
   }
-  return { storage: 'memory' as TwinStorage, handle: sqlite3Handle(sqlite3), failures };
+  return { storage: 'memory' as TwinStorage, handle: sqlite3Handle(sqlite3), failures, remove: async () => {} };
 }
 
 /** What a page task receives: the job it runs for, its idempotency key when it may repeat, and the job's input. */
@@ -148,15 +160,26 @@ export function startBrowserOps(options: BrowserOpsOptions): { stop(): Promise<v
       const sqlite3 = await options.initialize();
       const opened = await openDurable(sqlite3, scope, options.pool, options.databaseName, options.holdMs ?? 10_000);
       const zoneProvider = options.zoneProvider ?? createIntlZoneProvider({ revision: 'browser ICU' });
-      store = await openStore({ $model: '0.1', collections: { ...OPS_EVENTS_COLLECTIONS } } as any, {
+      const open = () => openStore({ $model: '0.1', collections: { ...OPS_EVENTS_COLLECTIONS } } as any, {
         driver: wasmDriver(opened.handle), path: options.databaseName,
         runtime: createRuntime({ zoneProvider: zoneProvider as any, ...(options.now ? { now: options.now } : {}) }),
         jobs: { schedules: jobSchedules() },
       } as any);
+      // A store that will not open because its file is damaged (seen once in Firefox, under heavy load, after a reload
+      // cut a write) is removed and started fresh: the jobs come back from the registry, only the history is lost, and
+      // the heartbeat says when (`recovered`) so the Jobs app can tell the person.
+      let recovered: string | undefined;
+      try { store = await open(); }
+      catch (error) {
+        if (!damaged(error)) throw error;
+        await opened.remove();
+        store = await open();
+        recovered = new Date((options.now ?? Date.now)()).toISOString();
+      }
       tasks = options.taskContract ? openPortClient(compileContract(options.taskContract as any), { channel: scope, timeoutMs: 30_000 }) : null;
       runtime = createOpsRuntime({
         store, registry: options.registry, contracts: tasks ? { desktop: desktopClient(tasks) } : {}, ...(options.handlers ? { handlers: options.handlers } : {}),
-        id: `${options.registry.name}@browser`, about: { storage: opened.storage, ...(options.tab ? { owner: options.tab } : {}) },
+        id: `${options.registry.name}@browser`, about: { storage: opened.storage, ...(options.tab ? { owner: options.tab } : {}), ...(recovered ? { recovered } : {}) },
         ...(options.now ? { now: options.now } : {}), ...(options.heartbeatMs ? { heartbeatMs: options.heartbeatMs } : {}),
         worker: { pollInterval: 1000 },
       });

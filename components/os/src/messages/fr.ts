@@ -217,6 +217,7 @@ export const fr: OsCatalogue = {
   'jobs/storage-durable': 'conservé dans ce navigateur',
   'jobs/storage-memory': 'non conservé : ce navigateur ne lui accorde aucun stockage durable',
   'jobs/runs-here': 's’exécute dans cet onglet',
+  'jobs/store-recovered': 'Le travail en arrière-plan conservé dans ce navigateur était endommagé et a recommencé {when} ; l’historique antérieur est perdu.',
   'state/unavailable': 'Votre bureau n’a pas pu être chargé, les modifications sont donc désactivées jusqu’à ce qu’il le soit.',
   'state/failed': 'Une modification n’a pas été enregistrée : {detail}.',
   'tray/theme-light': 'Passer au thème clair',

@@ -217,6 +217,7 @@ export const ko: OsCatalogue = {
   'jobs/storage-durable': '이 브라우저에 보관',
   'jobs/storage-memory': '보관되지 않음: 이 브라우저가 지속 저장소를 제공하지 않습니다',
   'jobs/runs-here': '이 탭에서 실행 중',
+  'jobs/store-recovered': '이 브라우저에 보관된 백그라운드 작업이 손상되어 {when} 새로 시작되었습니다. 이전 기록은 사라졌습니다.',
   'state/unavailable': '데스크톱을 불러오지 못했으므로, 불러올 때까지 변경할 수 없습니다.',
   'state/failed': '변경 사항을 저장하지 못했습니다: {detail}',
   'tray/theme-light': '밝은 테마로 전환',

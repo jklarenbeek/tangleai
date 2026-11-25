@@ -61,7 +61,7 @@ import { pt } from '../../../components/os/src/messages/pt.ts';
 import { ru } from '../../../components/os/src/messages/ru.ts';
 import { tr } from '../../../components/os/src/messages/tr.ts';
 import { zhTW } from '../../../components/os/src/messages/zh-tw.ts';
-import { fixtureCombinedQueue } from './combined.ts';
+import { combinedJobQueue } from '../../../components/os/src/jobs.ts';
 
 const query = new URLSearchParams(location.search);
 const PACKS: Record<string, OsCatalogue> = { ar, de, es, fr, ja, ko, nl, pt, ru, tr, 'zh-TW': zhTW };
@@ -334,7 +334,7 @@ if (jobsMode) {
     };
   };
   const queueFor = jobsMode === 'none' ? unconfiguredJobQueue()
-    : jobsMode === '2' ? fixtureCombinedQueue([
+    : jobsMode === '2' ? combinedJobQueue([
       { scope: 'orders', title: { en: 'Orders', nl: 'Bestellingen' }, queue: scripted },
       { scope: 'printing', title: { en: 'Printing', nl: 'Afdrukken' }, queue: second() },
     ])

@@ -217,6 +217,7 @@ export const ja: OsCatalogue = {
   'jobs/storage-durable': 'このブラウザーに保存',
   'jobs/storage-memory': '保存されません: このブラウザーは永続的な保存領域を提供しません',
   'jobs/runs-here': 'このタブで実行中',
+  'jobs/store-recovered': 'このブラウザーに保存されていたバックグラウンド処理は破損していたため、{when}に新しく開始されました。以前の履歴は失われました。',
   'state/unavailable': 'デスクトップを読み込めなかったため、読み込まれるまで変更はできません。',
   'state/failed': '変更を保存できませんでした: {detail}',
   'tray/theme-light': 'ライト テーマに切り替える',

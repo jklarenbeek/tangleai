@@ -217,6 +217,7 @@ export const tr: OsCatalogue = {
   'jobs/storage-durable': 'bu tarayıcıda saklanıyor',
   'jobs/storage-memory': 'saklanmıyor: bu tarayıcı kalıcı depolama vermiyor',
   'jobs/runs-here': 'bu sekmede çalışıyor',
+  'jobs/store-recovered': 'Bu tarayıcıda tutulan arka plan çalışması bozulmuştu ve {when} yeniden başlatıldı; önceki geçmiş kayboldu.',
   'state/unavailable': 'Masaüstünüz yüklenemedi; yüklenene kadar değişiklikler kapalı.',
   'state/failed': 'Bir değişiklik kaydedilmedi: {detail}.',
   'tray/theme-light': 'Açık temaya geç',

@@ -217,6 +217,7 @@ export const nl: OsCatalogue = {
   'jobs/storage-durable': 'bewaard in deze browser',
   'jobs/storage-memory': 'niet bewaard: deze browser geeft er geen blijvende opslag voor',
   'jobs/runs-here': 'draait in dit tabblad',
+  'jobs/store-recovered': 'Het achtergrondwerk in deze browser was beschadigd en is {when} opnieuw begonnen; de eerdere geschiedenis is verloren.',
   'state/unavailable': 'Uw bureaublad kon niet worden geladen, dus wijzigingen zijn uitgeschakeld totdat dat wel lukt.',
   'state/failed': 'Een wijziging is niet opgeslagen: {detail}.',
   'tray/theme-light': 'Overschakelen naar het lichte thema',

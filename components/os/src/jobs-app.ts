@@ -405,6 +405,9 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
       if (options.ownsRuntime?.()) parts.push(t('jobs/runs-here'));
       pulse.textContent = parts.join(' · ');
     }
+    // a store that would not open (damaged) was started fresh: said once, quietly, with when
+    const recovered = (health?.runtimes ?? []).map(r => r.recovered).find(Boolean);
+    if (recovered) pulse.append(el('span', 'tos-jobs-recovered', ` ${t('jobs/store-recovered', { when: relative(Date.parse(recovered)) })}`));
   };
 
   const productTitle = (product: JobScope) => product.title[locale] ?? product.title[locale.split('-')[0]] ?? product.title.en ?? product.scope;

@@ -217,6 +217,7 @@ export const zhTW: OsCatalogue = {
   'jobs/storage-durable': '保存在此瀏覽器中',
   'jobs/storage-memory': '未保存：此瀏覽器未提供持久儲存空間',
   'jobs/runs-here': '在此分頁中執行',
+  'jobs/store-recovered': '此瀏覽器中保存的背景工作已損壞，並於{when}重新開始；先前的紀錄已遺失。',
   'state/unavailable': '無法載入您的桌面，因此在載入完成之前無法進行變更。',
   'state/failed': '有一項變更未儲存：{detail}',
   'tray/theme-light': '切換為淺色主題',

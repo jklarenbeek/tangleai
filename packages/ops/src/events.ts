@@ -13,7 +13,7 @@ export type OpsEvent = {
   id: string, at: number, event: OpsEventName,
   kind?: string, jobId?: string, attempt?: number, day?: string,
   durationMs?: number, code?: string, message?: string, simulated?: boolean,
-  runtime?: string, stats?: Record<string, number>, storage?: string, owner?: string,
+  runtime?: string, stats?: Record<string, number>, storage?: string, owner?: string, recovered?: string,
 };
 
 /** The collection the host merges into its model's `collections`. */
@@ -26,7 +26,7 @@ export const OPS_EVENTS_COLLECTIONS = {
         event: { enum: ['started', 'completed', 'failed', 'lost', 'cancelled', 'not-repeated', 'budget', 'heartbeat'] },
         kind: { type: 'string' }, jobId: { type: 'string' }, attempt: { type: 'integer' }, day: { type: 'string' },
         durationMs: { type: 'number' }, code: { type: 'string' }, message: { type: 'string', maxLength: 500 },
-        simulated: { type: 'boolean' }, runtime: { type: 'string' }, stats: { type: 'object' }, storage: { type: 'string' }, owner: { type: 'string' },
+        simulated: { type: 'boolean' }, runtime: { type: 'string' }, stats: { type: 'object' }, storage: { type: 'string' }, owner: { type: 'string' }, recovered: { type: 'string' },
       },
     },
     key: '/id',

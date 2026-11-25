@@ -217,6 +217,7 @@ export const de: OsCatalogue = {
   'jobs/storage-durable': 'in diesem Browser aufbewahrt',
   'jobs/storage-memory': 'nicht aufbewahrt: dieser Browser gewährt keinen dauerhaften Speicher',
   'jobs/runs-here': 'läuft in diesem Tab',
+  'jobs/store-recovered': 'Die in diesem Browser gespeicherte Hintergrundarbeit war beschädigt und wurde {when} neu begonnen; der frühere Verlauf ist verloren.',
   'state/unavailable': 'Ihr Schreibtisch konnte nicht geladen werden, daher sind Änderungen deaktiviert, bis er verfügbar ist.',
   'state/failed': 'Eine Änderung wurde nicht gespeichert: {detail}.',
   'tray/theme-light': 'Zum hellen Design wechseln',

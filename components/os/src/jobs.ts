@@ -45,7 +45,8 @@ export type JobEvent = { id: string, at: number, event: 'started' | 'completed' 
   kind?: string, jobId?: string, attempt?: number, durationMs?: number, code?: string, message?: string, simulated?: boolean };
 /** A runtime's last heartbeat: when it reported and its worker's counts. */
 /** A runtime's last heartbeat; a browser twin also says where it keeps its store and which tab owns it. */
-export type JobRuntimeHealth = { runtime: string, at: number, stats: Record<string, number>, storage?: string, owner?: string };
+/** `recovered`: when the runtime's store would not open (damaged) and was started fresh, the ISO time it did. */
+export type JobRuntimeHealth = { runtime: string, at: number, stats: Record<string, number>, storage?: string, owner?: string, recovered?: string };
 /** A job the host's registry declares: its title, how safe it is to repeat, and its schedule's id when it has one. */
 export type RegisteredJob = { kind: string, title: Record<string, string>, description?: Record<string, string>,
   safety: 'safe-read' | 'provider-idempotent' | 'single-send', scheduled: boolean, schedule?: string, owner?: string };
@@ -122,7 +123,7 @@ const EVENT_SCHEMA = {
     code: { type: 'string', maxLength: 40 }, message: { type: 'string', maxLength: 500 }, simulated: { type: 'boolean' },
   },
 } as const;
-const HEALTH_SCHEMA = { type: 'object', additionalProperties: false, required: ['runtime', 'at', 'stats'], properties: { runtime: { type: 'string', minLength: 1, maxLength: 200 }, at: MS, stats: { type: 'object', additionalProperties: { type: 'number' } }, storage: { type: 'string', maxLength: 40 }, owner: { type: 'string', maxLength: 120 } } } as const;
+const HEALTH_SCHEMA = { type: 'object', additionalProperties: false, required: ['runtime', 'at', 'stats'], properties: { runtime: { type: 'string', minLength: 1, maxLength: 200 }, at: MS, stats: { type: 'object', additionalProperties: { type: 'number' } }, storage: { type: 'string', maxLength: 40 }, owner: { type: 'string', maxLength: 120 }, recovered: { type: 'string', maxLength: 40 } } } as const;
 const REGISTERED_SCHEMA = {
   type: 'object', additionalProperties: false, required: ['kind', 'title', 'safety', 'scheduled'],
   properties: { kind: KIND, title: TEXTS, description: TEXTS, safety: { enum: ['safe-read', 'provider-idempotent', 'single-send'] }, scheduled: { type: 'boolean' }, schedule: ID, owner: { type: 'string', maxLength: 200 } },
@@ -195,7 +196,6 @@ export function httpJobQueue(baseUrl: string, options: { fetch?: typeof globalTh
 }
 
 /** A part of a host the desktop shows on its own: a product, or the host's own runtime. */
-export type JobScope = { scope: string, title: Record<string, string> };
 
 /**
  * One queue over several: each entry is a scope (a product's queue at its own address, the host's own runtime) and

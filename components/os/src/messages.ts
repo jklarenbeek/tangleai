@@ -219,6 +219,7 @@ export const osMessagesEn = {
   'jobs/storage-durable': 'kept in this browser', // Jobs heartbeat line: the runtime's store survives a reload
   'jobs/storage-memory': 'not kept: this browser gives it no lasting storage', // Jobs heartbeat line: the runtime's store is in memory only
   'jobs/runs-here': 'runs in this tab', // Jobs heartbeat line: this tab's worker owns the runtime
+  'jobs/store-recovered': 'The background work kept in this browser was damaged and started fresh {when}; its earlier history is gone.', // Jobs heartbeat line: the runtime's damaged store was removed and started fresh; {when} is relative
   'state/unavailable': 'Your desktop could not be loaded, so changes are off until it is.',
   'state/failed': 'A change was not saved: {detail}.',
   'tray/theme-light': 'Switch to the light theme',
