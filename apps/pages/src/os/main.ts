@@ -19,9 +19,9 @@ import { createPreferences } from './preferences.ts';
 import { pagesWebReader } from './web-access.ts';
 import { pagesJobQueue, twinWanted, failedTwinQueue } from './job-access.ts';
 import type { JobQueue } from '@tangleai/os/jobs';
-import { browserJobQueue, startTwin, forgetBrowserOps } from './ops-browser-stub.ts'; // merge: @tangleai/ops/browser
+import { browserJobQueue, startTwin, forgetBrowserOps } from '@tangleai/ops/browser';
 import { desktopTasks } from './ops-tasks.ts';
-import { TWIN } from './ops-twin.ts';
+import { TWIN, DESKTOP_TASKS_CONTRACT } from './ops-twin.ts';
 import { setBackground } from './background.ts';
 import { createSurfaces } from './surfaces.ts';
 import { setPagesLanguage, setPagesMessages } from './i18n.ts';
@@ -58,7 +58,9 @@ if (twinOn) {
     const storage = (() => { try { return localStorage; } catch { return null; } })();
     twin = startTwin({
       workerUrl: new URL('./os-ops-worker.js', import.meta.url), channelName: TWIN.channel, lockName: TWIN.lock,
-      tasks: desktopTasks({ kernel, storage }),
+      taskContract: DESKTOP_TASKS_CONTRACT,
+      // each task gets the runtime's envelope ({ job, key?, input }); the page's tasks read the input
+      tasks: Object.fromEntries(Object.entries(desktopTasks({ kernel, storage })).map(([op, run]) => [op, (call: any) => run(call?.input ?? {})])),
       onState: (state: any) => { ownsRuntime = state?.ops === 'owner'; if (state?.ops === 'error') console.error('background work', state.message); },
     });
   } catch (error: any) {

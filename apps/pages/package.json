@@ -36,7 +36,8 @@
     "@jarenjs/contract": "0.226.0",
     "@jarenjs/core": "0.226.0",
     "@jarenjs/linq": "0.226.0",
-    "@jarenjs/calc": "0.226.0"
+    "@jarenjs/calc": "0.226.0",
+    "@tangleai/ops": "0.69.1"
   },
   "devDependencies": {
     "@sqlite.org/sqlite-wasm": "3.53.0-build1"

@@ -10,17 +10,18 @@
  * wall-clock job such as the daily 03:00 tidy runs in; a UTC rule is not
  * affected.
  */
-import { startBrowserOps } from './ops-browser-stub.ts'; // merge: @tangleai/ops/browser
+import { startBrowserOps } from '@tangleai/ops/browser';
 import type { JobRegistry } from '@tangleai/ops';
 import { initializeSqlite } from '../demos/playground/sqlite.ts';
 import registry from './ops-registry.json' with { type: 'json' };
 import { DESKTOP_TASKS_CONTRACT, TWIN, localRegistry } from './ops-twin.ts';
 
+const query = new URL(self.location.href).searchParams;
 const zone = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return undefined; } })();
 startBrowserOps({
   scope: self as any,
   initialize: () => initializeSqlite({ locateFile: (name: string) => new URL(name, import.meta.url).href, print: () => {}, printErr: () => {} }),
   registry: localRegistry(registry as JobRegistry, zone),
   channelName: TWIN.channel, lockName: TWIN.lock, databaseName: TWIN.database, pool: TWIN.pool,
-  taskContract: DESKTOP_TASKS_CONTRACT,
+  taskContract: DESKTOP_TASKS_CONTRACT, tab: query.get('tab') ?? undefined,
 });

@@ -570,7 +570,8 @@ function sectionMount(prefs: Preferences, id: SectionId, kernel?: Kernel): Setti
 
     function renderPrivacy() {
       const status = h('p', { class: 'tos-settings-status', role: 'status' });
-      const done = (text: string) => { status.textContent = text; status.dataset.tone = 'ok'; };
+      // Forget everything resets the preferences, which redraws this section: the status said after it is the one now shown
+      const done = (text: string) => { const live = (pane.querySelector('.tos-settings-status[role="status"]') as HTMLElement | null) ?? status; live.textContent = text; live.dataset.tone = 'ok'; };
       let armed = false, timer = 0;
       const everything = h('button', { type: 'button', class: 'tos-btn danger', onclick: () => {
         if (!armed) { armed = true; everything.textContent = t('privacy/confirm'); timer = win.setTimeout(() => { armed = false; everything.textContent = t('privacy/forget-everything'); }, 4000); return; }
