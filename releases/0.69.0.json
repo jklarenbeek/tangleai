@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "version": "0.69.0",
+  "baseVersion": "0.68.0",
+  "baseCommit": "be3f475649d61b9d54213960b0b6cc5213aa2717",
+  "preparationCommit": "4b99ca4e0d09e5c7fe0b6e1f87987753a308bd8e",
+  "initial": false,
+  "inputHash": "fc6983204fe50b3f95495e1358f28c62e351127dc30e529eae726f4f23c0cdfe",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        }
+      ],
+      "summary": "Jobs shows what a host's operations runtime did. A schedule the host's registry set shows the registered job's title in the person's language and a Run now button instead of Remove: the registry owns that schedule. A job that must never run twice is first asked once in place (\"This sends once; it is not repeated.\"), and a run refused because one already waits or runs is said with its code. A job's detail lists its attempts, oldest first, each with when it started, how it ended, how long it took and the first line of its error. An attempt a crash cut off is said to be lost and not repeated, and one a daily budget refused is said plainly. While the runtime reports, a quiet line says when it was last seen; when it has been silent for more than 90 seconds, a warning says for how long. A host without these operations answers nothing for them, and Jobs then shows none of it. Every sentence is in all twelve languages.",
+      "id": "jobs-runtime-app"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/ops",
+          "type": "minor"
+        }
+      ],
+      "summary": "The `job_queue` contract shows what a host's runtime did. `jobs.events` answers the attempts it recorded, newest first: started, completed, failed, lost, cancelled, not repeated, and refused by a budget. They can be filtered by job, kind and time, and none carries a payload. `jobs.health` answers when each runtime last reported, with the host's own time. `jobs.registry` answers the jobs the host's registry declares: their titles, how safe each is to repeat, and their schedules. `jobs.run` runs a registered job once, and is refused while a job of that kind waits or runs.\n\n`jobQueueProvider(store, { runtime })` serves the four operations from a running `createOpsRuntime`, taking the runtime's leases for cancel. It answers empty without a runtime or a history, and refuses to remove a schedule the host's registry set (`OS0192`).\n\nThe assistant's `tangle_os_jobs` reads the attempts, the heartbeats and the registry under its grants, and every message or error another system wrote reaches it framed as data, never instructions. With `jobs.suggest` and `action: 'run'` it can suggest running a registered job now. The suggestion waits in the inbox, and the job runs once when the person accepts.",
+      "id": "jobs-runtime-server"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.69.0"
+    },
+    {
+      "name": "@tangleai/ops",
+      "version": "0.69.0"
+    }
+  ]
+}

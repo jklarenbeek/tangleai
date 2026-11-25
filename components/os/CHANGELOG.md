@@ -1,5 +1,16 @@
 # @tangleai/os
 
+## 0.69.0
+
+### Minor Changes
+
+- 4b99ca4: Jobs shows what a host's operations runtime did. A schedule the host's registry set shows the registered job's title in the person's language and a Run now button instead of Remove: the registry owns that schedule. A job that must never run twice is first asked once in place ("This sends once; it is not repeated."), and a run refused because one already waits or runs is said with its code. A job's detail lists its attempts, oldest first, each with when it started, how it ended, how long it took and the first line of its error. An attempt a crash cut off is said to be lost and not repeated, and one a daily budget refused is said plainly. While the runtime reports, a quiet line says when it was last seen; when it has been silent for more than 90 seconds, a warning says for how long. A host without these operations answers nothing for them, and Jobs then shows none of it. Every sentence is in all twelve languages.
+- 5dd2c32: The `job_queue` contract shows what a host's runtime did. `jobs.events` answers the attempts it recorded, newest first: started, completed, failed, lost, cancelled, not repeated, and refused by a budget. They can be filtered by job, kind and time, and none carries a payload. `jobs.health` answers when each runtime last reported, with the host's own time. `jobs.registry` answers the jobs the host's registry declares: their titles, how safe each is to repeat, and their schedules. `jobs.run` runs a registered job once, and is refused while a job of that kind waits or runs.
+
+  `jobQueueProvider(store, { runtime })` serves the four operations from a running `createOpsRuntime`, taking the runtime's leases for cancel. It answers empty without a runtime or a history, and refuses to remove a schedule the host's registry set (`OS0192`).
+
+  The assistant's `tangle_os_jobs` reads the attempts, the heartbeats and the registry under its grants, and every message or error another system wrote reaches it framed as data, never instructions. With `jobs.suggest` and `action: 'run'` it can suggest running a registered job now. The suggestion waits in the inbox, and the job runs once when the person accepts.
+
 ## 0.68.0
 
 No changes in this release.

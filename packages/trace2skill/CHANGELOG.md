@@ -1,5 +1,14 @@
 # @tangleai/trace2skill
 
+## 0.69.0
+
+### Patch Changes
+
+- @tangleai/agents@0.69.0
+  - @tangleai/mas@0.69.0
+  - @tangleai/models@0.69.0
+  - @tangleai/outcomes@0.69.0
+
 ## 0.68.0
 
 ### Patch Changes
