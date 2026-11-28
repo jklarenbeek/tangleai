@@ -1661,7 +1661,7 @@
     },
     {
       "path": "workflows/lifecycle.json",
-      "sha256": "ecb216aafe89a2453c79bd8d4cb7859ad835bc3ea112c85f5078c57efd587b6d",
+      "sha256": "bb5cbd849e1025d764daaec87bedac1387259c5cd9ca58d8cb557c5dc6233db0",
       "licence": {
         "spdx": "MIT",
         "provenance": "tangle-authored-synthetic",
@@ -1696,5 +1696,5 @@
       }
     }
   ],
-  "revision": "400612c68ce0fe1795b2b70ba24a63c44badee5d1a403d5cefcb01e0341a2191"
+  "revision": "ce3037b87bc05485400515617f060292b97ead7f90b043e9047e4594453c2c2e"
 }

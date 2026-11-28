@@ -1,5 +1,11 @@
 # Tangle releases
 
+## 0.75.2
+
+A person's own accent colour reads in both schemes. `composeTheme` keeps the chosen colour where it reads at 4.5:1 as text on the theme's surface and background and on its own soft tint; where it does not (a dark slate in the dark scheme, a pale yellow in the light one), it uses the same hue moved toward white in dark or toward black in light, only as far as that takes. The text drawn on the accent is now whichever of the dark ink and white reads better on it, instead of a fixed brightness cut, so a mid-tone accent no longer gets white text below AA. The colour the person picked is what Settings keeps and shows as chosen.
+
+The Pages desktop's accent swatches are the AA kit accents, a darker violet (`#6d28d9`) and a darker amber (`#9a4708`).
+
 ## 0.75.1
 
 Every text colour of the desktop reads at WCAG AA (4.5:1) on the grounds the chrome draws it on, in every theme kit, light and dark. The light defaults are darker: accent `#0a6d67` (was `#0d8a83`), ok `#186d3c`, warn `#86520c` and fail `#ae2c43`, each with its soft tint; Topograph's accent is `#2d6959`, Risograph's `#b81c5c` and Tide's `#1b6a85`. The dark kits already passed and are unchanged. The theme test checks every text token on the surface, the background and its own soft tint, and the inks on the accent and the failure colour.

@@ -62,6 +62,23 @@ describe('theme kits', () => {
     }
     assert.deepEqual(failures, []);
   });
+  it('keep a person\'s accent as chosen where it reads, and move it toward readable where it does not', () => {
+    const channel = (c: number) => { const v = c / 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+    const rgb = (hex: string) => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+    const luminance = (c: number[]) => 0.2126 * channel(c[0]) + 0.7152 * channel(c[1]) + 0.0722 * channel(c[2]);
+    const contrast = (a: string, b: string) => { const [x, y] = [luminance(rgb(a)), luminance(rgb(b))].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+    // a light-only swatch, a dark-only one, a pale yellow, a near-black, a mid grey and the kits' own
+    for (const accent of ['#334155', '#9fc2f0', '#ffe066', '#0b0b0b', '#808080', '#b81c5c', '#1f5fa8'])
+      for (const kit of THEME_KITS) for (const scheme of ['light', 'dark'] as const) {
+        const { tokens } = composeTheme(kit.id, scheme, { accent });
+        for (const ground of ['--surface', '--bg'])
+          assert.ok(contrast(tokens['--accent'], tokens[ground]) >= 4.5, `${accent} in ${kit.id} ${scheme}: ${tokens['--accent']} on ${ground} ${contrast(tokens['--accent'], tokens[ground]).toFixed(2)}:1`);
+        assert.ok(contrast(tokens['--accent-fg'], tokens['--accent']) >= 4.5, `${accent} in ${kit.id} ${scheme}: its ink`);
+      }
+    assert.equal(composeTheme('loom', 'light', { accent: '#1f5fa8' }).tokens['--accent'], '#1f5fa8');
+    assert.equal(composeTheme('loom', 'dark', { accent: '#9fc2f0' }).tokens['--accent'], '#9fc2f0');
+    assert.notEqual(composeTheme('loom', 'dark', { accent: '#334155' }).tokens['--accent'], '#334155');
+  });
   it('take every text ink of the chrome from a token, never a literal colour', () => {
     const css = readFileSync(new URL('../../components/os/styles/os.css', import.meta.url), 'utf8');
     const literal = [...css.matchAll(/(?:^|[;{\s])color:\s*(#[0-9a-f]{3,8}|rgba?\([^)]*\)|white|black)\s*[;}]/gim)].map(m => m[1]);
@@ -69,8 +86,8 @@ describe('theme kits', () => {
   });
 
   it('apply an accent, a pattern, glass, corners and spacing, and ignore malformed changes', () => {
-    const theme = composeTheme('loom', 'light', { accent: '#c81e64', pattern: 'moire', seed: 42, glass: 0, corners: 'sharp', spacing: 'compact' });
-    assert.equal(theme.tokens['--accent'], '#c81e64');
+    const theme = composeTheme('loom', 'light', { accent: '#b81c5c', pattern: 'moire', seed: 42, glass: 0, corners: 'sharp', spacing: 'compact' });
+    assert.equal(theme.tokens['--accent'], '#b81c5c');
     assert.equal(theme.tokens['--accent-fg'], '#ffffff');
     assert.equal(theme.tokens['--os-desktop'], 'moire');
     assert.equal(theme.tokens['--os-pattern-seed'], '42');

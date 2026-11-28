@@ -8,6 +8,7 @@
 import { test, expect } from './playwright.mjs';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { composeTheme } from '../../components/os/src/themes.ts';
 
 let server, suiteUrl;
 test.describe.configure({ mode: 'serial' });
@@ -384,18 +385,23 @@ test('appearance: a theme kit, an accent and a pattern apply at once, survive a 
   expect(await token('--accent')).toBe('#2d6959');
   expect(await wallpaper()).toContain('data:image/svg+xml');
   await settings.locator('.tos-swatch-btn[aria-label="#b81c5c"]').click();
-  expect(await token('--accent')).toBe('#b81c5c');
+  // a swatch applies as the kit can read it: Topograph's darker ground takes it a shade darker
+  expect(await token('--accent')).toBe(composeTheme('topograph', 'light', { accent: '#b81c5c' }).tokens['--accent']);
+  await expect(settings.locator('.tos-swatch-btn[aria-label="#b81c5c"]')).toHaveAttribute('aria-pressed', 'true');
   await settings.locator('.tos-pattern', { hasText: 'Moiré' }).click();
   expect(await token('--os-desktop')).toBe('moire');
   const light = await wallpaper();
   await page.locator('.tos-dock-theme').click();
-  expect(await token('--accent')).toBe('#b81c5c');
+  // the chosen swatch carries over to dark, lightened only as far as it takes to read there
+  const darkAccent = composeTheme('topograph', 'dark', { accent: '#b81c5c' }).tokens['--accent'];
+  expect(darkAccent).not.toBe('#b81c5c');
+  expect(await token('--accent')).toBe(darkAccent);
   expect(await token('--os-desktop')).toBe('moire');
   expect(await wallpaper()).not.toBe(light);
   await expect(settings.locator('input[name="tos-scheme"][value="dark"]')).toBeChecked();
   await page.reload();
   await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'catalogue'));
-  expect(await token('--accent')).toBe('#b81c5c');
+  expect(await token('--accent')).toBe(darkAccent);
   expect(await token('--os-desktop')).toBe('moire');
 });
 

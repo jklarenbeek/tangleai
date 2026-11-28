@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/agents",
-  "version": "0.75.1",
+  "version": "0.75.2",
   "description": "Validated tools, bounded agents, action programs, recursive execution and guarded refinement.",
   "license": "MIT",
   "type": "module",
@@ -25,8 +25,8 @@
   "dependencies": {
     "@jarenjs/core": "0.246.0",
     "@jarenjs/validate": "0.246.0",
-    "@tangleai/models": "0.75.1",
-    "@tangleai/context": "0.75.1",
+    "@tangleai/models": "0.75.2",
+    "@tangleai/context": "0.75.2",
     "@jarenjs/contract": "0.246.0",
     "@jarenjs/json": "0.246.0"
   },

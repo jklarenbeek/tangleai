@@ -1,5 +1,13 @@
 # @tangleai/os
 
+## 0.75.2
+
+### Patch Changes
+
+- A person's own accent colour reads in both schemes. `composeTheme` keeps the chosen colour where it reads at 4.5:1 as text on the theme's surface and background and on its own soft tint; where it does not (a dark slate in the dark scheme, a pale yellow in the light one), it uses the same hue moved toward white in dark or toward black in light, only as far as that takes. The text drawn on the accent is now whichever of the dark ink and white reads better on it, instead of a fixed brightness cut, so a mid-tone accent no longer gets white text below AA. The colour the person picked is what Settings keeps and shows as chosen.
+
+  The Pages desktop's accent swatches are the AA kit accents, a darker violet (`#6d28d9`) and a darker amber (`#9a4708`).
+
 ## 0.75.1
 
 ### Patch Changes

@@ -44,8 +44,28 @@ const HEX = /^#[0-9a-f]{6}$/i;
 const rgb = (hex: string) => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
 const alpha = (hex: string, a: number) => `rgba(${rgb(hex).join(', ')}, ${a})`;
 const shade = (hex: string, f: number) => `#${rgb(hex).map(c => Math.max(0, Math.min(255, Math.round(c * f))).toString(16).padStart(2, '0')).join('')}`;
-/** Text on an accent: dark ink on a light accent, white on a dark one. */
-const onAccent = (hex: string) => { const [r, g, b] = rgb(hex).map(c => { const v = c / 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.45 ? '#0b1020' : '#ffffff'; };
+const luminance = (c: number[]) => { const [r, g, b] = c.map(x => { const v = x / 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+const contrast = (a: number[], b: number[]) => { const [x, y] = [luminance(a), luminance(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+const hexOf = (c: number[]) => `#${c.map(x => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join('')}`;
+/** Text on an accent: whichever of a dark ink and white reads better on it. */
+const onAccent = (hex: string) => contrast(rgb(hex), rgb('#0b1020')) > contrast(rgb(hex), [255, 255, 255]) ? '#0b1020' : '#ffffff';
+/**
+ * A person's accent as the scheme can read it: the chosen colour when it reads
+ * at 4.5:1 as text on the theme's surface and background, and on its own soft
+ * tint over them; otherwise the same hue moved toward white (dark) or black
+ * (light), only as far as it takes.
+ */
+function readableAccent(hex: string, scheme: 'light' | 'dark', tokens: Record<string, string>): string {
+  const grounds = [tokens['--surface'], tokens['--bg']].filter(g => HEX.test(g ?? '')).map(rgb);
+  const soft = scheme === 'dark' ? 0.16 : 0.12, target = scheme === 'dark' ? 255 : 0;
+  const reads = (c: number[]) => grounds.every(g => contrast(c, g) >= 4.5 && contrast(c, c.map((x, i) => x * soft + g[i] * (1 - soft))) >= 4.5);
+  const chosen = rgb(hex);
+  for (let step = 0; step <= 25; step++) {
+    const c = chosen.map(x => x + (target - x) * step * 0.04);
+    if (reads(c)) return step === 0 ? hex : hexOf(c);
+  }
+  return hexOf(chosen.map(() => target));
+}
 
 const RADII: Record<Corners, [string, string, string]> = { sharp: ['4px', '3px', '6px'], soft: ['12px', '8px', '14px'], round: ['18px', '12px', '22px'] };
 
@@ -73,7 +93,7 @@ export function composeTheme(kitId: string, scheme: 'light' | 'dark', custom: Th
     '--os-pattern-density': String(typeof custom.density === 'number' ? Math.max(0.3, Math.min(2, custom.density)) : 1),
   });
   if (custom.accent && HEX.test(custom.accent)) {
-    const a = custom.accent;
+    const a = readableAccent(custom.accent, scheme, tokens);
     Object.assign(tokens, { '--accent': a, '--accent-fg': onAccent(a), '--accent-hover': shade(a, scheme === 'dark' ? 1.12 : 0.86), '--accent-soft': alpha(a, scheme === 'dark' ? 0.16 : 0.12) });
   }
   if (custom.knot && HEX.test(custom.knot)) tokens['--os-knot'] = custom.knot;
