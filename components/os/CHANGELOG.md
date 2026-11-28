@@ -1,5 +1,15 @@
 # @tangleai/os
 
+## 0.75.1
+
+### Patch Changes
+
+- Every text colour of the desktop reads at WCAG AA (4.5:1) on the grounds the chrome draws it on, in every theme kit, light and dark. The light defaults are darker: accent `#0a6d67` (was `#0d8a83`), ok `#186d3c`, warn `#86520c` and fail `#ae2c43`, each with its soft tint; Topograph's accent is `#2d6959`, Risograph's `#b81c5c` and Tide's `#1b6a85`. The dark kits already passed and are unchanged. The theme test checks every text token on the surface, the background and its own soft tint, and the inks on the accent and the failure colour.
+
+  The stylesheet takes every text ink from a token, so a host's theme reaches all of it: the Jobs confirm button now uses `--fail-fg` instead of white. A host theme that sets `--fail` should set `--fail-fg` as well, since the badge, a hovered close button and that confirm button draw on it.
+
+  An unfocused window dims its controls but no longer its title and subtitle, which kept the muted subtitle below AA. The Settings sidebar and the Files locations wrap their labels even when a host's own `button` rule sets `white-space: nowrap`, instead of scrolling sideways.
+
 ## 0.75.0
 
 ### Minor Changes

@@ -381,21 +381,21 @@ test('appearance: a theme kit, an accent and a pattern apply at once, survive a 
   const wallpaper = () => page.evaluate(() => document.querySelector('.tos-wallpaper').style.background);
   await settings.locator('.tos-kit[data-kit="topograph"]').click();
   expect(await token('--os-desktop')).toBe('contours');
-  expect(await token('--accent')).toBe('#2f6f5e');
+  expect(await token('--accent')).toBe('#2d6959');
   expect(await wallpaper()).toContain('data:image/svg+xml');
-  await settings.locator('.tos-swatch-btn[aria-label="#c81e64"]').click();
-  expect(await token('--accent')).toBe('#c81e64');
+  await settings.locator('.tos-swatch-btn[aria-label="#b81c5c"]').click();
+  expect(await token('--accent')).toBe('#b81c5c');
   await settings.locator('.tos-pattern', { hasText: 'Moiré' }).click();
   expect(await token('--os-desktop')).toBe('moire');
   const light = await wallpaper();
   await page.locator('.tos-dock-theme').click();
-  expect(await token('--accent')).toBe('#c81e64');
+  expect(await token('--accent')).toBe('#b81c5c');
   expect(await token('--os-desktop')).toBe('moire');
   expect(await wallpaper()).not.toBe(light);
   await expect(settings.locator('input[name="tos-scheme"][value="dark"]')).toBeChecked();
   await page.reload();
   await page.waitForFunction(() => window.tangleOs?.kernel.modules().some(m => m.id === 'catalogue'));
-  expect(await token('--accent')).toBe('#c81e64');
+  expect(await token('--accent')).toBe('#b81c5c');
   expect(await token('--os-desktop')).toBe('moire');
 });
 

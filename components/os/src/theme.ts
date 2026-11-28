@@ -20,8 +20,8 @@ export const AURORA = {
  */
 const LIGHT: Record<string, string> = {
   '--bg': '#eef1f6', '--fg': '#161a2b', '--muted': '#596078', '--surface': '#ffffff', '--border': 'rgba(22, 26, 43, 0.12)',
-  '--accent': '#0d8a83', '--accent-fg': '#ffffff', '--accent-soft': 'rgba(13, 138, 131, 0.12)', '--accent-hover': '#0a756f',
-  '--ok': '#1f8a4c', '--ok-soft': 'rgba(31, 138, 76, 0.12)', '--fail': '#c4314b', '--fail-fg': '#ffffff', '--fail-soft': 'rgba(196, 49, 75, 0.12)', '--warn': '#a8670f', '--warn-soft': 'rgba(168, 103, 15, 0.14)',
+  '--accent': '#0a6d67', '--accent-fg': '#ffffff', '--accent-soft': 'rgba(10, 109, 103, 0.12)', '--accent-hover': '#085a55',
+  '--ok': '#186d3c', '--ok-soft': 'rgba(24, 109, 60, 0.12)', '--fail': '#ae2c43', '--fail-fg': '#ffffff', '--fail-soft': 'rgba(174, 44, 67, 0.12)', '--warn': '#86520c', '--warn-soft': 'rgba(134, 82, 12, 0.14)',
   '--code-bg': '#f2f4f8', '--code-fg': '#161a2b',
   '--radius': '12px', '--radius-sm': '8px',
   '--space-1': '.25rem', '--space-2': '.5rem', '--space-3': '.75rem', '--space-4': '1rem', '--space-5': '1.25rem', '--space-6': '1.5rem', '--space-8': '2rem', '--space-10': '2.5rem', '--space-14': '3.5rem',

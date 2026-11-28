@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "version": "0.75.1",
+  "baseVersion": "0.75.0",
+  "baseCommit": "c77b0cd2e9181b9947908603a39ca755985eb8aa",
+  "preparationCommit": "c77b0cd2e9181b9947908603a39ca755985eb8aa",
+  "initial": false,
+  "inputHash": "3c81dec48c1efb2206b2931e50840bc5c712249ec691bb17af763839e8b60dd1",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/os",
+          "type": "patch"
+        }
+      ],
+      "summary": "Every text colour of the desktop reads at WCAG AA (4.5:1) on the grounds the chrome draws it on, in every theme kit, light and dark. The light defaults are darker: accent `#0a6d67` (was `#0d8a83`), ok `#186d3c`, warn `#86520c` and fail `#ae2c43`, each with its soft tint; Topograph's accent is `#2d6959`, Risograph's `#b81c5c` and Tide's `#1b6a85`. The dark kits already passed and are unchanged. The theme test checks every text token on the surface, the background and its own soft tint, and the inks on the accent and the failure colour.\n\nThe stylesheet takes every text ink from a token, so a host's theme reaches all of it: the Jobs confirm button now uses `--fail-fg` instead of white. A host theme that sets `--fail` should set `--fail-fg` as well, since the badge, a hovered close button and that confirm button draw on it.\n\nAn unfocused window dims its controls but no longer its title and subtitle, which kept the muted subtitle below AA. The Settings sidebar and the Files locations wrap their labels even when a host's own `button` rule sets `white-space: nowrap`, instead of scrolling sideways.",
+      "id": "desktop-contrast"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/os",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/research",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/experiential",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.75.1"
+    },
+    {
+      "name": "@tangleai/ops",
+      "version": "0.75.1"
+    }
+  ]
+}

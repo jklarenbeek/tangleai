@@ -73,7 +73,7 @@ export function kindOf(s: Pick<AiSettings, 'provider' | 'baseUrl'>): ProviderKin
 const DEFAULT_PREFS: DesktopPreferences = { scheme: 'system', kit: 'loom', custom: {}, rememberKey: true, language: 'system', webReader: '', jobQueue: '' };
 
 /** Accent colours offered beside the colour picker. */
-export const ACCENT_SWATCHES = ['#0d8a83', '#2f6f5e', '#c81e64', '#1f5fa8', '#1f7a99', '#7c3aed', '#b45309', '#334155'];
+export const ACCENT_SWATCHES = ['#0a6d67', '#2d6959', '#b81c5c', '#1f5fa8', '#1b6a85', '#6d28d9', '#9a4708', '#334155'];
 
 const CORNERS = ['sharp', 'soft', 'round'], SPACINGS = ['compact', 'comfortable'];
 const hex = (v: unknown) => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v) ? v : undefined;
