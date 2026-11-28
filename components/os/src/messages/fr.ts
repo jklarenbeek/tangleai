@@ -168,6 +168,8 @@ export const fr: OsCatalogue = {
   'jobs/unconfigured': 'Aucun hôte de tâches n’est configuré sur ce bureau.',
   'jobs/unconfigured-detail': 'Le travail en arrière-plan s’exécute sur un hôte auquel le bureau se connecte. Indiquez-le dans les Paramètres pour voir ici ses planifications et ses tâches.',
   'jobs/configure': 'Ouvrir les Paramètres',
+  'jobs/none': 'Aucun travail en arrière-plan ne s’exécute ici.',
+  'jobs/none-detail': 'Cette partie n’a aucune tâche planifiée ou en attente. C’est le programme lui-même qui en décide ; il n’y a donc rien à configurer.',
   'jobs/loading': 'Lecture des tâches…',
   'jobs/in-zone': '{rule}, heure de {zone}',
   'jobs/every-second': 'Chaque seconde',

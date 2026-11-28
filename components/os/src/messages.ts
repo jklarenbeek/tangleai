@@ -170,6 +170,8 @@ export const osMessagesEn = {
   'jobs/unconfigured': 'No job host is configured on this desktop.', // Jobs: no host serves background work to this desktop (OS0190)
   'jobs/unconfigured-detail': 'Background work runs on a host the desktop connects to. Name it in Settings to see its schedules and jobs here.', // Jobs: what a job host is and where to set it up
   'jobs/configure': 'Open Settings', // Jobs: button to the desktop's Settings
+  'jobs/none': 'No background work runs here.', // Jobs: this part has no job queue, and nothing in Settings would give it one (a host passed configure: null)
+  'jobs/none-detail': 'This part has no scheduled or waiting work. Whether it has any is decided by the program itself, so there is nothing to set up.', // Jobs: why there is nothing to set up
   'jobs/loading': 'Reading the jobs…', // Jobs: status while the host is read
   'jobs/in-zone': '{rule}, {zone} time', // Jobs: a rule on a wall clock in a time zone; {zone} is a zone name such as Europe/Amsterdam
   'jobs/every-second': 'Every second', // Jobs: a rule that runs every second

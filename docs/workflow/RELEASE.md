@@ -74,6 +74,11 @@ separate manual author action.
    Compatible fixes use patch. Features use minor. Breaking development changes
    use minor with migration notes. A major changeset is refused. Multiple records
    combine into one release at their highest impact.
+   Two things consumers cannot see from the code are always named in the notes.
+   When the desktop's English texts changed, the `@tangleai/os` changeset ends with the list that
+   `node scripts/os-message-changes.ts` prints: hosts that carry their own catalogue translate from it.
+   When a file that consumers' vendor scripts read moves or is renamed (`jaren/foundations.json`,
+   `releases/os/*`, a release record), that is a breaking change: name the old and new paths.
 3. Run `npm run release:prepare`. Changesets calculates public versions and
    changelogs. The wrapper synchronizes the root, private versions, every internal
    reference and the lockfile. Every workspace, public or private, depends on the

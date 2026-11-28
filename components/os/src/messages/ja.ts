@@ -168,6 +168,8 @@ export const ja: OsCatalogue = {
   'jobs/unconfigured': 'このデスクトップにはジョブのホストが設定されていません。',
   'jobs/unconfigured-detail': 'バックグラウンドの処理は、デスクトップが接続するホストで実行されます。ここでスケジュールとジョブを表示するには、設定でホストを指定してください。',
   'jobs/configure': '設定を開く',
+  'jobs/none': 'ここではバックグラウンド処理は実行されていません。',
+  'jobs/none-detail': 'この部分には予定済みまたは待機中のタスクはありません。これはプログラム自体が決めるため、設定するものはありません。',
   'jobs/loading': 'ジョブを読み込んでいます…',
   'jobs/in-zone': '{rule}（{zone} 時間）',
   'jobs/every-second': '毎秒',

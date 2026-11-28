@@ -168,6 +168,8 @@ export const tr: OsCatalogue = {
   'jobs/unconfigured': 'Bu masaüstünde yapılandırılmış bir iş ana makinesi yok.',
   'jobs/unconfigured-detail': 'Arka plan çalışması, masaüstünün bağlandığı bir ana makinede çalışır. Zamanlamalarını ve işlerini burada görmek için onu Ayarlar’da belirtin.',
   'jobs/configure': 'Ayarları aç',
+  'jobs/none': 'Burada arka planda çalışan bir iş yok.',
+  'jobs/none-detail': 'Bu bölümün zamanlanmış veya bekleyen görevi yok. Bunu programın kendisi belirler; bu nedenle ayarlanacak bir şey yoktur.',
   'jobs/loading': 'İşler okunuyor…',
   'jobs/in-zone': '{rule}, {zone} saati',
   'jobs/every-second': 'Her saniye',

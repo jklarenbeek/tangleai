@@ -92,7 +92,7 @@ document: no document. The LLM-profile twin does not help, because a relaxation 
 every constraint it removes and therefore **grows** the schema.
 
 Those runs were measured when the canonical grammar was 18,831 characters and its LLM
-profile 19,158. It is **25,043** today, and the profile **25,302**: every operator the
+profile 19,158. It is **25,166** today, and the profile **25,425**: every operator the
 vocabulary gains lands in the response format, so the gap this section is about widens
 rather than closes with time. That is the failure `@tangleai/jaren/stylesheet` fixes:
 
@@ -124,7 +124,7 @@ Four changes, each one answering something that was measured rather than suspect
 **1. Narrow the response format; move the vocabulary to the prompt.**
 [`jaren-jslt.authoring.schema.json`](https://github.com/jklarenbeek/jarenjs/blob/3491513e164dc30e429c84e709bd738841f4df16/packages/json/schemas/jaren-jslt.authoring.schema.json) is
 the canonical grammar cut at the one `$ref` that pulls in the whole expression language —
-**25,043 → 3,633 characters**, the document shape intact and the body open (every node typed since Jaren 0.193.0, for providers that require a type). The cut is
+**25,166 → 3,633 characters**, the document shape intact and the body open (every node typed since Jaren 0.193.0, for providers that require a type). The cut is
 where all the growth is, so the authoring profile has not moved a byte while the grammar
 it is cut from has grown by a third. It is mechanically derived and the artifact test
 asserts the committed file *is* the derivation.

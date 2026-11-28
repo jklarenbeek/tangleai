@@ -1,5 +1,15 @@
 # Tangle releases
 
+## 0.75.0
+
+Build on Jaren 0.246.0. Plan diagrams quote an edge label that holds brackets, as Mermaid 11 reads it; a schedule's skipped runs are counted exactly after downtime for plain rules; a SQLite write waits for another connection's write lock instead of failing at once; and object and tuple schemas validate faster. No store table changes: a store this release writes still opens under the previous release.
+
+Jobs takes `configure: null` for a host where nothing can be set up: a part without a job queue then says that no background work runs there and why there is nothing to set up, and offers no way to Settings. Without the option, Jobs still offers Settings, as before.
+
+Desktop text keys since v0.74.0:
+
+- Added (2): `jobs/none`, `jobs/none-detail`
+
 ## 0.74.0
 
 The desktop follows the background work of every product a host runs. A `JobQueue` may answer `scopes()` with the products it serves (`JobScope`: a scope and its title per language); a queue without it is one unnamed product, and every call site works with both. Every call to a queue with several products names its scope, since such a queue refuses a call without one (`OS0194`).

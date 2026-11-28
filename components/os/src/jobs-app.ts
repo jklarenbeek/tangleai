@@ -26,8 +26,9 @@ import type { ShippedContext, ShippedMount } from './shell.ts';
 export type JobsOptions = {
   /** The host's queue: the desktop's kernel `jobQueue()`, or `unconfiguredJobQueue()` where it has none. */
   queue: JobQueue,
-  /** Where the person names a job host (the host's own Settings section); the desktop's Settings by default. */
-  configure?: () => void,
+  /** Where the person names a job host (the host's own Settings section); the desktop's Settings by default. `null`
+   * where nothing can be set up: a part without a queue then says it has no background work, without an offer. */
+  configure?: (() => void) | null,
   messages?: Partial<OsCatalogue>,
   /** The language `messages` is in: dates, numbers and the title of Jobs in it. */
   locale?: string,
@@ -465,9 +466,11 @@ function mountJobs(node: HTMLElement, context: ShippedContext, options: JobsOpti
   const showUnconfigured = (code: string, error?: any) => {
     unconfigured = true; header();
     states.replaceChildren(); pulse.hidden = true;
-    say(error?.twin ? t('jobs/twin-failed', { detail: String(error.message ?? '') }) : t('jobs/unconfigured'), 'fail', code);
+    const fixed = options.configure === null && !error?.twin;
+    say(error?.twin ? t('jobs/twin-failed', { detail: String(error.message ?? '') }) : (fixed ? t('jobs/none') : t('jobs/unconfigured')), fixed ? '' : 'fail', code);
     const box = el('div', 'tos-jobs-empty');
-    box.append(el('p', '', t('jobs/unconfigured-detail')), button('tos-jobs-configure', t('jobs/configure'), () => (options.configure ?? (() => context.openSettings()))()));
+    if (fixed) box.append(el('p', '', t('jobs/none-detail')));
+    else box.append(el('p', '', t('jobs/unconfigured-detail')), button('tos-jobs-configure', t('jobs/configure'), () => (options.configure ?? (() => context.openSettings()))()));
     view.replaceChildren(box);
   };
 

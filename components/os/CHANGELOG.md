@@ -1,5 +1,15 @@
 # @tangleai/os
 
+## 0.75.0
+
+### Minor Changes
+
+- Jobs takes `configure: null` for a host where nothing can be set up: a part without a job queue then says that no background work runs there and why there is nothing to set up, and offers no way to Settings. Without the option, Jobs still offers Settings, as before.
+
+  Desktop text keys since v0.74.0:
+
+  - Added (2): `jobs/none`, `jobs/none-detail`
+
 ## 0.74.0
 
 ### Minor Changes

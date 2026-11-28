@@ -168,6 +168,8 @@ export const de: OsCatalogue = {
   'jobs/unconfigured': 'Auf diesem Desktop ist kein Auftragshost eingerichtet.',
   'jobs/unconfigured-detail': 'Hintergrundarbeit läuft auf einem Host, mit dem sich der Desktop verbindet. Geben Sie ihn in den Einstellungen an, um hier seine Zeitpläne und Aufträge zu sehen.',
   'jobs/configure': 'Einstellungen öffnen',
+  'jobs/none': 'Hier läuft keine Hintergrundarbeit.',
+  'jobs/none-detail': 'Dieser Teil hat keine geplanten oder wartenden Aufgaben. Ob er welche hat, legt das Programm selbst fest; es gibt also nichts einzurichten.',
   'jobs/loading': 'Die Aufträge werden gelesen…',
   'jobs/in-zone': '{rule}, Zeit in {zone}',
   'jobs/every-second': 'Jede Sekunde',

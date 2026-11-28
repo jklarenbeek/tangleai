@@ -333,7 +333,7 @@ if (jobsMode) {
       run: async ({ kind }) => { note({ run: kind }); throw coded(JOB_CODES.unknown, `the registry has no job '${kind}'`); },
     };
   };
-  const queueFor = jobsMode === 'none' ? unconfiguredJobQueue()
+  const queueFor = jobsMode === 'none' || jobsMode === 'fixed' ? unconfiguredJobQueue()
     : jobsMode === '2' ? combinedJobQueue([
       { scope: 'orders', title: { en: 'Orders', nl: 'Bestellingen' }, queue: scripted },
       { scope: 'printing', title: { en: 'Printing', nl: 'Afdrukken' }, queue: second() },
@@ -341,7 +341,7 @@ if (jobsMode) {
     : jobsMode === 'starting' ? refusing(Object.assign(new Error('the background runtime is starting'), { code: 'OS0195' }))
     : jobsMode === 'twinfail' ? refusing(Object.assign(new Error('the worker script could not load'), { code: JOB_CODES.unconfigured, twin: true }))
     : scripted;
-  const jobsApp = jobsModule({ queue: queueFor, ...(twinHere ? { ownsRuntime: () => true } : {}), zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }),
+  const jobsApp = jobsModule({ queue: queueFor, ...(jobsMode === 'fixed' ? { configure: null } : {}), ...(twinHere ? { ownsRuntime: () => true } : {}), zoneProvider: createIntlZoneProvider({ revision: 'browser ICU' }),
     ...(messages ? { messages, ...(lang !== 'sentinel' ? { locale: lang! } : {}) } : {}) });
   kernel.install(jobsApp.manifest, 'shipped');
   shipped.jobs = jobsApp.mount;

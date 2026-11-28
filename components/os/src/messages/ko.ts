@@ -168,6 +168,8 @@ export const ko: OsCatalogue = {
   'jobs/unconfigured': '이 데스크톱에 작업 호스트가 설정되어 있지 않습니다.',
   'jobs/unconfigured-detail': '백그라운드 작업은 데스크톱이 연결하는 호스트에서 실행됩니다. 여기에서 일정과 작업을 보려면 설정에서 호스트를 지정하십시오.',
   'jobs/configure': '설정 열기',
+  'jobs/none': '여기에서는 백그라운드 작업이 실행되지 않습니다.',
+  'jobs/none-detail': '이 부분에는 예약되었거나 대기 중인 작업이 없습니다. 이는 프로그램 자체가 정하므로 설정할 것이 없습니다.',
   'jobs/loading': '작업을 읽는 중…',
   'jobs/in-zone': '{rule}, {zone} 시간',
   'jobs/every-second': '매초',

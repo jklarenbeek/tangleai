@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.75.0
+
+### Patch Changes
+
+- Build on Jaren 0.246.0. Plan diagrams quote an edge label that holds brackets, as Mermaid 11 reads it; a schedule's skipped runs are counted exactly after downtime for plain rules; a SQLite write waits for another connection's write lock instead of failing at once; and object and tuple schemas validate faster. No store table changes: a store this release writes still opens under the previous release.
+- @tangleai/context@0.75.0
+
 ## 0.74.0
 
 ### Patch Changes

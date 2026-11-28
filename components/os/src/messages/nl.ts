@@ -168,6 +168,8 @@ export const nl: OsCatalogue = {
   'jobs/unconfigured': 'Er is geen taakhost ingesteld op dit bureaublad.',
   'jobs/unconfigured-detail': 'Achtergrondwerk draait op een host waarmee het bureaublad verbinding maakt. Geef deze op in Instellingen om hier de schema’s en taken te zien.',
   'jobs/configure': 'Instellingen openen',
+  'jobs/none': 'Hier draait geen achtergrondwerk.',
+  'jobs/none-detail': 'Dit onderdeel heeft geen geplande of wachtende taken. Of het die heeft, bepaalt het programma zelf; er valt dus niets in te stellen.',
   'jobs/loading': 'De taken worden gelezen…',
   'jobs/in-zone': '{rule}, tijd in {zone}',
   'jobs/every-second': 'Elke seconde',

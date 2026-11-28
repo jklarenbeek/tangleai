@@ -168,6 +168,8 @@ export const zhTW: OsCatalogue = {
   'jobs/unconfigured': '此桌面尚未設定工作主機。',
   'jobs/unconfigured-detail': '背景工作在桌面所連線的主機上執行。請在設定中指定主機，即可在此查看它的排程與工作。',
   'jobs/configure': '開啟設定',
+  'jobs/none': '這裡沒有執行背景工作。',
+  'jobs/none-detail': '此部分沒有排程或等候中的工作。這由程式本身決定，因此沒有需要設定的項目。',
   'jobs/loading': '正在讀取工作…',
   'jobs/in-zone': '{rule}，{zone} 時間',
   'jobs/every-second': '每秒',

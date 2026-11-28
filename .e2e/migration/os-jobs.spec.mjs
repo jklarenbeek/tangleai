@@ -233,6 +233,14 @@ test('a background runtime in this browser says where it keeps its store and tha
   await expect(win.locator('.tos-jobs-pulse')).toHaveText(/^Background runtime seen \d+ seconds ago · kept in this browser · runs in this tab$/);
 });
 
+test('a part whose host can set nothing up says it has no background work, without an offer', async ({ page }) => {
+  const win = await openJobs(page, 'jobs=fixed');
+  await expect(win.locator('.tos-jobs-status')).toHaveText('No background work runs here.');
+  await expect(win.locator('.tos-jobs-status')).toHaveAttribute('data-code', 'OS0190');
+  await expect(win.locator('.tos-jobs-empty')).toContainText('nothing to set up');
+  await expect(win.locator('.tos-jobs-configure')).toHaveCount(0);
+});
+
 test('a runtime that is starting is said as such, without sending the person to Settings', async ({ page }) => {
   const win = await openJobs(page, 'jobs=starting');
   await expect(win.locator('.tos-jobs-status')).toHaveText('Background work is starting…');

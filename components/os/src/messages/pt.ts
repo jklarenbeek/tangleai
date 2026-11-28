@@ -168,6 +168,8 @@ export const pt: OsCatalogue = {
   'jobs/unconfigured': 'Nenhum host de tarefas está configurado nesta área de trabalho.',
   'jobs/unconfigured-detail': 'O trabalho em segundo plano é executado em um host ao qual a área de trabalho se conecta. Indique-o nas Configurações para ver aqui os agendamentos e as tarefas dele.',
   'jobs/configure': 'Abrir Configurações',
+  'jobs/none': 'Nenhum trabalho em segundo plano é executado aqui.',
+  'jobs/none-detail': 'Esta parte não tem tarefas agendadas nem em espera. Quem decide é o próprio programa, por isso não há nada a configurar.',
   'jobs/loading': 'Lendo as tarefas…',
   'jobs/in-zone': '{rule}, horário de {zone}',
   'jobs/every-second': 'A cada segundo',
